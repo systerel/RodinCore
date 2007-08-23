@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.Clause;
 
 /**
@@ -85,5 +86,6 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 	public int getDepth() {
 		return depth;
 	}
+	
 
 }

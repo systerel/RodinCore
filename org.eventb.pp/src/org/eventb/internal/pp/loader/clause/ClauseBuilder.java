@@ -11,14 +11,13 @@ package org.eventb.internal.pp.loader.clause;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
@@ -176,7 +175,7 @@ public final class ClauseBuilder {
 		return clause;
 	}
 	
-	public IVariableContext getVariableContext() {
+	public VariableContext getVariableContext() {
 		return variableContext;
 	}
 	

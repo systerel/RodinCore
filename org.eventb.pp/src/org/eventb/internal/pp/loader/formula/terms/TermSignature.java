@@ -135,16 +135,4 @@ public abstract class TermSignature {
 	@Override
 	public abstract boolean equals(Object obj);
 	
-	
-//	public Index getIndex(IIndexable indexable) {
-//		Index result = null;
-//		if (isConstant()) {
-//			result = new ConstantIndex(this);
-//		}
-//		else {
-//			result = new VariableIndex(indexable.getIndex(), getSort());
-//			indexable.incIndex();
-//		}
-//		return result;
-//	}
 }

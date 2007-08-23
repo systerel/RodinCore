@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -29,7 +29,7 @@ public class EqualityInferrer extends AbstractInferrer {
 	private boolean hasTrueEquality = false;
 	private Clause result;
 	
-	public EqualityInferrer(IVariableContext context) {
+	public EqualityInferrer(VariableContext context) {
 		super(context);
 	}
 	

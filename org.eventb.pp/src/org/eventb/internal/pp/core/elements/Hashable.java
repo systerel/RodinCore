@@ -13,7 +13,10 @@ import java.util.Collection;
 /**
  * Abstract base class for hashable literals.
  * <p>
- * This class holds two different hashcodes. A literal has two hashcode.
+ * This class holds two different hashcodes. A literal has two hashcodes,
+ * one taking into account the fact that variables in two equal clauses
+ * are in fact different instances, and one considering that all variables
+ * have the same hashcode.
  *
  * @author François Terrier
  *

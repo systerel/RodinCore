@@ -12,7 +12,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -303,24 +302,6 @@ public class TestPredicateProver extends AbstractPPTest {
 			assertEquals(test.result.length, i);
 	}
 	
-	public void testInitialization() {
-		IProverModule predicateProver = new PredicateProver(new VariableContext());
-		try {
-			predicateProver.next(false);
-			fail();
-		}
-		catch (IllegalStateException e) {
-			// expected
-		}
-		try {
-			predicateProver.addClauseAndDetectContradiction(null);
-			fail();
-		}
-		catch (IllegalStateException e) {
-			// expected
-		}
-	}
-	
 	public void testEmptyResult() {
 		IProverModule predicateProver = getProver();
 		
@@ -346,7 +327,6 @@ public class TestPredicateProver extends AbstractPPTest {
 	
 	private IProverModule getProver() {
 		IProverModule predicateProver = new PredicateProver(new VariableContext());
-		predicateProver.initialize(new ClauseSimplifier());
 		return predicateProver;
 	}
 	

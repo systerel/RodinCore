@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
 /**
  * This simplifier removes the existential variables appearing in literals
@@ -32,9 +32,9 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
  */
 public class ExistentialSimplifier extends AbstractSimplifier {
 
-	private final IVariableContext context;
+	private final VariableContext context;
 	
-	public ExistentialSimplifier(IVariableContext context) {
+	public ExistentialSimplifier(VariableContext context) {
 		this.context = context;
 	}
 	

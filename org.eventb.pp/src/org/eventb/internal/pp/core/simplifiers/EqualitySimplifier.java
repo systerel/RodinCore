@@ -11,11 +11,11 @@ package org.eventb.internal.pp.core.simplifiers;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
 /**
  * Simplifies trivial equalities between two equal or unequal terms.
@@ -33,9 +33,9 @@ import org.eventb.internal.pp.core.elements.EquivalenceClause;
  */
 public class EqualitySimplifier extends AbstractSimplifier {
 
-	private IVariableContext context;
+	private VariableContext context;
 	
-	public EqualitySimplifier(IVariableContext context) {
+	public EqualitySimplifier(VariableContext context) {
 		this.context = context;
 	}
 	

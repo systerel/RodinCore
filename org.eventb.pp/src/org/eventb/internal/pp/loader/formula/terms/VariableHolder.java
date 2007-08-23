@@ -46,7 +46,6 @@ public class VariableHolder extends TermSignature {
 	
 	@Override
 	public boolean equals(Object obj) {
-		// TODO think to integrate the sort in the computation of equals
 		if (obj == this) return true;
 		if (obj instanceof VariableHolder) {
 			return true;

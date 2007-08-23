@@ -11,12 +11,12 @@ package org.eventb.internal.pp.core.inferrers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -28,7 +28,7 @@ public class EqualityInstantiationInferrer extends InstantiationInferrer {
 	private boolean inverse;
 	private boolean hasTrueLiterals;
 	
-	public EqualityInstantiationInferrer(IVariableContext context) {
+	public EqualityInstantiationInferrer(VariableContext context) {
 		super(context);
 	}
 	

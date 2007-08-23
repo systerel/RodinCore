@@ -6,18 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.core;
+package org.eventb.internal.pp.core.elements;
 
 import java.util.HashMap;
+import java.util.List;
 
-import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
-import org.eventb.internal.pp.core.elements.Sort;
-
+/**
+ * TODO comment
+ *
+ * @author François Terrier
+ *
+ */
 public class PredicateTable {
 
 	private HashMap<Sort, PredicateLiteralDescriptor> map = new HashMap<Sort, PredicateLiteralDescriptor>();
 	private HashMap<Integer, PredicateLiteralDescriptor> integerMap = new HashMap<Integer, PredicateLiteralDescriptor>();
-	
 	
 	public PredicateTable() {
 		// nothing for now
@@ -29,6 +32,13 @@ public class PredicateTable {
 	
 	public PredicateLiteralDescriptor getDescriptor(int index) {
 		return integerMap.get(index);
+	}
+	
+	public PredicateLiteralDescriptor newDescriptor(int index, 
+			int arity, int realArity, boolean isLabel,
+			List<Sort> sortList) {
+		assert !integerMap.containsKey(index);
+		return new PredicateLiteralDescriptor(index, arity, realArity, isLabel, sortList);
 	}
 	
 	public void addDescriptor(int index, PredicateLiteralDescriptor descriptor) {

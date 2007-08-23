@@ -6,7 +6,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -14,6 +13,7 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 
 public class TestExistentialSimplification extends AbstractPPTest {
@@ -105,19 +105,22 @@ public class TestExistentialSimplification extends AbstractPPTest {
 		}
 	}
 	
-	static class MyVariableContext implements IVariableContext {
+	static class MyVariableContext extends VariableContext {
 		int i=0;
 		
+		@Override
 		public Constant getNextFreshConstant(Sort sort) {
 			if (i==0) {i++; return newCons0;}
 			if (i==1) {i++; return newCons1;}
 			return null;
 		}
 
+		@Override
 		public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
 			return null;
 		}
 
+		@Override
 		public Variable getNextVariable(Sort sort) {
 			return null;
 		}

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -25,6 +24,7 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.core.tracing.SplitOrigin;
@@ -42,7 +42,7 @@ public class CaseSplitInferrer extends AbstractInferrer {
 
 	private Level parent;
 	
-	public CaseSplitInferrer(IVariableContext context) {
+	public CaseSplitInferrer(VariableContext context) {
 		super(context);
 	}
 	
@@ -177,7 +177,7 @@ public class CaseSplitInferrer extends AbstractInferrer {
 	public boolean canInfer(Clause clause) {
 		if (clause.isUnit()) return false;
 		if (clause.getOrigin().isDefinition()) return false;
-		if (clause.isBlockedOnConditions()) return false;
+		if (clause.hasConditions()) return false;
 		
 		if (!(	hasConstantLiteral(clause.getPredicateLiterals())
 				|| hasConstantLiteral(clause.getArithmeticLiterals())

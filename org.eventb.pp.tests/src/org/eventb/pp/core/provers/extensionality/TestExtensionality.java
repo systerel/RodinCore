@@ -7,6 +7,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.descriptor;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
@@ -15,13 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -31,14 +31,6 @@ import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
 
 public class TestExtensionality extends AbstractPPTest {
-
-	protected static PredicateLiteralDescriptor descriptor(int index, int arity, int realArity, List<Sort> sortList) {
-		return new PredicateLiteralDescriptor(index, arity, realArity, false, sortList);
-	}
-	
-	protected static PredicateLiteralDescriptor labelDescriptor(int index, int arity, int realArity, List<Sort> sortList) {
-		return new PredicateLiteralDescriptor(index, arity, realArity, true, sortList);
-	}
 
 	private static PredicateLiteralDescriptor P0 = descriptor(0, 2, 2, mList(A,PA));
 	private static PredicateLiteralDescriptor P1 = descriptor(1, 3, 3, mList(A,B,PAB));
@@ -185,7 +177,6 @@ public class TestExtensionality extends AbstractPPTest {
 	
 	private IProverModule getProver(PredicateTable predicateTable, VariableContext context) {
 		IProverModule prover = new ExtensionalityProver(predicateTable, context);
-		prover.initialize(new ClauseSimplifier());
 		return prover;
 	}
 

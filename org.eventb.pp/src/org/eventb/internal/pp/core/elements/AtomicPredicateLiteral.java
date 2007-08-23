@@ -13,10 +13,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
+/**
+ * Implementation of {@link PredicateLiteral} for propositions.
+ * <p>
+ * Propositions are predicates with no terms.
+ *
+ * @author François Terrier
+ *
+ */
 public final class AtomicPredicateLiteral extends PredicateLiteral {
 
 	public AtomicPredicateLiteral(PredicateLiteralDescriptor descriptor, boolean isPositive) {
@@ -38,7 +46,7 @@ public final class AtomicPredicateLiteral extends PredicateLiteral {
 	}
 
 	@Override
-	public AtomicPredicateLiteral getCopyWithNewVariables(IVariableContext context, HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
+	public AtomicPredicateLiteral getCopyWithNewVariables(VariableContext context, HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
 		return this;
 	}
 

@@ -32,6 +32,7 @@ public class TestLevel extends AbstractPPTest {
 	}
 	
 	public void testParent() {
+		assertTrue(BASE.getParent().equals(BASE));
 		assertTrue(ONE.getParent().equals(BASE));
 		assertTrue(TWO.getParent().equals(BASE));
 		assertTrue(THREE.getParent().equals(ONE));

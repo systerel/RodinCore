@@ -10,11 +10,11 @@ package org.eventb.internal.pp.loader.formula;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;

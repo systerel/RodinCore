@@ -14,7 +14,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -380,7 +379,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 	};
 
-	private IVariableContext variableContext() {
+	private VariableContext variableContext() {
 		return new VariableContext();
 	}
 	

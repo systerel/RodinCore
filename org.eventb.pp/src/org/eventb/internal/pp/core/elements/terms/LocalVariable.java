@@ -11,7 +11,7 @@ package org.eventb.internal.pp.core.elements.terms;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
+import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.Sort;
 
 /**
@@ -21,6 +21,10 @@ import org.eventb.internal.pp.core.elements.Sort;
  * two different predicates.
  * <p>
  * As for variables, the index is only used for {@link #compareTo(Term)}.
+ * 
+ * TODO move the isForall boolean to {@link Literal}, since a universal or 
+ * existential quantifier spans over a whole literal, all terms in this 
+ * literal have the same quantification.
  * 
  * @author François Terrier
  * 
@@ -83,7 +87,7 @@ public final class LocalVariable extends SimpleTerm {
 	
 	// returns the variable corresponding to this local variable
 	private Variable varCache = null;
-	public Variable getVariable(IVariableContext context) {
+	public Variable getVariable(VariableContext context) {
 		if (varCache == null) {
 			varCache = context.getNextVariable(sort);
 		}

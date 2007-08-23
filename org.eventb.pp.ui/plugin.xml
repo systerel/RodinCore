@@ -20,7 +20,7 @@
             interrupt="true"
             name="NewPP (with lasso)"
             priorty="9"
-            tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderRestricted"
+            tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderWithLasso"
             target="global"
             tooltip="Launch NewPP (with lasso)"/>
       <tactic

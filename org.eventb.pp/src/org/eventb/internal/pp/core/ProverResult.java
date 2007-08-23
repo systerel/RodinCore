@@ -13,12 +13,23 @@ import java.util.Set;
 
 import org.eventb.internal.pp.core.elements.Clause;
 
-public class ProverResult {
+/**
+ * This class represents the result of the invocation of a
+ * prover. It contains two sets of clauses, the derived clauses
+ * and the subsumed clauses.
+ *
+ * @author François Terrier
+ *
+ */
+public final class ProverResult {
 
+	/**
+	 * Constant for an empty result
+	 */
 	public static ProverResult EMPTY_RESULT = new ProverResult();
 	
-	private Set<Clause> generatedClauses;
-	private Set<Clause> subsumedClauses;
+	private final Set<Clause> generatedClauses;
+	private final Set<Clause> subsumedClauses;
 	
 	public ProverResult(Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		this.generatedClauses = generatedClauses;
@@ -49,14 +60,31 @@ public class ProverResult {
 		this.subsumedClauses = new HashSet<Clause>();
 	}
 
+	/**
+	 * Returns the derived clauses.
+	 * 
+	 * @return the derived clauses
+	 */
 	public Set<Clause> getGeneratedClauses() {
 		return generatedClauses;
 	}
 	
+	/**
+	 * Returns the subsumed clauses.
+	 * 
+	 * @return the subsumed clauses
+	 */
 	public Set<Clause> getSubsumedClauses() {
 		return subsumedClauses;
 	}
 	
+	/**
+	 * Returns <code>true</code> if this result is empty and
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this result is empty and
+	 * <code>false</code> otherwise
+	 */
 	public boolean isEmpty() {
 		return generatedClauses.isEmpty() && subsumedClauses.isEmpty();
 	}

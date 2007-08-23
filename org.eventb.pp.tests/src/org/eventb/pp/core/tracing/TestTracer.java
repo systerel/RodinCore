@@ -5,9 +5,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.internal.pp.core.tracing.Tracer;
 
 public class TestTracer extends AbstractPPTest {
 

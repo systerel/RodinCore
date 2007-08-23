@@ -16,6 +16,8 @@ public class PPResult {
 	private ITracer tracer;
 	
 	public PPResult (Result result, ITracer tracer) {
+		assert result == Result.valid || tracer == null; 
+		
 		this.result = result;
 		this.tracer = tracer;
 	}

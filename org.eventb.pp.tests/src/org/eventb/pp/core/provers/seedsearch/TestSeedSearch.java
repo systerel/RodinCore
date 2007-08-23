@@ -9,8 +9,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -104,10 +102,8 @@ public class TestSeedSearch extends AbstractPPTest {
 	}
 
 	private SeedSearchProver getProver() {
-		IVariableContext context = new VariableContext();
+		VariableContext context = new VariableContext();
 		SeedSearchProver prover = new SeedSearchProver(context);
-		ClauseSimplifier simplifier = new ClauseSimplifier();
-		prover.initialize(simplifier);
 		return prover;
 	}
 	

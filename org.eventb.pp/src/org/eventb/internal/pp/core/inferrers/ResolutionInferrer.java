@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -36,7 +36,7 @@ public class ResolutionInferrer extends AbstractInferrer {
 	private Clause subsumedClause;
 	private boolean hasInstantiations;
 	
-	public ResolutionInferrer(IVariableContext context) {
+	public ResolutionInferrer(VariableContext context) {
 		super(context);
 	}
 	

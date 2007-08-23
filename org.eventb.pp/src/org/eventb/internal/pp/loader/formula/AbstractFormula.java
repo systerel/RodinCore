@@ -11,9 +11,9 @@ package org.eventb.internal.pp.loader.formula;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.clause.LabelManager;
@@ -72,7 +72,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 			predicateDescriptor = table.getDescriptor(index);
 		}
 		else {
-			predicateDescriptor = new PredicateLiteralDescriptor(index,arity,realArity,isLabel,sortList);
+			predicateDescriptor = table.newDescriptor(index,arity,realArity,isLabel,sortList);
 			table.addDescriptor(index, predicateDescriptor);
 			if (sort != null) table.addSort(sort, predicateDescriptor);
 		}

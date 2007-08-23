@@ -80,6 +80,19 @@ public class RodinTests extends AbstractPPTest {
 			this.result = result;
 			this.typeEnvironment = parseTypeEnvironment(typeEnvironment);
 		}
+		
+		public TestPair(List<String> typeEnvironment, Set<String> hypotheses,
+				String goal, boolean result, int timeout) {
+			this.hypotheses = new LinkedHashSet<Predicate>();
+			for (String string : hypotheses) {
+				this.hypotheses.add(ff.parsePredicate(string)
+						.getParsedPredicate());
+			}
+			this.goal = ff.parsePredicate(goal).getParsedPredicate();
+			this.result = result;
+			this.typeEnvironment = parseTypeEnvironment(typeEnvironment);
+			this.timeout = timeout;
+		}
 
 		private ITypeEnvironment parseTypeEnvironment(
 				List<String> typeEnvironment2) {
@@ -148,6 +161,12 @@ public class RodinTests extends AbstractPPTest {
 		doTestHelper(pair);
 	}
 	
+	private static void doTest(List<String> typeEnvironment,
+			Set<String> hypotheses, String goal, boolean result, int timeout) {
+		TestPair pair = new TestPair(typeEnvironment, hypotheses, goal, result, timeout);
+		doTestHelper(pair);
+	}
+	
 	private static void doTest(Set<String> hypotheses, String goal, boolean result, int timeout) {
 		TestPair pair = new TestPair(hypotheses, goal, result, timeout);
 		doTestHelper(pair);
@@ -156,6 +175,58 @@ public class RodinTests extends AbstractPPTest {
 	private static void doTest(Set<String> hypotheses, String goal, boolean result) {
 		TestPair pair = new TestPair(hypotheses, goal, result);
 		doTestHelper(pair);
+	}
+	
+	public void testFailingLevels() {
+		initDebug();
+
+		doTest(mList("B","ℙ(S×S×S)","R","ℙ(S×S)"),
+				mSet(
+						"∀x,y·x ↦ y∈R⇒¬y ↦ x∈R",
+						"∀x,y·x ↦ y∈R⇒¬x=y",
+						"∀x,y,z·x ↦ y∈R∧y ↦ z∈R⇒x ↦ z∈R",
+						"∀x,z·¬x=z⇒(∃y·x ↦ y ↦ z∈B)",
+						"∀x,y,z·x ↦ y ↦ z∈B⇒(x ↦ y∈R∧y ↦ z∈R)∨(z ↦ y∈R∧y ↦ x∈R)"
+						),"∀x,z·x ↦ z∈R⇒(∃y·x ↦ y∈R∧y ↦ z∈R)",true
+		);
+		
+		doTest(
+			mList("P","ℙ(S)","Q","ℙ(S)"),
+			new HashSet<String>(),
+			"(∀x·∃y·x∈P∧y∈Q)⇒(∃y·∀x·x∈P∧y∈Q)",true
+		);
+	}
+	
+	public void testSoundness() {
+		initDebug();
+		
+		doTest(
+				mList(
+				"m","ℙ(M×M)",
+				"l","M",
+				"f","M",
+				"M","ℙ(M)"
+				),
+				 mSet(
+				"(∀x,x0·x ↦ x0∈m⇒¬x=l∧¬x0=f)",
+				"(∀x,x0,x1·x ↦ x0∈m∧x ↦ x1∈m⇒x0=x1)",
+				"(∀x·¬x=l⇒(∃x0·x ↦ x0∈m))",
+				"(∀x·¬x=f⇒(∃x0·x0 ↦ x∈m))",
+				"(∀x,x0,x1·x0 ↦ x∈m∧x1 ↦ x∈m⇒x0=x1)",
+				"∀x·(∀x0·x0∈x⇒(∃x1·x1∈x∧x1 ↦ x0∈m))⇒(∀x0·¬x0∈x)"
+				),"l=f",false,10000);
+		
+		doTest(
+				mList(
+				"m","ℙ(M×M)",
+				"l","M",
+				"f","M",
+				"M","ℙ(M)"
+				),
+				 mSet(
+				"m∈M ∖ {l} ⤖ M ∖ {f}",
+				"∀x·x⊆m[x]⇒x=∅"
+				),"l=f",false,10000);
 	}
 	
 	public void testSimpleSplit() {
@@ -192,43 +263,81 @@ public class RodinTests extends AbstractPPTest {
 				),"brithday∪{p ↦ d}∈PERSON ⇸ DATE",true);	
 	}
 	
-//	public void testJR() {
-//		initDebug();
-////		f : A-->E
-////		f[a] <: b
-////		|---
-////		a <: f~[b]
-//		
-//		doTest(
-//				mList(
-//				"A","ℙ(A)",
-//				"E","ℙ(A)"
-//				),
-//				mSet(
-//				"f ∈ A→E",
-//				"f[a] ⊆ b"
-//				),"a ⊆ f∼[b]"
-//		,true);
-//		
-////		f : E-->E
-////		f~[b] : dom(K)
-////		K : POW(E) +->POW(E)
-////		f[K(f~[b])] <: b
-////		|---
-////		K(f~[b]) <: f~[b]
-//		
-//		doTest(
-//				mList(
-//					"E","ℙ(E)"
-//				),
-//				mSet(
-//				"f ∈ E → E",
-//				"K ∈ ℙ(E) ⇸ ℙ(E)",
-//				"f∼[b] ∈ dom(K)",
-//				"f[K(f∼[b])] ⊆ b"
-//				),"K(f∼[b]) ⊆ f∼[b]"
-//		,true);
-//	}
+	public void testPOW() {
+		initDebug();
+//		f : s >->t
+//		a : POW1(s)
+//		|--
+//		 f[a] : POW1(t)
+
+//		f : s >->t
+//		a : POW(s)
+//		a/={}
+//		|--
+//		 f[a] : POW(t) & f[a]/={}
+
+		doTest(
+				mList(
+					"s","ℙ(s)",
+					"t","ℙ(t)"
+				),
+				mSet(
+				"f ∈ s ↣ t",
+				"a ∈ ℙ(s)",
+				"a ≠ ∅"
+				),"f[a] ∈ ℙ(t) ∧ f[a] ≠ ∅"
+		,true);
+		
+		doTest(
+				mList(
+					"s","ℙ(s)",
+					"t","ℙ(t)"
+				),
+				mSet(
+				"f ∈ s ↣ t",
+				"a ∈ ℙ1(s)"
+				),"f[a] ∈ ℙ1(t)"
+		,true);
+		
+	}
+	
+	public void testJR() {
+		initDebug();
+//		f : A-->E
+//		f[a] <: b
+//		|---
+//		a <: f~[b]
+		
+		doTest(
+				mList(
+				"A","ℙ(A)",
+				"E","ℙ(A)"
+				),
+				mSet(
+				"f ∈ A→E",
+				"f[a] ⊆ b"
+				),"a ⊆ f∼[b]"
+		,true);
+		
+//		f : E-->E
+//		f~[b] : dom(K)
+//		K : POW(E) +->POW(E)
+//		f[K(f~[b])] <: b
+//		|---
+//		K(f~[b]) <: f~[b]
+		
+		doTest(
+				mList(
+					"E","ℙ(E)"
+				),
+				mSet(
+				"f ∈ E → E",
+				"K ∈ ℙ(E) ⇸ ℙ(E)",
+				"f∼[b] ∈ dom(K)",
+				"f[K(f∼[b])] ⊆ b"
+				),"K(f∼[b]) ⊆ f∼[b]"
+		,true);
+	}
 	
 	public void testConjunctiveGoals() {
 		initDebug();
@@ -851,7 +960,6 @@ public class RodinTests extends AbstractPPTest {
 				"(∀x,x0,x1·x0 ↦ x∈r∧x1 ↦ x∈r⇒x0=x1)∧(∀x,x0·x ↦ x0∈r⇒x∈E∧x0∈E)", true);
 
 		
-		
 		doTest(mSet("r ∈ E ⤖ E", "s ∈ E ⤖ E"), 
 				"(∀x,x0,x1·x0 ↦ x∈r∧x1 ↦ x∈r⇒x0=x1)", true);
 		// total
@@ -923,8 +1031,15 @@ public class RodinTests extends AbstractPPTest {
 //				"∧(∀x·x∈C⇒(∃x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)))", true);
 		
 		
-//		doTest(mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
-//				"(({c}⩤f)∪{c↦b}) ∈  C → D", true);	
+		doTest(mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+				"(({c}⩤f)∪{c↦b}) ∈  C → D", true);	
+		
+		doTest(mSet(
+				"f ∈ C ↔ D",
+				"c ∈ C",
+				"b ∈ D"
+		), "f{c↦b} ∈ C ↔ D",true
+		);
 	}
 	
 	public void testAll() {
@@ -938,12 +1053,7 @@ public class RodinTests extends AbstractPPTest {
 		doTest(mSet("f ∈ C ↔ D", "c ∈ C", "b ∈ D"), 
 				"(({c}⩤f)∪{c↦b}) ∈ C ↔ D",
 				true);
-// doTest(mSet(
-//			 "f ∈ C ↔ D",
-//			 "c ∈ C",
-//			 "b ∈ D"
-//			 ), "f{c↦b} ∈ C ↔ D",true
-//			);
+		
 
 			// (!(x?$10,x?$9).(x?$10,x?$9: f and not(x?$10 = c) or (x?$10 = c
 			// and x?$9 = d) => x?$10: C and x?$9: D)) and

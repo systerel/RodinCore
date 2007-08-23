@@ -14,6 +14,15 @@ import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * Concrete implementation of {@link Clause} for equivalence clauses.
+ * <p>
+ * Equivalence clauses must not be empty. Beside, they must contain at
+ * least two literals that are not conditions.
+ * 
+ * @author François Terrier
+ *
+ */
 public final class EquivalenceClause extends Clause {
 	
 	private static final int BASE_HASHCODE = 5;
@@ -23,6 +32,7 @@ public final class EquivalenceClause extends Clause {
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
+		assert predicates.size() + equalities.size() + arithmetic.size() >=2;
 		assert predicates != null && equalities != null && arithmetic != null;
 	}
 
@@ -31,6 +41,7 @@ public final class EquivalenceClause extends Clause {
 		
 		// not a unit clause. unit clauses are disjunctive clauses
 		assert !isUnit();
+		assert predicates.size() + equalities.size() + arithmetic.size() >=2;
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
 	}
 	

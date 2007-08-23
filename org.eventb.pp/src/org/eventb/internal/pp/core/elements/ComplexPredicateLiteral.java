@@ -16,12 +16,14 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
 /**
+ * Implementation of {@link PredicateLiteral} for non-propositional predicates.
+ * <p>
  * This class represents a predicate with arguments.
  *
  * @author François Terrier
  *
  */
-public class ComplexPredicateLiteral extends PredicateLiteral {
+public final class ComplexPredicateLiteral extends PredicateLiteral {
 
 	public ComplexPredicateLiteral (PredicateLiteralDescriptor descriptor, boolean isPositive, List<SimpleTerm> terms) {
 		super(descriptor, isPositive, terms);

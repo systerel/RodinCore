@@ -12,12 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -26,22 +23,23 @@ import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ExtensionalityOrigin;
 
 public class ExtensionalityProver implements IProverModule {
 	
 	private PredicateTable predicateTable;
-	private IVariableContext variableContext;
-	private ClauseSimplifier simplifier;
+	private VariableContext variableContext;
 	private ClauseFactory cf = ClauseFactory.getDefault();
 	
 	public ExtensionalityProver(PredicateTable predicateTable,
-			IVariableContext variableContext) {
+			VariableContext variableContext) {
 		this.predicateTable = predicateTable;
 		this.variableContext = variableContext;
 	}
@@ -70,7 +68,7 @@ public class ExtensionalityProver implements IProverModule {
 		else if (isDisjunctiveCandidate(clause)) {
 			//
 		}
-		if (derivedClause != null) return new ProverResult(simplifier.run(derivedClause));
+		if (derivedClause != null) return new ProverResult(derivedClause);
 		return ProverResult.EMPTY_RESULT;
 	}
 
@@ -123,7 +121,7 @@ public class ExtensionalityProver implements IProverModule {
 	}
 
 	private boolean isCandidate(Clause clause) {
-		if (clause.isBlockedOnConditions()) return false;
+		if (clause.hasConditions()) return false;
 		if (clause.sizeWithoutConditions() != 2) return false;
 		if (clause.getPredicateLiteralsSize() != 2) return false;
 		PredicateLiteral literal1 = clause.getPredicateLiteral(0);
@@ -211,10 +209,6 @@ public class ExtensionalityProver implements IProverModule {
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing
 		return ProverResult.EMPTY_RESULT;
-	}
-
-	public void initialize(ClauseSimplifier simplifier) {
-		this.simplifier = simplifier;
 	}
 
 	public ProverResult next(boolean force) {

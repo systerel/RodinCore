@@ -16,11 +16,19 @@ import java.util.Map;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
+/**
+ * Concrete implementation of {@link Literal} for equality literals.
+ * <p>
+ * Terms in an equality literal are ordered.
+ *
+ * @author François Terrier
+ *
+ */
+public final class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 
 	private static final int BASE_HASHCODE = 37;
 	
-	private boolean isPositive;
+	private final boolean isPositive;
 	
 	public EqualityLiteral (SimpleTerm term1, SimpleTerm term2, boolean isPositive) {
 //		super(Arrays.asList(new Term[]{term1,term2}));

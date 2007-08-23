@@ -18,10 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -29,6 +27,7 @@ import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
 import org.eventb.internal.pp.core.inferrers.EqualityInstantiationInferrer;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
@@ -48,13 +47,12 @@ public class EqualityProver implements IProverModule {
 	
 	private IEquivalenceManager manager = new EquivalenceManager();
 	
-	private ClauseSimplifier simplifier;
 	private EqualityInferrer inferrer;
 	private EqualityInstantiationInferrer instantiationInferrer;
 	
 	private HashSet<Clause> equalityInstantiations;
 	
-	public EqualityProver(IVariableContext context) {
+	public EqualityProver(VariableContext context) {
 		this.inferrer = new EqualityInferrer(context);
 		this.instantiationInferrer = new EqualityInstantiationInferrer(context);
 		this.equalityInstantiations = new LinkedHashSet<Clause>();
@@ -75,10 +73,6 @@ public class EqualityProver implements IProverModule {
 		}
 	}
 	
-	public void initialize(ClauseSimplifier simplifier) {
-		this.simplifier = simplifier;
-	}
-
 	public ProverResult next(boolean force) {
 		// return equality instantiations here, if not, it loops
 		if (equalityInstantiations.isEmpty()) return ProverResult.EMPTY_RESULT;
@@ -182,7 +176,6 @@ public class EqualityProver implements IProverModule {
 				clause.infer(instantiationInferrer);
 				Clause inferredClause = instantiationInferrer.getResult();
 				
-				inferredClause = simplifier.run(inferredClause);
 				generatedClauses.add(inferredClause);
 			}
 		}
@@ -220,7 +213,6 @@ public class EqualityProver implements IProverModule {
 				clause.infer(instantiationInferrer);
 				Clause inferredClause = instantiationInferrer.getResult();
 				
-				inferredClause = simplifier.run(inferredClause);
 				generatedClauses.add(inferredClause);
 			}
 		}
@@ -295,7 +287,6 @@ public class EqualityProver implements IProverModule {
 			inferrer.addParentClauses(new ArrayList<Clause>(entry.getValue()));
 			entry.getKey().infer(inferrer);
 			Clause inferredClause = inferrer.getResult();
-			inferredClause = simplifier.run(inferredClause);
 			generatedClauses.add(inferredClause);
 			if (inferredClause.getLevel().compareTo(entry.getKey().getLevel()) <= 0) 
 				subsumedClauses.add(entry.getKey());

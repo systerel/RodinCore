@@ -60,11 +60,6 @@ public final class Level implements Comparable<Level> {
 		}
 	}
 	
-//	public Level getSibling() {
-//		assert level.mod(TWO).intValue() != 0;
-//		return new Level(level.add(ONE));
-//	}
-	
 	/**
 	 * Returns the left branch of this level
 	 * 
@@ -188,6 +183,13 @@ public final class Level implements Comparable<Level> {
 		return level.compareTo(o.level);
 	}
 	
+	/**
+	 * Returns the highest level.
+	 * 
+	 * @param level1 level to be compared
+	 * @param level2 level to be compared
+	 * @return the highest level
+	 */
 	public static Level getHighest(Level level1, Level level2) {
 		if (level1.compareTo(level2) >= 0) return level1;
 		return level2;

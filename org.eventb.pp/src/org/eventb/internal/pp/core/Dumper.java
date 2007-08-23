@@ -14,7 +14,17 @@ import java.util.List;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
-public class Dumper {
+/**
+ * This class is responsible for dumping data structures.
+ * <p>
+ * Either a {@link ResetIterator} or an {@link Object} might be given
+ * to this dumper. A call to {@link #dump()} will then output the content
+ * of these data structures to the console if the DEBUG flag is set.
+ *
+ * @author François Terrier
+ *
+ */
+public final class Dumper {
 	
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
@@ -24,12 +34,27 @@ public class Dumper {
 		System.out.println(message);
 	}
 	
-	private List<Dumpable> dumpables = new ArrayList<Dumpable>(); 
+	private final List<Dumpable> dumpables = new ArrayList<Dumpable>(); 
 	
+	/**
+	 * Adds a {@link ResetIterator} to the dumper.
+	 * <p>
+	 * Each time {@link #dump()} is called, all elements of the iterator
+	 * will be output to the console.
+	 * 
+	 * @param name the name of this data structure
+	 * @param iterator the content of this data structure
+	 */
 	public void addDataStructure(String name, ResetIterator<Clause> iterator) {
 		dumpables.add(new DumpableDataStructure(name,iterator));
 	}
 	
+	/**
+	 * Adds an object to the dumper.
+	 * 
+	 * @param name the name of this object
+	 * @param object the object to be output to the consule
+	 */
 	public void addObject(String name, Object object) {
 		dumpables.add(new DumpableObject(name,object));
 	}
@@ -78,6 +103,9 @@ public class Dumper {
 		}
 	}
 	
+	/**
+	 * Dumps all registered data structures if {@value Dumper#DEBUG} is set to true.
+	 */
 	public void dump() {
 		if (DEBUG) {
 			debug("== Dumping datastructures ==");

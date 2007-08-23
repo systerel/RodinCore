@@ -11,6 +11,7 @@ package org.eventb.internal.pp.core.tracing;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.Tracer;
 
 /**
  * The interface for the origin of a clause.
@@ -73,4 +74,7 @@ public interface IOrigin {
 	 * @return the depth of this origin
 	 */
 	int getDepth();
+	
+	
+//	void checkCorrectOrigin() throws IllegalStateException; 
 }

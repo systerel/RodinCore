@@ -14,6 +14,12 @@ import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * Concrete implementation of {@link Clause} for ⊥.
+ *
+ * @author François Terrier
+ *
+ */
 public final class FalseClause extends Clause {
 
 	private static final int BASE_HASHCODE = 11;

@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class ClauseFactory {
@@ -28,7 +28,7 @@ public class ClauseFactory {
 		return DEFAULT;
 	}
 	
-	public Clause makeDisjunctiveClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, IVariableContext context) {
+	public Clause makeDisjunctiveClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, VariableContext context) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 		List<ArithmeticLiteral> arithmetic = new ArrayList<ArithmeticLiteral>();
@@ -43,7 +43,7 @@ public class ClauseFactory {
 		return clause;
 	}
 	
-	public Clause makeEquivalenceClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, IVariableContext context) {
+	public Clause makeEquivalenceClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, VariableContext context) {
 		assert literals.size() > 1;
 		
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
@@ -72,7 +72,7 @@ public class ClauseFactory {
 	
 	public Clause makeClauseFromEquivalenceClause(IOrigin origin, List<PredicateLiteral> predicate, 
 			List<EqualityLiteral> equality, List<ArithmeticLiteral> arithmetic, 
-			List<EqualityLiteral> conditions, IVariableContext context) {
+			List<EqualityLiteral> conditions, VariableContext context) {
 		assert predicate.size() + equality.size() + arithmetic.size() + conditions.size() > 0;
 		
 		// we have a disjunctive clause
@@ -85,7 +85,7 @@ public class ClauseFactory {
 		return new EquivalenceClause(origin, predicate, equality, arithmetic, conditions);
 	}
 	
-	private static <T extends Literal<?,?>> void replaceLocalVariablesByVariables(List<T> literals, IVariableContext context) {
+	private static <T extends Literal<?,?>> void replaceLocalVariablesByVariables(List<T> literals, VariableContext context) {
 		assert literals.size() == 1;
 		T literal = literals.remove(0);
 		Set<LocalVariable> localVariables = new HashSet<LocalVariable>();

@@ -10,7 +10,7 @@ package org.eventb.internal.pp.loader.formula;
 
 import java.util.List;
 
-import org.eventb.internal.pp.core.PredicateTable;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.BooleanEqualityTable;
 import org.eventb.internal.pp.loader.clause.LabelManager;

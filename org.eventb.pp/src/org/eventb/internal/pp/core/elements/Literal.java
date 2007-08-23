@@ -15,12 +15,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
+/**
+ * Abstract base class for literals.
+ * <p>
+ * There are three types of literals, {@link PredicateLiteral}, {@link EqualityLiteral}
+ * and {@link ArithmeticLiteral}. 
+ * <p>
+ * Instances of this class are immutable and all accessor methods return an immutable
+ * object or a shallow copy of a list of immutable objects.
+ *
+ * @author François Terrier
+ *
+ * @param <S> subclasses should put themselves as a parameter. Used to implement true
+ * covariance.
+ * @param <T> type of terms contained in this literal
+ */
 public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Hashable {
 
 	final protected List<T> terms;
@@ -34,18 +49,44 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		this.terms = terms;
 	}
 
+	/**
+	 * Returns the terms of this literal.
+	 * 
+	 * @return the terms of this literal
+	 */
 	public List<T> getTerms() {
 		return new ArrayList<T>(terms);
 	}
 	
+	/**
+	 * Returns the term at the specified index.
+	 * 
+	 * @param index the index
+	 * @return the term at the specified index
+	 */
 	public T getTerm(int index) {
 		return terms.get(index);
 	}
 	
+	/**
+	 * Returns the number of terms of this literal.
+	 * 
+	 * @return the number of terms of this literal
+	 */
 	public int getTermsSize() {
 		return terms.size();
 	}
 	
+	/**
+	 * Returns <code>true</code> if this literal is quantified,
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * A literal is quantified iff one of the term contains an
+	 * instance of {@link LocalVariable}.
+	 * 
+	 * @return <code>true</code> if this literal is quantified,
+	 * <code>false</code> otherwise
+	 */
 	public boolean isQuantified() {
 		for (T term : terms) {
 			if (term.isQuantified()) return true;
@@ -53,6 +94,16 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return false;
 	}
 
+	/**
+	 * Returns <code>true</code> if this literal is constant and
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * A literal is constant if none of its terms contain an instance
+	 * of {@link Variable}.
+	 * 
+	 * @return <code>true</code> if this literal is constant and
+	 * <code>false</code> otherwise
+	 */
 	public boolean isConstant() {
 		for (T term : terms) {
 			if (!term.isConstant()) return false;
@@ -60,6 +111,13 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return true;
 	}
 	
+	/**
+	 * Returns <code>true</code> if this literal is quantified and
+	 * the quantifier is a forall quantifier.
+	 * 
+	 * @return <code>true</code> if this literal is quantified and
+	 * the quantifier is a forall quantifier, <code>false</code> otherwise
+	 */
 	public boolean isForall() {
 		for (T term : terms) {
 			if (term.isForall()) return true;
@@ -67,7 +125,18 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return false;
 	}
 	
-	public S getCopyWithNewVariables(IVariableContext context, 
+	/**
+	 * Returns a copy of this literal where all variables and local variables
+	 * have been replaced by a fresh instance.
+	 * <p>
+	 * It holds that <code>literal.getCopyWithNewVariables(...).equalsWithDifferentVariables(
+	 * literal)</code>
+	 * 
+	 * @param context the variable context
+	 * @param substitutionsMap the substitution map
+	 * @return a copy of this literal with new instances of variables.
+	 */
+	public S getCopyWithNewVariables(VariableContext context, 
 			HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
 		Set<Variable> variables = new HashSet<Variable>();
 		Set<LocalVariable> localVariables = new HashSet<LocalVariable>();
@@ -85,18 +154,36 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return substitute(substitutionsMap);
 	}
 	
+	/**
+	 * Puts all local variables that occur in this literal in the
+	 * specified set.
+	 * 
+	 * @param variables the set of local variables to populate
+	 */
 	public void collectLocalVariables(Set<LocalVariable> variables) {
 		for (Term term : terms) {
 			term.collectLocalVariables(variables);
 		}
 	}
 	
+	/**
+	 * Puts all variables that occur in this literal in the specified set.
+	 * 
+	 * @param variables the set of variables to populate
+	 */
 	public void collectVariables(Set<Variable> variables) {
 		for (Term term : terms) {
 			term.collectVariables(variables);
 		}
 	}
 	
+	/**
+	 * Returns a copy of this literal where the substitution given in the specified
+	 * map is applied.
+	 * 
+	 * @param map the substitution map
+	 * @return a copy of this literal with the applied substitution
+	 */
 	public abstract S substitute(Map<SimpleTerm, SimpleTerm> map);
 	
 	@Override
@@ -108,6 +195,17 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return false;
 	}
 	
+	/**
+	 * Return <code>true</code> if this literal is equal to the specified 
+	 * literal but with different instances of variables.
+	 * <p>
+	 * @see Term#equalsWithDifferentVariables(Term, HashMap)
+	 * 
+	 * @param literal the literal to be checked for equality
+	 * @param map the map of correspondance for variables
+	 * @return <code>true</code> if this literal is equal to the specified
+	 * literal but with different instances of variables, <code>false</code> otherwise
+	 */
 	public boolean equalsWithDifferentVariables(S literal, HashMap<SimpleTerm, SimpleTerm> map) {
 		if (terms.size() != literal.terms.size()) return false;
 		else {
@@ -136,6 +234,11 @@ public abstract class Literal<S extends Literal<S,T>, T extends Term> extends Ha
 		return result;
 	}
 	
+	/**
+	 * Returns a copy of this literal with the opposite sign.
+	 * 
+	 * @return a copy of this literal with the opposite sign
+	 */
 	public abstract S getInverse();
 	
 	@Override

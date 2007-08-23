@@ -11,6 +11,7 @@ package org.eventb.internal.pp.core.tracing;
 import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.Tracer;
 
 /**
  * Implementation of {@link IOrigin} for typing clauses.

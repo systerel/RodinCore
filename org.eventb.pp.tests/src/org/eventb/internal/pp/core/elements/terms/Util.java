@@ -18,6 +18,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.AtomicPredicateLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -27,10 +28,10 @@ import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.formula.terms.ConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.DivideSignature;
@@ -284,7 +285,18 @@ public class Util {
 	}
 	
 	private static PredicateLiteralDescriptor descriptor(int index) {
-		return new PredicateLiteralDescriptor(index, 0, 0, false, new ArrayList<Sort>());
+		PredicateTable table = new PredicateTable();
+		return table.newDescriptor(index, 0, 0, false, new ArrayList<Sort>());
+	}
+	
+	public static PredicateLiteralDescriptor descriptor(int index, int arity, int realArity, List<Sort> sortList) {
+		PredicateTable table = new PredicateTable();
+		return table.newDescriptor(index, arity, realArity, false, sortList);
+	}
+
+	public static PredicateLiteralDescriptor labelDescriptor(int index, int arity, int realArity, List<Sort> sortList) {
+		PredicateTable table = new PredicateTable();
+		return table.newDescriptor(index, arity, realArity, true, sortList);
 	}
 	
 	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {

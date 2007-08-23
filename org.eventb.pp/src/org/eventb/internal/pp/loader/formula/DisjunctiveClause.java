@@ -54,36 +54,41 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 
 	private boolean isLabelizable(LabelContext context) {
 		if (context.isQuantified()) {
-			if (context.isPositiveLabel() || context.isNegativeLabel()) return true;
+			if (context.isPositive() && context.isPositiveLabel()) return true;
+			if (!context.isPositive() && context.isNegativeLabel()) return true;
 			else if (!context.isForall()) return true;
 		}
 		if (context.isEquivalence()) return true;
 		return false;
 	}
 	
-	private void addLabels(LabelManager manager, AbstractContext context) {
-//		if (context.isPositiveLabel || context.equivalenceCount > 0) manager.addLabel(this, context.isPositive);
-//		if (context.isNegativeLabel || context.equivalenceCount > 0) manager.addLabel(this, !context.isPositive);
-//		if (!context.isPositiveLabel && !context.isNegativeLabel && context.equivalenceCount == 0) manager.addLabel(this, context.isPositive);
-		manager.addLabel(this, true);
-		manager.addLabel(this, false);
-	}
-
-	private void setFlagsForLabels(LabelContext context, LabelContext newContext) {
+	private void addLabels(LabelManager manager, LabelContext context, LabelContext newContext) {
 		if (context.isEquivalence()) {
-			newContext.setNegativeLabel(true);
+			manager.addLabel(this, true);
+			manager.addLabel(this, false);
 			newContext.setPositiveLabel(true);
+			newContext.setNegativeLabel(true);
 		}
 		else {
-			if (context.isPositive()) {
+			if (!context.isPositiveLabel() && !context.isNegativeLabel()) {
+				manager.addLabel(this, context.isPositive());
+				if (context.isPositive()) newContext.setNegativeLabel(true);
+				else newContext.setPositiveLabel(true);
+			}
+			if (	(!context.isPositive() && context.isPositiveLabel())
+				|| 	(context.isPositive() && context.isNegativeLabel())) {
+				manager.addLabel(this, !context.isPositive());
 				newContext.setPositiveLabel(true);
-				newContext.setNegativeLabel(context.isNegativeLabel());
 			}
-			else {
+			if (	(context.isPositive() && context.isPositiveLabel())
+				|| 	(!context.isPositive() && context.isNegativeLabel())) {
+				manager.addLabel(this, context.isPositive());
 				newContext.setNegativeLabel(true);
-				newContext.setPositiveLabel(context.isNegativeLabel());
 			}
+			if (context.isPositiveLabel()) newContext.setPositiveLabel(true);
+			if (context.isNegativeLabel()) newContext.setNegativeLabel(true);
 		}
+		assert manager.hasLabel(this);
 	}
 
 	private boolean getChildContextAndSetLabels(LabelContext context, LabelManager manager) {
@@ -99,8 +104,7 @@ public class DisjunctiveClause extends AbstractClause<DisjunctiveClauseDescripto
 	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
 		LabelContext newContext = new LabelContext();
 		if (isLabelizable(context)) {
-			addLabels(manager, context);
-			setFlagsForLabels(context, newContext);
+			addLabels(manager, context, newContext);
 		}
 		setContextProperties(context, newContext);
 		return getChildContextAndSetLabels(newContext, manager);

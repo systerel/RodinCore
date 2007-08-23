@@ -12,13 +12,12 @@ package org.eventb.internal.pp.core.provers.predicate;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.iterators.IteratorMatchIterator;
 import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterator;
@@ -47,10 +46,9 @@ public class PredicateProver implements IProverModule {
 	private ResolutionResolver unitResolver;
 	private ReverseResolutionResolver conditionResolver;
 	
-	private ClauseSimplifier simplifier;
 	private UnitMatcher unitMatcher;
 	
-	public PredicateProver(IVariableContext context) {
+	public PredicateProver(VariableContext context) {
 		this.inferrer = new ResolutionInferrer(context);
 		
 		unitClauses = new RandomAccessList<Clause>();
@@ -63,10 +61,6 @@ public class PredicateProver implements IProverModule {
 		conditionResolver = new ReverseResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
 		
 		unitClausesIterator = unitClauses.iterator();
-	}
-	
-	public void initialize(ClauseSimplifier simplifier) {
-		this.simplifier = simplifier;
 	}
 	
 	private int counter = 0;
@@ -103,8 +97,6 @@ public class PredicateProver implements IProverModule {
 	}
 	
 	public ProverResult next(boolean force) {
-		if (simplifier == null) throw new IllegalStateException();
-		
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		if (!initializeNonUnitResolver()) return ProverResult.EMPTY_RESULT;
 		
@@ -112,7 +104,6 @@ public class PredicateProver implements IProverModule {
 		ProverResult result = ProverResult.EMPTY_RESULT;
 		if (nextClause != null) {
 			Clause clause = nextClause.getDerivedClause();
-			clause = simplifier.run(clause);
 			if (nextClause.getSubsumedClause() != null) result = new ProverResult(clause, nextClause.getSubsumedClause());
 			else result = new ProverResult(clause);
 		}
@@ -135,7 +126,6 @@ public class PredicateProver implements IProverModule {
 			if (result.getSubsumedClause() != null) subsumedClauses.add(result.getSubsumedClause());
 			
 			Clause inferredClause = result.getDerivedClause();
-			inferredClause = simplifier.run(inferredClause);
 			generatedClauses.add(inferredClause);
 			
 			result = resolver.next();
@@ -152,12 +142,10 @@ public class PredicateProver implements IProverModule {
 	private boolean isAcceptedNonUnitClause(Clause clause) {
 		 return	clause.getPredicateLiteralsSize()>0 
 				&& !clause.isUnit()
-				&& !clause.isBlockedOnConditions();
+				&& !clause.hasConditions();
 	}
 	
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
-		if (simplifier == null) throw new IllegalStateException();
-		
 		if (isAcceptedUnitClause(clause)) {
 			unitClauses.add(clause);
 			unitMatcher.newClause(clause);
@@ -200,7 +188,7 @@ public class PredicateProver implements IProverModule {
 		if (origin instanceof AbstractInferrenceOrigin) {
 			AbstractInferrenceOrigin tmp = (AbstractInferrenceOrigin)origin;
 			for (Clause parent : tmp.getClauses()) {
-				if (parent.isBlockedOnConditions()) return true;
+				if (parent.hasConditions()) return true;
 			}
 		}
 		return false;

@@ -16,7 +16,17 @@ import java.util.Set;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 
-public class ClauseSimplifier {
+/**
+ * This class is responsible for calling several simplifiers in a 
+ * row on a clause.
+ * <p>
+ * Simplifiers (instances of {@link ISimplifier}) are run on a clause using the
+ * order in which they were added using {@link #addSimplifier(ISimplifier)}.
+ *
+ * @author François Terrier
+ *
+ */
+public final class ClauseSimplifier {
 
 	/**
 	 * Debug flag for <code>PROVER_SIMPLIFIER_TRACE</code>
@@ -26,12 +36,23 @@ public class ClauseSimplifier {
 		System.out.println(message);
 	}
 	
-	private List<ISimplifier> simplifiers = new ArrayList<ISimplifier>();
+	private final List<ISimplifier> simplifiers = new ArrayList<ISimplifier>();
 	
+	/**
+	 * Adds a simplifier to the list of simplifiers.
+	 * 
+	 * @param simplifier the simplifier to be added
+	 */
 	public void addSimplifier(ISimplifier simplifier) {
 		simplifiers.add(simplifier);
 	}
 	
+	/**
+	 * Runs the simplifiers on the clause.
+	 * 
+	 * @param clause the clause on which to run the simplifiers
+	 * @return the simplified clause
+	 */
 	public Clause run(Clause clause) {
 		Clause tmp = clause;
 		for (ISimplifier simplifier : simplifiers) {
@@ -43,6 +64,12 @@ public class ClauseSimplifier {
 		return tmp;
 	}
 
+	/**
+	 * Runs the simplifiers on the specified set of clauses and 
+	 * puts back the simplified clauses in the given set.
+	 * 
+	 * @param clauses the clauses to be simplified
+	 */
 	public void run(Set<Clause> clauses) {
 		Set<Clause> tmp = new HashSet<Clause>();
 		for (Clause clause : clauses) {

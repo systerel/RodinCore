@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
@@ -22,6 +21,7 @@ import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
 /**
  * Abstract base class for inferrers. This abstract class provides the necessary
@@ -39,11 +39,11 @@ public abstract class AbstractInferrer implements IInferrer {
 	protected List<ArithmeticLiteral> arithmetic;
 	protected List<EqualityLiteral> conditions;
 	
-	protected final IVariableContext context;
+	protected final VariableContext context;
 	
 	protected HashMap<SimpleTerm, SimpleTerm> substitutionsMap;
 	
-	public AbstractInferrer(IVariableContext context) {
+	public AbstractInferrer(VariableContext context) {
 		this.context = context;
 	}
 	
@@ -138,7 +138,7 @@ public abstract class AbstractInferrer implements IInferrer {
 	}
 	
 	protected final <T extends Literal<?,?>> void getListCopy(List<T> list,
-			HashMap<SimpleTerm, SimpleTerm> substitutionsMap, IVariableContext context) {
+			HashMap<SimpleTerm, SimpleTerm> substitutionsMap, VariableContext context) {
 		List<T> result = new ArrayList<T>();
 		for (T pred : list) {
 			result.add((T)pred.getCopyWithNewVariables(context, substitutionsMap));

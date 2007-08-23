@@ -17,7 +17,17 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 
-public class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
+/**
+ * This class represents an arithmetic literal.
+ * <p>
+ * TODO for now, there is no normalization for arithmetic literals. This means 
+ * that we have the four possible types &lt;,≤,=,≠. Think about a nice way to normalize
+ * arithmetic literals.
+ *
+ * @author François Terrier
+ *
+ */
+public final class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 	
 	private static final int BASE_HASHCODE = 17;
 	

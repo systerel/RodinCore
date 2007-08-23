@@ -14,13 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.Instantiable;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.InstantiationValue;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.LiteralSignature;
@@ -60,7 +60,7 @@ public class SeedSearchManager {
 		this.solver = new SeedSearchSolver();
 	}
 	
-	public List<SeedSearchResult> getArbitraryInstantiation(IVariableContext context) {
+	public List<SeedSearchResult> getArbitraryInstantiation(VariableContext context) {
 		int currentInstantiationCount = -1;
 		for (Instantiable instantiable : instantiables) {
 			if (currentInstantiationCount==-1 || instantiable.getInstantiationCount() < currentInstantiationCount) {
@@ -77,7 +77,7 @@ public class SeedSearchManager {
 		return doArbitraryInstantiation(currentInstantiables, context);
 	}
 	
-	private List<SeedSearchResult> doArbitraryInstantiation(Set<Instantiable> instantiables, IVariableContext context) {
+	private List<SeedSearchResult> doArbitraryInstantiation(Set<Instantiable> instantiables, VariableContext context) {
 		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
 		for (Instantiable currentInstantiable : instantiables) {
 			currentInstantiable.incrementInstantiationCount();

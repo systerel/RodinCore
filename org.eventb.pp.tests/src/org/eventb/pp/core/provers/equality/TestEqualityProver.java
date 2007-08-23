@@ -6,7 +6,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -20,7 +19,6 @@ public class TestEqualityProver extends AbstractPPTest {
 	@Override
 	public void setUp() {
 		prover = new EqualityProver(new VariableContext());
-		prover.initialize(new ClauseSimplifier());
 	}
 	
 	public void testProverInstantiation() {

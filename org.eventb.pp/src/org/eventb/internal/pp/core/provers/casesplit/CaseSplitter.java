@@ -17,14 +17,13 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
-import org.eventb.internal.pp.core.IDispatcher;
+import org.eventb.internal.pp.core.ILevelController;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
 
 public class CaseSplitter implements IProverModule {
@@ -34,31 +33,20 @@ public class CaseSplitter implements IProverModule {
 	 */
 	public static boolean DEBUG = false;
 	public static void debug(String message){
-			String prefix = "";
-//			for (int i = 0; i < currentLevel.getHeight(); i++) {
-//				prefix += " ";
-//			}
-			System.out.println(prefix+message);
+		System.out.println(message);
 	}
 	
-	private Stack<SplitPair> splits = new Stack<SplitPair>();
-	
+	private Stack<SplitPair> splits;
 	private SplitPair nextCase;
-	
 	private Vector<Clause> candidates;
 	private CaseSplitInferrer inferrer;
+	private ILevelController dispatcher;
 	
-	private IDispatcher dispatcher;
-	private ClauseSimplifier simplifier;
-	
-	public CaseSplitter(IVariableContext context, IDispatcher dispatcher) {
+	public CaseSplitter(VariableContext context, ILevelController dispatcher) {
 		this.inferrer = new CaseSplitInferrer(context);
 		this.dispatcher = dispatcher;
-	}
-	
-	public void initialize(ClauseSimplifier simplifier) {
-		this.simplifier = simplifier;
-		candidates = new Stack<Clause>();
+		this.candidates = new Stack<Clause>();
+		this.splits = new Stack<SplitPair>();
 	}
 	
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
@@ -81,24 +69,25 @@ public class CaseSplitter implements IProverModule {
 	// if the preceding branch was closed, it returns the next case.
 	// it it is not the case it does a new case split
 	public ProverResult next(boolean force) {
-//		assert splits.size() == dispatcher.getLevel().getHeight();
+//		assert splits.size() == dispatcher.getCurrentLevel().getHeight();
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT;
+		if (nextCase == null && candidates.isEmpty()) return ProverResult.EMPTY_RESULT;
 		
+		Level oldLevel = dispatcher.getCurrentLevel();
+		dispatcher.nextLevel();
 		Set<Clause> result;
-		Set<Clause> subsumedClauses = new HashSet<Clause>();
-		if (nextCase == null) {
-			if (candidates.isEmpty()) return ProverResult.EMPTY_RESULT;
-			dispatcher.nextLevel();
-			result = newCaseSplit();
-		}
-		else {
-			dispatcher.nextLevel();
-			result = nextCase();
-		}
-		simplifier.run(result);
+		if (nextCase == null) result = newCaseSplit(oldLevel);
+		else result = nextCase();
+		assertCorrectResult(result);
 		
-//		assert splits.size() == dispatcher.getLevel().getHeight();
-		return new ProverResult(result, subsumedClauses);
+//		assert splits.size() == dispatcher.getCurrentLevel().getHeight();
+		return new ProverResult(result, new HashSet<Clause>());
+	}
+	
+	private void assertCorrectResult(Set<Clause> clauses) {
+		for (Clause clause : clauses) {
+			assert clause.getLevel().equals(dispatcher.getCurrentLevel());
+		}
 	}
 	
 	private Set<Clause> nextCase() {
@@ -109,13 +98,13 @@ public class CaseSplitter implements IProverModule {
 		return result;
 	}
 	
-	private Set<Clause> newCaseSplit() {
+	private Set<Clause> newCaseSplit(Level oldLevel) {
 		Clause clause = nextCandidate();
 		candidates.remove(clause);
 		
-		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel()):"Splitting on clause: "+clause+", but level: "+dispatcher.getLevel();
+//		assert !dispatcher.getCurrentLevel().isAncestorOf(clause.getLevel()):"Splitting on clause: "+clause+", but level: "+dispatcher.getCurrentLevel();
 		
-		splits.push(split(clause));
+		splits.push(split(clause, oldLevel));
 		if (DEBUG) debug("New case split on "+clause+", size of split stack: "+splits.size()+", remaining candidates: "+candidates.size());
 		return splits.peek().left;
 	}
@@ -142,10 +131,10 @@ public class CaseSplitter implements IProverModule {
 		return result;
 	}
 
-	private SplitPair split(Clause clause) {
-		inferrer.setLevel(dispatcher.getLevel().getParent());
+	private SplitPair split(Clause clause, Level level) {
+		inferrer.setLevel(level);
 		clause.infer(inferrer);
-		return new SplitPair(clause,inferrer.getLeftCase(),inferrer.getRightCase(),dispatcher.getLevel().getParent());
+		return new SplitPair(clause,inferrer.getLeftCase(),inferrer.getRightCase(),level);
 	}
 	
 	/**
@@ -163,10 +152,10 @@ public class CaseSplitter implements IProverModule {
 			putBackList.add(nextCase.original);
 		}
 		
-		if (DEBUG) debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+dispatcher.getLevel());
+		if (DEBUG) debug("CaseSplitter: Backtracking from: "+oldLevel+", to: "+newLevel);
 		Level tmp = oldLevel;
 
-		while (!tmp.getParent().equals(dispatcher.getLevel())) {
+		while (!tmp.getParent().equals(newLevel)) {
 			SplitPair pair = splits.pop();
 			if (	!dependencies.contains(tmp)
 					&& !newLevel.isAncestorOf(pair.original.getLevel())) { 
@@ -194,7 +183,7 @@ public class CaseSplitter implements IProverModule {
 
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		assert !candidates.contains(clause);
-		assert !dispatcher.getLevel().isAncestorOf(clause.getLevel());
+		assert !dispatcher.getCurrentLevel().isAncestorOf(clause.getLevel());
 		
 		if (accepts(clause)) candidates.add(clause);
 		return ProverResult.EMPTY_RESULT;

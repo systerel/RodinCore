@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.elements.terms.LocalVariable;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.inferrers.IInferrer;
@@ -23,9 +24,13 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 /**
  * Abstract base class for clauses.
  * <p>
- * There is two type of clause, {@link EquivalenceClause} and {@link DisjunctiveClause}.
+ * There are four types of clause, the two non-empty clause types {@link EquivalenceClause}
+ * and {@link DisjunctiveClause} and the two empty clause types {@link TrueClause} 
+ * and {@link FalseClause}.
+ * <p>
+ * Instances of this class are immutable and all accessor methods return an immutable
+ * object or a shallow copy of a list of immutable objects.
  * 
- *
  * @author François Terrier
  *
  */
@@ -35,9 +40,7 @@ public abstract class Clause {
 	final protected List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
 	final protected List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 	final protected List<EqualityLiteral> conditions = new ArrayList<EqualityLiteral>();
-	
 	final protected IOrigin origin;
-	
 	private int hashCode;
 	
 	public Clause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions, int hashCode) {
@@ -67,7 +70,7 @@ public abstract class Clause {
 			&& listEquals(arithmetic, clause.arithmetic, map) && listEquals(conditions, clause.conditions, map);
 	}
 	
-	private void computeHashCode(int hashCode) {
+	private final void computeHashCode(int hashCode) {
 		hashCode = 37*hashCode + hashCode(predicates);
 		hashCode = 37*hashCode + hashCode(equalities);
 		hashCode = 37*hashCode + hashCode(arithmetic);
@@ -75,7 +78,7 @@ public abstract class Clause {
 		this.hashCode = hashCode;
 	}
 
-	protected int hashCode(List<? extends Literal<?,?>> list) {
+	protected final int hashCode(List<? extends Literal<?,?>> list) {
 		int hashCode = 1;
 		for (Literal<?,?> literal : list) {
 			hashCode = 37*hashCode + (literal==null ? 0 : literal.hashCodeWithDifferentVariables());
@@ -88,7 +91,7 @@ public abstract class Clause {
 		return hashCode;
 	}
 	
-	protected <T extends Literal<T,?>> boolean listEquals(List<T> list1, List<T> list2,
+	private <T extends Literal<T,?>> boolean listEquals(List<T> list1, List<T> list2,
 			HashMap<SimpleTerm, SimpleTerm> map) {
 		if (list1.size() != list2.size()) return false;
 		for (int i = 0; i < list1.size(); i++) {
@@ -109,8 +112,15 @@ public abstract class Clause {
 		return false;
 	}
 	
-	public boolean isBlockedOnConditions() {
-		return conditions.size() > 0;
+	/**
+	 * Returns <code>true</code> if this clause contains
+	 * conditions, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this clause contains
+	 * conditions, <code>false</code> otherwise
+	 */
+	public boolean hasConditions() {
+		return !conditions.isEmpty();
 	}
 
 	@Override
@@ -149,6 +159,11 @@ public abstract class Clause {
 	}
 	
 	
+	/**
+	 * Returns the level of this clause.
+	 * 
+	 * @return the level of this clause
+	 */
 	public Level getLevel() {
 		return origin.getLevel();
 	}
@@ -158,8 +173,28 @@ public abstract class Clause {
 
 	protected abstract void computeBitSets();
 
+	/**
+	 * Returns <code>true</code> if this clause contains a predicate literal
+	 * that matches the given descriptor with the given sign.
+	 * 
+	 * @param predicate the predicate to be matched
+	 * @param isPositive the sign of the predicate
+	 * @return <code>true</code> if this clause contains a predicate literal
+	 * that matches the given descriptor, <code>false</code> otherwise
+	 */
 	public abstract boolean matches(PredicateLiteralDescriptor predicate, boolean isPositive);
 	
+	/**
+	 * Returns <code>true</code> if the specifed descriptor with the specified
+	 * sign matches the predicate literal at the specified position in this clause.
+	 * 
+	 * @param predicate the predicate to be matched
+	 * @param isPositive the sign of that predicate
+	 * @param position the position in this clause where the predicate has to match
+	 * @return <code>true</code> the specifed descriptor with the specified
+	 * sign matches the predicate literal at the specified position in this clause,
+	 * <code>false</code> otherwise
+	 */
 	public abstract boolean matchesAtPosition(PredicateLiteralDescriptor predicate, boolean isPositive, int position);
 	
 	protected boolean hasPredicateOfSign(PredicateLiteralDescriptor predicate, boolean isPositive) {
@@ -167,71 +202,165 @@ public abstract class Clause {
 		else return negativeLiterals.get(predicate.getIndex());
 	}
 
+	/**
+	 * Returns the equality literals of this clause.
+	 * 
+	 * @return the equality literals of this clause
+	 */
 	public final List<EqualityLiteral> getEqualityLiterals() {
 		return new ArrayList<EqualityLiteral>(equalities);
 	}
 	
+	/**
+	 * Returns the equality literal at the specified index.
+	 * 
+	 * @param index the index
+	 * @return the equality literal at the specified index
+	 */
 	public final EqualityLiteral getEqualityLiteral(int index) {
 		return equalities.get(index);
 	}
 	
+	/**
+	 * Returns the number of equality literals in this clause.
+	 * 
+	 * @return the number of equality literals in this clause
+	 */
 	public final int getEqualityLiteralsSize() {
 		return equalities.size();
 	}
 
+	/**
+	 * Returns the predicate literals in this clause.
+	 * 
+	 * @return the predicate literals in this clause
+	 */
 	public final List<PredicateLiteral> getPredicateLiterals() {
 		return new ArrayList<PredicateLiteral>(predicates);
 	}
 	
+	/**
+	 * Returns the predicate literal at the specified index.
+	 * 
+	 * @param index the index
+	 * @return the predicate literal at the specified index
+	 */
 	public final PredicateLiteral getPredicateLiteral(int index) {
 		return predicates.get(index);
 	}
 	
+	/**
+	 * Returns the number of predicate literals in this clause.
+	 * 
+	 * @return the number of predicate literals in this clause
+	 */
 	public final int getPredicateLiteralsSize() {
 		return predicates.size();
 	}
 
+	/**
+	 * Returns the arithmetic literals in this clause.
+	 * 
+	 * @return the arithmetic literals in this clause
+	 */
 	public final List<ArithmeticLiteral> getArithmeticLiterals() {
 		return new ArrayList<ArithmeticLiteral>(arithmetic);
 	}
 	
+	/**
+	 * Returns the arithmetic literal at the specified index.
+	 * 
+	 * @param index the index
+	 * @return the arithmetic literal at the specified index
+	 */
 	public final ArithmeticLiteral getArithmeticLiteral(int index) {
 		return arithmetic.get(index);
 	}
 	
+	/**
+	 * Returns the number of arithmetic literals in this clause.
+	 * 
+	 * @return the number of arithmetic literals in this clause
+	 */
 	public final int getArithmeticLiteralsSize() {
 		return arithmetic.size();
 	}
 	
+	/**
+	 * Returns the conditions of this clause.
+	 * 
+	 * @return the conditions of this clause
+	 */
 	public final List<EqualityLiteral> getConditions() {
 		return new ArrayList<EqualityLiteral>(conditions);
 	}
 	
+	/**
+	 * Returns the condition at the specified index.
+	 * 
+	 * @param index the index
+	 * @return the condition at the specified index
+	 */
 	public final EqualityLiteral getCondition(int index) {
 		return conditions.get(index);
 	}
 	
+	/**
+	 * Returns the number of conditions.
+	 * 
+	 * @return the number of conditions
+	 */
 	public final int getConditionsSize() {
 		return conditions.size();
 	}
 	
+	/**
+	 * Returns <code>true</code> if this clause is a unit clause, i.e.
+	 * if it contains only one literal, taking conditions into account.
+	 * 
+	 * @return <code>true</code> if this clause is a unit clause, <code>false</code> otherwise
+	 */
 	public boolean isUnit() {
 		if (equalities.size() + predicates.size() + arithmetic.size() + conditions.size() == 1) return true;
 		return false;
 	}
 
+	/**
+	 * Returns the size of this clause without taking the conditions into account.
+	 * 
+	 * @return the size of this clause without taking the conditions into account
+	 */
 	public int sizeWithoutConditions() {
 		return equalities.size() + predicates.size() + arithmetic.size();
 	}
 
+	/**
+	 * Returns <code>true</code> if this clause is equal to the specified clause
+	 * and has the same level.
+	 * 
+	 * @param clause the clause to be checked for equality
+	 * @return <code>true</code> if this clause is equal to the specified clause
+	 * and has the same level, <code>false</code> otherwise
+	 */
 	public boolean equalsWithLevel(Clause clause) {
 		return getLevel().equals(clause.getLevel()) && equals(clause);
 	}
 
+	/**
+	 * Returns the origin of this clause.
+	 * 
+	 * @return the origin of this clause
+	 */
 	public IOrigin getOrigin() {
 		return origin;
 	}
 	
+	/**
+	 * Returns <code>true</code> if this clause has quantified literals (i.e.
+	 * literals that contain terms that are instances of {@link LocalVariable}).
+	 * 
+	 * @return <code>true</code> if this clause has quantified literals, <code>false</code> otherwise
+	 */
 	public boolean hasQuantifiedLiteral() {
 		if (hasQuantifiedLiteral(predicates)) return true;
 		if (hasQuantifiedLiteral(equalities)) return true;
@@ -247,14 +376,43 @@ public abstract class Clause {
 		return false;
 	}
 	
+	/**
+	 * Returns <code>true</code> if this is an equivalence clause, <code>false</code>
+	 * otherwise.
+	 * 
+	 * @return <code>true</code> if this is an equivalence clause, <code>false</code>
+	 * otherwise
+	 */
 	public abstract boolean isEquivalence();
 	
+	/**
+	 * Returns <code>true</code> if this clause is ⊥.
+	 * 
+	 * @return <code>true</code> if this clause is ⊥, and <code>false</code> otherwise
+	 */
 	public abstract boolean isFalse();
 	
+	/**
+	 * Returns <code>true</code> if this clause is ⊤.
+	 * 
+	 * @return <code>true</code> if this clause is ⊤, and <code>false</code> otherwise
+	 */
 	public abstract boolean isTrue();
 	
+	/**
+	 * Runs the specified inferrer on this clause.
+	 * 
+	 * @param inferrer the inferrer
+	 */
 	public abstract void infer(IInferrer inferrer);
 
+	/**
+	 * Runs the specified simplifier on this clause and returns its 
+	 * resulting clause.
+	 * 
+	 * @param simplifier the simplifier to be run
+	 * @return the simplified clause
+	 */
 	public abstract Clause simplify(ISimplifier simplifier);
 	
 }

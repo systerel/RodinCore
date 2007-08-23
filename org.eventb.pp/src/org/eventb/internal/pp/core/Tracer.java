@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.pp.core.tracing;
+package org.eventb.internal.pp.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,30 +18,59 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.core.Level;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.pp.ITracer;
 
 /**
  * The tracer is responsible for keeping track of what formulas of a sequent
  * are needed to get to a proof. On top of the functionality of {@link ITracer},
- * this class takes care of proof tree. Whenever a contradiction is detected, 
- * this class is responsible for computing the level on which the prover needs to 
- * continue.
+ * this class takes care of the proof tree.
+ * <p>
+ * Whenever a contradiction is detected, this class is responsible for computing
+ * the level on which the prover needs to continue. The last closed level is always
+ * accessible using method {@link #getLastClosedLevel()}.
  *
  * @author François Terrier
  */
-public final class Tracer implements ITracer {
+public final class Tracer implements ITracer, ILevelController {
 
 	private final Map<Level, Pair> origins = new HashMap<Level, Pair>(); 
-	private Level level = null;
+	private Level lastClosedLevel = null;
+	private Level currentLevel = Level.base;
+	
+	private HashSet<Predicate> originalPredicates;
+	private boolean goalNeeded = false;
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.pp.core.ILevelController#getCurrentLevel()
+	 */
+	public Level getCurrentLevel() {
+		return currentLevel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.pp.core.ILevelController#nextLevel()
+	 */
+	public void nextLevel() {
+		if (lastClosedLevel!=null && currentLevel.getLeftBranch().equals(lastClosedLevel)) {
+			currentLevel = currentLevel.getRightBranch();
+		}
+		else {
+			currentLevel = currentLevel.getLeftBranch();
+		}
+	}
 	
 	/**
-	 * Returns the last closed level.
+	 * Returns the last closed level, or <code>null</code> if
+	 * no level has been closed yet.
+	 * <p>
+	 * If the last closed level is equal to {@link Level#base}, the base
+	 * level is closed and the proof is done.
 	 * 
-	 * @return the last closed level
+	 * @return the last closed level or <code>null</code>
 	 */
 	public Level getLastClosedLevel() {
-		return level;
+		return lastClosedLevel;
 	}
 	
 	/**
@@ -56,7 +85,7 @@ public final class Tracer implements ITracer {
 	 * @throws IllegalStateException in case there is an inconsistency in the proof tree
 	 */
 	public void addClosingClauseAndUpdateLevel(IOrigin origin) throws IllegalStateException {
-		if (level!=null && level.isAncestorInSameTree(origin.getLevel())) {
+		if (lastClosedLevel!=null && lastClosedLevel.isAncestorInSameTree(origin.getLevel())) {
 			throw new IllegalStateException();
 		}
 		
@@ -100,9 +129,13 @@ public final class Tracer implements ITracer {
 		assert !origins.containsKey(tmp);
 		origins.put(tmp, new Pair(origin,cumulatedDependencies));
 		assert !tmp.equals(Level.base)?!tmp.isRightBranch():true;
-		level = tmp;
+		setLastClosedLevel(tmp);
 	}
 	
+	private void setLastClosedLevel(Level level) {
+		lastClosedLevel = level;
+		currentLevel = lastClosedLevel.getParent();
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.tracing.ITracer#getClauses()
@@ -139,18 +172,30 @@ public final class Tracer implements ITracer {
 		}
 	}
 	
-	private HashSet<Predicate> originalPredicates;
-	void addNeededHypothesis(Predicate predicate) {
+	/**
+	 * Adds this predicate as a needed hypothesis.
+	 * 
+	 * @param predicate the predicate to add
+	 */
+	public void addNeededHypothesis(Predicate predicate) {
 		originalPredicates.add(predicate);
 	}
 
-	private boolean goalNeeded = false;
+	/* (non-Javadoc)
+	 * @see org.eventb.pp.ITracer#isGoalNeeded()
+	 */
 	public boolean isGoalNeeded() {
 		if (originalPredicates == null) calculateOriginalPredicates();
 		return goalNeeded;
 	}
 	
-	void setGoalNeeded(boolean goalNeeded) {
+	/**
+	 * Sets the specified value as the value for whether the
+	 * goal is needed for the proof or not.
+	 * 
+	 * @param goalNeeded the new value
+	 */
+	public void setGoalNeeded(boolean goalNeeded) {
 		this.goalNeeded = goalNeeded;
 	}
 }

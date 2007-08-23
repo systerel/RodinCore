@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
@@ -463,7 +462,7 @@ public class TestResolution extends AbstractInferrerTests {
 //		nonUnit.checkIsBlockedOnInstantiationsAndUnblock();
 //		unit.checkIsBlockedOnInstantiationsAndUnblock();
 		
-		IVariableContext context = new VariableContext();
+		VariableContext context = new VariableContext();
 		ResolutionInferrer inferrer = new ResolutionInferrer(context);
 		ResolutionResolver resolution = new ResolutionResolver(inferrer, new MyMatcher(nonUnit));
 		resolution.initialize(unit);

@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
@@ -39,7 +39,7 @@ public class InstantiationInferrer extends AbstractInferrer {
 		return result;
 	}
 	
-	public InstantiationInferrer(IVariableContext context) {
+	public InstantiationInferrer(VariableContext context) {
 		super(context);
 	}
 

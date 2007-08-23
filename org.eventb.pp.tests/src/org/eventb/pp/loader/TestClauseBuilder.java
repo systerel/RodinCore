@@ -1,7 +1,6 @@
 package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cAEqual;
-import static org.eventb.internal.pp.core.elements.terms.Util.cANEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cDiv;
@@ -97,19 +96,21 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Variable zInt = cVar(3,NAT);
 	private static Variable zA = cVar(4,Asort);
 	private static Variable zB = cVar(5,Bsort);
-	private static Variable zC = cVar(6,Csort);
+//	private static Variable zC = cVar(6,Csort);
 	private static Variable tA = cVar(7,Asort);
-	private static Variable tC = cVar(8,Csort);
+//	private static Variable tC = cVar(8,Csort);
 	private static Variable tPAB = cVar(9,PAB); 
 	private static Variable xA = cVar(10,Asort);
-	private static Variable yB = cVar(11,Bsort);
-	private static Variable yS = cVar(12,Ssort);
-	private static Variable yA = cVar(13,Asort);
-	private static Variable yPA = cVar(14,PA);
 	private static Variable xB = cVar(15,Bsort);
 	private static Variable yC = cVar(16,Csort);
 	private static Variable yU = cVar(17,Usort);
-	private static Variable xS = cVar(18,Ssort);
+	private static Variable yB = cVar(18,Bsort);
+	private static Variable yS = cVar(19,Ssort);
+	private static Variable yA = cVar(20,Asort);
+	private static Variable yPA = cVar(21,PA);
+	private static Variable xS = cVar(22,Ssort);
+	private static Variable zS = cVar(23,Ssort);
+	private static Variable xPS = cVar(24,PS);
 	
 	private static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
@@ -122,6 +123,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		env.addName("W", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B"))));
 		env.addName("X", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("C"))));
 		env.addName("Y", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("C"))));
+		env.addName("AA", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("S"), ff.makeGivenType("S"))));
 		
 		env.addName("e", ff.makeBooleanType());
 		env.addName("f", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B"))));
@@ -364,25 +366,28 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 		doTestP(
 				mList("∃x·∀y·∃z·∃w·x ↦ w ∈ T ∧ w = y + z"),
-				mList(cClause(cPred(4,cELocVar(0,NAT))),
-						cClause(cNotPred(4,xInt),cPred(3,xInt,yInt)),
-						cClause(cNotPred(3,xInt,yInt),cPred(2,xInt,yInt,cELocVar(1,NAT))),
+				mList(	cClause(cPred(4,cELocVar(0,NAT))),
+						cClause(cNotPred(4,xInt),cPred(2,xInt,yInt,cELocVar(1,NAT))),
 						cClause(cNotPred(2,xInt,yInt,zInt),cNotPred(1,xInt,cELocVar(2,NAT),yInt,zInt)),
 						cClause(cPred(1,xInt,yInt,zInt,wInt),cAEqual(yInt,cPlus(zInt, wInt))),
-						cClause(cPred(1,xInt,yInt,zInt,wInt),cPred(0,xInt,yInt)),
+						cClause(cPred(1,xInt,yInt,zInt,wInt),cPred(0,xInt,yInt))
 
-						cClause(cNotPred(1,xInt,yInt,zInt,wInt),cANEqual(yInt,cPlus(zInt, wInt)),cNotPred(0,xInt,yInt)))
+//						cClause(cNotPred(1,xInt,yInt,zInt,wInt),cANEqual(yInt,cPlus(zInt, wInt)),cNotPred(0,xInt,yInt))
+				)
 		);
 		doTestP(
 				mList("∃x·x ∈ P ∧ (∃y·y ∈ Q ∨ y ∈ R)"),
-				mList(cClause(cNotPred(4,cELocVar(1,Bsort))),
+				mList(	
+						cClause(cNotPred(4,cELocVar(1,Bsort))),
+						cClause(cPred(4,xB),cPred(2,cELocVar(1,Asort))),
 						cClause(cPred(4,xB),cPred(0,xB)),
-						cClause(cPred(4,xB),cPred(2,cELocVar(3,Asort))),
-						cClause(cNotPred(2,xA),cPred(1,xA,Q),cPred(1,xA,R)),
-
-						cClause(cNotPred(4,xB),cNotPred(0,xB),cNotPred(2,yA)),
-						cClause(cPred(2,xA),cNotPred(1,xA,R)),
-						cClause(cPred(2,xA),cNotPred(1,xA,Q))),
+						cClause(cNotPred(2,xA),cPred(1,xA,Q),cPred(1,xA,R))
+						
+//						cClause(cPred(4,xB),cPred(2,cELocVar(3,Asort))),
+//						cClause(cNotPred(4,xB),cNotPred(0,xB),cNotPred(2,yA)),
+//						cClause(cPred(2,xA),cNotPred(1,xA,R)),
+//						cClause(cPred(2,xA),cNotPred(1,xA,Q))
+				),
 				"Q", Q,
 				"R", R
 		);
@@ -397,33 +402,38 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cNotPred(0,xB),cNotPred(1,yA,Q),cNotPred(4, cELocVar(0,Asort),R,xB,yA)),
 						cClause(cPred(4,xA,yPA,zB,tA),cPred(1,xA,yPA)),
 						cClause(cPred(4,xA,yPA,zB,tA),cPred(3,zB,tA,xA)),
+						cClause(cPred(4,xA,yPA,zB,tA),cPred(1,xA,yPA)),
+						cClause(cPred(4,xA,yPA,zB,tA),cPred(3,zB,tA,xA)),
 						// 2 ok
 						cClause(cPred(1,xA,Q),cPred(1,xA,R)),
 						// 3 ok
 						cClause(cPred(12,xB),cNotPred(1,xA,R),cNotPred(4, cELocVar(9,Asort),Q,xB,xA)),
 						cClause(cPred(12,xB),cPred(0,xB)),
+						cClause(cNotPred(15,xB),cPred(3,xB,yA,cELocVar(3,Asort)))
 						// 4 ok
-						cClause(cNotPred(14,xB,yA),cPred(3,xB,yA,cELocVar(2,Asort))),
-						cClause(cNotPred(15,xB),cPred(14,xB,yA)),
+//						cClause(cNotPred(14,xB,yA),cPred(3,xB,yA,cELocVar(2,Asort))),
+//						cClause(cNotPred(15,xB),cPred(14,xB,yA)),
 						// unneeded definitions
-						cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
-						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,R)),
-						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,Q,xB,xA)),
-						cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
-						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,R)),
-						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,Q,xB,xA))),
+//						cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
+//						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,R)),
+//						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,Q,xB,xA)),
+//						cClause(cNotPred(4,xA,yPA,zB,tA),cNotPred(1,xA,yPA),cNotPred(3,zB,tA,xA)),
+//						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(1,xA,R)),
+//						cClause(cNotPred(12,xB),cNotPred(0,xB),cPred(4,yA,Q,xB,xA))
+						),
 						"Q", Q,
 						"R", R
 		);
 		doTestP(
 				mList("∃f\u2982ℙ(A×B)·(∀x,x0,x1·x ↦ x0∈f∧x ↦ x1∈f⇒x0=x1)∧(∀x·∃x0·x ↦ x0∈f)"),
-				mList(cClause(cNotPred(6,cELocVar(0,PAB))),
+				mList(	cClause(cNotPred(6,cELocVar(0,PAB))),
 						cClause(cPred(6,tPAB),cEqual(xB,yB),cNotPred(0,zA,xB,tPAB),cNotPred(0,zA,yB,tPAB)),
-						cClause(cPred(6,tPAB),cPred(0,xA,cELocVar(1,Bsort),tPAB)),
+						cClause(cPred(6,tPAB),cPred(0,xA,cELocVar(1,Bsort),tPAB))
 
-						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cNEqual(xB,zB)),
-						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB)),
-						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB)))
+//						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cNEqual(xB,zB)),
+//						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB)),
+//						cClause(cNotPred(6,tPAB),cNotPred(0,xA,yB,tPAB),cPred(0,zA,xB,tPAB))
+				)
 		);
 //		doTestP(
 //		mList("∃x·" +
@@ -489,10 +499,11 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("∃x·x ∈ P ∨ (a ∈ S ∧ b ∈ U)"),
 				mList(cClause(cPred(4, cELocVar(0,Bsort))),
 						cClause(cNotPred(4,xB),cPred(0,xB),cProp(1)),
-						cClause(cNotPred(4,xB),cPred(0,xB),cProp(2)),
+						cClause(cNotPred(4,xB),cPred(0,xB),cProp(2))
 
-						cClause(cPred(4,xB),cNotPred(0,xB)),
-						cClause(cPred(4,xB),cNotProp(1),cNotProp(2)))
+//						cClause(cPred(4,xB),cNotPred(0,xB)),
+//						cClause(cPred(4,xB),cNotProp(1),cNotProp(2))
+				)
 		);
 		doTestP(
 				mList("∀x·a ∈ S ∨ x ∈ S ∨ (∀y·x ∈ S ∨ y ∈ U)"),
@@ -583,8 +594,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 		doTestP(
 				mList("∃x·∀y·∃z·x ↦ y ↦ z ∈ TT"),
 				mList(cClause(cPred(2,cELocVar(0,NAT))),
-						cClause(cNotPred(2,xInt),cPred(1,xInt,yInt)),
-						cClause(cNotPred(1,xInt,yInt),cPred(0,xInt,yInt,cELocVar(2,NAT))))
+//						cClause(cNotPred(2,xInt),cPred(1,xInt,yInt)),
+						cClause(cNotPred(2,xInt),cPred(0,xInt,yInt,cELocVar(2,NAT))))
 		);
 
 		doTestP(
@@ -640,7 +651,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("∀x·x ∈ N ⇔ ¬(∀y·y ∈ N ⇔ x ↦ y ∈ T)"),
 				mList(
 						cEqClause(cPred(0,xInt),cNotPred(2,cELocVar(1,NAT),xInt)),
-						cEqClause(cPred(2,xInt,yInt),cPred(0,xInt),cPred(1,yInt,xInt)))
+						cEqClause(cPred(2,xInt,yInt),cPred(0,xInt),cPred(1,yInt,xInt))
+				)
 		);
 		doTestP(
 				mList("∀x·x ∈ N ⇔ ¬(∃y·y ∈ N ⇔ x ↦ y ∈ T)"),
@@ -658,9 +670,10 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList(
 						cClause(cPred(0,xInt),cNotPred(2,cELocVar(1,NAT),xInt)),
 						cClause(cPred(2,xInt,yInt),cNotPred(0,xInt)),
-						cClause(cPred(2,xInt,yInt),cNotPred(1,yInt,xInt)),
+						cClause(cPred(2,xInt,yInt),cNotPred(1,yInt,xInt))
 
-						cClause(cNotPred(2,xInt,yInt),cPred(0,xInt),cPred(1,yInt,xInt)))
+//						cClause(cNotPred(2,xInt,yInt),cPred(0,xInt),cPred(1,yInt,xInt))
+				)
 		);
 
 		doTestP(
@@ -675,6 +688,30 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+	public void testQuantifier() {
+		doTestP(
+				mList("¬(A=TRUE⇒(∀x·∃y·x∈P∧y∈Q))"),
+				mList(	cClause(cProp(6)),
+						cClause(cNotPred(3,cELocVar(0,Bsort))),
+						cClause(cNotPred(2,xB,yA),cNotPred(0,xB),cNotPred(1,yA)),
+						cClause(cPred(3,xB),cPred(2,xB,yA))
+				)
+		);
+		doTestP(
+				mList("(A=TRUE∧¬(∃x·∀y·x∈P∧y∈Q))"),
+				mList(	cClause(cProp(6)),
+						cClause(cPred(2,xB,cELocVar(0,Asort))),
+						cClause(cNotPred(2,xB,yA),cNotPred(0,xB),cNotPred(1,yA))
+				)
+		);
+		doTestP(
+				mList("(∀x·∃y·x ∈ S ∧ y ∈ S)"),
+				mList(	cClause(cNotPred(1,xS,cELocVar(0,Ssort))),
+						cClause(cPred(1,xS,yS),cPred(0,xS)),
+						cClause(cPred(1,xS,yS),cPred(0,yS))
+				)
+		);
+	}
 
 	public void testEquivalence() {
 		doTestP(
@@ -760,7 +797,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cEqClause(cPred(3,xInt, cELocVar(1,NAT)),cNotPred(0,cFLocVar(3,NAT))),
 						cClause(cNotPred(3,xInt,yInt),cPred(0,xInt),cPred(2,yInt,xInt)),
 						cClause(cPred(3,xInt,yInt),cNotPred(0,xInt)),
-						cClause(cPred(3,xInt,yInt),cNotPred(2,yInt,xInt)))
+						cClause(cPred(3,xInt,yInt),cNotPred(2,yInt,xInt))
+				)
 		);
 
 
@@ -771,7 +809,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cEqClause(cProp(0),cProp(1)),
 						cClause(cNotProp(1),cProp(0),cProp(0)),
 						cClause(cProp(1),cNotProp(0)),
-						cClause(cProp(1),cNotProp(0)))
+						cClause(cProp(1),cNotProp(0))
+				)
 		);
 		doTestP(
 				mList("a ∈ S ∨ (a ∈ S ⇔ a ∈ S)"),
@@ -791,11 +830,12 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList(
 						cEqClause(cNotProp(2),cProp(2)),
 						cClause(cNotProp(2),cProp(0),cProp(1)),
-						cClause(cProp(2),cNotProp(0)),
-						cClause(cProp(2),cNotProp(1)),
 						cClause(cNotProp(2),cProp(0),cProp(1)),
 						cClause(cProp(2),cNotProp(0)),
-						cClause(cProp(2),cNotProp(1)))
+						cClause(cProp(2),cNotProp(1)),
+						cClause(cProp(2),cNotProp(0)),
+						cClause(cProp(2),cNotProp(1))
+				)
 		);
 
 		doTestP(
@@ -805,7 +845,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cNotProp(4),cProp(1),cProp(3)),
 						cClause(cProp(4),cNotProp(1)),
 						cClause(cProp(4),cNotProp(3)),
-						cEqClause(cProp(3),cProp(2),cProp(2)))
+						cEqClause(cProp(3),cProp(2),cProp(2))
+				)
 		);
 		doTestP(
 				mList("a ∈ S ⇔ (d ∈ U ∨ ¬(c ∈ P ⇔ c ∈ P))"),
@@ -814,7 +855,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cNotProp(4),cProp(1),cNotProp(3)),
 						cClause(cProp(4),cNotProp(1)),
 						cClause(cProp(4),cProp(3)),
-						cEqClause(cProp(3),cProp(2),cProp(2)))
+						cEqClause(cProp(3),cProp(2),cProp(2))
+				)
 		);
 		doTestP(
 				mList("a ∈ S ⇔ ¬(d ∈ U ∨ (c ∈ P ⇔ c ∈ P))"),
@@ -823,7 +865,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cNotProp(4),cProp(1),cProp(3)),
 						cClause(cProp(4),cNotProp(1)),
 						cClause(cProp(4),cNotProp(3)),
-						cEqClause(cProp(3),cProp(2),cProp(2)))
+						cEqClause(cProp(3),cProp(2),cProp(2))
+				)
 		);
 		doTestP(
 				mList("(d ∈ U ∨ (c ∈ P ⇔ c ∈ P)) ⇔ a ∈ S"),
@@ -861,7 +904,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cEqClause(cNotProp(0),cProp(3)),
 						cClause(cNotProp(3),cNotProp(1),cNotProp(2)),
 						cClause(cProp(3),cProp(1)),
-						cClause(cProp(3),cProp(2)))
+						cClause(cProp(3),cProp(2))
+				)
 		);
 
 		doTestP(
@@ -880,12 +924,13 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("∃x· x = n + 1 ∧ x ∈ N"),
 				mList(cClause(cNotPred(1,cELocVar(0,NAT))),
 						cClause(cPred(1,xInt),cPred(0,xInt)),
-						cClause(cPred(1,xInt),cAEqual(xInt, cPlus(n,one))),
-						cClause(cNotPred(1,xInt),cNotPred(0,xInt),cANEqual(xInt, cPlus(n,one)))),
+						cClause(cPred(1,xInt),cAEqual(xInt, cPlus(n,one)))
+//						cClause(cNotPred(1,xInt),cNotPred(0,xInt),cANEqual(xInt, cPlus(n,one)))
+				),
 				1,one,
 				"n",n
 		);
-
+		
 		doTestP(
 				mList("n = 1"),
 				mList(cClause(cEqual(one, n))),
@@ -1096,10 +1141,11 @@ public class TestClauseBuilder extends AbstractPPTest {
 		doTestP(
 				mList("∃x·x > 1 ∨ x ≤ 1"),
 				mList(cClause(cPred(0,cELocVar(0,NAT))),
-						cClause(cNotPred(0,xInt),cLess(one,xInt),cLE(xInt,one)),
+						cClause(cNotPred(0,xInt),cLess(one,xInt),cLE(xInt,one))
 
-						cClause(cPred(0,xInt),cLE(xInt,one)),
-						cClause(cPred(0,xInt),cLess(one,xInt))),
+//						cClause(cPred(0,xInt),cLE(xInt,one)),
+//						cClause(cPred(0,xInt),cLess(one,xInt))
+						),
 						1,one
 		);
 
@@ -1444,19 +1490,20 @@ public class TestClauseBuilder extends AbstractPPTest {
 	public void testGoal() {
 		doTestG(
 				mList("∀x,y·x ↦ y ∈ V ∨ (∀z·(x ↦ y) ↦ z ∈ VV) ∨ (∀z·(x ↦ y) ↦ z ∈ VV)"),
-				mList(cClause(cNotPred(3, cELocVar(0,Asort),cELocVar(1,Bsort))),
-						cClause(cPred(3, xA, yB),cNotPred(0,xA,yB)),
-						cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(2,Csort))),
+				mList(	cClause(cNotPred(3, cELocVar(0,Asort),cELocVar(1,Bsort))),
 						cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(3,Csort))),
-						cClause(cNotPred(3, xA, yB),cPred(0,xA,yB),cPred(1,xA,yB,zC),cPred(1,xA,yB,tC)))
+						cClause(cPred(3, xA, yB),cNotPred(1,xA,yB,cELocVar(3,Csort))),
+						cClause(cPred(3, xA, yB),cNotPred(0,xA,yB))
+				)
 		);
 		doTestG(
 				mList("∀x,y·x ↦ y ∈ T ⇒ y ↦ x ∈ T"),
-				mList(cClause(cNotPred(1,cELocVar(0,NAT),cELocVar(1,NAT))),
+				mList(	cClause(cNotPred(1,cELocVar(0,NAT),cELocVar(1,NAT))),
 						cClause(cPred(1,xInt,yInt),cNotPred(0,xInt,yInt)),
-						cClause(cPred(1,xInt,yInt),cPred(0,yInt,xInt)),
+						cClause(cPred(1,xInt,yInt),cPred(0,yInt,xInt))
 
-						cClause(cNotPred(1,xInt,yInt),cPred(0,xInt,yInt),cNotPred(0,yInt,xInt)))
+//						cClause(cNotPred(1,xInt,yInt),cPred(0,xInt,yInt),cNotPred(0,yInt,xInt))
+				)
 		);
 		doTestG(
 				mList(
@@ -1477,40 +1524,76 @@ public class TestClauseBuilder extends AbstractPPTest {
 		doTestG(
 				mList("∀y·∃x·x ∈ N ∧ x ↦ y ∈ T"),
 				mList(cClause(cPred(3,cELocVar(1,NAT))),
-						cClause(cNotPred(3,xInt),cPred(2,yInt,xInt)),
-						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cNotPred(1,xInt,yInt)),
+						cClause(cNotPred(3,xInt),cNotPred(0,yInt),cNotPred(1,yInt,xInt))
 
-						cClause(cPred(2,xInt,yInt),cPred(1,xInt,yInt)),
-						cClause(cPred(2,xInt,yInt),cPred(0,xInt)))
+//						cClause(cPred(2,xInt,yInt),cPred(1,xInt,yInt)),
+//						cClause(cPred(2,xInt,yInt),cPred(0,xInt))
+				)
 		);
 		doTestG(
 				mList("∀y·¬(∀x·¬(x ∈ N ∧ x ↦ y ∈ T))"),
 				mList(cClause(cPred(3,cELocVar(1,NAT))),
-						cClause(cNotPred(3,xInt),cPred(2,yInt,xInt)),
-						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cNotPred(1,xInt,yInt)),
+						cClause(cNotPred(3,xInt),cNotPred(0,yInt),cNotPred(1,yInt,xInt))
 
-						cClause(cPred(2,xInt,yInt),cPred(1,xInt,yInt)),
-						cClause(cPred(2,xInt,yInt),cPred(0,xInt)))
+//						cClause(cPred(2,xInt,yInt),cPred(1,xInt,yInt)),
+//						cClause(cPred(2,xInt,yInt),cPred(0,xInt))
+				)
 		);
 
 		doTestG(
 				mList("∃x·∀y·x ∈ N ⇒ x ↦ y ∈ T"),
 				mList(cClause(cNotPred(2,xInt,cELocVar(1,NAT))),
 						cClause(cPred(2,xInt,yInt),cPred(0,xInt)),
-						cClause(cPred(2,xInt,yInt),cNotPred(1,xInt,yInt)),
+						cClause(cPred(2,xInt,yInt),cNotPred(1,xInt,yInt))
 
-						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cPred(1,xInt,yInt)))
+//						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cPred(1,xInt,yInt))
+				)
 		);
 		doTestG(
 				mList("¬(∀x·¬(∀y·x ∈ N ⇒ x ↦ y ∈ T))"),
 				mList(cClause(cNotPred(2,xInt,cELocVar(1,NAT))),
 						cClause(cPred(2,xInt,yInt),cPred(0,xInt)),
-						cClause(cPred(2,xInt,yInt),cNotPred(1,xInt,yInt)),
+						cClause(cPred(2,xInt,yInt),cNotPred(1,xInt,yInt))
 
-						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cPred(1,xInt,yInt)))
+//						cClause(cNotPred(2,xInt,yInt),cNotPred(0,xInt),cPred(1,xInt,yInt))
+				)
 		);
 	}
 
+	public void testEquivalence2() {
+		doTestP(
+				mList("A=TRUE∨B=TRUE⇔A=TRUE"),
+				mList(
+					cEqClause(cProp(2),cProp(0)),
+					cClause(cNotProp(0),cProp(2),cProp(3)),
+					cClause(cProp(0),cNotProp(2)),
+					cClause(cProp(0),cNotProp(3))
+				),
+				"A",Abool,
+				"B",Bbool
+		);
+		doTestP(
+				mList("(∀x,y·x ∈ S ∨ y ∈ S)⇔A=TRUE"),
+				mList(
+					cEqClause(cProp(4),cPred(1,cFLocVar(0,Ssort),cFLocVar(1,Ssort))),
+					cClause(cNotPred(1,xS,yS),cPred(0,xS),cPred(0,yS)),
+					cClause(cPred(1,xS,yS),cNotPred(0,xS)),
+					cClause(cPred(1,xS,yS),cNotPred(0,yS))
+				),
+				"A",Abool,
+				"B",Bbool
+		);
+		doTestP(
+				mList("(∃x·∀y·x ↦ y ∈ AA)⇔A=TRUE"),
+				mList(
+					cEqClause(cProp(4),cPred(1,cELocVar(0,Ssort))),
+					cClause(cNotPred(1,xS),cPred(0,xS,yS)),
+					cClause(cPred(1,xS),cNotPred(0,xS,cELocVar(1,Ssort)))
+				),
+				"A",Abool,
+				"B",Bbool
+		);
+	}
 
 	public void testPairVariable() {
 		Constant X = cCons("X",PAC);
@@ -1534,12 +1617,13 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList(
 						cClause(cNotPred(5, xA, yC), cPred(4, xA, yC, X), cPred(4,xA,yC,Y)),
 						cClause(cNotPred(2, xA, yB), cPred(1, xA, yB, V), cPred(1,xA,yB,W)),
-						cClause(cPred(0,xA),cPred(5,xA,cELocVar(0,Csort)),cPred(2,xA,cELocVar(1,Bsort))),
+						cClause(cPred(0,xA),cPred(5,xA,cELocVar(0,Csort)),cPred(2,xA,cELocVar(1,Bsort)))
 
-						cClause(cPred(5, xA, yC), cNotPred(4, xA, yC, X)),
-						cClause(cPred(5, xA, yC), cNotPred(4, xA, yC, Y)),
-						cClause(cPred(2, xA, yB), cNotPred(1, xA, yB, V)),
-						cClause(cPred(2, xA, yB), cNotPred(1, xA, yB, W))),
+//						cClause(cPred(5, xA, yC), cNotPred(4, xA, yC, X)),
+//						cClause(cPred(5, xA, yC), cNotPred(4, xA, yC, Y)),
+//						cClause(cPred(2, xA, yB), cNotPred(1, xA, yB, V)),
+//						cClause(cPred(2, xA, yB), cNotPred(1, xA, yB, W))
+				),
 				constants
 		);
 	}
@@ -1564,6 +1648,106 @@ public class TestClauseBuilder extends AbstractPPTest {
 					"a",a,
 					"b",b
 			);
+	}
+	
+	public void testExistentialBUG() {
+		doTestP(
+			mList("∃x·x∈A∧¬(∃y·y∈B∧x ↦ y∈AA)"),
+			mList(	cClause(cNotPred(4,cELocVar(0,Ssort))),
+					cClause(cPred(4,xS),cPred(0,xS,A)),
+					cClause(cPred(4,xS),cNotPred(0,yS,B),cNotPred(1,xS,yS))),
+			"A",A,
+			"B",B
+		);
+		doTestP(
+			mList("¬(∃x·x∈A∧¬(∃y·y∈B∧x ↦ y∈AA))"),
+			mList(	cClause(cNotPred(0,xS,A),cNotPred(2,cELocVar(0,Ssort),xS)),
+					cClause(cPred(2,xS,yS),cPred(0,xS,B)),
+					cClause(cPred(2,xS,yS),cPred(1,yS,xS))
+			),
+			"A",A,
+			"B",B
+		);
+		doTestG(
+			mList("∃x·x∈A∧¬(∃y·y∈B∧x ↦ y∈AA)"),
+			mList(	cClause(cNotPred(0,xS,A),cNotPred(2,cELocVar(0,Ssort),xS)),
+					cClause(cPred(2,xS,yS),cPred(0,xS,B)),
+					cClause(cPred(2,xS,yS),cPred(1,yS,xS))
+			),
+			"A",A,
+			"B",B
+		);
+		doTestG(
+			mList("¬(∃x·x∈A∧¬(∃y·y∈B∧x ↦ y∈AA))"),
+			mList(	cClause(cNotPred(4,cELocVar(0,Ssort))),
+					cClause(cPred(4,xS),cPred(0,xS,A)),
+					cClause(cPred(4,xS),cNotPred(0,yS,B),cNotPred(1,xS,yS))),
+			"A",A,
+			"B",B
+		);
+		doTestP(
+			mList("∃x·x∈A∧¬(∃y·x ↦ y∈AA∧(∃z·x ↦ z∈AA))"),
+			mList(	cClause(cNotPred(5,cELocVar(0,Ssort))),
+					cClause(cPred(5,xS),cPred(0,xS)),
+					cClause(cPred(5,xS),cNotPred(1,xS,yS),cNotPred(1,xS,zS))
+			),
+			"A",A,
+			"B",B
+		);
+		doTestP(
+			mList("¬(∃x·x∈A∧¬(∃y·x ↦ y∈AA∧(∃z·x ↦ z∈AA)))"),
+			mList(	cClause(cNotPred(0,xS),cNotPred(3,xS,cELocVar(0,Ssort))),
+					cClause(cPred(3,xS,yS),cPred(1,xS,yS)),
+					cClause(cPred(3,xS,yS),cPred(1,xS,cELocVar(1,Ssort)))
+			),
+			"A",A,
+			"B",B
+		);
+		doTestP(
+			mList("∀x·(∀y·(∃z·z∈x∧z ↦ y∈AA)∨y∈x)⇒(∀y·¬y∈x)"),
+			mList(	cClause(cNotPred(0,yS,xPS),cNotPred(4,cELocVar(0,Ssort),xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(0,yS,xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(0,zS,xPS),cNotPred(1,zS,yS))
+			)
+		);
+		doTestP(
+			mList("∀x·(∀y·(∃z·z∈x∧z ↦ y∈AA)∧y∈x)⇒(∀y·¬y∈x)"),
+			mList(	cClause(cNotPred(0,yS,xPS),cPred(4,cELocVar(0,Ssort),xPS)),
+					cClause(cNotPred(4,yS,xPS),cNotPred(0,yS,xPS),cNotPred(0,zS,xPS),cNotPred(1,zS,yS))
+			)
+		);
+		doTestP(
+			mList("∀x·(∀y·(∃z·z∈x∧z ↦ y∈AA)⇒y∈x)⇒(∀y·¬y∈x)"),
+			mList( 	cClause(cNotPred(0,yS,xPS),cNotPred(4,cELocVar(0,Ssort),xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(0,yS,xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(2,cELocVar(1,Ssort),xPS,yS)),
+					cClause(cPred(2,yS,xPS,zS),cPred(0,yS,xPS)),
+					cClause(cPred(2,yS,xPS,zS),cPred(1,yS,zS))
+			)
+		);
+		doTestP(
+			mList("∀x·(∀y·¬(∃z·z∈x∧z ↦ y∈AA)∨y∈x)⇒(∀y·¬y∈x)"),
+			mList(	cClause(cNotPred(0,yS,xPS),cNotPred(4,cELocVar(0,Ssort),xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(0,yS,xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(2,cELocVar(1,Ssort),xPS,yS)),
+					cClause(cPred(2,yS,xPS,zS),cPred(0,yS,xPS)),
+					cClause(cPred(2,yS,xPS,zS),cPred(1,yS,zS))
+			)
+		);
+		doTestP(
+			mList("∀x·(∀y·y∈x⇒(∃z·z∈x∧z ↦ y∈AA))⇒(∀y·¬y∈x)"),
+			mList(	cClause(cNotPred(0,yS,xPS),cNotPred(4,cELocVar(0,Ssort),xPS)),
+					cClause(cPred(4,yS,xPS),cPred(0,yS,xPS)),
+					cClause(cPred(4,yS,xPS),cNotPred(0,zS,xPS),cNotPred(1,zS,yS))
+			)
+		);
+		doTestP(
+			mList("∀x0·x0∈S⇒(∃y·y∈S∧y ↦ x∈AA)"),
+			mList(	cClause(cNotPred(0,xS),cNotPred(2,cELocVar(0,Ssort))),
+					cClause(cPred(2,xS),cPred(0,xS)),
+					cClause(cPred(2,xS),cPred(1,xS))
+			)
+		);
 	}
 	
 	

@@ -18,10 +18,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Map.Entry;
 
-import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.IProverModule;
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -30,6 +28,7 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
 
 public class SeedSearchProver implements IProverModule {
@@ -43,11 +42,10 @@ public class SeedSearchProver implements IProverModule {
 	}
 
 	private SeedSearchManager manager = new SeedSearchManager();
-	private ClauseSimplifier simplifier;
 	private InstantiationInferrer inferrer;
-	private IVariableContext context;
+	private VariableContext context;
 	
-	public SeedSearchProver(IVariableContext context) {
+	public SeedSearchProver(VariableContext context) {
 		this.context = context;
 		this.inferrer = new InstantiationInferrer(context);
 	}
@@ -74,17 +72,10 @@ public class SeedSearchProver implements IProverModule {
 	}
 	
 	private boolean accept(Clause clause) {
-		if (clause.isBlockedOnConditions()) return false;
+		if (clause.hasConditions()) return false;
 		return true;
 	}
 
-	private Clause simplify(Clause clause){
-		// we run the simplifier, since it is an instantiation, it is not possible
-		// to get a smaller clause than the original, given the fact that the
-		// original clause has been simplified
-		return simplifier.run(clause);
-	}
-	
 	private Map<Clause, Map<Variable, Set<Constant>>> instantiationMaps = new HashMap<Clause, Map<Variable,Set<Constant>>>();
 	
 	private boolean checkAndAddInstantiation(Clause clause, Variable variable, Constant constant) {
@@ -111,7 +102,7 @@ public class SeedSearchProver implements IProverModule {
 		if (checkAndAddInstantiation(result.getInstantiableClause(), variable, result.getConstant())) return null;
 		inferrer.addInstantiation(variable, result.getConstant());
 		result.getInstantiableClause().infer(inferrer);
-		return simplify(inferrer.getResult());
+		return inferrer.getResult();
 	}
 	
 	private void addConstants(Clause clause, PredicateLiteral literal1, List<SeedSearchResult> result) {
@@ -129,7 +120,6 @@ public class SeedSearchProver implements IProverModule {
 	
 	private void addInstantiable(Clause clause, PredicateLiteral literal1, int position, List<SeedSearchResult> result) {
 		// we do not instantiate definitions with the seed search module
-		// TODO is this a good idea ?
 		if (clause.getOrigin().isDefinition()) return;
 		
 		if (literal1.isQuantified()/* && clause.isUnit() */) { 
@@ -185,7 +175,7 @@ public class SeedSearchProver implements IProverModule {
 	private List<SeedSearchResult> addArbitraryClause(Clause clause) {
 		// TODO optimize
 		List<SeedSearchResult> result = new ArrayList<SeedSearchResult>();
-		if (clause.isBlockedOnConditions()) return result;
+		if (clause.hasConditions()) return result;
 		for (int i = 0; i < clause.getPredicateLiteralsSize(); i++) {
 			PredicateLiteral literal1 = clause.getPredicateLiteral(i);
 
@@ -244,10 +234,6 @@ public class SeedSearchProver implements IProverModule {
 		return ProverResult.EMPTY_RESULT;
 	}
 
-	public void initialize(ClauseSimplifier simplifier) {
-		this.simplifier = simplifier;
-	}
-
 	private static final int ARBITRARY_SEARCH = 5;
 	private double currentNumberOfArbitrary = 0;
 	private double currentCounter = ARBITRARY_SEARCH;
@@ -292,19 +278,8 @@ public class SeedSearchProver implements IProverModule {
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		
 		Set<Clause> nextClauses = new HashSet<Clause>();
-//		while (nextClauses.isEmpty()) {
-//			if (generatedClausesStack.isEmpty()) {
-//				List<Clause> nextClause = nextArbitraryInstantiation(force);
-//				if (nextClause.isEmpty()) return ProverResult.EMPTY_RESULT;
-//				else nextClauses.addAll(nextClause);
-//			}
-//			else {
-//				nextClauses.addAll(generatedClausesStack.remove(0));
-//			}
-//		}
-		
 		if (!generatedClausesStack.isEmpty()) nextClauses.addAll(generatedClausesStack.remove(0));
-		if (checkAndUpdateCounter()) nextClauses.addAll(nextArbitraryInstantiation());
+		if (checkAndUpdateCounter() || force) nextClauses.addAll(nextArbitraryInstantiation());
 		
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());

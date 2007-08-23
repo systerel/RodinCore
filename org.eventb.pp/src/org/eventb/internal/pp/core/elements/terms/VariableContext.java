@@ -8,7 +8,6 @@
 
 package org.eventb.internal.pp.core.elements.terms;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Sort;
 
 /**
@@ -19,7 +18,7 @@ import org.eventb.internal.pp.core.elements.Sort;
  * @author François Terrier
  *
  */
-public class VariableContext implements IVariableContext {
+public class VariableContext {
 
 	private int currentLocalVariableID = 0;
 	private int currentGlobalVariableID = 0;
@@ -30,7 +29,7 @@ public class VariableContext implements IVariableContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.pp.core.elements.IVariableContext#getNextVariable(org.eventb.internal.pp.core.elements.Sort)
+	 * @see org.eventb.internal.pp.core.elements.VariableContext#getNextVariable(org.eventb.internal.pp.core.elements.Sort)
 	 */
 	public Variable getNextVariable(Sort sort) {
 		assert sort != null;
@@ -38,7 +37,7 @@ public class VariableContext implements IVariableContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.pp.core.IVariableContext#getNextLocalVariable(boolean, org.eventb.internal.pp.core.elements.Sort)
+	 * @see org.eventb.internal.pp.core.VariableContext#getNextLocalVariable(boolean, org.eventb.internal.pp.core.elements.Sort)
 	 */
 	public LocalVariable getNextLocalVariable(boolean isForall, Sort sort) {
 		assert sort != null;
@@ -46,7 +45,7 @@ public class VariableContext implements IVariableContext {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.pp.core.IVariableContext#getNextFreshConstant(org.eventb.internal.pp.core.elements.Sort)
+	 * @see org.eventb.internal.pp.core.VariableContext#getNextFreshConstant(org.eventb.internal.pp.core.elements.Sort)
 	 */
 	public Constant getNextFreshConstant(Sort sort) {
 		assert sort != null;

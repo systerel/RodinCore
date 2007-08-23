@@ -14,6 +14,15 @@ import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 
+/**
+ * Abstract implementation of {@link Literal} for predicates.
+ * <p>
+ * There are two types of predicate literals, propositions {@link AtomicPredicateLiteral} 
+ * and predicates {@link ComplexPredicateLiteral}.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class PredicateLiteral extends Literal<PredicateLiteral,SimpleTerm> {
 
 	final protected PredicateLiteralDescriptor descriptor;

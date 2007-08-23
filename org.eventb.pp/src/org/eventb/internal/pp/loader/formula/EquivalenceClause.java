@@ -70,13 +70,11 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 		return false;
 	}
 
-	private void addLabels(LabelManager manager, AbstractContext context) {
+	private void addLabels(LabelManager manager, AbstractContext context,  LabelContext newContext) {
 		manager.addLabel(this,true);
-	}
-	
-	private void setFlagsForLabels(AbstractContext context, LabelContext newContext) {
 		newContext.setNegativeLabel(true);
 		newContext.setPositiveLabel(true);
+		assert manager.hasLabel(this);
 	}
 	
 	private boolean getChildContextAndSetLabels(LabelContext context, LabelManager manager) {
@@ -95,8 +93,7 @@ public class EquivalenceClause extends AbstractClause<EquivalenceClauseDescripto
 	boolean getContextAndSetLabels(LabelContext context, LabelManager manager) {
 		LabelContext newContext = new LabelContext();
 		if (isLabelizable(context)) {
-			addLabels(manager, context);
-			setFlagsForLabels(context, newContext);
+			addLabels(manager, context, newContext);
 		}
 		setContextProperties(context, newContext);
 		return getChildContextAndSetLabels(newContext, manager);

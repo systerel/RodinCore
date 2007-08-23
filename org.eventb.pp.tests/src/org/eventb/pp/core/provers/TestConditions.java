@@ -10,9 +10,8 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.ClauseDispatcher;
-import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
@@ -51,19 +50,19 @@ public class TestConditions extends AbstractPPTest {
 	
 	private ClauseDispatcher initProver() {
 		ClauseDispatcher proofStrategy = new ClauseDispatcher();
-		IVariableContext context = new VariableContext();
+		VariableContext context = new VariableContext();
 		PredicateTable table = new PredicateTable();
 		
 		PredicateProver prover = new PredicateProver(context);
-		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy);
+		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy.getLevelController());
 		SeedSearchProver seedsearch = new SeedSearchProver(context);
 		EqualityProver equalityprover = new EqualityProver(context);
 		ExtensionalityProver extensionalityProver = new ExtensionalityProver(table, context);
-		proofStrategy.addProver(prover);
-		proofStrategy.addProver(casesplitter);
-		proofStrategy.addProver(seedsearch);
-		proofStrategy.addProver(equalityprover);
-		proofStrategy.addProver(extensionalityProver);
+		proofStrategy.addProverModule(prover);
+		proofStrategy.addProverModule(casesplitter);
+		proofStrategy.addProverModule(seedsearch);
+		proofStrategy.addProverModule(equalityprover);
+		proofStrategy.addProverModule(extensionalityProver);
 		
 		OnePointRule onepoint = new OnePointRule();
 		ExistentialSimplifier existential = new ExistentialSimplifier(context);

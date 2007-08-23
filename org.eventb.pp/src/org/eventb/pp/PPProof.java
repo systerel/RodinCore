@@ -19,9 +19,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.PPCore;
 import org.eventb.internal.pp.core.ClauseDispatcher;
-import org.eventb.internal.pp.core.IVariableContext;
-import org.eventb.internal.pp.core.PredicateTable;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateTable;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.equality.EqualityProver;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
@@ -50,7 +50,7 @@ public class PPProof {
 	private List<InputPredicate> hypotheses = new ArrayList<InputPredicate>();
 	private InputPredicate goal;
 	
-	private IVariableContext context;
+	private VariableContext context;
 	private PredicateTable table;
 	private List<Clause> clauses;
 	
@@ -171,7 +171,7 @@ public class PPProof {
 //			if (DEBUG) debug("** proof found, traced clauses **");
 //			if (DEBUG) debug(getResult().getTracer().getClauses().toString());
 			if (DEBUG) debug("** proof found **");
-			if (result.getTracer() instanceof org.eventb.internal.pp.core.tracing.Tracer) if (DEBUG) debug("closing clauses: "+((org.eventb.internal.pp.core.tracing.Tracer)result.getTracer()).getClosingOrigins());
+			if (result.getTracer() instanceof org.eventb.internal.pp.core.Tracer) if (DEBUG) debug("closing clauses: "+((org.eventb.internal.pp.core.Tracer)result.getTracer()).getClosingOrigins());
 			if (DEBUG) debug("original hypotheses: "+result.getTracer().getNeededHypotheses().toString());
 			if (DEBUG) debug("goal needed: "+result.getTracer().isGoalNeeded());
 		}
@@ -331,15 +331,15 @@ public class PPProof {
 		proofStrategy = new ClauseDispatcher();
 		
 		PredicateProver prover = new PredicateProver(context);
-		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy);
+		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy.getLevelController());
 		SeedSearchProver seedsearch = new SeedSearchProver(context);
 		EqualityProver equalityprover = new EqualityProver(context);
 		ExtensionalityProver extensionalityProver = new ExtensionalityProver(table, context);
-		proofStrategy.addProver(prover);
-		proofStrategy.addProver(casesplitter);
-		proofStrategy.addProver(seedsearch);
-		proofStrategy.addProver(equalityprover);
-		proofStrategy.addProver(extensionalityProver);
+		proofStrategy.addProverModule(prover);
+		proofStrategy.addProverModule(casesplitter);
+		proofStrategy.addProverModule(seedsearch);
+		proofStrategy.addProverModule(equalityprover);
+		proofStrategy.addProverModule(extensionalityProver);
 		
 		OnePointRule onepoint = new OnePointRule();
 		ExistentialSimplifier existential = new ExistentialSimplifier(context);

@@ -20,14 +20,44 @@ import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.internal.pp.core.tracing.Tracer;
 import org.eventb.pp.ITracer;
 import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
 
-public class ClauseDispatcher implements IDispatcher {
-	
-	private Level level = Level.base;
+/**
+ * This class decides in which order prover modules are invoked and 
+ * manages derived and subsumed clauses.
+ * <p>
+ * The clause dispatcher maintains two data structures, one containing the 
+ * clauses that have already been handled and dispatched to the modules
+ * ({@link #alreadyDispatchedClauses}), and one containing clauses that
+ * have been derived by a prover module but not yet dispatched to the
+ * other modules ({@link #nonDispatchedClauses}).
+ * <p>
+ * The algorithm works step-by-step. At each step, the dispatcher does the
+ * following.
+ * <ul>
+ * <li>It dispatches all non dispatched clauses to the prover modules using
+ * {@link IProverModule#addClauseAndDetectContradiction(Clause)}.</li>
+ * <li>It gets the next clause from one of the prover module using 
+ * {@link IProverModule#next(boolean)}.</li>
+ * </ul>
+ * Between those two, it checks whether a contradiction has been derived and
+ * if it is the case, it first call {@link IProverModule#contradiction(Level, Level, Set)}
+ * on all prover modules and then it backtracks its data structures (the already
+ * dispatched clauses and the non-dispatched clauses). Doing so, it calls 
+ * {@link IProverModule#removeClause(Clause)} for each backtracked clause on each
+ * prover module.
+ * Before each steps, it checks whether the maximal number of steps has been 
+ * reached or whether the user has canceled the proof, in which case it stops.
+ * <p>
+ * The prover modules never have in their internal state clauses that are not
+ * in the {@link #alreadyDispatchedClauses} list of the clause dispatcher.
+ *
+ * @author François Terrier
+ *
+ */
+public final class ClauseDispatcher  {
 	
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
@@ -37,25 +67,25 @@ public class ClauseDispatcher implements IDispatcher {
 		System.out.println(message);
 	}
 	
-	private RandomAccessList<Clause> alreadyDispatchedClauses;
-	private ResetIterator<Clause> alreadyDispatchedBacktrackClausesIterator;
+	private final RandomAccessList<Clause> alreadyDispatchedClauses;
+	private final ResetIterator<Clause> alreadyDispatchedBacktrackClausesIterator;
+
+	private final RandomAccessList<Clause> nonDispatchedClauses;
+	private final ResetIterator<Clause> nonDispatchedClausesIterator;
+	private final ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
 	
-	private RandomAccessList<Clause> nonDispatchedClauses;
-	private ResetIterator<Clause> nonDispatchedClausesIterator;
-	private ResetIterator<Clause> nonDispatchedBacktrackClausesIterator;
+	private final Collection<Clause> originalClauses;
+	private final List<IProverModule> provers;
+	private final ClauseSimplifier simplifier;
+	private final Tracer tracer;
+	private final Dumper dumper;
 	
-	private Collection<Clause> originalClauses;
-	private List<IProverModule> provers;
-	private Tracer tracer;
-	private Dumper dumper;
-	private ClauseSimplifier simplifier;
-	
+	private PPResult result;
 	private int counter = 0;
 	private boolean canceled = false;
-	
+	private boolean terminated = false;
+
 	public ClauseDispatcher() {
-		level = Level.base;
-		
 		alreadyDispatchedClauses = new RandomAccessList<Clause>();
 		alreadyDispatchedBacktrackClausesIterator = alreadyDispatchedClauses.iterator();
 		nonDispatchedClauses = new RandomAccessList<Clause>();
@@ -67,28 +97,105 @@ public class ClauseDispatcher implements IDispatcher {
 		
 		simplifier = new ClauseSimplifier();
 		provers = new ArrayList<IProverModule>();
+		originalClauses = new ArrayList<Clause>();
 	}
 	
-	public void addProver(IProverModule prover) {
-		prover.initialize(simplifier);
+	/**
+	 * Adds a prover module to the clause dispatcher.
+	 * <p>
+	 * Prover module are invoked one after the other in the order
+	 * they were added to derive new clauses out of the dispatched
+	 * clauses.
+	 * 
+	 * @param prover the prover module to add
+	 */
+	public void addProverModule(IProverModule prover) {
 		prover.registerDumper(dumper);
 		provers.add(prover);
 	}
 	
+	/**
+	 * Sets the original clauses for this proof
+	 * 
+	 * @param clauses the original clauses
+	 */
 	public void setClauses(Collection<Clause> clauses) {
-		this.originalClauses = clauses;
+		this.originalClauses.addAll(clauses);
 	}
 	
+	/**
+	 * Adds a simplifier.
+	 * <p>
+	 * After a clause is derived by a prover module and before it
+	 * is added to the list of clauses, simplifiers added using this
+	 * method are called on the clause. They are called in the order
+	 * in which they were added. 
+	 * 
+	 * @param simplifier the simplifier to add
+	 */
 	public void addSimplifier(ISimplifier simplifier) {
 		this.simplifier.addSimplifier(simplifier);
 	}
 	
+	/**
+	 * Returns the tracer of this proof.
+	 * 
+	 * @return the tracer of this proof
+	 */
 	public ITracer getTracer() {
 		return tracer;
 	}
 	
+	/**
+	 * Returns the level controller.
+	 * 
+	 * @return the level controller
+	 */
+	public ILevelController getLevelController() {
+		return tracer;
+	}
+	
+	/**
+	 * Cancels this proof.
+	 */
 	public void cancel() {
 		this.canceled = true;
+	}
+	
+	/**
+	 * Returns the result of this proof.
+	 * 
+	 * @return the result of this proof
+	 */
+	public PPResult getResult() {
+		return result;
+	}
+	
+	/**
+	 * Starts the clause dispatcher on the specified clauses.
+	 * <p>
+	 * If a result is not found after the specified number of steps,
+	 * the clause dispatcher stops.
+	 * 
+	 * @param nofSteps the number of steps after which the clause dispatcher
+	 * stops
+	 */
+	public void mainLoop(long nofSteps) {
+		if (DEBUG) debug("=== ClauseDispatcher. Starting ===");
+		addOriginalClauses();
+		if (DEBUG) dumpOriginalClauses();
+		
+		boolean force = false;
+		while (!terminated) {
+			if (canceled) terminate(Result.cancel);
+			else if (!updateCounterAndCheckTermination(nofSteps)) {
+				// first phase, treat non dispatched clauses
+				if (!treatNondispatchedClausesAndCheckContradiction()) {
+					// second phase, all clauses have been treated
+					force = getNextClauseFromProvers(force);
+				}
+			}
+		}
 	}
 	
 	private void dumpOriginalClauses() {
@@ -98,24 +205,6 @@ public class ClauseDispatcher implements IDispatcher {
 			debug(iterator.next().toString());
 		}
 		iterator.invalidate();
-	}
-	
-	public void mainLoop(long nofSteps) {
-		if (DEBUG) debug("=== ClauseDispatcher. Starting ===");
-		addOriginalClauses();
-		if (DEBUG) dumpOriginalClauses();
-		
-		boolean force = false;
-		while (!terminated) {
-			if (canceled) noProofFound(Result.cancel);
-			else if (!updateCounterAndCheckTermination(nofSteps)) {
-				// first phase, treat non dispatched clauses
-				if (!treatNondispatchedClausesAndCheckContradiction()) {
-					// second phase, all clauses have been treated
-					force = getNextClauseFromProvers(force);
-				}
-			}
-		}
 	}
 	
 	private void addOriginalClauses() {
@@ -139,7 +228,7 @@ public class ClauseDispatcher implements IDispatcher {
 		if (nextResult.isEmpty()) {
 			if (DEBUG) debug("= Got no result this time =");
 			// proof done
-			if (force) noProofFound(Result.invalid);
+			if (force) terminate(Result.invalid);
 			return true;
 		}
 		else {
@@ -157,7 +246,7 @@ public class ClauseDispatcher implements IDispatcher {
 			Clause clause = nonDispatchedClausesIterator.next();
 			if (DEBUG) debug("== Next clause: "+clause+" ==");
 			
-			assert getLevel().compareTo(clause.getLevel()) >= 0;
+			assert tracer.getCurrentLevel().compareTo(clause.getLevel()) >= 0;
 
 			Set<IOrigin> contradictions = new HashSet<IOrigin>();
 			for (IProverModule prover : provers) {
@@ -179,10 +268,10 @@ public class ClauseDispatcher implements IDispatcher {
 	private boolean updateCounterAndCheckTermination(long nofSteps) {
 		counter++;
 		if (nofSteps > 0 && counter >= nofSteps) {
-			noProofFound(Result.timeout);
+			terminate(Result.timeout);
 			return true;
 		}
-		if (DEBUG) debug("=== ClauseDispatcher. Step "+counter+". Level "+level+" ===");
+		if (DEBUG) debug("=== ClauseDispatcher. Step "+counter+". Level "+tracer.getCurrentLevel()+" ===");
 		dumper.dump();
 		return false;
 	}
@@ -190,10 +279,16 @@ public class ClauseDispatcher implements IDispatcher {
 	private void treatProverResultAndCheckContradiction(ProverResult result, Set<IOrigin> contradictions) {
 		removeClauses(result.getSubsumedClauses());
 		Set<Clause> generatedClauses = result.getGeneratedClauses();
+		simplifyClauses(generatedClauses);
+		checkGeneratedClauseLevel(generatedClauses);
 		splitResultAndGetContradiction(generatedClauses, contradictions);
 		addNonDispatchedClauses(generatedClauses);
 	}
 	
+	private void simplifyClauses(Set<Clause> generatedClauses) {
+		simplifier.run(generatedClauses);
+	}
+
 	private void splitResultAndGetContradiction(Set<Clause> generatedClauses, Set<IOrigin> contradictions) {
 		for (Iterator<Clause> iter = generatedClauses.iterator(); iter.hasNext();) {
 			Clause clause = iter.next();
@@ -227,13 +322,19 @@ public class ClauseDispatcher implements IDispatcher {
 	
 	private void addNonDispatchedClauses(Set<Clause> clauses) {
 		for (Clause generatedClause : clauses) {
-			assert getLevel().compareTo(generatedClause.getLevel()) >= 0;
 			assert !generatedClause.isFalse();
 			assert !generatedClause.isTrue();
 			addNonDispatchedClause(generatedClause);
 		}
 	}
 	
+	private void checkGeneratedClauseLevel(Set<Clause> clauses) throws IllegalStateException {
+		for (Clause clause : clauses) {
+			if (clause.getLevel().equals(tracer.getCurrentLevel())) continue;
+			if (clause.getLevel().isAncestorInSameTree(tracer.getCurrentLevel())) continue;
+			else throw new IllegalStateException();
+		}
+	}
 	
 	private void addNonDispatchedClause(Clause clause) {
 		assert !clause.isFalse();
@@ -277,32 +378,30 @@ public class ClauseDispatcher implements IDispatcher {
 	
 	
 	private void internalContradiction(IOrigin origin) {
+		assert !tracer.getCurrentLevel().isAncestorOf(origin.getLevel());
 		if (DEBUG) debug("= Contradiction found on: "+origin+" =");
-		Level oldLevel = level;
-		
-		// contradiction has been found, backtrack
+		Level oldLevel = tracer.getCurrentLevel();
 		Set<Level> dependencies = new HashSet<Level>();
 		origin.getDependencies(dependencies);
 		if (DEBUG) debug("= Level dependencies: "+dependencies+" =");
-		
 		adjustLevel(origin);
 		if (terminated) return;
-		
-		if (DEBUG) debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+level+" =");
-		
+		if (DEBUG) debug("= Closing level: "+tracer.getLastClosedLevel()+", old level was: "+oldLevel+", new level is: "+tracer.getCurrentLevel()+" =");
+		dispatchContradictionToProvers(oldLevel, dependencies);
+		// we backtrack our own datastructure
+		if (DEBUG) debug("= Done dispatching, backtracking datastructures =");
+		backtrack(tracer.getCurrentLevel(), alreadyDispatchedBacktrackClausesIterator, alreadyDispatchedClauses);
+		backtrack(tracer.getCurrentLevel(), nonDispatchedBacktrackClausesIterator, nonDispatchedClauses);
+	}
+	
+	private void dispatchContradictionToProvers(Level oldLevel, Set<Level> dependencies) {
 		if (DEBUG) debug("= Dispatching contradiction to subprovers =");
 		Set<IOrigin> contradictions = new HashSet<IOrigin>();
 		for (IProverModule prover : provers) {
-			ProverResult result = prover.contradiction(oldLevel, level, dependencies);
+			ProverResult result = prover.contradiction(oldLevel, tracer.getCurrentLevel(), dependencies);
 			treatProverResultAndCheckContradiction(result, contradictions);
 		}	
 		assert contradictions.isEmpty();
-		
-		// we backtrack our own datastructure
-		if (DEBUG) debug("= Done dispatching, backtracking datastructures =");
-		
-		backtrack(level, alreadyDispatchedBacktrackClausesIterator, alreadyDispatchedClauses);
-		backtrack(level, nonDispatchedBacktrackClausesIterator, nonDispatchedClauses);
 	}
 	
 	private void backtrack(Level level, ResetIterator<Clause> iterator, 
@@ -330,51 +429,17 @@ public class ClauseDispatcher implements IDispatcher {
 		}
 	}
 	
-	public Level getLevel() {
-		return level;
-	}
-	
-	public void nextLevel() {
-		if (level.getLeftBranch().equals(tracer.getLastClosedLevel())) level = level.getRightBranch();
-		else level = level.getLeftBranch();
-	}
-	
 	private void adjustLevel(IOrigin origin) {
 		tracer.addClosingClauseAndUpdateLevel(origin);
-		if ( tracer.getLastClosedLevel().equals(Level.base)) {
-			// proof is done !
-			proofFound();
-			level = Level.base;
-		}
-		else {
-			// main loop on the next case
-			level =  tracer.getLastClosedLevel().getParent();
+		if (tracer.getLastClosedLevel().equals(Level.base)) {
+			terminate(Result.valid);
 		}
 	}
 	
-	private boolean terminated = false;
-	private PPResult result;
-	
-	public PPResult getResult() {
-		return result;
-	}
-
-	private void noProofFound(Result result1) {
-		result = new PPResult(result1, null);
+	private void terminate(Result result1) {
+		if (result1 != Result.valid) result = new PPResult(result1, null);
+		else result = new PPResult(result1, tracer);
 		terminated = true;
 	}
 	
-	private void proofFound() {
-		result = new PPResult(Result.valid, tracer);
-		terminated = true;
-	}
-
-	public boolean contains(Clause clause) {
-		if (alreadyDispatchedClauses.contains(clause)) {
-			Clause existingClause = alreadyDispatchedClauses.get(clause);
-			if (existingClause.equalsWithLevel(clause)) return true;
-		}
-		return false;
-	}
-
 }

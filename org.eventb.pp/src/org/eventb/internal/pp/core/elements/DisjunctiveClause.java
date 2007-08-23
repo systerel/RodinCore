@@ -14,6 +14,14 @@ import org.eventb.internal.pp.core.inferrers.IInferrer;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * Concrete implementation of {@link Clause} for disjunctive clauses.
+ * <p>
+ * Disjunctive clauses must not be empty.
+ * 
+ * @author François Terrier
+ *
+ */
 public final class DisjunctiveClause extends Clause {
 
 	private static final int BASE_HASHCODE = 3;
@@ -21,12 +29,14 @@ public final class DisjunctiveClause extends Clause {
 	DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
 		super(origin, predicates, equalities, arithmetic, conditions, BASE_HASHCODE);
 		
+		assert predicates.size() + equalities.size() + arithmetic.size() + conditions.size() >=1;
 		assert predicates != null && equalities != null && arithmetic != null && conditions != null;
 	}
 	
 	DisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic) {
 		super(origin, predicates, equalities, arithmetic, BASE_HASHCODE);
 		
+		assert predicates.size() + equalities.size() + arithmetic.size() + conditions.size() >=1;
 		assert predicates != null && equalities != null && arithmetic != null;
 	}
 	

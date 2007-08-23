@@ -11,7 +11,7 @@ package org.eventb.internal.pp.core.elements;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 
-public class Sort implements Comparable<Sort> {
+public final class Sort implements Comparable<Sort> {
 	
 	public static Sort NATURAL = new Sort(FormulaFactory.getDefault().makeIntegerType());
 	public static Sort BOOLEAN = new Sort(FormulaFactory.getDefault().makeBooleanType());

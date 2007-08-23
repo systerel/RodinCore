@@ -11,12 +11,12 @@ package org.eventb.internal.pp.core.simplifiers;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.eventb.internal.pp.core.IVariableContext;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.DisjunctiveClause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.EquivalenceClause;
 import org.eventb.internal.pp.core.elements.Literal;
+import org.eventb.internal.pp.core.elements.terms.VariableContext;
 
 /**
  * This simplifier removes all duplicate predicate, arithmetic or equality literals
@@ -37,9 +37,9 @@ import org.eventb.internal.pp.core.elements.Literal;
  */
 public class LiteralSimplifier extends AbstractSimplifier {
 	
-	private final IVariableContext context;
+	private final VariableContext context;
 	
-	public LiteralSimplifier(IVariableContext context) {
+	public LiteralSimplifier(VariableContext context) {
 		this.context = context;
 	}
 	
