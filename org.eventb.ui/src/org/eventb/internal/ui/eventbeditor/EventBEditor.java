@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -42,20 +43,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -546,83 +533,9 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 */
 	@Deprecated
 	public void edit(Object ssel) {
-		if (ssel instanceof IRodinElement) {
-			elementEdit((IRodinElement) ssel);
-			return;
-		}
-
+		this.getSite().getSelectionProvider().setSelection(
+				new StructuredSelection(ssel));
 		return;
-	}
-
-	/**
-	 * Set the selection in the editor if the input is a Rodin element.
-	 * <p>
-	 * 
-	 * @param element
-	 *            instance of IRodinElement
-	 */
-	private void elementEdit(IRodinElement element) {
-		if (element instanceof IMachineFile)
-			return;
-
-		if (element instanceof IContextFile)
-			return;
-
-		if (element instanceof ISeesContext) {
-			this.setActivePage(DependenciesPage.PAGE_ID);
-			return;
-		}
-
-		if (element instanceof IAxiom) {
-			this.setActivePage(AxiomPage.PAGE_ID);
-		}
-
-		else if (element instanceof ITheorem) {
-			this.setActivePage(TheoremPage.PAGE_ID);
-		}
-
-		else if (element instanceof ICarrierSet) {
-			this.setActivePage(CarrierSetPage.PAGE_ID);
-		}
-
-		else if (element instanceof IConstant)
-			this.setActivePage(ConstantPage.PAGE_ID);
-
-		else if (element instanceof IInvariant)
-			this.setActivePage(InvariantPage.PAGE_ID);
-
-		else if (element instanceof IEvent)
-			this.setActivePage(EventPage.PAGE_ID);
-
-		else if (element instanceof IVariable) {
-			if (element.getParent() instanceof IMachineFile)
-				this.setActivePage(VariablePage.PAGE_ID);
-			else
-				this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IGuard) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IAction) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IRefinesEvent) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		else if (element instanceof IWitness) {
-			this.setActivePage(EventPage.PAGE_ID);
-		}
-
-		// select the element within the page
-		IFormPage page = this.getActivePageInstance();
-		if (page instanceof EventBFormPage) {
-			((EventBFormPage) page).edit(element);
-		}
-
 	}
 
 	public F getRodinInput() {

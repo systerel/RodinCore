@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -26,7 +27,9 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
  *         <p>
  *         An implementation of the Event-B Form Page for editing Carrier Sets
  *         (Rodin elements).
+ * @deprecated use {@link EditPage} instead.
  */
+@Deprecated
 public class CarrierSetPage extends EventBFormPage {
 
 	// Title, tab title and ID of the page.
