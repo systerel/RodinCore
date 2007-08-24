@@ -11,18 +11,17 @@ public abstract class Reorganizer {
 	public static Predicate reorganize(RelationalPredicate pred, FormulaFactory ff) {
 		
 		final ConditionalQuant forall = new ConditionalQuant(ff);
-
 		final Predicate newPred = doPhase(pred, new ExpressionExtractor(forall, ff), ff);
-		if(newPred == pred) return pred;
-		else {
-			forall.startPhase2();
-			pred = doPhase(pred, new ExpressionExtractor(forall, ff), ff);
-			
-			return forall.conditionalQuantify(Formula.FORALL, pred, null);
+		if (newPred == pred) {
+			return pred;
 		}
+		forall.startPhase2();
+		pred = doPhase(pred, new ExpressionExtractor(forall, ff), ff);
+
+		return forall.conditionalQuantify(Formula.FORALL, pred, null);
 	}
 	
-	protected static RelationalPredicate doPhase(
+	private static RelationalPredicate doPhase(
 			RelationalPredicate pred, ExpressionExtractor extractor, FormulaFactory ff) {
 	
 		Expression left = extractor.translate(pred.getLeft());
