@@ -40,7 +40,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.RodinDB;
 
 /**
  * @author htson
@@ -208,7 +207,7 @@ public class ObligationExplorerContentProvider implements
 			}
 
 			// Ignore changes to irrelevant elements.
-			if (!(element instanceof RodinDB
+			if (!(element instanceof IRodinDB
 					|| element instanceof IRodinProject
 					|| element instanceof IPSFile || element instanceof IPSStatus)) {
 				return false;
