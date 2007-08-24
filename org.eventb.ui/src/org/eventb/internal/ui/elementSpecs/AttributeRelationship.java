@@ -2,7 +2,7 @@ package org.eventb.internal.ui.elementSpecs;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.core.RodinCore;
 
 public class AttributeRelationship implements IAttributeRelationship {
 
@@ -16,8 +16,7 @@ public class AttributeRelationship implements IAttributeRelationship {
 			IInternalElementType<?> elementType, String attributeName) {
 		this.id = id;
 		this.elementType = elementType;
-		attributeType = ElementTypeManager.getInstance().getAttributeType(
-				attributeName);
+		attributeType = RodinCore.getAttributeType(attributeName);
 	}
 
 	public String getID() {
