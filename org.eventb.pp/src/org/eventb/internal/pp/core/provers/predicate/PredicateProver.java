@@ -70,7 +70,7 @@ public class PredicateProver implements IProverModule {
 			return true;
 		}
 		else {
-			counter = unitClauses.size()*5;
+			counter = 50;
 			return false;
 		}
 	}
@@ -107,7 +107,7 @@ public class PredicateProver implements IProverModule {
 			if (nextClause.getSubsumedClause() != null) result = new ProverResult(clause, nextClause.getSubsumedClause());
 			else result = new ProverResult(clause);
 		}
-		if (DEBUG) debug("PredicateProver, next clause: "+result);
+		if (DEBUG) debug("PredicateProver["+counter+"], next clause: "+result);
 		return result;
 	}
 	

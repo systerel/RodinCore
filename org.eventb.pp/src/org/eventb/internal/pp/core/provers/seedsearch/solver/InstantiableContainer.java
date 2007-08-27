@@ -31,15 +31,16 @@ final class InstantiableContainer {
 		return transmitorLinks.contains(link);
 	}
 	
+	boolean isValid() {
+		return !transmitted || !transmitorLinks.isEmpty();
+	}
+	
 	void removeTransmitorLink(VariableLink link) {
 		assert transmitorLinks.contains(link);
 		
 		transmitorLinks.remove(link);
 	}
 	
-	boolean hasTransmitorLinks() {
-		return !transmitorLinks.isEmpty();
-	}
 	
 	boolean isTransmitted() {
 		return transmitted;
@@ -47,12 +48,9 @@ final class InstantiableContainer {
 	
 	void setNotTransmitted() {
 		transmitted = false;
-		transmitorLinks.clear();
 	}
 	
 	void addTransmitorLink(VariableLink link) {
-		assert transmitted;
-		
 		transmitorLinks.add(link);
 	}
 	

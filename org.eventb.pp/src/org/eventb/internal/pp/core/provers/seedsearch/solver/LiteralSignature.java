@@ -83,11 +83,11 @@ public class LiteralSignature {
 		return instantiables.get(value);
 	}
 	
-	Iterable<Instantiable> getInstantiables() {
+	public Iterable<Instantiable> getInstantiables() {
 		return new HashSet<Instantiable>(instantiables.keySet());
 	}
 	
-	void removeInstantiable(Instantiable value) {
+	public void removeInstantiable(Instantiable value) {
 		instantiables.remove(value);
 	}
 	

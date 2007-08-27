@@ -9,6 +9,8 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
+import org.eventb.internal.pp.core.ILevelController;
+import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -103,7 +105,15 @@ public class TestSeedSearch extends AbstractPPTest {
 
 	private SeedSearchProver getProver() {
 		VariableContext context = new VariableContext();
-		SeedSearchProver prover = new SeedSearchProver(context);
+		SeedSearchProver prover = new SeedSearchProver(context, new ILevelController(){
+			public Level getCurrentLevel() {
+				return BASE;
+			}
+
+			public void nextLevel() {
+				// nothing
+			}
+		});
 		return prover;
 	}
 	

@@ -19,6 +19,7 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.Dumper;
+import org.eventb.internal.pp.core.ILevelController;
 import org.eventb.internal.pp.core.IProverModule;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
@@ -44,9 +45,11 @@ public class SeedSearchProver implements IProverModule {
 	private SeedSearchManager manager = new SeedSearchManager();
 	private InstantiationInferrer inferrer;
 	private VariableContext context;
+	private ILevelController levelController;
 	
-	public SeedSearchProver(VariableContext context) {
+	public SeedSearchProver(VariableContext context, ILevelController levelController) {
 		this.context = context;
+		this.levelController = levelController;
 		this.inferrer = new InstantiationInferrer(context);
 	}
 	
@@ -102,11 +105,12 @@ public class SeedSearchProver implements IProverModule {
 		if (checkAndAddInstantiation(result.getInstantiableClause(), variable, result.getConstant())) return null;
 		inferrer.addInstantiation(variable, result.getConstant());
 		result.getInstantiableClause().infer(inferrer);
-		return inferrer.getResult();
+		Clause clause = inferrer.getResult();
+		assert clause.getLevel().isAncestorInSameTree(levelController.getCurrentLevel()) || clause.getLevel().equals(levelController.getCurrentLevel());
+		return clause;
 	}
 	
 	private void addConstants(Clause clause, PredicateLiteral literal1, List<SeedSearchResult> result) {
-		
 		// equivalence clauses for constants
 		if (clause.isEquivalence()) { 
 			PredicateLiteral inverse = literal1.getInverse();
@@ -234,7 +238,7 @@ public class SeedSearchProver implements IProverModule {
 		return ProverResult.EMPTY_RESULT;
 	}
 
-	private static final int ARBITRARY_SEARCH = 5;
+	private static final int ARBITRARY_SEARCH = 1;
 	private double currentNumberOfArbitrary = 0;
 	private double currentCounter = ARBITRARY_SEARCH;
 	
@@ -244,12 +248,14 @@ public class SeedSearchProver implements IProverModule {
 	
 	private boolean checkAndUpdateCounter() {
 		currentCounter--;
-		if (currentCounter == 0) {
+		if (currentCounter > 0) {
+			return false;
+		}
+		else {
 			currentNumberOfArbitrary++;
 			resetCounter();
 			return true;
 		}
-		return false;
 	}
 	
 	private List<Clause> nextArbitraryInstantiation() {
@@ -262,14 +268,15 @@ public class SeedSearchProver implements IProverModule {
 		return result;
 	}
 	
-	private int counter = 0;
+	private static final int INIT = 10;
+	private int counter = INIT;
 	private boolean isNextAvailable() {
 		if (counter > 0) {
 			counter--;
 			return false;
 		}
 		else {
-			counter = generatedClausesStack.size();
+			counter = INIT;
 			return true;
 		}
 	}
@@ -279,7 +286,11 @@ public class SeedSearchProver implements IProverModule {
 		
 		Set<Clause> nextClauses = new HashSet<Clause>();
 		if (!generatedClausesStack.isEmpty()) nextClauses.addAll(generatedClausesStack.remove(0));
-		if (checkAndUpdateCounter() || force) nextClauses.addAll(nextArbitraryInstantiation());
+		if (checkAndUpdateCounter() || force) {
+			List<Clause> clauses = nextArbitraryInstantiation();
+			nextClauses.addAll(clauses);
+			if (DEBUG) debug("SeedSearchProver, arbitrary instantiation: "+clauses);
+		}
 		
 		ProverResult result = new ProverResult(nextClauses,new HashSet<Clause>());
 		if (DEBUG) debug("SeedSearchProver, next clauses: "+nextClauses+", remaining clauses: "+generatedClausesStack.size());

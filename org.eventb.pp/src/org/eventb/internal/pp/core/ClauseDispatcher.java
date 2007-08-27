@@ -242,7 +242,7 @@ public final class ClauseDispatcher  {
 	private boolean treatNondispatchedClausesAndCheckContradiction() {
 		if (DEBUG) debug("== Treating non dispatched clauses ==");
 		nonDispatchedClausesIterator.reset();
-		while (nonDispatchedClausesIterator.hasNext()) {
+		while (nonDispatchedClausesIterator.hasNext() && !canceled) {
 			Clause clause = nonDispatchedClausesIterator.next();
 			if (DEBUG) debug("== Next clause: "+clause+" ==");
 			

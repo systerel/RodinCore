@@ -53,15 +53,16 @@ public class CaseSplitter implements IProverModule {
 		return backtrack(oldLevel, newLevel, dependencies);
 	}
 	
+	private static final int INIT = 3;
 	private int counter = 0;
 	private boolean isNextAvailable() {
 		if (counter > 0) {
 			counter--;
-			return true;
+			return false;
 		}
 		else {
-			counter = candidates.size()*50;
-			return false;
+			counter = INIT;
+			return true;
 		}
 	}
 	
@@ -80,6 +81,7 @@ public class CaseSplitter implements IProverModule {
 		else result = nextCase();
 		assertCorrectResult(result);
 		
+		if (DEBUG) debug("CaseSplitter["+counter+"]: "+result);
 //		assert splits.size() == dispatcher.getCurrentLevel().getHeight();
 		return new ProverResult(result, new HashSet<Clause>());
 	}

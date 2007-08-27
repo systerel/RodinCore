@@ -98,6 +98,10 @@ public class SeedSearchManager {
 		// otherwise it means there are two clauses with the same level, which is 
 		// impossible since the clause dispatcher removes all clauses with a higher level
 		// before adding the same clause with a lower level
+		for (Clause existingClause : instantiablesCache.keySet()) {
+			if (clause.equals(existingClause)) assert clause.equalsWithLevel(existingClause);
+		}
+		
 		Set<Instantiable> existingInstantiables = instantiablesCache.get(clause);
 		if (existingInstantiables == null) {
 			existingInstantiables = new HashSet<Instantiable>();
@@ -213,20 +217,18 @@ public class SeedSearchManager {
 	public void removeClause(Clause clause) {
 		// TODO refactor
 		
-		// 1) for variable links
-		// reconstruct link descriptor + remove clause
-		// we use a cache of link descriptors per clause
-		Set<LinkDescriptor> linkDescriptors = clauseLinksCache.remove(clause);
-		if (linkDescriptors != null) {
-			for (LinkDescriptor descriptor : linkDescriptors) {
-				VariableLink link = links.get(descriptor);
-				link.removeClause(clause);
-				if (!link.isValid()) {
-					solver.removeVariableLink(link);
-					links.remove(descriptor);
-				}
+		// 2) for instantiablesCache
+		// we use the clause -> instantiable hash table
+		Set<Instantiable> instantiableDescriptors = instantiablesCache.remove(clause);
+		if (instantiableDescriptors != null) {
+			for (Instantiable instantiable : instantiableDescriptors) {
+//				solver.removeInstantiable(instantiable);
+				removeInstantiable(instantiable);
+				instantiables.remove(instantiable);
 			}
 		}
+		
+//		assertNoMoreInstantiables(clause);
 		
 		// 3) for constants
 		// reconstruct constant descriptor
@@ -243,18 +245,38 @@ public class SeedSearchManager {
 			}
 		}
 		
-		// 2) for instantiablesCache
-		// we use the clause -> instantiable hash table
-		Set<Instantiable> instantiableDescriptors = instantiablesCache.remove(clause);
-		if (instantiableDescriptors != null) {
-			for (Instantiable instantiable : instantiableDescriptors) {
-				solver.removeInstantiable(instantiable);
-				instantiables.remove(instantiable);
+		// 1) for variable links
+		// reconstruct link descriptor + remove clause
+		// we use a cache of link descriptors per clause
+		Set<LinkDescriptor> linkDescriptors = clauseLinksCache.remove(clause);
+		if (linkDescriptors != null) {
+			for (LinkDescriptor descriptor : linkDescriptors) {
+				VariableLink link = links.get(descriptor);
+				link.removeClause(clause);
+				if (!link.isValid()) {
+					solver.removeVariableLink(link);
+					links.remove(descriptor);
+				}
 			}
 		}
 		
 	}
 	
+	private void removeInstantiable(Instantiable instantiable) {
+		for (LiteralSignature signature : signatures.values()) {
+			signature.removeInstantiable(instantiable);
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void assertNoMoreInstantiables(Clause clause) {
+		for (LiteralSignature signature : signatures.values()) {
+			for (Instantiable instantiable : signature.getInstantiables()) {
+				assert !instantiable.getClause().equals(clause);
+			}
+		}
+	}
+
 	public void backtrack(Level level) {
 		// no need for backtracking, we let removeClause do the job
 	}

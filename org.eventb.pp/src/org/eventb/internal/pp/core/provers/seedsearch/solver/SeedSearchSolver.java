@@ -67,7 +67,7 @@ public class SeedSearchSolver {
 		InstantiableContainer container = matchingSignature.getInstantiableContainer(instantiable);
 		if (container != null) {
 			// we stop here
-			if (link != null && container.isTransmitted()) container.addTransmitorLink(link);
+			if (link != null) container.addTransmitorLink(link);
 			else container.setNotTransmitted();
 		}
 		else {
@@ -96,6 +96,7 @@ public class SeedSearchSolver {
 		deleteInstantiable(instantiable, instantiable.getSignature(), null);
 	}
 
+	
 	private void deleteInstantiable(Instantiable instantiable, LiteralSignature signature, VariableLink link) {
 		LiteralSignature matchingSignature = signature.getMatchingLiteral();
 		InstantiableContainer container = matchingSignature.getInstantiableContainer(instantiable);
@@ -106,7 +107,7 @@ public class SeedSearchSolver {
 				// we remove the link
 				container.removeTransmitorLink(link);
 			}
-			if (link == null || !container.hasTransmitorLinks()) {
+			if (link == null || !container.isValid()) {
 				// we remove the container and continue
 				matchingSignature.removeInstantiable(instantiable);
 				for (VariableLink goingLink : matchingSignature.getVariableLinks()) {

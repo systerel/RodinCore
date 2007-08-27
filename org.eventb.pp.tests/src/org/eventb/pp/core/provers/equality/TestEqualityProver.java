@@ -25,7 +25,7 @@ public class TestEqualityProver extends AbstractPPTest {
 		prover.addClauseAndDetectContradiction(cClause(cEqual(a, x), cProp(0)));
 		prover.addClauseAndDetectContradiction(cClause(cNEqual(a, b)));
 		
-		ProverResult result = prover.next(false);
+		ProverResult result = prover.next(true);
 		assertEquals(result.getGeneratedClauses(), mSet(cClause(cProp(0))));
 	}
 	

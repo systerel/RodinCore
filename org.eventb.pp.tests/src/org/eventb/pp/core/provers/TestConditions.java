@@ -55,7 +55,7 @@ public class TestConditions extends AbstractPPTest {
 		
 		PredicateProver prover = new PredicateProver(context);
 		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy.getLevelController());
-		SeedSearchProver seedsearch = new SeedSearchProver(context);
+		SeedSearchProver seedsearch = new SeedSearchProver(context, proofStrategy.getLevelController());
 		EqualityProver equalityprover = new EqualityProver(context);
 		ExtensionalityProver extensionalityProver = new ExtensionalityProver(table, context);
 		proofStrategy.addProverModule(prover);

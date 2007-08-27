@@ -177,6 +177,92 @@ public class RodinTests extends AbstractPPTest {
 		doTestHelper(pair);
 	}
 	
+	public void testTrain() {
+		initDebug();
+		
+		doTest(
+				mList(
+				"nxt","ℙ(R×ℙ(B×B))",
+				"lst","ℙ(R×B)",
+				"R","ℙ(R)",
+				"B","ℙ(B)",
+				"rtbl","ℙ(B×R)",
+				"fst","ℙ(R×B)",
+				"n","ℙ(B×B)",
+				"b","B",
+				"rsrtbl","ℙ(B×R)",
+				"r","R",
+				"OCC","ℙ(B)"
+				),
+				 mSet(
+				"b∈OCC",
+				"n=nxt(r)",
+				"(rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b})=rsrtbl∼[{r}] ∖ OCC",
+				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}] ∖ {b}",
+				"b∈ran(nxt(r))∧(nxt(r))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(r))∼(b))=r",
+				"(rsrtbl∼[{r}] ∖ {b}) ∖ OCC=rsrtbl∼[{r}] ∖ OCC",
+				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅",
+				"rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})=(rtbl∼[{r}] ∖ rsrtbl∼[{r}])∪{b}",
+				"nxt∈R ⇸ ℙ(B × B)",
+				"(nxt(r))[(rtbl∼[{r}] ∖ rsrtbl∼[{r}])∪{b}]=(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∪(nxt(r))[{b}]",
+				"r∈dom(nxt)",
+				"b∈dom(nxt(r))",
+				"(nxt(r))(b)∈OCC",
+				"nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"
+				),"(nxt(r))[{b}]∩(rsrtbl∼[{r}] ∖ OCC)=∅",true);
+	}
+	
+//	public void testTrain2() {
+//		initDebug();
+//		doTest(
+//				mList(
+//				"nxt","ℙ(R×ℙ(B×B))",
+//				"rtbl","ℙ(B×R)",
+//				"n","ℙ(B×B)",
+//				"b","B",
+//				"r","R",
+//				"rsrtbl","ℙ(B×R)",
+//				"OCC","ℙ(B)"
+//				),
+//				 mSet(
+//				"b∈OCC",
+//				"n=nxt(rsrtbl(b))",
+//				"b∈dom(nxt(rsrtbl(b)))⇒(nxt(rsrtbl(b)))(b)∈OCC",
+//				"b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)",
+//				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅", // needed
+//				"¬rsrtbl(b)=r",
+//				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}]" // needed
+//				),"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ (OCC ∖ {b}))=∅",true);
+//	}
+	
+	public void testList() {
+		initDebug();
+		
+		doTest(
+			mList(
+			"m","ℙ(M×M)",
+			"l","M",
+			"p","N",
+			"n","ℙ(N×N)",
+			"N","ℙ(N)",
+			"f","M",
+			"M","ℙ(M)",
+			"s","ℙ(M×N)",
+			"d","N"
+			),
+			 mSet(
+			"m∈M ∖ {l} ⤖ M ∖ {f}",
+			"n∈N ∖ {d} ⤖ N ∖ {p}",
+			"s∈M ↔ N",
+			"s;n=m;s",
+			"s[{f}]={p}",
+			"n;s∼=s∼;m",
+			"s∈M ⤖ N",
+			"s[{l}] ∖ {d}=∅"
+			),"s(l)=d",true);
+	}
+	
+	
 	public void testFailingLevels() {
 		initDebug();
 
@@ -214,7 +300,7 @@ public class RodinTests extends AbstractPPTest {
 				"(∀x·¬x=f⇒(∃x0·x0 ↦ x∈m))",
 				"(∀x,x0,x1·x0 ↦ x∈m∧x1 ↦ x∈m⇒x0=x1)",
 				"∀x·(∀x0·x0∈x⇒(∃x1·x1∈x∧x1 ↦ x0∈m))⇒(∀x0·¬x0∈x)"
-				),"l=f",false,10000);
+				),"l=f",false,2000);
 		
 		doTest(
 				mList(
@@ -226,7 +312,7 @@ public class RodinTests extends AbstractPPTest {
 				 mSet(
 				"m∈M ∖ {l} ⤖ M ∖ {f}",
 				"∀x·x⊆m[x]⇒x=∅"
-				),"l=f",false,10000);
+				),"l=f",false,2000);
 	}
 	
 	public void testSimpleSplit() {
@@ -708,20 +794,20 @@ public class RodinTests extends AbstractPPTest {
 		
 	}
 	
-	public void testLoop() {
-		doTest(
-				mList(
-				"q","ℙ(S)",
-				"r","ℙ(S×S)"
-				),
-				 mSet(
-				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
-				"r∈ran(r) ⇸ ran(r)",
-				"r∼[q]⊆q",
-				"ran(r) ∖ dom(r)⊆q",
-				"q⊆ran(r)"
-				),"ran(r)⊆q",true);	
-	}
+//	public void testLoop() {
+//		doTest(
+//				mList(
+//				"q","ℙ(S)",
+//				"r","ℙ(S×S)"
+//				),
+//				 mSet(
+//				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
+//				"r∈ran(r) ⇸ ran(r)",
+//				"r∼[q]⊆q",
+//				"ran(r) ∖ dom(r)⊆q",
+//				"q⊆ran(r)"
+//				),"ran(r)⊆q",true);	
+//	}
 
 	public void testRelation() {
 		doTest(
@@ -886,6 +972,8 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testAllFunctionSameType() {
+		initDebug();
+		
 		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
 				"r∈S ↣ S", "s∈S ↣ S"),
 				"r;s∈S ↣ S",true);

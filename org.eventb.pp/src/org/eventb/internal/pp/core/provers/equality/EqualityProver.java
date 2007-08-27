@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.Map.Entry;
 
 import org.eventb.internal.pp.core.Dumper;
@@ -50,34 +50,54 @@ public class EqualityProver implements IProverModule {
 	private EqualityInferrer inferrer;
 	private EqualityInstantiationInferrer instantiationInferrer;
 	
-	private HashSet<Clause> equalityInstantiations;
+	private Vector<Set<Clause>> nonDispatchedClauses;
 	
 	public EqualityProver(VariableContext context) {
 		this.inferrer = new EqualityInferrer(context);
 		this.instantiationInferrer = new EqualityInstantiationInferrer(context);
-		this.equalityInstantiations = new LinkedHashSet<Clause>();
+		this.nonDispatchedClauses = new Vector<Set<Clause>>();
 	}
 	
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		manager.backtrack(newLevel);
 		
-		backtrackInstantiations(newLevel);
+		backtrackClauses(newLevel);
 		
 		return ProverResult.EMPTY_RESULT;
 	}
 
-	private void backtrackInstantiations(Level level) {
-		for (Iterator<Clause> iterator = equalityInstantiations.iterator(); iterator.hasNext();) {
-			Clause clause = iterator.next();
-			if (level.isAncestorOf(clause.getLevel())) iterator.remove();
+	private void backtrackClauses(Level newLevel) {
+		for (Iterator<Set<Clause>> iter = nonDispatchedClauses.iterator(); iter.hasNext();) {
+			Set<Clause> clauses = iter.next();
+			for (Iterator<Clause> iter2 = clauses.iterator(); iter2.hasNext();) {
+				Clause clause = iter2.next();
+				if (newLevel.isAncestorOf(clause.getLevel())) {
+					iter2.remove();
+					if (clauses.isEmpty()) iter.remove();
+				}
+			}
+		}
+	}
+	
+	private static final int INIT = 20;
+	private int counter = INIT;
+	private boolean isNextAvailable() {
+		if (counter > 0) {
+			counter--;
+			return false;
+		}
+		else {
+			counter = INIT;
+			return true;
 		}
 	}
 	
 	public ProverResult next(boolean force) {
+		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT;
 		// return equality instantiations here, if not, it loops
-		if (equalityInstantiations.isEmpty()) return ProverResult.EMPTY_RESULT;
-		Set<Clause> result = new HashSet<Clause>(equalityInstantiations);
-		equalityInstantiations.clear();
+		if (nonDispatchedClauses.isEmpty()) return ProverResult.EMPTY_RESULT;
+		Set<Clause> result = nonDispatchedClauses.remove(0);
+		if (DEBUG) debug("EqualityProver :"+result);
 		return new ProverResult(result, new HashSet<Clause>());
 	}
 
@@ -88,9 +108,29 @@ public class EqualityProver implements IProverModule {
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		Set<Clause> generatedClauses = new HashSet<Clause>();
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
+		Set<Clause> instantiationClauses = new HashSet<Clause>();
 		
-		addClause(clause, generatedClauses, subsumedClauses);
+		addClause(clause, generatedClauses, subsumedClauses, instantiationClauses);
+		splitClauses(generatedClauses, instantiationClauses);
+		
 		return new ProverResult(generatedClauses, subsumedClauses);
+	}
+	
+	private void splitClauses(Set<Clause> generatedClauses, Set<Clause> instantiationClauses) {
+		Set<Clause> clauses = new HashSet<Clause>();
+		for (Iterator<Clause> iterator = generatedClauses.iterator(); iterator.hasNext();) {
+			Clause clause = iterator.next();
+			if (clause.isFalse()) continue;
+			if (clause.isTrue()) continue;
+			if (clause.isUnit()) continue;
+			if (clause.getEqualityLiteralsSize() == 0) continue;
+			else {
+				iterator.remove();
+				clauses.add(clause);
+			}
+		}
+		clauses.addAll(instantiationClauses);
+		if (!clauses.isEmpty()) nonDispatchedClauses.add(clauses);
 	}
 	
 	public void removeClause(Clause clause) {
@@ -113,7 +153,8 @@ public class EqualityProver implements IProverModule {
 		return false;
 	}
 	
-	private void addClause(Clause clause, Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
+	private void addClause(Clause clause, Set<Clause> generatedClauses,
+			Set<Clause> subsumedClauses, Set<Clause> instantiationClauses) {
 		if (clause.isUnit() && (clause.getEqualityLiteralsSize()>0 || clause.getConditionsSize()>0)) {
 			EqualityLiteral equality = null;
 			if (clause.getConditionsSize()==1) equality = clause.getCondition(0);
@@ -125,7 +166,7 @@ public class EqualityProver implements IProverModule {
 			}
 			
 			IFactResult result = manager.addFactEquality(equality, clause);
-			handleFactResult(result, generatedClauses, subsumedClauses);
+			handleFactResult(result, generatedClauses, subsumedClauses, instantiationClauses);
 		}
 		else if (clause.getEqualityLiteralsSize()>0 || clause.getConditionsSize()>0) {
 			ArrayList<IQueryResult> queryResult = new ArrayList<IQueryResult>();
@@ -141,7 +182,7 @@ public class EqualityProver implements IProverModule {
 			handleEqualityList(clause.getConditions(), clause,
 					queryResult, instantiationResult, true);
 			handleQueryResult(queryResult, generatedClauses, subsumedClauses);
-			handleInstantiationResult(instantiationResult, equalityInstantiations);
+			handleInstantiationResult(instantiationResult, instantiationClauses);
 		}
 	}
 
@@ -182,7 +223,8 @@ public class EqualityProver implements IProverModule {
 	}
 
 	private void handleFactResult(IFactResult result,
-			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
+			Set<Clause> generatedClauses, Set<Clause> subsumedClauses,
+			Set<Clause> instantiationClauses) {
 		if (result == null) return;
 		if (result.hasContradiction()) {
 			List<Clause> contradictionOrigin = result.getContradictionOrigin();
@@ -191,7 +233,7 @@ public class EqualityProver implements IProverModule {
 		}
 		else {
 			if (result.getSolvedQueries() != null) handleQueryResult(result.getSolvedQueries(), generatedClauses, subsumedClauses);
-			if (result.getSolvedInstantiations() != null) handleInstantiationResult(result.getSolvedInstantiations(), equalityInstantiations);
+			if (result.getSolvedInstantiations() != null) handleInstantiationResult(result.getSolvedInstantiations(), instantiationClauses);
 		}
 	}
 	
