@@ -66,13 +66,13 @@ public class AutoPOMTest extends BuilderTest {
 				"y∈ℕ" 
 		);
 		POUtil.addSequent(poFile, "PO3", 
-				"∃x·x=3", 
+				"3=3", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"
 		);
 		POUtil.addSequent(poFile, "PO4", 
-				"1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))", 
+				"1=1 ∧2=2 ∧x ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"

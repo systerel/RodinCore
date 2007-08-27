@@ -8,6 +8,9 @@
 
 package org.eventb.core.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IMarker;
@@ -26,6 +29,10 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -104,10 +111,33 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	protected static void enableAutoProver() {
-		EventBPlugin.getPOMTacticPreference().setEnabled(true);
-	}
+	private static final String[] autoTacticIds = new String[] {
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.falseHypTac",
+		"org.eventb.core.seqprover.goalInHypTac",
+		"org.eventb.core.seqprover.funGoalTac",
+		"org.eventb.core.seqprover.autoRewriteTac",
+		"org.eventb.core.seqprover.typeRewriteTac",
+		"org.eventb.core.seqprover.findContrHypsTac",
+		"org.eventb.core.seqprover.eqHypTac",
+		"org.eventb.core.seqprover.shrinkImpHypTac",
+		"org.eventb.core.seqprover.clarifyGoalTac",
+	};
 	
+	protected static void enableAutoProver() {
+		final IAutoTacticPreference autoPref = EventBPlugin
+				.getPOMTacticPreference();
+		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
+				autoTacticIds.length);
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		for (String id : autoTacticIds) {
+			descrs.add(reg.getTacticDescriptor(id));
+		}
+		autoPref.setSelectedDescriptors(descrs);
+		autoPref.setEnabled(true);
+	}
+
 	protected static void disableAutoProver() {
 		EventBPlugin.getPOMTacticPreference().setEnabled(false);
 	}
