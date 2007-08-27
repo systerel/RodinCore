@@ -59,9 +59,9 @@ public abstract class TestPM extends BasicTest {
 				mTypeEnvironment());
 		POUtil.addSequent(poFile, "PO2", "1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ"), "y∈ℕ");
-		POUtil.addSequent(poFile, "PO3", "∃x·x=3", hyp0, mTypeEnvironment(),
+		POUtil.addSequent(poFile, "PO3", "3=3", hyp0, mTypeEnvironment(),
 				"3=3");
-		POUtil.addSequent(poFile, "PO4", "1=1 ∧2=2 ∧x ∈ℕ∧(∃x·(x=3))", hyp0,
+		POUtil.addSequent(poFile, "PO4", "1=1 ∧ 2=2 ∧ x∈ℕ ∧ 3=3", hyp0,
 				mTypeEnvironment(), "3=3");
 		POUtil.addSequent(poFile, "PO5", "1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ"), "y∈ℕ");

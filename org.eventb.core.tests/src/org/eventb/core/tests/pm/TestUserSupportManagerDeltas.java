@@ -26,7 +26,7 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		IPOFile poFile2 = createPOFile("y");
 		IPSFile psFile2 = poFile2.getPSFile();
 
-		enableAutoProver();
+		enableAutoProver(true);
 		runBuilder();
 
 		startDeltas();

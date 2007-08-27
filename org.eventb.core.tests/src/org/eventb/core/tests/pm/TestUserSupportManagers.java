@@ -27,7 +27,6 @@ public class TestUserSupportManagers extends TestPM {
 		IPOFile poFile2 = createPOFile("y");
 		IPSFile psFile2 = poFile2.getPSFile();
 
-		enableAutoProver();
 		runBuilder();
 
 		// Initial number of opened user supports

@@ -131,7 +131,7 @@ public class PendingSubgoalTests extends TestPM {
 		prFile = poFile.getPRFile();
 		psFile = poFile.getPSFile();
 
-		enableAutoProver();
+		enableAutoProver(true);
 		runBuilder();
 
 		userSupport = new UserSupport();

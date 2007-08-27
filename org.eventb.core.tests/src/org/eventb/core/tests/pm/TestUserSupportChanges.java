@@ -67,6 +67,7 @@ public class TestUserSupportChanges extends TestPM {
 
 		// Turn on beginner mode
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		enableAutoProver(true);
 		userSupport = new UserSupport();
 	}
 
@@ -93,7 +94,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 
@@ -132,7 +132,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
@@ -174,7 +173,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil
@@ -229,7 +227,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		String original = userSupport.toString();
@@ -253,7 +250,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
@@ -301,7 +297,6 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
@@ -359,7 +354,6 @@ public class TestUserSupportChanges extends TestPM {
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
@@ -428,7 +422,6 @@ public class TestUserSupportChanges extends TestPM {
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
 		poFile.save(null, true);
-		enableAutoProver();
 		runBuilder();
 		userSupport.setInput(psFile, null);
 		// Modified current PO
