@@ -90,11 +90,19 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		internalElements.putAll(childrenMap);
 		info.setChildren(childrenMap.keySet());
 	}
+	
+	public synchronized long getVersion() throws RodinDBException {
+		return buffer.getVersion();
+	}
 
+	public synchronized void setVersion(long version) throws RodinDBException {
+		buffer.setVersion(version);
+	}
+	
 	public synchronized boolean containsDescendant(InternalElement element) {
 		return getDOMElement(element) != null;
 	}
-
+	
 	// dest must be an element of the Rodin file associated to this info.
 	// TODO check for sourceInfo parameter removal
 	public synchronized void copy(InternalElement source,

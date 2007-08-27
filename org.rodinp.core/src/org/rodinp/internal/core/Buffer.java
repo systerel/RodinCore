@@ -36,6 +36,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
+import org.rodinp.internal.core.version.VersionManager;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,8 +57,8 @@ import org.xml.sax.SAXParseException;
  */
 public class Buffer {
 	
-	static class XMLErrorHandler implements ErrorHandler {
-
+	protected static class XMLErrorHandler implements ErrorHandler {
+		
 		public void error(SAXParseException exception) throws SAXException {
 			throw exception;
 		}
@@ -71,9 +72,9 @@ public class Buffer {
 		}
 		
 	}
-	
-	static class XMLErrorListener implements ErrorListener {
 
+	protected static class XMLErrorListener implements ErrorListener {
+		
 		public void error(TransformerException e) throws TransformerException {
 			throw e;
 		}
@@ -87,31 +88,143 @@ public class Buffer {
 		}
 		
 	}
-	
+
 	private static final String CONTENTS_ATTRIBUTE = "contents";
-	
-	private static final ErrorHandler errorHandler = new XMLErrorHandler();
-	
-	private static final ErrorListener errorListener = new XMLErrorListener();
 	
 	private static final String NAME_ATTRIBUTE = "name";
 	
 	private static String[] NO_ATTRIBUTE_NAMES = new String[0];
 
-	private volatile boolean changed;
-
-	private Document domDocument;
+	private static final ErrorListener errorListener = new XMLErrorListener();
 	
+	
+	private static final String VERSION_ATTRIBUTE = "version";
+	private static final ErrorHandler errorHandler = new XMLErrorHandler();
+	private Document domDocument;
 	/**
 	 * The file for which this buffer was created.
 	 */
 	private final RodinFile owner;
-	
 	private long stamp;
-	
+	private long version;
+
+	private volatile boolean changed;
+
 	public Buffer(RodinFile owner) {
 		this.owner = owner;
 		this.stamp = IResource.NULL_STAMP;
+		this.version = -1;
+	}
+	
+	/*
+	 * Loads this buffer from the corresponding resource.
+	 */
+	// TODO check for use of progress monitor.
+	public synchronized void load(IProgressMonitor pm) throws RodinDBException {
+
+		// Buffer has already been loaded (maybe concurrently by another
+		// thread).
+		if (domDocument != null) {
+			return;
+		}
+
+		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
+		final DocumentBuilder builder = manager.getDocumentBuilder();
+		builder.setErrorHandler(errorHandler);
+
+		long st = stamp;
+		Document doc = domDocument;
+
+		try {
+			final IFile file = owner.getResource();
+			st = file.getModificationStamp();
+			doc = builder.parse(file.getContents());
+		} catch (SAXException e) {
+			throw new RodinDBException(e,
+					IRodinDBStatusConstants.XML_PARSE_ERROR);
+		} catch (IOException e) {
+			throw new RodinDBException(e, IRodinDBStatusConstants.IO_EXCEPTION);
+		} catch (RodinDBException e) {
+			throw e;
+		} catch (CoreException e) {
+			throw new RodinDBException(e);
+		}
+
+		// the version is always fetched from the file;
+		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
+		version = fetchVersion(doc);
+		long reqVersion = VersionManager.getInstance().getVersion(owner.getElementType());
+
+		if (version > reqVersion) {
+			throw new RodinDBException(null, IRodinDBStatusConstants.FUTURE_VERSION);
+		} else if (version < reqVersion) {
+			throw new RodinDBException(null, IRodinDBStatusConstants.PAST_VERSION);
+		}
+
+		stamp = st;
+		domDocument = doc;
+		
+		normalize(domDocument.getDocumentElement());
+		this.changed = false;
+}
+
+	public Element getDocumentElement() {
+		return domDocument.getDocumentElement();
+	}
+
+	/**
+	 * Returns the Rodin file element of this buffer.
+	 * 
+	 * @return the handle of the file element for which this buffer was created.
+	 */
+	public final RodinFile getOwner() {
+		return owner;
+	}
+
+	/**
+	 * Returns the version number of the Rodin file element of this buffer
+	 * 
+	 * @return the version number of the Rodin file element of this buffer
+	 * @throws RodinDBException if the version number is invalid
+	 */
+	public long getVersion() throws RodinDBException {
+		return version;
+	}
+
+	private long fetchVersion(Document document) throws RodinDBException {
+		long v;
+		Element documentElement = document.getDocumentElement();
+		if (documentElement.hasAttributeNS(null, VERSION_ATTRIBUTE)) {
+			String rawVersion = documentElement.getAttributeNS(null, VERSION_ATTRIBUTE);
+			try {
+				v = Long.parseLong(rawVersion);
+			} catch (NumberFormatException e) {
+				throw new RodinDBException(e, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
+			}
+			if (v < 0) {
+				throw new RodinDBException(null, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
+			}
+		} else {
+			v = 0;
+		}
+		return v;
+	}
+
+	/**
+	 * Sets the version number of the Rodin file element of this buffer
+	 * 
+	 * @param version the version number of the Rodin file element of this buffer
+	 * @throws RodinDBException if the version number is smaller than <code>0</code>
+	 */
+	public void setVersion(long version) throws RodinDBException {
+		if (version < 0) {
+			throw new RodinDBException(null, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
+		} else {
+			Element documentElement = domDocument.getDocumentElement();
+			String rawVersion = Long.toString(version);
+			documentElement.setAttributeNS(null, VERSION_ATTRIBUTE, rawVersion);
+		}
+			
 	}
 	
 	public Element createElement(IInternalElementType<?> type, String name, Element domParent,
@@ -218,10 +331,6 @@ public class Buffer {
 		return result;
 	}
 	
-	public Element getDocumentElement() {
-		return domDocument.getDocumentElement();
-	}
-	
 	/**
 	 * Returns the Rodin element corresponding to <code>domChild</code> in the
 	 * given parent. Returns <code>null</code> in case of error building the
@@ -265,15 +374,6 @@ public class Buffer {
 
 		final String id = domElement.getNodeName();
 		return RodinCore.getInternalElementType(id);
-	}
-	
-	/**
-	 * Returns the Rodin file element of this buffer.
-	 * 
-	 * @return the handle of the file element for which this buffer was created.
-	 */
-	public final RodinFile getOwner() {
-		return owner;
 	}
 	
 	/**
@@ -322,40 +422,6 @@ public class Buffer {
 				|| domNextSibling.isSameNode(domSucc);
 	}
 
-	/*
-	 * Loads this buffer from the corresponding resource.
-	 */
-	// TODO check for use of progress monitor.
-	public synchronized void load(IProgressMonitor pm) 
-			throws RodinDBException {
-		
-		// Buffer has already been loaded (maybe concurrently by another thread).
-		if (domDocument != null) {
-			return;
-		}
-		
-		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		final DocumentBuilder builder = manager.getDocumentBuilder();
-		builder.setErrorHandler(errorHandler);
-		
-		try {
-			final IFile file = owner.getResource();
-			stamp = file.getModificationStamp();
-			domDocument = builder.parse(file.getContents());
-		} catch (SAXException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.XML_PARSE_ERROR);
-		} catch (IOException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.IO_EXCEPTION);
-		} catch (RodinDBException e) {
-			throw e;
-		} catch (CoreException e) {
-			throw new RodinDBException(e);
-		}
-		
-		normalize(domDocument.getDocumentElement());
-		this.changed = false;
-	}
-	
 	/*
 	 * Normalizes the given element and all its descendants.
 	 * 

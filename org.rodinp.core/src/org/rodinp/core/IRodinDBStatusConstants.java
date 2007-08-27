@@ -266,4 +266,37 @@ public interface IRodinDBStatusConstants {
 	 */
 	int INVALID_MARKER_LOCATION = 998;
 	
+	/**
+	 * Status indicating that the version attribute of a Rodin file could not be
+	 * retrieved. This may have two causes:
+	 * <ul>
+	 * <li>the attribute value cannot be parsed by
+	 * {@link Long#parseLong(String)}, or</li>
+	 * <li>the attribute value was parsed successfully but the long value is
+	 * smaller than <code>0</code>.</li>
+	 * </ul>
+	 */
+	int INVALID_VERSION_NUMBER = 1001;
+	
+	/**
+	 * Status indicating that a Rodin file being loaded cannot be converted to
+	 * the version required by the Rodin database. This happens when a Rodin
+	 * file was created with a more recent version of the database: downgrading
+	 * versions is not supported!
+	 */
+	int FUTURE_VERSION = 1002;
+	
+	/**
+	 * Status indicating that a Rodin file being loaded should first be
+	 * converted to the version required by the Rodin database. Conversion is
+	 * not carried out automatically with the loading process to avoid data-loss
+	 * in case of a conversion error.
+	 */
+	int PAST_VERSION = 1003;
+	
+	/**
+	 * Status indicating that a Rodin file could not be converted to the required
+	 * version.
+	 */
+	int CONVERSION_ERROR = 1004;
 }

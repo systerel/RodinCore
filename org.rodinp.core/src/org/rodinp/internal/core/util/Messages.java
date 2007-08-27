@@ -88,6 +88,12 @@ public final class Messages {
 	public static String type_database;
 	public static String type_project;
 	
+	public static String converter_fileUnchanged;
+	public static String converter_successfulConversion;
+	public static String converter_failedConversion;
+	public static String converter_convertingFiles;
+	public static String converter_savingFiles;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

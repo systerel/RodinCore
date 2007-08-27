@@ -11,20 +11,29 @@
 package org.rodinp.core.tests;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -51,6 +60,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	public static final IAttributeType.Integer fInt = RodinCore.getIntegerAttrType("org.rodinp.core.tests.fInt");
 	public static final IAttributeType.Long fLong = RodinCore.getLongAttrType("org.rodinp.core.tests.fLong");
 	public static final IAttributeType.String fString = RodinCore.getStringAttrType("org.rodinp.core.tests.fString");
+	public static final String PLUGIN_ID = "org.rodinp.core.tests";
 	static byte[] emptyBytes = emptyContents.getBytes();
 
 	public ModifyingResourceTests(String name) {
@@ -251,5 +261,34 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 			return resourceAttributes.isReadOnly();
 		}
 		return false;
+	}
+
+	protected void importProject(String projectName) throws Exception {
+		Bundle plugin = Platform.getBundle(PLUGIN_ID);
+		URL projectsURL = plugin.getEntry("projects");
+		projectsURL = FileLocator.toFileURL(projectsURL);
+		File projectsDir = new File(projectsURL.toURI());
+		for (File project: projectsDir.listFiles()) {
+			if (project.isDirectory()) 
+				importProject(project);
+		}
+	}
+
+	private void importProject(File projectDir) throws Exception {
+		final String projectName = projectDir.getName();
+		IProject project = getWorkspaceRoot().getProject(projectName);
+		IProjectDescription desc = getWorkspace().newProjectDescription(projectName); 
+		desc.setNatureIds(new String[] {RodinCore.NATURE_ID});
+		project.create(desc, null);
+		project.open(null);
+		IProjectNature nature = project.getNature(RodinCore.NATURE_ID);
+		nature.configure();
+		for (File file: projectDir.listFiles()) {
+			if (file.isFile()) {
+				InputStream is = new FileInputStream(file);
+				IFile target = project.getFile(file.getName());
+				target.create(is, false, null);
+			}
+		}
 	}
 }

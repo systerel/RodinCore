@@ -7,21 +7,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -32,8 +22,6 @@ import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.util.Util;
 
 public abstract class AbstractBuilderTest extends ModifyingResourceTests {
-	
-	public static final String PLUGIN_ID = "org.rodinp.core.tests";
 	
 	public AbstractBuilderTest(String name) {
 		super(name);
@@ -120,35 +108,6 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 		IRodinFile rodinFile = RodinCore.valueOf(file);
 		rodinFile.create(true, null);
 		return rodinFile;
-	}
-	
-	protected void importProject(String projectName) throws Exception {
-		Bundle plugin = Platform.getBundle(PLUGIN_ID);
-		URL projectsURL = plugin.getEntry("projects");
-		projectsURL = FileLocator.toFileURL(projectsURL);
-		File projectsDir = new File(projectsURL.toURI());
-		for (File project: projectsDir.listFiles()) {
-			if (project.isDirectory()) 
-				importProject(project);
-		}
-	}
-	
-	private void importProject(File projectDir) throws Exception {
-		final String projectName = projectDir.getName();
-		IProject project = getWorkspaceRoot().getProject(projectName);
-		IProjectDescription desc = getWorkspace().newProjectDescription(projectName); 
-		desc.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.create(desc, null);
-		project.open(null);
-		IProjectNature nature = project.getNature(RodinCore.NATURE_ID);
-		nature.configure();
-		for (File file: projectDir.listFiles()) {
-			if (file.isFile()) {
-				InputStream is = new FileInputStream(file);
-				IFile target = project.getFile(file.getName());
-				target.create(is, false, null);
-			}
-		}
 	}
 
 }

@@ -5,8 +5,11 @@
    <extension-point id="internalElementTypes" name="%internalElementTypesName" schema="schema/internalElementTypes.exsd"/>
    <extension-point id="autoTools" name="%autoToolsName" schema="schema/autoTools.exsd"/>
    <extension-point id="attributeTypes" name="%attributeTypesName" schema="schema/attributeTypes.exsd"/>
-   <extension-point id="elementSpecs" name="%elementSpecsName" schema="schema/elementSpecs.exsd"/>
+   <extension-point id="conversions" name="%conversionsName" schema="schema/conversions.exsd"/>
+   <extension-point id="fileElementVersions" name="%fileElementVersionsName" schema="schema/fileElementVersions.exsd"/>
+<!--   <extension-point id="elementSpecs" name="%elementSpecsName" schema="schema/elementSpecs.exsd"/>
    <extension-point id="elementRules" name="%elementRulesName" schema="schema/elementRules.exsd"/>
+-->
    <extension point="org.eclipse.core.runtime.contentTypes">
 		<content-type
         base-type="org.eclipse.core.runtime.xml"

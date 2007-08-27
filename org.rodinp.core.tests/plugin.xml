@@ -173,5 +173,175 @@
           name="String attribute"
           kind="string"/>
    </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tva"
+            id="versionFileA"
+            name="Test Version A"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvb"
+            id="versionFileB"
+            name="Test Version B"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvc"
+            id="versionFileC"
+            name="Test Version C"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvd"
+            id="versionFileD"
+            name="Test Version D"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.rodinp.core.fileElementTypes">
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileA"
+            content-type-id="org.rodinp.core.tests.versionFileA"
+            id="versionFileA"
+            name="Version File A">
+      </fileElementType>
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileB"
+            content-type-id="org.rodinp.core.tests.versionFileB"
+            id="versionFileB"
+            name="Version File B">
+      </fileElementType>
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileC"
+            content-type-id="org.rodinp.core.tests.versionFileC"
+            id="versionFileC"
+            name="Version File C">
+      </fileElementType>
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileD"
+            content-type-id="org.rodinp.core.tests.versionFileD"
+            id="versionFileD"
+            name="Version File D">
+      </fileElementType>
+   </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionEA"
+            id="versionEA"
+            name="Version E A">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionEB"
+            id="versionEB"
+            name="Version E B">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionEC"
+            id="versionEC"
+            name="Version E C">
+      </internalElementType>
+   </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+            id="versionStrAttr"
+            kind="string"
+            name="Version String Attribute">
+      </attributeType>
+   </extension>
+   <extension
+         point="org.rodinp.core.conversions">
+      <simple
+            type="org.rodinp.core.tests.versionFileA"
+            version="1">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileA/org.rodinp.core.tests.ve">
+            <renameElement
+                  newId="org.rodinp.core.tests.versionEA">
+            </renameElement>
+         </element>
+      </simple>
+      <simple
+            type="org.rodinp.core.tests.versionFileB"
+            version="2">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileB/org.rodinp.core.tests.versionEA">
+            <renameAttribute
+                  id="org.rodinp.core.tests.at"
+                  newId="org.rodinp.core.tests.versionStrAttr">
+            </renameAttribute>
+         </element>
+      </simple>
+      <simple
+            type="org.rodinp.core.tests.versionFileC"
+            version="3">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileC/org.rodinp.core.tests.versionEA">
+            <addAttribute
+                  newId="org.rodinp.core.tests.versionStrAttr"
+                  newValue="Hello">
+            </addAttribute>
+         </element>
+      </simple>
+      <sorted
+            order="ascending"
+            type="org.rodinp.core.tests.versionFileD"
+            version="4">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileD/org.rodinp.core.tests.versionEA">
+            <renameElement
+                  newId="org.rodinp.core.tests.versionEC">
+            </renameElement>
+            <addAttribute
+                  newId="org.rodinp.core.tests.versionStrAttr"
+                  newValue="A">
+            </addAttribute>
+         </element>
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileD/org.rodinp.core.tests.versionEB">
+            <renameElement
+                  newId="org.rodinp.core.tests.versionEC">
+            </renameElement>
+            <addAttribute
+                  newId="org.rodinp.core.tests.versionStrAttr"
+                  newValue="B">
+            </addAttribute>
+         </element>
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileD/org.rodinp.core.tests.versionEC">
+            <addAttribute
+                  newId="org.rodinp.core.tests.versionStrAttr"
+                  newValue="C">
+            </addAttribute>
+         </element>
+      </sorted>
+   </extension>
+   <extension
+         point="org.rodinp.core.fileElementVersions">
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileA"
+            version="1">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileB"
+            version="2">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileC"
+            version="3">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileD"
+            version="4">
+      </fileElementVersion>
+   </extension>
 
 </plugin>

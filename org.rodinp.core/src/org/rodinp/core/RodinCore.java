@@ -30,6 +30,7 @@ import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.WeakHashSet;
+import org.rodinp.internal.core.version.Result;
 
 /**
  * The plug-in runtime class for the Rodin core plug-in containing the core
@@ -683,5 +684,28 @@ public class RodinCore extends Plugin {
 		}
 		return RodinDBManager.getRodinDBManager().getRodinDB();
 	}
+	
+	/**
+	 * Convert a Rodin project to a new version. This method does not manipulate the project
+	 * but only computes what is necessary for the conversion to be done. This is returned as
+	 * a result (<code>IConversionResult</code>).
+	 * 
+	 * @param project the Rodin project to be converted
+	 * @param force whether or not files are expected to be in synchrony
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting and cancellation are not desired
+	 * @return the proposed conversion in an <code>IConversionResult</code>
+	 * @throws RodinDBException if there was a problem creating a conversion
+	 */
+	public static IConversionResult convert(
+			IRodinProject project, boolean force, IProgressMonitor monitor) throws RodinDBException {
+		Result result = new Result(project);
+		
+		result.convert(force, monitor);
+		
+		return result;
+			
+	}
+
 
 }
