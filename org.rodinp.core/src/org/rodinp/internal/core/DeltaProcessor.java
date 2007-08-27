@@ -377,7 +377,7 @@ public class DeltaProcessor {
 			
 			// reset project's caches
 			// TODO make that finer grained when project caches are implemented.
-			RodinProject project = element.getRodinProject();
+			final RodinProject project = (RodinProject) element.getRodinProject();
 			this.projectCachesToReset.add(project);						
 		}
 	}
@@ -446,7 +446,7 @@ public class DeltaProcessor {
 		} else if (elementType == IRodinProject.ELEMENT_TYPE) {
 				this.projectCachesToReset.add((RodinProject) element);
 		} else {
-			RodinProject project = element.getRodinProject();
+			final RodinProject project = (RodinProject) element.getRodinProject();
 			this.projectCachesToReset.add(project);				
 		}
 	}

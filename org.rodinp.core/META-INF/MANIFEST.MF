@@ -12,6 +12,5 @@ Eclipse-LazyStart: true
 Export-Package: org.rodinp.core,
  org.rodinp.core.basis,
  org.rodinp.core.builder,
- org.rodinp.internal.core,
  org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

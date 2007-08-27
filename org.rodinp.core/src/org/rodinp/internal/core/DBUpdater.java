@@ -122,8 +122,8 @@ public class DBUpdater {
 			RodinDBManager.getRodinDBManager().removePerProjectInfo(
 					(RodinProject) element);
 		} else {
-			this.projectsToUpdate.add(element.getRodinProject());
-			RodinProject project = element.getRodinProject();
+			final RodinProject project = (RodinProject) element.getRodinProject();
+			this.projectsToUpdate.add(project);
 			project.resetCaches();
 		}
 	}

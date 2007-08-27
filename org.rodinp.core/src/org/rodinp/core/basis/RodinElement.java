@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.ElementType;
@@ -382,7 +383,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
-	public RodinProject getRodinProject() {
+	public IRodinProject getRodinProject() {
 		IRodinElement current = this;
 		do {
 			if (current instanceof RodinProject)
