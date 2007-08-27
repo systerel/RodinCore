@@ -7,8 +7,7 @@ Bundle-Vendor: ETH Zurich
 Require-Bundle: org.junit4,
  org.eclipse.jdt.junit4.runtime,
  org.eventb.core.seqprover,
- org.eclipse.core.runtime,
- com.b4free.rodin.core
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
  org.eventb.core.seqprover.tests
