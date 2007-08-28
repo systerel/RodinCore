@@ -156,6 +156,10 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		convertProjectWithSuccess(project, 1);
 		
+		checkV04(project);
+	}
+
+	private void checkV04(IRodinProject project) throws Exception {
 		IInternalElement[] elements = getElements(project, "ff.tvd", IVersionEC.ELEMENT_TYPE, 6);
 		
 		String[] names = new String[] { "ax", "ay", "bx", "by", "bz", "cx" };
@@ -168,4 +172,27 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		}
 	}
 
+	public void test_05_createAndOpenFileWithVersion() throws Exception {
+		
+		try {
+			IRodinProject project = createRodinProject("P");
+			IRodinFile file = project.getRodinFile("f.tvc");
+			file.create(true, null);
+			file.open(null);
+		} catch (RodinDBException e) {
+			fail("Could not access new file.");
+		}
+	}
+	
+	public void test_06_ConversionSequence() throws Exception {
+		
+		IRodinProject project = fetchProject("V04a");
+		
+		convertProjectWithSuccess(project, 1);
+		
+		checkV04(project);
+	}
+	
 }
+
+

@@ -28,6 +28,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
+import org.rodinp.internal.core.version.VersionManager;
 
 /**
  * <p>
@@ -99,11 +100,17 @@ public class CreateRodinFileOperation extends RodinDBOperation {
 
 	private ByteArrayInputStream getInitialInputStream(RodinFile rodinFile) {
 		IElementType<?> elementType = rodinFile.getElementType();
+		long version = VersionManager.getInstance().getVersion(elementType);
 		StringBuilder buffer = new StringBuilder(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		);
 		buffer.append("<");
 		buffer.append(elementType.getId());
+		if (version > 0) {
+			buffer.append(" version=\"");
+			buffer.append(version);
+			buffer.append("\"");
+		}
 		buffer.append("/>");
 		try {
 			return new ByteArrayInputStream(buffer.toString().getBytes("UTF-8"));

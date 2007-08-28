@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -212,7 +213,7 @@ public class VersionManager {
 		}
 	}
 	
-	public long getVersion(IFileElementType<? extends IRodinFile> type) {
+	public long getVersion(IElementType<?> type) {
 		if (versionDescs == null) {
 			computeVersionDescs();
 		}
@@ -226,7 +227,7 @@ public class VersionManager {
 
 	private VersionDesc findVersionDesc(
 			List<VersionDesc> descs, 
-			IFileElementType<? extends IRodinFile> type) {
+			IElementType<?> type) {
 		for (VersionDesc desc : descs)
 			if (desc.type == type)
 				return desc;

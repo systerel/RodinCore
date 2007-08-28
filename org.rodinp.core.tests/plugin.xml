@@ -291,6 +291,26 @@
             </addAttribute>
          </element>
       </simple>
+      <simple
+            type="org.rodinp.core.tests.versionFileD"
+            version="2">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileD/org.rodinp.core.tests.versionEA">
+            <renameElement
+                  newId="org.rodinp.core.tests.versionEC">
+            </renameElement>
+         </element>
+      </simple>
+      <simple
+            type="org.rodinp.core.tests.versionFileD"
+            version="3">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileD/org.rodinp.core.tests.versionEX">
+            <renameElement
+                  newId="org.rodinp.core.tests.versionEA">
+            </renameElement>
+         </element>
+      </simple>
       <sorted
             order="ascending"
             type="org.rodinp.core.tests.versionFileD"
