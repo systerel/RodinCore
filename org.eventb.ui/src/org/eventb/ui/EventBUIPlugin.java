@@ -26,6 +26,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.IEventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -304,6 +306,15 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+
+	/**
+	 * Get the shared color registry.
+	 * 
+	 * @return the default shared color registry.
+	 */
+	public static IEventBSharedColor getSharedColor() {
+		return EventBSharedColor.getDefault();
 	}
 
 }
