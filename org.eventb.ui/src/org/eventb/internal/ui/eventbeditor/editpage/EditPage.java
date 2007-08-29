@@ -369,33 +369,38 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 * Utility method for updating comment of the file.
 	 */
 	private void updateComment() {
+		
+		if (form == null || form.isDisposed())
+			return;
+
 		if (commentText == null)
 			return;
 		final Text commentWidget = commentText.getTextWidget();
-		String text = commentWidget.getText();
-		IRodinFile rodinInput = this.getEventBEditor().getRodinInput();
-		if (rodinInput instanceof ICommentedElement) {
-			final ICommentedElement cElement = (ICommentedElement) rodinInput;
-			try {
-				if (cElement.hasComment()) {
-					final String comment = cElement.getComment();
-					if (!comment.equals(text)) {
-						Display display = commentWidget.getDisplay();
-						if (!display.isDisposed()) {
-							display.asyncExec(new Runnable() {
-								public void run() {
-									commentWidget.setText(comment);
-								}
-							});
+		Display display = form.getDisplay();
+		display.syncExec(new Runnable() {
+
+			public void run() {
+				String text = commentWidget.getText();
+				IRodinFile rodinInput = EditPage.this.getEventBEditor()
+						.getRodinInput();
+				if (rodinInput instanceof ICommentedElement) {
+					final ICommentedElement cElement = (ICommentedElement) rodinInput;
+					try {
+						if (cElement.hasComment()) {
+							final String comment = cElement.getComment();
+							if (!comment.equals(text)) {
+								commentWidget.setText(comment);
+							}
 						}
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+					internalPack(commentWidget.getParent());
 				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			internalPack(commentWidget.getParent());
-		}
+			
+		});
 	}
 
 	/**
