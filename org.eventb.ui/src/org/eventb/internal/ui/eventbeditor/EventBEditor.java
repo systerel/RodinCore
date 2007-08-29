@@ -665,4 +665,10 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 
 	abstract public String getEditorId();
 
+	public void pageSelectionChanged(SelectionChangedEvent event) {
+		FormEditorSelectionProvider selectionProvider = (FormEditorSelectionProvider) this
+				.getEditorSite().getSelectionProvider();
+		selectionProvider.fireSelectionChanged(event);
+	}
+
 }

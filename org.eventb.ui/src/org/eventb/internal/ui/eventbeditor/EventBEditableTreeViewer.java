@@ -666,8 +666,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
-		editor.getEditorSite().getSelectionProvider().setSelection(
-				event.getSelection());
+		((EventBEditor<?>) editor).pageSelectionChanged(event);
 	}
 
 }
