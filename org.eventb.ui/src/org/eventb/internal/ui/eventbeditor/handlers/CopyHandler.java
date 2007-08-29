@@ -1,4 +1,4 @@
-package org.eventb.ui.eventbeditor.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,11 +38,11 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 		
 		// If there is no selection then do nothing.
 		if (selection == null)
-			return null;
+			return "There is no selection";
 		
 		// If the selection is not a structured selection then do nothing.
 		if (!(selection instanceof IStructuredSelection))
-			return null;
+			return "The selection is not a structured selection";
 
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 
@@ -92,7 +92,7 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 					buf.toString() },
 					new Transfer[] { ResourceTransfer.getInstance(),
 							TextTransfer.getInstance() });
-			return null;
+			return "Copy project(s) successfully";
 		}
 
 		// Copies files into the clipboard
@@ -119,7 +119,7 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 				
 			setClipboard(resources, fileNames, buf.toString());
 
-			return null;
+			return "Copy file(s) successfully";
 		}
 
 		// Copies internal element
@@ -139,8 +139,7 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 						RodinHandleTransfer.getInstance(),
 						TextTransfer.getInstance() });
 
-		System.out.println("COPY SUCCESSFULLY");
-		return null;
+		return "Copy Rodin element successfully";
 	}
 
 	/**
