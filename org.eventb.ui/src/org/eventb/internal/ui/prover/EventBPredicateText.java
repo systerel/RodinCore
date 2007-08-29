@@ -16,12 +16,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -30,8 +28,10 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.IEventBSharedColor;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
@@ -42,10 +42,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	final Cursor handCursor;
 
 	final Cursor arrowCursor;
-
-	final Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
-
-	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 
 	private IUserSupport us;
 
@@ -223,7 +219,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			return;
 		String contents = text.getText();
 		int lineHeight = text.getLineHeight();
-		event.gc.setForeground(RED);
+		event.gc.setForeground(EventBUIPlugin.getSharedColor().getColor(
+				IEventBSharedColor.BOX_BORDER));
 		for (Point index : boxes) {
 			String str = contents.substring(index.x, index.y);
 			int stringWidth = event.gc.stringExtent(str).x;
@@ -241,7 +238,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			style.start = index.x;
 			style.length = index.y - index.x;
 			if (dirtyStates.contains(index))
-				style.background = YELLOW;
+				style.background = EventBUIPlugin.getSharedColor().getColor(
+						IEventBSharedColor.DIRTY_STATE);
 			style.fontStyle = SWT.ITALIC;
 			text.setStyleRange(style);
 		}
