@@ -87,7 +87,7 @@ public class ImageHyperlinkMarkerToolTip {
 		control.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (tipMenu.isVisible())
+				if (tipMenu != null && tipMenu.isVisible())
 					tipMenu.setVisible(false);
 			}
 		});
@@ -108,7 +108,8 @@ public class ImageHyperlinkMarkerToolTip {
 				widgetPosition = new Point(event.x, event.y);
 				Widget widget = event.widget;
 				if (widget == null) {
-					tipMenu.setVisible(false);
+					if (tipMenu != null && tipMenu.isVisible())
+						tipMenu.setVisible(false);
 					tipWidget = null;
 					return;
 				}
