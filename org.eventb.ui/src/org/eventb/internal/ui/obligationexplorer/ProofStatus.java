@@ -35,6 +35,17 @@ public class ProofStatus {
 		int reviewed = 0;
 		int remaining = 0;
 		for (IPSStatus status : statuses) {
+			boolean isBroken;
+			try {
+				isBroken = status.isBroken();
+			} catch (RodinDBException e) {
+				EventBUIExceptionHandler.handleGetAttributeException(e, UserAwareness.IGNORE);
+				continue;				
+			}
+			if (isBroken) {
+				++remaining;
+				continue;
+			}
 			boolean isDischarged;
 			try {
 				isDischarged = ProverUIUtils.isDischarged(status);
