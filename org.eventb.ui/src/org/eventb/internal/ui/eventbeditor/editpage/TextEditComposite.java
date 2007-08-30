@@ -6,6 +6,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,11 +16,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
@@ -28,6 +33,8 @@ public class TextEditComposite extends AbstractEditComposite {
 	protected StyledText text;
 	private Button undefinedButton;
 	protected int style = SWT.MULTI | SWT.BORDER;
+
+	IContextActivation contextActivation; 
 
 	public TextEditComposite(IAttributeUISpec uiSpec) {
 		super(uiSpec);
@@ -53,6 +60,28 @@ public class TextEditComposite extends AbstractEditComposite {
 				undefinedButton = null;
 			}
 			text = new StyledText(composite, style);
+			text.addFocusListener(new FocusListener() {
+
+				public void focusGained(FocusEvent e) {
+					// Activate Event-B Editor Context
+					IContextService contextService = (IContextService) fEditor
+							.getSite().getService(IContextService.class);
+					contextActivation = contextService
+							.activateContext(EventBUIPlugin.PLUGIN_ID
+									+ ".contexts.textEditCompositeScope");
+				}
+
+				public void focusLost(FocusEvent e) {
+					if (contextActivation == null)
+						return;
+					// Activate Event-B Editor Context
+					IContextService contextService = (IContextService) fEditor
+							.getSite().getService(IContextService.class);
+					contextService
+							.deactivateContext(contextActivation);
+				}
+				
+			});
 			text.addModifyListener(new ModifyListener() {
 
 				public void modifyText(ModifyEvent e) {
