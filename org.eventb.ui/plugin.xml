@@ -2546,8 +2546,13 @@
       <context
             description="%contexts.eventBEditorScopeDescription"
             id="org.eventb.ui.contexts.eventBEditorScope"
-            name="%contexts.eventBEditorScopeName"
-            parentId="org.eclipse.ui.textEditorScope"/>
+            name="%contexts.eventBEditorScopeName">
+      </context>
+      <context
+            description="%contexts.textEditCompositeScopeDescription"
+            id="org.eventb.ui.contexts.textEditCompositeScope"
+            name="%contexts.textEditCompositeScopeName">
+      </context>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -2561,18 +2566,6 @@
             contextId="org.eventb.ui.contexts.eventBEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+ARROW_DOWN"/>
-      <key
-            commandId="org.eventb.ui.edit.copy"
-            contextId="org.eventb.ui.contexts.eventBEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="ALT+CTRL+C">
-      </key>
-      <key
-            commandId="org.eventb.ui.edit.paste"
-            contextId="org.eventb.ui.contexts.eventBEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="ALT+CTRL+V">
-      </key>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -2581,13 +2574,15 @@
             commandId="org.eventb.ui.edit.moveUp">
          <activeWhen>
             <with
-                  variable="activeContexts">
-               <iterate
-                     operator="or">
+                  variable="activePartId">
+               <or>
                   <equals
-                        value="org.eventb.ui.contexts.eventBEditorScope">
+                        value="org.eventb.ui.editors.machine">
                   </equals>
-               </iterate>
+                  <equals
+                        value="org.eventb.ui.editors.context">
+                  </equals>
+               </or>
             </with>
          </activeWhen>
       </handler>
@@ -2596,44 +2591,76 @@
             commandId="org.eventb.ui.edit.moveDown">
          <activeWhen>
             <with
-                  variable="activeContexts">
-               <iterate
-                     operator="or">
+                  variable="activePartId">
+               <or>
                   <equals
-                        value="org.eventb.ui.contexts.eventBEditorScope">
+                        value="org.eventb.ui.editors.machine">
                   </equals>
-               </iterate>
+                  <equals
+                        value="org.eventb.ui.editors.context">
+                  </equals>
+               </or>
             </with>
          </activeWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.CopyHandler"
-            commandId="org.eventb.ui.edit.copy">
+            commandId="org.eclipse.ui.edit.copy">
          <activeWhen>
-            <with
-                  variable="activeContexts">
-               <iterate
-                     operator="or">
-                  <equals
-                        value="org.eventb.ui.contexts.eventBEditorScope">
-                  </equals>
-               </iterate>
-            </with>
+         	<and>
+             	<with
+                    variable="activePartId">
+                 <or>
+                    <equals
+                          value="org.eventb.ui.editors.machine">
+                    </equals>
+                    <equals
+                          value="org.eventb.ui.editors.context">
+                    </equals>
+                 </or>
+               </with>
+              <not>
+                 <with
+                       variable="activeContexts">
+                    <iterate
+                          operator="or">
+                       <equals
+                             value="org.eventb.ui.contexts.textEditCompositeScope">
+                       </equals>
+                    </iterate>
+                 </with>
+              </not>
+            </and>
          </activeWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.PasteHandler"
-            commandId="org.eventb.ui.edit.paste">
+            commandId="org.eclipse.ui.edit.paste">
          <activeWhen>
-            <with
-                  variable="activeContexts">
-               <iterate
-                     operator="or">
-                  <equals
-                        value="org.eventb.ui.contexts.eventBEditorScope">
-                  </equals>
-               </iterate>
-            </with>
+         	<and>
+             	<with
+                    variable="activePartId">
+                 <or>
+                    <equals
+                          value="org.eventb.ui.editors.machine">
+                    </equals>
+                    <equals
+                          value="org.eventb.ui.editors.context">
+                    </equals>
+                 </or>
+               </with>
+              <not>
+                 <with
+                       variable="activeContexts">
+                    <iterate
+                          operator="or">
+                       <equals
+                             value="org.eventb.ui.contexts.textEditCompositeScope">
+                       </equals>
+                    </iterate>
+                 </with>
+              </not>
+            </and>
          </activeWhen>
       </handler>
    </extension>
