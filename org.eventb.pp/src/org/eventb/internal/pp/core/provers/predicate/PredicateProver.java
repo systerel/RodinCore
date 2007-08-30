@@ -19,14 +19,25 @@ import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
-import org.eventb.internal.pp.core.provers.predicate.iterators.IteratorMatchIterator;
-import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IteratorMatchIterable;
+import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterable;
 import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatcher;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.tracing.AbstractInferrenceOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * This prover module is responsible for applying the unit resolution rule.
+ * <p>
+ * Each call to {@link #addClauseAndDetectContradiction(Clause)} tries to detect
+ * a contradiction using all unit clauses.
+ * Each call to {@link #next(boolean)} then returns one clause that is issued
+ * from the match between a unit and a non-unit clause.
+ *
+ * @author François Terrier
+ *
+ */
 public class PredicateProver implements IProverModule {
 
 	/**
@@ -56,9 +67,9 @@ public class PredicateProver implements IProverModule {
 		
 		unitMatcher = new UnitMatcher();
 		
-		nonUnitResolver = new ResolutionResolver(inferrer, new IteratorMatchIterator(nonUnitClauses.iterator()));
-		unitResolver = new ResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
-		conditionResolver = new ReverseResolutionResolver(inferrer, new UnitMatchIterator(unitMatcher));
+		nonUnitResolver = new ResolutionResolver(inferrer, new IteratorMatchIterable(nonUnitClauses.iterator()));
+		unitResolver = new ResolutionResolver(inferrer, new UnitMatchIterable(unitMatcher));
+		conditionResolver = new ReverseResolutionResolver(inferrer, new UnitMatchIterable(unitMatcher));
 		
 		unitClausesIterator = unitClauses.iterator();
 	}
@@ -154,7 +165,7 @@ public class PredicateProver implements IProverModule {
 		}
 		else if (isAcceptedNonUnitClause(clause)) {
 			nonUnitClauses.add(clause);
-			if (hadConditions(clause) /* || hadQuantifier(clause) */) return newClause(clause, conditionResolver);
+			if (hadConditions(clause)) return newClause(clause, conditionResolver);
 		}
 		return ProverResult.EMPTY_RESULT;
 	}
@@ -182,7 +193,7 @@ public class PredicateProver implements IProverModule {
 //		return false;
 //	}
 
-	// TODO dirty
+	// TODO change this dirty code
 	private boolean hadConditions(Clause clause) {
 		IOrigin origin = clause.getOrigin();
 		if (origin instanceof AbstractInferrenceOrigin) {

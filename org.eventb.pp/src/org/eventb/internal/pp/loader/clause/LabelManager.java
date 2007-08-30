@@ -12,6 +12,13 @@ import java.util.LinkedHashSet;
 
 import org.eventb.internal.pp.loader.formula.AbstractLabelizableFormula;
 
+/**
+ * Label manager that stores all formula that must be labelized and
+ * permits to retrieve them.
+ *
+ * @author François Terrier
+ *
+ */
 public class LabelManager {
 
 	private LinkedHashSet<AbstractLabelizableFormula<?>> toLabelizeNeg = new LinkedHashSet<AbstractLabelizableFormula<?>>();

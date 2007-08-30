@@ -34,7 +34,24 @@ import org.eventb.internal.pp.core.tracing.ClauseOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
 
-public class EqualityProver implements IProverModule {
+/**
+ * This module is responsible for handling equality predicates.
+ * <p>
+ * It does the following :
+ * <ul>
+ * <li>From constant unit equality clauses - also called facts - it derives contradictions. As
+ * soon as a contradiction is found, it is returned.</li>
+ * <li>From constant equality literals in non-unit clauses - called queries - it decides whether
+ * the equality literal is true, false or unsolved. As soon as a query is solved, the 
+ * corresponding clause is genereted.
+ * <li>From non-constant equality literals, it tries to find values suitable for
+ * instantiation.</li> 
+ * </ul>
+ *
+ * @author François Terrier
+ *
+ */
+public final class EqualityProver implements IProverModule {
 
 	/**
 	 * Debug flag for <code>PROVER_EQUALITY_TRACE</code>
@@ -45,12 +62,10 @@ public class EqualityProver implements IProverModule {
 			System.out.println(message);
 	}
 	
-	private IEquivalenceManager manager = new EquivalenceManager();
-	
-	private EqualityInferrer inferrer;
-	private EqualityInstantiationInferrer instantiationInferrer;
-	
-	private Vector<Set<Clause>> nonDispatchedClauses;
+	private final IEquivalenceManager manager = new EquivalenceManager();
+	private final EqualityInferrer inferrer;
+	private final EqualityInstantiationInferrer instantiationInferrer;
+	private final Vector<Set<Clause>> nonDispatchedClauses;
 	
 	public EqualityProver(VariableContext context) {
 		this.inferrer = new EqualityInferrer(context);
@@ -60,7 +75,6 @@ public class EqualityProver implements IProverModule {
 	
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		manager.backtrack(newLevel);
-		
 		backtrackClauses(newLevel);
 		
 		return ProverResult.EMPTY_RESULT;
@@ -105,6 +119,15 @@ public class EqualityProver implements IProverModule {
 		dumper.addObject("EqualityFormula table", manager);
 	}
 
+	/**
+	 * The prover result contains:
+	 * <ul>
+	 * <li>all generated unit clauses</li>
+	 * <li>all false or true clauses</li>
+	 * </ul>
+	 * 
+	 * @see org.eventb.internal.pp.core.IProverModule#addClauseAndDetectContradiction(org.eventb.internal.pp.core.elements.Clause)
+	 */
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		Set<Clause> generatedClauses = new HashSet<Clause>();
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
@@ -123,7 +146,6 @@ public class EqualityProver implements IProverModule {
 			if (clause.isFalse()) continue;
 			if (clause.isTrue()) continue;
 			if (clause.isUnit()) continue;
-			if (clause.getEqualityLiteralsSize() == 0) continue;
 			else {
 				iterator.remove();
 				clauses.add(clause);
@@ -260,42 +282,6 @@ public class EqualityProver implements IProverModule {
 		}
 	}
 	
-//	private void handleInstantiationResult(List<? extends IInstantiationResult> result) {
-//		if (result == null) return;
-//		Map<Clause, Map<EqualityFormula, Constant>> values = new HashMap<Clause, Map<EqualityFormula,Constant>>();
-//		Map<Clause, Set<Clause>> origins = new HashMap<Clause, Set<Clause>>();
-//		
-//		for (IInstantiationResult insRes : result) {
-//			for (Clause clause : insRes.getSolvedClauses()) {
-//				if (!values.containsKey(clause)) {
-//					values.put(clause, new HashMap<EqualityFormula, Constant>());
-//					origins.put(clause, new HashSet<Clause>());
-//				}
-//				Map<EqualityFormula, Constant> map = values.get(clause);
-//				map.put(insRes.getEquality(), insRes.getInstantiationValue());
-//				Set<Clause> origin = origins.get(clause);
-//				origin.addAll(insRes.getSolvedClauses());
-//			}
-//		}
-//		
-//		for (Entry<Clause, Map<EqualityFormula, Constant>> entry : values.entrySet()) {
-//			for (Entry<EqualityFormula, Constant> entry2 : entry.getValue().entrySet()) {
-//				instantiationInferrer.addEquality(entry2.getKey(), entry2.getValue());
-//			}
-//			instantiationInferrer.addParentClauses(new ArrayList<Clause>(origins.get(entry.getKey())));
-//			entry.getKey().infer(instantiationInferrer);
-//			Clause inferredClause = instantiationInferrer.getResult();
-//			
-//			inferredClause = simplifier.run(inferredClause);
-//			if (inferredClause.isFalse()) {
-//				dispatcher.contradiction(inferredClause.getOrigin());
-//				return;
-//			}
-//			if (!inferredClause.isTrue()) generatedClauses.appends(inferredClause);
-//		}
-//	}
-	
-	// takes a query result
 	private void handleQueryResult(List<? extends IQueryResult> result,
 			Set<Clause> generatedClauses, Set<Clause> subsumedClauses) {
 		if (result == null) return;

@@ -17,14 +17,19 @@ import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.formula.QuantifiedFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 
+/**
+ * Orderer for formulas.
+ * 
+ * TODO finish and plug in loader
+ *
+ * @author François Terrier
+ *
+ */
 public class LiteralOrderer implements Comparator<SignedFormula<?>> {
 
 	public int compare(SignedFormula<?> o1, SignedFormula<?> o2) {
 //		if (o1.equals(o2)) return 0;
 			
-//		System.out.println(o1.getFormula().getClass());
-//		System.out.println(o2.getFormula().getClass());
-		
 		int signComp = -new Boolean(o1.isPositive()).compareTo(o2.isPositive());
 		if (o1.getFormula() instanceof PredicateFormula) {
 			if (o2.getFormula() instanceof PredicateFormula) {
@@ -76,9 +81,6 @@ public class LiteralOrderer implements Comparator<SignedFormula<?>> {
 		}
 		if (o2.getFormula() instanceof QuantifiedFormula) return 1;
 		
-//		assert o1 instanceof QuantifiedFormula && o2 instanceof QuantifiedFormula;
-//		return compare((SignedFormula)(o1.getFormula()), (SignedFormula)(o2.getFormula()));
-		// TODO
 		assert false;
 		return 0;
 	}

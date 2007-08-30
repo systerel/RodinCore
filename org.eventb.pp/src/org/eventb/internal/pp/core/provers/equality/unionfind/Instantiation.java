@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
-public class Instantiation {
+public final class Instantiation {
 
 	private final QuerySource source;
 	private final Node node;

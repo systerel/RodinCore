@@ -10,6 +10,12 @@ package org.eventb.internal.pp.core.provers.predicate;
 
 import org.eventb.internal.pp.core.elements.Clause;
 
+/**
+ * Result of a resolution step.
+ *
+ * @author François Terrier
+ *
+ */
 public class ResolutionResult {
 
 	private Clause derivedClause;

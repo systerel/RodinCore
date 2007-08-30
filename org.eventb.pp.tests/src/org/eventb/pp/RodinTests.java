@@ -212,28 +212,28 @@ public class RodinTests extends AbstractPPTest {
 				),"(nxt(r))[{b}]∩(rsrtbl∼[{r}] ∖ OCC)=∅",true);
 	}
 	
-//	public void testTrain2() {
-//		initDebug();
-//		doTest(
-//				mList(
-//				"nxt","ℙ(R×ℙ(B×B))",
-//				"rtbl","ℙ(B×R)",
-//				"n","ℙ(B×B)",
-//				"b","B",
-//				"r","R",
-//				"rsrtbl","ℙ(B×R)",
-//				"OCC","ℙ(B)"
-//				),
-//				 mSet(
-//				"b∈OCC",
-//				"n=nxt(rsrtbl(b))",
-//				"b∈dom(nxt(rsrtbl(b)))⇒(nxt(rsrtbl(b)))(b)∈OCC",
-//				"b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)",
-//				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅", // needed
-//				"¬rsrtbl(b)=r",
-//				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}]" // needed
-//				),"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ (OCC ∖ {b}))=∅",true);
-//	}
+	public void testTrain2() {
+		initDebug();
+		doTest(
+				mList(
+				"nxt","ℙ(R×ℙ(B×B))",
+				"rtbl","ℙ(B×R)",
+				"n","ℙ(B×B)",
+				"b","B",
+				"r","R",
+				"rsrtbl","ℙ(B×R)",
+				"OCC","ℙ(B)"
+				),
+				 mSet(
+				"b∈OCC",
+				"n=nxt(rsrtbl(b))",
+				"b∈dom(nxt(rsrtbl(b)))⇒(nxt(rsrtbl(b)))(b)∈OCC",
+				"b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)",
+				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅", // needed
+				"¬rsrtbl(b)=r",
+				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}]" // needed
+				),"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ (OCC ∖ {b}))=∅",true);
+	}
 	
 	public void testList() {
 		initDebug();

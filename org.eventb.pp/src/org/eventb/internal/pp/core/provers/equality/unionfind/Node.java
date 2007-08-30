@@ -21,29 +21,19 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
-// each constant has a corresponding node information 
-// TODO -> each constant is same object
-public class Node implements Comparable<Node> {
+/**
+ * Node in the union-find data structure of equal constants.
+ * <p>
+ * Each node but the root of the tree has a parent which points 
+ * towards the root. The root of a tree contains the information
+ * of all nodes in the tree. This information is located in the 
+ * data structrue {@link #rootFactsInequalities}, {@link #rootInstantiations},
+ * {@link #rootQueryEqualities}, {@link #rootQueryInequalities}.
+ *
+ * @author François Terrier
+ */
+public final class Node implements Comparable<Node> {
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Node) {
-			Node tmp = (Node) obj;
-			return constant.equals(tmp.constant);
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return constant.hashCode();
-	}
-	
-	@Override
-	public String toString() {
-		return constant.getName();
-	}
-
 	private final Constant constant;
 	private Node parent;
 
@@ -226,12 +216,16 @@ public class Node implements Comparable<Node> {
 		return constant.compareTo(o.constant);
 	}
 
-	
 	public Node getRoot() {
 		Node tmp = this;
 		while (!tmp.isRoot()) {
 			tmp = tmp.getParent();
 		}
 		return tmp;
+	}
+	
+	@Override
+	public String toString() {
+		return constant.getName();
 	}
 }

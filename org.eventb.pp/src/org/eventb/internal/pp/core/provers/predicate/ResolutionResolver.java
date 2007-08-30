@@ -14,13 +14,13 @@ import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
-import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable;
 
 /**
  * This class is responsible for applying the resolution rule between one
- * unit and one non-unit clause. It is initialized with a new pair of clauses
- * and then, each call of {@link #nextMatch(ClauseDispatcher)} returns a new inferred clause,
- * until no more matches are available.
+ * unit clause and a set of non-unit clauses. It is instantiated with an {@link IMatchIterable}.
+ * Then, it is initialized with a clause and each call of {@link #nextMatch(ClauseDispatcher)} 
+ * returns a new inferred clause, until no more matches are available.
  *
  * @author François Terrier
  *
@@ -28,9 +28,9 @@ import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
 public class ResolutionResolver implements IResolver {
 
 	private ResolutionInferrer inferrer;
-	private IMatchIterator matchedClauses;
+	private IMatchIterable matchedClauses;
 	
-	public ResolutionResolver(ResolutionInferrer inferrer, IMatchIterator matchedClauses) {
+	public ResolutionResolver(ResolutionInferrer inferrer, IMatchIterable matchedClauses) {
 		this.inferrer = inferrer;
 		this.matchedClauses = matchedClauses;
 	}

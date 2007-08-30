@@ -22,6 +22,12 @@ import org.eventb.core.seqprover.xprover.XProverCall;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.core.seqprover.xprover.XProverReasoner;
 
+/**
+ * Implementation of {@link XProverReasoner} for PP.
+ *
+ * @author François Terrier
+ *
+ */
 public class PPReasoner extends XProverReasoner {
 
 	public static String REASONER_ID = "org.eventb.pp.pp";

@@ -10,18 +10,37 @@ package org.eventb.internal.pp.core.provers.predicate;
 
 import org.eventb.internal.pp.core.elements.Clause;
 
+/**
+ * Interface for resolvers.
+ *
+ * @author François Terrier
+ *
+ */
 public interface IResolver {
 
 	/**
 	 * Returns the result of this resolution step or <code>null</code>
 	 * if no more resolution can be applied.
 	 * 
-	 * @return
+	 * @return the result of this resolution step or <code>null</code>
+	 * if no more resolution can be applied
 	 */
 	public ResolutionResult next();	
 
+	/**
+	 * Returns <code>true</code> if this resolver is initialized with a
+	 * clause, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this resolver is initialized with a
+	 * clause, <code>false</code> otherwise
+	 */
 	public boolean isInitialized();
 	
-	public void initialize(Clause matcher);
+	/**
+	 * Initialize this resolver with the given clause.
+	 * 
+	 * @param matcher the clause
+	 */
+	public void initialize(Clause clause);
 	
 }

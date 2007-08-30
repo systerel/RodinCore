@@ -14,6 +14,12 @@ import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.EquivalenceClauseDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
+/**
+ * Implementation of {@link ClauseKey} for equivalence clauses.
+ *
+ * @author François Terrier
+ *
+ */
 public class EquivalenceClauseKey extends ClauseKey<EquivalenceClauseDescriptor> {
 
 	public EquivalenceClauseKey(List<SignedFormula<?>> signatures) {

@@ -55,22 +55,12 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	}
 
 	/**
-	 * Returns a copy of the children of this term signature where locally quantified variables
-	 * are replaced by its corresponding instance of {@link QuantifiedVariableHolder},
-	 * and where sub-trees that are not quantified (with respect to the
-	 * {@link TermSignature#isQuantified(int, int)} method) are replaced by an
-	 * instance of {@link VariableHolder}. The terms that are not quantified are fetched
-	 * added to the {@link TermSymbolTable} table passed as a parameter, their index
-	 * is added to the List indexList and the term itself is appended to termList.
-	 * @param startOffset TODO
-	 * @param endOffset TODO
-	 * @param termList the term list where each free term is added
-	 * @param lastQuantifiedOffset the offset of locally bound variables.
-	 * @param table the symbol table for terms, to retrieve existing terms
-	 * @param indexList the index list where each free term index is added
+	 * Helper method for {@link #getUnquantifiedTerm(int, int, List)}.
 	 * 
-	 * @return a copy of this signature where free terms are replaced by {@link VariableHolder}
-	 * and quantified terms are replaced by {@link QuantifiedVariableHolder}
+	 * @param startOffset first quantified index
+	 * @param endOffset last quantified index
+	 * @param termList the termList
+	 * @return 
 	 */
 	protected List<TermSignature> getUnquantifiedTermHelper(int startOffset, int endOffset, List<TermSignature> termList) {
 		List<TermSignature> signatures = new ArrayList<TermSignature>();

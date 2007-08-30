@@ -12,6 +12,12 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
+/**
+ * A predicate literal is uniquely identified by its sort without considering terms.
+ *
+ * @author François Terrier
+ *
+ */
 public class PredicateKey extends SymbolKey<PredicateDescriptor> {
 
 	private Sort sort;

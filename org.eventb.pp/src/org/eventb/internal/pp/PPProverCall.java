@@ -20,6 +20,12 @@ import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.pp.PPProof;
 import org.eventb.pp.PPResult.Result;
 
+/**
+ * Implementation of {@link XProverCall} for PP.
+ *
+ * @author François Terrier
+ *
+ */
 public class PPProverCall extends XProverCall {
 
 	private PPProof prover; 
@@ -34,7 +40,7 @@ public class PPProverCall extends XProverCall {
 	
 	@Override
 	public void cleanup() {
-//		prover = null;
+		// nothing
 	}
 
 	@Override

@@ -13,6 +13,13 @@ import java.util.List;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 
+/**
+ * Clauses are uniquely identified by the formulas inside them without considering terms.
+ *
+ * @author François Terrier
+ *
+ * @param <T>
+ */
 public abstract class ClauseKey<T extends IndexedDescriptor> extends SymbolKey<T> {
 
 	private List<SignedFormula<?>> signatures;

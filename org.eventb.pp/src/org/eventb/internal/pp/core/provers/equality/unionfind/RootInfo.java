@@ -8,7 +8,14 @@
 
 package org.eventb.internal.pp.core.provers.equality.unionfind;
 
-public class RootInfo<T extends Source> {
+/**
+ * This class holds the information located at the root of a tree.
+ *
+ * @author François Terrier
+ *
+ * @param <T>
+ */
+public final class RootInfo<T extends Source> {
 	
 	private Node inequalNode;
 	private final Equality<T> equality;

@@ -16,6 +16,13 @@ import org.eventb.internal.pp.loader.clause.LabelManager;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
+/**
+ * Abstract base class for a single formula. i.e. a literal.
+ *
+ * @author François Terrier
+ *
+ * @param <T>
+ */
 public abstract class AbstractSingleFormula<T extends LiteralDescriptor> extends AbstractFormula<T> {
 
 	public AbstractSingleFormula(List<TermSignature> terms, T descriptor) {

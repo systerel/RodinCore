@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.ILevelController;
 import org.eventb.internal.pp.core.IProverModule;
@@ -26,6 +27,18 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
 
+/**
+ * The prover module responsible for the case split rule.
+ * <p>
+ * This module maintains a stack of splits which is updated each time
+ * the {@link ClauseDispatcher} backtracks or each time a new split is done.
+ * All this module does is keeping this list of splits up-to-date and consistent
+ * with the current level of the prover. Furthermore, it chooses the right candidate
+ * for the next split.
+ *
+ * @author François Terrier
+ *
+ */
 public class CaseSplitter implements IProverModule {
 	
 	/**
@@ -93,24 +106,34 @@ public class CaseSplitter implements IProverModule {
 	}
 	
 	private Set<Clause> nextCase() {
-		if (DEBUG) debug("Following case on "+nextCase.original+", size of split stack: "+splits.size());
 		Set<Clause> result = nextCase.right;
 		splits.push(nextCase);
 		nextCase = null;
+		if (DEBUG) debug("Following case on "+nextCase.original+", size of split stack: "+splits.size());
 		return result;
 	}
 	
 	private Set<Clause> newCaseSplit(Level oldLevel) {
 		Clause clause = nextCandidate();
 		candidates.remove(clause);
-		
-//		assert !dispatcher.getCurrentLevel().isAncestorOf(clause.getLevel()):"Splitting on clause: "+clause+", but level: "+dispatcher.getCurrentLevel();
-		
 		splits.push(split(clause, oldLevel));
 		if (DEBUG) debug("New case split on "+clause+", size of split stack: "+splits.size()+", remaining candidates: "+candidates.size());
 		return splits.peek().left;
 	}
 	
+	/**
+	 * Returns the next candidate.
+	 * <p>
+	 * Candidates are chosen in this order :
+	 * <ul>
+	 * <li>clause depends on the goal, if several clauses depend on the goal, the
+	 * one with the smallest depth is taken</li>
+	 * <li>clause does not depend on the goal, the one with the smallest depth is 
+	 * taken first</li>
+	 * </ul>
+	 * 
+	 * @return
+	 */
 	private Clause nextCandidate() {
 		List<Clause> restrictedCandidates = getCandidatesDependingOnGoal();
 		if (restrictedCandidates.isEmpty()) restrictedCandidates = candidates;
@@ -141,6 +164,9 @@ public class CaseSplitter implements IProverModule {
 	
 	/**
 	 * Backtrack from this level up to and inclusive the level specified as a parameter.
+	 * <p>
+	 * Splits that are eliminated and not used are returned to the {@link ClauseDispatcher}
+	 * as they could lead to a proof. 
 	 * 
 	 * @param oldLevel the level which must be backtracked
 	 */

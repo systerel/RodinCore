@@ -15,12 +15,19 @@ import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.search.ConditionIterator;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
-public class IteratorMatchIterator implements IMatchIterator {
+/**
+ * Match iterable that returns all clauses matching the given predicate
+ * from a {@link ResetIterator}.
+ *
+ * @author François Terrier
+ *
+ */
+public class IteratorMatchIterable implements IMatchIterable {
 	// this class has a state
 
 	private ResetIterator<Clause> nonUnitClausesIterator;
 	
-	public IteratorMatchIterator(ResetIterator<Clause> nonUnitClausesIterator) {
+	public IteratorMatchIterable(ResetIterator<Clause> nonUnitClausesIterator) {
 		this.nonUnitClausesIterator = nonUnitClausesIterator;
 	}
 

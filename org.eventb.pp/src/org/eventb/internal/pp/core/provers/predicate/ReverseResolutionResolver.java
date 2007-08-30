@@ -13,14 +13,24 @@ import java.util.Iterator;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
-import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.UnitMatchIterable;
 
+/**
+ * This class is responsible for applying the unit resolution rule between a
+ * clause and a set of unit clauses. It is instantiated with a {@link UnitMatchIterable}
+ * and initialized with a non-unit clause. Each call to {@link #next()} then 
+ * returns a match between the non-unit clause and the unit clauses in the 
+ * {@link UnitMatchIterable}.
+ *
+ * @author François Terrier
+ *
+ */
 public class ReverseResolutionResolver implements IResolver {
 
 	private ResolutionInferrer inferrer;
-	private UnitMatchIterator nonUnitProver;
+	private UnitMatchIterable nonUnitProver;
 	
-	public ReverseResolutionResolver(ResolutionInferrer inferrer, UnitMatchIterator nonUnitProver) {
+	public ReverseResolutionResolver(ResolutionInferrer inferrer, UnitMatchIterable nonUnitProver) {
 		this.inferrer = inferrer;
 		this.nonUnitProver = nonUnitProver;
 	}

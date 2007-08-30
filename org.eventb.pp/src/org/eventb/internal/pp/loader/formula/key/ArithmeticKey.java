@@ -13,8 +13,17 @@ import java.util.List;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula.Type;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
+import org.eventb.internal.pp.loader.formula.terms.VariableHolder;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
+/**
+ * Arithmetic literals are uniquely identified by their type and
+ * defining terms. Defining terms are terms where all variables and constants
+ * are replaced by a {@link VariableHolder} as given by {@link TermSignature#getSimpleTerm(List)}.
+ *
+ * @author François Terrier
+ *
+ */
 public class ArithmeticKey extends SymbolKey<ArithmeticDescriptor> {
 
 	private List<TermSignature> definingTerms;

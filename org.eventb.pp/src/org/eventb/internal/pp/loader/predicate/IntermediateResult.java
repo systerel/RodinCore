@@ -30,7 +30,7 @@ public class IntermediateResult implements IIntermediateResult {
 	private List<TermSignature> results = new ArrayList<TermSignature>();
 	
 //	public void orderList() {
-////		Collections.sort(results);
+//		Collections.sort(results);
 //	}
 //	
 //	public void reverse() {

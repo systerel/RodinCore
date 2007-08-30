@@ -14,7 +14,9 @@ import java.util.Hashtable;
 import org.eventb.internal.pp.core.elements.Sort;
 
 /**
- * After the construction, all variables have different indexes.
+ * Used by the loader to retrieve the instances of the variables,
+ * local variables and constants corresponding to the given index or
+ * name.
  *
  * @author François Terrier
  *
@@ -32,6 +34,15 @@ public class VariableTable {
 		this.context = context;
 	}
 	
+	/**
+	 * Returns the variable corresponding to the given index
+	 * or creates a new one.
+	 * 
+	 * @param index the index of the variable
+	 * @param sort the sort of the variable
+	 * @return the variable corresponding to the given index or
+	 * a new one if the variable does not exist yet
+	 */
 	public Variable getVariable(int index, Sort sort) {
 		Variable var = variableTable.get(index);
 		if (var == null) {
@@ -41,6 +52,16 @@ public class VariableTable {
 		return var;
 	}
 	
+	/**
+	 * Returns the local variable corresponding to the given index
+	 * or creates a new one.
+	 * 
+	 * @param index the index of the variable
+	 * @param sort the sort of the variable
+	 * @param isForall the forall flag
+	 * @return the local variable corresponding to the given index or
+	 * a new one if the variable does not exist yet
+	 */
 	public LocalVariable getLocalVariable(int index, boolean isForall, Sort sort) {
 		LocalVariable var = localVariableTable.get(index);
 		if (var == null) {
@@ -50,6 +71,15 @@ public class VariableTable {
 		return var;
 	}
 	
+	/**
+	 * Returns the constant corresponding to the given name or
+	 * a new constant if none has been created yet.
+	 * 
+	 * @param name the name of the constant
+	 * @param sort the sort of the constant
+	 * @return the constant corresponding to the given name or
+	 * a new one if none has been created yet
+	 */
 	public Constant getConstant(String name, Sort sort) {
 		Constant constant = constantTable.get(name);
 		if (constant == null) {
@@ -59,6 +89,14 @@ public class VariableTable {
 		return constant;
 	}
 	
+	/**
+	 * Returns the integer constant corresponding to the given name or
+	 * a new constant if none has been created yet.
+	 * 
+	 * @param value the value of the constant
+	 * @return the constant corresponding to the given name or
+	 * a new one if none has been created yet
+	 */
 	public IntegerConstant getInteger(BigInteger value) {
 		IntegerConstant constant = integerTable.get(value);
 		if (constant == null) {

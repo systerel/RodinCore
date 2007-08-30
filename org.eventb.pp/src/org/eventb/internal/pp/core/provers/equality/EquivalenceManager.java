@@ -34,18 +34,28 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
-public class EquivalenceManager implements IEquivalenceManager {
+/**
+ * Implementation of {@link IEquivalenceManager}.
+ * <p>
+ * This class handles the mapping from the literals given by the prover
+ * to the internal classes of the {@link EqualitySolver}. It handles 
+ * backtracking/adding/removing equalities.
+ *
+ * @author François Terrier
+ *
+ */
+public final class EquivalenceManager implements IEquivalenceManager {
 
-	private SourceTable table;
-	private EqualitySolver solver;
+	private final SourceTable table;
+	private final EqualitySolver solver;
 
 	// maps Constant -> Node
 	// 		EqualityFormula -> EqualityFormula
 	//		EqualityFormula -> Instantiation
-	private Hashtable<Constant, Node> constantTable = new Hashtable<Constant, Node>();
-	private Hashtable<EqualityLiteral, Equality<FactSource>> factEqualityTable = new Hashtable<EqualityLiteral, Equality<FactSource>>();
-	private Hashtable<EqualityLiteral, Equality<QuerySource>> queryEqualityTable = new Hashtable<EqualityLiteral, Equality<QuerySource>>();
-	private Hashtable<EqualityLiteral, Instantiation> instantiationTable = new Hashtable<EqualityLiteral, Instantiation>();
+	private final Hashtable<Constant, Node> constantTable = new Hashtable<Constant, Node>();
+	private final Hashtable<EqualityLiteral, Equality<FactSource>> factEqualityTable = new Hashtable<EqualityLiteral, Equality<FactSource>>();
+	private final Hashtable<EqualityLiteral, Equality<QuerySource>> queryEqualityTable = new Hashtable<EqualityLiteral, Equality<QuerySource>>();
+	private final Hashtable<EqualityLiteral, Instantiation> instantiationTable = new Hashtable<EqualityLiteral, Instantiation>();
 	
 	// for backtrack
 	private Set<Equality<FactSource>> equalities = new HashSet<Equality<FactSource>>();
@@ -97,12 +107,6 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
-//	private void removeQuery(EqualityLiteral equality) {
-//		// not for fact equalities
-//		Equality<QuerySource> nodeEquality = queryEqualityTable.remove(equality);
-//		removeEqualityFromNodes(nodeEquality, equality.isPositive());
-//	}
-	
 	public FactResult addFactEquality(EqualityLiteral equality, Clause clause) {
 		assert equality.getTerm(0) instanceof Constant && equality.getTerm(1) instanceof Constant;
 		
@@ -133,11 +137,6 @@ public class EquivalenceManager implements IEquivalenceManager {
 		
 		FactResult result = equality.isPositive()?solver.addFactEquality(nodeEquality):
 			solver.addFactInequality(nodeEquality);
-//		if (result != null && result.getSolvedQueries() != null) {
-//			for (QueryResult queryResult : result.getSolvedQueries()) {
-//				removeQuery(queryResult.getEquality());
-//			}
-//		}
 			
 		return result;
 	}
@@ -169,7 +168,6 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 		
 		QueryResult result = solver.addQuery(nodeEquality, equality.isPositive());
-//		if (result!=null) removeQuery(result.getEquality());
 		
 		return result;
 	}
@@ -243,7 +241,7 @@ public class EquivalenceManager implements IEquivalenceManager {
 		}
 		
 		// 4 backtrack sourcetable
-		table.backtrack(level);
+		table.clear();
 		
 		// 5 add equalities
 		for (Equality<FactSource> equality : equalities) {
@@ -310,6 +308,5 @@ public class EquivalenceManager implements IEquivalenceManager {
 		return result;
 	}
 	
-
 }
  

@@ -12,6 +12,12 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
+/**
+ * Equality literals are uniquely identified by their sort.
+ *
+ * @author François Terrier
+ *
+ */
 public class EqualityKey extends SymbolKey<EqualityDescriptor> {
 
 	private Sort sort;

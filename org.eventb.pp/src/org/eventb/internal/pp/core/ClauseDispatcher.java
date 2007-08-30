@@ -53,6 +53,14 @@ import org.eventb.pp.PPResult.Result;
  * <p>
  * The prover modules never have in their internal state clauses that are not
  * in the {@link #alreadyDispatchedClauses} list of the clause dispatcher.
+ * <p>
+ * The clause dispatcher never has two clauses that are the same but with different
+ * levels in its state. It always removes the clause with the lowest level without
+ * adding the new one. It is therefore the same for prover modules. If it already
+ * exists, a clause is never added without first having been removed. This means
+ * that when the {@link ClauseDispatcher} calls {@link IProverModule#addClauseAndDetectContradiction(Clause)},
+ * either the given clause is new (has never been generated before), or it has
+ * already been generated but first removed using {@link IProverModule#removeClause(Clause)}.
  *
  * @author François Terrier
  *

@@ -17,8 +17,8 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  * of a literal or subformula.
  *
  * Calls to {@link IIntermediateResult#getTerms()} and {@link IIntermediateResult#
- * getIndexes()} should always return two lists of equal size and the indexes
- * should correspond to the terms.
+ * getIndexes()} must always return two lists of equal size and the indexes
+ * must correspond to the terms.
  *
  * @author François Terrier
  *
@@ -32,8 +32,11 @@ public interface IIntermediateResult {
 	 */
 	public List<TermSignature> getTerms();
 	
-	
+	/**
+	 * Returns the list of intermediate result contained in this result.
+	 * 
+	 * @return the list of intermediate result contained in this result
+	 */
 	public List<IIntermediateResult> getResultList();
-	
 	
 }

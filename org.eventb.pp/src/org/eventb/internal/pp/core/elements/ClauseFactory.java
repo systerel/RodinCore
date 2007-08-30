@@ -20,6 +20,12 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 
+/**
+ * Factory class for clauses.
+ *
+ * @author François Terrier
+ *
+ */
 public class ClauseFactory {
 
 	private static ClauseFactory DEFAULT = new ClauseFactory();
@@ -28,6 +34,15 @@ public class ClauseFactory {
 		return DEFAULT;
 	}
 	
+	/**
+	 * Returns a disjunctive clause with the literals provided in <code>literals</code>
+	 * where each variable and local variable is fresh.
+	 * 
+	 * @param origin the origin of the new clause
+	 * @param literals the literals of the new clause
+	 * @param context the variable context to create fresh instances
+	 * @return the new clause
+	 */
 	public Clause makeDisjunctiveClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, VariableContext context) {
 		List<PredicateLiteral> predicates = new ArrayList<PredicateLiteral>();
 		List<EqualityLiteral> equalities = new ArrayList<EqualityLiteral>();
@@ -43,6 +58,15 @@ public class ClauseFactory {
 		return clause;
 	}
 	
+	/**
+	 * Returns an equivalence clause with the literals provided in <code>literals</code>
+	 * where each variable and local variable is fresh.
+	 * 
+	 * @param origin the origin of the new clause
+	 * @param literals the literals of the new clause
+	 * @param context the variable context to create fresh instances
+	 * @return the new clause
+	 */
 	public Clause makeEquivalenceClauseWithNewVariables(IOrigin origin, List<Literal<?,?>> literals, VariableContext context) {
 		assert literals.size() > 1;
 		
@@ -60,16 +84,51 @@ public class ClauseFactory {
 		return clause;
 	}
 	
+	/**
+	 * Creates a new disjunctive clause with the given literals.
+	 * 
+	 * @param origin the origin of the new clause
+	 * @param predicates the predicate literals
+	 * @param equalities the equality literals
+	 * @param arithmetic the arithmetic literals
+	 * @param conditions the conditions
+	 * @return the new clause
+	 */
 	public Clause makeDisjunctiveClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
 		return new DisjunctiveClause(origin, predicates, equalities, arithmetic, conditions);
 	}
 	
+	/**
+	 * Creates a new equivalence clause with the given literals.
+	 * 
+	 * @param origin the origin of the new clause
+	 * @param predicates the predicate literals
+	 * @param equalities the equality literals
+	 * @param arithmetic the arithmetic literals
+	 * @param conditions the conditions
+	 * @return the new clause
+	 */
 	public Clause makeEquivalenceClause(IOrigin origin, List<PredicateLiteral> predicates, List<EqualityLiteral> equalities, List<ArithmeticLiteral> arithmetic, List<EqualityLiteral> conditions) {
 		assert predicates.size() + arithmetic.size() + equalities.size() > 1;
 		
 		return new EquivalenceClause(origin, predicates, equalities, arithmetic, conditions);
 	}
 	
+	/**
+	 * Creates a new equivalence clause or a new disjunctive clause based on the number of
+	 * literals. An equivalence clause cannot contain only one literal (conditions are not
+	 * taken into account). Therefore if
+	 * only one literal is given as parameter, a disjunctive clause is returned. If more
+	 * than one literal is given as parameter, an equivalence clause is returned.
+	 * 
+	 * @param origin the origin
+	 * @param predicate the predicate literals
+	 * @param equality the equality literals
+	 * @param arithmetic the arithmetic literals
+	 * @param conditions the conditions
+	 * @param context the variables context
+	 * @return an equivalence clause or a disjunctive clause depending on the total number of literals
+	 */
 	public Clause makeClauseFromEquivalenceClause(IOrigin origin, List<PredicateLiteral> predicate, 
 			List<EqualityLiteral> equality, List<ArithmeticLiteral> arithmetic, 
 			List<EqualityLiteral> conditions, VariableContext context) {
@@ -100,10 +159,22 @@ public class ClauseFactory {
 		literals.add(literal);
 	}
 	
+	/**
+	 * Returns a TRUE clause
+	 * 
+	 * @param origin the origin of the clause
+	 * @return the new clause
+	 */
 	public Clause makeTRUE(IOrigin origin) {
 		return new TrueClause(origin);
 	}
 	
+	/**
+	 * Returns a FALSE clause
+	 * 
+	 * @param origin the origin of the clause
+	 * @return the new clause
+	 */
 	public Clause makeFALSE(IOrigin origin) {
 		return new FalseClause(origin);
 	}

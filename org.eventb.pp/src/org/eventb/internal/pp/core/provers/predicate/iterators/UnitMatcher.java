@@ -14,6 +14,15 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 
+/**
+ * This class implements an efficient way of retrieving unit clauses that
+ * match a certain predicate.
+ * <p>
+ * Unit clauses must first be added to this matcher using the provided methods.
+ *
+ * @author François Terrier
+ *
+ */
 public class UnitMatcher {
 	// this class has a state
 	private HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>> positiveUnitClauseMap = new HashMap<PredicateLiteralDescriptor, RandomAccessList<Clause>>();

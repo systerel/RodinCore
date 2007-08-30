@@ -14,27 +14,84 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 
+/**
+ * Interface to the equivalence manager.
+ * <p>
+ * The equivelance manager is responsible for storing fact and query
+ * equalities and provides mechanisms to add them, remove them and 
+ * backtrack to a certain level.
+ *
+ * @author François Terrier
+ *
+ */
 public interface IEquivalenceManager {
 	
-	// here is the mapping Constant -> Node
-	// mapping EqualityFormula -> Source / one source per equality
 	
-	// nodes must be ordered
+	/**
+	 * Removes the given query equality from the equivalence manager.
+	 * 
+	 * @param equality the equality to remove
+	 * @param clause the clause containing the equality
+	 */
 	public void removeQueryEquality(EqualityLiteral equality, Clause clause);
 	
-	// returns contradiction + source and solved queries
-	// or null if nothing happens
+	/**
+	 * Adds the given fact equality to the equivalence manager. Returns
+	 * the associated fact result or <code>null</code> if nothing can
+	 * be derived from this new fact.
+	 * <p>
+	 * The given clause must be a unit clause containing the given equality 
+	 * either as an equality literal or as a condition.
+	 * 
+	 * @param equality the fact to add
+	 * @param clause the clause containing the fact.
+	 * @return the fact result or <code>null</code> if nothing is derived
+	 */
 	public IFactResult addFactEquality(EqualityLiteral equality, Clause clause);
 	
-	// returns solved query
-	// or null if nothing happens
+	/**
+	 * Adds the given query equality to the equivalence manager. Returns
+	 * the associated query result or <code>null</code> if this query
+	 * cannot be solved immediately.
+	 * <p>
+	 * The given clause must be non-unit and must contain the given equality.
+	 * 
+	 * @param equality the query to add
+	 * @param clause the clause containing the query
+	 * @return the query result or <code>null</code> if nothing is derived
+	 */
 	public IQueryResult addQueryEquality(EqualityLiteral equality, Clause clause);
 	
-	// backtrack up to/exclusive level
+	/**
+	 * Backtracks the equivalence manager to the given level (not included).
+	 * <p>
+	 * This backtracks all information related to the backtracked levels. It
+	 * removes all facts and query equalities from those levels. It also
+	 * removes instantiations from those levels.
+	 * 
+	 * @param level the new level
+	 */
 	public void backtrack(Level level);
-
 	
+	/**
+	 * Adds the given instantiation to the equivalence manager. Returns
+	 * the corresponding instantiation result or <code>null</code> if no
+	 * instantiation is immediately found.
+	 * <p>
+	 * The given equality must contain exactly one variable and one 
+	 * constant.
+	 * 
+	 * @param equality the equality to add
+	 * @param clause the clause which contains the equality
+	 * @return
+	 */
 	public List<? extends IInstantiationResult> addInstantiationEquality(EqualityLiteral equality, Clause clause);
 	
+	/**
+	 * Removes the given instantiation from the equivalence manager.
+	 * 
+	 * @param equality the equality to remove
+	 * @param clause the clause containing the equality
+	 */
 	public void removeInstantiation(EqualityLiteral equality, Clause clause);
 }

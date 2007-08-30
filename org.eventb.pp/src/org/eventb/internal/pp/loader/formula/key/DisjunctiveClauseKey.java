@@ -14,6 +14,12 @@ import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
+/**
+ * Implementation of {@link ClauseKey} for disjunctive clauses.
+ *
+ * @author François Terrier
+ *
+ */
 public class DisjunctiveClauseKey extends ClauseKey<DisjunctiveClauseDescriptor> {
 
 	public DisjunctiveClauseKey(List<SignedFormula<?>> signatures) {

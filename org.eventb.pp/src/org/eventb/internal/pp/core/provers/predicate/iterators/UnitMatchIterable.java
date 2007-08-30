@@ -16,12 +16,19 @@ import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 
-public class UnitMatchIterator implements IMatchIterator {
+/**
+ * Match iterable that returns all clauses matching the given predicate
+ * from a {@link UnitMatcher}.
+ *
+ * @author François Terrier
+ *
+ */
+public class UnitMatchIterable implements IMatchIterable {
 
 	private UnitMatcher unitMatcher;
 	private HashMap<RandomAccessList<Clause>, ResetIterator<Clause>> setIteratorMap = new HashMap<RandomAccessList<Clause>, ResetIterator<Clause>>(); 
 
-	public UnitMatchIterator(UnitMatcher unitMatcher) {
+	public UnitMatchIterable(UnitMatcher unitMatcher) {
 		this.unitMatcher = unitMatcher;
 	}
 	
@@ -45,7 +52,7 @@ public class UnitMatchIterator implements IMatchIterator {
 	 * 
 	 * @param predicate 
 	 * @return 
-	 * @see org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator#iterator(org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor)
+	 * @see org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable#iterator(org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor)
 	 */
 	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 		ResetIterator<Clause> iterator = getMatchingUnitIterator(predicate, isPositive);

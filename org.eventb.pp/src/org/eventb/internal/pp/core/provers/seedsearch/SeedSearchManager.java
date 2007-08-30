@@ -294,34 +294,6 @@ public class SeedSearchManager {
 		return result;
 	}
 	
-//	private static class InstantiableDescriptor {
-//		final LiteralSignature signature;
-//		final Clause clause;
-//		final int predicatePosition;
-//		public InstantiableDescriptor(LiteralSignature signature, Clause clause, int predicatePosition) {
-//			this.signature = signature;
-//			this.clause = clause;
-//			this.predicatePosition = predicatePosition;
-//		}
-//		@Override
-//		public boolean equals(Object obj) {
-//			if (obj instanceof InstantiableDescriptor) {
-//				InstantiableDescriptor tmp = (InstantiableDescriptor) obj;
-//				return predicatePosition == tmp.predicatePosition && signature.equals(tmp.signature)
-//					&& clause.equalsWithLevel(tmp.clause);
-//			}
-//			return false;
-//		}
-//		@Override
-//		public int hashCode() {
-//			return 37 * (37 * signature.hashCode() + clause.hashCode()) + predicatePosition; 
-//		}
-//		@Override
-//		public String toString() {
-//			return signature.toString() + " " + clause.toString();
-//		}
-//	}
-	
 	private static class SignatureDescriptor {
 		PredicateLiteralDescriptor descriptor;
 		boolean isPositive;

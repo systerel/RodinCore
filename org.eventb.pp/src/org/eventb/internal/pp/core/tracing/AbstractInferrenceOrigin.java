@@ -86,6 +86,5 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 	public int getDepth() {
 		return depth;
 	}
-	
 
 }

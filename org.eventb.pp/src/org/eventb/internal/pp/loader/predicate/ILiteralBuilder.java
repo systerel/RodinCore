@@ -27,6 +27,23 @@ import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 public interface ILiteralBuilder {
 
 	/**
+	 * Builds the given predicate and use originalPredicate as its origin.
+	 * <p>
+	 * If isGoal is true, the predicate will be loaded as a goal (negated).
+	 * Extends the current context with the normalization of this formula.
+	 * After calling this method, the context (retrieved using {@link
+	 * ILiteralBuilder#getContext()}) is extending with the labels and the
+	 * normalized form of the formula passed as parameter.
+	 * 
+	 * @param predicate the predicate to load
+	 * @param originalPredicate the original predicate to use in the origin
+	 * @param isGoal <code>true</code> if the predicate should be loaded as the goal
+	 */
+	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal);
+	
+	/**
+	 * Builds the given predicate.
+	 * <p>
 	 * Extends the current context with the normalization of this formula.
 	 * After calling this method, the context (retrieved using {@link
 	 * ILiteralBuilder#getContext()}) is extending with the labels and the

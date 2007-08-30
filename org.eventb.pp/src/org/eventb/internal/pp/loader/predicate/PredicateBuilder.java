@@ -55,12 +55,15 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
 
 /**
- * This class is used to build predicate literals for the PP prover. Each time
- * a predicate is created, the builder checks whether a predicate with the same
- * name and corresponding types already exists. If it is the case, that name is
- * used. If not, a new name is created. 
- * 
- * If the predicate is a quantifier ... 
+ * This class is responsible for building an intermediate data structure
+ * that is used to construct the final clauses. The classes composing this
+ * intermediate data structure are located in package org.eventb.internal.pp.loader.formula.
+ * <p>
+ * In that intermediate data structure, all single predicate and all subformula
+ * are factored and represented by the same descriptor (descriptors are located in
+ * package org.eventb.internal.pp.loader.formula.descriptor). Each individual
+ * instance of those predicates and sub-formulas are represented by a different
+ * instance of {@link AbstractFormula} or {@link SignedFormula}.
  *
  * @author François Terrier
  *
@@ -97,6 +100,15 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		this.context = new AbstractContext();
 	}
 	
+	/**
+	 * Builds the given predicate and use originalPredicate as its origin.
+	 * <p>
+	 * If isGoal is true, the predicate will be loaded as a goal (negated).
+	 * 
+	 * @param predicate the predicate to load
+	 * @param originalPredicate the original predicate to use in the origin
+	 * @param isGoal <code>true</code> if the predicate should be loaded as the goal
+	 */
 	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal) {
 		this.originalPredicate = originalPredicate;
 		build(predicate, isGoal,false);
@@ -283,7 +295,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	@Override
 	public boolean exitIN(RelationalPredicate pred) {
 		exitRelationalPredicate(pred,false);
-		// construct literal
+
 		SymbolKey<PredicateDescriptor> key = new PredicateKey(new Sort(pred.getRight().getType()));
 		
 		PredicateDescriptor desc = updateDescriptor(key, context.getLiteralTable(), inRes, "predicate");
@@ -541,10 +553,6 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 
 	@Override
 	public boolean exitEXISTS(QuantifiedPredicate pred) {
-		// take the top of the stack
-		// a literal signature
-		// wrap it in a quantifiedpredicate wrapper, which transforms it
-		// into 
 		exitQuantifiedPredicate(pred, false);
 		return true;
 	}

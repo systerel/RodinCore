@@ -9,7 +9,7 @@
 package org.eventb.internal.pp.core.provers.equality.unionfind;
 
 // for facts inequalities and queries only
-public class Equality<T extends Source> {
+public final class Equality<T extends Source> {
 	
 	private final T source;
 	private final Node left,right;

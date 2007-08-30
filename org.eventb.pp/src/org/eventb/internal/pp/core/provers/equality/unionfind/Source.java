@@ -19,6 +19,12 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 
+/**
+ * Source of an equality.
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class Source {
 	
 	private final EqualityLiteral equality;
@@ -50,6 +56,13 @@ public abstract class Source {
 		return result;
 	}
 	
+	/**
+	 * Source of a fact equality. Holds only one clause which is allowed
+	 * to change, in case a new clause with a lower level is derived.
+	 *
+	 * @author François Terrier
+	 *
+	 */
 	public static class FactSource extends Source {
 
 		private Clause clause;
@@ -88,12 +101,18 @@ public abstract class Source {
 		public String toString() {
 			return clause.toString();
 		}
-		
 	}	
 	
+	/**
+	 * Source of a query equality. Can hold several clauses. That way it
+	 * is possible to know which clauses are affected when a query is solved.
+	 *
+	 * @author François Terrier
+	 *
+	 */
 	public static class QuerySource extends Source {
 		
-		private Map<Clause, Level> clauses = new HashMap<Clause, Level>();
+		private final Map<Clause, Level> clauses = new HashMap<Clause, Level>();
 		
 		protected QuerySource() {
 			// for subclasses

@@ -10,7 +10,6 @@ package org.eventb.internal.pp.core.elements;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
@@ -41,10 +40,6 @@ public final class AtomicPredicateLiteral extends PredicateLiteral {
 		return this;
 	}
 	
-	public List<EqualityLiteral> getConditions(AtomicPredicateLiteral predicate) {
-		return new ArrayList<EqualityLiteral>();
-	}
-
 	@Override
 	public AtomicPredicateLiteral getCopyWithNewVariables(VariableContext context, HashMap<SimpleTerm, SimpleTerm> substitutionsMap) {
 		return this;

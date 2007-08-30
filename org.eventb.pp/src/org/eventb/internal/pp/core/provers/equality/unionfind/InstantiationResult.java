@@ -19,11 +19,11 @@ import org.eventb.internal.pp.core.provers.equality.IInstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
-public class InstantiationResult implements IInstantiationResult {
+public final class InstantiationResult implements IInstantiationResult {
 
-	private QuerySource source;
-	private Node proposedValue;
-	private Set<FactSource> solvedSource;
+	private final QuerySource source;
+	private final Node proposedValue;
+	private final Set<FactSource> solvedSource;
 	
 	public InstantiationResult(Node proposedValue, QuerySource source, Set<FactSource> solvedSource) {
 		this.source = source;

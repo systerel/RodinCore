@@ -30,10 +30,6 @@ public class QueryResult implements IQueryResult {
 		this.value = value;
 	}
 	
-//	public EqualityFormula getEquality() {
-//		return querySource.getEquality();
-//	}
-
 	public List<Clause> getSolvedValueOrigin() {
 		List<Clause> result = new ArrayList<Clause>();
 		for (FactSource source : factSource) {

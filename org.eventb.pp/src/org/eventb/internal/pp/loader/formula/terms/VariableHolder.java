@@ -14,6 +14,14 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.formula.ClauseContext;
 
+/**
+ * Class for variable holders. A variable holder is a place where
+ * a variable can be inserted. Used for decomposing quantified sub-formulas
+ * and arithmetic terms.
+ *
+ * @author François Terrier
+ *
+ */
 public class VariableHolder extends TermSignature {
 
 	public VariableHolder(Sort sort) {

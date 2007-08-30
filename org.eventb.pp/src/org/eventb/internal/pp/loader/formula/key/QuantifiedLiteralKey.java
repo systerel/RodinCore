@@ -13,22 +13,24 @@ import java.util.List;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
+import org.eventb.internal.pp.loader.formula.terms.VariableHolder;
 import org.eventb.internal.pp.loader.predicate.IContext;
 
 /**
  * This class represents an entry for a quantified predicate of the form 
  * {∀,∃}x,y,z·Lstu, where x,y,z are variables and s,t,u are terms. It serves
  * as a key in the quantified predicate symbol table. If two {@link QuantifiedLiteralKey}
- * are equal, they refer to the same quantified predicate in the table.
+ * are equal, they refer to the same quantified descriptor in the table.
+ * <p>
+ * Quantified literals are uniquely identified by the formula that they range over
+ * and the defining terms inside this formula. Defining terms are terms where all unquantifed
+ * variables are replaced by a {@link VariableHolder} as given by method 
+ * {@link TermSignature#getUnquantifiedTerm(int, int, List)}.
  *
  * @author François Terrier
  */
 public class QuantifiedLiteralKey extends SymbolKey<QuantifiedDescriptor> {
 
-	/**
-	 * <code>true</code> if quantifier is an existential quantifier,
-	 * <code>false</code> otherwise.
-	 */
 	private boolean isForall;
 	private SignedFormula<?> signature;
 	private List<TermSignature> terms;
@@ -39,6 +41,11 @@ public class QuantifiedLiteralKey extends SymbolKey<QuantifiedDescriptor> {
 		this.terms = terms;
 	}
 	
+	/**
+	 * Returns the signed signature for this literal.
+	 * 
+	 * @return the signed signature for this literal
+	 */
 	public SignedFormula<?> getSignature() {
 		return signature;
 	}

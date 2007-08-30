@@ -17,7 +17,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.provers.equality.IFactResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 
-public class FactResult implements IFactResult {
+public final class FactResult implements IFactResult {
 
 	private Set<FactSource> source;
 	private List<QueryResult> queries;

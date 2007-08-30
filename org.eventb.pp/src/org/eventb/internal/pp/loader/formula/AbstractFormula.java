@@ -109,7 +109,7 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 	// terms are not taken into account for the computation of the hashcode and
 	// for the equals method. This is because AbstractFormulas are used in
 	// ClauseKey
-	// for the clause hash key, which does must not take terms into account
+	// for the clause hash key, which does not take terms into account
 	@Override
 	public int hashCode() {
 		return descriptor.hashCode();

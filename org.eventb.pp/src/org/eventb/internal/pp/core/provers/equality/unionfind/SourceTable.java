@@ -16,12 +16,36 @@ import java.util.Map.Entry;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 
-public class SourceTable {
+/**
+ * Source table for storing the source of fact equalities.
+ * <p>
+ * In the source table, there exists an entry for each fact
+ * equality that has been derived by the prover. Beside there
+ * exists an entry for each link node-parent in the union-find
+ * data structure.
+ * 
+ * @author François Terrier
+ *
+ */
+public final class SourceTable {
 
-	private Hashtable<Node, Hashtable<Node, Set<FactSource>>> table = new Hashtable<Node, Hashtable<Node, Set<FactSource>>>();
+	private final Hashtable<Node, Hashtable<Node, Set<FactSource>>> table = new Hashtable<Node, Hashtable<Node, Set<FactSource>>>();
 	
-	// adds the source at the given entry if there is no existing source
-	// of a higher priority
+	/**
+	 * Adds the given set of fact source as a source of the equality between
+	 * node1 and node2. Only adds it if there is no existing source between node1
+	 * and node2 which has a higher priority.
+	 * <p>
+	 * Priority of sources are defined as such :
+	 * <ul>
+	 * <li>the source with the lowest level has the higher priority</li>
+	 * <li>if sources have the same level, smaller sources have higher priority</li>
+	 * </ul>
+	 * 
+	 * @param node1 the first node
+	 * @param node2 the second node
+	 * @param source the source
+	 */
 	public void addSource(Node node1, Node node2, Set<FactSource> source) {
 		assert source.size() > 0;
 		
@@ -57,12 +81,35 @@ public class SourceTable {
 		}
 	}
 	
+	/**
+	 * Adds the given set of fact source as a source of the equality between
+	 * node1 and node2. Only adds it if there is no existing source between node1
+	 * and node2 which has a higher priority.
+	 * <p>
+	 * Priority of sources are defined as such :
+	 * <ul>
+	 * <li>smaller sources have higher priority</li>
+	 * <li>if sources have the same size, the one with the lowest level has the higher
+	 * priority</li>
+	 * </ul>
+	 * 
+	 * @param node1 the first node
+	 * @param node2 the second node
+	 * @param source the source
+	 */
 	public void addSource(Node node1, Node node2, FactSource source) {
 		Set<FactSource> sourceList = new HashSet<FactSource>();
 		sourceList.add(source);
 		addSource(node1, node2, sourceList);
 	}
 	
+	/**
+	 * Gets the source of the equality between the two given nodes.
+	 * 
+	 * @param node1 the first node
+	 * @param node2 the second node
+	 * @return the source of the equality between the two nodes
+	 */
 	public Set<FactSource> getSource(Node node1, Node node2) {
 		Node first,second;
 		if (node1.compareTo(node2) < 0) {
@@ -77,8 +124,11 @@ public class SourceTable {
 		return table.get(first).get(second);
 	}
 	
-	public void backtrack(Level level) {
-		table = new Hashtable<Node, Hashtable<Node, Set<FactSource>>>();
+	/**
+	 * Clear this source table.
+	 */
+	public void clear() {
+		table.clear();
 	}
 	
 	public Set<String> dump() {

@@ -18,6 +18,12 @@ import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
+/**
+ * TODO comment
+ *
+ * @author François Terrier
+ *
+ */
 public abstract class LiteralDescriptor {
 	// hashcode and equals are inherited from Object hashcode and equals
 	
@@ -99,7 +105,7 @@ public abstract class LiteralDescriptor {
 					// we put a negative index here to be sure it is not
 					// interpreted as a quantified variable
 					int v = --varIndex;
-					index = new VariableSignature(context.getFreshVariable(),v,ind1.getSort());
+					index = new VariableSignature(context.getFreshVariableIndex(),v,ind1.getSort());
 				}
 				map.put(pair, index);
 			}

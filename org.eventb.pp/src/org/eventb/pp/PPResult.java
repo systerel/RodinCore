@@ -8,8 +8,20 @@
 
 package org.eventb.pp;
 
+/**
+ * Result of a PP run.
+ *
+ * @author François Terrier
+ *
+ */
 public class PPResult {
 
+	/**
+	 * The result of a run.
+	 *
+	 * @author François Terrier
+	 *
+	 */
 	public enum Result {valid, invalid, error, timeout, cancel}
 	
 	private Result result;
@@ -22,11 +34,23 @@ public class PPResult {
 		this.tracer = tracer;
 	}
 	
+	/**
+	 * Returns the result of this proof run.
+	 * 
+	 * @return the result of this proof run
+	 */
 	public Result getResult() {
 		return result;
 	}
 	
-	// is null when result different from valid
+	/**
+	 * Returns the tracer corresponding to this proof run if the 
+	 * proof succeded (result is {@link Result#valid}) or <code>null</code> 
+	 * if the proof did not succeed.
+	 * 
+	 * @return the tracer corresponding to this proof run if the 
+	 * proof succeded or <code>null</code> if the proof did not succeed
+	 */
 	public ITracer getTracer() {
 		return tracer;
 	}

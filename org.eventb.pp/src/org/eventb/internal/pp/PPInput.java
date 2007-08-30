@@ -13,6 +13,12 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.xprover.XProverInput;
 
+/**
+ * Implementation of {@link XProverInput} for PP.
+ *
+ * @author François Terrier
+ *
+ */
 public class PPInput extends XProverInput {
 
 	private static final String MAX_STEPS = "maxSteps";
@@ -41,6 +47,13 @@ public class PPInput extends XProverInput {
 	}
 
 
+	/**
+	 * Return the maximum number of steps PP will take
+	 * before stopping.
+	 * 
+	 * @return the maximum number of steps PP will take
+	 * before stopping
+	 */
 	public int getMaxSteps() {
 		return maxSteps;
 	}

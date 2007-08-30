@@ -18,7 +18,7 @@ import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
-import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterator;
+import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable;
 
 /**
  * This class tests the one point rule. There are several tests :
@@ -445,7 +445,7 @@ public class TestResolution extends AbstractInferrerTests {
 		}
 	}
 	
-	private static class MyMatcher implements IMatchIterator {
+	private static class MyMatcher implements IMatchIterable {
 		private List<Clause> list = new ArrayList<Clause>();
 		
 		MyMatcher(Clause clause) {

@@ -21,10 +21,21 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
 
-public class EqualitySolver {
+/**
+ * This class is the external interface to the union-find data
+ * structures formed by nodes that are equal. It contains all
+ * necessary operations (add fact, add query, add instantiation). 
+ * It keeps the {@link SourceTable} up to date. Backtracking
+ * and removal of query and instantiations is not done at this level.
+ *
+ * @author François Terrier
+ *
+ */
+public final class EqualitySolver {
 
-	private SourceTable sourceTable;
-	private Set<Node> nodes = new HashSet<Node>(); 
+	private final SourceTable sourceTable;
+	// for dumping only
+	private final Set<Node> nodes = new HashSet<Node>(); 
 	
 	public EqualitySolver(SourceTable table) {
 		this.sourceTable = table;
@@ -45,27 +56,17 @@ public class EqualitySolver {
 		// add the source to the table
 		sourceTable.addSource(node1, node2, equality.getSource());
 		Set<FactSource> sourceToRoot1 = new HashSet<FactSource>();
-		Node root1 = find(node1,sourceToRoot1);
+		Node root = find(node1,sourceToRoot1);
 		Set<FactSource> sourceToRoot2 = new HashSet<FactSource>();
-		Node root2 = find(node2,sourceToRoot2);
+		Node child = find(node2,sourceToRoot2);
 		
-		if (root1 == root2) return null;
+		if (root == child) return null;
 		
 		Set<FactSource> unionSource = new HashSet<FactSource>();
 		unionSource.addAll(sourceToRoot1);
 		unionSource.addAll(sourceToRoot2);
 		unionSource.add(equality.getSource());
 		
-		Node root,child;
-		// TODO check if this is necessary
-		if (root1.compareTo(root2) < 0) {
-			root = root1;
-			child = root2;
-		}
-		else {
-			root = root2;
-			child = root1;
-		}
 		union(root,child,unionSource);
 		
 		// 1 check the fact inequalities
@@ -94,8 +95,6 @@ public class EqualitySolver {
 				// contradiction
 				Set<FactSource> contradictionSource = source(equality.getLeft(),equality.getRight());
 				result.add(new QueryResult(equality.getSource(),contradictionSource,isEquality));
-//				if (isEquality) root.removeRootQueryEquality(equality);
-//				else root.removeRootQueryInequality(equality);
 			}
 		}
 		return result;
@@ -206,14 +205,6 @@ public class EqualitySolver {
 				Set<FactSource> contradictionSource = getContradictionSourceInTwoTrees(node1, node2, left, right);
 				contradictionSource.add(source);
 				resultList.add(new QueryResult(equality.getSource(),contradictionSource,isPositive));
-//				if (isPositive) {
-//					root.removeRootQueryInequality(equality);
-//					infoNode.removeRootQueryInequality(equality);
-//				}
-//				else {
-//					root.removeRootQueryEquality(equality);
-//					infoNode.removeRootQueryEquality(equality);
-//				}
 			}
 		}
 		return resultList;
@@ -273,17 +264,19 @@ public class EqualitySolver {
 		result = checkQueryContradictionWithInequality(node2, node1, root2, root1, equality.getSource(), !isPositive);
 		if (result != null) return result;
 
-		// add root info
-		RootInfo<QuerySource> info1 = new RootInfo<QuerySource>(root2, equality);
-		if (isPositive) root1.addRootQueryEquality(info1);
-		else root1.addRootQueryInequality(info1);
-		
-		RootInfo<QuerySource> info2 = new RootInfo<QuerySource>(root1, equality);
-		if (isPositive) root2.addRootQueryEquality(info2);
-		else root2.addRootQueryInequality(info2);
+		addRootInfo(equality, isPositive, root2, root1);
+		addRootInfo(equality, isPositive, root1, root2);
 		
 		return null;
 	}
+
+	private void addRootInfo(Equality<QuerySource> equality,
+			boolean isPositive, Node root1, Node root2) {
+		RootInfo<QuerySource> info2 = new RootInfo<QuerySource>(root1, equality);
+		if (isPositive) root2.addRootQueryEquality(info2);
+		else root2.addRootQueryInequality(info2);
+	}
+	
 	
 	private QueryResult checkQueryContradictionWithInequality(Node node1, Node node2, Node root1, Node root2, QuerySource source, boolean isPositive) {
 		for (RootInfo<FactSource> info : root1.getRootFactsInequalities()) {
@@ -305,7 +298,6 @@ public class EqualitySolver {
 		
 		Map<Node, InstantiationResult> resultMap = new HashMap<Node, InstantiationResult>();
 		for (RootInfo<FactSource> inequalityInfo : root.getRootFactsInequalities()) {
-			// TODO test this with equivalence manager and backtrack
 			if (!instantiation.hasInstantiation(inequalityInfo.updateAndGetInequalNode())) {
 				Equality<FactSource> inequality = inequalityInfo.getEquality();
 				Set<FactSource> sourceToRootLeft = new HashSet<FactSource>();

@@ -34,13 +34,12 @@ public class AbstractContext implements IContext {
 	// it will factor out lots of code in PredicateBuilder (eg. in method
 	// exitIN and exitEqualityLiteral ...)
 	
-	// we use different tables
-	SymbolTable<PredicateDescriptor> ptable = new SymbolTable<PredicateDescriptor>();
-	SymbolTable<DisjunctiveClauseDescriptor> cTable = new SymbolTable<DisjunctiveClauseDescriptor>();
-	SymbolTable<EquivalenceClauseDescriptor> eTable = new SymbolTable<EquivalenceClauseDescriptor>();
+	SymbolTable<PredicateDescriptor> predicateTable = new SymbolTable<PredicateDescriptor>();
+	SymbolTable<DisjunctiveClauseDescriptor> disjunctionTable = new SymbolTable<DisjunctiveClauseDescriptor>();
+	SymbolTable<EquivalenceClauseDescriptor> equivalenceTable = new SymbolTable<EquivalenceClauseDescriptor>();
 	SymbolTable<EqualityDescriptor> equalityTable = new SymbolTable<EqualityDescriptor>();
-	SymbolTable<ArithmeticDescriptor> aTable = new SymbolTable<ArithmeticDescriptor>();
-	SymbolTable<QuantifiedDescriptor> qTable = new SymbolTable<QuantifiedDescriptor>();
+	SymbolTable<ArithmeticDescriptor> arithmeticTable = new SymbolTable<ArithmeticDescriptor>();
+	SymbolTable<QuantifiedDescriptor> quantifierTable = new SymbolTable<QuantifiedDescriptor>();
 	
 	List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 	
@@ -56,7 +55,7 @@ public class AbstractContext implements IContext {
 	}
 
 	public SymbolTable<PredicateDescriptor> getLiteralTable() {
-		return ptable;
+		return predicateTable;
 	}
 
 	public void incrementQuantifierOffset(int value) {
@@ -72,15 +71,15 @@ public class AbstractContext implements IContext {
 	}
 
 	public SymbolTable<DisjunctiveClauseDescriptor> getDisjClauseTable() {
-		return cTable;
+		return disjunctionTable;
 	}
 
 	public SymbolTable<QuantifiedDescriptor> getQuantifiedTable() {
-		return qTable;
+		return quantifierTable;
 	}
 
 	public SymbolTable<EquivalenceClauseDescriptor> getEqClauseTable() {
-		return eTable;
+		return equivalenceTable;
 	}
 	
 	public SymbolTable<EqualityDescriptor> getEqualityTable() {
@@ -88,7 +87,7 @@ public class AbstractContext implements IContext {
 	}
 
 	public SymbolTable<ArithmeticDescriptor> getArithmeticTable() {
-		return aTable;
+		return arithmeticTable;
 	}
 	
 	public List<INormalizedFormula> getResults() {
@@ -99,24 +98,24 @@ public class AbstractContext implements IContext {
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractContext) {
 			AbstractContext temp = (AbstractContext) obj;
-			return cTable.equals(temp.cTable) && ptable.equals(temp.ptable)
-				&& qTable.equals(temp.qTable) && results.equals(temp.results);
+			return disjunctionTable.equals(temp.disjunctionTable) && predicateTable.equals(temp.predicateTable)
+				&& quantifierTable.equals(temp.quantifierTable) && results.equals(temp.results);
 		}
 		return false;
 	}
 
 	public Collection<LiteralDescriptor> getAllDescriptors() {
 		Collection<LiteralDescriptor> result = new ArrayList<LiteralDescriptor>();
-		result.addAll(ptable.getAllLiterals());
-		result.addAll(cTable.getAllLiterals());
-		result.addAll(eTable.getAllLiterals());
+		result.addAll(predicateTable.getAllLiterals());
+		result.addAll(disjunctionTable.getAllLiterals());
+		result.addAll(equivalenceTable.getAllLiterals());
 		result.addAll(equalityTable.getAllLiterals());
-		result.addAll(qTable.getAllLiterals());
+		result.addAll(quantifierTable.getAllLiterals());
 		return result;
 	}
 	
 	public Collection<PredicateDescriptor> getAllPredicateDescriptors() {
-		return ptable.getAllLiterals();
+		return predicateTable.getAllLiterals();
 	}
 
 	private int nextIdentifier = 0;
@@ -129,7 +128,7 @@ public class AbstractContext implements IContext {
 		return numberOfVariables;
 	}
 	
-	public int getFreshVariable() {
+	public int getFreshVariableIndex() {
 		return numberOfVariables++;
 	}
 

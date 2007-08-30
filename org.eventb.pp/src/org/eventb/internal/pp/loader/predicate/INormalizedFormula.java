@@ -36,9 +36,20 @@ public interface INormalizedFormula {
 	 */
 	public List<TermSignature> getTerms();
 	
-	
+	/**
+	 * Returns the predicate from which this normalized formula is issued.
+	 * 
+	 * @return the predicate from which this normalized formula is issued
+	 */
 	public Predicate getOriginalPredicate();
 
+	/**
+	 * Returns <code>true</code> if this normalized formula is a goal, 
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if this normalized formula is a goal, 
+	 * <code>false</code> otherwise
+	 */
 	public boolean isGoal();
 	
 }

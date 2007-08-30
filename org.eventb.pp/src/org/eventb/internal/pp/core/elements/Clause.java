@@ -11,6 +11,7 @@ package org.eventb.internal.pp.core.elements;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eventb.internal.pp.core.Level;
@@ -30,6 +31,13 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
  * <p>
  * Instances of this class are immutable and all accessor methods return an immutable
  * object or a shallow copy of a list of immutable objects.
+ * <p>
+ * Equality check and hashcode between clauses using the {@link #equals(Object)} and
+ * {@link #hashCode()} method does not
+ * take into account the origin of a clause for equivalence and disjunctive clause but
+ * does for true and false clauses. This is because disjunctive and equivalence clauses
+ * are optimised to be used in hashtables. {@link Hashtable#contains(Object)} returns
+ * true if the hashtable already contains the clause regardless of the origin of the clause.
  * 
  * @author François Terrier
  *
@@ -171,11 +179,22 @@ public abstract class Clause {
 	protected BitSet negativeLiterals = new BitSet();
 	protected BitSet positiveLiterals = new BitSet();
 
+	/**
+	 * Computes the bit set for predicate literals.
+	 * <p>
+	 * For each predicate literal, we associate a bit in either the
+	 * positive literal bit set or the negative literal bit set,
+	 * corresponding to the index of the predicate literal. Those
+	 * bit sets are used for checking efficiently whether a predicate
+	 * literal appears in this clause or not (in the {@link #matches(
+	 * PredicateLiteralDescriptor, boolean)} method).
+	 */
 	protected abstract void computeBitSets();
 
 	/**
 	 * Returns <code>true</code> if this clause contains a predicate literal
 	 * that matches the given descriptor with the given sign.
+	 * <p>
 	 * 
 	 * @param predicate the predicate to be matched
 	 * @param isPositive the sign of the predicate
