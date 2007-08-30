@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.rodinp.core.IAttributeType;
@@ -59,9 +63,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 	throws RodinDBException {
 		IConversionResult result = RodinCore.convert(project, true, null);
 		
-		IEntry[] entries = result.getEntries();
-		
-		assertEquals("wrong number of entries in result", size, entries.length);
+		IEntry[] entries = getEntries(result, size);
 		
 		for (int i=0; i<entries.length; i++)
 			assertTrue("error when transforming " + entries[i].getFile().getElementName(), 
@@ -69,7 +71,90 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		result.accept(true, false, null);
 	}
+
+	private IEntry[] getEntries(IConversionResult result, int size) {
+		IEntry[] entries = result.getEntries();
+		
+		assertEquals("wrong number of entries in result", size, entries.length);
+		return entries;
+	}
 	
+	private byte[] getContents(IRodinFile file) throws Exception {
+		InputStream s = file.getResource().getContents();
+		int size = s.available();
+		byte[] contents = new byte[size];
+		int read = s.read(contents);
+		s.close();
+		assert read == size;
+		return contents;
+	}
+	
+	private static class ByteArrayWrapper {
+		private final byte[] array;
+
+		public ByteArrayWrapper(byte[] array) {
+			super();
+			this.array = array;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(array);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final ByteArrayWrapper other = (ByteArrayWrapper) obj;
+			if (!Arrays.equals(array, other.array))
+				return false;
+			return true;
+		}
+		
+		@Override
+		public String toString() {
+			StringBuffer bb = new StringBuffer(array.length);
+			for (int i=0; i<array.length; i++)
+				bb.append(array[i]);
+			return bb.toString();
+		}
+		
+	}
+
+	private void convertProjectFailsFor(IRodinProject project, int size,
+			String... files) throws Exception {
+		IConversionResult result = RodinCore.convert(project, true, null);
+		
+		IEntry[] entries = getEntries(result, size);
+		
+		ByteArrayWrapper[] c = new ByteArrayWrapper[files.length];
+		for (int i=0; i<files.length; i++) {
+			c[i] = new ByteArrayWrapper(getContents(project.getRodinFile(files[i])));
+		}
+		
+		for (int i=0; i<entries.length; i++)
+			for (String name : files)
+				if (entries[i].getFile().getElementName().equals(name))
+					assertFalse("tarnsformation should have failed " + entries[i].getFile().getElementName(), 
+					entries[i].success());
+		
+		result.accept(true, false, null);
+		
+		for (int i=0; i<files.length; i++) {
+			ByteArrayWrapper b = new ByteArrayWrapper(getContents(project.getRodinFile(files[i])));
+			assertEquals("File contents should not have changed " + files[i], c[i], b);
+		}
+		
+	}
+
 	private IRodinProject fetchProject(String name) throws Exception {
 		importProject(name);
 		
@@ -147,18 +232,6 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		getAttribute(elements[1], VersionAttributes.StringAttr, "Byebye");
 	}
 	
-	/**
-	 * sort elements, rename elements, add attributes and load fixed Rodin file
-	 */
-	public void test_04_SortRenameElementAddAttribute() throws Exception {
-		
-		IRodinProject project = fetchProject("V04");
-		
-		convertProjectWithSuccess(project, 1);
-		
-		checkV04(project);
-	}
-
 	private void checkV04(IRodinProject project) throws Exception {
 		IInternalElement[] elements = getElements(project, "ff.tvd", IVersionEC.ELEMENT_TYPE, 6);
 		
@@ -172,6 +245,21 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		}
 	}
 
+	/**
+	 * sort elements, rename elements, add attributes and load fixed Rodin file
+	 */
+	public void test_04_SortRenameElementAddAttribute() throws Exception {
+		
+		IRodinProject project = fetchProject("V04");
+		
+		convertProjectWithSuccess(project, 1);
+		
+		checkV04(project);
+	}
+
+	/**
+	 * When a new Rodin file is created, the correct current version must be assigned to it.
+	 */
 	public void test_05_createAndOpenFileWithVersion() throws Exception {
 		
 		try {
@@ -184,6 +272,10 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		}
 	}
 	
+	/**
+	 * When necessary, a sequence of conversions must be carried out.
+	 * (This is a variant of test_04)
+	 */
 	public void test_06_ConversionSequence() throws Exception {
 		
 		IRodinProject project = fetchProject("V04a");
@@ -191,6 +283,18 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		convertProjectWithSuccess(project, 1);
 		
 		checkV04(project);
+	}
+	
+	/**
+	 * If the version number of a file is higher than the current version number,
+	 * conversion fails. The file must not be modified (even if the conversion result is accepted).
+	 */
+	public void test_07_CannotConvertFromFutureVersion() throws Exception {
+		
+		IRodinProject project = fetchProject("V02a");
+		
+		convertProjectFailsFor(project, 1, "ff.tvb");
+		
 	}
 	
 }
