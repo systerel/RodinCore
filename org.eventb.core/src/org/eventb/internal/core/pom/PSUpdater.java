@@ -41,15 +41,22 @@ public class PSUpdater {
 	// Statuses that are in the PS file but not yet updated
 	final Set<IPSStatus> unusedStatuses;
 
-	public PSUpdater(IPSWrapper psWrapper) throws RodinDBException {
-		this.psWrapper = psWrapper;
-		final IPSFile psFile = psWrapper.getPSFile();
-		if (psFile.exists()) {
-			final IPSStatus[] ss = psWrapper.getPSStatuses();
-			this.unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
-		} else {
-			psFile.create(false, null); // TODO fix null PM
-			this.unusedStatuses = Collections.emptySet();
+	public PSUpdater(IPSWrapper psWrapper, IProgressMonitor pm)
+			throws RodinDBException {
+		try {
+			this.psWrapper = psWrapper;
+			final IPSFile psFile = psWrapper.getPSFile();
+			if (psFile.exists()) {
+				final IPSStatus[] ss = psWrapper.getPSStatuses();
+				this.unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
+			} else {
+				psFile.create(false, pm);
+				this.unusedStatuses = Collections.emptySet();
+			}
+		} finally {
+			if (pm != null) {
+				pm.done();
+			}
 		}
 	}
 

@@ -44,11 +44,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		final IPOSequent[] poSequents = poFile.getSequents();
 		final int nbOfPOs = poSequents.length;
-		final int workUnits = 1 + 2 + nbOfPOs * 2;
-		// 1 : creating fresh PR file
-		// 1x : updating each proof status
-		// 2 : saving PR file
-		// 1x : auto-proving each proof obligation
+		final int workUnits = 2 + nbOfPOs + 3 + nbOfPOs;
 		
 		try {
 			pm.beginTask("Proving " + componentName, workUnits);
@@ -58,7 +54,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			
 			// update proof statuses
 			final IPSWrapper psWrapper = new PSWrapper(psFile);
-			final PSUpdater updater = new PSUpdater(psWrapper);
+			final PSUpdater updater = new PSUpdater(psWrapper,
+					new SubProgressMonitor(pm, 1));
 			for (final IPOSequent poSequent : poSequents) {
 				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
 				updater.updatePO(poSequent, spm);
