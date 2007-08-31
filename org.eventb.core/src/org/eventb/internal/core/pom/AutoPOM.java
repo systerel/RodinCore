@@ -44,7 +44,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		final IPOSequent[] poSequents = poFile.getSequents();
 		final int nbOfPOs = poSequents.length;
-		final int workUnits = 2 + nbOfPOs + 3 + nbOfPOs;
+		final int workUnits = 2 + nbOfPOs * 2 + 1 + nbOfPOs;
 		
 		try {
 			pm.beginTask("Proving " + componentName, workUnits);
@@ -62,7 +62,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				checkCancellation(pm, prFile, psFile);
 			}
 			
-			updater.cleanup(new SubProgressMonitor(pm, 1));
+			updater.cleanup(new SubProgressMonitor(pm, nbOfPOs));
 			
 			pm.subTask("saving");
 			prFile.save(new SubProgressMonitor(pm, 1), true, true);
