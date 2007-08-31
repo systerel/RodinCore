@@ -87,6 +87,11 @@ public class PSUpdateTests extends BuilderTest {
 		poSequent.move(poFile, nextSibling, null, false, null);
 	}
 
+	/**
+	 * Checks that the PS file contains statuses for all POs, and with the
+	 * correct stamp. Also checks that statuses are stored in exactly the same
+	 * order as POs.
+	 */
 	private void checkPSFile() throws RodinDBException {
 		final IPOFile poFile = getPOFile();
 		final IPSFile psFile = getPSFile();
@@ -94,12 +99,12 @@ public class PSUpdateTests extends BuilderTest {
 		assertTrue(psFile.exists());
 		final IPOSequent[] poSequents = poFile.getSequents();
 		final IPSStatus[] psStatuses = psFile.getStatuses();
-		assertEquals(poSequents.length, psStatuses.length);
-		
-		for (IPSStatus psStatus: psStatuses) {
-			// TODO change later to also check for the order of statuses
-			final IPOSequent poSequent = psStatus.getPOSequent();
-			assertTrue(poSequent.exists());
+		final int length = poSequents.length;
+		assertEquals(length, psStatuses.length);
+		for (int i = 0; i < length; i++) {
+			final IPOSequent poSequent = poSequents[i];
+			final IPSStatus psStatus = psStatuses[i]; 
+			assertEquals(poSequent, psStatus.getPOSequent());
 			if (poSequent.hasPOStamp()) {
 				assertTrue(psStatus.hasPOStamp());
 				assertEquals(poSequent.getPOStamp(), psStatus.getPOStamp());

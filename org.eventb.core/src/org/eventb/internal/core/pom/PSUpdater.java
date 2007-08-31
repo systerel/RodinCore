@@ -38,20 +38,28 @@ public class PSUpdater {
 	// access to the PR and PS files
 	final IPSWrapper psWrapper;
 	
+	final IPSFile psFile;
+
+	final int initialNbOfStatuses;
+	
 	// Statuses that are in the PS file but not yet updated
 	final Set<IPSStatus> unusedStatuses;
+	
+	final ElementSorter<IPSStatus> sorter = new ElementSorter<IPSStatus>();
 
 	public PSUpdater(IPSWrapper psWrapper, IProgressMonitor pm)
 			throws RodinDBException {
 		try {
 			this.psWrapper = psWrapper;
-			final IPSFile psFile = psWrapper.getPSFile();
+			psFile = psWrapper.getPSFile();
 			if (psFile.exists()) {
 				final IPSStatus[] ss = psWrapper.getPSStatuses();
-				this.unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
+				initialNbOfStatuses = ss.length;
+				unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
 			} else {
 				psFile.create(false, pm);
-				this.unusedStatuses = Collections.emptySet();
+				initialNbOfStatuses = 0;
+				unusedStatuses = Collections.emptySet();
 			}
 		} finally {
 			if (pm != null) {
@@ -65,6 +73,7 @@ public class PSUpdater {
 		final String poName = poSequent.getElementName();
 		final IPSStatus status = psWrapper.getPSStatus(poName);
 		unusedStatuses.remove(status);
+		sorter.addItem(status);
 		if (! status.exists()) {
 			status.create(null, pm);
 		}
@@ -73,19 +82,34 @@ public class PSUpdater {
 		}
 	}
 	
-	public void cleanup(IProgressMonitor pm) throws RodinDBException {
-		if (pm == null) {
-			pm = new NullProgressMonitor();
-		}
-		final int size = unusedStatuses.size();
+	public void cleanup(IProgressMonitor ipm) throws RodinDBException {
+		final IProgressMonitor pm = definedProgressMonitor(ipm);
+		final ElementSorter.Mover<IPSStatus> mover = new ElementSorter.Mover<IPSStatus>() {
+			public void move(IPSStatus element, IPSStatus nextSibling)
+					throws RodinDBException {
+				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
+				element.move(psFile, nextSibling, null, false, spm);
+			}
+		};
 		try {
-			pm.beginTask("Cleaning up unused proof statuses", size);
-			for (IPSStatus psStatus: unusedStatuses) {
+			pm.beginTask("Cleaning up proof statuses", initialNbOfStatuses);
+			for (IPSStatus psStatus : unusedStatuses) {
 				psStatus.delete(false, new SubProgressMonitor(pm, 1));
 			}
+			sorter.sort(psFile.getStatuses(), mover);
 		} finally {
 			pm.done();
 		}
+	}
+
+	private IProgressMonitor definedProgressMonitor(IProgressMonitor ipm) {
+		final IProgressMonitor pm;
+		if (ipm == null) {
+			pm = new NullProgressMonitor();
+		} else {
+			pm = ipm;
+		}
+		return pm;
 	}
 	
 	// Returns true if the both the status and the corresponding PO sequent
