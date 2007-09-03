@@ -30,9 +30,9 @@ public class EventBSharedColor implements IEventBSharedColor {
 
 	public Color getColor(String key) {
 		if (key.equals(IEventBSharedColor.DIRTY_STATE))
-			display.getSystemColor(SWT.COLOR_YELLOW);
+			return display.getSystemColor(SWT.COLOR_YELLOW);
 		if (key.equals(IEventBSharedColor.BOX_BORDER))
-			display.getSystemColor(SWT.COLOR_RED);
+			return display.getSystemColor(SWT.COLOR_RED);
 		return null;
 	}
 
