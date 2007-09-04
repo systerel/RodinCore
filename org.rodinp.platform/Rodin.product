@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.2"?>
+<?pde version="3.1"?>
 
 <product name="%productName" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" useFeatures="true">
 
@@ -16,9 +16,13 @@
       <vmArgs>-Xmx512m</vmArgs>
    </launcherArgs>
 
-   <windowImages small="/org.rodinp.platform/icons/rodin16.gif" large="/org.rodinp.platform/icons/rodin32.gif"/>
+   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif"/>
 
-
+   <splash
+      location="org.rodinp.platform"
+      startupProgressRect="5,200,445,15"
+      startupMessageRect="7,177,445,20"
+      startupForegroundColor="000000" />
    <launcher name="rodin">
       <linux icon="/org.rodinp.platform/rodin32.xpm"/>
       <macosx icon="/org.rodinp.platform/rodin.icns"/>
@@ -27,6 +31,8 @@
          <bmp/>
       </win>
    </launcher>
+
+   <intro introId="org.rodinp.platform.intro"/>
 
    <plugins>
    </plugins>
