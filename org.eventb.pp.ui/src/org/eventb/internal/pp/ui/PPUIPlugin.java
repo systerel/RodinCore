@@ -15,7 +15,7 @@ public class PPUIPlugin extends Plugin {
 
 	
 	public PPUIPlugin() {
-		// TODO Auto-generated constructor stub
+		// Nothing to do
 	}
 
 	/**
