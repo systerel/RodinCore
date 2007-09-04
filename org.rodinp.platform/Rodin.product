@@ -38,7 +38,6 @@
    </plugins>
 
    <features>
-      <feature id="com.b4free.rodin" version="0.7.6"/>
       <feature id="org.eventb.ide" version="0.7.6"/>
       <feature id="org.rodinp.platform" version="0.7.6"/>
    </features>
