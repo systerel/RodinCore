@@ -78,6 +78,7 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -679,15 +680,27 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		if (currentPO == null)
 			image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
 		else {
-			IProofTreeNode root = currentPO.getProofTree().getRoot();
-			assert root != null;
-			int confidence = root.getConfidence();
-			if (confidence <= IConfidence.PENDING)
-				image = EventBImage.getImage(EventBImage.IMG_PENDING_SMILEY);
-			else if (confidence <= IConfidence.REVIEWED_MAX)
-				image = EventBImage.getImage(EventBImage.IMG_REVIEW_SMILEY);
-			else
+			IProofTree proofTree = currentPO.getProofTree();
+			if (proofTree == null)
 				image = EventBImage.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
+			else {
+				IProofTreeNode root = proofTree.getRoot();
+				if (root == null)
+					image = EventBImage
+							.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
+				else {
+					int confidence = root.getConfidence();
+					if (confidence <= IConfidence.PENDING)
+						image = EventBImage
+								.getImage(EventBImage.IMG_PENDING_SMILEY);
+					else if (confidence <= IConfidence.REVIEWED_MAX)
+						image = EventBImage
+								.getImage(EventBImage.IMG_REVIEW_SMILEY);
+					else
+						image = EventBImage
+								.getImage(EventBImage.IMG_DISCHARGED_SMILEY);
+				}
+			}
 		}
 		smiley.setImage(image);
 		midComp.pack();
