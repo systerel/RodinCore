@@ -18,6 +18,14 @@
       %license
    </license>
 
+   <url>
+      <discovery label="Main Rodin update site" url="http://rodin-b-sharp.sourceforge.net/updates"/>
+      <discovery label="B4free update site" url="http://bmethod.com/update_site/b4free_provers)"/>
+      <discovery label="B2Rodin update site" url="http://bmethod.com/update_site/b2rodin"/>
+      <discovery label="Brama update site" url="http://bmethod.com/update_site/brama"/>
+      <discovery label="ProB update site" url="http://www.stups.uni-duesseldorf.de/prob/update/prototype"/>
+   </url>
+
    <requires>
       <import feature="org.rodinp.platform" version="0.7.6" match="compatible"/>
    </requires>
