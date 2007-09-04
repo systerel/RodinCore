@@ -22,21 +22,44 @@
                value="icons/rodin16.gif,icons/rodin32.gif"/>
          <property
                name="appName"
-               value="%productName">
-         </property>
+               value="%productName"/>
+         <property
+               name="startupForegroundColor"
+               value="000000"/>
+         <property
+               name="startupMessageRect"
+               value="7,177,445,20"/>
+         <property
+               name="startupProgressRect"
+               value="5,200,445,15"/>
       </product>
    </extension>
    <extension
-         id="org.rodinp.platform.intro"
-         name="%introName"
          point="org.eclipse.ui.intro">
       <intro
-            class="org.rodinp.internal.platform.RodinIntroPart"
-            icon="icons/rodin16.gif"
-            id="org.rodinp.platform.welcome"/>
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.rodinp.platform.intro">
+      </intro>
       <introProductBinding
-            introId="org.rodinp.platform.welcome"
-            productId="org.rodinp.platform.product"/>
+            introId="org.rodinp.platform.intro"
+            productId="org.rodinp.platform.product">
+      </introProductBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.config">
+      <config
+            content="introContent.xml"
+            id="org.rodinp.platform.introConfigId"
+            introId="org.rodinp.platform.intro">
+         <presentation
+               home-page-id="root">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx"
+                  style="content/shared.css">
+            </implementation>
+         </presentation>
+      </config>
    </extension>
 
 </plugin>
