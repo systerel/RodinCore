@@ -73,7 +73,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			SubProgressMonitor spm = new SubProgressMonitor(pm, nbOfPOs,
 					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
 			);
-			AutoProver.run(prFile, psFile, spm);
+			AutoProver.run(prFile, psFile, updater.getOutOfDateStatuses(), spm);
 			return true;
 		} finally {
 			pm.done();

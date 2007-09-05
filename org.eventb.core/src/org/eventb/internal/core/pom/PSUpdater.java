@@ -7,9 +7,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +47,8 @@ public class PSUpdater {
 	// Statuses that are in the PS file but not yet updated
 	final Set<IPSStatus> unusedStatuses;
 	
+	final List<IPSStatus> outOfDateStatuses = new ArrayList<IPSStatus>();
+
 	final ElementSorter<IPSStatus> sorter = new ElementSorter<IPSStatus>();
 
 	public PSUpdater(IPSWrapper psWrapper, IProgressMonitor pm)
@@ -76,9 +80,11 @@ public class PSUpdater {
 		sorter.addItem(status);
 		if (! status.exists()) {
 			status.create(null, pm);
+			outOfDateStatuses.add(status);
 		}
 		if (!hasSameStampAsPo(status)) {
 			updateStatus(status, pm);
+			outOfDateStatuses.add(status);
 		}
 	}
 	
@@ -145,6 +151,11 @@ public class PSUpdater {
 			status.setPOStamp(poSequent.getPOStamp(), null);
 		}
 		status.setBroken(broken, null);
+	}
+
+	public IPSStatus[] getOutOfDateStatuses() {
+		IPSStatus[] result = new IPSStatus[outOfDateStatuses.size()];
+		return outOfDateStatuses.toArray(result);
 	}
 
 }

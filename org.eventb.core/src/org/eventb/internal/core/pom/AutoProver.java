@@ -34,10 +34,10 @@ final class AutoProver {
 		// Nothing to do.
 	}
 	
-	protected static void run(IPRFile prFile, IPSFile psFile, IProgressMonitor monitor) throws RodinDBException {
+	protected static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
+			IProgressMonitor monitor) throws RodinDBException {
 		if (!isEnabled())
 			return;
-		final IPSStatus[] pos = psFile.getStatuses();
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);
@@ -56,8 +56,10 @@ final class AutoProver {
 			}
 			// monitor.worked(1);
 			dirty = true;
-			if (dirty) prFile.save(null, false, true);
-			if (dirty) psFile.save(null, false, false);
+			if (dirty) {
+				prFile.save(null, false, true);
+				psFile.save(null, false, false);
+			}
 		} finally {
 			monitor.done();
 		}
