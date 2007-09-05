@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Reasoners</title>
+</head>
+
+<body>
+<h1>Reasoners</h1>
+<h2>Concepts</h2>
+<p>Reasoners are used in Event-B Sequent Prover to generate
+<a href="proofRules.html">Proof Rules</a>. A reasoner is provided with the 
+sequent to prove as well as some extra optional input. The reasoner is 
+implemented by a computer program and it is the job of the developers to ensure
+that the reasoners either fail or generate logically valid proof rules.</p>
+<p>An example of a reasoner is the "conjI" reasoner that generates the conjI 
+proof rules, which splits a conjunctive goal into two sub-goals. Here, assume 
+that the input sequent is "A, B, C |- D & E", the conjI reasoner produces the 
+following proof rules.</p>
+<p>
+A, B, C |- D  &nbsp &nbsp   A, B, C |- E
+<br>
+--------------------------------------
+<br>
+ &nbsp &nbsp A, B, C |- D & E
+</p>
+
+<h2>Adding a reasoner</h2>
+<p>A reasoner is added into the Event-B Sequent Prover using the extension point
+<code>org.eventb.core.seqprover.reasoners</code>. Below are an example of how to contribute
+to the extension point.</p>
+<font color="#4444cc">
+<pre>
+&lt;extension point="org.eventb.core.seqprover.reasoners">
+   &lt;reasoner
+      class="org.eventb.contributors.seqprover.reasoners.Hyp"
+      id="hyp"
+      name="%hypName"/>
+&lt;/extension>
+</pre>
+</font>
+<p>The above declaration defines a reasoner with a specific id (which will automatically prefix
+by the project name, e.g. <code>org.eventb.contributors.seqprover</code>). The
+name is an externalised string that is used for displaying purpose.</p>
+<p>The class attribute must be a valid Java class name which will be used to create
+an instance of the reasoner. This class must implements 
+<code>org.eventb.core.seqprover.IReasoner</code> interface.</p> However, most of
+ he time, developers only need to extends one of the abstract implementation
+ (depending on the type of the reasoner). For this implementation purpose, the 
+ type of the reasonners are specified as below:
+ 
+ <ol>
+ <li>Automatic rewriters: The reasoners of this type does not have any extra input
+ (except the sequent) and automatically rewrites all the occurrences of certain
+ formulas into other ones. An example of this is the rewriter which rewrites 
+ according to the following rules:
+   <ul>
+   <li>⊤ ⇒ P == P
+   <li>P ⇒ ⊤ == ⊤
+   <li>⊥ ⇒ P == ⊤
+   <li>P ⇒ ⊥ = ⊥
+   </ul>
+   <p>
+   In order to implement a reasoner of this type, clients can extends the
+   abstract class <code>org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites</code>.
+   For the moment, the class is internal within the project and subjected to be
+   changed. Clients can make a copy of this class to develop their own
+   implementation.
+   </p>
+   <p>An example is as follows:
+   <font color="#4444cc">
+   <pre>
+   import org.eventb.core.ast.IFormulaRewriter;
+   import org.eventb.core.seqprover.IProofMonitor;
+   import org.eventb.core.seqprover.IProverSequent;
+   import org.eventb.core.seqprover.IReasonerInput;
+   import org.eventb.core.seqprover.IReasonerOutput;
+   import org.eventb.core.seqprover.SequentProver;
+
+   public class AutoRewrites extends AbstractAutoRewrites {
+
+	  public static String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".autoRewrites";
+
+	  public String getReasonerID() {
+  		  return REASONER_ID;
+	  }
+
+	  @Override
+	  protected String getDisplayName() {
+		 return "simplification rewrites";
+	  }
+
+	  public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
+			IProofMonitor pm) {
+		final IFormulaRewriter rewriter = new AutoRewriterImpl();
+
+		return apply(seq, input, rewriter, true, pm);
+	  }
+
+   }
+   </pre>
+   </font>
+   </p>
+   <p>
+   Clients need to implement three methods. The first one namely <code>getReasonerID()</code>
+   return the string ID of this reasoner. This must be the same ID as declared
+   in the XML file (do not forget the project name prefix).  
+   </p>
+   <p> 
+   The second method is <code>getDisplayName()</code> which return the display 
+   name of the reasoner, which will be used for displaying in the UI.
+   </p>
+   <p>
+   The last method <code>IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
+   IProofMonitor pm)</code> to implement the behaviour of the reasoner. Here,
+   clients need to create an instance of <code>org.eventb.core.ast.IFormulaRewriter</code>,
+   then call the protected method <code>apply(IProverSequent seq, IReasonerInput input,
+   IFormulaRewriter rewriter, boolean hideOriginal, IProofMonitor pm)</code>. The
+   boolean flag <code>hideOriginal</code> to indicate that if a hypothesis get
+   rewritten, the original hypothesis should be hidden or not. 
+   </p>
+   <p>In order to implement the formula rewriter, clients are suggested to use
+   Tom. See example of <code>org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl.t</code>
+   which implement most of the automatic rewriting rules as in the document (?)
+   (reference needed here) supply with the Rodin platform.
+   </p>
+
+<li>Automatic inference: The reasoners of this type does not have any extra input
+(except the sequent) and implements an inference rule or a collection of
+inference rules. For example, a reasoner can implement the following inference 
+rules which dealing with conjunction in the hypothesis and in goal.
+<pre>
+  H, P |- Q
+-----------------  
+ H |- P => Q
+</pre>
+In order to implement a reasoner of this type, clients extends the abstract
+class <code>org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner</code>.
+Example include <code>org.eventb.internal.core.seqprover.eventbExtensions.ImpI</code>
+which implement the above proof rule.
+</p>
+<li>Manual rewriters: TODO
+<li>Manual inference: TODO
+<li>General reasoners: If the reasoner does not fall into the above categories,
+clients needs to implements the interface IReasoner, including the reasoner input
+how to serialize/deserialize the reasoner input. More information to follow ...
+</ol> 
+<p>
+Implementing a reasoner is only a first step of contributing to the Sequent
+Prover. In order to have the reasoner to be used, it needs to be wrap around by
+a tactic.
+</p>
+</body>
+</html>
