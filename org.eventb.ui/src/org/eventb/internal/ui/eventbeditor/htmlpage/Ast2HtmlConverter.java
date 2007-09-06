@@ -26,7 +26,7 @@ public class Ast2HtmlConverter extends AstConverter {
 	
 	public Ast2HtmlConverter() {
 		Bundle bundle = EventBUIPlugin.getDefault().getBundle();
-		IPath path = new Path("src/org/eventb/internal/ui/eventbeditor/htmlpage/style.css");
+		IPath path = new Path("html/style.css");
 		IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
 		HEADER = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
 			"<head>"+
