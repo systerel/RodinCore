@@ -651,10 +651,9 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 
 	private void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
-		this.setActivePage(EditPage.PAGE_ID);
-		// select the element within the page
-		IFormPage page = this.getActivePageInstance();
-		if (page instanceof EditPage) {
+		// select the element within the edit page
+		IFormPage page = this.setActivePage(EditPage.PAGE_ID);
+		if (page != null && page instanceof EditPage) {
 			((EditPage) page).edit(element, attributeType, charStart, charEnd);
 		}
 	}
