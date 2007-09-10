@@ -250,6 +250,8 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	int getCharacterOffset(Point pt) {
+		if (text.isDisposed())
+			return -1;
 		int offset;
 		try {
 			offset = text.getOffsetAtLocation(pt);
