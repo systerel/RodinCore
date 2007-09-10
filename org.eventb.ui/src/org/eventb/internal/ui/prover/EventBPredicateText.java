@@ -10,33 +10,37 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.PaintObjectEvent;
+import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.IEventBSharedColor;
+import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
 
 public class EventBPredicateText implements IPropertyChangeListener {
+	private final static int MARGIN = 5;
 
 	// Constants for showing different cursors
 	final Cursor handCursor;
@@ -47,16 +51,14 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	private Predicate hyp;
 
-	StyledText text;
+	StyledText styledText;
 	
-	private Collection<Point> boxes;
+	IEventBInputText [] boxes;
+	
+	int [] offsets;
 
 	TacticHyperlinkManager manager;
 	
-	Point currentBox;
-
-	private int currSize;
-
 	private ProverUI proverUI;
 	
 	Collection<Point> dirtyStates;
@@ -71,22 +73,26 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	MouseEnterListener mouseEnterListener = new MouseEnterListener();
 
-	public EventBPredicateText(FormToolkit toolkit, final Composite parent, ProverUI proverUI) {
+	private ScrolledForm scrolledForm;
+
+	public EventBPredicateText(FormToolkit toolkit, final Composite parent, ProverUI proverUI, ScrolledForm scrolledForm) {
 		this.proverUI = proverUI;
+		this.scrolledForm = scrolledForm;
 		dirtyStates = new ArrayList<Point>();
-		text = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
+		styledText = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		Font font = JFaceResources
 				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		text.setFont(font);
-		handCursor = new Cursor(text.getDisplay(), SWT.CURSOR_HAND);
-		arrowCursor = new Cursor(text.getDisplay(), SWT.CURSOR_ARROW);
+		styledText.setFont(font);
+		handCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_HAND);
+		arrowCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_ARROW);
 		JFaceResources.getFontRegistry().addListener(this);
-		text.addListener(SWT.MouseDown, mouseDownListener);
-		text.addListener(SWT.MouseMove, mouseMoveListener);
-		text.addListener(SWT.MouseHover, mouseHoverListener);
-		text.addListener(SWT.MouseExit, mouseExitListener);
-		text.addListener(SWT.MouseEnter, mouseEnterListener);
-		manager = new TacticHyperlinkManager(text) {
+		styledText.addListener(SWT.MouseDown, mouseDownListener);
+		styledText.addListener(SWT.MouseMove, mouseMoveListener);
+		styledText.addListener(SWT.MouseHover, mouseHoverListener);
+		styledText.addListener(SWT.MouseExit, mouseExitListener);
+		styledText.addListener(SWT.MouseEnter, mouseEnterListener);
+		styledText.setEditable(false);
+		manager = new TacticHyperlinkManager(styledText) {
 
 			@Override
 			protected void applyTactic(String tacticID, IPosition position) {
@@ -120,135 +126,90 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	// This must be called after initialisation
 	public void setText(String string, IUserSupport us, Predicate hyp,
-			Collection<Point> boxes, Collection<TacticPositionUI> links) {
+			int [] positions, Collection<TacticPositionUI> links) {
 		this.hyp = hyp;
 		this.us = us;
-		this.boxes = boxes;
+		styledText.setText(string);
+		this.offsets = positions;
+		createTextBoxes();
 		manager.setHyperlinks(links);
-		text.setText(string);
-		text.pack();
-		text.addModifyListener(new EventBStyledTextModifyListener());
-
-		text.addListener(SWT.Paint, new Listener() {
-			public void handleEvent(Event event) {
-				drawBoxes(event);
+		// reposition widgets on paint event and draw a box around the widgets.
+		styledText.addPaintObjectListener(new PaintObjectListener() {
+			public void paintObject(PaintObjectEvent event) {
+				event.gc.setForeground(styledText.getDisplay().getSystemColor(
+						SWT.COLOR_RED));
+				StyleRange style = event.style;
+				int start = style.start;
+				for (int i = 0; i < offsets.length; i++) {
+					int offset = offsets[i];
+					if (start == offset) {
+						Text text = boxes[i].getTextWidget();
+						Point pt = text.getSize();
+						int x = event.x + MARGIN;
+						int y = event.y + event.ascent - 2*pt.y/3;
+						text.setLocation(x, y);
+						Rectangle bounds = text.getBounds();
+						event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
+								bounds.width + 1, bounds.height + 1);
+						break;
+					}
+				}
 			}
-
 		});
 
-		text.addModifyListener(new ModifyListener() {
+		//		styledText.pack();
+//		styledText.addModifyListener(new EventBStyledTextModifyListener());
 
-			public void modifyText(ModifyEvent e) {
-				if (currentBox == null)
-					return;
-				dirtyStates.add(currentBox);
-				updateIndexes();
-			}
-
-		});
-
-		text.addVerifyListener(new VerifyListener() {
-
-			public void verifyText(VerifyEvent e) {
-				checkModifiable(e);
-			}
-
-		});
 		setStyle();
 	}
 
-	protected void checkModifiable(VerifyEvent e) {
-		e.doit = false;
-		Point pt = new Point(e.start, e.end);
-
-		// Make sure the selection is from left to right
-		if (pt.x > pt.y) {
-			pt = new Point(pt.y, pt.x);
-		}
-
-		// It is only modify-able if it is within one subrange and the
-		for (Point index : boxes) {
-			if (index.x > pt.x)
-				continue;
-			if (index.y < pt.y)
-				continue;
-
-			if (e.text.equals("")) { // deletion
-				if (pt.x == pt.y - 1 && index.y == pt.x) // SWT.DEL at the
-					// end
-					continue;
-				else if (pt.x == pt.y + 1 && index.x == pt.y) // SWT.BS at the
-					// beginning
-					continue;
-			}
-
-			e.doit = true;
-			currentBox = index;
-			currSize = text.getText().length();
-			break;
-		}
-	}
-
-	protected void updateIndexes() {
-		int offset = text.getText().length() - currSize;
-
-		for (Point box : boxes) {
-			if (box.x > currentBox.y) {
-				box.x = box.x + offset;
-				box.y = box.y + offset;
-			}
-		}
-
-		manager.updateHyperlinks(currentBox.y, offset);
-		
-		for (Point point : dirtyStates) {
-			if (point.x > currentBox.y) {
-				point.x = point.x + offset;
-				point.y = point.y + offset;
-			}
-		}
-
-		currentBox.y = currentBox.y + offset;
-
-		setStyle();
-		text.redraw();
-	}
-
-	void drawBoxes(Event event) {
-		if (boxes == null)
+	private void createTextBoxes() {
+		if (offsets == null)
 			return;
-		String contents = text.getText();
-		int lineHeight = text.getLineHeight();
-		event.gc.setForeground(EventBUIPlugin.getSharedColor().getColor(
-				IEventBSharedColor.BOX_BORDER));
-		for (Point index : boxes) {
-			String str = contents.substring(index.x, index.y);
-			int stringWidth = event.gc.stringExtent(str).x;
-			Point topLeft = text.getLocationAtOffset(index.x);
-			event.gc.drawRectangle(topLeft.x - 1, topLeft.y, stringWidth + 1,
-					lineHeight - 1);
+		boxes = new IEventBInputText[offsets.length];
+		for (int i = 0; i < offsets.length; ++i) {
+			final Text text = new Text(styledText, SWT.MULTI);
+			final int offset = offsets[i];
+			text.setText("     ");
+			boxes[i] = new EventBMath(text);
+			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			
+			text.addModifyListener(new ModifyListener() {
+
+				public void modifyText(ModifyEvent e) {
+					resizeControl(text, offset);
+				}
+				
+			});
+			resizeControl(text, offset);
+			 
 		}
+	}
+
+	protected void resizeControl(Text text, int offset) {
+		StyleRange style = new StyleRange ();
+		style.start = offset;
+		style.length = 1;
+		text.pack();
+		Rectangle rect = text.getBounds();
+		int ascent = 2 * rect.height / 3;
+		int descent = rect.height - ascent;
+		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
+				rect.width + 2 * MARGIN);
+		styledText.setStyleRange(style);
+		scrolledForm.reflow(true);
+//		IFormPage page = proverUI.getActivePageInstance();
+//		if (page != null && page instanceof ProofsPage) {
+//			((ProofsPage) page).autoLayout();
+//		}
 	}
 
 	private void setStyle() {
-		if (boxes == null)
-			return;
-		for (Point index : boxes) {
-			StyleRange style = new StyleRange();
-			style.start = index.x;
-			style.length = index.y - index.x;
-			if (dirtyStates.contains(index))
-				style.background = EventBUIPlugin.getSharedColor().getColor(
-						IEventBSharedColor.DIRTY_STATE);
-			style.fontStyle = SWT.ITALIC;
-			text.setStyleRange(style);
-		}
-
 		manager.setHyperlinkStyle();
 	}
 
 	public StyledText getMainTextWidget() {
-		return text;
+		return styledText;
 	}
 
 	/*
@@ -260,24 +221,28 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
 			Font font = JFaceResources
 					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-			text.setFont(font);
-			text.pack();
+			styledText.setFont(font);
+			styledText.pack();
 		}
 	}
 
 	public void dispose() {
 		JFaceResources.getFontRegistry().removeListener(this);
-		text.dispose();
+		if (boxes != null) {
+			for (IEventBInputText box : boxes) {
+				box.dispose();
+			}
+		}
+		styledText.dispose();
 	}
 
 	public String[] getResults() {
 		if (boxes == null)
 			return new String[0];
-		String[] results = new String[boxes.size()];
+		String[] results = new String[boxes.length];
 		int i = 0;
-		for (Point index : boxes) {
-			String str = text.getText().substring(index.x, index.y);
-			results[i] = str;
+		for (IEventBInputText box : boxes) {
+			results[i] = box.getTextWidget().getText();
 			i++;
 		}
 

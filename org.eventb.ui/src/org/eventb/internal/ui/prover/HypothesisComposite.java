@@ -208,7 +208,7 @@ public abstract class HypothesisComposite implements
 		for (Predicate hyp : hyps) {
 			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
 					.getBody(), hyp, userSupport, i % 2 != 0,
-					enable, this, proverUI);
+					enable, this, proverUI, scrolledForm);
 			rows.add(row);
 			i++;
 		}

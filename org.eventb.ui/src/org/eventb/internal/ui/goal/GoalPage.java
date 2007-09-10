@@ -258,7 +258,7 @@ public class GoalPage extends Page implements
 		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
-		goalText = new EventBPredicateText(toolkit, goalComposite, proverUI);
+		goalText = new EventBPredicateText(toolkit, goalComposite, proverUI, scrolledForm);
 		final StyledText styledText = goalText.getMainTextWidget();
 		// styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true));
@@ -286,7 +286,7 @@ public class GoalPage extends Page implements
 			assert parseResult.isSuccess();
 			Predicate tmpPred = parseResult.getParsedPredicate();
 
-			Collection<Point> indexes = new ArrayList<Point>();
+			int [] indexes = new int[0];
 
 			if (node.isOpen() && tmpPred instanceof QuantifiedPredicate
 					&& tmpPred.getTag() == Formula.EXISTS) {
@@ -474,13 +474,13 @@ public class GoalPage extends Page implements
 		return links.values();
 	}
 	
-	private Collection<Point> getIndexesString(Predicate pred,
+	private int [] getIndexesString(Predicate pred,
 			String sourceString) {
 		QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
-		Collection<Point> indexes = new ArrayList<Point>();
 
 		actualString = "\u2203 ";
 		BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
+		int [] offsets = new int[idents.length];
 
 		int i = 0;
 		for (BoundIdentDecl ident : idents) {
@@ -489,10 +489,9 @@ public class GoalPage extends Page implements
 					loc.getEnd() + 1);
 			// ProverUIUtils.debugProverUI("Ident: " + image);
 			actualString += " " + image + " ";
-			int x = actualString.length();
-			actualString += "      ";
-			int y = actualString.length();
-			indexes.add(new Point(x, y));
+			int offset = actualString.length();
+			actualString += "\uFFFC";
+			offsets[i] = offset;
 
 			if (++i == idents.length) {
 				actualString += "\u00b7\n";
@@ -502,7 +501,7 @@ public class GoalPage extends Page implements
 		}
 		actualString += PredicateUtil.prettyPrint(max_length, sourceString,
 				qpred.getPredicate());
-		return indexes;
+		return offsets;
 	}
 
 	/**

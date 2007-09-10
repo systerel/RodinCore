@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +33,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -96,6 +95,8 @@ public class HypothesisRow {
 
 	SelectionListener listener;
 	
+	private ScrolledForm scrolledForm;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -113,9 +114,10 @@ public class HypothesisRow {
 	public HypothesisRow(FormToolkit toolkit, Composite parent, Predicate hyp,
 			IUserSupport userSupport, boolean odd,
 			boolean enable,
-			SelectionListener listener, ProverUI proverUI) {
+			SelectionListener listener, ProverUI proverUI, ScrolledForm scrolledForm) {
 		GridData gd;
 		this.hyp = hyp;
+		this.scrolledForm = scrolledForm;
 		this.listener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
@@ -180,7 +182,7 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite,
-				proverUI);
+				proverUI, scrolledForm);
 		StyledText textWidget = hypothesisText.getMainTextWidget();
 		textWidget.setBackground(background);
 		textWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -202,10 +204,10 @@ public class HypothesisRow {
 		if (enable && parsedPred instanceof QuantifiedPredicate
 				&& parsedPred.getTag() == Formula.FORALL) {
 			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
-			Collection<Point> indexes = new ArrayList<Point>();
-
+			
 			String string = "\u2200 ";
 			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
+			int [] indexes = new int[idents.length];
 
 			int i = 0;
 			for (BoundIdentDecl ident : idents) {
@@ -216,9 +218,8 @@ public class HypothesisRow {
 					ProverUIUtils.debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
-				string += "      ";
-				int y = string.length();
-				indexes.add(new Point(x, y));
+				string += " ";
+				indexes[i] = x;
 
 				if (++i == idents.length) {
 					string += "\u00b7\n";
@@ -284,7 +285,7 @@ public class HypothesisRow {
 			assert parseResult.isSuccess();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 
-			Collection<Point> indexes = new ArrayList<Point>();
+			int [] indexes = new int[0];
 
 			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
 

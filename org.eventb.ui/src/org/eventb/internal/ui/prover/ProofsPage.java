@@ -175,14 +175,13 @@ public class ProofsPage extends FormPage implements
 			// Do nothing if already layouting (avoid looping)
 			if (layouting == true)
 				return;
-			layouting = true;
 			autoLayout();
-			layouting = false;
 		}
 
 	}
 
 	void autoLayout() {
+		layouting = true;
 		ScrolledForm form = this.getManagedForm().getForm();
 		Rectangle original = form.getBody().getBounds();
 
@@ -232,6 +231,7 @@ public class ProofsPage extends FormPage implements
 			hypComposite.setSize(totalWidth, totalHeight);
 			hypComposite.reflow(true);
 		}
+		layouting = false;
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
