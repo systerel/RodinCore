@@ -22,7 +22,7 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 /**
  * @author htson
  *         <p>
- *         This is the class that hold a Text using to display and to retrive
+ *         This is the class that holds a StyledText to display and to retrieve
  *         expressions which are in the mathematical language of Event-B.
  */
 public class EventBStyledText extends EventBControl implements IEventBInputText {
@@ -63,7 +63,8 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	}
 
 	protected void commit() {
-		// Do nothing. Client should override this method.
+		// Do nothing. Client should override this method in order to implement
+		// the intended behaviour.
 	}
 
 	/*

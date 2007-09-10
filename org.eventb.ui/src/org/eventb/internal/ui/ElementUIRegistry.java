@@ -160,38 +160,6 @@ public class ElementUIRegistry {
 		}
 
 		/**
-		 * A private helper method which get the label for an object providing
-		 * the label attribute and the label provider extension attribute
-		 * <p>
-		 * 
-		 * @param obj
-		 *            any object
-		 * @param provider
-		 *            the string repressents the label provider extension
-		 *            attribute
-		 * @return the label according to the input object and the extension
-		 *         names
-		 */
-		// private String getLabel(Object obj, String provider) {
-		// if (labelProvider != null)
-		// return labelProvider.getLabel(obj);
-		//
-		// try {
-		// labelProvider = (IElementLabelProvider) configuration
-		// .createExecutableExtension(provider); //$NON-NLS-1$
-		// return labelProvider.getLabel(obj);
-		// } catch (CoreException e) {
-		// String message = "Cannot instantiate the label provider class "
-		// + configuration.getAttribute(provider);
-		// UIUtils.log(e, message);
-		// if (UIUtils.DEBUG) {
-		// System.out.println(message);
-		// e.printStackTrace();
-		// }
-		// return DEFAULT_LABEL;
-		// }
-		// }
-		/**
 		 * Get a secondary label (used for the second column in Event-B Editable
 		 * Tree Viewer)
 		 * <p>

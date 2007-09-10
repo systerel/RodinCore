@@ -21,7 +21,7 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 /**
  * @author htson
  *         <p>
- *         This is the class that hold a Text using to display and to retrive
+ *         This is the class that holds a Text widget to display and to retrieve
  *         expressions which are in the mathematical language of Event-B.
  */
 public class EventBMath extends EventBControl implements IEventBInputText {
@@ -62,7 +62,8 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	}
 
 	protected void commit() {
-		// Do nothing. Client should override this method.
+		// Do nothing. Clients should override this method to implement the
+		// intended behaviour.
 	}
 
 	/*
@@ -74,6 +75,11 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 		return (Text) getControl();
 	}
 
+	/**
+	 * Enable/disable the translation.
+	 * 
+	 * @param translate
+	 */
 	public void setTranslate(boolean translate) {
 		this.translate = translate;
 		listener.setEnable(translate);

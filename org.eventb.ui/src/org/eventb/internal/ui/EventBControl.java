@@ -22,8 +22,8 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 /**
  * @author htson
  *         <p>
- *         This decorator class implement the
- *         <code>org.eventb.ui.IEventBControl</code> which add the default
+ *         This decorator class implements the
+ *         <code>org.eventb.ui.IEventBControl</code> which attaches the default
  *         Event-B font to the control.
  */
 public class EventBControl implements IEventBControl, IPropertyChangeListener {

@@ -19,9 +19,10 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of
- *         <code>org.eventb.ui.IElementLabelProvider</code> providing label
- *         for extends context element using the abstract context name
+ *         A label provider for extends context element. Return the abstract
+ *         context name if the element is indeed an extends context element,
+ *         otherwise return <code>null</code>.
+ *         </p>
  */
 public class ExtendsContextLabelProvider implements IElementLabelProvider {
 
