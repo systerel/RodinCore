@@ -27,8 +27,6 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
  */
 public class EventBStyledText extends EventBControl implements IEventBInputText {
 
-	boolean translate;
-	
 	EventBStyledTextModifyListener listener;
 	
 	/**
@@ -38,10 +36,12 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	 * @param text
 	 *            a Text widget
 	 */
-	public EventBStyledText(final StyledText text) {
+	public EventBStyledText(final StyledText text, final boolean isMath) {
 		super(text);
-		listener = new EventBStyledTextModifyListener();
-		text.addModifyListener(listener);
+		if (isMath) {
+			listener = new EventBStyledTextModifyListener();
+			text.addModifyListener(listener);
+		}
 		text.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
@@ -49,9 +49,9 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 			}
 
 			public void focusLost(FocusEvent e) {
-				if (text.getEditable() && translate) {
-					String translateStr = Text2EventBMathTranslator.translate(text
-							.getText());
+				if (text.getEditable() && isMath) {
+					String translateStr = Text2EventBMathTranslator
+							.translate(text.getText());
 					if (!text.getText().equals(translateStr)) {
 						text.setText(translateStr);
 					}
@@ -74,11 +74,6 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	 */
 	public Text getTextWidget() {
 		return (Text) getControl();
-	}
-
-	public void setTranslate(boolean translate) {
-		this.translate = translate;
-		listener.setEnable(translate);
 	}
 
 }

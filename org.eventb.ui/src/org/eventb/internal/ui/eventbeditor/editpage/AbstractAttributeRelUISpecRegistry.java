@@ -260,7 +260,10 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			String widget = config.getAttribute("widget");
 			IEditComposite editComposite;
 			if (widget.equals("text")) {
-				editComposite = new TextEditComposite(uiSpec);
+				String math = config.getAttribute("math");
+				boolean isMath = (math == null)
+						|| math.equalsIgnoreCase("true"); 
+				editComposite = new TextEditComposite(uiSpec, isMath);
 			} else if (widget.equals("combo")) {
 				editComposite = new CComboEditComposite(uiSpec);
 			} else {

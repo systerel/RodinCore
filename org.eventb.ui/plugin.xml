@@ -2201,10 +2201,11 @@
             widget="combo">
       </attributeRel>
       <attributeRel
+            defaultValue="var"
             factory="org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory"
-			defaultValue="var"
             horizontalExpand="false"
             id="org.eventb.core.variableIdentifier"
+            math="false"
             priority="1"
             style="single"
             widget="text"/>
@@ -2212,16 +2213,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.variableComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
             defaultValue="inv"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.invariantLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2239,16 +2242,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.invariantComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory"
             defaultValue="thm"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.theoremLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2266,16 +2271,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.theoremComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory"
             defaultValue="evt"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.eventLabel"
+            math="false"
             priority="1"
             style="single"
             widget="text">
@@ -2299,6 +2306,7 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.eventComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
@@ -2312,10 +2320,11 @@
             widget="combo">
       </attributeRel>
       <attributeRel
+            defaultValue="grd"
             factory="org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory"
-			defaultValue="grd"
             horizontalExpand="false"
             id="org.eventb.core.guardLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2333,16 +2342,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.guardComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
+            defaultValue="wit"
             factory="org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory"
-			defaultValue="wit"
             horizontalExpand="false"
             id="org.eventb.core.witnessLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2360,16 +2371,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.witnessComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory"
             defaultValue="act"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.actionLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2387,6 +2400,7 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.actionComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
@@ -2408,10 +2422,11 @@
             widget="combo">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory"
             defaultValue="set"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.carrierSetIdentifier"
+            math="false"
             priority="1"
             style="single"
             widget="text"/>
@@ -2419,16 +2434,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.carrierSetComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory"
             defaultValue="cst"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.constantIdentifier"
+            math="false"
             priority="1"
             style="single"
             widget="text"/>
@@ -2436,16 +2453,18 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.constantComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory"
             defaultValue="axm"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory"
             horizontalExpand="false"
             id="org.eventb.core.axiomLabel"
+            math="false"
             postfix=":"
             priority="1"
             style="single"
@@ -2463,6 +2482,7 @@
             factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
             horizontalExpand="true"
             id="org.eventb.core.axiomComment"
+            math="false"
             prefix="//"
             priority="9"
             style="multi"

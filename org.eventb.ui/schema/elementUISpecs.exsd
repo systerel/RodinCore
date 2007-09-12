@@ -230,6 +230,13 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="math" type="boolean">
+            <annotation>
+               <documentation>
+                  this is apply to &lt;samp&gt;text&lt;/samp&gt; widget only. This indicates that the text widget will need math keyboard attachted to it or not.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -268,7 +275,7 @@ This specify that the section for events in Edit Page should start with &quot;EV
 &lt;/p&gt;
 Similarly, the relationship of events with their child elements can be declared as follows:
 &lt;pre&gt;
-	&lt;extension
+ &lt;extension
       point=&quot;org.eventb.ui.elementUISpecs&quot;&gt;
       &lt;elementRel
             id=&quot;org.eventb.core.parameter&quot;
@@ -313,7 +320,7 @@ Secondly, the client declares how to display attributes for certain elements wit
             widget=&quot;combo&quot;&gt;
       &lt;/attributeRel&gt;
       &lt;attributeRel
-		factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory&quot;
+  factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory&quot;
             horizontalExpand=&quot;false&quot;
             id=&quot;org.eventb.core.eventConvergence&quot;
             priority=&quot;3&quot;

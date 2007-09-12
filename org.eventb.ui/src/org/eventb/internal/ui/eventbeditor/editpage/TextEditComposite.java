@@ -33,11 +33,13 @@ public class TextEditComposite extends AbstractEditComposite {
 	protected StyledText text;
 	private Button undefinedButton;
 	protected int style = SWT.MULTI | SWT.BORDER;
-
+	private boolean isMath;
+	
 	IContextActivation contextActivation; 
 
-	public TextEditComposite(IAttributeUISpec uiSpec) {
+	public TextEditComposite(IAttributeUISpec uiSpec, boolean isMath) {
 		super(uiSpec);
+		this.isMath = isMath;
 	}
 
 	@Override
@@ -89,7 +91,7 @@ public class TextEditComposite extends AbstractEditComposite {
 				}
 				
 			});
-			new EventBStyledText(text) {
+			new EventBStyledText(text, isMath) {
 
 				@Override
 				protected void commit() {
