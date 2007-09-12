@@ -90,8 +90,7 @@ public class EventBStyledTextModifyListener implements ModifyListener {
 	}
 
 	public void setEnable(boolean translate) {
-		// TODO Auto-generated method stub
-		
+		enable = translate;
 	}
 
 }
