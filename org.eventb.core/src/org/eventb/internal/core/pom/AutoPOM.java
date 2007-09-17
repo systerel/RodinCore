@@ -31,7 +31,25 @@ import org.rodinp.core.builder.IGraph;
  */
 public class AutoPOM implements IAutomaticTool, IExtractor {
 
+	/**
+	 * Flag for the POM debug trace
+	 */
 	public static boolean DEBUG = false;
+	
+	/**
+	 * Flag for the POM proof reuse performance trace
+	 */
+	public static boolean PERF_PROOFREUSE = false;
+
+	/**
+	 * Variable that records the number of runs of the POM during the entire session.
+	 * <p>
+	 * Note: This value is only updated if the <code>PERF_PROOFREUSE</code> flag is set to
+	 * <code>true</code>.
+	 * </p> 
+	 */
+	private static int toalRuns = 0;
+	
 	
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
 			throws RodinDBException {
@@ -77,6 +95,36 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			return true;
 		} finally {
 			pm.done();
+			
+			// Output performance trace if required
+			if (PERF_PROOFREUSE)
+			{
+				toalRuns++;
+
+				// Calculate percentage of proofs reused
+				float proofReuse;
+				if (PSUpdater.totalPOs - PSUpdater.newPOs == 0){
+					proofReuse = 0;
+				}
+				else{
+				proofReuse = ((PSUpdater.recoverablePOsWithProofs + PSUpdater.unchangedPOsWithProofs) * 100)
+								 / (PSUpdater.totalPOs - PSUpdater.newPOs);
+				}
+				
+				System.out.println(
+						"=========== Cumulative POM Proof reuse performance ==========" +
+						"\nTotal runs of the POM: " + toalRuns +						
+						"\nTotal # POs processed: " + PSUpdater.totalPOs +
+						"\n # Unchanged: " + PSUpdater.unchangedPOs +
+						"\t\t(with non-empty proofs: " + PSUpdater.unchangedPOsWithProofs +")" +
+						"\n # Recoverable: " + PSUpdater.recoverablePOs + 
+						"\t(with non-empty proofs: " + PSUpdater.recoverablePOsWithProofs +")" +
+						"\n # Irrrecoverable: " + PSUpdater.irrecoverablePOs +
+						"\t(with non-empty proofs: " + PSUpdater.irrecoverablePOsWithProofs +")" +
+						"\n # New: " + PSUpdater.newPOs +
+						"\n\n%'age Proofs Reused: " + proofReuse +
+						"\n============================================================\n");
+			}
 		}
 	}
 

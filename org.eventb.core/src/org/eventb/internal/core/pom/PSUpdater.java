@@ -23,6 +23,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
@@ -50,6 +51,22 @@ public class PSUpdater {
 	final List<IPSStatus> outOfDateStatuses = new ArrayList<IPSStatus>();
 
 	final ElementSorter<IPSStatus> sorter = new ElementSorter<IPSStatus>();
+	
+	/**
+	 * Variables that record proof reuses performance during the entire session.
+	 * <p>
+	 * Note: Their values are only updated if the <code>AutoPOM.PERF_PROOFREUSE</code> flag is set to
+	 * <code>true</code>.
+	 * </p> 
+	 */
+	protected static int totalPOs = 0;
+	protected static int newPOs = 0;
+	protected static int unchangedPOs = 0;
+	protected static int unchangedPOsWithProofs = 0;
+	protected static int recoverablePOs = 0;
+	protected static int recoverablePOsWithProofs = 0;
+	protected static int irrecoverablePOs = 0;
+	protected static int irrecoverablePOsWithProofs = 0;
 
 	public PSUpdater(IPSWrapper psWrapper, IProgressMonitor pm)
 			throws RodinDBException {
@@ -72,12 +89,14 @@ public class PSUpdater {
 		}
 	}
 
+	
 	public void updatePO(IPOSequent poSequent, IProgressMonitor pm)
 			throws RodinDBException {
 		final String poName = poSequent.getElementName();
 		final IPSStatus status = psWrapper.getPSStatus(poName);
 		unusedStatuses.remove(status);
 		sorter.addItem(status);
+
 		if (! status.exists()) {
 			status.create(null, pm);
 			outOfDateStatuses.add(status);
@@ -86,6 +105,17 @@ public class PSUpdater {
 			updateStatus(status, pm);
 			outOfDateStatuses.add(status);
 		}
+		else
+		{
+			if (AutoPOM.PERF_PROOFREUSE) {
+				unchangedPOs++;
+				if (status.exists() && status.getConfidence() != IConfidence.UNATTEMPTED)
+				{
+					unchangedPOsWithProofs++;
+				}
+			}
+		}
+		if (AutoPOM.PERF_PROOFREUSE) { totalPOs++; }		
 	}
 	
 	public void cleanup(IProgressMonitor ipm) throws RodinDBException {
@@ -131,7 +161,7 @@ public class PSUpdater {
 		}
 		return poSequent.getPOStamp() == psStatus.getPOStamp();
 	}
-
+	
 	private void updateStatus(IPSStatus status, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -142,9 +172,29 @@ public class PSUpdater {
 		if (prProof.exists()) {
 			IProofDependencies deps = prProof.getProofDependencies(ff, monitor);
 			broken = !ProverLib.proofReusable(deps, seq);
+			if (AutoPOM.PERF_PROOFREUSE) 
+			{
+				if (broken) 
+				{
+					irrecoverablePOs++;
+					if (prProof.getConfidence() != IConfidence.UNATTEMPTED)
+					{
+						irrecoverablePOsWithProofs++;
+					}
+				} 
+				else 
+				{
+					recoverablePOs++;
+					if (prProof.getConfidence() != IConfidence.UNATTEMPTED)
+					{
+						recoverablePOsWithProofs++;
+					}
+				}
+			}
 		} else {
 			prProof.create(null, monitor);
 			broken = false;
+			if (AutoPOM.PERF_PROOFREUSE) newPOs++;
 		}
 		status.copyProofInfo(null);
 		if (poSequent.hasPOStamp()) {

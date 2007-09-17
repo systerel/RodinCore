@@ -54,6 +54,7 @@ public class EventBPlugin extends Plugin {
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
 	private static final String PO_LOADER_TRACE = PLUGIN_ID + "/debug/poloader"; //$NON-NLS-1$
 	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
+	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID + "/perf/pom/proofReuse"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
@@ -246,6 +247,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(PM_TRACE);
 			if (option != null)
 				UserSupportUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(PERF_POM_PROOFREUSE_TRACE);
+			if (option != null)
+				AutoPOM.PERF_PROOFREUSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
