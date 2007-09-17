@@ -123,7 +123,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 						"\t(with non-empty proofs: " + PSUpdater.irrecoverablePOsWithProofs +")" +
 						"\n # New: " + PSUpdater.newPOs +
 						"\n\n%'age Proofs Reused: " + proofReuse +
-						"\n============================================================\n");
+						"\n=============================================================\n");
 			}
 		}
 	}
