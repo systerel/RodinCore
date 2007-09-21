@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
@@ -94,8 +96,13 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							}							
 						}
 					}
-					if (obj instanceof IPSFile) {
-						IPSFile psFile = (IPSFile) obj;
+					if (obj instanceof IMachineFile || obj instanceof IContextFile) {
+						IPSFile psFile;
+						if (obj instanceof IMachineFile)
+							psFile = ((IMachineFile) obj).getPSFile();
+						else {
+							psFile = ((IContextFile) obj).getPSFile();
+						}
 						IPRFile prFile = psFile.getPRFile();
 						IPSStatus[] statuses;
 						try {
