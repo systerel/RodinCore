@@ -848,16 +848,6 @@
       <viewerContribution
             id="org.eventb.ui.ObligationExplorer"
             targetID="org.eventb.ui.views.ObligationExplorer">
-         <visibility>
-            <or>
-               <objectClass
-                     name="org.eventb.core.IMachineFile">
-               </objectClass>
-               <objectClass
-                     name="org.eventb.core.IContextFile">
-               </objectClass>
-            </or>
-         </visibility>
          <action
                class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsAutoProver"
                enablesFor="+"
