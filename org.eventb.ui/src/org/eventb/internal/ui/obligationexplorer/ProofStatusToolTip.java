@@ -145,14 +145,24 @@ public class ProofStatusToolTip {
 					Tree w = (Tree) widget;
 					widget = w.getItem(widgetPosition);
 				}
-				if (widget == null) {
-					// tipShell.setVisible(false);
+				else {
 					tipWidget = null;
 					return;
 				}
 				if (widget == tipWidget)
 					return;
 				tipWidget = widget;
+				if (!(tipWidget instanceof TreeItem)) {
+					tipWidget = null;
+					return;
+				}
+				
+				Object obj = tipWidget.getData();
+				if (!(obj instanceof IMachineFile || obj instanceof IContextFile)) {
+					tipWidget = null;
+					return;
+				}
+				
 
 				if (tipShell != null && !tipShell.isDisposed())
 					tipShell.dispose();
@@ -181,19 +191,15 @@ public class ProofStatusToolTip {
 						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 				tipLabel.setFont(font);
 
-				// tipLabel.setData ("_TABLEITEM", item);
-				if (tipWidget instanceof TreeItem) {
-					Object obj = tipWidget.getData();
-					if (obj instanceof IMachineFile) {
-						IPSFile psFile = ((IMachineFile) obj).getPSFile();
-						tipLabel.setText(getToolTipText(psFile));
-					}
-					else if (obj instanceof IContextFile) {
-						IPSFile psFile = ((IContextFile) obj).getPSFile();
-						tipLabel.setText(getToolTipText(psFile));
-					}
+				if (obj instanceof IMachineFile) {
+					IPSFile psFile = ((IMachineFile) obj).getPSFile();
+					tipLabel.setText(getToolTipText(psFile));
 				}
-				// tipLabel.setText("Test");
+				else {
+					IPSFile psFile = ((IContextFile) obj).getPSFile();
+					tipLabel.setText(getToolTipText(psFile));
+				}
+
 				tipLabel.addListener(SWT.MouseExit, labelListener);
 				tipLabel.addListener(SWT.MouseDown, labelListener);
 
