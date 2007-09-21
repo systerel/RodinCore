@@ -17,8 +17,10 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
-import org.eventb.internal.core.pom.AutoPOM;
+import org.eventb.core.IPSStatus;
+import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
@@ -67,8 +69,12 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							ObligationExplorerUtils.debug("Run Auto Prover on "
 									+ psFile.getBareName());
 						try {
-							(new AutoPOM()).run(null, psFile.getResource(),
-									monitor);
+//							(new AutoPOM()).run(null, psFile.getResource(),
+//									monitor);
+							IPRFile prFile = psFile.getPRFile();
+							IPSStatus[] statuses = psFile.getStatuses();
+							
+							AutoProver.run(prFile, psFile, statuses, monitor);
 						} catch (RodinDBException e) {
 							if (ObligationExplorerUtils.DEBUG)
 								e.printStackTrace();

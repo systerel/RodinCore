@@ -24,7 +24,7 @@ import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
-final class AutoProver {
+public final class AutoProver {
 
 	public static boolean isEnabled() {
 		return EventBPlugin.getPOMTacticPreference().isEnabled();
@@ -34,7 +34,7 @@ final class AutoProver {
 		// Nothing to do.
 	}
 	
-	protected static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
+	public static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (!isEnabled())
 			return;
