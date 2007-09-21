@@ -1,8 +1,6 @@
 package org.eventb.internal.ui.obligationexplorer.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -11,31 +9,40 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.core.pom.AutoProver;
+import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class ObligationsAutoProver implements IViewActionDelegate {
 
 	ISelection sel;
+
+	TreeViewer viewer;
 	
 	public ObligationsAutoProver() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public void init(IViewPart view) {
-		// Do nothing
+		// The enablement condition should guarantee that the part is the
+		// Obligation Explorer.
+		assert view instanceof ObligationExplorer;
+		
+		viewer = ((ObligationExplorer) view).getTreeViewer();
+		// The viewer must be initialised.
+		assert viewer != null;
 	}
 
 	public void run(IAction action) {
@@ -46,40 +53,71 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 		assert (sel instanceof IStructuredSelection);
 		IStructuredSelection ssel = (IStructuredSelection) sel;
 		
-		// Collecting all the PSFiles
-		Object[] objects = ssel.toArray();
-		final List<IPSFile> psFiles = new ArrayList<IPSFile>(objects.length);
-		for (Object obj : objects) {
-			assert (obj instanceof IMachineFile || obj instanceof IContextFile);
-			if (obj instanceof IMachineFile) {
-				psFiles.add(((IMachineFile) obj).getPSFile());
-			}
-			else
-				psFiles.add(((IContextFile) obj).getPSFile());
-		}
-		
+		final Object [] objects = TreeSupports.treeSelectionToSet(viewer, ssel); 
+				
 		// Run the auto prover on all remaining POs
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-				for (IPSFile psFile : psFiles) {
-					if (psFile.exists()) {
-						if (ObligationExplorerUtils.DEBUG)
-							ObligationExplorerUtils.debug("Run Auto Prover on "
-									+ psFile.getBareName());
+				for (Object obj : objects) {
+					if (obj instanceof IRodinProject) {
+						// Run the Auto Prover on all IPSFile in this project
+						IRodinProject rodinPrj = (IRodinProject) obj;
+						IPSFile[] psFiles;
 						try {
-//							(new AutoPOM()).run(null, psFile.getResource(),
-//									monitor);
-							IPRFile prFile = psFile.getPRFile();
-							IPSStatus[] statuses = psFile.getStatuses();
-							
-							AutoProver.run(prFile, psFile, statuses, monitor);
+							psFiles = rodinPrj
+									.getChildrenOfType(IPSFile.ELEMENT_TYPE);
 						} catch (RodinDBException e) {
-							if (ObligationExplorerUtils.DEBUG)
-								e.printStackTrace();
+							EventBUIExceptionHandler
+									.handleGetChildrenException(e,
+											UserAwareness.IGNORE);
 							continue;
 						}
+						for (IPSFile psFile : psFiles) {
+							IPRFile prFile = psFile.getPRFile();
+							IPSStatus[] statuses;
+							try {
+								statuses = psFile.getStatuses();
+							} catch (RodinDBException e) {
+								EventBUIExceptionHandler
+										.handleGetChildrenException(e,
+												UserAwareness.IGNORE);
+								continue;
+							}
+							try {
+								AutoProver.run(prFile, psFile, statuses, monitor);
+							} catch (RodinDBException e) {
+								EventBUIExceptionHandler.handleRodinException(
+										e, UserAwareness.IGNORE);
+								continue;
+							}							
+						}
+					}
+					if (obj instanceof IPSFile) {
+						IPSFile psFile = (IPSFile) obj;
+						IPRFile prFile = psFile.getPRFile();
+						IPSStatus[] statuses;
+						try {
+							statuses = psFile.getStatuses();
+						} catch (RodinDBException e) {
+							EventBUIExceptionHandler
+									.handleGetChildrenException(e,
+											UserAwareness.IGNORE);
+							continue;
+						}
+						try {
+							AutoProver.run(prFile, psFile, statuses, monitor);
+						} catch (RodinDBException e) {
+							EventBUIExceptionHandler.handleRodinException(
+									e, UserAwareness.IGNORE);
+							continue;
+						}
+					}
+					
+					if (obj instanceof IPSStatus) {
+						// TODO: Farhad: How to run AutoProver on just the
+						// single PO.
 					}
 				}
 			}
@@ -88,6 +126,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 		
 		runWithProgress(op);
 	}
+
 
 	private void runWithProgress(IRunnableWithProgress op) {
 		final Shell shell = Display.getDefault().getActiveShell();
