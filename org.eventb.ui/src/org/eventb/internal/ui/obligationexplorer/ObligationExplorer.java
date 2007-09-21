@@ -103,9 +103,6 @@ public class ObligationExplorer extends ViewPart implements
 	// Group of action that is used.
 	ObligationExplorerActionGroup groupActionSet;
 
-	// A flag to indicate if the selection is made externally.
-	private boolean byExternal;
-
 	ToolItem exclude;
 
 	ToolItem discharge;
@@ -184,8 +181,6 @@ public class ObligationExplorer extends ViewPart implements
 				.getUserSupports();
 		final boolean proofBroken = status.isBroken();
 		for (IUserSupport userSupport : userSupports) {
-			// UIUtils.debugObligationExplorer("Get US: "
-			// + userSupport);
 			IProofState [] proofStates = userSupport.getPOs();
 			for (IProofState proofState : proofStates) {
 				if (proofState.getPSStatus().equals(status)) {
@@ -251,20 +246,6 @@ public class ObligationExplorer extends ViewPart implements
 		}
 
 		return UNKNOWN;
-
-		// Previous code:
-		// IProof status = ps.getProof();
-		// if (status.getContents().equals("PENDING"))
-		// return registry.get(EventBImage.IMG_PENDING);
-		// else if (status.getContents().equals("DISCHARGED"))
-		// return registry.get(EventBImage.IMG_DISCHARGED);
-	}
-
-	/**
-	 * The constructor.
-	 */
-	public ObligationExplorer() {
-		byExternal = false;
 	}
 
 	/**
@@ -366,7 +347,7 @@ public class ObligationExplorer extends ViewPart implements
 		createToolItem(coolBar);
 		createText(coolBar);
 
-		fViewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL
+		fViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		fViewer.setContentProvider(new ObligationExplorerContentProvider(
 				fViewer));
@@ -481,6 +462,9 @@ public class ObligationExplorer extends ViewPart implements
 				if (obj instanceof IRodinFile) {
 					UIUtils.linkToEventBEditor(obj);
 				}
+				else if (obj instanceof IPSStatus) {
+					selectPO((IPSStatus) obj);
+				}
 			}
 		};
 
@@ -521,39 +505,11 @@ public class ObligationExplorer extends ViewPart implements
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (byExternal)
-			return;
-
-		if (ObligationExplorerUtils.DEBUG)
-			ObligationExplorerUtils.debug("Selection changed: ");
-		ISelection sel = event.getSelection();
-
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) sel;
-
-			if (!ssel.isEmpty()) {
-				// UIUtils.debugObligationExplorer("Activate UI "
-				// + ssel.toString());
-				ISelection selection = fViewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-
-				if (obj instanceof IPSStatus) {
-					IPSStatus ps = (IPSStatus) obj;
-
-					selectPO(ps);
-				}
-			} else {
-				if (ObligationExplorerUtils.DEBUG)
-					ObligationExplorerUtils.debug("De-selected");
-				// Do nothing when there is no selection
-				// editor.getUserSupport().selectNode(null);
-			}
-		}
-
+		// Do nothing
+		// TODO See if will be used. Otherwise, should be removed.
 	}
 
-	private void selectPO(IPSStatus ps) {
+	void selectPO(IPSStatus ps) {
 		UIUtils.linkToProverUI(ps);
 		UIUtils.activateView(ProofControl.VIEW_ID);
 		UIUtils.activateView(ProofTreeUI.VIEW_ID);
@@ -568,7 +524,7 @@ public class ObligationExplorer extends ViewPart implements
 	 *            the object will be selected
 	 */
 	public void externalSetSelection(Object obj) {
-		byExternal = true;
+//		byExternal = true;
 		if (!((IStructuredSelection) fViewer.getSelection()).toList().contains(
 				obj)) {
 			if (ObligationExplorerUtils.DEBUG)
@@ -577,7 +533,7 @@ public class ObligationExplorer extends ViewPart implements
 			fViewer.setSelection(new StructuredSelection(obj));
 			fViewer.getControl().setRedraw(true);
 		}
-		byExternal = false;
+//		byExternal = false;
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
