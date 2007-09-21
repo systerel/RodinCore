@@ -50,17 +50,33 @@ public class Copy implements IObjectActionDelegate {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() != 1) {
 			action.setEnabled(false);
+			if (ProofTreeUIUtils.DEBUG) {
+				ProofTreeUIUtils
+						.debug("There should be exactly one selected element, disable Copy");
+			}
 			return;
 		}
 		if (!(ssel.getFirstElement() instanceof IProofTreeNode)) {
 			action.setEnabled(false);
+			if (ProofTreeUIUtils.DEBUG) {
+				ProofTreeUIUtils
+						.debug("The selected element should be a IProofTreeNode, disable Copy");
+			}
 			return;
 		}
 		
 		IProofTreeNode node = (IProofTreeNode) ssel.getFirstElement();
 		if (node.isOpen()) {
+			if (ProofTreeUIUtils.DEBUG) {
+				ProofTreeUIUtils
+						.debug("The proof tree node should be not open, disable Copy");
+			}
 			action.setEnabled(false);
 		} else {
+			if (ProofTreeUIUtils.DEBUG) {
+				ProofTreeUIUtils
+						.debug("The proof tree node is not open, enable Copy");
+			}
 			action.setEnabled(true);
 		}
 	}
