@@ -443,9 +443,10 @@ public class SectionComposite implements ISectionComposite {
 		if (contain(element)) {
 			if (selected)
 				setExpand(true);
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.select(element, selected);
-			}
+			if (elementComps != null)
+				for (IElementComposite elementComp : elementComps) {
+					elementComp.select(element, selected);
+				}
 		}
 	}
 
