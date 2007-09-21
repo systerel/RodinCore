@@ -845,6 +845,29 @@
                menubarPath="additions"
                tooltip="%popupMenu.copy.tooltip"/>
       </objectContribution>
+      <viewerContribution
+            id="org.eventb.ui.ObligationExplorer"
+            targetID="org.eventb.ui.views.ObligationExplorer">
+         <visibility>
+            <or>
+               <objectClass
+                     name="org.eventb.core.IMachineFile">
+               </objectClass>
+               <objectClass
+                     name="org.eventb.core.IContextFile">
+               </objectClass>
+            </or>
+         </visibility>
+         <action
+               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsAutoProver"
+               enablesFor="+"
+               icon="icons/discharged.gif"
+               id="org.eventb.ui.obligationexplorer.autoprover"
+               label="%action.autoProver.label"
+               menubarPath="proving"
+               tooltip="%action.autoProver.tooltip">
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eventb.ui.proofTactics">
