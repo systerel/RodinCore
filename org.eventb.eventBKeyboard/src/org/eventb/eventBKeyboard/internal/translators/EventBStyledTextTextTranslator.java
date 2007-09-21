@@ -94,27 +94,33 @@ IEventBStyledTextTranslator {
 					test = symbol.getCombo();
 					int index = subString.indexOf(test);
 
-					if (index != -1) {
+					while (index != -1) {
 						result = symbol.getTranslation();
 
 						realIndex = beginIndex + index;
 
 						if (index != 0) {
-							if (isTextCharacter(text.charAt(index - 1))) {
-								break;
+							if (isTextCharacter(subString.charAt(index - 1))) {
+								index = subString.indexOf(test, index + 1);
+								continue;
 							}
 						}
 
 						if (realIndex + test.length() != endIndex) {
 							if (isTextCharacter(text.charAt(realIndex
 									+ test.length()))) {
-								break;
+								index = subString.indexOf(test, index + 1);
+								continue;
 							}
 						} else {
 							if (endIndex == text.length()) {
-								break;
+								index = subString.indexOf(test, index + 1);
+								continue;
 							}
 						}
+						break;
+					}
+					if (index != -1) {
 
 						widget.setSelection(realIndex, realIndex
 								+ test.length());
