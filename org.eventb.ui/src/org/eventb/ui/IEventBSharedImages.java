@@ -63,8 +63,6 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_APPLIED = "Applied";
 
-	public static final String IMG_UNATTEMPTED = "Unattempted";
-
 	public static final String IMG_DEFAULT = "Default";
 
 	public static final String IMG_REFINES = "Refines";

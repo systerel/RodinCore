@@ -112,10 +112,8 @@ public class ObligationExplorer extends ViewPart implements
 	ProofStatusToolTip handler;
 	
 	// Proof states
-
 	static int UNKNOWN = -1;
 	static int DISCHARGED = 0;
-	static int UNATTEMPTED = 1;
 	static int PENDING_BROKEN = 2;
 	static int PENDING = 3;
 	static int REVIEWED_BROKEN = 4;
@@ -188,9 +186,6 @@ public class ObligationExplorer extends ViewPart implements
 					if (!proofState.isDirty() || tree == null)
 						break;
 
-					if (!tree.proofAttempted())
-						return UNATTEMPTED;
-
 					int confidence = tree.getConfidence();
 
 					if (confidence == IConfidence.PENDING) {
@@ -222,7 +217,7 @@ public class ObligationExplorer extends ViewPart implements
 
 		// TODO : confidence now expresses unattempted as well
 		if ((!prProof.exists()) || (prProof.getConfidence() <= IConfidence.UNATTEMPTED))
-			return UNATTEMPTED;
+			return PENDING;
 
 		int confidence = prProof.getConfidence();
 		if (proofBroken) {

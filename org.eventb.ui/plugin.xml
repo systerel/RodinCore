@@ -698,7 +698,7 @@
       </element>
       <element
             defaultColumn="content"
-            icon="icons/unattempted.gif"
+            icon="icons/sample.gif"
             priority="6"
             type="org.eventb.core.witness">
          <column

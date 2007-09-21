@@ -130,8 +130,6 @@ public class EventBImage {
 				"icons/reviewed.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_BROKEN,
 				"icons/reviewed_broken.gif");
-		registerImage(registry, IEventBSharedImages.IMG_UNATTEMPTED,
-				"icons/unattempted.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DEFAULT,
 				"icons/sample.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REFINES,

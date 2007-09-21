@@ -85,10 +85,6 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 							IProofTree tree = proofState.getProofTree();
 
 							if (tree != null && proofState.isDirty()) {
-								if (!tree.proofAttempted())
-									return registry
-											.get(IEventBSharedImages.IMG_UNATTEMPTED);
-
 								int confidence = tree.getConfidence();
 
 								final boolean proofBroken = status.isBroken();
