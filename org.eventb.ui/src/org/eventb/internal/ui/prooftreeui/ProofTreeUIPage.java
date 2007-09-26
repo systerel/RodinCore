@@ -444,24 +444,44 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (ProofTreeUIUtils.DEBUG)
-			ProofTreeUIUtils.debug("Selection Changed: " + event);
+			ProofTreeUIUtils.debug("Selection Changed 1");
 		ISelection sel = event.getSelection();
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Selection Changed 2: " + sel);
 
 		if (sel instanceof IStructuredSelection) {
+			if (ProofTreeUIUtils.DEBUG)
+				ProofTreeUIUtils.debug("Selection Changed 3");
 			IStructuredSelection ssel = (IStructuredSelection) sel;
+			if (ProofTreeUIUtils.DEBUG)
+				ProofTreeUIUtils.debug("Selection Changed 4");
 			if (!ssel.isEmpty()) {
+				if (ProofTreeUIUtils.DEBUG)
+					ProofTreeUIUtils.debug("Selection Changed 5");
 				Object obj = ssel.getFirstElement();
+				if (ProofTreeUIUtils.DEBUG)
+					ProofTreeUIUtils.debug("Selection Changed 6: " + obj);
 				if (obj instanceof IProofTreeNode) {
 					try {
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Selection Changed 7");
 						userSupport.selectNode((IProofTreeNode) obj);
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Selection Changed 8");
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			} else { // Do nothing when there is no selection
+				if (ProofTreeUIUtils.DEBUG)
+					ProofTreeUIUtils.debug("Selection Changed 4.1");
 			}
+			if (ProofTreeUIUtils.DEBUG)
+				ProofTreeUIUtils.debug("Selection Changed 9");
 		}
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Selection Changed 10");
 
 	}
 
