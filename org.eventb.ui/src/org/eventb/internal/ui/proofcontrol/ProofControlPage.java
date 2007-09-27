@@ -879,11 +879,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		Display display = scrolledForm.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
+				// Do nothing if the form is disposed.
+				if (scrolledForm.isDisposed())
+					return;
+
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();

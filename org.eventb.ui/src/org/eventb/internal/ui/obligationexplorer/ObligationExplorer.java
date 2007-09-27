@@ -533,14 +533,21 @@ public class ObligationExplorer extends ViewPart implements
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
-		Control control = fViewer.getControl();
+		final Control control = fViewer.getControl();
+		
+		// Do nothing if the control is already disposed.
 		if (control.isDisposed())
 			return;
 
-		
 		Display display = control.getDisplay();
+
 		display.syncExec(new Runnable() {
 			public void run() {
+		
+				// Do nothing if the control is already disposed.
+				if (control.isDisposed())
+					return;
+
 				IUserSupportDelta[] affectedUserSupports = delta.getAffectedUserSupports();
 				for (IUserSupportDelta affectedUserSupport : affectedUserSupports) {
 					IPSFile psFile = affectedUserSupport.getUserSupport().getInput();
