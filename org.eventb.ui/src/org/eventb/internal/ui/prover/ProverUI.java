@@ -519,6 +519,9 @@ public class ProverUI extends FormEditor implements
 	 */
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Begin User Support Manager Changed");
+
 		if (saving)
 			return; // Ignore delta while saving
 
@@ -597,6 +600,9 @@ public class ProverUI extends FormEditor implements
 				}
 			}
 		});
+	
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("End User Support Manager Changed");
 	}
 
 	protected void setInformation(IUserSupportInformation[] information) {

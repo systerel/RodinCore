@@ -235,6 +235,9 @@ public class ProofsPage extends FormPage implements
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Begin User Support Manager Changed");
+
 		final ScrolledForm scrolledForm = this.getManagedForm().getForm();
 		// Do nothing if the managed form is disposed.
 		if (scrolledForm.isDisposed())
@@ -315,6 +318,8 @@ public class ProofsPage extends FormPage implements
 			}
 		});
 
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("End User Support Manager Changed");
 	}
 
 }

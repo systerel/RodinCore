@@ -533,6 +533,9 @@ public class ObligationExplorer extends ViewPart implements
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("Begin User Support Manager Changed");
+
 		final Control control = fViewer.getControl();
 		
 		// Do nothing if the control is already disposed.
@@ -579,6 +582,9 @@ public class ObligationExplorer extends ViewPart implements
 				}
 			}
 		});
+
+		if (ObligationExplorerUtils.DEBUG)
+			ObligationExplorerUtils.debug("End User Support Manager Changed");
 	}
 
 	@Override

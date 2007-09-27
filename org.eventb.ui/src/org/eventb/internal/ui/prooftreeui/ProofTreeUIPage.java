@@ -536,6 +536,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("Begin User Support Manager Changed");
+		
 		final Control control = viewer.getControl();
 		// Do nothing if the control has been disposed
 		if (control.isDisposed())
@@ -654,6 +657,10 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				}
 			}
 		});
+	
+		if (ProofTreeUIUtils.DEBUG)
+			ProofTreeUIUtils.debug("End User Support Manager Changed");
+
 	}
 
 	void selectCurrentNode(IProofTreeNode node) {

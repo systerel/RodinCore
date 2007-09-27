@@ -850,6 +850,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
+		if (ProofControlUtils.DEBUG)
+			ProofControlUtils.debug("Begin User Support Manager Changed");
+
 		// Do nothing if the form is disposed.
 		if (scrolledForm.isDisposed())
 			return;
@@ -954,6 +957,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				scrolledForm.reflow(true);
 			}
 		});
+
+		if (ProofControlUtils.DEBUG)
+			ProofControlUtils.debug("End User Support Manager Changed");
 
 	}
 

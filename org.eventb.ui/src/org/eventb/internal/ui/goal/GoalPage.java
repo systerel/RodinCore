@@ -558,6 +558,9 @@ public class GoalPage extends Page implements
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+		if (GoalUtils.DEBUG)
+			GoalUtils.debug("Begin User Support Manager Changed");
+
 		// Do nothing if the page is disposed.
 		final Control control = this.getControl();
 		if (control.isDisposed())
@@ -654,6 +657,9 @@ public class GoalPage extends Page implements
 				}
 			}
 		});
+
+		if (GoalUtils.DEBUG)
+			GoalUtils.debug("End User Support Manager Changed");
 	}
 	
 	void setInformation(final IUserSupportInformation[] information) {

@@ -223,6 +223,8 @@ public abstract class HypothesisComposite implements
 	 */
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Begin User Support Manager Changed");
 		// Do nothing if the form is disposed.
 		if (scrolledForm.isDisposed())
 			return;
@@ -309,6 +311,9 @@ public abstract class HypothesisComposite implements
 				}
 			});
 		}
+
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("End User Support Manager Changed");
 	}
 
 	public void setFocus() {

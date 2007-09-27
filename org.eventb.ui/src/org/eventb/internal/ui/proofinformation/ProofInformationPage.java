@@ -295,6 +295,9 @@ public class ProofInformationPage extends Page implements
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
+		if (ProofInformationUtils.DEBUG)
+			ProofInformationUtils.debug("Begin User Support Manager Changed");
+
 		if (scrolledForm.isDisposed())
 			return;
 		final IUserSupport userSupport = this.editor.getUserSupport();
@@ -359,6 +362,9 @@ public class ProofInformationPage extends Page implements
 				}
 			}
 		});
+
+		if (ProofInformationUtils.DEBUG)
+			ProofInformationUtils.debug("End User Support Manager Changed");
 
 	}
 
