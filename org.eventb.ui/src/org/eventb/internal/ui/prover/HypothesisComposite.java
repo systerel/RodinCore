@@ -43,7 +43,6 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -245,67 +244,71 @@ public abstract class HypothesisComposite implements
 
 		// This case should NOT happened.
 		if (kind == IUserSupportDelta.ADDED) {
+			// Should not happen because the user support should exist before
+			// creating this.
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils
 						.debug("Error: Delta said that the user Support is added");
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		boolean needRefresh = false;
+		
+		// Handle the case where the user support has changed.
+		if (kind == IUserSupportDelta.CHANGED) {
+			int usFlags = affectedUserSupport.getFlags();
+			if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
+				// The current proof state is changed, reinitialise the
+				// view.
+				needRefresh = true;
+			}
+			else if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
+				// If the changes occurs in some proof states.
+				IProofState proofState = userSupport.getCurrentPO();
+				// Trying to get the change for the current proof state.
+				final IProofStateDelta affectedProofState = ProverUIUtils
+						.getProofStateDelta(affectedUserSupport,
+								proofState);
+				if (affectedProofState != null) {
+					// If there are some changes
+					int psKind = affectedProofState.getKind();
+					if (psKind == IProofStateDelta.ADDED) {
+						// This case should not happened since the proof state
+						// must exist before creating this.
+						if (ProverUIUtils.DEBUG)
+							ProverUIUtils
+									.debug("Error: Delta said that the proof state is added");
+						return; // Do nothing
+					}
 
-		display.syncExec(new Runnable() {
-			public void run() {
-				// Handle the case where the user support has changed.
-				if (kind == IUserSupportDelta.CHANGED) {
-					int usFlags = affectedUserSupport.getFlags();
-					if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
-						// The current proof state is changed, reinitialise the
-						// view.
-						refresh();
+					if (psKind == IProofStateDelta.REMOVED) {
+						// Do nothing in this case, this will be handled
+						// by the main proof editor.
 						return;
 					}
-					if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
-						// If the changes occurs in some proof states.
-						IProofState proofState = userSupport.getCurrentPO();
-						// Trying to get the change for the current proof state.
-						final IProofStateDelta affectedProofState = ProverUIUtils
-								.getProofStateDelta(affectedUserSupport,
-										proofState);
-						if (affectedProofState != null) {
-							// If there are some changes
-							int psKind = affectedProofState.getKind();
-							if (psKind == IProofStateDelta.ADDED) {
-								// This case should not happened
-								if (ProverUIUtils.DEBUG)
-									ProverUIUtils
-											.debug("Error: Delta said that the proof state is added");
-								return;
-							}
 
-							if (psKind == IProofStateDelta.REMOVED) {
-								// Do nothing in this case, this will be handled
-								// by the main proof editor.
-								return;
-							}
-
-							if (psKind == IProofStateDelta.CHANGED) {
-								// If there are some changes to the proof state.
-								int psFlags = affectedProofState.getFlags();
-								if ((psFlags & flags) != 0) {
-									// Update the view if the corresponding flag
-									// has been changed
-									refresh();
-									return;
-								}
-
-							}
+					if (psKind == IProofStateDelta.CHANGED) {
+						// If there are some changes to the proof state.
+						int psFlags = affectedProofState.getFlags();
+						if ((psFlags & flags) != 0) {
+							// Update the view if the corresponding flag
+							// has been changed
+							needRefresh = true;
 						}
 					}
 				}
 			}
-		});
+		}
 
+		if (needRefresh) {
+			Display display = scrolledForm.getDisplay();
+
+			display.syncExec(new Runnable() {
+				public void run() {
+					refresh();
+				}
+			});
+		}
 	}
 
 	public void setFocus() {

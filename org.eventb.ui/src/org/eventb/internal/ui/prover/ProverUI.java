@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -521,6 +522,10 @@ public class ProverUI extends FormEditor implements
 		if (saving)
 			return; // Ignore delta while saving
 
+		final Control control = this.getControl(getCurrentPage());
+		if (control.isDisposed())
+			return;
+		
 		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
@@ -544,11 +549,13 @@ public class ProverUI extends FormEditor implements
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		Display display = control.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
+				if (control.isDisposed())
+					return;
+
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();

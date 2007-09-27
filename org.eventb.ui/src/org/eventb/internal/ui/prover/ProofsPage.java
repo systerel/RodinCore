@@ -235,8 +235,9 @@ public class ProofsPage extends FormPage implements
 	}
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
+		final ScrolledForm scrolledForm = this.getManagedForm().getForm();
 		// Do nothing if the managed form is disposed.
-		if (this.getManagedForm().getForm().isDisposed())
+		if (scrolledForm.isDisposed())
 			return;
 
 		// Trying to get the changes for the current user support.
@@ -262,11 +263,14 @@ public class ProofsPage extends FormPage implements
 			return; // Do nothing
 		}
 
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		Display display = scrolledForm.getDisplay();
 
 		display.syncExec(new Runnable() {
 			public void run() {
+				// Do nothing if the managed form is disposed.
+				if (scrolledForm.isDisposed())
+					return;
+
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int usFlags = affectedUserSupport.getFlags();

@@ -58,7 +58,6 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -537,6 +536,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
+		final Control control = viewer.getControl();
+		// Do nothing if the control has been disposed
+		if (control.isDisposed())
+			return;
+		
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Proof Tree UI for "
 					+ ProofTreeUIPage.this.userSupport.getInput()
@@ -565,10 +569,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						.debug("Error: Delta said that the user Support is added");
 			return; // Do nothing
 		}
-		Display display = EventBUIPlugin.getDefault().getWorkbench()
-				.getDisplay();
+		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
+
+				// Do nothing if the control has been disposed
+				if (control.isDisposed())
+					return;
+
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();

@@ -295,7 +295,7 @@ public class ProofInformationPage extends Page implements
 	}
 
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
-		if (scrolledForm.getContent().isDisposed())
+		if (scrolledForm.isDisposed())
 			return;
 		final IUserSupport userSupport = this.editor.getUserSupport();
 
@@ -322,9 +322,14 @@ public class ProofInformationPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = Display.getDefault();
+		Display display = scrolledForm.getDisplay();
+		
 		display.syncExec(new Runnable() {
 			public void run() {
+				
+				if (scrolledForm.isDisposed())
+					return;
+
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
