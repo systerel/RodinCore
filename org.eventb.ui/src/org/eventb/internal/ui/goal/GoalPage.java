@@ -559,7 +559,8 @@ public class GoalPage extends Page implements
 
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		// Do nothing if the page is disposed.
-		if (this.getControl().isDisposed())
+		final Control control = this.getControl();
+		if (control.isDisposed())
 			return;
 
 		// Trying to get the changes for the current user support.
@@ -585,10 +586,13 @@ public class GoalPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = this.getControl().getDisplay();
+		Display display = control.getDisplay();
 		
 		display.syncExec(new Runnable() {
 			public void run() {
+				if (control.isDisposed())
+					return;
+				
 				// Handle the case where the user support has changed.
 				if (kind == IUserSupportDelta.CHANGED) {
 					int flags = affectedUserSupport.getFlags();
