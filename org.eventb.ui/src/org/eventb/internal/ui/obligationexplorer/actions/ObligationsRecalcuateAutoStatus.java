@@ -19,7 +19,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.internal.core.pom.AutoProver;
+import org.eventb.internal.core.pom.RecalculateAutoStatus;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
@@ -27,13 +27,13 @@ import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class ObligationsAutoProver implements IViewActionDelegate {
+public class ObligationsRecalcuateAutoStatus implements IViewActionDelegate {
 
 	ISelection sel;
 
 	TreeViewer viewer;
 	
-	public ObligationsAutoProver() {
+	public ObligationsRecalcuateAutoStatus() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -88,8 +88,8 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 								continue;
 							}
 							try {
-								AutoProver.run(prFile, psFile, statuses, monitor);
-								// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+								// AutoProver.run(prFile, psFile, statuses, monitor);
+								RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler.handleRodinException(
 										e, UserAwareness.IGNORE);
@@ -115,8 +115,8 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							continue;
 						}
 						try {
-							AutoProver.run(prFile, psFile, statuses, monitor);
-							// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+							// AutoProver.run(prFile, psFile, statuses, monitor);
+							RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
 									e, UserAwareness.IGNORE);
@@ -131,8 +131,8 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 						IPRFile prFile = psFile.getPRFile();
 						IPSStatus[] statuses = new IPSStatus[]{status};
 						try {
-							AutoProver.run(prFile, psFile, statuses, monitor);
-							// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+							// AutoProver.run(prFile, psFile, statuses, monitor);
+							RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
 									e, UserAwareness.IGNORE);

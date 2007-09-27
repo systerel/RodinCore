@@ -849,6 +849,15 @@
             id="org.eventb.ui.ObligationExplorer"
             targetID="org.eventb.ui.views.ObligationExplorer">
          <action
+               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsRecalcuateAutoStatus"
+               enablesFor="+"
+               icon="icons/discharged.gif"
+               id="org.eventb.ui.obligationexplorer.recalcAutoStatus"
+               label="%action.recalcAutoStatus.label"
+               menubarPath="proving"
+               tooltip="%action.recalcAutoStatus.tooltip">
+         </action>
+         <action
                class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsAutoProver"
                enablesFor="+"
                icon="icons/discharged.gif"
