@@ -98,9 +98,13 @@ public class DeltaProcessor {
 		listeners.toArray(savedListeners);
 		try {
 			firing = true;
+			if (UserSupportUtils.DEBUG)
+				UserSupportUtils.debug("Start firing delta");
 			for (IUserSupportManagerChangedListener listener: listeners) {
 				notifyListener(listener, savedRoot);
 			}
+			if (UserSupportUtils.DEBUG)
+				UserSupportUtils.debug("End firing delta");
 		} finally {
 			firing = false;
 		}
