@@ -184,7 +184,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		viewer = new TreeViewer(pageBook, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ProofTreeLabelProvider());
-		viewer.addSelectionChangedListener(this);
+//		viewer.addSelectionChangedListener(this);
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -317,7 +317,40 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				// Do nothing
+				ISelection sel = viewer.getSelection();
+				if (sel instanceof IStructuredSelection) {
+					if (ProofTreeUIUtils.DEBUG)
+						ProofTreeUIUtils.debug("Selection Changed 3");
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					if (ProofTreeUIUtils.DEBUG)
+						ProofTreeUIUtils.debug("Selection Changed 4");
+					if (!ssel.isEmpty()) {
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Selection Changed 5");
+						Object obj = ssel.getFirstElement();
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Selection Changed 6: " + obj);
+						if (obj instanceof IProofTreeNode) {
+							try {
+								if (ProofTreeUIUtils.DEBUG)
+									ProofTreeUIUtils.debug("Selection Changed 7");
+								userSupport.selectNode((IProofTreeNode) obj);
+								if (ProofTreeUIUtils.DEBUG)
+									ProofTreeUIUtils.debug("Selection Changed 8");
+							} catch (RodinDBException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					} else { // Do nothing when there is no selection
+						if (ProofTreeUIUtils.DEBUG)
+							ProofTreeUIUtils.debug("Selection Changed 4.1");
+					}
+					if (ProofTreeUIUtils.DEBUG)
+						ProofTreeUIUtils.debug("Selection Changed 9");
+				}
+				if (ProofTreeUIUtils.DEBUG)
+					ProofTreeUIUtils.debug("Selection Changed 10");
 			}
 		});
 	}
