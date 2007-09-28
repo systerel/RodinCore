@@ -197,26 +197,76 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		
 		sequent = getSequent(po, "evt/A2/SIM");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment, "ay'=cx'+ay'", "cz'=az'");
+		sequentHasHypotheses(sequent, environment, "ay'=qq+ay'", "cz'=az'");
 		sequentHasNotHypotheses(sequent, environment, "pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'");
 		sequentHasGoal(sequent, environment, "ay'=az'");
 
 		sequent = getSequent(po, "evt/I1/INV");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
 		sequentHasNotHypotheses(sequent, environment, 
-				"pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'");
+				"pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'", "ay'=qq+ay'", "cz'=az'");
 		sequentHasGoal(sequent, environment, "qq>qq");
 
 		sequent = getSequent(po, "evt/I2/INV");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=cx'+ay'");
+		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=qq+ay'");
 		sequentHasNotHypotheses(sequent, environment, "pp⊆ℕ", "qq∈pp∪{0}", "ax'=cx'");
 		sequentHasGoal(sequent, environment, "cy'+qq>ay'");
 
 		sequent = getSequent(po, "evt/I3/INV");
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cx'", "cy'", "cz'", "pp", "qq");
-		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=cx'+ay'", "cz'=az'");
+		sequentHasHypotheses(sequent, environment, "{cy',cz'} ⊆ {qq}", "ay'=qq+ay'", "cz'=az'");
 		sequentHasGoal(sequent, environment, "cz'+ay'+qq>az'");
+	}
+	
+	/**
+	 * renaming of witness in hypothesis
+	 */
+	public void test_03() throws Exception {
+		
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "ax");
+		addInvariants(abs, makeSList("I1"), makeSList("ax>0"));
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("ax:∈{0,1}"));
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "qq", "cy");
+		addInvariants(mac, makeSList("I2", "I3"), makeSList("qq=0 ⇒ ax=cy", "qq=1 ⇒ ax=cy+1"));
+		IEvent event = addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList("G1"), makeSList("cy=0"), 
+				makeSList("A2"), makeSList("cy ≔ cy+1"));
+		addEventRefines(event, "evt");
+		addEventWitnesses(event, 
+				makeSList("ax'"), 
+				makeSList("(qq=0 ⇒ ax'=cy') ∧ (qq'=1 ⇒ ax'=cy'+1)"));
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = makeTypeEnvironment();
+		
+		IPOFile po = mac.getPOFile();
+		
+		containsIdentifiers(po, "ax", "qq", "cy");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt/I2/INV");
+		sequentHasIdentifiers(sequent, "ax'", "cy'");
+		sequentHasHypotheses(sequent, environment, "(qq=0 ⇒ ax'=cy+1) ∧ (qq=1 ⇒ ax'=(cy+1)+1)");
+		sequentHasGoal(sequent, environment, "qq=0 ⇒ ax'=cy+1");
 	}
 
 }

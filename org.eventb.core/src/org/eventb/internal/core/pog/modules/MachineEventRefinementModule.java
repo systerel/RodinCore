@@ -14,6 +14,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCWitness;
+import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGPredicate;
@@ -88,10 +89,18 @@ public abstract class MachineEventRefinementModule extends MachineEventActionUti
 		List<ISCWitness> nondetWitnesses = witnessTable.getNondetWitnesses();
 		List<FreeIdentifier> nondetLabels = witnessTable.getNondetVariables();
 		List<Predicate> nondetPredicates = witnessTable.getNondetPredicates();
-			
+		
+		List<BecomesEqualTo> concDetAssignments = concreteEventActionTable.getPrimedDetAssignments();
+		
+		List<BecomesEqualTo> subst = new ArrayList<BecomesEqualTo>(concDetAssignments.size() + 1);
+		subst.addAll(concDetAssignments);
+		if (concreteEventActionTable.getXiUnprime() != null)
+			subst.add(concreteEventActionTable.getXiUnprime());
+		
 		for (int i=0; i<nondetWitnesses.size(); i++) {
 			if (freeIdents.contains(nondetLabels.get(i))) {
 				Predicate hypPred = nondetPredicates.get(i);
+				hypPred = hypPred.applyAssignments(subst, factory);
 				hyp.add(makePredicate(
 								hypPred,
 								nondetWitnesses.get(i).getSource()));
