@@ -12,8 +12,6 @@
 
 package org.eventb.internal.ui.goal;
 
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-
 /**
  * @author htson
  *         <p>
@@ -25,7 +23,7 @@ public class GoalUtils {
 	public final static String DEBUG_PREFIX = "*** Goal *** ";
 
 	public static void debug(String message) {
-		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);
+		System.out.println(DEBUG_PREFIX + message);
 	}
 
 }
