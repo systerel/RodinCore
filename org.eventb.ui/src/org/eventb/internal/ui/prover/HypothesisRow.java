@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.prover;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,6 +99,8 @@ public class HypothesisRow {
 	
 	private ScrolledForm scrolledForm;
 	
+	private Collection<ImageHyperlink> hyperlinks;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -155,6 +159,7 @@ public class HypothesisRow {
 		}
 		buttonComposite.setLayoutData(new GridData(SWT.FILL,
 				SWT.FILL, false, false));
+		hyperlinks = new ArrayList<ImageHyperlink>();
 		createImageHyperlinks(buttonComposite);
 
 		hypothesisComposite = toolkit.createComposite(parent);
@@ -339,6 +344,7 @@ public class HypothesisRow {
 		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
 		hyperlink.setBackground(background);
 		hyperlink.setEnabled(false);
+		hyperlinks.add(hyperlink);
 		return;
 	}
 
@@ -377,6 +383,7 @@ public class HypothesisRow {
 			hyperlink.setBackground(background);
 			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
 			hyperlink.setEnabled(enable);
+			hyperlinks.add(hyperlink);
 		}
 
 		return;
@@ -386,13 +393,15 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
-		if (hypothesisText != null)
-			hypothesisText.dispose();
+//		if (hypothesisText != null)
+//			hypothesisText.dispose();
 
 		if (!checkBox.isDisposed()) {
 			checkBox.removeSelectionListener(listener);
 			checkBox.dispose();
 		}
+		for (ImageHyperlink hyperlink : hyperlinks)
+			hyperlink.dispose();
 		buttonComposite.dispose();
 		hypothesisComposite.dispose();
 	}
