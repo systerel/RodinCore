@@ -88,7 +88,7 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 								int confidence = tree.getConfidence();
 
 								final boolean proofBroken = status.isBroken();
-								if (confidence == IConfidence.PENDING) {
+								if (confidence <= IConfidence.PENDING) {
 									if (false && proofBroken)
 										return registry
 												.get(IEventBSharedImages.IMG_PENDING_BROKEN);
