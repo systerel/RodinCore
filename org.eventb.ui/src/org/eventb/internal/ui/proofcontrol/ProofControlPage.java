@@ -786,12 +786,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 
-		expertMode = new Action("Expert mode switch", SWT.CHECK) {
+		expertMode = new Action("Disable post-tactic", SWT.CHECK) {
 			@Override
 			public void run() {
 				boolean checked = !expertMode.isChecked();
 				store.setValue(PreferenceConstants.P_POSTTACTIC_ENABLE,
 						checked);
+				IAutoTacticPreference postTacticPreference = EventBPlugin
+					.getPostTacticPreference();
+				postTacticPreference.setEnabled(checked);
 			}
 		};
 		boolean b = store
@@ -803,8 +806,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		postTacticPreference.setEnabled(b);
 		expertMode.setToolTipText("Disable post-tactic");
 
-		expertMode.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_DISABLE_POST_TACTIC_PATH));
+		expertMode
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_DISABLE_POST_TACTIC_PATH));
 	}
 
 	/**
