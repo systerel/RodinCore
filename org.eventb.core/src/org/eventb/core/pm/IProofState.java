@@ -54,7 +54,8 @@ public interface IProofState extends IProofTreeChangedListener {
 			throws RodinDBException;
 
 	/**
-	 * Check if the current proof is closed. The current proof is closed if:
+	 * Check if the current proof is closed (there is no pending subgoal left).
+	 * The current proof is closed if:
 	 * <ul>
 	 * <li>There is a proof tree and the proof tree is closed.
 	 * <li>If there is no proof trees, the status on disk for the corresponding
