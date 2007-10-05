@@ -184,7 +184,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		viewer = new TreeViewer(pageBook, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		viewer.setLabelProvider(new ProofTreeLabelProvider());
-//		viewer.addSelectionChangedListener(this);
+		viewer.addSelectionChangedListener(this);
 		Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -197,7 +197,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		makeActions();
 		hookContextMenu();
-		hookDoubleClickAction();
+//		hookDoubleClickAction();
 		contributeToActionBars();
 
 		if (fInput != null)
@@ -314,6 +314,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	/**
 	 * Hook the double click action.
 	 */
+	@SuppressWarnings("unused")
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
