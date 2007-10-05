@@ -19,7 +19,8 @@ import org.eventb.ui.EventBUIPlugin;
 /**
  * @author htson
  *         <p>
- *         Implementation of the Cache Hypothesis View.
+ *         Implementation of the Cache Hypothesis View. This might be removed in
+ *         the future (since the view is hardly used now).
  */
 public class CacheHypothesis extends ProverContentOutline {
 
@@ -41,7 +42,7 @@ public class CacheHypothesis extends ProverContentOutline {
 	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		// Try to get a Search Hypothesis Page.
+		// Try to get a Cache Hypothesis Page.
 		Object obj = part.getAdapter(ICacheHypothesisPage.class);
 		if (obj instanceof ICacheHypothesisPage) {
 			ICacheHypothesisPage page = (ICacheHypothesisPage) obj;
@@ -49,7 +50,7 @@ public class CacheHypothesis extends ProverContentOutline {
 			page.createControl(getPageBook());
 			return new PageRec(part, page);
 		}
-		// There is no content outline
+		// There is no Cache Hypothesis Page.
 		return null;
 	}
 

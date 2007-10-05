@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.cachehypothesis;
 
 import java.util.ArrayList;
@@ -24,14 +36,27 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *         <p>
+ *         This class extends {@link HypothesisComposite} to implements the
+ *         displaying of cached hypotheses by adding different tool items, e.g
+ *         "add"/"remove" hypotheses or "select all". This is used in
+ *         {@link CacheHypothesisPage}.
+ */
 public class CacheHypothesisComposite extends HypothesisComposite {
 
+	// Tool item for adding the selected (cached) hypotheses to the set of
+	// selected hypotheses.
 	ToolItem addItem;
 	
+	// Tool item for removing the selected (cached) hypotheses out of the cache.
 	ToolItem removeItem;
 
+	// Tool item for inverse the current selection.
 	ToolItem inverseSelection;
 
+	// Tool item for select all cached hypotheses.
 	ToolItem selectAll;
 	
 	ToolItem selectNone;

@@ -17,7 +17,8 @@ import org.eventb.internal.ui.prover.IHypothesisPage;
 /**
  * @author htson
  *         <p>
- *         This is the interface for the Cache Hypothesis Page.
+ *         This is the interface for the Cache Hypothesis Page which is just a
+ *         direct extension of the general {@link IHypothesisPage}.
  */
 public interface ICacheHypothesisPage extends IHypothesisPage {
 	// Direct extension of IHypothesisPage.

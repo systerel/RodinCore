@@ -15,6 +15,7 @@ package org.eventb.internal.ui.cachehypothesis;
 /**
  * @author htson
  *         <p>
+ *         This is an utility class for supporting the Cached Hypothesis View.
  */
 public class CacheHypothesisUtils {
 
