@@ -20,7 +20,7 @@ public class NextReview implements IProofCommand {
 
 			public void run() {
 				try {
-					us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
+					boolean b = us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
 
 						public boolean select(IProofTreeNode node) {
 							int confidence = node.getConfidence();
@@ -30,7 +30,8 @@ public class NextReview implements IProofCommand {
 						}
 						
 					});
-					us.applyTactic(Tactics.prune(), false, monitor);
+					if (b) 
+						us.applyTactic(Tactics.prune(), false, monitor);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
