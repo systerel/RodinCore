@@ -622,12 +622,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return null;
 	}
 
-	public void selectNextSubgoal(boolean rootIncluded,
+	public boolean selectNextSubgoal(boolean rootIncluded,
 			IProofTreeNodeFilter filter) throws RodinDBException {
 		if (currentPS == null)
-			return;
-		currentPS.selectNextSubGoal(currentPS.getCurrentNode(), rootIncluded,
-				filter);
+			return false;
+		return currentPS.selectNextSubGoal(currentPS.getCurrentNode(),
+				rootIncluded, filter);
 	}
 
 	

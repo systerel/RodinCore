@@ -666,13 +666,15 @@ public class ProofState implements IProofState {
 		node.setComment(text);
 	}
 
-	public void selectNextSubGoal(IProofTreeNode node, boolean rootIncluded,
+	public boolean selectNextSubGoal(IProofTreeNode node, boolean rootIncluded,
 			IProofTreeNodeFilter filter) throws RodinDBException {
 		final IProofTreeNode newNode = this.getNextSubgoal(node, rootIncluded,
 				filter);
 		if (newNode != null) {
 			setCurrentNode(newNode);
+			return true;
 		}
+		return false;
 	}
 
 	private IProofTreeNode getNextSubgoal(IProofTreeNode node,

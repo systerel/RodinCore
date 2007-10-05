@@ -318,18 +318,20 @@ public interface IUserSupport extends IElementChangedListener {
 	/**
 	 * For the current proof state, select the next subgoal satisfies the
 	 * filter. The flag <code>rootIncluded</code> to indicate that if the
-	 * current node should be considered or not.
+	 * current node should be considered or not. If there is no such subgoal, do
+	 * nothing.
 	 * <p>
 	 * 
 	 * @param rootIncluded
 	 *            to include the current node or not
 	 * @param filter
 	 *            a proof tree node filter
-	 * 
+	 * @return <code>true</code> if there is such a node satisfies the filter.
+	 *         Return <code>false</code> otherwise.
 	 * @throws RodinDBException
-	 *            if some error occurred
+	 *             if some error occurred
 	 */
-	public abstract void selectNextSubgoal(boolean rootIncluded,
+	public abstract boolean selectNextSubgoal(boolean rootIncluded,
 			IProofTreeNodeFilter filter)
 			throws RodinDBException;
 
