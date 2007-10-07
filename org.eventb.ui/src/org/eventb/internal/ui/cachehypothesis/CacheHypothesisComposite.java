@@ -33,6 +33,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
 
@@ -72,20 +73,25 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	public void createItems(ToolBar toolBar) {
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
-		addItem.setToolTipText("Select hypotheses");
+		addItem
+				.setToolTipText(Messages.cacheHypothesis_toolItem_add_toolTipText);
 		addItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = CacheHypothesisComposite.this.getUserSupport();
+				IUserSupport userSupport = CacheHypothesisComposite.this
+						.getUserSupport();
 				assert userSupport != null;
-				
-				Set<Predicate> selected = CacheHypothesisComposite.this.getSelectedHyps();
-				ITactic t = Tactics.mngHyp(ProverFactory.makeSelectHypAction(selected));
+
+				Set<Predicate> selected = CacheHypothesisComposite.this
+						.getSelectedHyps();
+				ITactic t = Tactics.mngHyp(ProverFactory
+						.makeSelectHypAction(selected));
 				try {
 					userSupport.applyTacticToHypotheses(t, selected, true,
 							new NullProgressMonitor());
 				} catch (RodinDBException exception) {
-					EventBUIExceptionHandler.handleApplyTacticException(exception);
+					EventBUIExceptionHandler
+							.handleApplyTacticException(exception);
 				}
 			}
 
@@ -96,15 +102,19 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		});
 
 		removeItem = new ToolItem(toolBar, SWT.PUSH);
-		removeItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REMOVE));
-		removeItem.setToolTipText("Remove hypotheses");
+		removeItem.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_REMOVE));
+		removeItem
+				.setToolTipText(Messages.cacheHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = CacheHypothesisComposite.this.getUserSupport();
+				IUserSupport userSupport = CacheHypothesisComposite.this
+						.getUserSupport();
 				assert userSupport != null;
-				
-				Set<Predicate> deselected = CacheHypothesisComposite.this.getSelectedHyps();
+
+				Set<Predicate> deselected = CacheHypothesisComposite.this
+						.getSelectedHyps();
 				userSupport.removeCachedHypotheses(deselected);
 			}
 
@@ -115,8 +125,10 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		});
 		
 		selectAll = new ToolItem(toolBar, SWT.PUSH);
-		selectAll.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_ALL));
-		selectAll.setToolTipText("Select all");
+		selectAll.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_SELECT_ALL));
+		selectAll
+				.setToolTipText(Messages.cacheHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -126,12 +138,14 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
-			
+
 		});
 
 		inverseSelection = new ToolItem(toolBar, SWT.PUSH);
-		inverseSelection.setImage(EventBImage.getImage(IEventBSharedImages.IMG_INVERSE));
-		inverseSelection.setToolTipText("Inverse selection");
+		inverseSelection.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_INVERSE));
+		inverseSelection
+				.setToolTipText(Messages.cacheHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -141,12 +155,14 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
-			
+
 		});
 
 		selectNone = new ToolItem(toolBar, SWT.PUSH);
-		selectNone.setImage(EventBImage.getImage(IEventBSharedImages.IMG_SELECT_NONE));
-		selectNone.setToolTipText("Deselect all");
+		selectNone.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_SELECT_NONE));
+		selectNone
+				.setToolTipText(Messages.cacheHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -176,6 +192,8 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 
 	@Override
 	public void updateToolbarItems() {
+		if (CacheHypothesisUtils.DEBUG)
+			CacheHypothesisUtils.debug("Update toolbar item: Add, Remove");
 		addItem.setEnabled(!this.getSelectedHyps().isEmpty());
 		removeItem.setEnabled(!this.getSelectedHyps().isEmpty());
 	}

@@ -14,6 +14,7 @@ package org.eventb.internal.ui.cachehypothesis;
 
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.internal.ui.prover.ProverContentOutline;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -29,10 +30,15 @@ public class CacheHypothesis extends ProverContentOutline {
 	 * <code>"org.eventb.ui.views.CacheHypothesis"</code>).
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".views.CacheHypothesis";
+			+ ".views.CacheHypothesis"; // $NON-NLS-1$
 
+	/**
+	 * Constructor.
+	 * <p>
+	 * Create a prover content outline with the default message.
+	 */
 	public CacheHypothesis() {
-		super("Cached Hypothesis is not available");
+		super(Messages.cacheHypothesis_defaultMessage);
 	}
 
 	/*
