@@ -1,10 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.searchhypothesis;
 
-import java.util.HashMap;
-
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.IPage;
 import org.eventb.internal.ui.prover.ProverContentOutline;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -19,17 +29,20 @@ public class SearchHypothesis extends ProverContentOutline {
 	 * <code>"org.eventb.ui.views.SearchHypothesis"</code>).
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".views.SearchHypothesis";
+			+ ".views.SearchHypothesis"; // $NON-NLS-1$
 
-	public HashMap<IPage, IWorkbenchPart> fPagesToParts;
-
+	/**
+	 * Constructor.
+	 * <p>
+	 * Create a prover content outline with the default message.
+	 */
 	public SearchHypothesis() {
-		super("Search Hypothesis is not available");
+		super(Messages.searchHypothesis_defaultMessage);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
 	@Override
