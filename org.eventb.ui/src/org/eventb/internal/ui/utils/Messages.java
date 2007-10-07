@@ -37,15 +37,34 @@ public class Messages {
 	public static String editorAction_copy_title;
 	public static String editorAction_copy_toolTip;
 	
+	// Cache hypothesis view
+	public static String cacheHypothesis_defaultMessage;
+	public static String cacheHypothesis_toolItem_add_toolTipText;
+	public static String cacheHypothesis_toolItem_remove_toolTipText;
+	public static String cacheHypothesis_toolItem_selectAll_toolTipText;
+	public static String cacheHypothesis_toolItem_inverseSelection_toolTipText;
+	public static String cacheHypothesis_toolItem_selectNone_toolTipText;
+	
+	// Search hypothesis view
+	public static String searchHypothesis_defaultMessage;
+	public static String searchHypothesis_toolItem_add_toolTipText;
+	public static String searchHypothesis_toolItem_remove_toolTipText;
+	public static String searchHypothesis_toolItem_selectAll_toolTipText;
+	public static String searchHypothesis_toolItem_inverseSelection_toolTipText;
+	public static String searchHypothesis_toolItem_selectNone_toolTipText;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
 	/**
-	 * Bind the given message's substitution locations with the given string values.
+	 * Bind the given message's substitution locations with the given string
+	 * values.
 	 * 
-	 * @param message the message to be manipulated
-	 * @param bindings An array of objects to be inserted into the message
+	 * @param message
+	 *            the message to be manipulated
+	 * @param bindings
+	 *            An array of objects to be inserted into the message
 	 * @return the manipulated String
 	 */
 	public static String bind(String message, Object... bindings) {
