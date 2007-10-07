@@ -21,8 +21,11 @@ import java.util.StringTokenizer;
  */
 public class CacheHypothesisUtils {
 
+	// The Debug flag. This is set by the main activator class of this UI
+	// plugin. Client should not try to reset this flag.
 	public static boolean DEBUG = false;
 
+	// The default prefix for debugging messages.
 	public final static String DEBUG_PREFIX = "*** Cache Hypothesis *** "; // $NON-NLS-1$
 
 	/**
