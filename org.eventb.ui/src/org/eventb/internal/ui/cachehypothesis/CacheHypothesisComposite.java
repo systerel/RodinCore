@@ -60,17 +60,38 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	// Tool item for select all cached hypotheses.
 	ToolItem selectAll;
 	
+	// Tool item for de-select all cached hypothesis 
 	ToolItem selectNone;
 	
+	/**
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param userSupport
+	 *            the User Support associated with this cached hypothesis
+	 *            composite.
+	 * @param proverUI
+	 *            the main prover editor associated with this cached hypothesis
+	 *            composite.
+	 */
 	public CacheHypothesisComposite(IUserSupport userSupport,
 			ProverUI proverUI) {
+		// Create a hypothesis composite which listens to the changes for:
+		// Current Proof Tree Node, changes in the Proof Tree itself and changes
+		// for the cache.
 		super(userSupport, IProofStateDelta.F_NODE
 				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_CACHE,
 				proverUI);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.prover.HypothesisComposite#createItems(org.eclipse.swt.widgets.ToolBar)
+	 */
 	@Override
 	public void createItems(ToolBar toolBar) {
+		// Create item for adding hypotheses.
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
 		addItem
@@ -101,6 +122,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 			
 		});
 
+		// Create item for remove hypotheses.
 		removeItem = new ToolItem(toolBar, SWT.PUSH);
 		removeItem.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_REMOVE));
@@ -124,6 +146,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 			
 		});
 		
+		// Create item for select all (cached) hypotheses.
 		selectAll = new ToolItem(toolBar, SWT.PUSH);
 		selectAll.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_ALL));
@@ -141,6 +164,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 
 		});
 
+		// Create item for inverting the current selection.
 		inverseSelection = new ToolItem(toolBar, SWT.PUSH);
 		inverseSelection.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_INVERSE));
@@ -158,6 +182,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 
 		});
 
+		// Create item for de-select all cached hypotheses.
 		selectNone = new ToolItem(toolBar, SWT.PUSH);
 		selectNone.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_NONE));
@@ -176,12 +201,21 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.prover.HypothesisComposite#getHypotheses(org.eventb.core.pm.IProofState)
+	 */
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
 		Collection<Predicate> cached = new ArrayList<Predicate>();
+
+		// Get the cached hypotheses associated with the proof state.
 		if (ps != null) {
 			cached = ps.getCached();
 		}
+
+		// Return the valid cached hypotheses only.
 		Collection<Predicate> validCached = new ArrayList<Predicate>();
 		for (Predicate cache : cached) {
 			if (ps.getCurrentNode().getSequent().containsHypothesis(cache))
@@ -190,6 +224,11 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		return validCached;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.prover.HypothesisComposite#updateToolbarItems()
+	 */
 	@Override
 	public void updateToolbarItems() {
 		if (CacheHypothesisUtils.DEBUG)
@@ -198,11 +237,23 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		removeItem.setEnabled(!this.getSelectedHyps().isEmpty());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
+		// Update the status of the toolbar items.
 		updateToolbarItems();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
 	public void widgetSelected(SelectionEvent e) {
+		// Behave as the default selected.
 		widgetDefaultSelected(e);
 	}
 
