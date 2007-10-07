@@ -20,7 +20,10 @@ import org.eventb.internal.ui.prover.ProverUI;
 /**
  * @author htson
  *         <p>
- *         This class is an implementation of a Search Hypothesis Page.
+ *         This class extends the default implementation {@link HypothesisPage}
+ *         to implement a Search Hypothesis 'page'. This implementation just use
+ *         a {@link SearchHypothesisComposite} for displaying the cached
+ *         hypotheses.
  */
 public class SearchHypothesisPage extends HypothesisPage implements
 		ISearchHypothesisPage {
@@ -30,12 +33,21 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	 * <p>
 	 * 
 	 * @param userSupport
-	 *            the User Support associated with this Hypothesis Page.
+	 *            the User Support associated with this cached hypothesis page.
+	 *            This must not be <code>null</code>.
+	 * @param proverUI
+	 *            the main prover editor ({@link ProverUI}). This must not be
+	 *            <code>null</null>.
 	 */
 	public SearchHypothesisPage(IUserSupport userSupport, ProverUI proverUI) {
 		super(userSupport, proverUI);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.ui.prover.HypothesisPage#getHypypothesisCompsite()
+	 */
 	@Override
 	public HypothesisComposite getHypypothesisCompsite() {
 		return new SearchHypothesisComposite(userSupport, proverUI);
