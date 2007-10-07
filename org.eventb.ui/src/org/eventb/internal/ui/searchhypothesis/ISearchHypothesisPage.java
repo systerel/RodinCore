@@ -17,7 +17,8 @@ import org.eventb.internal.ui.prover.IHypothesisPage;
 /**
  * @author htson
  *         <p>
- *         This is the interface for the Search Hypothesis Pages.
+ *         This is the interface for the Search Hypothesis Page which is just a
+ *         direct extension of the general {@link IHypothesisPage}.
  */
 public interface ISearchHypothesisPage extends IHypothesisPage {
 	// Direct extension of IHypothesisPage
