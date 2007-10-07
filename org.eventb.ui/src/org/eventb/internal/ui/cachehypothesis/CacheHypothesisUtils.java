@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.cachehypothesis;
 
+import java.util.StringTokenizer;
+
 /**
  * @author htson
  *         <p>
@@ -21,10 +23,19 @@ public class CacheHypothesisUtils {
 
 	public static boolean DEBUG = false;
 
-	public final static String DEBUG_PREFIX = "*** Cache Hypothesis *** ";
+	public final static String DEBUG_PREFIX = "*** Cache Hypothesis *** "; // $NON-NLS-1$
 
+	/**
+	 * Print the debug message with the prefix for cache hypothesis.
+	 * 
+	 * @param message
+	 *            the debug message
+	 */
 	public static void debug(String message) {
-		System.out.println(DEBUG_PREFIX + message);
+		StringTokenizer tokenizer = new StringTokenizer(message, "\n");
+		while (tokenizer.hasMoreTokens()) {
+			System.out.println(DEBUG_PREFIX + tokenizer.nextToken());
+		}
 	}
 
 }
