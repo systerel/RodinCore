@@ -17,7 +17,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
 /**
  * @author htson
  *         <p>
- *         This is the interface for the Hypothesis Page pages.
+ *         This is the common interface for Hypothesis Page which is just a
+ *         direct extension of the general {@link IPageBookViewPage}.
  */
 public interface IHypothesisPage extends IPageBookViewPage {
 	// Direct extensions of IPageBookViewPage

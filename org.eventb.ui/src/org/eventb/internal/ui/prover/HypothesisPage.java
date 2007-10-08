@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.prover;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -25,15 +26,27 @@ import org.eventb.core.pm.IUserSupport;
 /**
  * @author htson
  *         <p>
- *         This class is an abstract implementation of a Hypothesis 'page'.
+ *         This class is an abstract implementation of a Hypothesis 'Page' which
+ *         can be used in Hypothesis View such as Cached and Search Hypothesis
+ *         View. The implementation uses a main hypothesis composite
+ *         {@link HypothesisComposite} for displaying the list of hypotheses.
+ *         </p>
+ *         <p>
+ *         Clients need to implement the abstract method
+ *         {@link #getHypypothesisCompsite()} to return appropriate Hypothesis
+ *         Composite.
+ *         </p>
  */
 public abstract class HypothesisPage extends Page implements
 		IHypothesisPage {
 
+	// The User Support associated with this Hypothesis Page.
 	protected IUserSupport userSupport;
 
+	// The main prover editor associated with this Hypothesis Page
 	protected ProverUI proverUI;
 
+	// The hypothesis composite associate
 	HypothesisComposite hypComp;
 	
 	/**
@@ -41,15 +54,28 @@ public abstract class HypothesisPage extends Page implements
 	 * <p>
 	 * 
 	 * @param userSupport
-	 *            the User Support associated with this Hypothesis Page.
+	 *            the User Support associated with this hypothesis page.
+	 *            This must not be <code>null</code>.
+	 * @param proverUI
+	 *            the main prover editor ({@link ProverUI}). This must not be
+	 *            <code>null</null>.
 	 */
 	public HypothesisPage(IUserSupport userSupport,
 			ProverUI proverUI) {
+		Assert.isNotNull(userSupport, "The User Suport should not be null"); // $NON-NLS-1$
+		Assert.isNotNull(proverUI, "The main prover editor should not be null"); // $NON-NLS-1$
 		this.userSupport = userSupport;
 		this.proverUI = proverUI;
 		hypComp = getHypypothesisCompsite();
 	}
 
+	/**
+	 * Abstract method for creating the main hypothesis composite to be used for
+	 * this hypothesis page. Client needs to implement this method to provide
+	 * the appropriate hypothesis composite of their choice.
+	 * 
+	 * @return a hypothesis composite.
+	 */
 	public abstract HypothesisComposite getHypypothesisCompsite();
 
 	/*
@@ -59,6 +85,7 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void dispose() {
+		// Disposing the main hypothesis composite
 		hypComp.dispose();
 		super.dispose();
 	}
@@ -72,22 +99,27 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void createControl(Composite parent) {
+		// Create the content of the hypothesis composite.
 		hypComp.createControl(parent);
+		// Contribute to different action bars.  
 		contributeToActionBars();
 	}
 
-	/**
-	 * Setup the action bars
+	/*
+	 * Utility method for setup the action bars.
 	 */
 	private void contributeToActionBars() {
 		IActionBars bars = getSite().getActionBars();
+		// Setup the local pull down menu.
 		fillLocalPullDown(bars.getMenuManager());
+		// Setup the local tool bar.
 		fillLocalToolBar(bars.getToolBarManager());
+		// Setup the context menu.
+		fillContextMenu(bars.getMenuManager());
 	}
 
-	/**
+	/*
 	 * Fill the local pull down.
-	 * <p>
 	 * 
 	 * @param manager
 	 *            the menu manager
@@ -96,19 +128,18 @@ public abstract class HypothesisPage extends Page implements
 		manager.add(new Separator());
 	}
 
-	/**
+	/*
 	 * Fill the context menu.
-	 * <p>
 	 * 
 	 * @param manager
 	 *            the menu manager
 	 */
-	void fillContextMenu(IMenuManager manager) {
+	private void fillContextMenu(IMenuManager manager) {
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/**
+	/*
 	 * Fill the local toolbar.
 	 * <p>
 	 * 
@@ -127,6 +158,7 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void setFocus() {
+		// Pass the focus to the hypothesis composite.
 		hypComp.setFocus();
 	}
 
@@ -137,8 +169,8 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public Control getControl() {
+		// Return the control of the hypothesis composite.
 		return hypComp.getControl();
 	}
 
 }
-
