@@ -37,22 +37,28 @@ public class Messages {
 	public static String editorAction_copy_title;
 	public static String editorAction_copy_toolTip;
 	
-	// Cache hypothesis view
-	public static String cacheHypothesis_defaultMessage;
-	public static String cacheHypothesis_toolItem_add_toolTipText;
-	public static String cacheHypothesis_toolItem_remove_toolTipText;
-	public static String cacheHypothesis_toolItem_selectAll_toolTipText;
-	public static String cacheHypothesis_toolItem_inverseSelection_toolTipText;
-	public static String cacheHypothesis_toolItem_selectNone_toolTipText;
+	// Cached hypotheses view
+	public static String cachedHypothesis_defaultMessage;
+	public static String cachedHypothesis_toolItem_add_toolTipText;
+	public static String cachedHypothesis_toolItem_remove_toolTipText;
+	public static String cachedHypothesis_toolItem_selectAll_toolTipText;
+	public static String cachedHypothesis_toolItem_inverseSelection_toolTipText;
+	public static String cachedHypothesis_toolItem_selectNone_toolTipText;
 	
-	// Search hypothesis view
-	public static String searchHypothesis_defaultMessage;
-	public static String searchHypothesis_toolItem_add_toolTipText;
-	public static String searchHypothesis_toolItem_remove_toolTipText;
-	public static String searchHypothesis_toolItem_selectAll_toolTipText;
-	public static String searchHypothesis_toolItem_inverseSelection_toolTipText;
-	public static String searchHypothesis_toolItem_selectNone_toolTipText;
+	// Searched hypotheses view
+	public static String searchedHypothesis_defaultMessage;
+	public static String searchedHypothesis_toolItem_add_toolTipText;
+	public static String searchedHypothesis_toolItem_remove_toolTipText;
+	public static String searchedHypothesis_toolItem_selectAll_toolTipText;
+	public static String searchedHypothesis_toolItem_inverseSelection_toolTipText;
+	public static String searchedHypothesis_toolItem_selectNone_toolTipText;
 	
+	// Selected hypotheses
+	public static String selectedHypothesis_toolItem_remove_toolTipText;
+	public static String selectedHypothesis_toolItem_selectAll_toolTipText;
+	public static String selectedHypothesis_toolItem_inverseSelection_toolTipText;
+	public static String selectedHypothesis_toolItem_selectNone_toolTipText;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

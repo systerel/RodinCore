@@ -38,7 +38,7 @@ public class CacheHypothesis extends ProverContentOutline {
 	 * Create a prover content outline with the default message.
 	 */
 	public CacheHypothesis() {
-		super(Messages.cacheHypothesis_defaultMessage);
+		super(Messages.cachedHypothesis_defaultMessage);
 	}
 
 	/*

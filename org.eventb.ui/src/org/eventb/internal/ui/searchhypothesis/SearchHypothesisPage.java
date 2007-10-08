@@ -33,7 +33,7 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	 * <p>
 	 * 
 	 * @param userSupport
-	 *            the User Support associated with this cached hypothesis page.
+	 *            the User Support associated with this searched hypothesis page.
 	 *            This must not be <code>null</code>.
 	 * @param proverUI
 	 *            the main prover editor ({@link ProverUI}). This must not be

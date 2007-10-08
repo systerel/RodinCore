@@ -37,7 +37,7 @@ public class SearchHypothesis extends ProverContentOutline {
 	 * Create a prover content outline with the default message.
 	 */
 	public SearchHypothesis() {
-		super(Messages.searchHypothesis_defaultMessage);
+		super(Messages.searchedHypothesis_defaultMessage);
 	}
 
 	/*

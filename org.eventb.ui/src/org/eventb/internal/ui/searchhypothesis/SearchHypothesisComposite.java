@@ -87,7 +87,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
 		addItem
-				.setToolTipText(Messages.searchHypothesis_toolItem_add_toolTipText);
+				.setToolTipText(Messages.searchedHypothesis_toolItem_add_toolTipText);
 		addItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -119,7 +119,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		removeItem.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_REMOVE));
 		removeItem
-				.setToolTipText(Messages.searchHypothesis_toolItem_remove_toolTipText);
+				.setToolTipText(Messages.searchedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -143,7 +143,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		selectAll.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_ALL));
 		selectAll
-				.setToolTipText(Messages.searchHypothesis_toolItem_selectAll_toolTipText);
+				.setToolTipText(Messages.searchedHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -160,7 +160,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		inverseSelection = new ToolItem(toolBar, SWT.PUSH);
 		inverseSelection.setImage(EventBImage.getImage(IEventBSharedImages.IMG_INVERSE));
 		inverseSelection
-				.setToolTipText(Messages.searchHypothesis_toolItem_inverseSelection_toolTipText);
+				.setToolTipText(Messages.searchedHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -178,7 +178,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		selectNone.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_NONE));
 		selectNone
-				.setToolTipText(Messages.searchHypothesis_toolItem_selectNone_toolTipText);
+				.setToolTipText(Messages.searchedHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {

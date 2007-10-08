@@ -95,7 +95,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
 		addItem
-				.setToolTipText(Messages.cacheHypothesis_toolItem_add_toolTipText);
+				.setToolTipText(Messages.cachedHypothesis_toolItem_add_toolTipText);
 		addItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -127,7 +127,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		removeItem.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_REMOVE));
 		removeItem
-				.setToolTipText(Messages.cacheHypothesis_toolItem_remove_toolTipText);
+				.setToolTipText(Messages.cachedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -151,7 +151,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		selectAll.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_ALL));
 		selectAll
-				.setToolTipText(Messages.cacheHypothesis_toolItem_selectAll_toolTipText);
+				.setToolTipText(Messages.cachedHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -169,7 +169,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		inverseSelection.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_INVERSE));
 		inverseSelection
-				.setToolTipText(Messages.cacheHypothesis_toolItem_inverseSelection_toolTipText);
+				.setToolTipText(Messages.cachedHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -187,7 +187,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		selectNone.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_SELECT_NONE));
 		selectNone
-				.setToolTipText(Messages.cacheHypothesis_toolItem_selectNone_toolTipText);
+				.setToolTipText(Messages.cachedHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
