@@ -10,6 +10,7 @@ package org.eventb.core.tests.pog;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
@@ -373,7 +374,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * Ensures that modifying the guard of an event changes the stamp for the
 	 * invariant preservation POs associated to the event.
 	 */
-	public void testEvents_00() throws Exception {
+	public void testDelta_16_chgIndirectGuard() throws Exception {
 		final IMachineFile mac = createMachine("mac");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈0‥4"));
@@ -401,5 +402,53 @@ public class DeltaCheckingTest extends EventBPOTest {
 		hasStamp(sequent, IPOStampedElement.INIT_STAMP+1);
 		hasStamp(po, IPOStampedElement.INIT_STAMP+1);
 	}
+	
+	/**
+	 * verifies that stamps of predicate sets and sequents are 
+	 * transitively changed, where the source is a machine.
+	 */
+	public void testDelta_17_chgIndirectInvariant() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "u");
+		addInvariants(abs, makeSList("H"), makeSList("u>0"));
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("Z"), makeSList("u≔u+1"));
+		abs.save(null, true);
+		
+		IMachineFile mac = createMachine("mch");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "u", "v");
+		addInvariants(mac, makeSList("I"), makeSList("v=u"));
+		IEvent evt = addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A", "B"), makeSList("v≔v+1", "u≔v"));
+		addEventRefines(evt, "evt");
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		IPOSequent sequent = getSequent(mac.getPOFile(), "evt/Z/SIM");
+		
+		hasStamp(sequent, IPOStampedElement.INIT_STAMP);
+		hasStamp(sequent.getHypotheses()[0].getParentPredicateSet(), IPOStampedElement.INIT_STAMP);
+		
+		// in the refined machine mac only the predicate of invariant I is changed
+		
+		IInvariant invariant = mac.getInvariants()[0];
+		invariant.setPredicateString("v=u+1", null);
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		sequent = getSequent(mac.getPOFile(), "evt/Z/SIM");
+		
+		hasStamp(sequent, IPOStampedElement.INIT_STAMP+1);
+		hasStamp(sequent.getHypotheses()[0].getParentPredicateSet(), IPOStampedElement.INIT_STAMP+1);
+		
+	}
+
 
 }

@@ -68,15 +68,6 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		return (IPOFile) project.getRodinFile(name + "_tmp");
 	}
 
-//	protected IPOFile getTmpPOFile(IPOFile poFile, IProgressMonitor monitor) throws RodinDBException {
-//		final IRodinProject project = (IRodinProject) poFile.getParent();
-//		final String name = poFile.getElementName();
-//		String tmpName = name + TMP_EXTENSION_SUFFIX;
-//		if (poFile.exists())
-//			poFile.move(project, null, tmpName, true, monitor);
-//		return (IPOFile) project.getRodinFile(tmpName);
-//	}
-
 	// Compare the temporary file with the current proof obligation file.
 	// The comparison is done per predicate set and per sequent.
 	// Changed parent predicate sets are taken into account in the
@@ -226,6 +217,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			if (chPrdSets.contains(pSet)) {
 				for (IPOPredicateSet cSet : list) {
 					cSet.setPOStamp(freshStamp, monitor);
+					chPrdSets.add(cSet);
 					done.add(cSet);
 				}
 			} else {
