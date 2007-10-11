@@ -47,7 +47,7 @@ public class ProofsPage extends FormPage implements
 	// ID, title and the tab-title
 	public static final String PAGE_ID = "Selected Hypotheses"; //$NON-NLS-1$
 
-	public static final String PAGE_TITLE = "Selected Hypotheses"; //$NON-NLS-1$
+	public static final String PAGE_TITLE = "No Current Obligation"; //$NON-NLS-1$
 
 	public static final String PAGE_TAB_TITLE = "State"; //$NON-NLS-1$
 
@@ -138,6 +138,7 @@ public class ProofsPage extends FormPage implements
 				new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		body.setLayout(new ProofsPageLayout());
+		setPartName();
 	}
 
 	/**
@@ -278,6 +279,10 @@ public class ProofsPage extends FormPage implements
 				if (kind == IUserSupportDelta.CHANGED) {
 					int usFlags = affectedUserSupport.getFlags();
 					
+					if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
+						setPartName();
+					}
+					
 					if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.
 						IProofState proofState = userSupport.getCurrentPO();
@@ -320,6 +325,17 @@ public class ProofsPage extends FormPage implements
 
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("End User Support Manager Changed");
+	}
+
+	protected void setPartName() {
+		IProofState currentPO = userSupport.getCurrentPO();
+		ScrolledForm form = this.getManagedForm().getForm();
+		if (currentPO != null) {
+			String name = currentPO.getPSStatus().getElementName();
+			form.setText(name);
+		} else {
+			form.setText(PAGE_TITLE);
+		}
 	}
 
 }
