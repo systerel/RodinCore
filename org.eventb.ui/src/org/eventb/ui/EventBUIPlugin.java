@@ -14,9 +14,14 @@ package org.eventb.ui;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -25,6 +30,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBSharedColor;
@@ -40,6 +46,7 @@ import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.RodinCore;
@@ -145,6 +152,28 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		database = RodinCore.valueOf(root);
 		
 		initialisePreferences();
+		
+		loadFont();
+	}
+
+	/**
+	 * Utility method which try to load the necessary font if it is not
+	 * currently available.
+	 */
+	private void loadFont() {
+		Display display = this.getWorkbench().getDisplay();
+		FontData[] fontList = display.getFontList("Brave Sans Mono", true);
+		for (FontData font : fontList) {
+			System.out.println("Font Data: " + font);
+		}
+		if (fontList.length == 0) {
+			// The font is not available, try to load the font
+			Bundle bundle = EventBUIPlugin.getDefault().getBundle();
+			IPath path = new Path("fonts/bravesansmono_roman.ttf");
+			IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
+			Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
+			display.loadFont(absolutePath.toString());
+		}
 	}
 
 	/**
