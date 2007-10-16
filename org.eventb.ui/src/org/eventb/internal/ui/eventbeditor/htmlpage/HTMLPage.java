@@ -101,7 +101,7 @@ public class HTMLPage extends EventBEditorPage implements
 					true);
 			widget
 					.setText(
-							"<form>Your platform does not support SWT Browser widget. Platform requirements for the widget are available from the SWT FAQ website</form>",
+							"<form>Your platform does not support SWT Browser widget. Platform requirements for the widget are available from the SWT FAQ website: http://www.eclipse.org/swt/faq.php#howusemozilla</form>",
 							true, false);
 			formText = new EventBFormText(widget);
 			widget.setWhitespaceNormalized(false);
