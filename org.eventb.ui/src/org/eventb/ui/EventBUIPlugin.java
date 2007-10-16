@@ -163,9 +163,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	private void loadFont() {
 		Display display = this.getWorkbench().getDisplay();
 		FontData[] fontList = display.getFontList("Brave Sans Mono", true);
-		for (FontData font : fontList) {
-			System.out.println("Font Data: " + font);
-		}
 		if (fontList.length == 0) {
 			// The font is not available, try to load the font
 			Bundle bundle = EventBUIPlugin.getDefault().getBundle();
