@@ -218,10 +218,12 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.eventb.internal.ui.perspectives.EventBPerspective"
+            icon="icons/full/clcl16/b_file.gif"
             id="org.eventb.ui.perspective.eventb"
             name="%perspective.eventb"/>
       <perspective
             class="org.eventb.internal.ui.perspectives.ProvingPerspective"
+            icon="icons/full/clcl16/prf_per.gif"
             id="org.eventb.ui.perspective.proving"
             name="%perspective.proving"/>
    </extension>
