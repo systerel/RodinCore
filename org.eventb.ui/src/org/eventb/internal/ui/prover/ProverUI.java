@@ -203,7 +203,8 @@ public class ProverUI extends FormEditor implements
 	 */
 	@Override
 	public void dispose() {
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
+				this);
 		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
@@ -226,50 +227,43 @@ public class ProverUI extends FormEditor implements
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class required) {
 		if (IProofTreeUIPage.class.equals(required)) {
-			if (fProofTreeUI == null) {
-				fProofTreeUI = new ProofTreeUIPage(userSupport);
+			// Create a new Proof Tree UI Page
+			fProofTreeUI = new ProofTreeUIPage(userSupport);
 				if (userSupport.getCurrentPO() != null) {
 					fProofTreeUI.setInput(userSupport.getCurrentPO()
 							.getProofTree());
 				}
-			}
 			return fProofTreeUI;
 		}
 		if (IProofControlPage.class.equals(required)) {
-			if (fProofControlPage == null) {
-				fProofControlPage = new ProofControlPage(this);
-			}
+			// Create a new Proof Control Page
+			fProofControlPage = new ProofControlPage(this);
 			return fProofControlPage;
 		}
 
 		if (IProofInformationPage.class.equals(required)) {
-			if (fProofInformationPage == null) {
-				fProofInformationPage = new ProofInformationPage(this);
-			}
+			// Create a new Proof Information Page
+			fProofInformationPage = new ProofInformationPage(this);
 			return fProofInformationPage;
 		}
 
 		if (ISearchHypothesisPage.class.equals(required)) {
-			if (fSearchHypothesisPage == null) {
-				fSearchHypothesisPage = new SearchHypothesisPage(this
-						.getUserSupport(), this);
-			}
+			// Create a new Search Hypothesis Page
+			fSearchHypothesisPage = new SearchHypothesisPage(this
+					.getUserSupport(), this);
 			return fSearchHypothesisPage;
 		}
 
 		if (ICacheHypothesisPage.class.equals(required)) {
-			if (fCacheHypothesisPage == null) {
-				fCacheHypothesisPage = new CacheHypothesisPage(this
-						.getUserSupport(), this);
-			}
+			// Create a new Cache Hypothesis Page
+			fCacheHypothesisPage = new CacheHypothesisPage(this
+					.getUserSupport(), this);
 			return fCacheHypothesisPage;
 		}
 
 		if (IGoalPage.class.equals(required)) {
-			if (fGoalPage == null) {
-				fGoalPage = new GoalPage(this, this
-						.getUserSupport());
-			}
+			// Create a new Goal Page.
+			fGoalPage = new GoalPage(this, this.getUserSupport());
 			return fGoalPage;
 		}
 
