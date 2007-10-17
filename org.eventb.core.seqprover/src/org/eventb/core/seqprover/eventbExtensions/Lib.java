@@ -1220,4 +1220,45 @@ public final class Lib {
 		return formula.getTag() == Expression.KCARD;
 	}
 
+	/**
+	 * Return the range type of a relation input. Return <code>null</code> if
+	 * the input is not a relation, i.e. of type POW(S x T) for some sets S and
+	 * T.
+	 * 
+	 * @param r
+	 *            an relation expression.
+	 * @return the type of the range of the input relation or <code>null</code>.
+	 */
+	public static Type getRangeType(Expression r) {
+		Type type = r.getType();
+		if (type instanceof PowerSetType) {
+			Type baseType = type.getBaseType();
+			if (baseType instanceof ProductType) {
+				ProductType pType = (ProductType) baseType;
+				return pType.getRight();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the domain type of a relation input. Return <code>null</code> if
+	 * the input is not a relation, i.e. of type POW(S x T) for some sets S and
+	 * T.
+	 * 
+	 * @param r
+	 *            an relation expression.
+	 * @return the type of the range of the input relation or <code>null</code>.
+	 */
+	public static Type getDomainType(Expression r) {
+		Type type = r.getType();
+		if (type instanceof PowerSetType) {
+			Type baseType = type.getBaseType();
+			if (baseType instanceof ProductType) {
+				ProductType pType = (ProductType) baseType;
+				return pType.getLeft();
+			}
+		}
+		return null;
+	}
 }
