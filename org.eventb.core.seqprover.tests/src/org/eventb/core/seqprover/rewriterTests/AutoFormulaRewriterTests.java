@@ -1,18 +1,22 @@
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
 
+import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
@@ -20,6 +24,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -1044,6 +1049,60 @@ public class AutoFormulaRewriterTests {
 		expectedPred.typeCheck(ff.makeTypeEnvironment());
 		assertRelationalPredicate("A ∖ B ⊆ S == A ⊆ S ∪ B", expectedPred, input, Predicate.SUBSETEQ, S);
 
+		// r[{}] = {}
+		expressionTest("{∅, {FALSE}}",
+				"{({(0 ↦ 1) ↦ FALSE, (2 ↦ 1) ↦ TRUE})[∅], {FALSE}}");
+		expressionTest("{∅, {1 ↦ TRUE}}",
+				"{({0 ↦ (1 ↦ FALSE), 2 ↦ (1 ↦ TRUE)})[∅], {1 ↦ TRUE}}");
+		
+		// dom({}) = {}
+		Type domainType = ff.makeIntegerType();
+		Type rangeType = ff.makeBooleanType();
+		Type relType = ff.makeRelationalType(domainType, rangeType);
+		AtomicExpression r = ff.makeEmptySet(relType, null);
+		UnaryExpression domExp = ff.makeUnaryExpression(Expression.KDOM, r, null);
+		expressionTest("dom(∅) = ∅", ff.makeEmptySet(ff
+				.makePowerSetType(domainType), null), domExp);
+
+		// ran({}) = {}
+		UnaryExpression ranExp = ff.makeUnaryExpression(Expression.KRAN, r,
+				null);
+		expressionTest("ran(∅) = ∅", ff.makeEmptySet(ff
+				.makePowerSetType(rangeType), null), ranExp);
+	}
+
+	private void expressionTest(String expectedImage,
+			String inputImage) {
+		Expression input = Lib.parseExpression(inputImage);
+		if (input == null)
+			Assert.isTrue(false, "Input expression: \n\t" + inputImage
+					+ "\n\tcannot be parsed");
+		ITypeCheckResult typeCheck = input.typeCheck(ff.makeTypeEnvironment());
+		if (!typeCheck.isSuccess())
+			Assert.isTrue(false, "Input expression: \n\t" + inputImage
+					+ "\n\tcannot be type checked");
+		Expression expected = Lib.parseExpression(expectedImage);
+		if (expected == null)
+			Assert.isTrue(false, "Expected expression: \n\t" + expectedImage
+					+ "\n\tcannot be parsed");
+		typeCheck = expected.typeCheck(ff.makeTypeEnvironment());
+		if (!typeCheck.isSuccess())
+			Assert.isTrue(false, "Expected expression: \n\t" + expectedImage
+					+ "\n\tcannot be type checked");
+		expressionTest(inputImage + "  -->  " + expectedImage, expected, input);
+	}
+	
+	private void expressionTest(String message, Expression expected,
+			Expression input) {
+		assertEquals("Input expression should be type checked ", true, input
+				.isTypeChecked());
+		assertEquals("Expected expression should be type checked ", true, expected
+				.isTypeChecked());
+		assertEquals("Expected expression: " + expected
+				+ " and input expression: " + input
+				+ " should be of the same type ", expected.getType(), input
+				.getType());
+		assertEquals(message, expected, input.rewrite(r));
 	}
 
 	private void assertSetExtension(String message, Expression expected,
