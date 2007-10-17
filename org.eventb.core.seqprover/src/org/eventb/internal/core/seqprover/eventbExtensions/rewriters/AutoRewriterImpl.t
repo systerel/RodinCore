@@ -1024,13 +1024,21 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-			 * Set Theory: r[∅] = ∅
+			 * Set Theory: r[∅] == ∅
 			 */
 			RelImage(r, S) -> {
 				if (`S.equals(makeEmptySet(
 						ff.makePowerSetType(Lib.getDomainType(`r)))))
 					return makeEmptySet(
 							ff.makePowerSetType(Lib.getRangeType(`r)));
+			}
+
+			/**
+			 * Set Theory: (S × {E})(x) == E
+			 */
+			FunImage(Cprod(_, SetExtension(children)), _) -> {
+				if (`children.length == 1)
+					return `children[0];
 			}
 
 		}
@@ -1215,7 +1223,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 			
 			/**
-			 * Set Theory: dom(∅) = ∅
+			 * Set Theory: dom(∅) == ∅
 			 */
 			Dom(r) -> {
 				if (`r.equals(makeEmptySet(`r.getType())))
@@ -1223,7 +1231,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * Set Theory: ran(∅) = ∅
+			 * Set Theory: ran(∅) == ∅
 			 */
 			Ran(r) -> {
 				if (`r.equals(makeEmptySet(`r.getType())))

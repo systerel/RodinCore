@@ -1049,13 +1049,13 @@ public class AutoFormulaRewriterTests {
 		expectedPred.typeCheck(ff.makeTypeEnvironment());
 		assertRelationalPredicate("A ∖ B ⊆ S == A ⊆ S ∪ B", expectedPred, input, Predicate.SUBSETEQ, S);
 
-		// r[{}] = {}
+		// r[{}] == {}
 		expressionTest("{∅, {FALSE}}",
 				"{({(0 ↦ 1) ↦ FALSE, (2 ↦ 1) ↦ TRUE})[∅], {FALSE}}");
 		expressionTest("{∅, {1 ↦ TRUE}}",
 				"{({0 ↦ (1 ↦ FALSE), 2 ↦ (1 ↦ TRUE)})[∅], {1 ↦ TRUE}}");
 		
-		// dom({}) = {}
+		// dom({}) == {}
 		Type domainType = ff.makeIntegerType();
 		Type rangeType = ff.makeBooleanType();
 		Type relType = ff.makeRelationalType(domainType, rangeType);
@@ -1064,11 +1064,15 @@ public class AutoFormulaRewriterTests {
 		expressionTest("dom(∅) = ∅", ff.makeEmptySet(ff
 				.makePowerSetType(domainType), null), domExp);
 
-		// ran({}) = {}
+		// ran({}) == {}
 		UnaryExpression ranExp = ff.makeUnaryExpression(Expression.KRAN, r,
 				null);
 		expressionTest("ran(∅) = ∅", ff.makeEmptySet(ff
 				.makePowerSetType(rangeType), null), ranExp);
+		
+		// (S ** {E})(x) == E
+		expressionTest("TRUE", "(ℕ × {TRUE})(1)");
+		expressionTest("1", "(BOOL × {1})(TRUE)");
 	}
 
 	private void expressionTest(String expectedImage,
