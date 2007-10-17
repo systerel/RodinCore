@@ -875,8 +875,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-	    	 * Arithmetic 2: E − 0 == E
-	    	 * Arithmetic 3: 0 − E == −E
+			 * Arithmetic: E − E == 0
+			 */
+			Minus(E, E) -> {
+				return number0;
+			}
+
+			/**
+	    	 * Arithmetic: E − 0 == E
+	    	 * Arithmetic: 0 − E == −E
 	    	 */
 	    	Minus(E, F) -> {
 	    		if (`F.equals(number0)) {
@@ -888,7 +895,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), UnMinus(F)) -> {
 	    		return FormulaSimplification.getFaction(`E, `F);
@@ -925,8 +932,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic 8: E ÷ 1 = E
-	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 * Arithmetic: E ÷ 1 = E
+	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
 	    		return FormulaSimplification.getFaction(`expression, `E, `F);
@@ -941,18 +948,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic 8: E ÷ 1 = E
-	    	 * Arithmetic 9: 0 ÷ E = 0
-	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
+	    	 * Arithmetic: E ÷ 1 = E
+	    	 * Arithmetic: 0 ÷ E = 0
+	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), IntegerLiteral(F)) -> {
 	    		return FormulaSimplification.getFaction(`expression, `E, `F);
 	    	}
 
 			/**
-	    	 * Arithmetic 11: E^1 == E
-	    	 * Arithmetic 12: E^0 == 1
-	    	 * Arithmetic 12: 1^E == 1
+	    	 * Arithmetic: E^1 == E
+	    	 * Arithmetic: E^0 == 1
+	    	 * Arithmetic: 1^E == 1
 	    	 */
 	    	Expn (E, F) -> {
    				if (`F.equals(number1)) {

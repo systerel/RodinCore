@@ -1158,6 +1158,10 @@ public class AutoFormulaRewriterTests {
 		assertUnaryExpression("−(−i) = i", number1, Expression.UNMINUS,
 				numberMinus1);
 
+		// E - E == 0
+		expressionTest("0", "1 − 1");
+		expressionTest("0", "(x + 2 ∗ y) − (x + 2 ∗ y)");
+		
 		// E * ... * 1 * ... * F == E * ... * ... * F
 		Expression prod23 = ff.makeAssociativeExpression(Expression.MUL,
 				new Expression[] { number2, number3 }, null);
