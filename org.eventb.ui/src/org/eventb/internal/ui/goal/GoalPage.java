@@ -58,7 +58,6 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.TacticPositionUI;
-import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.PredicateUtil;
@@ -421,9 +420,7 @@ public class GoalPage extends Page implements
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
-		IProofControlPage proofControlPage = (IProofControlPage) this.proverUI
-				.getAdapter(IProofControlPage.class);
-		String globalInput = proofControlPage.getInput();
+		String globalInput = this.proverUI.getProofControl().getInput();
 		if (provider != null)
 			try {
 				userSupport.applyTactic(
