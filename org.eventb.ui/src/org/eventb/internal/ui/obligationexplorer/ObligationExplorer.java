@@ -74,6 +74,7 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -358,24 +359,9 @@ public class ObligationExplorer extends ViewPart implements
 		fViewer.getControl().setLayoutData(textData);
 		fViewer.setInput(EventBUIPlugin.getRodinDatabase());
 
-		// Sync with the current active ProverUI
-		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-		if (activePage != null) {
-			IEditorPart editor = activePage.getActiveEditor();
-			if (editor instanceof ProverUI) {
-				IPSStatus prSequent = ((ProverUI) editor)
-						.getCurrentProverSequent();
-				if (prSequent != null) {
-					fViewer.setSelection(new StructuredSelection(prSequent));
-					fViewer.reveal(prSequent);
-				} else {
-					IRodinFile prFile = ((ProverUI) editor).getRodinInput();
-					fViewer.setSelection(new StructuredSelection(prFile));
-					fViewer.reveal(prFile);
-				}
-			}
-		}
+		setSelectionFromProverUI();
 		fViewer.addSelectionChangedListener(this);
+		getSite().setSelectionProvider(fViewer);
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -384,6 +370,30 @@ public class ObligationExplorer extends ViewPart implements
 		handler = new ProofStatusToolTip(fViewer.getControl().getShell());
 		handler.activateHoverHelp(fViewer.getControl());
 
+	}
+
+	// Sync the selection with the current active ProverUI
+	private void setSelectionFromProverUI() {
+		final IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+		if (activePage == null) {
+			return;
+		}
+		final IEditorPart editorPart = activePage.getActiveEditor();
+		if (!(editorPart instanceof ProverUI)) {
+			return;
+		}
+		final ProverUI proverUI = (ProverUI) editorPart;
+		final IRodinElement objectToSelect = getCurrentRodinElement(proverUI);
+		fViewer.setSelection(new StructuredSelection(objectToSelect));
+		fViewer.reveal(objectToSelect);
+	}
+
+	private IRodinElement getCurrentRodinElement(ProverUI proverUI) {
+		final IPSStatus prSequent = proverUI.getCurrentProverSequent();
+		if (prSequent != null) {
+			return prSequent;
+		}
+		return proverUI.getRodinInput();
 	}
 
 	/**
