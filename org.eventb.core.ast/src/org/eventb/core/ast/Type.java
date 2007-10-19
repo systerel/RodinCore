@@ -109,7 +109,7 @@ public abstract class Type {
 	 * 
 	 * @return the source type of this type, or <code>null</code>
 	 */
-	protected Type getSource() {
+	public Type getSource() {
 		if (this instanceof PowerSetType) {
 			Type baseType = ((PowerSetType) this).getBaseType();
 			if (baseType instanceof ProductType) {
@@ -128,7 +128,7 @@ public abstract class Type {
 	 * 
 	 * @return the target type of this type, or <code>null</code>
 	 */
-	protected Type getTarget() {
+	public Type getTarget() {
 		if (this instanceof PowerSetType) {
 			Type baseType = ((PowerSetType) this).getBaseType();
 			if (baseType instanceof ProductType) {
