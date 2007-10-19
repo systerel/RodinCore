@@ -1230,15 +1230,7 @@ public final class Lib {
 	 * @return the type of the range of the input relation or <code>null</code>.
 	 */
 	public static Type getRangeType(Expression r) {
-		Type type = r.getType();
-		if (type instanceof PowerSetType) {
-			Type baseType = type.getBaseType();
-			if (baseType instanceof ProductType) {
-				ProductType pType = (ProductType) baseType;
-				return pType.getRight();
-			}
-		}
-		return null;
+		return r.getType().getTarget();
 	}
 
 	/**
@@ -1251,14 +1243,6 @@ public final class Lib {
 	 * @return the type of the range of the input relation or <code>null</code>.
 	 */
 	public static Type getDomainType(Expression r) {
-		Type type = r.getType();
-		if (type instanceof PowerSetType) {
-			Type baseType = type.getBaseType();
-			if (baseType instanceof ProductType) {
-				ProductType pType = (ProductType) baseType;
-				return pType.getLeft();
-			}
-		}
-		return null;
+		return r.getType().getSource();
 	}
 }
