@@ -38,13 +38,13 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBFormText;
@@ -61,19 +61,24 @@ public class ProofInformationPage extends Page implements
 		IProofInformationPage, IUserSupportManagerChangedListener {
 	ScrolledForm scrolledForm;
 
-	private ProverUI editor;
+//	private ProverUI editor;
 
 	private IEventBFormText formText;
+
+	IUserSupport userSupport;
+	
+	IProofState proofState;
 
 	/**
 	 * Constructor.
 	 * <p>
 	 * 
-	 * @param editor
-	 *            the Prover UI Editor corresponding to this page.
+	 * @param userSupport
+	 *            the User Support corresponding to this page.
 	 */
-	public ProofInformationPage(ProverUI editor) {
-		this.editor = editor;
+	public ProofInformationPage(IUserSupport userSupport) {
+		this.userSupport = userSupport;
+		this.proofState = userSupport.getCurrentPO();
 		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
 				this);
 	}
@@ -105,9 +110,8 @@ public class ProofInformationPage extends Page implements
 
 		scrolledForm = toolkit.createScrolledForm(parent);
 
-		IProofState ps = editor.getUserSupport().getCurrentPO();
-		if (ps != null)
-			scrolledForm.setText(ps.getPSStatus().getElementName());
+		if (proofState != null)
+			scrolledForm.setText(proofState.getPSStatus().getElementName());
 
 		Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -115,8 +119,8 @@ public class ProofInformationPage extends Page implements
 		body.setLayout(gl);
 
 		formText = new EventBFormText(toolkit.createFormText(body, true));
-		if (ps != null)
-			setFormText(ps.getPSStatus(), new NullProgressMonitor());
+		if (proofState != null)
+			setFormText(proofState.getPSStatus(), new NullProgressMonitor());
 
 		toolkit.paintBordersFor(body);
 		scrolledForm.reflow(true);
@@ -298,10 +302,10 @@ public class ProofInformationPage extends Page implements
 		if (ProofInformationUtils.DEBUG)
 			ProofInformationUtils.debug("Begin User Support Manager Changed");
 
-		if (scrolledForm.isDisposed())
+		// Do nothing if the control has been disposed.
+		if (this.getControl().isDisposed())
 			return;
-		final IUserSupport userSupport = this.editor.getUserSupport();
-
+		
 		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
 				.getUserSupportDelta(delta, userSupport);
@@ -339,9 +343,9 @@ public class ProofInformationPage extends Page implements
 					
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed.
-						IProofState ps = userSupport.getCurrentPO();
-						if (ps != null) {
-							IPSStatus prSequent = ps.getPSStatus();
+						proofState = userSupport.getCurrentPO();
+						if (proofState != null) {
+							IPSStatus prSequent = proofState.getPSStatus();
 							if (prSequent.exists()) {
 								scrolledForm.setText(prSequent.getElementName());
 								setFormText(prSequent, new NullProgressMonitor());
@@ -357,8 +361,32 @@ public class ProofInformationPage extends Page implements
 							clearFormText();							
 						}
 					}
-					// Ignore all the other changes to the user support and the
-					// proof states.
+					
+					if ((flags & IUserSupportDelta.F_STATE) != 0) {
+						IProofStateDelta proofStateDelta = ProverUIUtils
+								.getProofStateDelta(affectedUserSupport,
+										proofState);
+						
+						if (proofStateDelta == null)
+							return;
+						
+						if (proofState != null) {
+							IPSStatus prSequent = proofState.getPSStatus();
+							if (prSequent.exists()) {
+								scrolledForm.setText(prSequent.getElementName());
+								setFormText(prSequent, new NullProgressMonitor());
+								scrolledForm.reflow(true);
+							}
+							else {
+								scrolledForm.setText(prSequent.getElementName()
+										+ "does not exists");
+								scrolledForm.reflow(true);								
+							}
+						}
+						else {
+							clearFormText();							
+						}
+					}
 				}
 			}
 		});

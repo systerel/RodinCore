@@ -243,7 +243,8 @@ public class ProverUI extends FormEditor implements
 
 		if (IProofInformationPage.class.equals(required)) {
 			// Create a new Proof Information Page
-			fProofInformationPage = new ProofInformationPage(this);
+			fProofInformationPage = new ProofInformationPage(this
+					.getUserSupport());
 			return fProofInformationPage;
 		}
 
