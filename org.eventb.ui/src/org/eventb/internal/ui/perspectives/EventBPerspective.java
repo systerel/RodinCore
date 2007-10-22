@@ -16,6 +16,7 @@ import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
+import org.eventb.internal.ui.rodinproblems.RodinProblemView;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -61,7 +62,7 @@ public class EventBPerspective implements IPerspectiveFactory {
 		// Place the Problems / Task to the bottom of the editor area.
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.75f, editorArea);
-		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		bottom.addView(RodinProblemView.VIEW_ID);
 
 		// Place the outline to right of editor area.
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,

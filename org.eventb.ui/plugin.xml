@@ -65,6 +65,12 @@
             icon="icons/full/ctool16/goal.gif"
             id="org.eventb.ui.views.Goal"
             name="%view.Goal"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.rodinproblems.RodinProblemView"
+            icon="icons/full/ctool16/problems_view.gif"
+            id="org.eventb.ui.views.RodinProblemView"
+            name="%view.RodinProblemView"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -254,9 +260,9 @@
          <viewShortcut id="org.eventb.ui.views.ProofControl"/>
          <viewShortcut id="org.eventb.ui.views.ProofInformation"/>
          <viewShortcut id="org.eventb.ui.views.SearchHypothesis"/>
-         <viewShortcut id="org.eclipse.ui.views.ProblemView"/>
+         <viewShortcut id="org.eventb.ui.views.RodinProblemView"/>
          <view
-               id="org.eclipse.ui.views.ProblemView"
+               id="org.eventb.ui.views.RodinProblemView"
                relationship="stack"
                relative="org.eventb.ui.views.ProofControl"/>
          <viewShortcut id="org.eventb.ui.views.ProjectExplorer"/>
@@ -265,12 +271,12 @@
          <view
                id="org.eclipse.ui.views.PropertySheet"
                relationship="stack"
-               relative="org.eclipse.ui.views.ProblemView"/>
+               relative="org.eventb.ui.views.RodinProblemView"/>
          <view
                id="org.eclipse.ui.views.TaskList"
                relationship="stack"
-               relative="org.eclipse.ui.views.ProblemView"/>
-         <viewShortcut id="org.eclipse.ui.views.ProblemView"/>
+               relative="org.eventb.ui.views.RodinProblemView"/>
+         <viewShortcut id="org.eventb.ui.views.RodinProblemView"/>
          <viewShortcut id="org.eclipse.ui.views.PropertySheet"/>
          <viewShortcut id="org.eclipse.ui.views.ContentOutline"/>
          <viewShortcut id="org.eclipse.ui.views.TaskList"/>
