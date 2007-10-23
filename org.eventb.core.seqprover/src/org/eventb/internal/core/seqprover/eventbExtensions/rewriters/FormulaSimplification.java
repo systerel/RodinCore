@@ -137,25 +137,24 @@ public class FormulaSimplification {
 
 	public static Expression getFaction(Expression expression, BigInteger E,
 			Expression F) {
-		BigInteger number0 = new BigInteger("0");
-		if (E.compareTo(number0) == 0)
-			return ff.makeIntegerLiteral(number0, null);
-		if (E.compareTo(number0) < 0) {
-			Expression minusE = ff.makeIntegerLiteral(E.abs(), null);
+		switch (E.signum()) {
+		case -1:
+			final Expression minusE = ff.makeIntegerLiteral(E.negate(), null);
 			return ff.makeBinaryExpression(Expression.DIV, minusE, F, null);
+		case 0:
+			return ff.makeIntegerLiteral(E, null);
+		default:
+			return expression;
 		}
-		return expression;
 	}
 
 	public static Expression getFaction(Expression expression, 
 			Expression E, BigInteger F) {
-		BigInteger number0 = new BigInteger("0");
-		if (F.compareTo(number0) < 0) {
-			Expression minusF = ff.makeIntegerLiteral(F.abs(), null);
+		if (F.signum() < 0) {
+			final Expression minusF = ff.makeIntegerLiteral(F.negate(), null);
 			return ff.makeBinaryExpression(Expression.DIV, E, minusF, null);
 		}
-		BigInteger number1 = new BigInteger("1");
-		if (F.compareTo(number1) == 0) {
+		if (F.equals(BigInteger.ONE) ) {
 			return ff.makeUnaryExpression(Expression.UNMINUS, E, null);
 		}
 		return expression;
@@ -163,16 +162,14 @@ public class FormulaSimplification {
 
 	public static Expression getFaction(Expression expression, 
 			BigInteger E, BigInteger F) {
-		BigInteger number0 = new BigInteger("0");
-		if (E.compareTo(number0) == 0)
-			return ff.makeIntegerLiteral(number0, null);
-		BigInteger number1 = new BigInteger("1");
-		if (F.compareTo(number1) == 0) {
+		if (E.signum() == 0)
+			return ff.makeIntegerLiteral(BigInteger.ZERO, null);
+		if (F.equals(BigInteger.ONE)) {
 			return ff.makeIntegerLiteral(E, null);
 		}
-		if (E.compareTo(number0) < 0 && F.compareTo(number0) < 0) {
-			Expression minusE = ff.makeIntegerLiteral(E.abs(), null);
-			Expression minusF = ff.makeIntegerLiteral(F.abs(), null);
+		if (E.signum() < 0 && F.signum() < 0) {
+			final Expression minusE = ff.makeIntegerLiteral(E.negate(), null);
+			final Expression minusF = ff.makeIntegerLiteral(F.negate(), null);
 			return ff.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
 		}
 		return expression;
@@ -180,11 +177,11 @@ public class FormulaSimplification {
 
 	public static Expression simplifyMulArithmetic(
 			AssociativeExpression expression, Expression[] children) {
-		Expression number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+		Expression number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 		boolean positive = true;
 		boolean change = false;
 		// Expression neutral = number1;
-		Expression number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
+		Expression number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
 				number1, null);
 		Expression literalMinus1 = ff.makeIntegerLiteral(new BigInteger("-1"), null);
