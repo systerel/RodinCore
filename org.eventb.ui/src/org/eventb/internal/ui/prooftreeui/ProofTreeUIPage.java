@@ -191,9 +191,9 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		gd.horizontalSpan = 1;
 		tree.setLayoutData(gd);
 
-		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
-				.getShell(), userSupport);
-		handler.activateHoverHelp(viewer.getControl());
+//		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
+//				.getShell(), userSupport);
+//		handler.activateHoverHelp(viewer.getControl());
 
 		makeActions();
 		hookContextMenu();
