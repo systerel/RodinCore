@@ -241,7 +241,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		
 		sequentHasIdentifiers(sequent, "y", "yc", "x'", "z'", "zc'");
 		sequentHasSelectionHints(sequent, typeEnvironment, 
-				"yc>1", "x=1", "z'≠zc'");
+				"yc>1", "x=1", "z'≠TRUE");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, 
 				"x∈0‥4", "z∈BOOL∖{TRUE}", "zc∈BOOL∖{TRUE}", "yc=y");
 	}

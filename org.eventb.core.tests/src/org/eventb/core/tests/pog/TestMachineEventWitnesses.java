@@ -264,9 +264,62 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		IPOSequent sequent;
 		
 		sequent = getSequent(po, "evt/I2/INV");
-		sequentHasIdentifiers(sequent, "ax'", "cy'");
+		sequentHasIdentifiers(sequent, "ax'", "cy'", "qq'");
 		sequentHasHypotheses(sequent, environment, "(qq=0 ⇒ ax'=cy+1) ∧ (qq=1 ⇒ ax'=(cy+1)+1)");
 		sequentHasGoal(sequent, environment, "qq=0 ⇒ ax'=cy+1");
 	}
+	
+	/**
+	 * primed variables of witnesses must be in sequent type environment
+	 * even if they do not appear in an assignment of the abstract or
+	 * concrete event
+	 */
+	public void test_04() throws Exception {
+		
+		IMachineFile abs = createMachine("abs");
+
+		addVariables(abs, "ax", "ay", "az");
+		addInvariants(abs, 
+				makeSList("I1", "I2", "I3"), 
+				makeSList("ax>0", "ay∈{0,1}", "az>ax"));
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("G1"), makeSList("az>0"), 
+				makeSList("A1", "A2"), makeSList("ax:∈{0,1}", "ay≔1"));
+		
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		IMachineFile mac = createMachine("mac");
+
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "ay", "az", "cz");
+		addInvariants(mac, makeSList("I4"), 
+				makeSList("cz∈{1,2}"));
+		IEvent event = addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList("G1"), makeSList("az>0"), 
+				makeSList("C2"), makeSList("ay≔1"));
+		addEventRefines(event, "evt");
+		addEventWitnesses(event, 
+				makeSList("ax'"), 
+				// important: the types of cz' and az' cannot be inferred
+				makeSList("(cz'=az' ⇒ ax'=1) ∧ (cz'≠az' ⇒ ax'=0)"));
+		
+		mac.save(null, true);
+
+		runBuilder();
+		
+		IPOFile po = mac.getPOFile();
+		
+		containsIdentifiers(po, "ax", "ay", "az", "cz");
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt/A1/SIM");
+		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cz'");
+	}
+
 
 }

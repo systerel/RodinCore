@@ -160,13 +160,13 @@ public class TestMachineRefines extends EventBPOTest {
 		sequent = getSequent(po, "evt/I2/INV");
 		
 		sequentHasIdentifiers(sequent, "V1'", "V2'");
-		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2+2");
 		sequentHasGoal(sequent, typeEnvironment, "V2+2≥V1'");
 		
 		sequent = getSequent(po, "evt/A1/SIM");
 		
 		sequentHasIdentifiers(sequent, "V1'", "V2'");
-		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4", "V2∈0‥5", "V2≥V1", "V1'≥V2+2");
 		sequentHasGoal(sequent, typeEnvironment, "V1'∈ℕ");
 		
 	}
@@ -733,7 +733,7 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		IPOSequent sequent = getSequent(po, "evt/A/SIM");
 		sequentHasIdentifiers(sequent, "p'", "q'");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "q∈BOOL", "p'≠q'");
+		sequentHasHypotheses(sequent, environment, "p∈BOOL", "q∈BOOL", "p'≠q");
 		sequentHasGoal(sequent, environment, "p'≠p");
 	}
 	
@@ -1100,7 +1100,7 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		IPOSequent 
 		sequent = getSequent(po, "evt/J/INV");
-		sequentHasIdentifiers(sequent, "x'", "a");
+		sequentHasIdentifiers(sequent, "x'", "a", "y'");
 		sequentHasHypotheses(sequent, environment, "y=1", "x+y=2");
 		sequentHasGoal(sequent, environment, "y+y=2");
 	}
