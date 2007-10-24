@@ -24,12 +24,14 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
 import org.eventb.core.pog.state.IConcreteEventActionTable;
 import org.eventb.core.pog.state.IConcreteEventGuardTable;
+import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IMachineVariableTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -40,6 +42,7 @@ import org.eventb.internal.core.pog.AbstractEventGuardTable;
 import org.eventb.internal.core.pog.ConcreteEventActionTable;
 import org.eventb.internal.core.pog.ConcreteEventGuardTable;
 import org.eventb.internal.core.pog.EventHypothesisManager;
+import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -59,7 +62,9 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 	EventHypothesisManager eventHypothesisManager;
 	ITypeEnvironment eventTypeEnvironment;
 	IAbstractEventGuardList abstractEventGuardList;
-	
+	IEventWitnessTable witnessTable;
+	IMachineVariableTable variableTable;
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -244,7 +249,38 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 				repository);
 		
 		fetchActionsAndVariables(concreteEvent, repository);
-	
+		
+		fetchWitnesses(concreteEvent, repository, monitor);
+
+	}
+
+	private void fetchWitnesses(ISCEvent concreteEvent,
+			IPOGStateRepository repository, IProgressMonitor monitor)
+			throws CoreException, RodinDBException {
+		variableTable = (IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
+
+		ITypeEnvironment largeEnv = factory.makeTypeEnvironment();
+		largeEnv.addAll(eventTypeEnvironment);
+		List<FreeIdentifier> variables = variableTable.getVariables();
+		for (FreeIdentifier identifier : variables) {
+			largeEnv.add(identifier.withPrime(factory));
+		}
+		witnessTable = 
+			new EventWitnessTable(concreteEvent.getSCWitnesses(), largeEnv, factory, monitor);
+		
+		List<Predicate> predicates = witnessTable.getPredicates();
+		for (Predicate predicate : predicates) {
+			FreeIdentifier[] identifiers = predicate.getFreeIdentifiers();
+			for (FreeIdentifier identifier : identifiers) {
+				if (identifier.isPrimed() && !eventTypeEnvironment.contains(identifier.getName())) {
+					eventTypeEnvironment.add(identifier);
+					eventHypothesisManager.addIdentifier(identifier);
+				}
+			}
+		}
+		
+		witnessTable.makeImmutable();
+		repository.setState(witnessTable);
 	}
 
 	/* (non-Javadoc)
@@ -261,6 +297,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		eventHypothesisManager = null;
 		abstractEventGuardList = null;
 		eventTypeEnvironment = null;
+		variableTable = null;
 		factory = null;
 		
 		super.endModule(element, repository, monitor);

@@ -32,7 +32,6 @@ import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.pog.EventWitnessTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -59,14 +58,17 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			throws CoreException {
 		
 		List<ISCWitness> witnesses = witnessTable.getWitnesses();
+		List<Predicate> predicates = witnessTable.getPredicates();
 		
-		if (witnesses.size() == 0)
+		int size = witnesses.size();
+		if (size == 0)
 			return;
 		
 		IPOFile target = repository.getTarget();
 					
-		for (ISCWitness witness : witnesses) {
-			Predicate predicate = witness.getPredicate(factory, typeEnvironment);
+		for (int i=0; i<size; i++) {
+			ISCWitness witness = witnesses.get(i);
+			Predicate predicate = predicates.get(i);
 			
 			if (goalIsTrivial(predicate)) // only trivial POs can be derived from this witness
 				continue;
@@ -198,7 +200,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 		return found;
 	}
 	
-	protected IEventWitnessTable witnessTable;
+	IEventWitnessTable witnessTable;
 	protected ITypeEnvironment typeEnvironment;
 
 	@Override
@@ -208,10 +210,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		typeEnvironment = repository.getTypeEnvironment();
-		witnessTable = 
-			new EventWitnessTable(concreteEvent.getSCWitnesses(), typeEnvironment, factory, monitor);
-		witnessTable.makeImmutable();
-		repository.setState(witnessTable);
+		witnessTable = (IEventWitnessTable) repository.getState(IEventWitnessTable.STATE_TYPE);
 	}
 
 	@Override
@@ -220,6 +219,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			IPOGStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		typeEnvironment = null;
+		witnessTable = null;
 		super.endModule(element, repository, monitor);
 	}
 
