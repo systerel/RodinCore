@@ -991,7 +991,7 @@ public class Tactics {
 									return true;
 							}
 							if (left instanceof AtomicExpression) {
-								AtomicExpression aExp = (AtomicExpression) right;
+								AtomicExpression aExp = (AtomicExpression) left;
 								if (aExp.getTag() == Expression.EMPTYSET)
 									return true;
 							}

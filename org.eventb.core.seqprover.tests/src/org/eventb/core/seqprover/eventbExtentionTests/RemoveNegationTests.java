@@ -102,6 +102,38 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	
 	String resultP22 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{{x} ↦ 0})";
 
+	String P23 = "(0 = 1) ⇒ ¬(∅ = {1})";
+
+	String resultP23 = "0=1⇒(∃x·x∈{1})";
+	
+	String P24 = "∀x·x = 0 ⇒ ¬(∅ = {x})";
+
+	String resultP24 = "∀x·x=0⇒(∃x0·x0∈{x})";
+
+	String P25 = "(0 = 1) ⇒ ¬(∅ = {1 ↦ 2})";
+	
+	String resultP25 = "0=1⇒(∃x,x0·x ↦ x0∈{1 ↦ 2})";
+	
+	String P26 = "∀x·x = 0 ⇒ ¬(∅ = {x ↦ 0})";
+	
+	String resultP26 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{x ↦ 0})";
+
+	String P27 = "(0 = 1) ⇒ ¬(∅ = {(1 ↦ 2) ↦ (3 ↦ 4)})";
+
+	String resultP27 = "0=1⇒(∃x,x0,x1,x2·x ↦ x0 ↦ (x1 ↦ x2)∈{1 ↦ 2 ↦ (3 ↦ 4)})";
+	
+	String P28 = "∀x·x = 0 ⇒ ¬(∅ = {1 ↦ ((x ↦ 0) ↦ x)})";
+
+	String resultP28 = "∀x·x=0⇒(∃x0,x1,x2,x3·x0 ↦ (x1 ↦ x2 ↦ x3)∈{1 ↦ (x ↦ 0 ↦ x)})";
+	
+	String P29 = "(0 = 1) ⇒ ¬(∅ = {1 ↦ {2}})";
+
+	String resultP29 = "0=1⇒(∃x,x0·x ↦ x0∈{1 ↦ {2}})";
+	
+	String P30 = "∀x·x = 0 ⇒ ¬(∅= {{x} ↦ 0})";
+	
+	String resultP30 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{{x} ↦ 0})";
+
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rn";
@@ -135,7 +167,15 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P19, "1", resultP19),
 				new SuccessfulTest(P20, "1.1", resultP20),
 				new SuccessfulTest(P21, "1", resultP21),
-				new SuccessfulTest(P22, "1.1", resultP22)
+				new SuccessfulTest(P22, "1.1", resultP22),
+				new SuccessfulTest(P23, "1", resultP23),
+				new SuccessfulTest(P24, "1.1", resultP24),
+				new SuccessfulTest(P25, "1", resultP25),
+				new SuccessfulTest(P26, "1.1", resultP26),
+				new SuccessfulTest(P27, "1", resultP27),
+				new SuccessfulTest(P28, "1.1", resultP28),
+				new SuccessfulTest(P29, "1", resultP29),
+				new SuccessfulTest(P30, "1.1", resultP30)
 		};
 	}
 
@@ -164,7 +204,15 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				P19, "0",
 				P20, "1.0",
 				P21, "0",
-				P22, "1.0"
+				P22, "1.0",
+				P23, "0",
+				P24, "1.0",
+				P25, "0",
+				P26, "1.0",
+				P27, "0",
+				P28, "1.0",
+				P29, "0",
+				P30, "1.0"
 		};
 	}
 
@@ -192,7 +240,15 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				P19, "1",
 				P20, "1.1",
 				P21, "1",
-				P22, "1.1"
+				P22, "1.1",
+				P23, "1",
+				P24, "1.1",
+				P25, "1",
+				P26, "1.1",
+				P27, "1",
+				P28, "1.1",
+				P29, "1",
+				P30, "1.1"
 		};
 	}
 
