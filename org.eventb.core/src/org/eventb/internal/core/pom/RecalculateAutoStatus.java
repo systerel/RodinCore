@@ -97,15 +97,13 @@ public final class RecalculateAutoStatus {
 				prProof.setProofTree(autoProofTree, null);
 				PSWrapper.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setHasManualProof(false,null);
-				prFile.save(null, false, true);
-				return true;
 			}
 			else
 			{
 				status.setHasManualProof(true,null);
-				prFile.save(null, false, true);
-				return true;
 			}
+			prFile.save(null, false, true);
+			return true;
 			
 		} finally {
 			pm.done();
