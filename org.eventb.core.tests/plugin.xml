@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.eventb.core.seqprover.reasoners">
+      <reasoner
+            class="org.eventb.core.tests.pom.TracingReasoner"
+            id="tracingReasoner"
+            name="Tracing Reasoner">
+      </reasoner>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.autoTactics">
+      <autoTactic
+            class="org.eventb.core.tests.pom.TracingReasoner$TracingTactic"
+            id="tracingTactic"
+            name="Tracing Tactic">
+      </autoTactic>
+   </extension>
+
+</plugin>
