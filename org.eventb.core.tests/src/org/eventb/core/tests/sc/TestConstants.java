@@ -139,6 +139,36 @@ public class TestConstants extends GenericIdentTest<IContextFile, ISCContextFile
 		containsMarkers(con, false);
 	}
 
+	/**
+	 * name conflict with constant from abstraction of abstraction
+	 */
+	public void testConstants_07_constantFromAbstractionAbstractionNameConflict() throws Exception {
+		final IContextFile c1 = createContext("c1");
+		addConstants(c1, makeSList("C1"));
+		addAxioms(c1, makeSList("A1"), makeSList("C1∈ℕ"));
+		c1.save(null, true);
+		runBuilder();
+		
+		final IContextFile c2 = createContext("c2");
+		addContextExtends(c2, c1.getComponentName());
+		c2.save(null, true);
+		runBuilder();
+
+		final IContextFile c3 = createContext("c3");
+		addContextExtends(c3, c2.getComponentName());
+		addConstants(c3, makeSList("C1"));
+		addAxioms(c3, makeSList("A1"), makeSList("C1∈ℕ"));
+		c3.save(null, true);
+		runBuilder();
+
+		final ISCContextFile file = c3.getSCContextFile();
+		containsConstants(file);
+		final ISCInternalContext[] contexts = getInternalContexts(file, 2);
+		containsConstants(contexts[0], "C1");
+		hasMarker(c3.getConstants()[0]);
+		hasMarker(c3.getExtendsClauses()[0]);
+	}
+
 	@Override
 	protected IGenericSCTest<IContextFile, ISCContextFile> newGeneric() {
 		return new GenericContextSCTest(this);
