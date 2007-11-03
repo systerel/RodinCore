@@ -291,10 +291,20 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	public ISCInternalContext[] getInternalContexts(ISCContextFile file, int num) throws RodinDBException {
-		ISCInternalContext[] contexts = file.getAbstractSCContexts();
-		
-		assertEquals("wrong number of internal contexts", num, contexts.length);
+		final ISCInternalContext[] contexts = file.getAbstractSCContexts();
+		checkInternalContexts(num, contexts);
 		return contexts;
+	}
+
+	private void checkInternalContexts(int num, ISCInternalContext[] contexts)
+			throws RodinDBException {
+
+		assertEquals("wrong number of internal contexts", num, contexts.length);
+
+		// Ensure that there is no nested internal context
+		for (final ISCInternalContext iCtx: contexts) {
+			containsNoContexts(iCtx);
+		}
 	}
 
 	public ISCEvent getSCEvent(ISCMachineFile file, String label) throws RodinDBException {
@@ -324,9 +334,8 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	public ISCInternalContext[] getInternalContexts(ISCMachineFile file, int num) throws RodinDBException {
-		ISCInternalContext[] contexts = file.getSCSeenContexts();
-		
-		assertEquals("wrong number of internal contexts", num, contexts.length);
+		final ISCInternalContext[] contexts = file.getSCSeenContexts();
+		checkInternalContexts(num, contexts);
 		return contexts;
 	}
 
@@ -502,6 +511,15 @@ public abstract class BasicSCTest extends EventBTest {
 		Set<String> nameSet = getContextNameSet(contexts);
 		for (String name : names)
 			assertTrue("should contain " + name, nameSet.contains(name));
+	}
+
+	private void containsNoContexts(ISCInternalContext scContext)
+			throws RodinDBException {
+		final ISCInternalContext[] children = scContext
+				.getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
+
+		assertEquals("Should not contain any internal contexts", 0,
+				children.length);
 	}
 
 	public void seesContexts(ISCMachineFile scMachine, String... names) throws RodinDBException {
