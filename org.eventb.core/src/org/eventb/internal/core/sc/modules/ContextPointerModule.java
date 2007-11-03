@@ -362,8 +362,11 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		for (IRodinElement element : elements) {
-			IInternalElement internalElement = (IInternalElement) element;
-			internalElement.copy(target, null, null, false, monitor);
+			// Do not copy nested internal contexts.
+			if (element.getElementType() != ISCInternalContext.ELEMENT_TYPE) {
+				IInternalElement internalElement = (IInternalElement) element;
+				internalElement.copy(target, null, null, false, monitor);
+			}
 		}
 		
 		return true;
