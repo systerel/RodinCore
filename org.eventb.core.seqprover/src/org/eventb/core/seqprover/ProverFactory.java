@@ -500,5 +500,54 @@ public final class ProverFactory {
 			
 		};
 	}
+
+	/**
+	 * Returns a new sequent with some hidden and selected hypotheses from the
+	 * given parameters.
+	 * 
+	 * <p>
+	 * Note : <br>
+	 * The parameters provided to construct the sequent must be consistent in
+	 * order to construct a proper sequent. In particular:
+	 * <ul>
+	 * <li> All predicates (i.e. all hypotheses and the goal) must be type
+	 * checked.
+	 * <li> The type environment provided should contain all free identifiers
+	 * and carrier sets appearing in the predicates of the sequent and can be
+	 * used to successfully type check them.
+	 * <li> All hypotheses to be hidden must also be present in the set of
+	 * hypotheses provided.
+	 * <li> All hypotheses to be selected must also be present in the set of
+	 * hypotheses provided.
+	 * <li> All hypotheses to be hidden and selected must be disjoint.
+	 * </ul>
+	 * These checks need to be done before calling this method. The behaviour of
+	 * the sequent prover is undefined if these checks are not done.
+	 * </p>
+	 * 
+	 * @param typeEnv
+	 *            The type environment for the sequent, or <code>null</code>
+	 *            iff the empty type environment is to be used. It should be
+	 *            ensured that all predicates can be type checked using this
+	 *            type environment.
+	 * @param globalHypSet
+	 *            The set of hypotheses, or <code>null</code> iff this set is
+	 *            intended to be empty.
+	 * @param hiddenHypSet
+	 *            The set of hypotheses to hide. The set of hypotheses to hide
+	 *            should be contained in the set of hypotheses
+	 * @param selectedHypSet
+	 *            The set of hypotheses to select. The set of hypotheses to
+	 *            select should be contained in the set of hypotheses and
+	 *            disjoint from the set of hidden hypotheses.
+	 * @param goal
+	 *            The goal. This parameter must not be <code>null</code>.
+	 * @return A new sequent with the given information.
+	 */
+	public static IProverSequent makeSequent(ITypeEnvironment typeEnv,
+			Set<Predicate> globalHypSet, Set<Predicate> hiddenHypSet,
+			Set<Predicate> selectedHypSet, Predicate goal) {
+		return new ProverSequent(typeEnv,globalHypSet, hiddenHypSet, selectedHypSet, goal);
+	}
 	
 }
