@@ -234,6 +234,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 	    	/**
+	    	 * Equivalent 5: P ⇔ P == ⊤
+	    	 */
+	    	Leqv(P, P) -> {
+	    		return Lib.True;
+	    	}
+
+	    	/**
 	    	 * Equivalent 1: P ⇔ ⊤ == P
 	    	 */
 	    	Leqv(P, BTRUE()) -> {
@@ -261,12 +268,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		return Lib.makeNeg(`P);
 	    	}
 
-	    	/**
-	    	 * Equivalent 5: P ⇔ P == ⊤
-	    	 */
-	    	Leqv(P, P) -> {
-	    		return Lib.True;
-	    	}
 	    }
 	    return predicate;
 	}
@@ -821,6 +822,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	/**
 	    	 * Set Theory: p; ... ;∅; ... ;q  = ∅
 	    	 */
+	    	Fcomp (children) -> {
+	    		for (Expression child : `children) {
+	    			if (Lib.isEmptySet(child)) {
+	    				return ff.makeEmptySet(expression.getType(), null);
+	    			}
+	    		}
+	    	}
+	
+	    	/**
+	    	 * Set Theory: p∘ ... ∘∅∘ ... ∘q  = ∅
+	    	 */
 	    	Bcomp (children) -> {
 	    		for (Expression child : `children) {
 	    			if (Lib.isEmptySet(child)) {
@@ -895,18 +907,27 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
-	    	 */
-	    	Div(UnMinus(E), UnMinus(F)) -> {
-	    		return FormulaSimplification.getFaction(`E, `F);
-	    	}
-
-			/**
 	    	 * Arithmetic: E ÷ E = 1
 	    	 */
 	    	Div(E, E) -> {
 	    		return Lib.makeIntegerLiteral(1);
 	    	}
+
+			/**
+			 * Arithmetic: E ÷ 1 = E
+			 */
+			Div(E, IntegerLiteral(F)) -> {
+				if (`F.equals(BigInteger.ONE))
+					return `E;
+			}
+			
+			/**
+			 * Arithmetic: 0 ÷ E = 0
+			 */
+			Div(IntegerLiteral(F), _) -> {
+				if (`F.equals(BigInteger.ZERO))
+					return number0;
+			}
 
 			/**
 	    	 * Arithmetic: (X ∗ ... ∗ E ∗ ... ∗ Y) ÷ E == X ∗ ... ∗ Y
@@ -932,7 +953,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic: E ÷ 1 = E
+	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
+	    	 */
+	    	Div(UnMinus(E), UnMinus(F)) -> {
+	    		return FormulaSimplification.getFaction(`E, `F);
+	    	}
+
+			/**
 	    	 * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
@@ -940,7 +967,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-	    	 * Arithmetic 9: 0 ÷ E = 0
 	    	 * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), UnMinus(F)) -> {

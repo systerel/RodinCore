@@ -19,26 +19,33 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 
+	private IFormulaRewriter rewriter;
+
+	private boolean hideOriginal;
+	
+	protected AbstractAutoRewrites(IFormulaRewriter rewriter,
+			boolean hideOriginal) {
+		this.rewriter = rewriter;
+		this.hideOriginal = hideOriginal;
+	}
+	
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IFormulaRewriter rewriter, boolean hideOriginal, IProofMonitor pm) {
+			IProofMonitor pm) {
 		
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			
 			// Rewrite the hypothesis
-			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
-			
-//			if (inferredHyp == hyp)
-//				continue;
-			
+			Predicate inferredHyp = recursiveRewrite(hyp);
+
 			Collection<Predicate> inferredHyps = Lib
 					.breakPossibleConjunct(inferredHyp);
 
 			// Check if rewriting made a change
 			if (inferredHyp == hyp && inferredHyps.size() == 1)
 				continue;
+
 			// Check if rewriting generated something interesting
-			// if (inferredHyp.getTag() == Predicate.BTRUE) continue;
 			inferredHyps.remove(Lib.True);
 
 			// Check if rewriting generated something new
@@ -51,9 +58,6 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 								.singleton(hyp)));
 					
 					// Do NOT re-select the inferred hyps
-					// if (!inferredHyps.isEmpty())
-					// hypActions.add(ProverFactory
-					// .makeSelectHypAction(inferredHyps));
 				}
 				continue;
 			}
@@ -72,7 +76,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		}
 
 		Predicate goal = seq.goal();
-		Predicate newGoal = recursiveRewrite(goal, rewriter);
+		Predicate newGoal = recursiveRewrite(goal);
 
 		if (newGoal != goal) {
 			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory
@@ -102,11 +106,9 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	 * 
 	 * @param pred
 	 *            the input predicate
-	 * @param rewriter
-	 *            a rewriter which is used to rewrite the input predicate
 	 * @return the resulting predicate after rewrite.
 	 */
-	private Predicate recursiveRewrite(Predicate pred, IFormulaRewriter rewriter) {
+	private Predicate recursiveRewrite(Predicate pred) {
 		Predicate resultPred;
 		resultPred = pred.rewrite(rewriter);
 		while (resultPred != pred) {
