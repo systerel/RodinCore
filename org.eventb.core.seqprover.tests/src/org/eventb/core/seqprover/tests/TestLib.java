@@ -84,6 +84,152 @@ public class TestLib {
 		return seq;
 	}
 	
+	/**
+	 * <p>
+	 * Constructs a sequent from a string of the form " Hyps ;H; Hyps ;S; Hyps |-
+	 * goal" where the hypothesis list Hyps is of the form " hyp ;; hyp ;; ... ;;
+	 * hyp ". (If the list is empty, Hyps should be at least as contain one blank space)
+	 * </p>
+	 * <p>
+	 * The first list of hypotheses is the list of all hypotheses. The second
+	 * list (after ;H;) is the list of hidden hypotheses. The third list (after
+	 * ;S;) is the list of selected hypotheses. The order of hypotheses in the
+	 * list are kept. Ignoring order, the set of hidden hypotheses and selected
+	 * hypotheses should be disjoint and both are subset of the set of all
+	 * hypotheses.
+	 * </p>
+	 * <p>
+	 * 
+	 * <p>
+	 * The type environment of the sequent should be inferrable from the
+	 * predicates in the order in which they appear in the global set of
+	 * hypotheses (e.g. "x+1=y ;; x=y " is fine, but "x=y ;; x+1=y " is not
+	 * since "x=y" cannot be type-checked alone)
+	 * </p>
+	 * 
+	 * This method is used to easily construct sequents for test cases.
+	 * 
+	 * @param sequentAsString
+	 *            The sequent as a string
+	 * @return The resulting sequent
+	 * @throws IllegalArgumentException
+	 *             in case the sequent could not be constructed due to a parsing
+	 *             or type-checking error.
+	 * @author htson
+	 */
+	public static IProverSequent genFullSeq(String sequentAsString){
+		String[] goalSplit = sequentAsString.split("[|]-");
+		if (goalSplit.length != 2)
+			throw new IllegalArgumentException();
+		
+		String hypsImage = goalSplit[0];
+		String goalImage = goalSplit[1];
+		
+		String[] hiddenHypSplit = hypsImage.split(";H;");
+		if (hiddenHypSplit.length != 2)
+			throw new IllegalArgumentException();
+		String globalHypLists = hiddenHypSplit[0];
+		String[] selectedHypSplit = hiddenHypSplit[1].split(";S;");
+		if (selectedHypSplit.length != 2)
+			throw new IllegalArgumentException();
+		
+		String hiddenHypLists = selectedHypSplit[0];
+		String selectedHypLists = selectedHypSplit[1];
+		
+		// Parsing hyps
+		Predicate[] globalHyps = parsePredicate(globalHypLists);
+		Predicate[] hiddenHyps = parsePredicate(hiddenHypLists);
+		Predicate[] selectedHyps = parsePredicate(selectedHypLists);
+		Predicate goal = Lib.parsePredicate(goalImage);
+		if (goal == null)
+			throw new IllegalArgumentException();
+		
+		// Type check global hyps
+		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		ITypeCheckResult tcResult;
+		for (int i = 0; i < globalHyps.length; i++) {
+			tcResult = globalHyps[i].typeCheck(typeEnvironment);
+			if (!tcResult.isSuccess())
+				throw new IllegalArgumentException();
+			typeEnvironment.addAll(tcResult.getInferredEnvironment());
+		}
+
+		// Type check hidden hyps and check to see if it is contains in the set
+		// of global hypotheses.
+		for (Predicate hiddenHyp : hiddenHyps) {
+			tcResult = hiddenHyp.typeCheck(typeEnvironment);
+			if (!tcResult.isSuccess())
+				throw new IllegalArgumentException();
+			boolean found = false;
+			for (Predicate globalHyp : globalHyps) {
+				if (hiddenHyp.equals(globalHyp)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				throw new IllegalArgumentException();
+		}
+		
+		// Type check selected hyps if it is contains in the set
+		// of global hypotheses but not the hidden hypotheses.
+		for (Predicate selectedHyp : selectedHyps) {
+			tcResult = selectedHyp.typeCheck(typeEnvironment);
+			if (!tcResult.isSuccess())
+				throw new IllegalArgumentException();
+			boolean found = false;
+			for (Predicate globalHyp : globalHyps) {
+				if (selectedHyp.equals(globalHyp)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				throw new IllegalArgumentException();
+			
+			found = false;
+			for (Predicate hiddenHyp : hiddenHyps) {
+				if (selectedHyp.equals(hiddenHyp)) {
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				throw new IllegalArgumentException();
+		}
+
+		tcResult = goal.typeCheck(typeEnvironment);
+		if (!tcResult.isSuccess())
+			throw new IllegalArgumentException();
+		typeEnvironment.addAll(tcResult.getInferredEnvironment());
+				
+		// constructing sequent
+		Set<Predicate> globalHypSet = new LinkedHashSet<Predicate>(Arrays
+				.asList(globalHyps));
+		Set<Predicate> hiddenHypSet = new LinkedHashSet<Predicate>(Arrays
+				.asList(hiddenHyps));
+		Set<Predicate> selectedHypSet = new LinkedHashSet<Predicate>(Arrays
+				.asList(selectedHyps));
+		IProverSequent seq = ProverFactory.makeSequent(typeEnvironment,
+				globalHypSet, hiddenHypSet, selectedHypSet, goal);
+		
+		return seq;
+	}
+	
+	private static Predicate[] parsePredicate(String predicateList)
+			throws IllegalArgumentException {
+		String[] hypsStr = predicateList.split(";;");
+		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
+			hypsStr = new String[0];
+		Predicate[] Hyps = new Predicate[hypsStr.length];
+		for (int i = 0; i < hypsStr.length; i++) {
+			Hyps[i] = Lib.parsePredicate(hypsStr[i]);
+			if (Hyps[i] == null)
+				throw new IllegalArgumentException();
+		}
+		return Hyps;
+	}
+	
 	public static IProofTreeNode genProofTreeNode(String str){
 		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
 	}
