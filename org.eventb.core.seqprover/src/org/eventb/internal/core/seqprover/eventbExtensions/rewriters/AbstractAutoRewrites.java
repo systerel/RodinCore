@@ -50,15 +50,12 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 
 			// Check if rewriting generated something new
 			if (seq.containsHypotheses(inferredHyps)) {
-				// if the original hyp was selected then...
-				if (seq.isSelected(hyp)) {
-					// hide it and...
-					if (hideOriginal)
-						hypActions.add(ProverFactory.makeHideHypAction(Collections
-								.singleton(hyp)));
-					
-					// Do NOT re-select the inferred hyps
-				}
+				// Hide the original hypothesis.
+				if (hideOriginal)
+					hypActions.add(ProverFactory.makeHideHypAction(Collections
+							.singleton(hyp)));
+
+				// Do NOT re-select the inferred hyps
 				continue;
 			}
 
