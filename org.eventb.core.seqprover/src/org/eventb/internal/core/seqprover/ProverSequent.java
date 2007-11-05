@@ -204,6 +204,18 @@ public final class ProverSequent implements IInternalProverSequent{
 	}
 	
 
+	public ProverSequent(ITypeEnvironment typeEnv, Collection<Predicate> globalHypSet,
+			Collection<Predicate> hiddenHypSet, Collection<Predicate> selectedHypSet,
+			Predicate goal) {
+		this.typeEnvironment = typeEnv == null ? FORMULA_FACTORY.makeTypeEnvironment() : typeEnv.clone();
+		this.globalHypotheses = globalHypSet == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypSet);
+		this.localHypotheses = NO_HYPS;
+		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
+		this.selectedHypotheses = selectedHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypSet);
+		this.goal = goal;
+		SequentProver.debugOut("Constructed new sequent " + this);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#modify(org.eventb.core.ast.FreeIdentifier[], java.util.Collection, org.eventb.core.ast.Predicate)
 	 */
