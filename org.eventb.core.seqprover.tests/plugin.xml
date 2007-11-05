@@ -23,6 +23,16 @@
             class="org.eventb.core.seqprover.xprover.tests.ExtendedInputReasoner"
             id="extended"
             name="%reasoner.extended.name"/>
+      <reasoner
+            class="org.eventb.core.seqprover.rewriterTests.HideOriginalRewrites"
+            id="hideOriginalRewrites"
+            name="Simple rewriter (hide original)">
+      </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.rewriterTests.ShowOriginalRewrites"
+            id="showOriginalRewrites"
+            name="Simple rewriter (show original)">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
