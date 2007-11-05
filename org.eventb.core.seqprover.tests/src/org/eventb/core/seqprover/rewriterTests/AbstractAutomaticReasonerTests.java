@@ -50,7 +50,7 @@ public abstract class AbstractAutomaticReasonerTests extends AbstractReasonerTes
 
 		IReasonerInput input = new EmptyInput();
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input));
+				.genFullSeq(sequenceImage), input));
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[");
@@ -64,7 +64,7 @@ public abstract class AbstractAutomaticReasonerTests extends AbstractReasonerTes
 		}
 		buffer.append("]");
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input, buffer.toString()));
+				.genFullSeq(sequenceImage), input, buffer.toString()));
 		return successfullReasonerApps;
 	}
 
@@ -92,7 +92,7 @@ public abstract class AbstractAutomaticReasonerTests extends AbstractReasonerTes
 
 		IReasonerInput input = new EmptyInput();
 		
-		IProverSequent sequent = TestLib.genSeq(sequentImage);
+		IProverSequent sequent = TestLib.genFullSeq(sequentImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
