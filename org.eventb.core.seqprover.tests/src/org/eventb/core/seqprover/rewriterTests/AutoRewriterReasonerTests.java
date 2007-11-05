@@ -6,20 +6,17 @@ public class AutoRewriterReasonerTests extends AbstractAutomaticReasonerTests {
 
 	@Override
 	protected SuccessfulTest[] getSuccessfulTests() {
+		// No need to test this. This should be guaranteed by testing the
+		// abstract automatic rewrite reasoner and the formula rewriter itself.
 		return new SuccessfulTest [] {
-				// Single rewrite in goal
-				new SuccessfulTest("⊤ |- 1 = 0", "{}[][][⊤] |- ⊥"),
-				// Single rewrite in hypothesis (do not hide the original hypothesis)
-				new SuccessfulTest("1 = 0|- ⊤", "{}[1=0][][⊥] |- ⊤"),
-				// Rewriting hypothesis to true is not done
-				new SuccessfulTest("1 = 1|- ⊤", "{}[1=1][][] |- ⊤")
 		};
 	}
 
 	@Override
 	protected String[] getUnsuccessfulTests() {
+		// No need to test this. This should be guaranteed by testing the
+		// abstract automatic rewrite reasoner and the formula rewriter itself.
 		return new String [] {
-				"⊤ |- x ∈ ℕ"
 		};	
 	}
 
