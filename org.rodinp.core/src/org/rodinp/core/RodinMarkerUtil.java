@@ -28,6 +28,9 @@ import org.rodinp.internal.core.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
+ * 
+ * @author Laurent Voisin
+ * @author Thai Son Hoang
  */
 public final class RodinMarkerUtil {
 
@@ -370,7 +373,6 @@ public final class RodinMarkerUtil {
 	 *             if the given marker is not a Rodin problem marker delta
 	 * @see #ELEMENT
 	 * @see #getElement(IMarker)
-	 * @author htson
 	 */
 	public static IRodinElement getElement(IMarkerDelta delta) {
 		final IRodinElement ie = getInternalElement(delta);
@@ -393,7 +395,6 @@ public final class RodinMarkerUtil {
 	 *             if the given marker is not a Rodin problem marker
 	 * @see #ELEMENT
 	 * @see #getInternalElement(IMarker)
-	 * @author htson
 	 */
 	public static IInternalElement getInternalElement(IMarkerDelta delta) {
 		checkRodinProblemMarker(delta.getMarker());
@@ -412,7 +413,6 @@ public final class RodinMarkerUtil {
 	 * @param handleId
 	 *            the handle ID of the internal element.
 	 * @return the internal element corresponding to the resource.
-	 * @author htson
 	 */
 	private static IInternalElement getInternalElement(IResource resource,
 			String handleId) {
@@ -447,7 +447,6 @@ public final class RodinMarkerUtil {
 	 *             if the given marker delta is not a Rodin problem marker delta
 	 * @see #ATTRIBUTE_ID
 	 * @see #getAttributeType(IMarker)
-	 * @author htson
 	 */
 	public static IAttributeType getAttributeType(IMarkerDelta delta) {
 		checkRodinProblemMarker(delta.getMarker());
