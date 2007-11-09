@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="internalElementTypes" name="%internalElementTypes"/>
+         <meta.schema plugin="org.rodinp.core" id="internalElementTypes" name="Internal Element Types"/>
       </appInfo>
       <documentation>
          &lt;p&gt;The Rodin platform contains an extensible database.  In particular, new kind of internal elements can be added to the database.

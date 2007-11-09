@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="attributeTypes" name="%attributeTypes"/>
+         <meta.schema plugin="org.rodinp.core" id="attributeTypes" name="Attribute Types"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

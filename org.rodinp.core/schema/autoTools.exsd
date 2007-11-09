@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="autoTools" name="%autoToolsName"/>
+         <meta.schema plugin="org.rodinp.core" id="autoTools" name="Automatic Tools"/>
       </appInfo>
       <documentation>
          The Rodin platform supports the notion of automatic tools.  These tools are run automatically 

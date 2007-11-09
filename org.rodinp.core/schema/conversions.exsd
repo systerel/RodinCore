@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="conversions" name="%conversionsName"/>
+         <meta.schema plugin="org.rodinp.core" id="conversions" name="Rodin Conversions"/>
       </appInfo>
       <documentation>
          See extension point &lt;code&gt;fileElementVersions&lt;/code&gt;

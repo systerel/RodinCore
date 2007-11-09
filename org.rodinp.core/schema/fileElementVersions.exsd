@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="fileElementVersions" name="%fileElementVersionsName"/>
+         <meta.schema plugin="org.rodinp.core" id="fileElementVersions" name="File Element Versions"/>
       </appInfo>
       <documentation>
          &lt;p&gt;File element types can be associated with version numbers. The platform supports automatic conversions from older to newer versions.&lt;/p&gt;
