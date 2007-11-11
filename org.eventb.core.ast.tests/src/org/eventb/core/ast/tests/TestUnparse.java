@@ -6,7 +6,9 @@ import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.FIRST_ASSOCIATIVE_EXPRESSION;
 import static org.eventb.core.ast.Formula.FIRST_ASSOCIATIVE_PREDICATE;
@@ -22,6 +24,8 @@ import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.MINUS;
+import static org.eventb.core.ast.Formula.MOD;
 import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.OVR;
 import static org.eventb.core.ast.Formula.PLUS;
@@ -62,21 +66,27 @@ import static org.eventb.core.ast.tests.ITestHelper.QUANTIFIED_PREDICATE_LENGTH;
 import static org.eventb.core.ast.tests.ITestHelper.RELATIONAL_PREDICATE_LENGTH;
 import static org.eventb.core.ast.tests.ITestHelper.UNARY_EXPRESSION_LENGTH;
 import static org.eventb.core.ast.tests.ITestHelper.UNARY_PREDICATE_LENGTH;
+
+import java.util.regex.Pattern;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.UnaryExpression;
 
 
 
@@ -95,7 +105,7 @@ public class TestUnparse extends TestCase {
 
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	
-	private static FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
+	static FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	private static FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
 	private static FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
 	private static FreeIdentifier id_t = ff.makeFreeIdentifier("t", null);
@@ -132,33 +142,9 @@ public class TestUnparse extends TestCase {
 		abstract Formula<?> getFormula();
 		abstract Formula<?> parseAndCheck(String input);
 		void verify(String input) {
-			checkUnneededParentheses(input);
+			assertTrue(input, ParenChecker.check(input));
 			Formula<?> actual = parseAndCheck(input);
 			checkSourceLocations(input, actual);
-		}
-		void checkUnneededParentheses(String input) {
-			// This check ensures that there is no unnecessary external parenthesis in
-			// the given string
-			if (input.charAt(0) != '(')
-				return;
-			final int length = input.length();
-			int count = 1;
-			for (int i = 1; i < length; i++) {
-				switch (input.charAt(i)) {
-				case '(':
-					++ count;
-					break;
-				case ')':
-					-- count;
-					if (count == 0) {
-						assertFalse("'" + input + "' contains unnecessary external parentheses",
-								i == length - 1);
-						return;
-					}
-					break;
-				}
-			}
-			assertFalse("'" + input + "' contains unbalanced parentheses", true);
 		}
 		void checkSourceLocations(String input, Formula<?> parsedFormula) {
 			// Verify that source locations are properly nested
@@ -469,6 +455,27 @@ public class TestUnparse extends TestCase {
 			), new ExprTestPair(
 					"\u22121",
 					mIntegerLiteral(-1)
+			), new ExprTestPair(
+					"1 \u2212 (\u22121)",
+					mBinaryExpression(MINUS,
+							mIntegerLiteral(1),
+							mIntegerLiteral(-1))
+			), new ExprTestPair(
+					"\u22121 \u2212 1",
+					mBinaryExpression(MINUS,
+							mIntegerLiteral(-1),
+							mIntegerLiteral(1))
+			), new ExprTestPair(
+					"(\u22121)\u22171",
+					mAssociativeExpression(MUL,
+							mIntegerLiteral(-1),
+							mIntegerLiteral(1))
+			), new ExprTestPair(
+					"\u22121\u22171",
+					mUnaryExpression(UNMINUS,
+							mAssociativeExpression(MUL,
+									mIntegerLiteral(1),
+									mIntegerLiteral(1)))
 			),
 	};
 	
@@ -661,7 +668,9 @@ public class TestUnparse extends TestCase {
 	
 	private Expression[] constructBinaryUnaryTrees() {
 		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
-		Expression[]  formulae = new Expression[(UNARY_EXPRESSION_LENGTH)*(BINARY_EXPRESSION_LENGTH)*3];
+		final int length = (3 * UNARY_EXPRESSION_LENGTH * BINARY_EXPRESSION_LENGTH)
+				+ (2 * BINARY_EXPRESSION_LENGTH);
+		final Expression[] formulae = new Expression[length];
 		int idx = 0;
 		for (int i=0;i<UNARY_EXPRESSION_LENGTH;i++) {
 			for (int j=0;j<BINARY_EXPRESSION_LENGTH;j++) {
@@ -678,13 +687,26 @@ public class TestUnparse extends TestCase {
 						mUnaryExpression(i + FIRST_UNARY_EXPRESSION, id_y));
 			}
 		}
+		// Special case of negative integer literal
+		for (int j=0;j<BINARY_EXPRESSION_LENGTH;j++) {
+			formulae[idx ++] = mBinaryExpression(
+					j + FIRST_BINARY_EXPRESSION,
+					mIntegerLiteral(-1),
+					id_y);
+			formulae[idx ++] = mBinaryExpression(
+					j + FIRST_BINARY_EXPRESSION,
+					id_x,
+					mIntegerLiteral(-1));
+		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 	
 	private Expression[] constructAssociativeUnaryTrees() {
 		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
-		Expression[]  formulae = new Expression[4 * UNARY_EXPRESSION_LENGTH * ASSOCIATIVE_EXPRESSION_LENGTH];
+		final int length = (4 * UNARY_EXPRESSION_LENGTH * ASSOCIATIVE_EXPRESSION_LENGTH)
+				+ (3 * ASSOCIATIVE_EXPRESSION_LENGTH);
+		final Expression[] formulae = new Expression[length];
 		int idx = 0;
 		for (int i=0;i<UNARY_EXPRESSION_LENGTH;i++) {
 			for (int j=0;j<ASSOCIATIVE_EXPRESSION_LENGTH;j++) {
@@ -706,12 +728,30 @@ public class TestUnparse extends TestCase {
 						id_y);
 			}
 		}
-		assert idx == formulae.length;
+		// Special case of negative integer literal
+		for (int j=0;j<ASSOCIATIVE_EXPRESSION_LENGTH;j++) {
+			formulae[idx ++] = mAssociativeExpression(
+					j + FIRST_ASSOCIATIVE_EXPRESSION,
+					id_x,
+					mIntegerLiteral(-1));
+			formulae[idx ++] = mAssociativeExpression(
+					j + FIRST_ASSOCIATIVE_EXPRESSION,
+					id_x,
+					mIntegerLiteral(-1), 
+					id_z);
+			formulae[idx ++] = mAssociativeExpression(
+					j + FIRST_ASSOCIATIVE_EXPRESSION, 
+					mIntegerLiteral(-1), 
+					id_y);
+		}
+		assert idx == length;
 		return formulae;
 	}
 	
 	private Expression[] constructUnaryUnaryTrees() {
-		Expression[]  formulae = new Expression[(UNARY_EXPRESSION_LENGTH)*(UNARY_EXPRESSION_LENGTH)*2];
+		final int length = (2 * UNARY_EXPRESSION_LENGTH * UNARY_EXPRESSION_LENGTH)
+				+ UNARY_EXPRESSION_LENGTH;
+		final Expression[] formulae = new Expression[length];
 		int idx = 0;
 		for (int i=0;i<UNARY_EXPRESSION_LENGTH;i++) {
 			for (int j=0;j<UNARY_EXPRESSION_LENGTH;j++) {
@@ -722,6 +762,12 @@ public class TestUnparse extends TestCase {
 						j + FIRST_UNARY_EXPRESSION,
 						mUnaryExpression(i + FIRST_UNARY_EXPRESSION, id_x));
 			}
+		}
+		// Special case of negative integer literal
+		for (int j=0;j<UNARY_EXPRESSION_LENGTH;j++) {
+			formulae[idx ++] = mUnaryExpression(
+					j + FIRST_UNARY_EXPRESSION,
+					mIntegerLiteral(-1));
 		}
 		assert idx == formulae.length;
 		return formulae;
@@ -848,8 +894,9 @@ public class TestUnparse extends TestCase {
 	}
 	
 	private Expression[] constructQuantifiedUnaryTree() {
-		final int length = 2 * UNARY_EXPRESSION_LENGTH * (2 * QUANTIFIED_EXPRESSION_LENGTH + 1);
-		Expression[]  formulae = new Expression[length];
+		final int length = (2 * UNARY_EXPRESSION_LENGTH + 1)
+				* (2 * QUANTIFIED_EXPRESSION_LENGTH + 1);
+		final Expression[]  formulae = new Expression[length];
 		int idx = 0;
 		for (int i = 0; i < QUANTIFIED_EXPRESSION_LENGTH; i++) {
 			for (int j = 0; j < UNARY_EXPRESSION_LENGTH; j++) {
@@ -861,6 +908,13 @@ public class TestUnparse extends TestCase {
 					formulae[idx ++] = mUnaryExpression(FIRST_UNARY_EXPRESSION + j,
 							mQExpr(FIRST_QUANTIFIED_EXPRESSION + i, form, bd_x, b0));
 				}
+			}
+			// Special case of negative integer literal
+			for (QuantifiedExpression.Form form: QuantifiedExpression.Form.values()) {
+				if (form == Lambda && FIRST_QUANTIFIED_EXPRESSION + i != CSET)
+					continue;
+				formulae[idx ++] = mQExpr(FIRST_QUANTIFIED_EXPRESSION + i, form, bd_x, 
+						mIntegerLiteral(-1));
 			}
 		}
 		assert idx == formulae.length;
@@ -1151,19 +1205,103 @@ public class TestUnparse extends TestCase {
 	
 	private void routineTest (Formula<?>[] formulae) {
 		for (int i = 0; i < formulae.length; i++) {
-			TestPair pair;
+			final TestPair pair;
 			if (formulae[i] instanceof Expression) {
 				pair = new ExprTestPair(null, (Expression) formulae[i]);
 			} else {
 				pair = new PredTestPair(null, (Predicate) formulae[i]);
 			}
 			
-			String formula = pair.getFormula().toString();
-			String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
+			final String formula = pair.getFormula().toString();
+			final String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
 			
 			pair.verify(formula);
 			pair.verify(formulaParenthesized);
 		}
+	}
+	
+	public void testNegativeIntegerLiteral() throws Exception {
+		final ExprTestPair pairs[] = new ExprTestPair[] {
+				// Alone
+				new ExprTestPair("\u2212x", mUnaryExpression(UNMINUS, id_x)),
+				// Unary minus
+				new ExprTestPair("\u2212(\u2212x)", mUnaryExpression(UNMINUS,
+						mUnaryExpression(UNMINUS, id_x))),
+				// Addition
+				new ExprTestPair("\u2212x+y", mAssociativeExpression(PLUS,
+						mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y+(\u2212x)+z", mAssociativeExpression(PLUS,
+						id_y, mUnaryExpression(UNMINUS, id_x), id_z)),
+				new ExprTestPair("y+(\u2212x)", mAssociativeExpression(PLUS,
+						id_y, mUnaryExpression(UNMINUS, id_x))),
+				// Subtraction
+				new ExprTestPair("\u2212x \u2212 y", mBinaryExpression(MINUS,
+						mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y \u2212 (\u2212x)", mBinaryExpression(MINUS,
+						id_y, mUnaryExpression(UNMINUS, id_x))),
+				// Multiplication
+				new ExprTestPair("(\u2212x)\u2217y", mAssociativeExpression(
+						MUL, mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y\u2217(\u2212x)\u2217z",
+						mAssociativeExpression(MUL, id_y, mUnaryExpression(
+								UNMINUS, id_x), id_z)),
+				new ExprTestPair("y\u2217(\u2212x)", mAssociativeExpression(
+						MUL, id_y, mUnaryExpression(UNMINUS, id_x))),
+				// Division
+				new ExprTestPair("(\u2212x) \u00f7 y", mBinaryExpression(DIV,
+						mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y \u00f7 (\u2212x)", mBinaryExpression(DIV,
+						id_y, mUnaryExpression(UNMINUS, id_x))),
+				// Modulo
+				new ExprTestPair("(\u2212x) mod y", mBinaryExpression(MOD,
+						mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y mod (\u2212x)", mBinaryExpression(MOD,
+						id_y, mUnaryExpression(UNMINUS, id_x))),
+				// Exponentiation
+				new ExprTestPair("(\u2212x) ^ y", mBinaryExpression(EXPN,
+						mUnaryExpression(UNMINUS, id_x), id_y)),
+				new ExprTestPair("y ^ (\u2212x)", mBinaryExpression(EXPN, id_y,
+						mUnaryExpression(UNMINUS, id_x))), };
+		
+		routineTestStringFormula(pairs);
+		
+		// Same test with a positive integer literal
+		final int length = pairs.length;
+		final ExprTestPair pairsPos[] = new ExprTestPair[length];
+		final Pattern pattern = Pattern.compile(id_x.getName());
+		final IntegerLiteral il_1 = mIntegerLiteral(1);
+		final IFormulaRewriter rewriterPos = new DefaultRewriter(false, ff) {
+			@Override
+			public Expression rewrite(FreeIdentifier identifier) {
+				return identifier == id_x ? il_1 : identifier;
+			}
+		};
+		for (int i = 0; i < length; i++) {
+			final String image = pairs[i].image;
+			final Expression expr = pairs[i].formula;
+			final String newImage = pattern.matcher(image).replaceAll("(1)");
+			final Expression newExpr = expr.rewrite(rewriterPos);
+			pairsPos[i] = new ExprTestPair(newImage, newExpr);
+		}
+		routineTestStringFormula(pairsPos);
+
+		// Same test with a negative integer literal
+		final ExprTestPair pairsNeg[] = new ExprTestPair[length];
+		final IntegerLiteral il_m1 = mIntegerLiteral(-1);
+		final IFormulaRewriter rewriterNeg = new DefaultRewriter(false, ff) {
+			@Override
+			public Expression rewrite(UnaryExpression expr) {
+				return expr.getChild() == id_x ? il_m1 : expr;
+			}
+		};
+		for (int i = 0; i < length; i++) {
+			final String image = pairs[i].image;
+			final Expression expr = pairs[i].formula;
+			final String newImage = pattern.matcher(image).replaceAll("1");
+			final Expression newExpr = expr.rewrite(rewriterNeg);
+			pairsNeg[i] = new ExprTestPair(newImage, newExpr);
+		}
+		routineTestStringFormula(pairsNeg);
 	}
 
 }
