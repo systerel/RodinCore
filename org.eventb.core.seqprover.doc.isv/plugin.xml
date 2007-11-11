@@ -15,6 +15,9 @@
             file="tocGuide.xml">
       </toc>
       <toc
+            file="tocReasoners.xml">
+      </toc>
+      <toc
             file="tocReference.xml">
       </toc>
       <toc

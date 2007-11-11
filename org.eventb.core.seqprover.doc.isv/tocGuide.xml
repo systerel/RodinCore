@@ -12,7 +12,4 @@
 	<topic label="Sequent Prover UI">
 		<link toc="tocUI.xml" />
 	</topic>
-	<topic label="Contributing to the Sequent Prover" href="html/guide/contributing.html">
-		<link toc="tocContributing.xml" />
-	</topic>
 </toc>

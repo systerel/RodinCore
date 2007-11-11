@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Automatic Rewriting Reasoners</title>
+  </head>
+  
+  <body>
+    <h1>Automatic Rewriting Reasoners</h1>
+    <h2>Concepts</h2>
+
+    <p>
+      The reasoners of this type does not have any extra input (except the
+      sequent) and automatically rewrites all the occurrences of certain
+      formulas into other ones. An example of this is the rewriter which
+      rewrites according to the following rules:
+    </p>
+    <ul>
+      <li>⊤ ⇒ P == P
+      <li>P ⇒ ⊤ == ⊤
+      <li>⊥ ⇒ P == ⊤
+      <li>P ⇒ ⊥ = ⊥
+    </ul>
+
+    <h2>Implementation</h2>
+    <p>
+      In order to implement a reasoner of this type, clients can extends the
+      abstract class
+      <code>org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites</code>.
+      For the moment, the class is internal within the project and subjected to
+      be changed. Clients can make a copy of this class to develop their own
+      implementation.
+    </p>
+    <p>An example is as follows:
+      <font color="#4444cc">
+    </p>
+    <pre>
+import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.seqprover.SequentProver;
+
+public class AutoRewrites extends AbstractAutoRewrites {
+
+	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
+
+	public AutoRewrites() {
+		super(rewriter, true);
+	}
+
+	public static String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".autoRewrites";
+
+	public String getReasonerID() {
+		return REASONER_ID;
+	}
+
+	@Override
+	protected String getDisplayName() {
+		return "simplification rewrites";
+	}
+}
+    </pre>
+  </font>
+    
+    <p>
+      The constructor of should call the super constructor method
+      super(IFormulaRewriter, boolean) to specify the formula rewriter to use
+      and the reasoner should hide the source of the rewritten hypothesis or
+      not.  Clients need to implement two methods. The first one namely
+      <code>getReasonerID()</code> return the string ID of this reasoner. This
+      must be the same ID as declared in the XML file (do not forget the
+      project name prefix).
+    </p>
+    <p>
+      The second method is <code>getDisplayName()</code> which return the
+      display name of the reasoner, which will be used for displaying in the
+      UI.
+    </p>
+    <p>
+      In order to implement the formula rewriter, clients are suggested to use
+      Tom. See example of
+      <code>org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl.t</code>
+      which implement most of the automatic rewriting rules as in the User
+      Manual (reference needed here) supplied with the Rodin platform.
+   </p>
+
+    <h2>Testing</h2>
+    The abstract automatic rewriting reasoners has been tested, so clients only
+    need to test if the reasoner has been declared correctly (testing the
+    reasoner ID), and the formula rewriter used for this reasoner has been
+    implemented correctly.
+    <h3>Testing the reasoner ID</h3>
+    <p>
+      This test based on the abstract class
+      <code>org.eventb.core.seqprover.rewriterTests.AbstractAutomaticReasonerTests</code>. An example is as follows.
+    </p>
+    <pre>
+import org.eventb.core.seqprover.SequentProver;
+
+public class AutoRewriterReasonerTests extends AbstractAutomaticReasonerTests {
+
+	@Override
+	protected SuccessfulTest[] getSuccessfulTests() {
+		// No need to test this. This should be guaranteed by testing the
+		// abstract automatic rewrite reasoner and the formula rewriter itself.
+		return new SuccessfulTest [] {
+		};
+	}
+
+	@Override
+	protected String[] getUnsuccessfulTests() {
+		// No need to test this. This should be guaranteed by testing the
+		// abstract automatic rewrite reasoner and the formula rewriter itself.
+		return new String [] {
+		};	
+	}
+
+	@Override
+	public String getReasonerID() {
+		return SequentProver.PLUGIN_ID + ".autoRewrites";
+	}
+
+}
+    </pre>
+    <p>
+      In this test, clients only need to provide the reasoner ID under test.
+    </p>
+
+    <h3>Testing the formula rewriter</h3>
+    <p>
+      This test based on the abstract class
+      <code>org.eventb.core.seqprover.rewriterTests.AbstractFormulaRewriterTests</code>. An example is as follows.
+    </p>
+    <pre>
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.junit.Test;
+
+public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
+	
+	// The automatic rewriter for testing.
+	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
+	
+	/**
+	 * Constructor.
+	 * <p>
+	 * Create an abstract formula rewriter test with the input is the automatic
+	 * rewriter.
+	 */
+	public AutoFormulaRewriterTests() {
+		super(rewriter);
+	}
+
+	/**
+	 * Tests for rewriting conjunctions.
+	 */
+	@Test
+	public void testRewrite() {
+                // Test rewriting predicate
+		predicateTest("⊥", "x = 1 ∧ ⊥");
+                // Test rewriting expression
+		expressionTest("1", "card({x + 1})");
+        }
+
+}
+    </pre>
+    <p>
+      More instructions about how to use the method <code>predicateTest</code>
+      and <code>expressionTest</code> (along with some other utility methods)
+      can be found in
+      <code>org.eventb.core.seqprover.rewriterTests.AbstractFormulaRewriterTests</code> class.      
+    </p>
+</body>
+</html>
