@@ -220,6 +220,9 @@ public class QuantifiedExpression extends Expression {
 		propagate.set(Formula.KRAN);
 		propagate.set(Formula.KPRJ1);
 		propagate.set(Formula.KPRJ2);
+		propagate.set(Formula.KID);
+		propagate.set(Formula.KMIN);
+		propagate.set(Formula.KMAX);
 		propagateRight.set(Formula.FUNIMAGE);
 		propagateRight.set(Formula.RELIMAGE);
 		

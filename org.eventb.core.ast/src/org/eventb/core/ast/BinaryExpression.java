@@ -272,6 +272,9 @@ public class BinaryExpression extends Expression {
 		propagateLeft.set(Formula.KRAN);
 		propagateLeft.set(Formula.KPRJ1);
 		propagateLeft.set(Formula.KPRJ2);
+		propagateLeft.set(Formula.KID);
+		propagateLeft.set(Formula.KMIN);
+		propagateLeft.set(Formula.KMAX);
 		// is a relop
 		propagateLeft.set(Formula.EQUAL);
 		propagateLeft.set(Formula.NOTEQUAL);

@@ -185,9 +185,8 @@ public class AssociativeExpression extends Expression {
 		assert tags.length == leftNoParenthesesMap.length;
 		assert tags.length == rightNoParenthesesMap.length;
 
-		BitSet propagateLeft = new BitSet();
-		BitSet propagateRight = new BitSet();
-		BitSet commonTempLeft, commonTempRight;
+		final BitSet propagateLeft = new BitSet();
+		final BitSet commonTempLeft, commonTempRight;
 		BitSet temp;
 		
 		propagateLeft.set(Formula.NO_TAG);
@@ -208,6 +207,9 @@ public class AssociativeExpression extends Expression {
 		propagateLeft.set(Formula.KRAN);
 		propagateLeft.set(Formula.KPRJ1);
 		propagateLeft.set(Formula.KPRJ2);
+		propagateLeft.set(Formula.KID);
+		propagateLeft.set(Formula.KMIN);
+		propagateLeft.set(Formula.KMAX);
 		// is a relop
 		propagateLeft.set(Formula.EQUAL);
 		propagateLeft.set(Formula.NOTEQUAL);
@@ -235,7 +237,7 @@ public class AssociativeExpression extends Expression {
 		propagateLeft.set(Formula.TBIJ);
 		propagateLeft.set(Formula.MAPSTO);
 		
-		propagateRight = (BitSet)propagateLeft.clone();
+		final BitSet propagateRight = (BitSet)propagateLeft.clone();
 		// is not below but reachable without parentheses only right child
 		propagateRight.set(Formula.FUNIMAGE);
 		propagateRight.set(Formula.RELIMAGE);
