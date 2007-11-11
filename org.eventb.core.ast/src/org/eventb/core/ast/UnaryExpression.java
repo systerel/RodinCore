@@ -238,24 +238,38 @@ public class UnaryExpression extends Expression {
 		assert leftParenthesesMap.length == tags.length;
 		assert rightParenthesesMap.length == tags.length;
 
-		for(int i=0; i<tags.length; i++) {
+		for (int i=0; i<tags.length; i++) {
 			leftParenthesesMap[i] = new BitSet();
 			rightParenthesesMap[i] = new BitSet();
 		}
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.PLUS);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.MINUS);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.UNMINUS);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.MUL);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.DIV);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.MOD);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.CONVERSE);
-		rightParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.EXPN);
-		leftParenthesesMap[Formula.UNMINUS-firstTag] = (BitSet)rightParenthesesMap[Formula.UNMINUS-firstTag].clone();
-		leftParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.FUNIMAGE);
-		leftParenthesesMap[Formula.UNMINUS-firstTag].set(Formula.RELIMAGE);
+
+		leftParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
+		leftParenthesesMap[UNMINUS-firstTag].set(MUL);
+		leftParenthesesMap[UNMINUS-firstTag].set(DIV);
+		leftParenthesesMap[UNMINUS-firstTag].set(MOD);
+		leftParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
+		leftParenthesesMap[UNMINUS-firstTag].set(EXPN);
+		leftParenthesesMap[UNMINUS-firstTag].set(FUNIMAGE);
+		leftParenthesesMap[UNMINUS-firstTag].set(RELIMAGE);
 		
+		rightParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
+		rightParenthesesMap[UNMINUS-firstTag].set(PLUS);
+		rightParenthesesMap[UNMINUS-firstTag].set(MINUS);
+		rightParenthesesMap[UNMINUS-firstTag].set(MUL);
+		rightParenthesesMap[UNMINUS-firstTag].set(DIV);
+		rightParenthesesMap[UNMINUS-firstTag].set(MOD);
+		rightParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
+		rightParenthesesMap[UNMINUS-firstTag].set(EXPN);
 	}
 	
+	protected static boolean needsParentheses(int tag, boolean isRightChild,
+			int parentTag) {
+		if (isRightChild) {
+			return rightParenthesesMap[tag - firstTag].get(parentTag);
+		}
+		return leftParenthesesMap[tag - firstTag].get(parentTag);
+	}
+
 	/**
 	 * Returns the unique child of this node.
 	 * 
@@ -308,10 +322,7 @@ public class UnaryExpression extends Expression {
 	}
 
 	private boolean needsParentheses(boolean isRightChild, int parentTag) {
-		if (isRightChild) {
-			return rightParenthesesMap[getTag()-firstTag].get(parentTag);
-		}
-		return leftParenthesesMap[getTag()-firstTag].get(parentTag);
+		return needsParentheses(getTag(), isRightChild, parentTag);
 	}
 
 	protected String getTagOperator() {

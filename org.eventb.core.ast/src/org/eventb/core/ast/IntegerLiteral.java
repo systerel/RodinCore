@@ -61,7 +61,15 @@ public class IntegerLiteral extends Expression {
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
 
-		final boolean bracketed = parentTag == UNMINUS;
+		final boolean bracketed;
+		if (literal.signum() < 0) {
+			// A negative literal behaves like a unary minus.
+			bracketed = UnaryExpression.needsParentheses(UNMINUS, isRightChild,
+					parentTag);
+		} else {
+			bracketed = parentTag == UNMINUS;
+		}
+		
 		if (bracketed) {
 			builder.append('(');
 		}
