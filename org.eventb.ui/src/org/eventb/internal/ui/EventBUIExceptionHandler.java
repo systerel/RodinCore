@@ -299,4 +299,27 @@ public class EventBUIExceptionHandler {
 				awareness);
 	}
 
+	/**
+	 * Handle an exception with some options.
+	 * 
+	 * @param e
+	 *            an exception
+	 * @param message
+	 *            the message related to the exception
+	 * @param awareness
+	 *            the level of awareness
+	 * @param debugPrefix
+	 *            the debug prefix. If it is <code>null</code> then no debug
+	 *            message will be printed. Otherwise the message will be printed
+	 *            with this prefix.
+	 */
+	public static void handleException(Exception e, String message,
+			UserAwareness awareness, String debugPrefix) {
+		if (debugPrefix != null) {
+			UIUtils.printDebugMessage(debugPrefix, message);
+			e.printStackTrace();
+		}
+		UIUtils.log(e, message);
+	}
+
 }
