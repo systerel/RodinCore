@@ -187,8 +187,6 @@ public class ElementUIRegistry implements IElementUIRegistry {
 					try {
 						provider = (IElementLabelProvider) column
 								.createExecutableExtension("labelProvider"); //$NON-NLS-1$
-						providers.put(columnID, provider);
-						return provider.getLabel(obj);
 					} catch (CoreException e) {
 						String message = "Cannot instantiate the label provider class "   //$NON-NLS-1$
 								+ configuration.getAttribute("labelProvider") //$NON-NLS-1$
@@ -198,6 +196,12 @@ public class ElementUIRegistry implements IElementUIRegistry {
 								+ DEFAULT_LABEL;
 						EventBUIExceptionHandler.handleException(e, message,
 								UserAwareness.IGNORE, DEBUG ? DEBUG_PREFIX : null);
+						return DEFAULT_LABEL;
+					}
+					providers.put(columnID, provider);
+					try {
+						return provider.getLabel(obj);
+					} catch (RodinDBException e) {
 						return DEFAULT_LABEL;
 					}
 				}
@@ -223,8 +227,6 @@ public class ElementUIRegistry implements IElementUIRegistry {
 						try {
 							modifier = (IElementModifier) column
 									.createExecutableExtension("modifier"); //$NON-NLS-1$
-							modifiers.put(columnID, modifier);
-							return false;
 						} catch (CoreException e) {
 							String message = "Cannot instantiate the modifier class "   //$NON-NLS-1$
 									+ modifierClass
@@ -237,6 +239,8 @@ public class ElementUIRegistry implements IElementUIRegistry {
 									DEBUG ? DEBUG_PREFIX : null);
 							return DEFAULT_EDITABLE;
 						}
+						modifiers.put(columnID, modifier);
+						return false;
 					}
 				}
 			}
@@ -260,8 +264,6 @@ public class ElementUIRegistry implements IElementUIRegistry {
 					try {
 						modifier = (IElementModifier) column
 								.createExecutableExtension("modifier");   //$NON-NLS-1$
-						modifiers.put(columnID, modifier);
-						modifier.modify(element, text);
 					} catch (CoreException e) {
 						String message = "Cannot instantiate the modifier class "   //$NON-NLS-1$
 								+ modifier
@@ -273,6 +275,8 @@ public class ElementUIRegistry implements IElementUIRegistry {
 										: null);
 						return;
 					}
+					modifiers.put(columnID, modifier);
+					modifier.modify(element, text);
 				}
 			}
 		}
