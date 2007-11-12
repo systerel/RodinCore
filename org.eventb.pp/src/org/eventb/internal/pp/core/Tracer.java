@@ -36,7 +36,7 @@ public final class Tracer implements ITracer, ILevelController {
 
 	private final Map<Level, Pair> origins = new HashMap<Level, Pair>(); 
 	private Level lastClosedLevel = null;
-	private Level currentLevel = Level.base;
+	private Level currentLevel = Level.BASE;
 	
 	private HashSet<Predicate> originalPredicates;
 	private boolean goalNeeded = false;
@@ -64,7 +64,7 @@ public final class Tracer implements ITracer, ILevelController {
 	 * Returns the last closed level, or <code>null</code> if
 	 * no level has been closed yet.
 	 * <p>
-	 * If the last closed level is equal to {@link Level#base}, the base
+	 * If the last closed level is equal to {@link Level#BASE}, the base
 	 * level is closed and the proof is done.
 	 * 
 	 * @return the last closed level or <code>null</code>
@@ -101,10 +101,10 @@ public final class Tracer implements ITracer, ILevelController {
 		}
 		
 		Level tmp = origin.getLevel();
-		if (!tmp.equals(Level.base) && tmp.isRightBranch()) assert origins.containsKey(tmp.getParent().getLeftBranch());
+		if (!tmp.equals(Level.BASE) && tmp.isRightBranch()) assert origins.containsKey(tmp.getParent().getLeftBranch());
 		
 		Set<Level> cumulatedDependencies = new HashSet<Level>(dependencies);
-		while (!tmp.equals(Level.base)) {
+		while (!tmp.equals(Level.BASE)) {
 			Level current = tmp;
 			Level parent = tmp.getParent();
 			if (current.isRightBranch()) {
@@ -128,7 +128,7 @@ public final class Tracer implements ITracer, ILevelController {
 		}
 		assert !origins.containsKey(tmp);
 		origins.put(tmp, new Pair(origin,cumulatedDependencies));
-		assert !tmp.equals(Level.base)?!tmp.isRightBranch():true;
+		assert !tmp.equals(Level.BASE)?!tmp.isRightBranch():true;
 		setLastClosedLevel(tmp);
 	}
 	

@@ -8,7 +8,7 @@ public class TestLevel extends AbstractPPTest {
 
 	
 	public void testEquals() {
-		assertTrue(BASE.equals(Level.base));
+		assertTrue(BASE.equals(Level.BASE));
 		assertTrue(ONE.equals(ONE));
 		assertTrue(TWO.equals(TWO));
 		assertFalse(ONE.equals(TWO));

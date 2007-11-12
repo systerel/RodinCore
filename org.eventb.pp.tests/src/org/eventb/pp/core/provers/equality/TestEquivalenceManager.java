@@ -37,7 +37,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addQueryEquality(ab, cClause(cProp(0),ab)));
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 		
-		manager.backtrack(Level.base);
+		manager.backtrack(Level.BASE);
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
@@ -45,7 +45,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addQueryEquality(nab, cClause(cProp(0),nab)));
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 		
-		manager.backtrack(Level.base);
+		manager.backtrack(Level.BASE);
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	

@@ -5,7 +5,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,20 +50,20 @@ public abstract class AbstractPPTest extends TestCase {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	public static Level BASE = Level.base;
-	public static Level ONE = new Level(BigInteger.ONE);
-	public static Level TWO = new Level(BigInteger.valueOf(2));
-	public static Level THREE = new Level(BigInteger.valueOf(3));
-	public static Level FOUR = new Level(BigInteger.valueOf(4));
-	public static Level FIVE = new Level(BigInteger.valueOf(5));
-	public static Level SIX = new Level(BigInteger.valueOf(6));
-	public static Level SEVEN = new Level(BigInteger.valueOf(7));
-	public static Level EIGHT = new Level(BigInteger.valueOf(8));
-	public static Level NINE = new Level(BigInteger.valueOf(9));
-	public static Level TEN = new Level(BigInteger.valueOf(10));
-	public static Level ELEVEN = new Level(BigInteger.valueOf(11));
-	public static Level NINETEEN = new Level(BigInteger.valueOf(19));
-	public static Level TWENTY = new Level(BigInteger.valueOf(20));
+	public static Level BASE = Level.BASE;
+	public static Level ONE = BASE.getLeftBranch();
+	public static Level TWO = BASE.getRightBranch();
+	public static Level THREE = ONE.getLeftBranch();
+	public static Level FOUR = ONE.getRightBranch();
+	public static Level FIVE = TWO.getLeftBranch();
+	public static Level SIX = TWO.getRightBranch();
+	public static Level SEVEN = THREE.getLeftBranch();
+	public static Level EIGHT = THREE.getRightBranch();
+	public static Level NINE = FOUR.getLeftBranch();
+	public static Level TEN = FOUR.getRightBranch();
+	public static Level ELEVEN = FIVE.getLeftBranch();
+	public static Level NINETEEN = NINE.getLeftBranch();
+	public static Level TWENTY = NINE.getRightBranch();
 	
 	public static Variable x = cVar(1);
 	public static Variable y = cVar(2);
@@ -131,8 +130,8 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Sort NAT = Sort.NATURAL;
 	public static Sort BOOL = Sort.BOOLEAN;
 	
-	public static Clause TRUE = Util.TRUE(Level.base);
-	public static Clause FALSE = Util.FALSE(Level.base);
+	public static Clause TRUE = Util.TRUE(Level.BASE);
+	public static Clause FALSE = Util.FALSE(Level.BASE);
 	
 	public static void assertFalse(ProverResult result) {
 		assertEquals(result.getGeneratedClauses().size(), 1);

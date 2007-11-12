@@ -439,7 +439,7 @@ public final class ClauseDispatcher  {
 	
 	private void adjustLevel(IOrigin origin) {
 		tracer.addClosingClauseAndUpdateLevel(origin);
-		if (tracer.getLastClosedLevel().equals(Level.base)) {
+		if (tracer.getLastClosedLevel().equals(Level.BASE)) {
 			terminate(Result.valid);
 		}
 	}

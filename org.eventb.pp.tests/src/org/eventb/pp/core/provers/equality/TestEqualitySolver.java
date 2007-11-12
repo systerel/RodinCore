@@ -100,7 +100,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		
 		@Override
 		public String toString() {
-			return name+(level.equals(Level.base)?"":"/"+level);
+			return name+(level.equals(Level.BASE)?"":"/"+level);
 		}
 
 		@Override
@@ -115,11 +115,11 @@ public class TestEqualitySolver extends AbstractPPTest {
 		}
 	}
 	
-	private static FactSource R1L0 = new MyFactSource("R1",Level.base);
-	private static FactSource R2L0 = new MyFactSource("R2",Level.base);
-	private static FactSource R3L0 = new MyFactSource("R3",Level.base);
-	private static FactSource R4L0 = new MyFactSource("R4",Level.base);
-	private static FactSource R5L0 = new MyFactSource("R5",Level.base);
+	private static FactSource R1L0 = new MyFactSource("R1", BASE);
+	private static FactSource R2L0 = new MyFactSource("R2", BASE);
+	private static FactSource R3L0 = new MyFactSource("R3", BASE);
+	private static FactSource R4L0 = new MyFactSource("R4", BASE);
+	private static FactSource R5L0 = new MyFactSource("R5", BASE);
 	
 	private static QuerySource R1L0q = new MyQuerySource("R1");
 	private static QuerySource R2L0q = new MyQuerySource("R2");
@@ -129,26 +129,26 @@ public class TestEqualitySolver extends AbstractPPTest {
 	private static QuerySource R6L0q = new MyQuerySource("R6");
 	private static QuerySource R7L0q = new MyQuerySource("R7");
 	
-	private static FactSource R6L0 = new MyFactSource("R6",Level.base);
-	private static FactSource R7L0 = new MyFactSource("R7",Level.base);
-	private static FactSource R8L0 = new MyFactSource("R8",Level.base);
-	private static FactSource R9L0 = new MyFactSource("R9",Level.base);
+	private static FactSource R6L0 = new MyFactSource("R6", BASE);
+	private static FactSource R7L0 = new MyFactSource("R7", BASE);
+	private static FactSource R8L0 = new MyFactSource("R8", BASE);
+	private static FactSource R9L0 = new MyFactSource("R9", BASE);
 	
-	private static FactSource R1L1 = new MyFactSource("R1",ONE);
-	private static FactSource R2L1 = new MyFactSource("R2",ONE);
-	private static FactSource R3L1 = new MyFactSource("R3",ONE);
-	private static FactSource R4L1 = new MyFactSource("R4",ONE);
+	private static FactSource R1L1 = new MyFactSource("R1", ONE);
+	private static FactSource R2L1 = new MyFactSource("R2", ONE);
+	private static FactSource R3L1 = new MyFactSource("R3", ONE);
+	private static FactSource R4L1 = new MyFactSource("R4", ONE);
 
-	private static FactSource R1L3 = new MyFactSource("R1",THREE);
-	private static FactSource R2L3 = new MyFactSource("R2",THREE);
-	private static FactSource R3L3 = new MyFactSource("R3",THREE);
+	private static FactSource R1L3 = new MyFactSource("R1", THREE);
+	private static FactSource R2L3 = new MyFactSource("R2", THREE);
+	private static FactSource R3L3 = new MyFactSource("R3", THREE);
 
-	private static FactSource R1L7 = new MyFactSource("R1",SEVEN);
-	private static FactSource R2L7 = new MyFactSource("R2",SEVEN);
-	private static FactSource R3L7 = new MyFactSource("R3",SEVEN);
+	private static FactSource R1L7 = new MyFactSource("R1", SEVEN);
+	private static FactSource R2L7 = new MyFactSource("R2", SEVEN);
+	private static FactSource R3L7 = new MyFactSource("R3", SEVEN);
 
 	private static QuerySource ESq = new MyQuerySource("ES");
-	private static FactSource ES = new MyFactSource("ES",Level.base);
+	private static FactSource ES = new MyFactSource("ES", BASE);
 	
 
 	private EqualitySolver solver;
@@ -354,7 +354,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		FactResult result = solver.addFactEquality(E(a, d, R6L0));
 		
 		assertNotNull(result);
-		assertEquals(Level.base, result.getContradictionLevel());
+		assertEquals(Level.BASE, result.getContradictionLevel());
 	}
 	
 	public void testSimpleQueryContradiction1() {
@@ -791,14 +791,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 		List<InstantiationResult> results = solver.addInstantiation(I(a, R6L0q));
 		assertNotNull(results);
 		assertEquals(2, results.size());
-		InstantiationResult result2 = results.get(0);
-		assertEquals(e, result2.getProposedValue());
-		assertEquals(R6L0q, result2.getSolvedSource());
-		assertEquals(mSet(R2L0, R4L0), result2.getSolvedValueSource());
-		InstantiationResult result1 = results.get(1);
+		InstantiationResult result1 = results.get(0);
 		assertEquals(d, result1.getProposedValue());
 		assertEquals(R6L0q, result1.getSolvedSource());
 		assertEquals(mSet(R1L1, R3L1), result1.getSolvedValueSource());
+		InstantiationResult result2 = results.get(1);
+		assertEquals(e, result2.getProposedValue());
+		assertEquals(R6L0q, result2.getSolvedSource());
+		assertEquals(mSet(R2L0, R4L0), result2.getSolvedValueSource());
 	}
 	
 	public void testMultipleInstantiation2() {

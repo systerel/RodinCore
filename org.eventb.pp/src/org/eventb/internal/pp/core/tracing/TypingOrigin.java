@@ -33,7 +33,7 @@ public class TypingOrigin implements IOrigin {
 	}
 
 	public Level getLevel() {
-		return Level.base;
+		return Level.BASE;
 	}
 
 	public boolean isDefinition() {

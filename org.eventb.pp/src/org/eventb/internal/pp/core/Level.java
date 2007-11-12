@@ -13,7 +13,7 @@ import java.math.BigInteger;
 /**
  * This class represents a level of the proof tree.
  * <p>
- * Each proof begins at the base level, accessible using {@value #base}. Each case
+ * Each proof begins at the base level, accessible using {@value #BASE}. Each case
  * split divides the proof tree in two branches, accessible using {@link #getLeftBranch()}
  * and {@link #getRightBranch()}. For instance, if the prover splits on a clause
  * having level base, the two corresponding branches will have level base.getLeftBranch()
@@ -33,11 +33,12 @@ public final class Level implements Comparable<Level> {
 	/**
 	 * The base level
 	 */
-	public static Level base = new Level(BigInteger.ZERO);
+	public static final Level BASE = new Level(BigInteger.ZERO);
 	
 	private final BigInteger level;
 	
-	public Level(BigInteger level) {
+	private Level(BigInteger level) {
+		assert level.signum() >= 0;
 		this.level = level;
 	}
 	
@@ -99,7 +100,7 @@ public final class Level implements Comparable<Level> {
 	 * <code>false</code> otherwise
 	 */
 	public boolean isRightBranch() {
-		if (this.equals(base)) return false;
+		if (this.equals(BASE)) return false;
 		return level.mod(TWO).intValue() == 0;
 	}
 	
@@ -153,7 +154,7 @@ public final class Level implements Comparable<Level> {
 		if (other.equals(this)) return false;
 		
 		Level tmp = other;
-		while (!tmp.equals(Level.base) && !tmp.equals(this)) {
+		while (!tmp.equals(Level.BASE) && !tmp.equals(this)) {
 			tmp = tmp.getParent();
 		}
 		if (tmp.equals(this)) return true;
@@ -176,7 +177,7 @@ public final class Level implements Comparable<Level> {
 	
 	@Override
 	public String toString() {
-		return ""+level;
+		return level.toString();
 	}
 	
 	public int compareTo(Level o) {

@@ -382,7 +382,7 @@ public class Util {
 	}
 	
 	public static Clause cClause(Literal<?,?>... literals) {
-		Clause clause = newDisjClause(new DummyOrigin(Level.base), mList(literals));
+		Clause clause = newDisjClause(new DummyOrigin(Level.BASE), mList(literals));
 		return clause;
 	}
 	
@@ -400,11 +400,11 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return cf.makeDisjunctiveClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
+		return cf.makeDisjunctiveClause(new DummyOrigin(Level.BASE),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
 	public static Clause cEqClause(Literal<?,?>... literals) {
-		Clause clause = newEqClause(new DummyOrigin(Level.base),mList(literals));
+		Clause clause = newEqClause(new DummyOrigin(Level.BASE),mList(literals));
 		return clause;
 	}
 	
@@ -422,7 +422,7 @@ public class Util {
 			else if (literal instanceof EqualityLiteral) equalities.add((EqualityLiteral)literal);
 			else if (literal instanceof ArithmeticLiteral) arithmetic.add((ArithmeticLiteral)literal);
 		}
-		return cf.makeEquivalenceClause(new DummyOrigin(Level.base),predicates,equalities,arithmetic,mList(conditions));
+		return cf.makeEquivalenceClause(new DummyOrigin(Level.BASE),predicates,equalities,arithmetic,mList(conditions));
 	}
 	
 	public static <T> Set<T> mSet(T... elements) {

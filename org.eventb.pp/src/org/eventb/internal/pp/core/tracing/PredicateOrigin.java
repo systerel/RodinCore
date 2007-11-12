@@ -52,7 +52,7 @@ public class PredicateOrigin implements IOrigin {
 	}
 
 	public Level getLevel() {
-		return Level.base;
+		return Level.BASE;
 	}
 
 	@Override
