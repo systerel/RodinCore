@@ -82,6 +82,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			return;
 		}
 		
+		abstractConvergence = null;
 		concreteConvergence = currentEvent.getCurrentEvent().getConvergence();
 		
 		assert concreteConvergence != null;

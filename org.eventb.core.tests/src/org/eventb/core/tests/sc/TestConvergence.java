@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
@@ -345,6 +346,44 @@ public class TestConvergence extends BasicSCTest {
 		isConvergent(events[1]);
 		
 		containsMarkers(mac, false);
+	}
+	
+	/**
+	 * If a convergent event is refined by a convergent there is no need for a 
+	 * variant in the refined machine what concerns the convergent event.
+	 */
+	public void testCvg_10_convergentEventNoVariant() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+		addVariant(abs, "1");
+		IEvent evt = addEvent(abs, "evt");
+		setConvergent(evt);
+
+		abs.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		
+		IMachineFile mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
+		IEvent mevt = addEvent(mac, "evt");
+		addEventRefines(mevt, "evt");
+		setConvergent(mevt);
+		IEvent mfvt = addEvent(mac, "fvt");
+		setConvergent(mfvt);
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
+		isConvergent(events[1]);
+		isOrdinary(events[2]);
+		hasMarker(mfvt, EventBAttributes.CONVERGENCE_ATTRIBUTE);
 	}
 
 }
