@@ -15,6 +15,7 @@ package org.eventb.internal.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -561,6 +562,22 @@ public class UIUtils {
 			final String message = realException.getMessage();
 			MessageDialog.openError(shell, "Unexpected Error", message);
 			return;
+		}
+	}
+
+	/**
+	 * Print the debug message in multiple line, each line with the same given
+	 * prefix.
+	 * 
+	 * @param debugPrefix
+	 *            the default prefix for the debug message
+	 * @param message
+	 *            the debug message
+	 */
+	public static void printDebugMessage(String debugPrefix, String message) {
+		StringTokenizer tokenizer = new StringTokenizer(message, "\n");
+		while (tokenizer.hasMoreElements()) {
+			System.out.println(debugPrefix + tokenizer.nextToken());
 		}
 	}
 
