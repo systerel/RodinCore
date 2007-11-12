@@ -108,7 +108,7 @@ public class ProcessMonitor {
 		return output;
 	}
 	
-	public byte[] error() {
+	public synchronized byte[] error() {
 		if (error == null) {
 			error = errorStream.toByteArray();
 		}
