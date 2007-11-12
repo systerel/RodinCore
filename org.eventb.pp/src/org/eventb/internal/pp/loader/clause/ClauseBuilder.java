@@ -63,8 +63,7 @@ public final class ClauseBuilder {
 		prefix.append("  ");
 	}
 	public static void debugExit(AbstractFormula<?> pred) {
-		prefix.deleteCharAt(prefix.length()-1);
-		prefix.deleteCharAt(prefix.length()-1);
+		prefix.setLength(prefix.length() - 2);
 	}
 	
 	private List<Clause> clauses;
