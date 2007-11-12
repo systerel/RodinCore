@@ -31,6 +31,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.BundledFileExtractor;
+import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBSharedColor;
@@ -95,6 +96,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String GOAL_TRACE = PLUGIN_ID
 			+ "/debug/goal"; //$NON-NLS-1$
+
+	private static final String ELEMENT_REGISTRY_TRACE = PLUGIN_ID
+			+ "/debug/elementRegistry"; //$NON-NLS-1$
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -254,6 +258,10 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(GOAL_TRACE);
 			if (option != null)
 				GoalUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(ELEMENT_REGISTRY_TRACE);
+			if (option != null)
+				ElementUIRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
