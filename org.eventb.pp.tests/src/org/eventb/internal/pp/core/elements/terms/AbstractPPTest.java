@@ -20,7 +20,6 @@ import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.pp.PPProof;
 
 public abstract class AbstractPPTest extends TestCase {
 
@@ -150,7 +149,7 @@ public abstract class AbstractPPTest extends TestCase {
 //		PredicateBuilder.DEBUG = true;
 //		ClauseBuilder.DEBUG = true;
 		
-		PPProof.DEBUG = true;
+//		PPProof.DEBUG = true;
 //		ClauseDispatcher.DEBUG = true;
 //		SeedSearchProver.DEBUG = true;
 //		EqualityProver.DEBUG = true;
