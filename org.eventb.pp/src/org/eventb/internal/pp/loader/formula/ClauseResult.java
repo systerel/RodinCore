@@ -19,7 +19,7 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 
 public class ClauseResult {
 
-	private static ClauseFactory cf = ClauseFactory.getDefault();
+	private static final ClauseFactory cf = ClauseFactory.getDefault();
 	
 	private List<List<Literal<?, ?>>> literalLists;
 	private boolean isEquivalence;
