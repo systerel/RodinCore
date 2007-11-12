@@ -520,9 +520,6 @@ public class ProverUI extends FormEditor implements
 		if (saving)
 			return; // Ignore delta while saving
 
-		final Control control = this.getControl(getCurrentPage());
-		if (control.isDisposed())
-			return;
 		
 		// Trying to get the changes for the current user support.
 		final IUserSupportDelta affectedUserSupport = ProverUIUtils
@@ -547,11 +544,12 @@ public class ProverUI extends FormEditor implements
 			return; // Do nothing
 		}
 
-		Display display = control.getDisplay();
-
+		Display display = this.getEditorSite().getShell().getDisplay();
+		
 		display.syncExec(new Runnable() {
 			public void run() {
-				if (control.isDisposed())
+				Control control = getActiveControl(); 
+				if (control != null)
 					return;
 
 				// Handle the case where the user support has changed.
@@ -598,6 +596,16 @@ public class ProverUI extends FormEditor implements
 	
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("End User Support Manager Changed");
+	}
+
+	Control getActiveControl() {
+		int activePage = getActivePage();
+		if (activePage == -1)
+			return null;
+		final Control control = this.getControl(activePage);
+		if (control.isDisposed())
+			return null;
+		return control;
 	}
 
 	protected void setInformation(IUserSupportInformation[] information) {
