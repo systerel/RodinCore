@@ -549,7 +549,7 @@ public class ProverUI extends FormEditor implements
 		display.syncExec(new Runnable() {
 			public void run() {
 				Control control = getActiveControl(); 
-				if (control != null)
+				if (control == null)
 					return;
 
 				// Handle the case where the user support has changed.
