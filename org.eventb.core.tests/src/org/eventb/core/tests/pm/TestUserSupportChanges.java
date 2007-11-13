@@ -95,7 +95,11 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, null);
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, monitor);
+
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
 		// Check the status of the User Support here
@@ -133,7 +137,11 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
+
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
 		// Check the status of the User Support here
 		assertString(
@@ -174,7 +182,10 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil
 				.copyPO(poFile, psFile, prFile, originalPO, copyOriginalPO);
 		assertString(
@@ -228,7 +239,10 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		String original = userSupport.toString();
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, originalPO, dischargedPO);
 		assertString("Changed: PO is not loaded ", userSupport.toString(),
@@ -251,7 +265,10 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
 		assertString(
 				"Change: PO is loaded and NOT modified ",
@@ -298,7 +315,10 @@ public class TestUserSupportChanges extends TestPM {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
 		try {
 			userSupport.applyTactic(Tactics.review(1), false,
@@ -355,7 +375,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
 		try {
 			userSupport.applyTactic(Tactics.review(1), false,
@@ -423,7 +446,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
 		try {
 			userSupport.applyTactic(Tactics.review(1), false,

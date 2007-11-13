@@ -48,17 +48,16 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		startDeltas();
 		userSupport.setInput(psFile, monitor);
-		assertDeltas("Set input ", "[*] x.bps [CURRENT|STATE|INFORMATION]\n"
-				+ "Select a new proof node (priority 1)\n"
-				+ "Proof Tree is reloaded (priority 2)\n"
-				+ "New current obligation (priority 2)\n"
-				+ "  [+] PO1[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO2[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO3[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO4[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO5[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO6[org.eventb.core.psStatus] []\n"
-				+ "  [+] PO7[org.eventb.core.psStatus] []");
+		
+		// The proof states has been created but not initialized for all POs.
+		assertDeltas("Set input ", "[*] x.bps [STATE]\n" + 
+				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO3[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO4[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO7[org.eventb.core.psStatus] []");
 		stopDeltas();
 		userSupport.dispose();
 	}
@@ -75,6 +74,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
 
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
+		
 		IProofState[] states = userSupport.getPOs();
 
 		startDeltas();
@@ -112,6 +114,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
@@ -165,6 +169,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -203,6 +209,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.review(1), false, monitor);
 
@@ -254,6 +262,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -296,6 +306,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
 		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference()
@@ -351,6 +363,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		startDeltas();
 		userSupport.searchHyps("=");
@@ -379,6 +393,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.searchHyps("=");
 		IProofState currentPO = userSupport.getCurrentPO();
@@ -424,6 +440,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -483,6 +501,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		startDeltas();
 		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
@@ -506,6 +526,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -543,6 +565,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, monitor);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
 

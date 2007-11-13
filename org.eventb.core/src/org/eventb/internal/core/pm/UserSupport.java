@@ -75,9 +75,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						proofStates.add(state);
 						deltaProcessor.newProofState(UserSupport.this, state);
 					}
-					// Do not fire delta. The delta will be fire in
-					// nextUndischargedPO()
-					nextUndischargedPO(true, monitor);
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 				}

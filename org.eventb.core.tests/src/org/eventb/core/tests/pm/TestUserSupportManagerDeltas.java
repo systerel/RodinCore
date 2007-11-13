@@ -34,20 +34,18 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating first user support", "[+] null []");
 
 		clearDeltas();
-		userSupport1.setInput(psFile1, new NullProgressMonitor());
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport1.setInput(psFile1, monitor);
 
 		assertDeltas("Set input for the first user support",
-				"[*] x.bps [CURRENT|STATE|INFORMATION]\n"
-						+ "Select a new proof node (priority 1)\n"
-						+ "Proof Tree is reloaded (priority 2)\n"
-						+ "New current obligation (priority 2)\n" 
-						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO3[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO4[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO5[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO6[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO7[org.eventb.core.psStatus] []");
+				"[*] x.bps [STATE]\n" + 
+				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO3[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO4[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO7[org.eventb.core.psStatus] []");
 
 		clearDeltas();
 		IUserSupport userSupport2 = manager.newUserSupport();
@@ -55,20 +53,17 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating the second user support", "[+] null []");
 
 		clearDeltas();
-		userSupport2.setInput(psFile2, new NullProgressMonitor());
+		userSupport2.setInput(psFile2, monitor);
 
 		assertDeltas("Set input for the second user support",
-				"[*] y.bps [CURRENT|STATE|INFORMATION]\n"
-						+ "Select a new proof node (priority 1)\n"
-						+ "Proof Tree is reloaded (priority 2)\n"
-						+ "New current obligation (priority 2)\n" 
-						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO3[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO4[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO5[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO6[org.eventb.core.psStatus] []\n"
-						+ "  [+] PO7[org.eventb.core.psStatus] []");
+				"[*] y.bps [STATE]\n" + 
+				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO3[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO4[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
+				"  [+] PO7[org.eventb.core.psStatus] []");
 
 		clearDeltas();
 		userSupport1.dispose();

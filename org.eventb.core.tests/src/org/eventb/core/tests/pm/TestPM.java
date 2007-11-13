@@ -19,6 +19,8 @@ public abstract class TestPM extends BasicTest {
 		manager = EventBPlugin.getPlugin().getUserSupportManager();
 		// Disable the Post tactic
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		// Enable the POM-Tactic
+		EventBPlugin.getPOMTacticPreference().setEnabled(true);
 	}
 
 	@Override
@@ -54,18 +56,18 @@ public abstract class TestPM extends BasicTest {
 		IPOFile poFile = (IPOFile) rodinProject.getRodinFile(fileName + ".bpo");
 		poFile.create(true, null);
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
-				mTypeEnvironment("x", "ℤ"), "1=1", "2=2", "x∈ℕ");
-		POUtil.addSequent(poFile, "PO1", "1=1 ∧2=2 ∧x ∈ℕ", hyp0,
+				mTypeEnvironment("x", "ℤ"), "¬x=1", "¬x=2", "x∈ℕ");
+		POUtil.addSequent(poFile, "PO1", "¬x=1 ∧¬x=2 ∧x ∈ℕ", hyp0,
 				mTypeEnvironment());
-		POUtil.addSequent(poFile, "PO2", "1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
+		POUtil.addSequent(poFile, "PO2", "¬x=1 ∧¬x=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ"), "y∈ℕ");
 		POUtil.addSequent(poFile, "PO3", "3=3", hyp0, mTypeEnvironment(),
 				"3=3");
-		POUtil.addSequent(poFile, "PO4", "1=1 ∧ 2=2 ∧ x∈ℕ ∧ 3=3", hyp0,
+		POUtil.addSequent(poFile, "PO4", "¬x=1 ∧ ¬x=2 ∧ x∈ℕ ∧ 3=3", hyp0,
 				mTypeEnvironment(), "3=3");
-		POUtil.addSequent(poFile, "PO5", "1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ", hyp0,
+		POUtil.addSequent(poFile, "PO5", "¬x=1 ∧¬x=2 ∧y ∈ℕ∧y ∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ"), "y∈ℕ");
-		POUtil.addSequent(poFile, "PO6", "1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
+		POUtil.addSequent(poFile, "PO6", "¬x=1 ∧¬x=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ", "x'", "ℤ"), "y∈ℕ");
 		POUtil.addSequent(poFile, "PO7", "y∈ℕ", hyp0,
 				mTypeEnvironment("y", "ℤ"), "x=x");

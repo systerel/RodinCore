@@ -181,7 +181,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, new NullProgressMonitor());
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		startDeltas();
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
 
@@ -210,7 +213,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, new NullProgressMonitor());
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		// Modified current PPO
 		try {
@@ -249,7 +255,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
 		try {
 			userSupport.applyTactic(Tactics.review(1), false,
@@ -289,7 +298,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
+		NullProgressMonitor monitor = new NullProgressMonitor();
 		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
 		try {
 			userSupport.applyTactic(Tactics.review(1), false,

@@ -52,13 +52,14 @@ public class TestUserSupports extends TestPM {
 		IPOFile poFile = createPOFile("x");
 		IPSFile psFile = poFile.getPSFile();
 
-
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		// Checks that all POs are discharged except the last one.
 		IProofState[] states = userSupport.getPOs();
@@ -142,7 +143,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		// Checks that all POs are discharged except the last one.
 
@@ -225,7 +228,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.review(1), false, monitor);
 		userSupport.searchHyps("");
@@ -278,7 +283,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -329,7 +336,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		assertFalse("Initially, there are no unsaved changes ", userSupport
 				.hasUnsavedChanges());
@@ -368,7 +377,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState[] unsavedPOs = userSupport.getUnsavedPOs();
 		assertEquals("Initially, there are no unsaved PO ", 0,
@@ -431,7 +442,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
 		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference().getDefaultComposedTactic();
@@ -485,7 +498,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -511,7 +526,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		userSupport.searchHyps("=");
 
@@ -553,7 +570,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -598,7 +617,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -622,7 +643,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
@@ -655,7 +678,9 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile, null);
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
 
 		IProofState currentPO = userSupport.getCurrentPO();
 
