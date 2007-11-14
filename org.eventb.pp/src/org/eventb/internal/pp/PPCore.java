@@ -44,10 +44,6 @@ public class PPCore extends Plugin {
 	private static final String PROVER_DUMPING_TRACE = PLUGIN_ID + "/debug/prover/dumping"; //$NON-NLS-1$
 	private static final String PROVER_SEEDSEARCH_TRACE = PLUGIN_ID + "/debug/prover/seedsearch"; //$NON-NLS-1$
 	
-	public PPCore() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	/**
 	 * The shared instance.
 	 */
