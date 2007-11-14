@@ -167,17 +167,34 @@ public class PPProof {
 	}
 	
 	/**
-	 * Invokes the prover. Tries to prove the given
-	 * sequent in maximum maxSteps steps. If maxSteps
-	 * is -1, there is no timeout.
+	 * Invokes the prover. Tries to prove the given sequent in maximum maxSteps
+	 * steps.
 	 * 
 	 * @param maxSteps
+	 *            maximal number of steps, or <code>-1</code> to denote an
+	 *            infinite number
 	 */
 	public void prove(long maxSteps) {
+		prove(maxSteps, null);
+	}
+
+	/**
+	 * Invokes the prover in a cancelable way. Tries to prove the given sequent
+	 * in maximum maxSteps steps. Also, the prover will stop when the given
+	 * monitor indicates that it has been canceled.
+	 * 
+	 * @param maxSteps
+	 *            maximal number of steps, or <code>-1</code> to denote an
+	 *            infinite number
+	 * @param monitor
+	 *            monitor for cancellation or <code>null</code> if no
+	 *            monitoring is required
+	 */
+	public void prove(long maxSteps, IPPMonitor monitor) {
 		if (result != null) return;
 		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		
-		initProver();
+		initProver(monitor);
 		if (DEBUG) debug("==== Original clauses ====");
 		for (Clause clause : clauses) {
 			if (DEBUG) debug(clause.toString());
@@ -188,13 +205,6 @@ public class PPProof {
 		result = proofStrategy.getResult();
 		
 		debugResult();
-	}
-	
-	/**
-	 * Cancels the prover.
-	 */
-	public void cancel() {
-		proofStrategy.cancel();
 	}
 	
 	private void debugResult() {
@@ -289,8 +299,8 @@ public class PPProof {
 		}
 	}
 	
-	private void initProver() {
-		proofStrategy = new ClauseDispatcher();
+	private void initProver(IPPMonitor monitor) {
+		proofStrategy = new ClauseDispatcher(monitor);
 		
 		PredicateProver prover = new PredicateProver(context);
 		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy.getLevelController());

@@ -20,6 +20,7 @@ import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
+import org.eventb.pp.IPPMonitor;
 import org.eventb.pp.ITracer;
 import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
@@ -85,20 +86,23 @@ public final class ClauseDispatcher  {
 	private final Collection<Clause> originalClauses;
 	private final List<IProverModule> provers;
 	private final ClauseSimplifier simplifier;
+	private final IPPMonitor monitor;
 	private final Tracer tracer;
 	private final Dumper dumper;
 	
 	private PPResult result;
 	private int counter = 0;
-	private boolean canceled = false;
 	private boolean terminated = false;
 
-	public ClauseDispatcher() {
+	
+	public ClauseDispatcher(IPPMonitor monitor) {
 		alreadyDispatchedClauses = new RandomAccessList<Clause>();
 		alreadyDispatchedBacktrackClausesIterator = alreadyDispatchedClauses.iterator();
 		nonDispatchedClauses = new RandomAccessList<Clause>();
 		nonDispatchedClausesIterator = nonDispatchedClauses.iterator();
 		nonDispatchedBacktrackClausesIterator = nonDispatchedClauses.iterator();
+		
+		this.monitor = monitor;
 		
 		dumper = new Dumper();
 		tracer = new Tracer();
@@ -164,13 +168,6 @@ public final class ClauseDispatcher  {
 	}
 	
 	/**
-	 * Cancels this proof.
-	 */
-	public void cancel() {
-		this.canceled = true;
-	}
-	
-	/**
 	 * Returns the result of this proof.
 	 * 
 	 * @return the result of this proof
@@ -195,7 +192,9 @@ public final class ClauseDispatcher  {
 		
 		boolean force = false;
 		while (!terminated) {
-			if (canceled) terminate(Result.cancel);
+			if (isCanceled()) {
+				terminate(Result.cancel);
+			}
 			else if (!updateCounterAndCheckTermination(nofSteps)) {
 				// first phase, treat non dispatched clauses
 				if (!treatNondispatchedClausesAndCheckContradiction()) {
@@ -250,7 +249,7 @@ public final class ClauseDispatcher  {
 	private boolean treatNondispatchedClausesAndCheckContradiction() {
 		if (DEBUG) debug("== Treating non dispatched clauses ==");
 		nonDispatchedClausesIterator.reset();
-		while (nonDispatchedClausesIterator.hasNext() && !canceled) {
+		while (nonDispatchedClausesIterator.hasNext() && !isCanceled()) {
 			Clause clause = nonDispatchedClausesIterator.next();
 			if (DEBUG) debug("== Next clause: "+clause+" ==");
 			
@@ -448,6 +447,10 @@ public final class ClauseDispatcher  {
 		if (result1 != Result.valid) result = new PPResult(result1, null);
 		else result = new PPResult(result1, tracer);
 		terminated = true;
+	}
+
+	private boolean isCanceled() {
+		return monitor != null && monitor.isCanceled();
 	}
 	
 }

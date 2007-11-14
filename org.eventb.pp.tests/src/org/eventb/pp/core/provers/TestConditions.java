@@ -49,7 +49,7 @@ public class TestConditions extends AbstractPPTest {
 	}
 	
 	private ClauseDispatcher initProver() {
-		ClauseDispatcher proofStrategy = new ClauseDispatcher();
+		ClauseDispatcher proofStrategy = new ClauseDispatcher(null);
 		VariableContext context = new VariableContext();
 		PredicateTable table = new PredicateTable();
 		
