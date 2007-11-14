@@ -107,10 +107,10 @@ public abstract class AbstractReasonerTests extends TestCase {
 		// Setup needs to be done only once since reasoner is not modified.
 		if (reasoner == null)
 		{ 
-			assertTrue("Reasoner with id " + getReasonerID() + "is not registered",
+			assertTrue("Reasoner with id " + getReasonerID() + " is not registered",
 					SequentProver.getReasonerRegistry().isRegistered(getReasonerID()));
 			reasoner = SequentProver.getReasonerRegistry().getReasonerInstance(getReasonerID());
-			assertFalse("Reasoner with id " + getReasonerID() + "is a dummy reasoner.",
+			assertFalse("Reasoner with id " + getReasonerID() + " is a dummy reasoner.",
 					SequentProver.getReasonerRegistry().isDummyReasoner(reasoner));
 
 		}
