@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 
 /**
- * Singeleton class implementing the reasoner registry.
+ * Singleton class implementing the reasoner registry.
  * 
  * @see org.eventb.core.seqprover.IReasonerRegistry
  * 
@@ -31,7 +31,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 	private static String REASONERS_ID =
 		SequentProver.PLUGIN_ID + ".reasoners";
 
-	private static IReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
+	private static final IReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
 
 	private static final String[] NO_STRING = new String[0];
 	
