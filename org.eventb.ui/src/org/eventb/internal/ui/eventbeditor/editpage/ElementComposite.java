@@ -219,6 +219,10 @@ public class ElementComposite implements IElementComposite {
 		if (!rElement.exists())
 			return;
 
+		// Only continue if the children section composites already exists
+		if (sectionComps == null)
+			return;
+		
 		if (rElement.equals(element)) {
 			for (ISectionComposite sectionComp : sectionComps) {
 				if (sectionComp.getElementType().equals(childrenType)) {
@@ -326,8 +330,10 @@ public class ElementComposite implements IElementComposite {
 		} else {
 			row.updateLinks();
 			if (rElement.isAncestorOf(element)) {
-				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.refresh(element, set);
+				if (sectionComps != null) {
+					for (ISectionComposite sectionComp : sectionComps) {
+						sectionComp.refresh(element, set);
+					}
 				}
 			}
 		}
