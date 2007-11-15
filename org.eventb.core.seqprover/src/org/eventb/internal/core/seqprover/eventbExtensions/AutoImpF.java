@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 /**
- * A reasoner that tries to infer new selected hypotheses using the current slected hypotheses and the 
+ * A reasoner that tries to infer new selected hypotheses using the current selected hypotheses and the 
  * implications that are present in the visible hypotheses.
  * 
  * 
@@ -78,7 +78,7 @@ public class AutoImpF extends EmptyInputReasoner {
 				// hide the implicative hyp
 				hypActions.add(ProverFactory.makeHideHypAction(Collections.singleton(hyp)));
 				// select the inferred hyps
-				hypActions.add(ProverFactory.makeSelectHypAction(inferredHyps));
+				// hypActions.add(ProverFactory.makeSelectHypAction(inferredHyps));
 				continue;
 			}
 

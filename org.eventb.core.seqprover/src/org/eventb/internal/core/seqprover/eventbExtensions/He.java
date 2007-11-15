@@ -53,19 +53,20 @@ public class He extends SinglePredInputReasoner {
 		
 		List<IHypAction> rewrites = new ArrayList<IHypAction>();
 		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
-		Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
+		// Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
 		// toDeselect.add(eqHyp);
 		
 		for (Predicate shyp : seq.selectedHypIterable()){
 			if (!shyp.equals(eqHyp)) {
 				Predicate rewritten = (Lib.rewrite(shyp,from,to));
-				if (rewritten != shyp)
+				// if (rewritten != shyp)
+				if (! seq.containsHypothesis(rewritten))
 				{
 					rewrites.add(ProverFactory.makeForwardInfHypAction(
 							Collections.singleton(shyp),
 							Collections.singleton(rewritten)));
 					toDeselect.add(shyp);
-					toSelect.add(rewritten);
+					// toSelect.add(rewritten);
 				}
 			}
 		}
@@ -85,7 +86,7 @@ public class He extends SinglePredInputReasoner {
 			newGoal = null;
 		}
 		rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
-		rewrites.add(ProverFactory.makeSelectHypAction(toSelect));
+		// rewrites.add(ProverFactory.makeSelectHypAction(toSelect));
 		IAntecedent[] anticidents = new IAntecedent[1];
 		anticidents[0] = ProverFactory.makeAntecedent(
 				newGoal,null,null,
