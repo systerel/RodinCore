@@ -37,7 +37,9 @@ public class NewEhTests extends AbstractReasonerTests {
 				// eqHyp not an equality
 				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), new SinglePredInput(TestLib.genPred("⊤"))),
 				// nothing to do
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; ⊤ |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2")))
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; ⊤ |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2"))),
+				// nothing to do
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; 1=1 ;; 2=2 |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2")))
 		};
 	}
 
