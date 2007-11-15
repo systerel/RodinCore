@@ -14,7 +14,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
 import org.junit.Test;
 
 /**
- * Unit tests for the rn reasoner
+ * Unit tests for the Eq reasoner
  * 
  * @author htson
  */
