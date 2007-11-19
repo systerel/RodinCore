@@ -36,8 +36,9 @@ public final class AutoProver {
 	
 	public static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
 			IProgressMonitor monitor) throws RodinDBException {
-		if (!isEnabled())
-			return;
+//		This check must be done by the caller		
+//		if (!isEnabled())
+//			return;
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);

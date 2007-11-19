@@ -19,7 +19,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
@@ -40,9 +39,9 @@ import org.rodinp.core.RodinDBException;
  */
 public final class RecalculateAutoStatus {
 
-	public static boolean isEnabled() {
-		return EventBPlugin.getPOMTacticPreference().isEnabled();
-	}
+//	public static boolean isEnabled() {
+//		return EventBPlugin.getPOMTacticPreference().isEnabled();
+//	}
 
 	private RecalculateAutoStatus() {
 		// Nothing to do.
@@ -111,9 +110,9 @@ public final class RecalculateAutoStatus {
 	}
 	
 	private static ITactic autoTactic(){
-		if (isEnabled())
+		// if (isEnabled())
 			return EventBPlugin.getPOMTacticPreference().getSelectedComposedTactic();
-		else return BasicTactics.failTac("Auto Prover Disabled");
+		// else return BasicTactics.failTac("Auto Prover Disabled");
 	}
 
 }
