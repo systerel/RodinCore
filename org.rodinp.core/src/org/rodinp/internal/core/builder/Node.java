@@ -56,7 +56,7 @@ public class Node implements Serializable {
 			if (file == null) {
 				IPath p = getPath();
 				if (p != null)
-					file = ResourcesPlugin.getWorkspace().getRoot().getFile(getPath());
+					file = ResourcesPlugin.getWorkspace().getRoot().getFile(p);
 			}
 			return file;
 		}
