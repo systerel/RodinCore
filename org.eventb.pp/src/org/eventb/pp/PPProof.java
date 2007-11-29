@@ -195,9 +195,11 @@ public class PPProof {
 		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		
 		initProver(monitor);
-		if (DEBUG) debug("==== Original clauses ====");
-		for (Clause clause : clauses) {
-			if (DEBUG) debug(clause.toString());
+		if (DEBUG) {
+			debug("==== Original clauses ====");
+			for (Clause clause : clauses) {
+				debug(clause.toString());
+			}
 		}
 
 		proofStrategy.setClauses(clauses);
