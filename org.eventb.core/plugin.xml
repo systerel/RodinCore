@@ -1141,6 +1141,9 @@
       <tactic id="org.eventb.core.seqprover.goalDisjInHypTac"/>
       <tactic id="org.eventb.core.seqprover.funGoalTac"/>
       <tactic id="com.b4free.rodin.core.ml"/>
+      <tactic
+            id="com.b4free.rodin.core.p0">
+      </tactic>
       <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
       <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
       <tactic id="org.eventb.core.seqprover.impGoalTac"/>
