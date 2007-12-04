@@ -100,7 +100,7 @@ public final class AutoProver {
 				prProof.setProofTree(autoProofTree, null);
 				PSWrapper.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setHasManualProof(false,null);
-				prFile.save(null, false, true);
+				// prFile.save(null, false, true);
 				return true;
 			}
 			// If the auto prover made 'some' progress, and no

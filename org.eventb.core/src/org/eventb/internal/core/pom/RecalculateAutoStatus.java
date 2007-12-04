@@ -101,7 +101,7 @@ public final class RecalculateAutoStatus {
 			{
 				status.setHasManualProof(true,null);
 			}
-			prFile.save(null, false, true);
+			// prFile.save(null, false, true);
 			return true;
 			
 		} finally {
