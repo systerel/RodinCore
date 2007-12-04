@@ -108,8 +108,8 @@ public class CaseSplitter implements IProverModule {
 	private Set<Clause> nextCase() {
 		Set<Clause> result = nextCase.right;
 		splits.push(nextCase);
-		nextCase = null;
 		if (DEBUG) debug("Following case on "+nextCase.original+", size of split stack: "+splits.size());
+		nextCase = null;
 		return result;
 	}
 	
