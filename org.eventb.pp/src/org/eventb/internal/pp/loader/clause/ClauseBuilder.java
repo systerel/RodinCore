@@ -82,15 +82,19 @@ public final class ClauseBuilder {
 		initialize(context, table);
 		
 		for (INormalizedFormula signature : context.getResults()) {
-			if (DEBUG) debug("========================================");
-			if (DEBUG) debug("Getting clauses for original formula: " + signature);
+			if (DEBUG){
+				debug("========================================");
+				debug("Getting clauses for original formula: " + signature);
+			}
 			buildNormalizedFormulas(signature);
 		}
 		getDefinitions();
-		if (DEBUG) debug("========================================");
-		if (DEBUG) debug("End of loading phase, clauses:");
-		for (Clause clause : clauses) {
-			if (DEBUG) debug(clause.toString());
+		if (DEBUG) {
+			debug("========================================");
+			debug("End of loading phase, clauses:");
+			for (Clause clause : clauses) {
+				debug(clause.toString());
+			}
 		}
 	}
 	
