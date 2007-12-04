@@ -9,6 +9,7 @@
 package org.eventb.internal.pp.core.provers.extensionality;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,7 +67,7 @@ public class ExtensionalityProver implements IProverModule {
 			}
 		}
 		else if (isDisjunctiveCandidate(clause)) {
-			//
+			// TODO code case where we need to search for the complementary clause
 		}
 		if (derivedClause != null) return new ProverResult(derivedClause);
 		return ProverResult.EMPTY_RESULT;
@@ -108,10 +109,14 @@ public class ExtensionalityProver implements IProverModule {
 	 * @return
 	 */
 	private boolean haveSameVariables(PredicateLiteral literal1, PredicateLiteral literal2) {
-		for (int i = 0;i<literal1.getDescriptor().getArity()-1;i++) {
+		final Set<Term> set = new HashSet<Term>();
+		final int lengthMinusOne = literal1.getDescriptor().getArity()-1;
+		for (int i = 0;i<lengthMinusOne;i++) {
 			Term term1 = literal1.getTerm(i);
 			Term term2 = literal2.getTerm(i);
-			if (term1.isConstant() || term1 != term2) return false;
+			if (term1.isConstant() || term1 != term2 || set.contains(term1))
+				return false;
+			set.add(term1);
 		}
 		return true;
 	}
