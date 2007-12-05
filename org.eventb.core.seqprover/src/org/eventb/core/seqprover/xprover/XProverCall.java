@@ -145,8 +145,8 @@ public abstract class XProverCall implements Runnable, Cancellable {
 	 * <code>true</code>.
 	 * </p>
 	 * 
-	 * @return <code>false</code> iff the sequent was discharged indepently of
-	 *         its goal
+	 * @return <code>false</code> iff the sequent was discharged independently
+	 *         of its goal
 	 */
 	public boolean isGoalNeeded() {
 		return true;
