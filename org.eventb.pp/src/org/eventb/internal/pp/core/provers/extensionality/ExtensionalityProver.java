@@ -103,6 +103,9 @@ public class ExtensionalityProver implements IProverModule {
 	 * Returns <code>true</code> if both literals are of the form PxyzA where xyz are
 	 * the same variables for both literals and A can be either a constant or a variable 
 	 * and not necessarily the same for both literals.
+	 * <p>
+	 * Also checks that variables xyz are pairwise distinct.
+	 * </p>
 	 * 
 	 * @param literal1
 	 * @param literal2
