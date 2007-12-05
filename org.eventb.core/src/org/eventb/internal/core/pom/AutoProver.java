@@ -36,9 +36,6 @@ public final class AutoProver {
 	
 	public static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
 			IProgressMonitor monitor) throws RodinDBException {
-//		This check must be done by the caller		
-//		if (!isEnabled())
-//			return;
 		boolean dirty = false;
 		try {
 			monitor.beginTask("auto-proving", pos.length);
@@ -55,7 +52,6 @@ public final class AutoProver {
 				);
 				dirty |= processPo(prFile, status, subMonitor);
 			}
-			// monitor.worked(1);
 			dirty = true;
 			if (dirty) {
 				prFile.save(null, false, true);
@@ -105,13 +101,9 @@ public final class AutoProver {
 			}
 			// If the auto prover made 'some' progress, and no
 			// proof was previously attempted update the proof
-			if (autoProofTree.getRoot().hasChildren() && 
-					(
-							// ( status.getProofConfidence() > IConfidence.UNATTEMPTED) || 
-							(! status.getHasManualProof() && !(proofConfidence > IConfidence.PENDING))
-					))	
-
-			{
+			if (autoProofTree.getRoot().hasChildren()
+					&& !status.getHasManualProof()
+					&& !(proofConfidence > IConfidence.PENDING)) {
 				prProof.setProofTree(autoProofTree, null);
 				PSWrapper.updateStatus(status,new SubProgressMonitor(pm,1));
 				status.setHasManualProof(false,null);
