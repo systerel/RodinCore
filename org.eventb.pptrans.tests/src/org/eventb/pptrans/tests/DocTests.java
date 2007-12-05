@@ -150,4 +150,70 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	public void testBool_01() {
+		final ITypeEnvironment te = mTypeEnvironment();
+		doTransTest("bool(bool(x = 5) = TRUE) = TRUE",
+				"x = 5",
+				false, 
+				te);
+	}
+
+	public void testBool_02() {
+		final ITypeEnvironment te = mTypeEnvironment();
+		doTransTest("bool(bool(x = 5) = FALSE) = TRUE",
+				"¬(x = 5)",
+				false, 
+				te);
+	}
+
+	public void testBool_03() {
+		final ITypeEnvironment te = mTypeEnvironment();
+		doTransTest("bool(x = 5) = f(x)",
+				"∃y·(y = TRUE ⇔ x = 5) ∧ x ↦ y ∈ f",
+				false, 
+				te);
+	}
+
+	public void testBool_04() {
+		final ITypeEnvironment te = mTypeEnvironment();
+		doTransTest("bool(x = 5) ∈ S",
+				"∃y·(y = TRUE ⇔ x = 5) ∧ y ∈ S",
+				false, 
+				te);
+	}
+
+	public void testBool_05() {
+		final ITypeEnvironment te = mTypeEnvironment("f", "ℙ(BOOL×S)");
+		doTransTest("f(bool(x = 5)) = a",
+				"∃y·(y = TRUE ⇔ x = 5) ∧ y ↦ a ∈ f",
+				false, 
+				te);
+	}
+
+	public void testBool_06() {
+		final ITypeEnvironment te = mTypeEnvironment("f", "ℙ(S×BOOL)");
+		doTransTest("f(a) = bool(x = 5)",
+				"∃y·(y = TRUE ⇔ x = 5) ∧ a ↦ y ∈ f",
+				false, 
+				te);
+	}
+
+	public void testBool_07() {
+		final ITypeEnvironment te = mTypeEnvironment("f", "ℙ(BOOL×BOOL×BOOL×S)");
+		doTransTest("f(bool(x = 5) ↦ bool(x = 6) ↦ bool(x = 7)) = a",
+				"∃y,z,t·(y = TRUE ⇔ x = 5)" +
+				"     ∧ (z = TRUE ⇔ x = 6)" +
+				"     ∧ (t = TRUE ⇔ x = 7)" +
+				"     ∧ y ↦ z ↦ t ↦ a ∈ f",
+				false, 
+				te);
+	}
+
+	public void testBool_08() {
+		final ITypeEnvironment te = mTypeEnvironment("f", "ℙ(BOOL×S×ℤ)");
+		doTransTest("f(bool(x = 5) ↦ a)∈ℕ",
+				"∀y·(∃z·(z = TRUE ⇔ x = 5) ∧ z ↦ a ↦ y ∈ f) ⇒ 0 ≤ y",
+				false, 
+				te);
+	}				
 }
