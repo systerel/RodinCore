@@ -1302,6 +1302,16 @@ public class RodinTests extends AbstractPPTest {
 	public void testFalseHypothesis() {
 		doTest(mSet("⊥"), "⊥", true);
 	}
+	
+	public void testBug1833264() {
+		doTest(mList("DO", "S"),
+				new HashSet<String>(),
+				"f(bool((DO=DC ∧ oD=TRUE) ∨ (DO=DO ∧ cD=TRUE)) ↦ DO)" +
+				"< f(bool((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE)) ↦ dEC)",
+				false);
+		
+	}
+	
 	public void testBug1840292(){
 		doTest(mList("r3", "ℙ(S×S)", "r2", "ℙ(S×S)", "r", "ℙ(S×S)", "S",
 				"ℙ(S)", "R", "ℙ(ℙ(S×S))"), mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R",
