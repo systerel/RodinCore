@@ -433,22 +433,24 @@ public class Translator extends IdentityTranslator {
 	         *	  			0 ≤ e
 	         */
 			Natural() -> {
-				return ff.makeRelationalPredicate(
-					Formula.LE,
-					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
-					translate(e),
-					loc);
+				return translate(
+					ff.makeRelationalPredicate(
+						Formula.LE,
+						ff.makeIntegerLiteral(BigInteger.ZERO, loc),
+						e,
+						loc));
 			}
 			/**
 	         * RULE IR5: 	e ∈ ℕ1 
 	         *	  			0 < e
 	         */
 			Natural1() -> {
-				return ff.makeRelationalPredicate(
-					Formula.LT,
-					ff.makeIntegerLiteral(BigInteger.ZERO, loc),
-					translate(e),
-					loc);
+				return translate(
+					ff.makeRelationalPredicate(
+						Formula.LT,
+						ff.makeIntegerLiteral(BigInteger.ZERO, loc),
+						e,
+						loc));
 			}
 			/**
 	         * RULE IR6: 	e ∈ {x·P∣f} 
@@ -644,11 +646,11 @@ public class Translator extends IdentityTranslator {
 
 				for(Expression member: `members){
 					predicates.add(
-						ff.makeRelationalPredicate(
-							Formula.EQUAL, e, member, loc));
+						translate(
+							ff.makeRelationalPredicate(
+								Formula.EQUAL, e, member, loc)));
 				}
-				return translate(
-					FormulaConstructor.makeLorPredicate(ff, predicates, loc));
+				return FormulaConstructor.makeLorPredicate(ff, predicates, loc);
 			}
 			
 	        /**
@@ -678,16 +680,16 @@ public class Translator extends IdentityTranslator {
 			UpTo(a, b) -> {
 				return FormulaConstructor.makeLandPredicate(
 					ff,
-					ff.makeRelationalPredicate(
+					translate(ff.makeRelationalPredicate(
 						Formula.LE,
 						translate(`a),
 						translate(e), 
-						loc),
-					ff.makeRelationalPredicate(
+						loc)),
+					translate(ff.makeRelationalPredicate(
 						Formula.LE,
 						translate(e), 
 						translate(`b),
-						loc),
+						loc)),
 					loc);
 			}
 	        /**
@@ -716,8 +718,7 @@ public class Translator extends IdentityTranslator {
 				int tag = right.getTag() == Formula.BINTER ? Formula.LAND : Formula.LOR;
 
 				for(Expression child: `children) {
-					preds.add(
-						translateIn(e, child, loc));
+					preds.add(translateIn(e, child, loc));
 				}
 				return FormulaConstructor.makeAssociativePredicate(ff, tag, preds, loc);
 			}
