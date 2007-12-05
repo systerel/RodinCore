@@ -48,6 +48,7 @@ public abstract class Reorganizer {
 			case Formula.FUNIMAGE:
 			case Formula.KMIN:
 			case Formula.KMAX:
+			case Formula.KBOOL:
 				return  quantification.condSubstitute(expr);
 			case Formula.BOUND_IDENT:
 				return quantification.push(expr);
