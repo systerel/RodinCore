@@ -1,7 +1,5 @@
 package org.eventb.core.seqprover.autoTacticPreference;
 
-//import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
-//import static org.eventb.core.seqprover.tactics.BasicTactics.repeat;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.ArrayList;
@@ -145,7 +143,6 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 			tactics[i] = tacticDesc.getTacticInstance();
 			++i;
 		}
-		//return repeat(composeOnAllPending(tactics));
 		return loopOnAllPending(tactics);
 	}
 
