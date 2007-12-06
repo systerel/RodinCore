@@ -18,6 +18,7 @@ import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
+import org.eventb.internal.pp.core.provers.predicate.ResolutionResult;
 import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable;
 
 /**
@@ -433,6 +434,14 @@ public class TestResolution extends AbstractInferrerTests {
 		// TODO variables mixed with local quantifiers
 	}
 
+	public void test1833264() throws Exception {
+		doTest(
+				cClause(cNotProp(1),cNotPred(0, a),cNotProp(0)),
+				cClause(cPred(0,b)),
+				cClause(mList(cNotProp(1),cNotProp(0)),cNEqual(a,b)) //, cClause(cNotProp(1), cNotPred(0, a))
+		);
+	}
+	
 	public void testInitialization() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		Clause clause = cClause(cPred(0));
@@ -474,7 +483,16 @@ public class TestResolution extends AbstractInferrerTests {
 			disjointVariables(inferredClause, unit);
 			disjointVariables(inferredClause, nonUnit);
 		}
-		assertNull("\nUnit: " + unit + "NonUnit: " + nonUnit, resolution.next());
+		ResolutionResult r = resolution.next();
+		if (r != null) {
+			System.out.println("When doing resolution between:\n  " + unit
+					+ "\nand\n  " + nonUnit);
+			for (; r != null; r = resolution.next()) {
+				System.out.println("Missing inferred clause: "
+						+ r.getDerivedClause());
+			}
+			fail("Missing inferred clauses, see stdout.");
+		}
 	}
 	
 	public void testSubsumption() {
