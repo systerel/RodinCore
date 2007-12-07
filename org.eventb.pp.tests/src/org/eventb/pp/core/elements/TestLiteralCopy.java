@@ -1,6 +1,7 @@
 package org.eventb.pp.core.elements;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 
 import java.util.HashMap;
 
@@ -14,8 +15,8 @@ public class TestLiteralCopy extends AbstractPPTest {
 
 	
 	public void testSimplePredicate() {
-		TestLiteralCopy.<PredicateLiteral>doTest(cPred(1, evar0, evar0));
-		TestLiteralCopy.<PredicateLiteral>doTest(cPred(1, evar1, evar0));
+		TestLiteralCopy.<PredicateLiteral>doTest(cPred(d1AA, evar0, evar0));
+		TestLiteralCopy.<PredicateLiteral>doTest(cPred(d1AA, evar1, evar0));
 	}
 	
 	

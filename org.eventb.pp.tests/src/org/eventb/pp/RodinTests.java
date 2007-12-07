@@ -177,64 +177,6 @@ public class RodinTests extends AbstractPPTest {
 		doTestHelper(pair);
 	}
 	
-	public void testTrain() {
-		initDebug();
-		
-		doTest(
-				mList(
-				"nxt","ℙ(R×ℙ(B×B))",
-				"lst","ℙ(R×B)",
-				"R","ℙ(R)",
-				"B","ℙ(B)",
-				"rtbl","ℙ(B×R)",
-				"fst","ℙ(R×B)",
-				"n","ℙ(B×B)",
-				"b","B",
-				"rsrtbl","ℙ(B×R)",
-				"r","R",
-				"OCC","ℙ(B)"
-				),
-				 mSet(
-				"b∈OCC",
-				"n=nxt(r)",
-				"(rsrtbl∼[{r}] ∖ {b}) ∖ (OCC ∖ {b})=rsrtbl∼[{r}] ∖ OCC",
-				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}] ∖ {b}",
-				"b∈ran(nxt(r))∧(nxt(r))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(r))∼(b))=r",
-				"(rsrtbl∼[{r}] ∖ {b}) ∖ OCC=rsrtbl∼[{r}] ∖ OCC",
-				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅",
-				"rtbl∼[{r}] ∖ (rsrtbl∼[{r}] ∖ {b})=(rtbl∼[{r}] ∖ rsrtbl∼[{r}])∪{b}",
-				"nxt∈R ⇸ ℙ(B × B)",
-				"(nxt(r))[(rtbl∼[{r}] ∖ rsrtbl∼[{r}])∪{b}]=(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∪(nxt(r))[{b}]",
-				"r∈dom(nxt)",
-				"b∈dom(nxt(r))",
-				"(nxt(r))(b)∈OCC",
-				"nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}"
-				),"(nxt(r))[{b}]∩(rsrtbl∼[{r}] ∖ OCC)=∅",true);
-	}
-	
-	public void testTrain2() {
-		initDebug();
-		doTest(
-				mList(
-				"nxt","ℙ(R×ℙ(B×B))",
-				"rtbl","ℙ(B×R)",
-				"n","ℙ(B×B)",
-				"b","B",
-				"r","R",
-				"rsrtbl","ℙ(B×R)",
-				"OCC","ℙ(B)"
-				),
-				 mSet(
-				"b∈OCC",
-				"n=nxt(rsrtbl(b))",
-				"b∈dom(nxt(rsrtbl(b)))⇒(nxt(rsrtbl(b)))(b)∈OCC",
-				"b∈ran(nxt(rsrtbl(b)))∧(nxt(rsrtbl(b)))∼(b)∈dom(rsrtbl)⇒¬rsrtbl((nxt(rsrtbl(b)))∼(b))=rsrtbl(b)",
-				"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ OCC)=∅", // needed
-				"¬rsrtbl(b)=r",
-				"({b} ⩤ rsrtbl)∼[{r}]=rsrtbl∼[{r}]" // needed
-				),"(nxt(r))[rtbl∼[{r}] ∖ rsrtbl∼[{r}]]∩(rsrtbl∼[{r}] ∖ (OCC ∖ {b}))=∅",true);
-	}
-	
 	public void testList() {
 		initDebug();
 		
@@ -616,51 +558,6 @@ public class RodinTests extends AbstractPPTest {
 				),"¬x=c",true);
 	}
 
-	public void testFailingExample1() {
-		initDebug();
-		
-		doTest(
-				mList(
-				"I","ℙ(ℙ(E)×ℙ(E))",
-				"O","ℙ(ℙ(E))",
-				"K","ℙ(ℙ(E)×ℙ(E))",
-				"C","ℙ(ℙ(E))",
-				"N","ℙ(E×ℙ(ℙ(E)))",
-				"B","ℙ(ℙ(E)×ℙ(E))",
-				"E","ℙ(E)"
-				),
-				 mSet(
-				"O∈ℙ(ℙ(E))",
-				"∀S,T·S∈O∧T∈O⇒S∩T∈O",
-				"∀S·S⊆O⇒union(S)∈O",
-				"E∈O",
-				"N∈E → ℙ(ℙ(E))",
-				"∀x·N(x)={S·∃X·X∈O∧x∈X∧X⊆S ∣ S}",
-				"∀S,T,x·S⊆T∧S∈N(x)⇒T∈N(x)",
-				"∀S,T,x·S∈N(x)∧T∈N(x)⇒S∩T∈N(x)",
-				"∀S,x·S∈N(x)⇒x∈S",
-				"∀S,x·S∈N(x)⇒(∃T·T∈N(x)∧(∀y·y∈T⇒S∈N(y)))",
-				"∀x·N(x)≠∅",
-				"∀S,x·S∈O∧x∈S⇒S∈N(x)",
-				"∀S·(∀x·x∈S⇒S∈N(x))⇒S∈O",
-				"O={X·∀x·x∈X⇒X∈N(x) ∣ X}",
-				"∀X,x·x∈X⇒x∈dom(N)∧N∈E ⇸ ℙ(ℙ(E))",
-				"C={X·E ∖ X∈O ∣ X}",
-				"∀S·S≠∅∧S⊆C⇒inter(S)∈C",
-				"∀S,T·S∈C∧T∈C⇒S∪T∈C",
-				"∅∈C",
-				"E∈C",
-				"I∈ℙ(E) → ℙ(E)",
-				"∀X·I(X)={x·x∈X∧X∈N(x) ∣ x}",
-				"K∈ℙ(E) → ℙ(E)",
-				"∀X·K(X)={x·∀y·y∈N(x)⇒y∩X≠∅ ∣ x}",
-				"B∈ℙ(E) → ℙ(E)",
-				"∀X·B(X)=K(X)∩K(E ∖ X)",
-				"∀X·I(X)=union({o·o∈O∧o⊆X ∣ o})",
-				"∀X·X∈O⇔X=I(X)"
-				),"∀X,Y·I(X∩Y)=I(X)∩I(Y)",true);
-	}
-	
 	public void testFailingExample2() {
 		initDebug();
 		

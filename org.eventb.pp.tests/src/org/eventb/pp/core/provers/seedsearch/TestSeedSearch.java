@@ -5,6 +5,10 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AAA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
@@ -35,56 +39,54 @@ public class TestSeedSearch extends AbstractPPTest {
 	
 	TestPair[] tests = new TestPair[]{
 			new TestPair(
-					mList(cClause(cNotPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,evar0,x)),
-					mList(cClause(cPred(0,evar0,a)))
+					mList(cClause(cNotPred(d0AA,x,a),cPred(d2A,x))),
+					cClause(cPred(d0AA,evar0,x)),
+					mList(cClause(cPred(d0AA,evar0,a)))
 			),
 			new TestPair(
-					mList(cClause(cNotPred(0,x,b),cPred(2,x))),
-					cClause(cPred(0,evar0,x)),
-					mList(cClause(cPred(0,evar0,b)))
+					mList(cClause(cNotPred(d0AA,x,b),cPred(d2A,x))),
+					cClause(cPred(d0AA,evar0,x)),
+					mList(cClause(cPred(d0AA,evar0,b)))
 			),
 			new TestPair(
-					mList(	cClause(cNotPred(0,x,y),cPred(1,x,y)),
-							cClause(cNotPred(1,x,a),cPred(2,x))),
-					cClause(cPred(0,evar0,x)),
-					mList(cClause(cPred(0,evar0,a)))
+					mList(	cClause(cNotPred(d0AA,x,y),cPred(d1AA,x,y)),
+							cClause(cNotPred(d1AA,x,a),cPred(d2A,x))),
+					cClause(cPred(d0AA,evar0,x)),
+					mList(cClause(cPred(d0AA,evar0,a)))
 			),
 			
 			new TestPair(
-					mList(	cClause(cNotPred(0,x,b),cPred(2,x)),
-							cClause(cNotPred(0,x,c),cPred(2,x))
+					mList(	cClause(cNotPred(d0AA,x,b),cPred(d2A,x)),
+							cClause(cNotPred(d0AA,x,c),cPred(d2A,x))
 					),
-					cClause(cPred(0,evar0,x)),
-					mList(	cClause(cPred(0,evar0,c)),
-							cClause(cPred(0,evar0,b)))					
+					cClause(cPred(d0AA,evar0,x)),
+					mList(	cClause(cPred(d0AA,evar0,c)),
+							cClause(cPred(d0AA,evar0,b)))					
 			),
 			
 			new TestPair(
-					mList(cClause(cNotPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,evar0,x)),
-					mList(cClause(cPred(0,evar0,a)))
+					mList(cClause(cNotPred(d0AA,x,a),cPred(d2A,x))),
+					cClause(cPred(d0AA,evar0,x)),
+					mList(cClause(cPred(d0AA,evar0,a)))
 			),
 			
 			new TestPair(
-					mList(cEqClause(cPred(0,x,a),cPred(2,x))),
-					cClause(cPred(0,evar0,x)),
-					mList(cClause(cPred(0,evar0,a)))
+					mList(cEqClause(cPred(d0AA,x,a),cPred(d2A,x))),
+					cClause(cPred(d0AA,evar0,x)),
+					mList(cClause(cPred(d0AA,evar0,a)))
 			),
 			
 			new TestPair(
-					mList(	cClause(cNotPred(0,x,y,a),cPred(2,y)),
-							cClause(cNotPred(2,b),cPred(1,a,b))),
-					cClause(cPred(0,evar0,x,y)),
-					mList(cClause(cPred(0,evar0,b,x)))
+					mList(	cClause(cNotPred(d0AAA,x,y,a),cPred(d2A,y)),
+							cClause(cNotPred(d2A,b),cPred(d1AA,a,b))),
+					cClause(cPred(d0AAA,evar0,x,y)),
+					mList(cClause(cPred(d0AAA,evar0,b,x)))
 			),
 			
 	};
 	
 	public void doTest(TestPair pair) {
-		SeedSearchProver.DEBUG = true;
-		
-		SeedSearchProver prover = getProver();
+		final SeedSearchProver prover = getProver();
 		
 		RandomAccessList<Clause> clauses = new RandomAccessList<Clause>();
 		for (Clause clause : pair.originalClauses) {
@@ -104,8 +106,8 @@ public class TestSeedSearch extends AbstractPPTest {
 	}
 
 	private SeedSearchProver getProver() {
-		VariableContext context = new VariableContext();
-		SeedSearchProver prover = new SeedSearchProver(context, new ILevelController(){
+		final VariableContext context = new VariableContext();
+		final SeedSearchProver prover = new SeedSearchProver(context, new ILevelController(){
 			public Level getCurrentLevel() {
 				return BASE;
 			}
@@ -118,7 +120,7 @@ public class TestSeedSearch extends AbstractPPTest {
 	}
 	
 	public void testEmptyResult() {
-		SeedSearchProver prover = getProver();
+		final SeedSearchProver prover = getProver();
 		assertEquals(prover.next(false), ProverResult.EMPTY_RESULT);
 		assertEquals(prover.addClauseAndDetectContradiction(cClause(cProp(0))), ProverResult.EMPTY_RESULT);
 	}

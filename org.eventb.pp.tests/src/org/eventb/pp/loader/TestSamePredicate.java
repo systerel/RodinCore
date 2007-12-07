@@ -3,7 +3,6 @@ package org.eventb.pp.loader;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -103,8 +102,7 @@ public class TestSamePredicate extends TestCase {
 	
 	private SignedFormula<?> build(PredicateBuilder builder, String test) {
 		Predicate expr = ff.parsePredicate(test).getParsedPredicate();
-		ITypeCheckResult result = expr.typeCheck(env);
-		System.out.println(result.toString());
+		expr.typeCheck(env);
 		builder.build(expr,false);
 		return builder.getContext().getResults().get(0).getSignature();
 	}

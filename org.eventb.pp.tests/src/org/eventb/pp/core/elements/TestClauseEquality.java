@@ -8,6 +8,13 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AAA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d3A;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -23,59 +30,59 @@ public class TestClauseEquality extends AbstractPPTest {
 
 	public void testPredicateEqual() {
 		testEqual(
-				cClause(cPred(0,x)),cClause(cPred(0,y))	
+				cClause(cPred(d0A,x)),cClause(cPred(d0A,y))	
 		);
 		testEqual(
-				cClause(cPred(0,x,y)),cClause(cPred(0,y,x))	
+				cClause(cPred(d0AA,x,y)),cClause(cPred(d0AA,y,x))	
 		);
 		testEqual(
-				cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,z))	
+				cClause(cPred(d0AAA,x,y,z)),cClause(cPred(d0AAA,y,x,z))	
 		);
 		testEqual(
-				cClause(cPred(0,x,y,z)),cClause(cPred(0,z,y,x))	
+				cClause(cPred(d0AAA,x,y,z)),cClause(cPred(d0AAA,z,y,x))	
 		);
 		testEqual(
-				cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,y),cPred(1,x))
+				cClause(cPred(d0A,x),cPred(d1A,y)),cClause(cPred(d0A,y),cPred(d1A,x))
 		);
 		testEqual(
-				cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,y),cPred(1,x),cPred(2,z))
+				cClause(cPred(d0A,x),cPred(d1A,y),cPred(d2A,z)),cClause(cPred(d0A,y),cPred(d1A,x),cPred(d2A,z))
 		);
 		testEqual(
-				cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,y),cPred(1,y),cPred(2,y))
+				cClause(cPred(d0A,x),cPred(d1A,x),cPred(d2A,x)),cClause(cPred(d0A,y),cPred(d1A,y),cPred(d2A,y))
 		);
 		testEqual(
-				cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,z))
-		);
-
-		testEqual(
-				cClause(cPred(0,x),cEqual(x,y)),cClause(cPred(0,x),cEqual(y,x))
-		);
-		testEqual(
-				cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
-		);
-		testEqual(
-				cClause(cPred(0,y),cEqual(a,y)),cClause(cPred(0,x),cEqual(x,a))
+				cClause(cPred(d0A,x),cPred(d1A,y),cPred(d2A,x)),cClause(cPred(d0A,z),cPred(d1A,x),cPred(d2A,z))
 		);
 
 		testEqual(
-				cClause(cPred(0,a)),cClause(cPred(0,a))
+				cClause(cPred(d0A,x),cEqual(x,y)),cClause(cPred(d0A,x),cEqual(y,x))
 		);
 		testEqual(
-				cClause(cPred(0,evar0)),cClause(cPred(0,evar1))
+				cClause(cPred(d0A,y),cEqual(a,y)),cClause(cPred(d0A,x),cEqual(a,x))
 		);
 		testEqual(
-				cClause(cPred(0,x,evar0)),cClause(cPred(0,y,evar1))
+				cClause(cPred(d0A,y),cEqual(a,y)),cClause(cPred(d0A,x),cEqual(x,a))
+		);
+
+		testEqual(
+				cClause(cPred(d0A,a)),cClause(cPred(d0A,a))
 		);
 		testEqual(
-				cEqClause(cProp(0),cPred(0,fvar0)),cEqClause(cProp(0),cPred(0,fvar1))
+				cClause(cPred(d0A,evar0)),cClause(cPred(d0A,evar1))
+		);
+		testEqual(
+				cClause(cPred(d0AA,x,evar0)),cClause(cPred(d0AA,y,evar1))
+		);
+		testEqual(
+				cEqClause(cProp(0),cPred(d0A,fvar0)),cEqClause(cProp(0),cPred(d0A,fvar1))
 		);
 
 //		testEqual(
-//				cClause(cPred(1,cPlus(cPlus(a,y),y))),cClause(cPred(1,cPlus(cPlus(a,x),x)))
+//				cClause(cPred(d1A,cPlus(cPlus(a,y),y))),cClause(cPred(d1A,cPlus(cPlus(a,x),x)))
 //		);
 
 		testEqual(
-				cEqClause(cPred(3,x),cPred(0,x),cNotPred(1,x,evar0)),cEqClause(cPred(3,x),cPred(0,x),cNotPred(1,x,evar1))
+				cEqClause(cPred(d3A,x),cPred(d0A,x),cNotPred(d1AA,x,evar0)),cEqClause(cPred(d3A,x),cPred(d0A,x),cNotPred(d1AA,x,evar1))
 		);
 	}
 
@@ -85,7 +92,7 @@ public class TestClauseEquality extends AbstractPPTest {
 				cClause(cProp(0)),cClause(cNotProp(0))
 		);
 		testUnequal(
-				cClause(cPred(1,a)),cClause(cNotPred(1,a))
+				cClause(cPred(d1A,a)),cClause(cNotPred(d1A,a))
 		);
 		testUnequal(
 				cClause(cEqual(a,a)),cClause(cNEqual(a,a))
@@ -95,49 +102,49 @@ public class TestClauseEquality extends AbstractPPTest {
 				cClause(cProp(0)),cClause(cProp(1))	
 		);
 		testUnequal(
-				cClause(cPred(0,x)),cClause(cPred(0,x,x))	
+				cClause(cPred(d0A,x)),cClause(cPred(d0AA,x,x))	
 		);
 		testUnequal(
-				cClause(cPred(0,x)),cClause(cPred(1,x))	
-		);
-
-		testUnequal(
-				cClause(cPred(0,x,y)),cClause(cPred(0,y,y))	
+				cClause(cPred(d0A,x)),cClause(cPred(d1A,x))	
 		);
 
 		testUnequal(
-				cClause(cPred(0,x,y,z)),cClause(cPred(0,y,x,x))	
-		);
-		testUnequal(
-				cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,x))	
-		);
-		testUnequal(
-				cClause(cPred(0,x,y,z)),cClause(cPred(0,x,x,y))	
+				cClause(cPred(d0AA,x,y)),cClause(cPred(d0AA,y,y))	
 		);
 
 		testUnequal(
-				cClause(cPred(0,x),cPred(1,y)),cClause(cPred(0,x),cPred(1,x))
+				cClause(cPred(d0AAA,x,y,z)),cClause(cPred(d0AAA,y,x,x))	
 		);
 		testUnequal(
-				cClause(cPred(0,x),cPred(1,y),cPred(2,z)),cClause(cPred(0,x),cPred(1,x),cPred(2,z))
+				cClause(cPred(d0AAA,x,y,z)),cClause(cPred(d0AAA,x,x,x))	
 		);
 		testUnequal(
-				cClause(cPred(0,x),cPred(1,x),cPred(2,x)),cClause(cPred(0,x),cPred(1,y),cPred(2,y))
-		);
-		testUnequal(
-				cClause(cPred(0,x),cPred(1,y),cPred(2,x)),cClause(cPred(0,z),cPred(1,x),cPred(2,x))
+				cClause(cPred(d0AAA,x,y,z)),cClause(cPred(d0AAA,x,x,y))	
 		);
 
 		testUnequal(
-				cClause(cPred(0,a)),cClause(cPred(0,b))
+				cClause(cPred(d0A,x),cPred(d1A,y)),cClause(cPred(d0A,x),cPred(d1A,x))
+		);
+		testUnequal(
+				cClause(cPred(d0A,x),cPred(d1A,y),cPred(d2A,z)),cClause(cPred(d0A,x),cPred(d1A,x),cPred(d2A,z))
+		);
+		testUnequal(
+				cClause(cPred(d0A,x),cPred(d1A,x),cPred(d2A,x)),cClause(cPred(d0A,x),cPred(d1A,y),cPred(d2A,y))
+		);
+		testUnequal(
+				cClause(cPred(d0A,x),cPred(d1A,y),cPred(d2A,x)),cClause(cPred(d0A,z),cPred(d1A,x),cPred(d2A,x))
+		);
+
+		testUnequal(
+				cClause(cPred(d0A,a)),cClause(cPred(d0A,b))
 		);
 
 
 		testUnequal(
-				cEqClause(cProp(1),cPred(0,evar0)),cEqClause(cProp(1),cPred(0,fvar1))
+				cEqClause(cProp(1),cPred(d0A,evar0)),cEqClause(cProp(1),cPred(d0A,fvar1))
 		);
 		testUnequal(
-				cEqClause(cProp(1),cPred(0,fvar0)),cEqClause(cProp(1),cPred(0,evar1))
+				cEqClause(cProp(1),cPred(d0A,fvar0)),cEqClause(cProp(1),cPred(d0A,evar1))
 		);
 
 		testUnequal(
@@ -145,14 +152,14 @@ public class TestClauseEquality extends AbstractPPTest {
 		);
 
 		testUnequal(
-				cEqClause(cProp(0),cPred(1,a)),cClause(cProp(0),cPred(1,b))	
+				cEqClause(cProp(0),cPred(d1A,a)),cClause(cProp(0),cPred(d1A,b))	
 		);
 
 		testUnequal(
-				cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,x))
+				cClause(cPred(d0A,x),cEqual(a,y)),cClause(cPred(d0A,x),cEqual(a,x))
 		);			
 		testUnequal(
-				cClause(cPred(0,x),cEqual(a,y)),cClause(cPred(0,x),cEqual(a,a))
+				cClause(cPred(d0A,x),cEqual(a,y)),cClause(cPred(d0A,x),cEqual(a,a))
 		);
 	}
 	
@@ -162,7 +169,7 @@ public class TestClauseEquality extends AbstractPPTest {
 	
 	public void testEqualClauseWithEquality() {
 		// this is unequal
-		testUnequal(cClause(cPred(0,x),cEqual(x,y)),cClause(cPred(0,y),cEqual(x,y)));
+		testUnequal(cClause(cPred(d0A,x),cEqual(x,y)),cClause(cPred(d0A,y),cEqual(x,y)));
 	}
 
 	public void testEqual(Clause... clauses) {

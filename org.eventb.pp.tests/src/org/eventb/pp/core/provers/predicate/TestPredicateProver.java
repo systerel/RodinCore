@@ -7,6 +7,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
@@ -275,8 +276,8 @@ public class TestPredicateProver extends AbstractPPTest {
 	
 	
 	public void testHiddenInferrence() {
-		doTest(new TestPair(mList(cClause(cPred(0,evar1),cProp(1)),cClause(cPred(0,a),cProp(1))),
-				mList(cClause(cNotPred(0,a))),
+		doTest(new TestPair(mList(cClause(cPred(d0A,evar1),cProp(1)),cClause(cPred(d0A,a),cProp(1))),
+				mList(cClause(cNotPred(d0A,a))),
 				cClause(mList(cProp(1)),cNEqual(evar1, a)),
 				cClause(mList(cProp(1)),cNEqual(a, a))));
 	}

@@ -7,6 +7,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.Set;
@@ -40,8 +43,8 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 					mSet(cClause(TWO, cNotProp(0)),cClause(TWO, cNotProp(1)))
 			);
 			doTest(
-					cClause(BASE, cEqual(a,b),cPred(0,a)),
-					mSet(cClause(ONE, cPred(0,a))),
+					cClause(BASE, cEqual(a,b),cPred(d0A,a)),
+					mSet(cClause(ONE, cPred(d0A,a))),
 					mSet(cClause(TWO, cEqual(a,b)))
 			);
 			doTest(
@@ -50,19 +53,19 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 					mSet(cClause(TWO,cEqual(b,c)))
 			);
 			doTest(
-					cEqClause(BASE, cPred(0,fvar0), cPred(0,a)),
-					mSet(cClause(ONE, cPred(0,x)), cClause(ONE, cPred(0,a))),
-					mSet(cClause(TWO, cNotPred(0,evar0)), cClause(cNotPred(0,a)))
+					cEqClause(BASE, cPred(d0A,fvar0), cPred(d0A,a)),
+					mSet(cClause(ONE, cPred(d0A,x)), cClause(ONE, cPred(d0A,a))),
+					mSet(cClause(TWO, cNotPred(d0A,evar0)), cClause(cNotPred(d0A,a)))
 			);
 			doTest(
-					cClause(BASE, cPred(0,evar0), cPred(0,a)),
-					mSet(cClause(ONE, cPred(0,evar0))),
-					mSet(cClause(TWO, cPred(0,a)))
+					cClause(BASE, cPred(d0A,evar0), cPred(d0A,a)),
+					mSet(cClause(ONE, cPred(d0A,evar0))),
+					mSet(cClause(TWO, cPred(d0A,a)))
 			);
 			doTest(
-					cEqClause(BASE, cPred(0,evar0), cPred(0,a)),
-					mSet(cClause(ONE, cPred(0,evar0)),cClause(ONE, cPred(0,a))),
-					mSet(cClause(TWO, cNotPred(0,x)),cClause(TWO, cNotPred(0,a)))
+					cEqClause(BASE, cPred(d0A,evar0), cPred(d0A,a)),
+					mSet(cClause(ONE, cPred(d0A,evar0)),cClause(ONE, cPred(d0A,a))),
+					mSet(cClause(TWO, cNotPred(d0A,x)),cClause(TWO, cNotPred(d0A,a)))
 			);
 			doTest(
 					cEqClause(BASE, cProp(0), cProp(1), cProp(2)),
@@ -99,15 +102,15 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 		
 		Clause[] canInfer = new Clause[]{
 				cClause(cProp(0),cProp(1)),
-				cClause(cPred(0,a),cPred(1,b)),
-				cClause(cPred(0,evar0),cPred(1,evar1)),
-				cClause(cEqual(a,b),cPred(0,a)),
-				cClause(cPred(0,evar0),cPred(1,var1)),
+				cClause(cPred(d0A,a),cPred(d1A,b)),
+				cClause(cPred(d0A,evar0),cPred(d1A,evar1)),
+				cClause(cEqual(a,b),cPred(d0A,a)),
+				cClause(cPred(d0A,evar0),cPred(d1A,var1)),
 				cEqClause(cProp(0),cProp(1)),
-				cEqClause(cPred(0,a),cPred(1,b)),
-				cEqClause(cPred(0,evar0),cPred(1,evar1)),
-				cEqClause(cEqual(a,b),cPred(0,a)),
-				cEqClause(cPred(0,evar0),cPred(1,var1)),
+				cEqClause(cPred(d0A,a),cPred(d1A,b)),
+				cEqClause(cPred(d0A,evar0),cPred(d1A,evar1)),
+				cEqClause(cEqual(a,b),cPred(d0A,a)),
+				cEqClause(cPred(d0A,evar0),cPred(d1A,var1)),
 		};
 
 		for (Clause clause : canInfer) {
@@ -120,11 +123,11 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 		
 		Clause[] cannotInfer = new Clause[]{
 				cClause(cProp(0)),
-				cClause(cPred(0,x),cPred(0,x)),
-				cClause(cPred(0,x),cPred(1,x,y)),
-				cClause(cEqual(x,b),cPred(0,x)),
-				cEqClause(cPred(0,x),cPred(0,x)),
-				cEqClause(cPred(0,x),cPred(1,x,y)),
+				cClause(cPred(d0A,x),cPred(d0A,x)),
+				cClause(cPred(d0A,x),cPred(d1AA,x,y)),
+				cClause(cEqual(x,b),cPred(d0A,x)),
+				cEqClause(cPred(d0A,x),cPred(d0A,x)),
+				cEqClause(cPred(d0A,x),cPred(d1AA,x,y)),
 		};
 
 		for (Clause clause : cannotInfer) {

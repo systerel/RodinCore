@@ -10,6 +10,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
@@ -89,12 +92,12 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 		
 		new TestPair(
-				cClause(cProp(0),cPred(1,a)),
-				cClause(cProp(0),cPred(1,a))
+				cClause(cProp(0),cPred(d1A,a)),
+				cClause(cProp(0),cPred(d1A,a))
 		),
 		new TestPair(
-				cClause(cProp(0),cProp(0),cPred(1,a)),
-				cClause(cProp(0),cPred(1,a))
+				cClause(cProp(0),cProp(0),cPred(d1A,a)),
+				cClause(cProp(0),cPred(d1A,a))
 		),
 		
 		
@@ -108,34 +111,34 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 		
 		new TestPair(
-				cClause(cNotProp(0),cPred(1,a)),
-				cClause(cNotProp(0),cPred(1,a))
+				cClause(cNotProp(0),cPred(d1A,a)),
+				cClause(cNotProp(0),cPred(d1A,a))
 		),
 		new TestPair(
-				cClause(cNotProp(0),cNotProp(0),cPred(1,a)),
-				cClause(cNotProp(0),cPred(1,a))
+				cClause(cNotProp(0),cNotProp(0),cPred(d1A,a)),
+				cClause(cNotProp(0),cPred(d1A,a))
 		),
 		
 		
 		new TestPair(
-				cClause(cPred(0,a),cPred(0,a)),
-				cClause(cPred(0,a))
+				cClause(cPred(d0A,a),cPred(d0A,a)),
+				cClause(cPred(d0A,a))
 		),
 		new TestPair(
-				cClause(cPred(0,var0),cPred(0,var0)),
-				cClause(cPred(0,var0))
+				cClause(cPred(d0A,var0),cPred(d0A,var0)),
+				cClause(cPred(d0A,var0))
 		),
 		new TestPair(
-				cClause(cPred(0,var0),cPred(0,var1)),
-				cClause(cPred(0,var0),cPred(0,var1))
+				cClause(cPred(d0A,var0),cPred(d0A,var1)),
+				cClause(cPred(d0A,var0),cPred(d0A,var1))
 		),
 		new TestPair(
-				cClause(cPred(0,var0,a),cPred(0,var0,a)),
-				cClause(cPred(0,var0,a))
+				cClause(cPred(d0AA,var0,a),cPred(d0AA,var0,a)),
+				cClause(cPred(d0AA,var0,a))
 		),
 		new TestPair(
-				cClause(cPred(0,evar0),cPred(0,fvar0)),
-				cClause(cPred(0,evar0),cPred(0,fvar0))
+				cClause(cPred(d0A,evar0),cPred(d0A,fvar0)),
+				cClause(cPred(d0A,evar0),cPred(d0A,fvar0))
 		),
 		
 		new TestPair(
@@ -191,20 +194,20 @@ public class TestLiteralSimplification extends AbstractPPTest {
 				TRUE
 		),
 		new TestPair(
-				cClause(cPred(0,a),cNotPred(0,a)),
+				cClause(cPred(d0A,a),cNotPred(d0A,a)),
 				TRUE
 		),
 		new TestPair(
-				cClause(cPred(0,var0),cNotPred(0,var0)),
+				cClause(cPred(d0A,var0),cNotPred(d0A,var0)),
 				TRUE
 		),
 		new TestPair(
-				cClause(cPred(0,evar0),cNotPred(0,evar0)),
-				cClause(cPred(0,evar0),cNotPred(0,evar0))
+				cClause(cPred(d0A,evar0),cNotPred(d0A,evar0)),
+				cClause(cPred(d0A,evar0),cNotPred(d0A,evar0))
 		),
 		new TestPair(
-				cClause(cPred(0,evar0),cNotPred(0,var0)),
-				cClause(cPred(0,evar0),cNotPred(0,var0))
+				cClause(cPred(d0A,evar0),cNotPred(d0A,var0)),
+				cClause(cPred(d0A,evar0),cNotPred(d0A,var0))
 		),
 		
 		new TestPair(
@@ -259,24 +262,24 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		),
 		
 		new TestPair(
-				cEqClause(cPred(0,evar0),cPred(0,evar1)),
-				cEqClause(cPred(0,evar0),cPred(0,evar1))
+				cEqClause(cPred(d0A,evar0),cPred(d0A,evar1)),
+				cEqClause(cPred(d0A,evar0),cPred(d0A,evar1))
 		),
 		new TestPair(
-				cEqClause(cPred(0,fvar0),cPred(0,fvar1)),
-				cEqClause(cPred(0,fvar0),cPred(0,fvar1))
+				cEqClause(cPred(d0A,fvar0),cPred(d0A,fvar1)),
+				cEqClause(cPred(d0A,fvar0),cPred(d0A,fvar1))
 		),
 //		new TestPair(
-//				cEqClause(cPred(0,evar0),cNotPred(0,fvar0)),
+//				cEqClause(cPred(d0A,evar0),cNotPred(d0A,fvar0)),
 //				FALSE
 //		),
 		new TestPair(
-				cEqClause(cPred(0,evar0),cPred(0,var0)),
-				cEqClause(cPred(0,evar0),cPred(0,var0))
+				cEqClause(cPred(d0A,evar0),cPred(d0A,var0)),
+				cEqClause(cPred(d0A,evar0),cPred(d0A,var0))
 		),
 		new TestPair(
-				cEqClause(cPred(0,fvar0),cPred(0,var0)),
-				cEqClause(cPred(0,fvar0),cPred(0,var0))
+				cEqClause(cPred(d0A,fvar0),cPred(d0A,var0)),
+				cEqClause(cPred(d0A,fvar0),cPred(d0A,var0))
 		),
 		
 		new TestPair(

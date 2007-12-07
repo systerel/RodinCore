@@ -6,6 +6,10 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AAA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 
 import java.util.HashMap;
 
@@ -23,64 +27,64 @@ public class TestLiteralEquality extends AbstractPPTest {
 		doUnequalTests(cProp(0), cProp(1), true);
 		doUnequalTests(cNotProp(0), cNotProp(1), true);
 		doUnequalTests(cNotProp(0), cProp(0), true);
-		doUnequalTests(cProp(0), cPred(0,a), true);
-		doUnequalTests(cProp(0), cNotPred(0,a), true);
+		doUnequalTests(cProp(0), cPred(d0A,a), true);
+		doUnequalTests(cProp(0), cNotPred(d0A,a), true);
 //		doUnequalTests(cProp(0), cEqual(a, b), true);
 //		doUnequalTests(cProp(0), cNEqual(a, b), true);
-		doUnequalTests(cNotProp(0), cPred(0,a), true);
-		doUnequalTests(cNotProp(0), cNotPred(0,a), true);
+		doUnequalTests(cNotProp(0), cPred(d0A,a), true);
+		doUnequalTests(cNotProp(0), cNotPred(d0A,a), true);
 //		doUnequalTests(cNotProp(0), cEqual(a, b), true);
 //		doUnequalTests(cNotProp(0), cNEqual(a, b), true);
 	}
 	
 	public void testPredicate() {
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, a), cPred(0, a));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, a), cNotPred(0, a));
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, a), cPred(0, b), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, a), cNotPred(0, b), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, a), cNotPred(0, a), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, a), cPred(1, a), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, a), cNotPred(1, a), true);
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0A, a), cPred(d0A, a));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0A, a), cNotPred(d0A, a));
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, a), cPred(d0A, b), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0A, a), cNotPred(d0A, b), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, a), cNotPred(d0A, a), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, a), cPred(d1A, a), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0A, a), cNotPred(d1A, a), true);
 		
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x), cPred(0, x));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x), cNotPred(0, x));
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x), cPred(0, y), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x), cNotPred(0, y), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x), cNotPred(0, x), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x), cPred(1, x), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x), cNotPred(1, x), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0,x), cPred(0,a), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0,x), cNotPred(0,a), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, y), cPred(0, y, x), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, x), cPred(0, y, x), true);
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0A, x), cPred(d0A, x));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0A, x), cNotPred(d0A, x));
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, x), cPred(d0A, y), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0A, x), cNotPred(d0A, y), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, x), cNotPred(d0A, x), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A, x), cPred(d1A, x), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0A, x), cNotPred(d1A, x), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0A,x), cPred(d0A,a), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0A,x), cNotPred(d0A,a), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, y), cPred(d0AA, y, x), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, x), cPred(d0AA, y, x), true);
 		
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, evar0), cPred(0, x, evar0));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, evar0), cNotPred(0, x, evar0));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, evar0, evar0), cPred(0, x, evar0, evar0));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, evar0, evar0), cNotPred(0, x, evar0, evar0));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(0, x, fvar0), cPred(0, x, fvar0));
-		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(0, x, fvar0), cNotPred(0, x, fvar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0AA, x, evar0), cPred(d0AA, x, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0AA, x, evar0), cNotPred(d0AA, x, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0AAA, x, evar0, evar0), cPred(d0AAA, x, evar0, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0AAA, x, evar0, evar0), cNotPred(d0AAA, x, evar0, evar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0AA, x, fvar0), cPred(d0AA, x, fvar0));
+		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0AA, x, fvar0), cNotPred(d0AA, x, fvar0));
 		
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0), cPred(0, x, evar1), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0), cNotPred(0, x, evar1), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0), cPred(0, x, fvar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0), cNotPred(0, x, fvar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0, evar1), cPred(0, x, evar0, evar0), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0, evar1), cNotPred(0, x, evar0, evar0), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, evar0, evar0), cPred(0, x, evar0, fvar0), false);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, evar0, evar0), cNotPred(0, x, evar0, fvar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, evar0), cPred(d0AA, x, evar1), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, evar0), cNotPred(d0AA, x, evar1), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, evar0), cPred(d0AA, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, evar0), cNotPred(d0AA, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AAA, x, evar0, evar1), cPred(d0AAA, x, evar0, evar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AAA, x, evar0, evar1), cNotPred(d0AAA, x, evar0, evar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AAA, x, evar0, evar0), cPred(d0AAA, x, evar0, fvar0), false);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AAA, x, evar0, evar0), cNotPred(d0AAA, x, evar0, fvar0), false);
 		
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, x), cPred(0, x, evar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, x), cNotPred(0, x, evar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, x), cPred(0, x, fvar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, x), cNotPred(0, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, x), cPred(d0AA, x, evar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, x), cNotPred(d0AA, x, evar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, x), cPred(d0AA, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, x), cNotPred(d0AA, x, fvar0), true);
 		
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, a), cPred(0, x, evar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, a), cNotPred(0, x, evar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0, x, a), cPred(0, x, fvar0), true);
-		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(0, x, a), cNotPred(0, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, a), cPred(d0AA, x, evar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, a), cNotPred(d0AA, x, evar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA, x, a), cPred(d0AA, x, fvar0), true);
+		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cNotPred(d0AA, x, a), cNotPred(d0AA, x, fvar0), true);
 		
-//		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(0,a,b), cEqual(a, b), true);
+//		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA,a,b), cEqual(a, b), true);
 	}
 	
 	public void testEquality() {

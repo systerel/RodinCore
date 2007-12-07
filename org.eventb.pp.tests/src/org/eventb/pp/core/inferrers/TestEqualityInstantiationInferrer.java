@@ -7,6 +7,8 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.HashMap;
@@ -25,47 +27,47 @@ public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 	
 	public void testSimple() {
 		doTest(
-				cClause(cPred(0, x),cEqual(x, a)), 
+				cClause(cPred(d0A, x),cEqual(x, a)), 
 				M(xa, b),
 				mList(cClause(nab)),
-				cClause(cPred(0, b))
+				cClause(cPred(d0A, b))
 		);
 		doTest(
-				cClause(cPred(0, x, y),cEqual(x, a)), 
+				cClause(cPred(d0AA, x, y),cEqual(x, a)), 
 				M(xa, b),
 				mList(cClause(nab)),
-				cClause(cPred(0, b, y))
+				cClause(cPred(d0AA, b, y))
 		);
 	}
 	
 	public void testEquivalenceTransformation() {
 		doTest(
-				cEqClause(cPred(0, x),cEqual(x, a)), 
+				cEqClause(cPred(d0A, x),cEqual(x, a)), 
 				M(xa, b),
 				mList(cClause(nab)),
-				cClause(cNotPred(0, b))
+				cClause(cNotPred(d0A, b))
 		);
 		doTest(
-				cEqClause(cPred(0, x),cNEqual(x, a)), 
+				cEqClause(cPred(d0A, x),cNEqual(x, a)), 
 				M(nxa, b),
 				mList(cClause(nab)),
-				cClause(cPred(0, b))
+				cClause(cPred(d0A, b))
 		);
 		doTest(
-				cEqClause(cPred(0, x),cProp(1),cEqual(x, a)), 
+				cEqClause(cPred(d0A, x),cProp(1),cEqual(x, a)), 
 				M(xa, b),
 				mList(cClause(nab)),
-				cEqClause(cNotPred(0, b),cProp(1))
+				cEqClause(cNotPred(d0A, b),cProp(1))
 		);
 	}
 	
 	public void testSeveralEquivalenceTransformation() {
 		doTest(
-				cEqClause(cPred(0, x, y),cEqual(y, b),cEqual(x, a)), 
+				cEqClause(cPred(d0AA, x, y),cEqual(y, b),cEqual(x, a)), 
 				M(	xa, b,
 					yb, a),
 				mList(cClause(nab)),
-				cClause(cPred(0, b, a))
+				cClause(cPred(d0AA, b, a))
 		);
 		
 	}

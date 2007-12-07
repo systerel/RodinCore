@@ -7,6 +7,11 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AAA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
@@ -106,58 +111,58 @@ public class TestResolution extends AbstractInferrerTests {
 	public void testRule1() {
 		// PREDICATE LOGIC
 		doTest(
-				cClause(cPred(0,var0),cPred(1,var0)),
-				cClause(cNotPred(0,var0)),
-				cClause(mList(cPred(1,var0)),cNEqual(var0,var0))
+				cClause(cPred(d0A,var0),cPred(d1A,var0)),
+				cClause(cNotPred(d0A,var0)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(var0,var0))
 		);
 		doTest(
-				cClause(cPred(0,a),cPred(1,a)),
-				cClause(cNotPred(0,b)),
-				cClause(mList(cPred(1,a)),cNEqual(a, b))
+				cClause(cPred(d0A,a),cPred(d1A,a)),
+				cClause(cNotPred(d0A,b)),
+				cClause(mList(cPred(d1A,a)),cNEqual(a, b))
 		);
 	}
 
 	public void testRule2NewWithPredicatePreparation() {
 		doTest(
-				cClause(cPred(0,evar1),cProp(1)),
-				cClause(cNotPred(0,var0)),
+				cClause(cPred(d0A,evar1),cProp(1)),
+				cClause(cNotPred(d0A,var0)),
 				cClause(mList(cProp(1)),cNEqual(evar1, evar1))
 		);
 	}
 
 	public void testRule2() {
 		doTest(
-				cClause(cPred(0,evar1),cProp(1)),
-				cClause(cNotPred(0,var0)),
+				cClause(cPred(d0A,evar1),cProp(1)),
+				cClause(cNotPred(d0A,var0)),
 				cClause(mList(cProp(1)),cNEqual(evar1, evar1))
 		);
 		doTest(
-				cClause(cPred(0,evar0,var0),cPred(1,var0)),
-				cClause(cNotPred(0,var1,var1)),
-				cClause(mList(cPred(1,var0)),cNEqual(evar0, evar0), cNEqual(evar0, var0))
+				cClause(cPred(d0AA,evar0,var0),cPred(d1A,var0)),
+				cClause(cNotPred(d0AA,var1,var1)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar0, evar0), cNEqual(evar0, var0))
 		);
 		doTest(
-				cClause(cPred(0,evar0,evar1),cPred(1,var0)),
-				cClause(cNotPred(0,var1,var0)),
-				cClause(mList(cPred(1,var0)),cNEqual(evar0, evar0), cNEqual(evar1, evar1))
+				cClause(cPred(d0AA,evar0,evar1),cPred(d1A,var0)),
+				cClause(cNotPred(d0AA,var1,var0)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar0, evar0), cNEqual(evar1, evar1))
 		);
 		doTest(
-				cClause(cPred(0,evar0,var0),cPred(1,var1)),
-				cClause(cNotPred(0,var1,var0)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar0, evar0), cNEqual(var0, var0))
+				cClause(cPred(d0AA,evar0,var0),cPred(d1A,var1)),
+				cClause(cNotPred(d0AA,var1,var0)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar0, evar0), cNEqual(var0, var0))
 		);
 		doTest(
-				cClause(cPred(0,evar0,evar1),cPred(1,var0)),
-				cClause(cNotPred(0,var1,var1)),
-				cClause(mList(cPred(1,var0)),cNEqual(evar1, evar1), cNEqual(evar0, evar1))
+				cClause(cPred(d0AA,evar0,evar1),cPred(d1A,var0)),
+				cClause(cNotPred(d0AA,var1,var1)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar1, evar1), cNEqual(evar0, evar1))
 		);
 		
 	}
 
 	public void testRule3() {
 		doTest(
-				cClause(cPred(0,var0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cClause(cPred(d0A,var0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1, var00))
 		);
 	}
@@ -165,269 +170,269 @@ public class TestResolution extends AbstractInferrerTests {
 	public void testRule4and5() {
 		// PREDICATE LOGIC WITH EQUIVALENCE
 		doTest(
-				cEqClause(cPred(0,var0),cPred(1,var1),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cEqClause(mList(cPred(1,var1),cPred(1,var0)),cNEqual(var0, var0))
+				cEqClause(cPred(d0A,var0),cPred(d1A,var1),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cEqClause(mList(cPred(d1A,var1),cPred(d1A,var0)),cNEqual(var0, var0))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cPred(0,b),cNotPred(0,c)),
-				cClause(cPred(0,b)),
-				cEqClause(mList(cPred(0,b),cNotPred(0,c)),cNEqual(a, b)),
-				cEqClause(mList(cPred(0,a),cNotPred(0,c)),cNEqual(b, b)),
-				cEqClause(mList(cNotPred(0,a),cPred(0,b)),cNEqual(c, b))
+				cEqClause(cPred(d0A,a),cPred(d0A,b),cNotPred(d0A,c)),
+				cClause(cPred(d0A,b)),
+				cEqClause(mList(cPred(d0A,b),cNotPred(d0A,c)),cNEqual(a, b)),
+				cEqClause(mList(cPred(d0A,a),cNotPred(d0A,c)),cNEqual(b, b)),
+				cEqClause(mList(cNotPred(d0A,a),cPred(d0A,b)),cNEqual(c, b))
 		);
 	}
 
 	public void testRule4and5WithTransformation() {
 		// Tests transformation eqclause->disjclause
 		doTest(
-				cEqClause(cPred(0,a),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cPred(1,var0)),cNEqual(a,a))
+				cEqClause(cPred(d0A,a),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(a,a))
 		);
 		doTest(
-				cEqClause(cNotPred(0,a),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cNotPred(1,var0)),cNEqual(a,a))
+				cEqClause(cNotPred(d0A,a),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cNotPred(d1A,var0)),cNEqual(a,a))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cPred(1,evar0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cPred(1,evar0)),cNEqual(a,a))
+				cEqClause(cPred(d0A,a),cPred(d1A,evar0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cPred(d1A,evar0)),cNEqual(a,a))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cPred(1,fvar2)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cPred(1,var11)),cNEqual(a,a))
+				cEqClause(cPred(d0A,a),cPred(d1A,fvar2)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cPred(d1A,var11)),cNEqual(a,a))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cPred(1,evar2)),
-				cClause(cNotPred(0,var0)),
-				cClause(mList(cNotPred(1,var11)),cNEqual(a, a))
+				cEqClause(cPred(d0A,a),cPred(d1A,evar2)),
+				cClause(cNotPred(d0A,var0)),
+				cClause(mList(cNotPred(d1A,var11)),cNEqual(a, a))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cPred(1,fvar2)),
-				cClause(cNotPred(0,var0)),
-				cClause(mList(cNotPred(1,evar2)),cNEqual(a, a))
+				cEqClause(cPred(d0A,a),cPred(d1A,fvar2)),
+				cClause(cNotPred(d0A,var0)),
+				cClause(mList(cNotPred(d1A,evar2)),cNEqual(a, a))
 		);
 	}
 
 	public void testRule6and7() {
 		// 4 TESTS with local variables + transformation
 		doTest(
-				cEqClause(cNotPred(0,evar2),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cNotPred(1,var0)),cNEqual(evar2,evar2))
+				cEqClause(cNotPred(d0A,evar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cNotPred(d1A,var0)),cNEqual(evar2,evar2))
 		);
 		doTest(
-				cEqClause(cPred(0,fvar2),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cPred(1,var0)),cNEqual(evar2,evar2))
+				cEqClause(cPred(d0A,fvar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar2,evar2))
 		);
 		doTest(
-				cEqClause(cNotPred(0,evar2),cPred(1,var1),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cEqClause(mList(cNotPred(1,var1),cPred(1,var0)),cNEqual(evar2,evar2))
+				cEqClause(cNotPred(d0A,evar2),cPred(d1A,var1),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cEqClause(mList(cNotPred(d1A,var1),cPred(d1A,var0)),cNEqual(evar2,evar2))
 		);
 		doTest(
-				cEqClause(cPred(0,fvar2),cPred(1,var1),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cEqClause(mList(cPred(1,var1),cPred(1,var0)),cNEqual(evar2,evar2))
+				cEqClause(cPred(d0A,fvar2),cPred(d1A,var1),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cEqClause(mList(cPred(d1A,var1),cPred(d1A,var0)),cNEqual(evar2,evar2))
 		);
 		// 
 		
 //		doTest(
-//				cEqClause(cNotPred(0,cPlus(evar2,evar2)),cPred(1,var1),cPred(1,var0)),
-//				cClause(cPred(0,var0)),
-//				cEqClause(mList(cNotPred(1,var1),cPred(1,var0)),cNEqual(cPlus(evar2,evar2),cPlus(evar2,evar2)))
+//				cEqClause(cNotPred(d0A,cPlus(evar2,evar2)),cPred(d1A,var1),cPred(d1A,var0)),
+//				cClause(cPred(d0A,var0)),
+//				cEqClause(mList(cNotPred(d1A,var1),cPred(d1A,var0)),cNEqual(cPlus(evar2,evar2),cPlus(evar2,evar2)))
 //		);
 //		doTest(
-//				cEqClause(cPred(0,cPlus(fvar2,fvar2)),cPred(1,var1),cPred(1,var0)),
-//				cClause(cPred(0,var0)),
-//				cEqClause(mList(cPred(1,var1),cPred(1,var0)),cNEqual(cPlus(evar2,evar2),cPlus(evar2,evar2)))
+//				cEqClause(cPred(d0A,cPlus(fvar2,fvar2)),cPred(d1A,var1),cPred(d1A,var0)),
+//				cClause(cPred(d0A,var0)),
+//				cEqClause(mList(cPred(d1A,var1),cPred(d1A,var0)),cNEqual(cPlus(evar2,evar2),cPlus(evar2,evar2)))
 //		);
 	}
 
 	public void testRule8And9() {
 		doTest(
-				cEqClause(cPred(0,evar2),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cPred(1,var0)),cNEqual(var00,var00))
+				cEqClause(cPred(d0A,evar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(var00,var00))
 		);
 		doTest(
-				cEqClause(cNotPred(0,fvar2),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cClause(mList(cNotPred(1,var0)),cNEqual(var00,var00))
+				cEqClause(cNotPred(d0A,fvar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cClause(mList(cNotPred(d1A,var0)),cNEqual(var00,var00))
 		);
 		// same tests with constants
 		doTest(
-				cEqClause(cPred(0,evar2),cPred(1,var0)),
-				cClause(cPred(0,a)),
-				cClause(mList(cPred(1,var0)),cNEqual(a,var11))
+				cEqClause(cPred(d0A,evar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,a)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(a,var11))
 		);
 		doTest(
-				cEqClause(cNotPred(0,fvar2),cPred(1,var0)),
-				cClause(cPred(0,a)),
-				cClause(mList(cNotPred(1,var0)),cNEqual(a,var11))
+				cEqClause(cNotPred(d0A,fvar2),cPred(d1A,var0)),
+				cClause(cPred(d0A,a)),
+				cClause(mList(cNotPred(d1A,var0)),cNEqual(a,var11))
 		);
 		doTest(
-				cEqClause(cNotPred(0,evar2),cPred(1,var0)),
-				cClause(cNotPred(0,a)),
-				cClause(mList(cPred(1,var0)),cNEqual(a,var11))
+				cEqClause(cNotPred(d0A,evar2),cPred(d1A,var0)),
+				cClause(cNotPred(d0A,a)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(a,var11))
 		);
 		doTest(
-				cEqClause(cPred(0,fvar2),cPred(1,var0)),
-				cClause(cNotPred(0,a)),
-				cClause(mList(cNotPred(1,var0)),cNEqual(a,var11))
+				cEqClause(cPred(d0A,fvar2),cPred(d1A,var0)),
+				cClause(cNotPred(d0A,a)),
+				cClause(mList(cNotPred(d1A,var0)),cNEqual(a,var11))
 		);
 		doTest(
-				cEqClause(cPred(0,evar2),cPred(1,var1),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cEqClause(mList(cPred(1,var1),cPred(1,var0)),cNEqual(var00,var00))
+				cEqClause(cPred(d0A,evar2),cPred(d1A,var1),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cEqClause(mList(cPred(d1A,var1),cPred(d1A,var0)),cNEqual(var00,var00))
 		);
 		doTest(
-				cEqClause(cNotPred(0,fvar2),cPred(1,var1),cPred(1,var0)),
-				cClause(cPred(0,var0)),
-				cEqClause(mList(cNotPred(1,var1),cPred(1,var0)),cNEqual(var00,var00))
+				cEqClause(cNotPred(d0A,fvar2),cPred(d1A,var1),cPred(d1A,var0)),
+				cClause(cPred(d0A,var0)),
+				cEqClause(mList(cNotPred(d1A,var1),cPred(d1A,var0)),cNEqual(var00,var00))
 		);
 
 //		doTest(
-//				cEqClause(cPred(0,cPlus(evar2,evar2)),cPred(1,var1),cPred(1,var0)),
-//				cClause(cPred(0,var0)),
-//				cEqClause(mList(cPred(1,var1),cPred(1,var0)),cNEqual(var11,cPlus(var00,var00)))
+//				cEqClause(cPred(d0A,cPlus(evar2,evar2)),cPred(d1A,var1),cPred(d1A,var0)),
+//				cClause(cPred(d0A,var0)),
+//				cEqClause(mList(cPred(d1A,var1),cPred(d1A,var0)),cNEqual(var11,cPlus(var00,var00)))
 //		);
 //		doTest(
-//				cEqClause(cNotPred(0,cPlus(fvar2,fvar2)),cPred(1,var1),cPred(1,var0)),
-//				cClause(cPred(0,var0)),
-//				cEqClause(mList(cNotPred(1,var1),cPred(1,var0)),cNEqual(var11,cPlus(var00,var00)))
+//				cEqClause(cNotPred(d0A,cPlus(fvar2,fvar2)),cPred(d1A,var1),cPred(d1A,var0)),
+//				cClause(cPred(d0A,var0)),
+//				cEqClause(mList(cNotPred(d1A,var1),cPred(d1A,var0)),cNEqual(var11,cPlus(var00,var00)))
 //		);
 	}
 
 	public void testOtherRule() {
 		// TODO check this
 		doTest(
-				cEqClause(cPred(0,var0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cPred(d0A,var0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cNotProp(1)),cNEqual(evar1,var0))
 		);
 		doTest(
-				cEqClause(cNotPred(0,var0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cNotPred(d0A,var0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1,var0))
 		);
 		doTest(
-				cEqClause(cNotPred(0,var0,var1),cPred(1,var1)),
-				cClause(cNotPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
+				cEqClause(cNotPred(d0AA,var0,var1),cPred(d1A,var1)),
+				cClause(cNotPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
 		);
 		doTest(
-				cEqClause(cNotPred(0,var0,var1),cPred(1,var2)),
-				cClause(cNotPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
+				cEqClause(cNotPred(d0AA,var0,var1),cPred(d1A,var2)),
+				cClause(cNotPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
 		);
 		// TODO document those rules
 		doTest(
-				cClause(cNotPred(0,var0,var1),cPred(1,var1)),
-				cClause(cPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
+				cClause(cNotPred(d0AA,var0,var1),cPred(d1A,var1)),
+				cClause(cPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar1,var0), cNEqual(var1, var1))
 		);
 		doTest(
-				cClause(cNotPred(0,var0,var1),cPred(1,var2)),
-				cClause(cPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
+				cClause(cNotPred(d0AA,var0,var1),cPred(d1A,var2)),
+				cClause(cPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar0,var0), cNEqual(var2, var2))
 		);
 		doTest(
-				cClause(cNotPred(0,var0,var1),cPred(1,var0,var1)),
-				cClause(cPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var0,var1)),cNEqual(evar0,var0), cNEqual(var1, var1))
+				cClause(cNotPred(d0AA,var0,var1),cPred(d1AA,var0,var1)),
+				cClause(cPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1AA,var0,var1)),cNEqual(evar0,var0), cNEqual(var1, var1))
 		);
 		doTest(
-				cClause(cNotPred(0,var0,var0,var1),cPred(1,var0,var1)),
-				cClause(cPred(0,evar0,evar1,var1)),
-				cClause(mList(cPred(1,var0,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
+				cClause(cNotPred(d0AAA,var0,var0,var1),cPred(d1AA,var0,var1)),
+				cClause(cPred(d0AAA,evar0,evar1,var1)),
+				cClause(mList(cPred(d1AA,var0,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
 		);
 		doTest(
-				cClause(cNotPred(0,var0,var0,var1),cPred(1,var1)),
-				cClause(cPred(0,evar0,evar1,var1)),
-				cClause(mList(cPred(1,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
+				cClause(cNotPred(d0AAA,var0,var0,var1),cPred(d1A,var1)),
+				cClause(cPred(d0AAA,evar0,evar1,var1)),
+				cClause(mList(cPred(d1A,var1)),cNEqual(evar0,var0), cNEqual(evar1,var0), cNEqual(var1, var1))
 		);
 		doTest(
-				cClause(cNotPred(0,var0,var0),cPred(1,var1)),
-				cClause(cPred(0,evar0,var1)),
-				cClause(mList(cPred(1,var0)),cNEqual(evar0,var1),cNEqual(var1, var1))
+				cClause(cNotPred(d0AA,var0,var0),cPred(d1A,var1)),
+				cClause(cPred(d0AA,evar0,var1)),
+				cClause(mList(cPred(d1A,var0)),cNEqual(evar0,var1),cNEqual(var1, var1))
 		);
 	}
 	
 	// constants + pseudo constant
 	//	doTest(
-	//	cClause(cPred(0,evar1),cProp(1)),
-	//	cClause(cNotPred(0,a)),
+	//	cClause(cPred(d0A,evar1),cProp(1)),
+	//	cClause(cNotPred(d0A,a)),
 	//	cClause(mList(cProp(1)),cNEqual(evar1, a))
 	//	);
 	//	doTest(
-	//	cClause(cNotPred(0,evar1),cProp(1)),
-	//	cClause(cPred(0,a)),
+	//	cClause(cNotPred(d0A,evar1),cProp(1)),
+	//	cClause(cPred(d0A,a)),
 	//	cClause(mList(cProp(1)),cNEqual(evar1, a))
 	//	);
 
 	public void testRuleDoNotApply() {
 		// disjunctive clauses
 		doTest(
-				cClause(cPred(0,evar1),cProp(1)),
-				cClause(cNotPred(0,a)),
+				cClause(cPred(d0A,evar1),cProp(1)),
+				cClause(cNotPred(d0A,a)),
 				cClause(mList(cProp(1)),cNEqual(evar1, a))
 		);
 		doTest(
-				cClause(cPred(0,a),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cClause(cPred(d0A,a),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1, a))
 		);
 		doTest(
-				cClause(cPred(0,evar0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cClause(cPred(d0A,evar0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1, evar0))
 		);
 
 		// equivalence clauses
 		doTest(
-				cEqClause(cPred(0,evar0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cPred(d0A,evar0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cNotProp(1)),cNEqual(evar0, evar1))
 		);
 		doTest(
-				cEqClause(cNotPred(0,evar0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cNotPred(d0A,evar0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar0, var0))
 		);
 		doTest(
-				cEqClause(cPred(0,fvar0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cPred(d0A,fvar0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cNotProp(1)),cNEqual(evar0, var0))
 		);
 		doTest(
-				cEqClause(cNotPred(0,fvar0),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cNotPred(d0A,fvar0),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar0, evar1))
 		);
 		
 		doTest(
-				cEqClause(cPred(0,a),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cPred(d0A,a),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cNotProp(1)),cNEqual(evar1, a))
 		);
 		doTest(
-				cEqClause(cNotPred(0,a),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cNotPred(d0A,a),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(evar1, a))
 		);
 		doTest(
-				cEqClause(cPred(0,a),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cPred(d0A,a),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cNotProp(1)),cNEqual(evar1, a))
 		);
 		doTest(
-				cEqClause(cNotPred(0,a),cProp(1)),
-				cClause(cNotPred(0,evar1)),
+				cEqClause(cNotPred(d0A,a),cProp(1)),
+				cClause(cNotPred(d0A,evar1)),
 				cClause(mList(cProp(1)),cNEqual(a, evar1))
 		);
 
@@ -436,15 +441,15 @@ public class TestResolution extends AbstractInferrerTests {
 
 	public void test1833264() throws Exception {
 		doTest(
-				cClause(cNotProp(1),cNotPred(0, a),cNotProp(0)),
-				cClause(cPred(0,b)),
-				cClause(mList(cNotProp(1),cNotProp(0)),cNEqual(a,b)) //, cClause(cNotProp(1), cNotPred(0, a))
+				cClause(cNotProp(1),cNotPred(d0A, a),cNotProp(0)),
+				cClause(cPred(d0A,b)),
+				cClause(mList(cNotProp(1),cNotProp(0)),cNEqual(a,b)) //, cClause(cNotProp(1), cNotPred(d0A, a))
 		);
 	}
 	
 	public void testInitialization() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		Clause clause = cClause(cPred(0));
+		Clause clause = cClause(cProp(0));
 		try {
 			clause.infer(inferrer);
 			fail();
@@ -506,47 +511,47 @@ public class TestResolution extends AbstractInferrerTests {
 
 	public void testNoSubsumptionWithConstants() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		inferrer.setUnitClause(cClause(cPred(0,a)));
+		inferrer.setUnitClause(cClause(cPred(d0A,a)));
 		inferrer.setPosition(0);
-		Clause clause = cClause(cNotPred(0,b), cProp(1));
+		Clause clause = cClause(cNotPred(d0A,b), cProp(1));
 		clause.infer(inferrer);
 		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
 	public void testSubsumptionWithConstants() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		inferrer.setUnitClause(cClause(cPred(0,a)));
+		inferrer.setUnitClause(cClause(cPred(d0A,a)));
 		inferrer.setPosition(0);
-		Clause clause = cClause(cNotPred(0,a), cProp(1));
+		Clause clause = cClause(cNotPred(d0A,a), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(0,a), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(d0A,a), cProp(1))));
 	}
 	
 	public void testNoSubsumptionWithVariables() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		inferrer.setUnitClause(cClause(cPred(0,a)));
+		inferrer.setUnitClause(cClause(cPred(d0A,a)));
 		inferrer.setPosition(0);
-		Clause clause = cClause(cNotPred(0,x), cProp(1));
+		Clause clause = cClause(cNotPred(d0A,x), cProp(1));
 		clause.infer(inferrer);
 		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
 	public void testSubsumptionWithVariables() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		inferrer.setUnitClause(cClause(cPred(0,x)));
+		inferrer.setUnitClause(cClause(cPred(d0A,x)));
 		inferrer.setPosition(0);
-		Clause clause = cClause(cNotPred(0,a), cProp(1));
+		Clause clause = cClause(cNotPred(d0A,a), cProp(1));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(0,a), cProp(1))));
+		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(d0A,a), cProp(1))));
 	}
 	
 	public void testSubsumptionWithVariables2() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
-		inferrer.setUnitClause(cClause(cPred(0,x)));
+		inferrer.setUnitClause(cClause(cPred(d0A,x)));
 		inferrer.setPosition(0);
-		Clause clause = cClause(cNotPred(0,x), cPred(1,x,y));
+		Clause clause = cClause(cNotPred(d0A,x), cPred(d1AA,x,y));
 		clause.infer(inferrer);
-		assertTrue(inferrer.getSubsumedClause().equals( cClause(cNotPred(0,x), cPred(1,x,y))));
+		assertTrue(inferrer.getSubsumedClause().equals( cClause(cNotPred(d0A,x), cPred(d1AA,x,y))));
 	}
 	
 	

@@ -5,6 +5,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;
@@ -40,24 +43,24 @@ public class TestExistentialSimplification extends AbstractPPTest {
 					cClause(cProp(0))
 			),
 			new TestPair(
-					cClause(cPred(0,var0)),
-					cClause(cPred(0,var0))
+					cClause(cPred(d0A,var0)),
+					cClause(cPred(d0A,var0))
 			),
 			new TestPair(
-					cClause(cPred(0,evar0)),
-					cClause(cPred(0,newCons0))
+					cClause(cPred(d0A,evar0)),
+					cClause(cPred(d0A,newCons0))
 			),
 			new TestPair(
-					cClause(cPred(0,evar0,var0)),
-					cClause(cPred(0,evar0,var0))
+					cClause(cPred(d0AA,evar0,var0)),
+					cClause(cPred(d0AA,evar0,var0))
 			),
 			new TestPair(
-					cClause(cPred(0,evar0,var0)),
-					cClause(cPred(0,evar0,var0))
+					cClause(cPred(d0AA,evar0,var0)),
+					cClause(cPred(d0AA,evar0,var0))
 			),
 			new TestPair(
-					cClause(cPred(0,evar0,a)),
-					cClause(cPred(0,newCons0,a))
+					cClause(cPred(d0AA,evar0,a)),
+					cClause(cPred(d0AA,newCons0,a))
 			),
 			new TestPair(
 					cClause(cEqual(var0,evar0)),
@@ -70,29 +73,29 @@ public class TestExistentialSimplification extends AbstractPPTest {
 			
 			// non unit disjunctive
 			new TestPair(
-					cClause(cPred(0,evar0),cPred(1,evar1)),
-					cClause(cPred(0,newCons0),cPred(1,newCons1))
+					cClause(cPred(d0A,evar0),cPred(d1A,evar1)),
+					cClause(cPred(d0A,newCons0),cPred(d1A,newCons1))
 			),
 			
 			// FORALL in equivalence clauses
 			new TestPair(
-					cEqClause(cPred(0,evar0),cPred(1,evar1)),
-					cEqClause(cPred(0,evar0),cPred(1,evar1))
+					cEqClause(cPred(d0A,evar0),cPred(d1A,evar1)),
+					cEqClause(cPred(d0A,evar0),cPred(d1A,evar1))
 			),
 			//simple
 			new TestPair(
-					cEqClause(cPred(0,fvar0),cPred(1,var0)),
-					cEqClause(cPred(0,fvar0),cPred(1,var0))
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,var0)),
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,var0))
 			),
 			//2 foralls
 			new TestPair(
-					cEqClause(cPred(0,fvar0),cPred(1,fvar0)),
-					cEqClause(cPred(0,fvar0),cPred(1,fvar0))
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,fvar0)),
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,fvar0))
 			),
 			// mixed
 			new TestPair(
-					cEqClause(cPred(0,fvar0),cPred(1,evar0)),
-					cEqClause(cPred(0,fvar0),cPred(1,evar0))
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,evar0)),
+					cEqClause(cPred(d0A,fvar0),cPred(d1A,evar0))
 			),
 			
 	};
@@ -128,6 +131,6 @@ public class TestExistentialSimplification extends AbstractPPTest {
 	
 	
 //	public void testExistentialBlocking() {
-//		Clause clause = cClause(cPred(0, var0, evar0));
+//		Clause clause = cClause(cPred(d0AA, var0, evar0));
 //	}
 }

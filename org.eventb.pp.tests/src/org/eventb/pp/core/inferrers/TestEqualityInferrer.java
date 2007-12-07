@@ -5,6 +5,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
@@ -41,20 +42,20 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 	
 	public void testSimpleDisjunctiveClausesWithVariables() {
 		doTest(
-				cClause(cPred(0,x),ab), mList(ab), EMPTY, mList(cClause(ab)), 
+				cClause(cPred(d0A,x),ab), mList(ab), EMPTY, mList(cClause(ab)), 
 				TRUE
 		);
 		doTest(
-				cClause(cPred(0,x),ab), EMPTY, mList(ab), mList(cClause(ab)), 
-				cClause(cPred(0,x))
+				cClause(cPred(d0A,x),ab), EMPTY, mList(ab), mList(cClause(ab)), 
+				cClause(cPred(d0A,x))
 		);
 		doTest(
-				cClause(cPred(0,x),nab), mList(nab), EMPTY, mList(cClause(nab)),
+				cClause(cPred(d0A,x),nab), mList(nab), EMPTY, mList(cClause(nab)),
 				TRUE
 		);
 		doTest(
-				cClause(cPred(0,x),nab), EMPTY, mList(nab), mList(cClause(nab)), 
-				cClause(cPred(0,x))
+				cClause(cPred(d0A,x),nab), EMPTY, mList(nab), mList(cClause(nab)), 
+				cClause(cPred(d0A,x))
 		);		
 	}
 

@@ -1,11 +1,17 @@
 package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.descriptor;
+
+import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.pp.core.elements.Clause;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -24,28 +30,34 @@ import org.eventb.internal.pp.loader.clause.ClauseBuilder;
  */
 public class TestSameObjects extends AbstractPPTest {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
 	
+	private static final Constant aS = cCons("a", S);
+	private static final Constant bT = cCons("b", T);
 
-	private static Variable var0 = Util.cVar(1,S);
-	private static Variable var1 = Util.cVar(2,T);
-	
+	private static final Variable var0 = cVar(1, S);
+	private static final Variable var1 = cVar(2, T);
+
+	private static final PredicateLiteralDescriptor d0S = descriptor(0, S);
+	private static final PredicateLiteralDescriptor d1T = descriptor(1, T);
+
 	private static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
-		env.addName("S", ff.makePowerSetType(ff.makeGivenType("S")));
-		env.addName("T", ff.makePowerSetType(ff.makeGivenType("T")));
+		env.addGivenSet("S");
+		env.addGivenSet("T");
 	}
 	
-	public void testSimpleConstant () {
-		String formula = "∀x,y·a ∈ S ∨ b ∈ T ∨ x ∈ S ∨ y ∈ T";
-		
-		ClauseBuilder result = Util.doPhaseOneAndTwo(formula, env, new MyVariableTable());
-		
+	public void testSimpleConstant() {
+		final String formula = "∀x,y·a ∈ S ∨ b ∈ T ∨ x ∈ S ∨ y ∈ T";
+		final ClauseBuilder result = Util.doPhaseOneAndTwo(formula, env,
+				new MyVariableTable());
+
 		// the expected result is a non-unit clause Sa ∨ Ta ∨ Sx ∨ Tx
-		assertEquals(result.getClauses().size(), 1);
-		Clause clause = result.getClauses().iterator().next();
-		assertEquals(cClause(cPred(0, a),cPred(0, var0),cPred(1, b),cPred(1, var1)), clause);
-		
+		final List<Clause> clauses = result.getClauses();
+		assertEquals(clauses.size(), 1);
+		final Clause clause = clauses.iterator().next();
+		assertEquals(cClause(cPred(d0S, aS), cPred(d0S, var0), cPred(d1T, bT),
+				cPred(d1T, var1)), clause);
 	}
 	
 	static class MyVariableTable extends VariableTable {
@@ -55,9 +67,10 @@ public class TestSameObjects extends AbstractPPTest {
 		}
 		
 		@Override
+		@SuppressWarnings("synthetic-access")
 		public Constant getConstant(String name, Sort sort) {
-			if (name.equals("a")) return a;
-			if (name.equals("b")) return b;
+			if (name.equals("a")) return aS;
+			if (name.equals("b")) return bT;
 			return super.getConstant(name, sort);
 		}
 

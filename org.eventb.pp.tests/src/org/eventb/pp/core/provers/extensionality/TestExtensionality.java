@@ -1,13 +1,17 @@
 package org.eventb.pp.core.provers.extensionality;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
+import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
-import static org.eventb.internal.pp.core.elements.terms.Util.descriptor;
+import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0APA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1APA;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.ArrayList;
@@ -25,32 +29,31 @@ import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
-import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
 
 public class TestExtensionality extends AbstractPPTest {
 
-	private static PredicateLiteralDescriptor P0 = descriptor(0, 2, 2, mList(A,PA));
-	private static PredicateLiteralDescriptor P1 = descriptor(1, 3, 3, mList(A,B,PAB));
+	private static PredicateLiteralDescriptor P0 = d0APA;
 	
-	private static Variable x = Util.cVar(1,A);
-	private static Variable y = Util.cVar(2,A);
-	private static Variable py = Util.cVar(3,PA);
+	private static Variable x = cVar(1,A);
+	private static Variable y = cVar(2,A);
+	private static Variable py = cVar(3,PA);
 	
-	private static Constant e = Util.cCons("e",A);
-	private static Constant f = Util.cCons("f",A);
+	private static Constant e = cCons("e",A);
+	private static Constant f = cCons("f",A);
 	
-	private static Constant a1 = Util.cCons("a1", PA);
-	private static Constant a2 = Util.cCons("a2", PA);
-	private static Constant a3 = Util.cCons("a3", PA);
-	private static Constant a4 = Util.cCons("a4", PA);
-	static Constant c0 = Util.cCons("0", PA);
+	private static Constant a1 = cCons("a1", PA);
+	private static Constant a2 = cCons("a2", PA);
+	private static Constant a3 = cCons("a3", PA);
+	private static Constant a4 = cCons("a4", PA);
+	
+	private static Constant c0 = cCons("0", A);
 	
 	public void testAllowedInputWithEquality() {
 		doTest(cClause(cProp(0)), null);
-		doTest(cClause(cPred(0, x)), null);
+		doTest(cClause(cPred(d0A, x)), null);
 		doTest(cClause(cEqual(a, b)), null);
 		doTest(cClause(cEqual(a, b)), null);
 		doTest(cClause(new ArrayList<Literal<?, ?>>(),cEqual(a1, a2)),null, P0, PA);
@@ -60,30 +63,31 @@ public class TestExtensionality extends AbstractPPTest {
 	
 	public void testEquality() {
 		doTest(	cClause(cEqual(a1,a2)),
-				cEqClause(cPred(0,x,a1),cPred(0,x,a2)),
+				cEqClause(cPred(P0,x,a1),cPred(P0,x,a2)),
 				P0, PA
 		);
 	}
 	
 	public void testInEquality() {
-		doTest(	cClause(cNEqual(a1,a2)),
-				cEqClause(cNotPred(0,c0,a1),cPred(0,c0,a2)),
-				new VariableContext() {
-					@Override
-					public Constant getNextFreshConstant(Sort sort) {return c0;}
-				},
-				P0, PA
-		);
+		final VariableContext variableContext = new VariableContext() {
+			@Override
+			@SuppressWarnings("synthetic-access")
+			public Constant getNextFreshConstant(Sort sort) {
+				return c0;
+			}
+		};
+		doTest(cClause(cNEqual(a1, a2)), cEqClause(cNotPred(P0, c0, a1),
+				cPred(P0, c0, a2)), variableContext, P0, PA);
 	}
 	
 	public void testAllowedInputWithEquivalence() {
 		doTest(cEqClause(cPred(P0,x,a1),cPred(P0,a,a2)),null);
 		doTest(cClause(cPred(P0,x,a1),cPred(P0,x,a2)),null);
 		doTest(cEqClause(cPred(P0,x,a1),cPred(P0,y,a2)),null);
-		doTest(cEqClause(mList(cPred(0,x,a1),cPred(0,x,a2)),cEqual(a1, a2)),null, P0, PA);
-		doTest(cEqClause(cProp(1),cPred(0,x,a1),cPred(0,x,a2)),null, P0, PA);
-		doTest(cEqClause(cEqual(a1,a2),cPred(0,x,a1),cPred(0,x,a2)),null);
-		doTest(cEqClause(cPred(P0,x,a1),cPred(P1,x,a2)),null,P0,PA);
+		doTest(cEqClause(mList(cPred(P0,x,a1),cPred(P0,x,a2)),cEqual(a1, a2)),null, P0, PA);
+		doTest(cEqClause(cProp(1),cPred(P0,x,a1),cPred(P0,x,a2)),null, P0, PA);
+		doTest(cEqClause(cEqual(a1,a2),cPred(P0,x,a1),cPred(P0,x,a2)),null);
+		doTest(cEqClause(cPred(P0,x,a1),cPred(d1APA,x,a2)),null,P0,PA);
 		doTest(cEqClause(cNotPred(P0,x,a1),cPred(P0,x,a2)), null, P0, PA);
 		doTest(cEqClause(cNotPred(P0,e,a1),cPred(P0,f,a2)), null, P0, PA);
 		doTest(cEqClause(cNotPred(P0,x,a1),cNotPred(P0,x,py)), null, P0, PA);

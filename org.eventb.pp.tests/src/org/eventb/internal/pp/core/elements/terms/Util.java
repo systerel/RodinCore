@@ -1,5 +1,7 @@
 package org.eventb.internal.pp.core.elements.terms;
 
+import static junit.framework.Assert.assertTrue;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -69,7 +72,8 @@ public class Util {
 	
 	public static Predicate parsePredicate(String predicate, ITypeEnvironment environment) {
 		 Predicate pred = ff.parsePredicate(predicate).getParsedPredicate();
-		 pred.typeCheck(environment);
+		 final ITypeCheckResult tcResult = pred.typeCheck(environment);
+		 assertTrue("TypeCheck failed", tcResult.isSuccess());
 		 return pred;
 	}
 
@@ -211,6 +215,10 @@ public class Util {
 	}
 	
 	static Sort A = Util.mSort(ff.makeGivenType("A"));
+	static Sort B = Util.mSort(ff.makeGivenType("B"));
+	static Sort PA = Util.mSort(ff.makePowerSetType(ff.makeGivenType("A")));
+	static Sort PAB = Util.mSort(ff.makePowerSetType(ff.makeProductType(ff
+			.makeGivenType("A"), ff.makeGivenType("B"))));
 	
 	public static Constant cCons(String name, Sort sort) {
 		return new Constant(name, sort);
@@ -283,30 +291,35 @@ public class Util {
 	public static Expn cExpn(Term... terms) {
 		return new Expn(Arrays.asList(terms));
 	}
+
+	private static final PredicateTable table = new PredicateTable();
 	
-	private static PredicateLiteralDescriptor descriptor(int index) {
-		PredicateTable table = new PredicateTable();
-		return table.newDescriptor(index, 0, 0, false, new ArrayList<Sort>());
-	}
+	// Proposition descriptors
+	public static final PredicateLiteralDescriptor d0 = descriptor(0);
+	public static final PredicateLiteralDescriptor d1 = descriptor(1);
+	public static final PredicateLiteralDescriptor d2 = descriptor(2);
+	public static final PredicateLiteralDescriptor d3 = descriptor(3);
+	public static final PredicateLiteralDescriptor d4 = descriptor(4);
 	
-	public static PredicateLiteralDescriptor descriptor(int index, int arity, int realArity, List<Sort> sortList) {
-		PredicateTable table = new PredicateTable();
-		return table.newDescriptor(index, arity, realArity, false, sortList);
+	// Predicate descriptors
+	public static final PredicateLiteralDescriptor d0A = descriptor(0, A);
+	public static final PredicateLiteralDescriptor d0AA = descriptor(0, A, A);
+	public static final PredicateLiteralDescriptor d0APA = descriptor(0, A, PA);
+	public static final PredicateLiteralDescriptor d0PAPA = descriptor(0, PA, PA);
+	public static final PredicateLiteralDescriptor d0AAA = descriptor(0, A, A, A);
+	public static final PredicateLiteralDescriptor d1A = descriptor(1, A);
+	public static final PredicateLiteralDescriptor d1AA = descriptor(1, A, A);
+	public static final PredicateLiteralDescriptor d1APA = descriptor(1, A, PA);
+	public static final PredicateLiteralDescriptor d1ABPAB = descriptor(1, A, B, PAB);
+	public static final PredicateLiteralDescriptor d2A = descriptor(2, A);
+	public static final PredicateLiteralDescriptor d2AA = descriptor(2, A, A);
+	public static final PredicateLiteralDescriptor d3A = descriptor(3, A);
+
+	public static PredicateLiteralDescriptor descriptor(int index, Sort... sorts) {
+		final int arity = sorts.length;
+		return table.newDescriptor(index, arity, arity, false, Arrays.asList(sorts));
 	}
 
-	public static PredicateLiteralDescriptor labelDescriptor(int index, int arity, int realArity, List<Sort> sortList) {
-		PredicateTable table = new PredicateTable();
-		return table.newDescriptor(index, arity, realArity, true, sortList);
-	}
-	
-	public static ComplexPredicateLiteral cPred(int index, SimpleTerm... terms) {
-		return new ComplexPredicateLiteral(descriptor(index), true, Arrays.asList(terms));
-	}
-	
-	public static ComplexPredicateLiteral cNotPred(int index, SimpleTerm... terms) {
-		return new ComplexPredicateLiteral(descriptor(index), false, Arrays.asList(terms));
-	}
-	
 	public static ComplexPredicateLiteral cPred(PredicateLiteralDescriptor descriptor, SimpleTerm... terms) {
 		return new ComplexPredicateLiteral(descriptor, true, Arrays.asList(terms));
 	}

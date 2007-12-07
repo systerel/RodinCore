@@ -5,6 +5,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cNotPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNotProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
@@ -33,11 +36,11 @@ public class TestConditions extends AbstractPPTest {
 		initDebug();
 		
 		List<Clause> clauses = mList(
-				cClause(cPred(0, a), cPred(1, a), cPred(2, a)),
+				cClause(cPred(d0A, a), cPred(d1A, a), cPred(d2A, a)),
 				cClause(cProp(3), Util.cEqual(a, b)),
-				cClause(cNotPred(0, b)),
-				cClause(cNotPred(1, b)),
-				cClause(cNotPred(2, b)),
+				cClause(cNotPred(d0A, b)),
+				cClause(cNotPred(d1A, b)),
+				cClause(cNotPred(d2A, b)),
 				cClause(cNotProp(3))
 		);
 		

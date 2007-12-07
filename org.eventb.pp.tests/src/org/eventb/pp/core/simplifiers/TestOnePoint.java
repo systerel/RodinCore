@@ -5,6 +5,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import org.eventb.internal.pp.core.elements.Clause;
@@ -28,34 +31,34 @@ public class TestOnePoint extends AbstractPPTest {
 	public void testOnePoint() {
 		// standard test
 			testOnePoint(
-					cClause(cNEqual(var0, a), cPred(0, var0)),
-					cClause(cPred(0, a))
+					cClause(cNEqual(var0, a), cPred(d0A, var0)),
+					cClause(cPred(d0A, a))
 			);
 			// no rule applies
 			testOnePoint(
-					cClause(cNEqual(a, b), cPred(0, a)),
-					cClause(cNEqual(a, b), cPred(0, a))
+					cClause(cNEqual(a, b), cPred(d0A, a)),
+					cClause(cNEqual(a, b), cPred(d0A, a))
 			);
 			// no rule applies either, variable is in expression
 			// border case, see what to do with it
 			// TODO this test will change with arithmetic
 //			testOnePoint(
-//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0)),
-//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(0, var0))
+//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(d0A, var0)),
+//					cClause(cNEqual(var0, cPlus(var1,var0)), cPred(d0A, var0))
 //			);
 			testOnePoint(
-					cClause(cNEqual(var0, var00), cPred(0, var0)),
-					cClause(cPred(0, var00))
+					cClause(cNEqual(var0, var00), cPred(d0A, var0)),
+					cClause(cPred(d0A, var00))
 			);
 			// more variables
 			testOnePoint(
-					cClause(cNEqual(var0, a), cNEqual(var1, b), cPred(0, var0, var1)),
-					cClause(cPred(0, a, b))
+					cClause(cNEqual(var0, a), cNEqual(var1, b), cPred(d0AA, var0, var1)),
+					cClause(cPred(d0AA, a, b))
 			);
 			// more literals
 			testOnePoint(
-					cClause(cNEqual(var0, a), cPred(0, var0), cPred(1, var0)),
-					cClause(cPred(0, a), cPred(1, a))
+					cClause(cNEqual(var0, a), cPred(d0A, var0), cPred(d1A, var0)),
+					cClause(cPred(d0A, a), cPred(d1A, a))
 			);
 			// different literals
 			testOnePoint(
@@ -71,12 +74,12 @@ public class TestOnePoint extends AbstractPPTest {
 			// EQUIVALENCE
 			// standard test
 			testOnePoint(
-					cEqClause(cNEqual(var0, a), cPred(0, var0)),
-					cEqClause(cNEqual(var0, a), cPred(0, var0))
+					cEqClause(cNEqual(var0, a), cPred(d0A, var0)),
+					cEqClause(cNEqual(var0, a), cPred(d0A, var0))
 			);
 			testOnePoint(
-					cEqClause(mList(cPred(0, var0),cPred(1,var0)), cNEqual(var0, a)),
-					cEqClause(cPred(0, a),cPred(1, a))
+					cEqClause(mList(cPred(d0A, var0),cPred(d1A,var0)), cNEqual(var0, a)),
+					cEqClause(cPred(d0A, a),cPred(d1A, a))
 			);
 			testOnePoint(
 					cEqClause(mList(cNEqual(var0,a),cNEqual(a,var0)),cNEqual(var0,a)),
@@ -85,14 +88,14 @@ public class TestOnePoint extends AbstractPPTest {
 			
 			//
 			testOnePoint(
-					cEqClause(mList(cPred(0,var0),cPred(1,var0)),cNEqual(var0,a),cNEqual(b,b)),
-					cEqClause(mList(cPred(0,a),cPred(1,a)),cNEqual(b,b))
+					cEqClause(mList(cPred(d0A,var0),cPred(d1A,var0)),cNEqual(var0,a),cNEqual(b,b)),
+					cEqClause(mList(cPred(d0A,a),cPred(d1A,a)),cNEqual(b,b))
 			);
 			
 			// Disjunctive with conditions
 			testOnePoint(
-					cClause(mList(cPred(0,var0)),cNEqual(var0,a)),
-					cClause(cPred(0,a))
+					cClause(mList(cPred(d0A,var0)),cNEqual(var0,a)),
+					cClause(cPred(d0A,a))
 			);
 			
 			// EQUALITY alone
@@ -124,8 +127,8 @@ public class TestOnePoint extends AbstractPPTest {
 	public void testNotOnePoint () {
 			// standard test
 			testOnePoint(
-					cClause(cEqual(var0, a), cPred(0, var0)),
-					cClause(cEqual(var0, a), cPred(0, var0))
+					cClause(cEqual(var0, a), cPred(d0A, var0)),
+					cClause(cEqual(var0, a), cPred(d0A, var0))
 			);
 			
 			
@@ -136,21 +139,21 @@ public class TestOnePoint extends AbstractPPTest {
 			
 			// EXISTENTIAL
 			testOnePoint(
-					cClause(cPred(0,var0),cNEqual(evar0,var0)),
-					cClause(cPred(0,var0),cNEqual(evar0,var0))
+					cClause(cPred(d0A,var0),cNEqual(evar0,var0)),
+					cClause(cPred(d0A,var0),cNEqual(evar0,var0))
 			);
 			testOnePoint(
-					cClause(cPred(0,var0),cNEqual(var0,evar0)),
-					cClause(cPred(0,var0),cNEqual(var0,evar0))
+					cClause(cPred(d0A,var0),cNEqual(var0,evar0)),
+					cClause(cPred(d0A,var0),cNEqual(var0,evar0))
 			);
 			testOnePoint(
-					cClause(cPred(0,var0),cPred(1,var0),cNEqual(evar0,var0)),
-					cClause(cPred(0,var0),cPred(1,var0),cNEqual(evar0,var0))
+					cClause(cPred(d0A,var0),cPred(d1A,var0),cNEqual(evar0,var0)),
+					cClause(cPred(d0A,var0),cPred(d1A,var0),cNEqual(evar0,var0))
 			);
 			
 			testOnePoint(
-					cClause(cPred(0, var0),cEqual(evar0, evar0)),
-					cClause(cPred(0, var0),cEqual(evar0, evar0))
+					cClause(cPred(d0A, var0),cEqual(evar0, evar0)),
+					cClause(cPred(d0A, var0),cEqual(evar0, evar0))
 			);
 	}
 	

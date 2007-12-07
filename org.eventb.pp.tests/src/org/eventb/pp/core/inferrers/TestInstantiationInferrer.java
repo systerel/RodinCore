@@ -4,6 +4,8 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cEqClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
+import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.eventb.internal.pp.core.elements.terms.Util.d2AA;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
@@ -35,13 +37,13 @@ public class TestInstantiationInferrer extends AbstractInferrerTests {
 					cClause(cProp(0))
 			),
 			new TestPair(
-					cClause(cPred(1,x)),
+					cClause(cPred(d1A,x)),
 					x,
 					a,
-					cClause(cPred(1,a))
+					cClause(cPred(d1A,a))
 			),
 //			new TestPair(
-//					cClause(cPred(1,x)),
+//					cClause(cPred(d1A,x)),
 //					x,
 //					cPlus(a,b,c),
 //					cClause(cPred(1,cPlus(a,b,c)))
@@ -65,16 +67,16 @@ public class TestInstantiationInferrer extends AbstractInferrerTests {
 //					cClause(cPred(1,cPlus(cPlus(a,z),y)))
 //			),
 			new TestPair(
-					cClause(cPred(1,x),cPred(2,x,y)),
+					cClause(cPred(d1A,x),cPred(d2AA,x,y)),
 					x,
 					a,
-					cClause(cPred(1,a),cPred(2,a,y))
+					cClause(cPred(d1A,a),cPred(d2AA,a,y))
 			),
 			new TestPair(
-					cEqClause(cPred(1,x),cPred(2,x,y)),
+					cEqClause(cPred(d1A,x),cPred(d2AA,x,y)),
 					x,
 					a,
-					cEqClause(cPred(1,a),cPred(2,a,y))
+					cEqClause(cPred(d1A,a),cPred(d2AA,a,y))
 			),
 			
 	};
