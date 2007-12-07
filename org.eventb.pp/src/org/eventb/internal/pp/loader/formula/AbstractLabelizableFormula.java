@@ -54,6 +54,7 @@ public abstract class AbstractLabelizableFormula<T extends IndexedDescriptor>
 		ClauseBuilder.debugEnter(this);
 		ClauseResult result;
 		if (manager.hasLabel(this)) {
+			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Manager contains label for " +this );
 			Literal<?, ?> literal = getLabelPredicate(termList, context);
 			prefix.addLiteralToAllLists(literal);
 			result = prefix;
