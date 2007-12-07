@@ -26,10 +26,8 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
-import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
-import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.tracing.ExtensionalityOrigin;
 
@@ -150,41 +148,42 @@ public class ExtensionalityProver implements IProverModule {
 	}
 
 	private Clause getEquivalence(Clause clause, EqualityLiteral equality) {
-		Sort sort = equality.getSort();
-		PredicateLiteralDescriptor descriptor = predicateTable.getDescriptor(sort);
-		List<SimpleTerm> terms1 = new ArrayList<SimpleTerm>();
-		List<SimpleTerm> terms2 = new ArrayList<SimpleTerm>();
-		PredicateLiteral literal1,literal2;
-		if (equality.isPositive()) {
-			int i = 1;
-			for (Sort variableSort : descriptor.getSortList()) {
-				if (i<descriptor.getArity()) {
-					Variable variable = variableContext.getNextVariable(variableSort);
-					terms1.add(variable);
-					terms2.add(variable);
-					i++;
-				}
-			}
-		}
-		else {
-			int i = 1;
-			for (Sort variableSort : descriptor.getSortList()) {
-				if (i<descriptor.getArity()) {
-					Constant constant = variableContext.getNextFreshConstant(variableSort);
-					terms1.add(constant);
-					terms2.add(constant);
-					i++;
-				}
-			}
-		}
+		final boolean positive = equality.isPositive();
+		final Sort sort = equality.getSort();
+		final PredicateLiteralDescriptor descriptor = predicateTable
+				.getDescriptor(sort);
+		final List<SimpleTerm> terms1 = new ArrayList<SimpleTerm>();
+		final List<SimpleTerm> terms2 = new ArrayList<SimpleTerm>();
+		final List<Sort> sorts = descriptor.getSortList();
+		final List<Sort> leftSorts = sorts.subList(0, sorts.size() - 1);
+		addLeftTerms(leftSorts, terms1, terms2, positive);
 		terms1.add(equality.getTerm1());
 		terms2.add(equality.getTerm2());
-		assert terms1.size() == terms2.size() && terms1.size() == descriptor.getArity();
-		literal1 = new ComplexPredicateLiteral(descriptor,equality.isPositive(),terms1);
-		literal2 = new ComplexPredicateLiteral(descriptor,true,terms2);
-		return cf.makeEquivalenceClause(new ExtensionalityOrigin(clause), getPredicateLiterals(literal1, literal2),
-				new ArrayList<EqualityLiteral>(), new ArrayList<ArithmeticLiteral>(),
+
+		final PredicateLiteral literal1 = new ComplexPredicateLiteral(
+				descriptor, positive, terms1);
+		final PredicateLiteral literal2 = new ComplexPredicateLiteral(
+				descriptor, true, terms2);
+		return cf.makeEquivalenceClause(new ExtensionalityOrigin(clause),
+				getPredicateLiterals(literal1, literal2),
+				new ArrayList<EqualityLiteral>(),
+				new ArrayList<ArithmeticLiteral>(),
 				new ArrayList<EqualityLiteral>());
+	}
+
+	private void addLeftTerms(List<Sort> sorts, List<SimpleTerm> terms1,
+			List<SimpleTerm> terms2, boolean positive) {
+
+		for (final Sort sort : sorts) {
+			final SimpleTerm term;
+			if (positive) {
+				term = variableContext.getNextVariable(sort);
+			} else {
+				term = variableContext.getNextFreshConstant(sort);
+			}
+			terms1.add(term);
+			terms2.add(term);
+		}
 	}
 	
 	private List<PredicateLiteral> getPredicateLiterals(PredicateLiteral literal1, PredicateLiteral literal2) {
