@@ -28,9 +28,27 @@ public abstract class PredicateLiteral extends Literal<PredicateLiteral,SimpleTe
 	final protected PredicateLiteralDescriptor descriptor;
 	final protected boolean isPositive;
 	
+	// Checks that the arguments are compatible with the predicate descriptor
+	private static boolean checkArgs(PredicateLiteralDescriptor descriptor,
+			List<SimpleTerm> terms) {
+
+		final List<Sort> sorts = descriptor.getSortList();
+		final int arity = sorts.size();
+		if (arity != terms.size()) {
+			return false;
+		}
+		for (int i = 0; i < arity; ++ i) {
+			final SimpleTerm term = terms.get(i);
+			if (!sorts.get(i).equals(term.getSort())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public PredicateLiteral(PredicateLiteralDescriptor descriptor, boolean isPositive, List<SimpleTerm> terms) {
 		super(terms, 37*descriptor.hashCode()+(isPositive?0:1));
-		
+		assert checkArgs(descriptor, terms);
 		this.descriptor = descriptor;
 		this.isPositive = isPositive;
 	}
