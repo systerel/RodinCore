@@ -101,7 +101,8 @@ public class ResolutionResolver implements IResolver {
 	
 	private boolean nextPosition() {
 		if (currentMatched == null) return false;
-		for (int i = currentPosition+1; i < currentMatched.getPredicateLiteralsSize(); i++) {
+		final int predicateLiteralsSize = currentMatched.getPredicateLiteralsSize();
+		for (int i = currentPosition+1; i < predicateLiteralsSize; i++) {
 			PredicateLiteral matcherPredicate = currentMatcher.getPredicateLiteral(0);
 			if (currentMatched.matchesAtPosition(matcherPredicate.getDescriptor(), matcherPredicate.isPositive(), i)) {
 				currentPosition = i;
