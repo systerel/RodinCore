@@ -111,15 +111,15 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	 */
 	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal) {
 		this.originalPredicate = originalPredicate;
-		build(predicate, isGoal,false);
+		buildInternal(predicate, isGoal);
 	}
 	
 	public void build(Predicate predicate, boolean isGoal) {
 		this.originalPredicate = predicate;
-		build(predicate, isGoal,false);
+		buildInternal(predicate, isGoal);
 	}
 	
-	private void build(Predicate predicate, boolean isGoal, boolean dummy) {
+	private void buildInternal(Predicate predicate, boolean isGoal) {
 		assert predicate != null && (predicate.getTag() == Formula.IN
 			|| predicate.getTag() == Formula.EXISTS || predicate.getTag() == Formula.FORALL
 			|| predicate.getTag() == Formula.LOR || predicate.getTag() == Formula.EQUAL
@@ -128,10 +128,13 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 			|| predicate.getTag() == Formula.LEQV || predicate.getTag() == Formula.LE
 			|| predicate.getTag() == Formula.LT || predicate.getTag() == Formula.GE
 			|| predicate.getTag() == Formula.GT) : "Unexpected operator: "+predicate+"";
-		assert predicate.isTypeChecked():predicate+"";
+		assert predicate.isTypeChecked():predicate;
 		
-		if (DEBUG) debug("========================================");
-		if (DEBUG) debug("Loading "+(isGoal?"goal":"hypothese")+": " + predicate);
+		if (DEBUG) {
+			debug("========================================");
+			debug("Loading " + (isGoal ? "goal" : "hypothese") + ": "
+					+ predicate);
+		}
 	
 		this.result = new Stack<NormalizedFormula>();
 		this.termBuilder = new TermBuilder(result);
@@ -146,8 +149,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		assert result.size() == 1;
 		
 		if (isGoal) {
-			// we inverse the sign
-			res.getSignature().switchSign();
+			res.getSignature().negate();
 		}
 		context.addResult(res);
 	}
