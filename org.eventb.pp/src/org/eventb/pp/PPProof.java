@@ -11,6 +11,7 @@ package org.eventb.pp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -104,9 +105,7 @@ public class PPProof {
 	}
 	
 	private void proofFound(InputPredicate predicate) {
-		Tracer tracer;
-		if (predicate.isGoal) tracer = new Tracer(true); 
-		else tracer = new Tracer(predicate.originalPredicate, false);
+		final SimpleTracer tracer = new SimpleTracer(predicate);
 		result = new PPResult(Result.valid, tracer);
 	}
 	
@@ -117,13 +116,13 @@ public class PPProof {
 	public List<Predicate> getTranslatedHypotheses() {
 		List<Predicate> result = new ArrayList<Predicate>();
 		for (InputPredicate hypothesis : hypotheses) {
-			result.add(hypothesis.translatedPredicate);
+			result.add(hypothesis.getTranslatedPredicate());
 		}
 		return result;
 	}
 	
 	public Predicate getTranslatedGoal() {
-		return goal.translatedPredicate;
+		return goal.getTranslatedPredicate();
 	}
 	
 	/**
@@ -224,76 +223,88 @@ public class PPProof {
 	}
 	
 	private static class InputPredicate {
-		private static FormulaFactory ff = FormulaFactory.getDefault();
 
-		boolean isGoal;
-		Predicate originalPredicate;
-		Predicate translatedPredicate;
-		
+		private static final FormulaFactory ff = FormulaFactory.getDefault();
+
+		private static Predicate translate(Predicate predicate) {
+			assert predicate.isTypeChecked();
+
+			Predicate newPredicate;
+			newPredicate = Translator.decomposeIdentifiers(predicate, ff);
+			newPredicate = Translator
+					.reduceToPredicateCalulus(newPredicate, ff);
+			newPredicate = Translator.simplifyPredicate(newPredicate, ff);
+			newPredicate = newPredicate.flatten(ff);
+
+			if (newPredicate.isTypeChecked()) {
+				if (DEBUG) {
+					debug("Translated: " + predicate + " to: " + newPredicate);
+				}
+				return newPredicate;
+			}
+			if (DEBUG) {
+				debug("Translator generated untype-checked predicate: "
+						+ newPredicate);
+			}
+			PPCore.log("Translator generetad untyped predicate "
+							+ newPredicate);
+			return null;
+		}
+
+		final boolean isGoal;
+		final Predicate originalPredicate;
+		private Predicate translatedPredicate;
+
 		public InputPredicate(Predicate originalPredicate, boolean isGoal) {
 			this.originalPredicate = originalPredicate;
 			this.isGoal = isGoal;
 		}
-		
+
 		public boolean loadPhaseOne(PredicateBuilder builder) {
-			if (translatedPredicate == null) throw new IllegalStateException("Translator should be invoked first");
+			if (translatedPredicate == null) {
+				throw new IllegalStateException(
+						"Translator should be invoked first");
+			}
 			assert translatedPredicate.isTypeChecked();
-				
-			if (translatedPredicate.getTag() == Formula.BTRUE && isGoal) {
-				return true;
+
+			if (translatedPredicate.getTag() == Formula.BTRUE) {
+				return isGoal;
 			}
-			if (translatedPredicate.getTag() == Formula.BFALSE && !isGoal) {
-				return true;
-			}
-			if (translatedPredicate.getTag() == Formula.BTRUE && !isGoal) {
-				return false;
-			}
-			if (translatedPredicate.getTag() == Formula.BFALSE && isGoal) {
-				return false;
+			if (translatedPredicate.getTag() == Formula.BFALSE) {
+				return !isGoal;
 			}
 			builder.build(translatedPredicate, originalPredicate, isGoal);
 			return false;
 		}
-		
+
 		public void translate() {
-			translate(originalPredicate);
+			translatedPredicate = translate(originalPredicate);
 		}
-		
-		private void translate(Predicate predicate) {
-			assert predicate.isTypeChecked();
-			
-			Predicate newPredicate;
-			newPredicate = Translator.decomposeIdentifiers(predicate, ff);
-			newPredicate = Translator.reduceToPredicateCalulus(newPredicate, ff);
-			newPredicate = Translator.simplifyPredicate(newPredicate, ff);
-			newPredicate = newPredicate.flatten(ff);
-			
-			if (newPredicate.isTypeChecked()) {
-				translatedPredicate = newPredicate;
-				if (DEBUG) debug("Translated: "+predicate+" to: "+newPredicate);
-			} else {
-				PPCore.log("Translator generetad untyped predicate " + newPredicate);
-				if (DEBUG) debug("Translator generated untype-checked predicate: "+ newPredicate);
-			}
+
+		public Predicate getTranslatedPredicate() {
+			return translatedPredicate;
 		}
-	
 	}
 	
-	private static class Tracer implements ITracer {
-		private List<Predicate> originalPredicates = new ArrayList<Predicate>();
-		private boolean goalNeeded;
+	private static final class SimpleTracer implements ITracer {
+		private final Predicate hypothesis;
+		private final boolean goalNeeded;
 		
-		public Tracer(Predicate originalPredicate, boolean goalNeeded) {
-			this.originalPredicates.add(originalPredicate);
-			this.goalNeeded = goalNeeded;
-		}
-		
-		public Tracer(boolean goalNeeded) {
-			this.goalNeeded = goalNeeded;
+		public SimpleTracer(InputPredicate ip) {
+			if (ip.isGoal) {
+				this.hypothesis = null;
+				this.goalNeeded = true;
+			} else {
+				this.hypothesis = ip.originalPredicate;
+				this.goalNeeded = false;
+			}
 		}
 
 		public List<Predicate> getNeededHypotheses() {
-			return originalPredicates;
+			if (hypothesis != null) {
+				return Collections.singletonList(hypothesis);
+			}
+			return Collections.emptyList();
 		}
 
 		public boolean isGoalNeeded() {
