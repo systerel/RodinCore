@@ -119,16 +119,34 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		buildInternal(predicate, isGoal);
 	}
 	
+	private boolean checkPredicateTag(Predicate predicate) {
+		if (predicate == null) {
+			return false;
+		}
+		switch (predicate.getTag()) {
+		case Formula.EXISTS:
+		case Formula.FORALL:
+		case Formula.NOT:
+		case Formula.LIMP:
+		case Formula.LEQV:
+		case Formula.LAND:
+		case Formula.LOR:
+		case Formula.IN:
+		case Formula.EQUAL:
+		case Formula.NOTEQUAL:
+		case Formula.LE:
+		case Formula.LT:
+		case Formula.GE:
+		case Formula.GT:
+			return true;
+		}
+		return false;
+	}
+	
 	private void buildInternal(Predicate predicate, boolean isGoal) {
-		assert predicate != null && (predicate.getTag() == Formula.IN
-			|| predicate.getTag() == Formula.EXISTS || predicate.getTag() == Formula.FORALL
-			|| predicate.getTag() == Formula.LOR || predicate.getTag() == Formula.EQUAL
-			|| predicate.getTag() == Formula.NOT || predicate.getTag() == Formula.LAND
-			|| predicate.getTag() == Formula.LIMP || predicate.getTag() == Formula.NOTEQUAL
-			|| predicate.getTag() == Formula.LEQV || predicate.getTag() == Formula.LE
-			|| predicate.getTag() == Formula.LT || predicate.getTag() == Formula.GE
-			|| predicate.getTag() == Formula.GT) : "Unexpected operator: "+predicate+"";
-		assert predicate.isTypeChecked():predicate;
+		assert checkPredicateTag(predicate) : "Unexpected operator: "
+				+ predicate;
+		assert predicate.isTypeChecked() : predicate;
 		
 		if (DEBUG) {
 			debug("========================================");
@@ -145,7 +163,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		pushNewList(new BoundIdentDecl[0]);
 		predicate.accept(this);
 
-		NormalizedFormula res = result.peek();
+		final NormalizedFormula res = result.peek();
 		assert result.size() == 1;
 		
 		if (isGoal) {
@@ -153,9 +171,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		}
 		context.addResult(res);
 	}
-	
-	
-	
+
 	private void pushNewTerm(TermSignature term) {
 		inRes.addResult(term);
 	}
