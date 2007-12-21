@@ -137,7 +137,7 @@ public class QuantifiedFormula extends AbstractLabelizableFormula<QuantifiedDesc
 
 	void switchSign() {
 		this.isForall = !this.isForall;
-		child.switchSign();
+		child.negate();
 	}
 	
 	void setContextProperties(AbstractContext context, AbstractContext newContext) {

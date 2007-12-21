@@ -84,11 +84,11 @@ public class NormalizedFormula implements INormalizedFormula {
 		for (ResultPair pair : list) {
 			if (!pair.signature.isPositive()) {
 				numberOfNegations++;
-				pair.signature.switchSign();
+				pair.signature.negate();
 			}
 		}
 		if (numberOfNegations % 2 != 0) {
-			list.get(0).signature.switchSign();
+			list.get(0).signature.negate();
 		}
 	}
 	
