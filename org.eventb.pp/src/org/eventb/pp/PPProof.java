@@ -141,9 +141,7 @@ public class PPProof {
 	 * into the CNF required as an input to the prover.
 	 */
 	public void load() {
-		PredicateBuilder pBuilder = new PredicateBuilder();
-		ClauseBuilder cBuilder = new ClauseBuilder();
-
+		final PredicateBuilder pBuilder = new PredicateBuilder();
 		for (InputPredicate predicate : hypotheses) {
 			if (predicate.loadPhaseOne(pBuilder)) {
 				proofFound(predicate);
@@ -157,6 +155,7 @@ public class PPProof {
 			return;
 		}
 
+		final ClauseBuilder cBuilder = new ClauseBuilder();
 		cBuilder.loadClausesFromContext(pBuilder.getContext());
 		cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
 
