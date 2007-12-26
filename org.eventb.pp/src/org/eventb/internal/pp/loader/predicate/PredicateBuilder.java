@@ -360,7 +360,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 			exitArithmeticLiteral(Type.EQUAL, negative);
 		}
 		else {
-			exitEqualityLiteral(new Sort(pred.getRight().getType()), termBuilder.invertSign()?!negative:negative);
+			exitEqualityLiteral(new Sort(pred.getRight().getType()), negative);
 		}
 		debugExit();
 		return true;

@@ -46,11 +46,6 @@ public class TermBuilder extends DefaultVisitor {
 	private Stack<TermSignature> terms;
 	private Stack<NormalizedFormula> results;
 	
-	private boolean invertSign = false;
-	public boolean invertSign() {
-		return invertSign;
-	}
-	
 	public TermBuilder(Stack<NormalizedFormula> results) {
 		assert results != null;
 
@@ -60,7 +55,6 @@ public class TermBuilder extends DefaultVisitor {
 	public TermSignature buildTerm(Expression expression) {
 		assert expression != null;
 		
-		this.invertSign = false;
 		this.terms = new Stack<TermSignature>();
 		
 		expression.accept(this);
@@ -172,14 +166,6 @@ public class TermBuilder extends DefaultVisitor {
 		return true;
 	}
 
-	@Override
-	public boolean visitFALSE(AtomicExpression expr) {
-		invertSign = true;
-		TermSignature tr = new TrueConstantSignature(new Sort(expr.getType()));
-		terms.push(tr);
-		return true;
-	}
-	
 	private int getIndex(int boundIndex) {
 		int tmp = 0;
 		int i = results.size()-1;
