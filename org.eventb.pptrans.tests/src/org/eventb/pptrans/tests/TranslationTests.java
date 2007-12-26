@@ -1549,4 +1549,67 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir46);
 	}
 	
+	public void testFALSE_1() {
+		doTest( "b = FALSE", 
+				"¬(b = TRUE)", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_2() {
+		doTest( "FALSE = b", 
+				"¬(b = TRUE)", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_3() {
+		doTest( "TRUE = FALSE", 
+				"¬⊤", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_4() {
+		doTest( "FALSE = TRUE", 
+				"¬⊤", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_5() {
+		doTest( "FALSE = FALSE", 
+				"⊤", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_6() {
+		doTest( "FALSE ∈ S", 
+				"∃x· ¬ x = TRUE ∧ x ∈ S", 
+				false, 
+				mTypeEnvironment());
+	}
+	
+	public void testFALSE_7() {
+		doTest( "FALSE ↦ a ∈ S", 
+				"∃x· ¬ x = TRUE ∧ x ↦ a ∈ S", 
+				false, 
+				mTypeEnvironment("a", "T"));
+	}
+	
+	public void testFALSE_8() {
+		doTest( "a ↦ FALSE ∈ S", 
+				"∃x· ¬ x = TRUE ∧ a ↦ x ∈ S", 
+				false, 
+				mTypeEnvironment("a", "T"));
+	}
+	
+	public void testFALSE_9() {
+		doTest( "a ↦ (FALSE ↦ b) ∈ S", 
+				"∃x· ¬ x = TRUE ∧ a ↦ (x ↦ b) ∈ S", 
+				false, 
+				mTypeEnvironment("a", "T", "b", "U"));
+	}
+	
 }
