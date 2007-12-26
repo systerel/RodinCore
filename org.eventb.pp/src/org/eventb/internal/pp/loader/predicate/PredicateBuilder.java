@@ -75,6 +75,8 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	 */
 	public static boolean DEBUG = false;
 	
+	private static final BoundIdentDecl[] NO_BIDS = new BoundIdentDecl[0];
+
 	public static void debug(String message){
 		System.out.println(message);
 	}
@@ -160,7 +162,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		this.isPositive = true;
 		this.isGoal = isGoal;
 		
-		pushNewList(new BoundIdentDecl[0]);
+		pushNewList(NO_BIDS);
 		predicate.accept(this);
 
 		final NormalizedFormula res = result.peek();
@@ -177,11 +179,11 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	private void pushNewList(BoundIdentDecl[] decls) {
-		int startOffset = context.getQuantifierOffset();
-		context.incrementQuantifierOffset(decls.length);
-		int startAbsolute = context.getNumberOfVariables();
+		final int startAbsolute = context.getNumberOfVariables();
 		context.incrementNumberOfVariables(decls.length);
-		int endOffset = context.getQuantifierOffset()-1;
+		final int startOffset = context.getQuantifierOffset();
+		context.incrementQuantifierOffset(decls.length);
+		final int endOffset = context.getQuantifierOffset()-1;
 		result.push(new NormalizedFormula(new LiteralOrderer(),startAbsolute,startOffset,endOffset,decls,originalPredicate,isGoal));
 	}
 
@@ -413,7 +415,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	private void enterLogicalOperator() {
-		pushNewList(new BoundIdentDecl[0]);
+		pushNewList(NO_BIDS);
 	}
 	
 	private StringBuilder prefix = new StringBuilder("");
