@@ -1489,18 +1489,18 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("b = TRUE"),
 				mList(cClause(cProp(0)))
 		);
-//		doTestP(
-//				mList("b = FALSE"),
-//				mList(cClause(cNotProp(0)))
-//		);
+		doTestP(
+				mList("¬(b = TRUE)"),
+				mList(cClause(cNotProp(0)))
+		);
 		doTestP(
 				mList("b = TRUE","b = TRUE"),
 				mList(cClause(cProp(0)),cClause(cProp(0)))
 		);
-//		doTestP(
-//				mList("b = TRUE","b = FALSE"),
-//				mList(cClause(cProp(0)),cClause(cNotProp(0)))
-//		);
+		doTestP(
+				mList("b = TRUE","¬(b = TRUE)"),
+				mList(cClause(cProp(0)),cClause(cNotProp(0)))
+		);
 		doTestP(
 				mList("b = TRUE","c = TRUE"),
 				mList(cClause(cProp(0)),cClause(cProp(1)))
