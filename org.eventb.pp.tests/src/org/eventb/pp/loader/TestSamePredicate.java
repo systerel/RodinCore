@@ -84,7 +84,7 @@ public class TestSamePredicate extends TestCase {
 //			},
 
 			new String[]{
-				"e = f", "e = TRUE", "f = TRUE", "e = FALSE", "f = FALSE"
+				"e = f", "e = TRUE", "f = TRUE", "¬(e = TRUE)", "¬(f = TRUE)"
 			},
 			new String[]{
 				"a = b", "b = a"
