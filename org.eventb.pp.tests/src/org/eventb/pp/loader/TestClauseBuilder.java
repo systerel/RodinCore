@@ -324,33 +324,28 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 		doTestP(
 				mList("a ∈ S ⇒ d ∈ U"),
-				mList(
-						cClause(cNotProp(0),cProp(1))),
-						constants1
+				mList(cClause(cNotProp(0),cProp(1))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ⇒ b ∈ S"),
-				mList(
-						cClause(cPred(d0S, b),cNotPred(d0S, a))),
-						constants1
+				mList(cClause(cPred(d0S, b),cNotPred(d0S, a))),
+				constants1
 		);
 		doTestP(
 				mList("¬(a ∈ S) ⇒ d ∈ U"),
-				mList(
-						cClause(cProp(0),cProp(1))),
-						constants1
+				mList(cClause(cProp(0),cProp(1))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ⇒ ¬(d ∈ U)"),
-				mList(
-						cClause(cNotProp(0),cNotProp(1))),
-						constants1
+				mList(cClause(cNotProp(0),cNotProp(1))),
+				constants1
 		);
 		doTestP(
 				mList("¬(a ∈ S) ⇒ b ∈ S"),
-				mList(
-						cClause(cPred(d0S, a),cPred(d0S, b))),
-						constants1
+				mList(cClause(cPred(d0S, a),cPred(d0S, b))),
+				constants1
 		);
 		doTestP(
 				mList("¬(a ∈ S ⇒ d ∈ U)"),
@@ -366,46 +361,39 @@ public class TestClauseBuilder extends AbstractPPTest {
 
 		doTestP(
 				mList("a ∈ S ∨ a ∈ S"),
-				mList(
-						cClause(cProp(0), cProp(0))),
-						constants1
+				mList(cClause(cProp(0), cProp(0))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ∨ b ∈ SS"),
-				mList(
-						cClause(cPred(d0SPS, a, S), cPred(d0SPS, b, SS))),
-						constants1
+				mList(cClause(cPred(d0SPS, a, S), cPred(d0SPS, b, SS))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ∨ b ∈ S"),
-				mList(
-						cClause(cPred(d0S, a), cPred(d0S, b))),
-						constants1
+				mList(cClause(cPred(d0S, a), cPred(d0S, b))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ∨ b ∈ S ∨ c ∈ U"),
-				mList(
-						cClause(cPred(d0S, a), cPred(d0S, b), cProp(1))),
-						constants1
+				mList(cClause(cPred(d0S, a), cPred(d0S, b), cProp(1))),
+				constants1
 		);
 		doTestP(
 				mList("a ∈ S ∨ b ∈ S ∨ c ∈ U ∨ d ∈ U"),
-				mList(
-						cClause(cPred(d0S, a), cPred(d0S, b), cPred(d1U, c), cPred(d1U, d))),
-						constants1
+				mList(cClause(cPred(d0S, a), cPred(d0S, b), cPred(d1U, c), cPred(d1U, d))),
+				constants1
 		);
 		doTestP(
 				mList("¬(¬(a ∈ S) ∧ ¬(b ∈ S))"),
-				mList(
-						cClause(cPred(d0S, a), cPred(d0S, b))),
-						constants1
+				mList(cClause(cPred(d0S, a), cPred(d0S, b))),
+				constants1
 		);
 
 		doTestP(	
 				mList("(a ∈ S ∨ b ∈ S) ∨ (a ∈ S ∨ b ∈ S)"),
-				mList(
-						cClause(cPred(d0S, a), cPred(d0S, b), cPred(d0S, a), cPred(d0S,b))),
-						constants1
+				mList(cClause(cPred(d0S, a), cPred(d0S, b), cPred(d0S, a), cPred(d0S,b))),
+				constants1
 		);
 
 		doTestP(
@@ -415,11 +403,18 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cNotPred(d1S,xS), cPred(d0SPS,xS,B), cPred(d0SPS,xS,C)),
 						cClause(cPred(d1S,xS), cNotPred(d0SPS,xS,B)),
 						cClause(cPred(d1S,xS), cNotPred(d0SPS,xS,C)),
-						cEqClause(cPred(d2S,xS), cNotPred(d0SPS,xS,A), cPred(d1S,xS))),
+						cEqClause(cPred(d2S,xS), cNotPred(d0SPS,xS,A), cPred(d1S,xS))
+				),
 				"A", A,
 				"B", B,
 				"C", C,
 				"S", S
+		);
+
+		doTestP(	
+				mList("∃x·x ∈ S"),
+				mList(cClause(cPred(d0S, cELocVar(0,Ssort)))),
+				constants1
 		);
 	}
 
@@ -1494,18 +1489,18 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("b = TRUE"),
 				mList(cClause(cProp(0)))
 		);
-		doTestP(
-				mList("b = FALSE"),
-				mList(cClause(cNotProp(0)))
-		);
+//		doTestP(
+//				mList("b = FALSE"),
+//				mList(cClause(cNotProp(0)))
+//		);
 		doTestP(
 				mList("b = TRUE","b = TRUE"),
 				mList(cClause(cProp(0)),cClause(cProp(0)))
 		);
-		doTestP(
-				mList("b = TRUE","b = FALSE"),
-				mList(cClause(cProp(0)),cClause(cNotProp(0)))
-		);
+//		doTestP(
+//				mList("b = TRUE","b = FALSE"),
+//				mList(cClause(cProp(0)),cClause(cNotProp(0)))
+//		);
 		doTestP(
 				mList("b = TRUE","c = TRUE"),
 				mList(cClause(cProp(0)),cClause(cProp(1)))
@@ -1869,12 +1864,12 @@ public class TestClauseBuilder extends AbstractPPTest {
 		StringBuilder message = new StringBuilder();
 		for (T clause : actual) {
 			if (!expected.contains(clause)){
-				message.append("Missing clause : "+clause.toString()+"\n");
+				message.append("Superfluous clause : "+clause.toString()+"\n");
 			}
 		}
 		for (T clause : expected) {
 			if (!actual.contains(clause)){
-				message.append("Superfluous clause : "+clause.toString()+"\n");
+				message.append("Missing clause : "+clause.toString()+"\n");
 			}
 		}
 		assertTrue("\n"+predicate+"\n"+message.toString(), message.length()==0);
