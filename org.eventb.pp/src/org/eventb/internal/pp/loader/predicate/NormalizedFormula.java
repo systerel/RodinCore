@@ -34,18 +34,16 @@ public class NormalizedFormula implements INormalizedFormula {
 	private boolean isPositive = false;
 	protected Comparator<SignedFormula<?>> orderer;
 	private int startOffset, endOffset;
-	private int startAbsolute;
 	private BoundIdentDecl[] boundIdentDecls;
 	private Predicate originalPredicate;
 	private boolean isGoal;
 	
-	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, int startAbsolute, int startOffset,
-			int endOffset, BoundIdentDecl[] boundIdentDecls, Predicate originalPredicate, boolean isGoal) {
+	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, int startOffset, int endOffset,
+			BoundIdentDecl[] boundIdentDecls, Predicate originalPredicate, boolean isGoal) {
 		this.orderer = orderer;
 		this.boundIdentDecls = boundIdentDecls;
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
-		this.startAbsolute = startAbsolute;
 		this.originalPredicate = originalPredicate;
 		this.isGoal = isGoal;
 	}
@@ -70,10 +68,6 @@ public class NormalizedFormula implements INormalizedFormula {
 		return endOffset;
 	}
 
-	public int getStartAbsolute() {
-		return startAbsolute;
-	}
-	
 	/**
 	 * Puts the negation sign on the first literal of the list, or
 	 * no negation sign. This is meant for equivalence clauses. The clause
