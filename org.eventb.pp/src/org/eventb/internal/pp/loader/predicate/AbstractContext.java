@@ -11,10 +11,7 @@ package org.eventb.internal.pp.loader.predicate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
@@ -23,7 +20,6 @@ import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.key.SymbolTable;
-import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 
 /**
  * This class represents a context. Information stored in a context are information that
@@ -47,33 +43,6 @@ public class AbstractContext implements IContext {
 	
 	List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 	
-	int numberOfVariables = 0;
-	
-	final Vector<VariableSignature> boundVars = new Vector<VariableSignature>();
-
-	public void addDecls(BoundIdentDecl[] decls) {
-		int revIndex = boundVars.size(); // induction variable for next loop
-		for (BoundIdentDecl decl : decls) {
-			final Sort sort = new Sort(decl.getType());
-			final int varIndex = numberOfVariables++;
-			boundVars.add(new VariableSignature(varIndex, revIndex++, sort));
-		}
-	}
-
-	public void removeDecls(BoundIdentDecl[] decls) {
-		boundVars.setSize(boundVars.size() - decls.length);
-	}
-
-	public int getQuantifierOffset() {
-		return boundVars.size();
-	}
-
-	public VariableSignature getVariableSignature(int boundIndex) {
-		final int length = boundVars.size();
-		assert 0 <= boundIndex && boundIndex < length;
-		return boundVars.get(length - boundIndex - 1);
-	}
-
 	public SymbolTable<PredicateDescriptor> getLiteralTable() {
 		return predicateTable;
 	}
@@ -136,6 +105,9 @@ public class AbstractContext implements IContext {
 		return nextIdentifier++;
 	}
 
+	// Number of variables used in this context so far
+	private int numberOfVariables = 0;
+	
 	public int getFreshVariableIndex() {
 		return numberOfVariables++;
 	}

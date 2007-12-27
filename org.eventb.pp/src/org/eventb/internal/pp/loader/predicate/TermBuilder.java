@@ -10,10 +10,12 @@ package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FreeIdentifier;
@@ -31,6 +33,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.formula.terms.TimesSignature;
 import org.eventb.internal.pp.loader.formula.terms.TrueConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.UnaryMinusSignature;
+import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 
 /**
  * This class is the builder for terms.
@@ -42,6 +45,8 @@ public class TermBuilder {
 
 	private final AbstractContext context;
 
+	private final Vector<VariableSignature> boundVars = new Vector<VariableSignature>();
+
 	public TermBuilder(AbstractContext context) {
 		assert context != null;
 		this.context = context;
@@ -51,7 +56,7 @@ public class TermBuilder {
 		return process(expr);
 	}
 
-	public TermSignature process(Expression expr) {
+	private TermSignature process(Expression expr) {
 		if (expr instanceof BinaryExpression) {
 			return processBinaryExpression((BinaryExpression) expr);
 		}
@@ -112,7 +117,7 @@ public class TermBuilder {
 		}
 	}
 
-	public TermSignature processUnaryExpression(UnaryExpression expr) {
+	private TermSignature processUnaryExpression(UnaryExpression expr) {
 		final TermSignature child = process(expr.getChild());
 		switch (expr.getTag()) {
 		case Expression.UNMINUS:
@@ -122,7 +127,7 @@ public class TermBuilder {
 		}
 	}
 
-	public TermSignature processAtomicExpression(AtomicExpression expr) {
+	private TermSignature processAtomicExpression(AtomicExpression expr) {
 		final Sort sort = new Sort(expr.getType());
 		assert sort.equals(Sort.BOOLEAN);
 		switch (expr.getTag()) {
@@ -133,16 +138,16 @@ public class TermBuilder {
 		}
 	}
 
-	public TermSignature processBoundIdentifier(BoundIdentifier ident) {
+	private TermSignature processBoundIdentifier(BoundIdentifier ident) {
 		switch (ident.getTag()) {
 		case Expression.BOUND_IDENT:
-			return context.getVariableSignature(ident.getBoundIndex());
+			return getVariableSignature(ident.getBoundIndex());
 		default:
 			throw invalidTerm(ident);
 		}
 	}
 
-	public TermSignature processFreeIdentifier(FreeIdentifier ident) {
+	private TermSignature processFreeIdentifier(FreeIdentifier ident) {
 		final Sort sort = new Sort(ident.getType());
 		switch (ident.getTag()) {
 		case Expression.FREE_IDENT:
@@ -152,7 +157,7 @@ public class TermBuilder {
 		}
 	}
 
-	public TermSignature processIntegerLiteral(IntegerLiteral lit) {
+	private TermSignature processIntegerLiteral(IntegerLiteral lit) {
 		final Sort sort = new Sort(lit.getType());
 		assert sort.equals(Sort.NATURAL);
 		switch (lit.getTag()) {
@@ -162,4 +167,28 @@ public class TermBuilder {
 			throw invalidTerm(lit);
 		}
 	}
+
+	public void pushDecls(BoundIdentDecl[] decls) {
+		int revIndex = boundVars.size(); // induction variable for next loop
+		for (BoundIdentDecl decl : decls) {
+			final Sort sort = new Sort(decl.getType());
+			final int varIndex = context.getFreshVariableIndex();
+			boundVars.add(new VariableSignature(varIndex, revIndex++, sort));
+		}
+	}
+
+	public void popDecls(BoundIdentDecl[] decls) {
+		boundVars.setSize(boundVars.size() - decls.length);
+	}
+
+	public int getNumberOfDecls() {
+		return boundVars.size();
+	}
+
+	private VariableSignature getVariableSignature(int boundIndex) {
+		final int length = boundVars.size();
+		assert 0 <= boundIndex && boundIndex < length;
+		return boundVars.get(length - boundIndex - 1);
+	}
+
 }

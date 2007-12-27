@@ -179,9 +179,9 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	private void pushNewList(BoundIdentDecl[] decls) {
-		final int startOffset = context.getQuantifierOffset();
-		context.addDecls(decls);
-		final int endOffset = context.getQuantifierOffset()-1;
+		final int startOffset = termBuilder.getNumberOfDecls();
+		termBuilder.pushDecls(decls);
+		final int endOffset = termBuilder.getNumberOfDecls()-1;
 		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,originalPredicate,isGoal));
 	}
 
@@ -595,7 +595,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	private void exitQuantifiedPredicate(QuantifiedPredicate pred, boolean isForall) {
 		isForall = isPositive?isForall:!isForall;
 		
-		context.removeDecls(pred.getBoundIdentDecls());
+		termBuilder.popDecls(pred.getBoundIdentDecls());
 		
 		NormalizedFormula res = result.pop();
 		SignedFormula<?> quantified = res.getLiterals().get(0);
