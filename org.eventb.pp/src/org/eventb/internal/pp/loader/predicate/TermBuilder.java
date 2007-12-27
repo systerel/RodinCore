@@ -38,7 +38,7 @@ import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
  * This class is the builder for terms.
  * 
  * @author François Terrier
- * 
+ * @author Laurent Voisin 
  */
 public class TermBuilder {
 
@@ -54,97 +54,117 @@ public class TermBuilder {
 	}
 
 	public TermSignature process(Expression expr) {
+		if (expr instanceof BinaryExpression) {
+			return processBinaryExpression((BinaryExpression) expr);
+		}
+		if (expr instanceof AssociativeExpression) {
+			return processAssociativeExpression((AssociativeExpression) expr);
+		}
+		if (expr instanceof UnaryExpression) {
+			return processUnaryExpression((UnaryExpression) expr);
+		}
+		if (expr instanceof AtomicExpression) {
+			return processAtomicExpression((AtomicExpression) expr);
+		}
+		if (expr instanceof BoundIdentifier) {
+			return processBoundIdentifier((BoundIdentifier) expr);
+		}
+		if (expr instanceof FreeIdentifier) {
+			return processFreeIdentifier((FreeIdentifier) expr);
+		}
+		if (expr instanceof IntegerLiteral) {
+			return processIntegerLiteral((IntegerLiteral) expr);
+		}
+		throw invalidTerm(expr);
+	}
+
+	private RuntimeException invalidTerm(Expression expr) {
+		return new IllegalArgumentException("Invalid term: " + expr);
+	}
+
+	public TermSignature processBinaryExpression(BinaryExpression expr) {
+		final TermSignature left = process(expr.getLeft());
+		final TermSignature right = process(expr.getRight());
 		switch (expr.getTag()) {
 		case Expression.DIV:
-			return processDIV((BinaryExpression) expr);
+			return new DivideSignature(left, right);
 		case Expression.EXPN:
-			return processEXPN((BinaryExpression) expr);
+			return new ExpnSignature(left, right);
 		case Expression.MINUS:
-			return processMINUS((BinaryExpression) expr);
+			return new MinusSignature(left, right);
 		case Expression.MOD:
-			return processMOD((BinaryExpression) expr);
-		case Expression.MUL:
-			return processMUL((AssociativeExpression) expr);
-		case Expression.PLUS:
-			return processPLUS((AssociativeExpression) expr);
-		case Expression.UNMINUS:
-			return processUNMINUS((UnaryExpression) expr);
-		case Expression.BOUND_IDENT:
-			return processBOUND_IDENT((BoundIdentifier) expr);
-		case Expression.FREE_IDENT:
-			return processFREE_IDENT((FreeIdentifier) expr);
-		case Expression.INTLIT:
-			return processINTLIT((IntegerLiteral) expr);
-		case Expression.TRUE:
-			return processTRUE((AtomicExpression) expr);
-			// TODO case of predefined sets BOOL and INTEGER
+			return new ModSignature(left, right);
 		default:
-			throw new IllegalArgumentException("Invalid term: " + expr);
+			throw invalidTerm(expr);
 		}
 	}
 
-	public TermSignature processDIV(BinaryExpression expr) {
-		final TermSignature left = process(expr.getLeft());
-		final TermSignature right = process(expr.getRight());
-		return new DivideSignature(left, right);
-	}
-
-	public TermSignature processEXPN(BinaryExpression expr) {
-		final TermSignature left = process(expr.getLeft());
-		final TermSignature right = process(expr.getRight());
-		return new ExpnSignature(left, right);
-	}
-
-	public TermSignature processMINUS(BinaryExpression expr) {
-		final TermSignature left = process(expr.getLeft());
-		final TermSignature right = process(expr.getRight());
-		return new MinusSignature(left, right);
-	}
-
-	public TermSignature processMOD(BinaryExpression expr) {
-		final TermSignature left = process(expr.getLeft());
-		final TermSignature right = process(expr.getRight());
-		return new ModSignature(left, right);
-	}
-
-	public TermSignature processMUL(AssociativeExpression expr) {
+	public TermSignature processAssociativeExpression(AssociativeExpression expr) {
 		final List<TermSignature> children = new ArrayList<TermSignature>();
 		for (Expression child : expr.getChildren()) {
 			children.add(process(child));
 		}
-		return new TimesSignature(children);
-	}
-
-	public TermSignature processPLUS(AssociativeExpression expr) {
-		final List<TermSignature> children = new ArrayList<TermSignature>();
-		for (Expression child : expr.getChildren()) {
-			children.add(process(child));
+		switch (expr.getTag()) {
+		case Expression.MUL:
+			return new TimesSignature(children);
+		case Expression.PLUS:
+			return new PlusSignature(children);
+		default:
+			throw invalidTerm(expr);
 		}
-		return new PlusSignature(children);
 	}
 
-	public TermSignature processUNMINUS(UnaryExpression expr) {
+	public TermSignature processUnaryExpression(UnaryExpression expr) {
 		final TermSignature child = process(expr.getChild());
-		return new UnaryMinusSignature(child);
+		switch (expr.getTag()) {
+		case Expression.UNMINUS:
+			return new UnaryMinusSignature(child);
+		default:
+			throw invalidTerm(expr);
+		}
 	}
 
-	public TermSignature processBOUND_IDENT(BoundIdentifier ident) {
+	public TermSignature processAtomicExpression(AtomicExpression expr) {
+		final Sort sort = new Sort(expr.getType());
+		assert sort.equals(Sort.BOOLEAN);
+		switch (expr.getTag()) {
+		case Expression.TRUE:
+			return new TrueConstantSignature(sort);
+		default:
+			throw invalidTerm(expr);
+		}
+	}
+
+	public TermSignature processBoundIdentifier(BoundIdentifier ident) {
 		final int index = getIndex(ident.getBoundIndex());
-		return new VariableSignature(getStartIndex(ident.getBoundIndex()),
-				index, new Sort(ident.getType()));
+		switch (ident.getTag()) {
+		case Expression.BOUND_IDENT:
+			return new VariableSignature(getStartIndex(ident.getBoundIndex()),
+					index, new Sort(ident.getType()));
+		default:
+			throw invalidTerm(ident);
+		}
 	}
 
-	public TermSignature processFREE_IDENT(FreeIdentifier ident) {
-		return new ConstantSignature(ident.getName(), new Sort(ident.getType()));
+	public TermSignature processFreeIdentifier(FreeIdentifier ident) {
+		final Sort sort = new Sort(ident.getType());
+		switch (ident.getTag()) {
+		case Expression.FREE_IDENT:
+			return new ConstantSignature(ident.getName(), sort);
+		default:
+			throw invalidTerm(ident);
+		}
 	}
 
-	public TermSignature processINTLIT(IntegerLiteral lit) {
-		assert new Sort(lit.getType()).equals(Sort.NATURAL);
-		return new IntegerSignature(lit.getValue());
-	}
-
-	public TermSignature processTRUE(AtomicExpression expr) {
-		return new TrueConstantSignature(new Sort(expr.getType()));
+	public TermSignature processIntegerLiteral(IntegerLiteral lit) {
+		final Sort sort = new Sort(lit.getType());
+		assert sort.equals(Sort.NATURAL);
+		switch (lit.getTag()) {
+		case Expression.INTLIT:
+			return new IntegerSignature(lit.getValue());
+		default:
+			throw invalidTerm(lit);
+		}
 	}
 
 	private int getIndex(int boundIndex) {
