@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006,2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,23 @@ package org.eventb.internal.pp.core.elements;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 
+/**
+ * Common implementation for sorts.
+ * <p>
+ * Instances of this class are immutable.
+ * </p>
+ * 
+ * @author François Terrier
+ */
 public final class Sort implements Comparable<Sort> {
 	
-	public static Sort NATURAL = new Sort(FormulaFactory.getDefault().makeIntegerType());
-	public static Sort BOOLEAN = new Sort(FormulaFactory.getDefault().makeBooleanType());
+	private static final FormulaFactory ff = FormulaFactory.getDefault(); 
+	
+	public static final Sort NATURAL = new Sort(ff.makeIntegerType());
 
-	final private Type type;
+	public static final Sort BOOLEAN = new Sort(ff.makeBooleanType());
+
+	private final Type type;
 	
 	public Sort(Type type) {
 		this.type = type;
