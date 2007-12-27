@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -102,8 +103,16 @@ public class Util {
 		return new VariableSignature(uniqueIndex, index, new Sort(ff.makeGivenType("A")));
 	}
 	
+	public static VariableSignature mVariable(int varIndex, int index, Sort sort) {
+		return new VariableSignature(varIndex, index, sort);
+	}
+	
 	public static ConstantSignature mConstant(String name) {
 		return new ConstantSignature(name, new Sort(ff.makeGivenType("A")));
+	}
+	
+	public static ConstantSignature mConstant(String name, Sort sort) {
+		return new ConstantSignature(name, sort);
 	}
 	
 	public static IntegerSignature mInteger(int value) {
@@ -158,6 +167,10 @@ public class Util {
 
 	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
 		return ff.makeBoundIdentifier(index, null, type);
+	}
+
+	public static BoundIdentDecl mBoundIdentDecl(String name, Type type) {
+		return ff.makeBoundIdentDecl(name, null, type);
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name) {
@@ -446,5 +459,8 @@ public class Util {
 		return new ArrayList<T>(Arrays.asList(elements));
 	}
 	
-	
+	public static <T> T[] mArray(T... elements) {
+		return elements;
+	}
+
 }
