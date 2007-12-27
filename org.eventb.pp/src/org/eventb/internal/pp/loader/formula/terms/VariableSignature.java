@@ -76,7 +76,7 @@ public class VariableSignature extends TermSignature {
 	
 	@Override
 	public String toString() {
-		return ""+uniqueIndex+","+index+"("+sort+")";
+		return uniqueIndex + "," + index + "(" + sort + ")";
 	}
 
 	/* 
