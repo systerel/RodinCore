@@ -2,11 +2,11 @@ package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSort;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -16,118 +16,66 @@ import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
 
 /**
- * This class tests that the sorts created by the term builder are
- * indeed the expected sorts.
- * Are tested here :
+ * This class tests that the sorts created by the term builder are indeed the
+ * expected sorts. Are tested here :
  * <ul>
- * 	<li>arithmetic sort for all arithmetic type</li>
- * 	<li>carrier set sorts, same sort for same carrier set, different sort for
- * 	    different carrier sets</li>
- * 	<li>boolean sorts...</li>
+ * <li>arithmetic sort for all arithmetic type</li>
+ * <li>carrier set sorts, same sort for same carrier set, different sort for
+ * different carrier sets</li>
+ * <li>boolean sorts...</li>
  * </ul>
- *
+ * 
  * @author François Terrier
- *
+ * 
  */
 public class TestSorts extends AbstractPPTest {
 
-	static FormulaFactory ff = FormulaFactory.getDefault();
-	
-	static Type S = ff.makeGivenType("S");
-	static Type T = ff.makeGivenType("T");
-	
-	static FreeIdentifier a = ff.makeFreeIdentifier("a", null);
-	static FreeIdentifier b = ff.makeFreeIdentifier("b", null);
-	static FreeIdentifier k = ff.makeFreeIdentifier("k", null);
-	
-	static BoundIdentifier b0 = ff.makeBoundIdentifier(0, null, S);
-	
-	static {
-		ITypeEnvironment env;
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-		env = ff.makeTypeEnvironment();
-		env.addName("a", S);
-		a.typeCheck(env);
-		
-		env = ff.makeTypeEnvironment();
-		env.addName("b", T);
-		b.typeCheck(env);
-		
-		env = ff.makeTypeEnvironment();
-		env.addName("k", ff.makeIntegerType());
-		k.typeCheck(env);
-	}
+	private static Type S = ff.makeGivenType("S");
+	private static Type T = ff.makeGivenType("T");
+	private static Type INT = ff.makeIntegerType();
+
+	private static FreeIdentifier a = ff.makeFreeIdentifier("a", null, S);
+	private static FreeIdentifier b = ff.makeFreeIdentifier("b", null, T);
+	private static FreeIdentifier k = ff.makeFreeIdentifier("k", null, INT);
+
+	private static BoundIdentDecl dxS = ff.makeBoundIdentDecl("x", null, S);
+	private static BoundIdentDecl dyT = ff.makeBoundIdentDecl("y", null, T);
 	
-	private static class TestPair {
-		// for the readability of the test, use of string
-		Expression expression;
-		Sort expected;
-		
-		TestPair (Expression expression, Sort expected) {
-			this.expression = expression;
-			this.expected = expected;
-		}
-		
-		TestPair (String expression, Sort expected) {
-			this.expression = Util.parseExpression(expression);
-			this.expression.typeCheck(ff.makeTypeEnvironment());
-			this.expected = expected;
-		}
-		
-	}
-	
-	TestPair[] tests = new TestPair[]{
-		new TestPair(a,
-			mSort(S)
-		),
-		new TestPair(
-			b,
-			mSort(T)
-		),
-		new TestPair(
-			k,
-			NAT
-		),
-		new TestPair(
-			"k + 1",
-			NAT
-		),
-		new TestPair(
-			"k ∗ 1",
-			NAT
-		),
-		new TestPair(
-			"k ÷ 1",
-			NAT
-		),
-		new TestPair(
-			"k mod 1",
-			NAT
-		),
-		new TestPair(
-			"k ^ 1",
-			NAT
-		),
-		new TestPair(
-			"k − 1",
-			NAT
-		),
-//		new TestPair(
-//			b0,
-//			mSort(S)
-//		),
-	};
-	
-	public void doTest(Expression expression, Sort expected) {
+	private static BoundIdentifier b0S = ff.makeBoundIdentifier(0, null, S);
+	private static BoundIdentifier b0T = ff.makeBoundIdentifier(0, null, T);
+	private static BoundIdentifier b1S = ff.makeBoundIdentifier(1, null, S);
+
+	private void doTest(Expression expression, Sort expected, BoundIdentDecl... decls) {
 		final TermBuilder builder = new TermBuilder(new AbstractContext());
+		builder.pushDecls(decls);
 		final TermSignature term = builder.buildTerm(expression);
-		
 		assertEquals(expression.toString(), expected, term.getSort());
 	}
-	
+
+	private void doTest(String image, Sort expected, BoundIdentDecl... decls) {
+		final Expression expr = Util.parseExpression(image);
+		expr.typeCheck(ff.makeTypeEnvironment());
+		assertTrue(expr.isTypeChecked());
+		doTest(expr, expected, decls);
+	}
+
 	public void testSorts() {
-		for (TestPair test : tests) {
-			doTest(test.expression, test.expected);
-		}
+		doTest(a, mSort(S));
+		doTest(b, mSort(T));
+		doTest(k, NAT);
+		doTest("k + 1", NAT);
+		doTest("k ∗ 1", NAT);
+		doTest("k ÷ 1", NAT);
+		doTest("k mod 1", NAT);
+		doTest("k ^ 1", NAT);
+		doTest("k − 1", NAT);
+		doTest("− k", NAT);
+		doTest("0", NAT);
+		
+		doTest(b0S, mSort(S), dxS);
+		doTest(b0T, mSort(T), dxS, dyT);
+		doTest(b1S, mSort(S), dxS, dyT);
 	}
 }
