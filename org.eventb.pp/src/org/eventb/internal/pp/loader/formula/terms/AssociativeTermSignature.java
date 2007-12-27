@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
 package org.eventb.internal.pp.loader.formula.terms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.Sort;
@@ -25,19 +26,17 @@ import org.eventb.internal.pp.loader.formula.ClauseContext;
  */
 public abstract class AssociativeTermSignature extends TermSignature {
 
-	protected List<TermSignature> terms;
+	// Immutable
+	protected final List<TermSignature> terms;
 	
 	public AssociativeTermSignature(List<TermSignature> terms) {
 		super(Sort.NATURAL);
-		
-		this.terms = terms;
+		this.terms = new ArrayList<TermSignature>(terms);
 	}
 	
 	public AssociativeTermSignature(TermSignature term) {
 		super(Sort.NATURAL);
-		
-		this.terms = new ArrayList<TermSignature>();
-		this.terms.add(term);
+		this.terms = Collections.singletonList(term);
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	 * @return a copy of the children
 	 */
 	protected List<TermSignature> deepCopyHelper() {
-		List<TermSignature> copy = new ArrayList<TermSignature>();
+		final List<TermSignature> copy = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
 			copy.add(term.deepCopy());
 		}
@@ -63,9 +62,9 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	 * @return 
 	 */
 	protected List<TermSignature> getUnquantifiedTermHelper(int startOffset, int endOffset, List<TermSignature> termList) {
-		List<TermSignature> signatures = new ArrayList<TermSignature>();
+		final List<TermSignature> signatures = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
-			TermSignature sig;
+			final TermSignature sig;
 			if (term.isQuantified(startOffset,endOffset)) {
 				sig = term.getUnquantifiedTerm(startOffset, endOffset, termList);
 			} else {
@@ -78,9 +77,9 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	}
 	
 	protected List<TermSignature> getSimpleTermHelper(List<TermSignature> termList) {
-		List<TermSignature> signatures = new ArrayList<TermSignature>();
+		final List<TermSignature> signatures = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
-			TermSignature sig = term.getSimpleTerm(termList);
+			final TermSignature sig = term.getSimpleTerm(termList);
 			signatures.add(sig);
 		}
 		return signatures;
@@ -94,7 +93,7 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	}
 	
 	public List<Term> getTermHelper(ClauseContext context) {
-		List<Term> result = new ArrayList<Term>();
+		final List<Term> result = new ArrayList<Term>();
 		for (TermSignature term : terms) {
 			result.add(term.getTerm(context));
 		}
@@ -133,13 +132,14 @@ public abstract class AssociativeTermSignature extends TermSignature {
 	
 	@Override
 	public String toString() {
-		StringBuffer str = new StringBuffer();
-		str.append("(");
+		final StringBuilder sb = new StringBuilder();
+		String sep = "(";
 		for (TermSignature term : terms) {
-			str.append(term.toString() + " ");
+			sb.append(sep);
+			sep = " ";
+			sb.append(term.toString());
 		}
-		str.deleteCharAt(str.length()-1);
-		str.append(")");
-		return str.toString();
+		sb.append(")");
+		return sb.toString();
 	}
 }

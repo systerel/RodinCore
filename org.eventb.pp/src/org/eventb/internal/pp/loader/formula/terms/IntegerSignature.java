@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.eventb.internal.pp.loader.formula.terms;
 
 import java.math.BigInteger;
@@ -8,11 +16,10 @@ import org.eventb.internal.pp.loader.formula.ClauseContext;
 
 public class IntegerSignature extends AbstractConstantSignature {
 
-	private BigInteger literal;
+	private final BigInteger literal;
 	
 	public IntegerSignature(BigInteger literal) {
 		super(Sort.NATURAL);
-		
 		this.literal = literal;
 	}
 
@@ -28,7 +35,7 @@ public class IntegerSignature extends AbstractConstantSignature {
 
 	@Override
 	public String toString() {
-		return literal+"";
+		return literal.toString();
 	}
 
 	@Override
