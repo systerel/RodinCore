@@ -2,9 +2,6 @@ package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSort;
 
-import java.util.Stack;
-
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -15,7 +12,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
-import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
 
 /**
@@ -122,10 +119,8 @@ public class TestSorts extends AbstractPPTest {
 	};
 	
 	public void doTest(Expression expression, Sort expected) {
-		Stack<NormalizedFormula> result = new Stack<NormalizedFormula>();
-		result.push(new NormalizedFormula(null,0,0,0,new BoundIdentDecl[0],null,false));
-		TermBuilder builder = new TermBuilder(result);
-		TermSignature term = builder.buildTerm(expression);
+		final TermBuilder builder = new TermBuilder(new AbstractContext());
+		final TermSignature term = builder.buildTerm(expression);
 		
 		assertEquals(expression.toString(), expected, term.getSort());
 	}

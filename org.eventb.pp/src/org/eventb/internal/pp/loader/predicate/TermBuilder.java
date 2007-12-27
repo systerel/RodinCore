@@ -10,7 +10,6 @@ package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AtomicExpression;
@@ -32,21 +31,20 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.formula.terms.TimesSignature;
 import org.eventb.internal.pp.loader.formula.terms.TrueConstantSignature;
 import org.eventb.internal.pp.loader.formula.terms.UnaryMinusSignature;
-import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 
 /**
  * This class is the builder for terms.
  * 
  * @author François Terrier
- * @author Laurent Voisin 
+ * @author Laurent Voisin
  */
 public class TermBuilder {
 
-	private final Stack<NormalizedFormula> results;
+	private final AbstractContext context;
 
-	public TermBuilder(Stack<NormalizedFormula> results) {
-		assert results != null;
-		this.results = results;
+	public TermBuilder(AbstractContext context) {
+		assert context != null;
+		this.context = context;
 	}
 
 	public TermSignature buildTerm(Expression expr) {
@@ -136,11 +134,9 @@ public class TermBuilder {
 	}
 
 	public TermSignature processBoundIdentifier(BoundIdentifier ident) {
-		final int index = getIndex(ident.getBoundIndex());
 		switch (ident.getTag()) {
 		case Expression.BOUND_IDENT:
-			return new VariableSignature(getStartIndex(ident.getBoundIndex()),
-					index, new Sort(ident.getType()));
+			return context.getVariableSignature(ident.getBoundIndex());
 		default:
 			throw invalidTerm(ident);
 		}
@@ -165,28 +161,5 @@ public class TermBuilder {
 		default:
 			throw invalidTerm(lit);
 		}
-	}
-
-	private int getIndex(int boundIndex) {
-		int tmp = 0;
-		int i = results.size() - 1;
-
-		while (i > 0) {
-			tmp = tmp + results.get(i).getBoundIdentDecls().length;
-			i--;
-		}
-		return tmp - 1 - boundIndex;
-	}
-
-	private int getStartIndex(int boundIndex) {
-		int tmp = boundIndex;
-		int i = results.size() - 1;
-
-		while (tmp >= results.get(i).getBoundIdentDecls().length) {
-			tmp = tmp - results.get(i).getBoundIdentDecls().length;
-			i--;
-		}
-		return (results.get(i).getBoundIdentDecls().length - tmp - 1)
-				+ results.get(i).getStartAbsolute();
 	}
 }

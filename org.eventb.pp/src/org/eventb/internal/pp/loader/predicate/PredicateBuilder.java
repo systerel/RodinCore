@@ -157,7 +157,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		}
 	
 		this.result = new Stack<NormalizedFormula>();
-		this.termBuilder = new TermBuilder(result);
+		this.termBuilder = new TermBuilder(context);
 		this.inRes = new IntermediateResult(/*new TermOrderer()*/);
 		this.isPositive = true;
 		this.isGoal = isGoal;
@@ -179,12 +179,10 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	private void pushNewList(BoundIdentDecl[] decls) {
-		final int startAbsolute = context.getNumberOfVariables();
-		context.incrementNumberOfVariables(decls.length);
 		final int startOffset = context.getQuantifierOffset();
-		context.incrementQuantifierOffset(decls.length);
+		context.addDecls(decls);
 		final int endOffset = context.getQuantifierOffset()-1;
-		result.push(new NormalizedFormula(new LiteralOrderer(),startAbsolute,startOffset,endOffset,decls,originalPredicate,isGoal));
+		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,originalPredicate,isGoal));
 	}
 
 	private void clean() {
@@ -597,7 +595,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	private void exitQuantifiedPredicate(QuantifiedPredicate pred, boolean isForall) {
 		isForall = isPositive?isForall:!isForall;
 		
-		context.decrementQuantifierOffset(pred.getBoundIdentDecls().length);
+		context.removeDecls(pred.getBoundIdentDecls());
 		
 		NormalizedFormula res = result.pop();
 		SignedFormula<?> quantified = res.getLiterals().get(0);

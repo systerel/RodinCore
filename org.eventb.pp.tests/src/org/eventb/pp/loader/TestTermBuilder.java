@@ -9,16 +9,12 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mMod;
 import static org.eventb.internal.pp.core.elements.terms.Util.mPlus;
 import static org.eventb.internal.pp.core.elements.terms.Util.mTimes;
 import static org.eventb.internal.pp.core.elements.terms.Util.mUnaryMinus;
-
-import java.util.Stack;
-
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
-import org.eventb.internal.pp.loader.predicate.NormalizedFormula;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
 
 
@@ -120,11 +116,7 @@ public class TestTermBuilder extends TestCase {
 	
 	
 	public void doTest(Expression input, TermSignature expected) {
-		// we assume that the string is a relational predicate and more
-		// precisely Formula.IN
-		Stack<NormalizedFormula> result = new Stack<NormalizedFormula>();
-		result.push(new NormalizedFormula(null,0,0,0,new BoundIdentDecl[0],null,false));
-		TermBuilder builder = new TermBuilder(result);
+		TermBuilder builder = new TermBuilder(new AbstractContext());
 		TermSignature actual = builder.buildTerm(input);
 		
 		assertEquals(expected, actual);
