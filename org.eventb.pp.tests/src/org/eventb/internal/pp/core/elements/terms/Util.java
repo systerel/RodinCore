@@ -100,7 +100,7 @@ public class Util {
 	}
 	
 	public static VariableSignature mVariable(int uniqueIndex, int index) {
-		return new VariableSignature(uniqueIndex, index, new Sort(ff.makeGivenType("A")));
+		return mVariable(uniqueIndex, index, new Sort(ff.makeGivenType("A")));
 	}
 	
 	public static VariableSignature mVariable(int varIndex, int index, Sort sort) {
@@ -108,7 +108,7 @@ public class Util {
 	}
 	
 	public static ConstantSignature mConstant(String name) {
-		return new ConstantSignature(name, new Sort(ff.makeGivenType("A")));
+		return mConstant(name, new Sort(ff.makeGivenType("A")));
 	}
 	
 	public static ConstantSignature mConstant(String name, Sort sort) {
