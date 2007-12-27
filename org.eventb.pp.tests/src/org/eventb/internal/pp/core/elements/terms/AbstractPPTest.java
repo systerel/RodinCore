@@ -119,6 +119,7 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Sort S = Util.mSort(ty_S);
 	public static Sort T = Util.mSort(ty_T);
 	public static Sort U = Util.mSort(ty_U);
+	public static Sort V = Util.mSort(ty_V);
 	public static Sort PA = Util.mSort(POW(ty_A));
 	public static Sort PB = Util.mSort(POW(ty_B));
 	public static Sort PC = Util.mSort(POW(ty_C));
