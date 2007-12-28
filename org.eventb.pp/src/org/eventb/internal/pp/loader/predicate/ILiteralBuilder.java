@@ -8,21 +8,20 @@
 
 package org.eventb.internal.pp.loader.predicate;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 
 /**
- * {@link ILiteralBuilder} is the base interface for the normalizer. It is
- * intended to be used to normalize each formula of a particular sequent, by
- * calling {@link ILiteralBuilder#build(Formula)} for each predicate. The result
- * of the normalization can be retrieved from the {@link IContext}.
- *
- * This interface is used to perform the first phase of the normalization of a 
+ * Common protocol for the normalizer. Instances of this interface are intended
+ * to be used to normalize each formula of a particular sequent, by calling
+ * <code>build</code> for each predicate. The result of the normalization can
+ * be retrieved from the {@link IContext}.
+ * <p>
+ * This interface is used to perform the first phase of the normalization of a
  * formula. The second phase is done by {@link ClauseBuilder}.
- *
+ * </p>
+ * 
  * @author François Terrier
- *
  */
 public interface ILiteralBuilder {
 
@@ -39,7 +38,7 @@ public interface ILiteralBuilder {
 	 * @param originalPredicate the original predicate to use in the origin
 	 * @param isGoal <code>true</code> if the predicate should be loaded as the goal
 	 */
-	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal);
+	void build(Predicate predicate, Predicate originalPredicate, boolean isGoal);
 	
 	/**
 	 * Builds the given predicate.
@@ -51,7 +50,7 @@ public interface ILiteralBuilder {
 	 * 
 	 * @param formula the formula to be normalized
 	 */
-	public void build(Predicate formula, boolean isGoal);
+	void build(Predicate formula, boolean isGoal);
 
 	/**
 	 * Returns the context associated with this builder. For a particular
@@ -60,6 +59,6 @@ public interface ILiteralBuilder {
 	 * 
 	 * @return the contxt associated with this builder
 	 */
-	public IContext getContext();
+	IContext getContext();
 	
 }
