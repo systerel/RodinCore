@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.internal.pp.core.elements.Sort;
+import org.eventb.internal.pp.core.tracing.IOrigin;
+import org.eventb.internal.pp.core.tracing.PredicateOrigin;
 import org.eventb.internal.pp.loader.formula.AbstractClause;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
@@ -93,8 +95,8 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	private IntermediateResult inRes;
 	private boolean isPositive;
 
-	private Predicate originalPredicate;
-	private boolean isGoal;
+	// Origin of the predicate currently being built.
+	private IOrigin origin;
 	
 	public PredicateBuilder() {
 		// TODO remove this static call
@@ -112,12 +114,12 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	 * @param isGoal <code>true</code> if the predicate should be loaded as the goal
 	 */
 	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal) {
-		this.originalPredicate = originalPredicate;
+		this.origin = new PredicateOrigin(originalPredicate, isGoal);
 		buildInternal(predicate, isGoal);
 	}
 	
 	public void build(Predicate predicate, boolean isGoal) {
-		this.originalPredicate = predicate;
+		this.origin = new PredicateOrigin(predicate, isGoal);
 		buildInternal(predicate, isGoal);
 	}
 	
@@ -160,13 +162,12 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		this.termBuilder = new TermBuilder(context);
 		this.inRes = new IntermediateResult(/*new TermOrderer()*/);
 		this.isPositive = true;
-		this.isGoal = isGoal;
 		
 		pushNewList(NO_BIDS);
 		predicate.accept(this);
 
-		final NormalizedFormula res = result.peek();
-		assert result.size() == 1;
+		final NormalizedFormula res = result.pop();
+		assert result.isEmpty();
 		
 		if (isGoal) {
 			res.getSignature().negate();
@@ -182,7 +183,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		final int startOffset = termBuilder.getNumberOfDecls();
 		termBuilder.pushDecls(decls);
 		final int endOffset = termBuilder.getNumberOfDecls()-1;
-		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,originalPredicate,isGoal));
+		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,origin));
 	}
 
 	private void clean() {

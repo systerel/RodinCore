@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -22,7 +22,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  * This class is used by the builder to store informations about the literals
  * encountered in the current level of the abstract syntax tree (AST) of an Event-B
  * predicate. The predicate loader maintains a stack of objects of this class,
- * one for each subformula of the AST.
+ * one for each sub-formula of the AST.
  *
  * @author François Terrier
  *
@@ -35,17 +35,16 @@ public class NormalizedFormula implements INormalizedFormula {
 	protected Comparator<SignedFormula<?>> orderer;
 	private int startOffset, endOffset;
 	private BoundIdentDecl[] boundIdentDecls;
-	private Predicate originalPredicate;
-	private boolean isGoal;
+	
+	private final IOrigin origin;
 	
 	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, int startOffset, int endOffset,
-			BoundIdentDecl[] boundIdentDecls, Predicate originalPredicate, boolean isGoal) {
+			BoundIdentDecl[] boundIdentDecls, IOrigin origin) {
 		this.orderer = orderer;
 		this.boundIdentDecls = boundIdentDecls;
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
-		this.originalPredicate = originalPredicate;
-		this.isGoal = isGoal;
+		this.origin = origin;
 	}
 	
 	public void setPositive(boolean isPositive) {
@@ -164,12 +163,8 @@ public class NormalizedFormula implements INormalizedFormula {
 		return list.toString();
 	}
 
-	public Predicate getOriginalPredicate() {
-		return originalPredicate;
-	}
-
-	public boolean isGoal() {
-		return isGoal;
+	public IOrigin getOrigin() {
+		return origin;
 	}
 
 }

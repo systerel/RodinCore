@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.core.tracing.DefinitionOrigin;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.internal.pp.core.tracing.PredicateOrigin;
 import org.eventb.internal.pp.core.tracing.TypingOrigin;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.AbstractLabelizableFormula;
@@ -148,7 +147,7 @@ public final class ClauseBuilder {
 	private void buildNormalizedFormulas(INormalizedFormula result) {
 		SignedFormula<?> sig = result.getSignature();
 		ClauseResult clauseResult = sig.getFinalClauses(manager, bool, variableTable, predicateTable);
-		IOrigin origin = new PredicateOrigin(result.getOriginalPredicate(),result.isGoal());
+		IOrigin origin = result.getOrigin();
 		clauses.addAll(clauseResult.getClauses(origin,variableContext));
 	}
 	

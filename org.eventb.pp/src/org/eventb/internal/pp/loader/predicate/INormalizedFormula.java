@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@ package org.eventb.internal.pp.loader.predicate;
 
 import java.util.List;
 
-import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
@@ -35,21 +35,13 @@ public interface INormalizedFormula {
 	 * @return the list of terms appearing in this formula
 	 */
 	public List<TermSignature> getTerms();
-	
-	/**
-	 * Returns the predicate from which this normalized formula is issued.
-	 * 
-	 * @return the predicate from which this normalized formula is issued
-	 */
-	public Predicate getOriginalPredicate();
+
 
 	/**
-	 * Returns <code>true</code> if this normalized formula is a goal, 
-	 * <code>false</code> otherwise.
+	 * Returns the origin of this normalized formula (used for tracing).
 	 * 
-	 * @return <code>true</code> if this normalized formula is a goal, 
-	 * <code>false</code> otherwise
+	 * @return the origin of this formula
 	 */
-	public boolean isGoal();
-	
+	IOrigin getOrigin();
+
 }
