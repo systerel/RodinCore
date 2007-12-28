@@ -420,10 +420,10 @@ public class TestClauseBuilder extends AbstractPPTest {
 
 	public void testComplex() {
 		Object[] constants = new Object[]{
-				"a",a,
-				"b",b,
-				"c",c,
-				"d",d,
+				"a", a,
+				"b", b,
+				"c", c,
+				"d", d,
 		};
 		doTestP(
 				mList("(a ∈ S ∨ b ∈ S) ∨ (∀x,y·x ∈ S ∨ y ∈ S)"),
@@ -463,7 +463,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 						"∀x, y · x ∈ P ∧ y ∈ Q ⇒ (∃z · z ∈ R ∧ (x↦y)↦z ∈ M)",
 						"∀x · x ∈ Q ∨ x ∈ R",
 						"∃x · x ∈ P ∧ (∀y · y ∈ R ⇒ (∃z · z ∈ Q ∧ (x↦y)↦z ∈ M))",
-				"∃x · ∀y · ∃z · (x↦y)↦z ∈ M"),
+						"∃x · ∀y · ∃z · (x↦y)↦z ∈ M"
+				),
 				mList(/* 3 */cClause(cNotPred(d12B, cELocVar(1,Bsort))), /* 4 */cClause(cPred(d15B, cELocVar(2,Bsort))),
 						// 1 ok
 						cClause(cNotPred(d0B,xB),cNotPred(d1APA,yA,Q),cNotPred(d4APABA, cELocVar(0,Asort),R,xB,yA)),
