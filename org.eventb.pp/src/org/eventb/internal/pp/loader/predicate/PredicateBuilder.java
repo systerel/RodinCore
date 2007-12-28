@@ -118,9 +118,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	}
 	
 	public void build(Predicate predicate, boolean isGoal) {
-		this.origin = new PredicateOrigin(predicate, isGoal);
-		buildInternal(predicate, isGoal);
-		this.origin = null;
+		build(predicate, predicate, isGoal);
 	}
 	
 	private boolean checkPredicateTag(Predicate predicate) {
@@ -160,7 +158,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 		this.result = new Stack<NormalizedFormula>();
 		this.termBuilder = new TermBuilder(context);
-		this.isPositive = true;
+		this.isPositive = !isGoal;
 		
 		pushNewList(NO_BIDS);
 		predicate.accept(this);
@@ -168,9 +166,6 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		final NormalizedFormula res = result.pop();
 		assert result.isEmpty();
 		
-		if (isGoal) {
-			res.getSignature().negate();
-		}
 		context.addResult(res);
 	}
 
