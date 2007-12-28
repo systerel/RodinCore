@@ -52,7 +52,7 @@ import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResultList;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 
 public class Util {
@@ -83,7 +83,7 @@ public class Util {
 	public static ClauseBuilder doPhaseOneAndTwo(String predicate, ITypeEnvironment environment,
 			VariableTable table) {
 		Predicate pred = parsePredicate(predicate, environment);
-		PredicateBuilder pBuilder = new PredicateBuilder();
+		PredicateLoader pBuilder = new PredicateLoader();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
 		cBuilder.loadClausesFromContext(pBuilder.getContext(),table);
@@ -92,7 +92,7 @@ public class Util {
 	
 	public static ClauseBuilder doPhaseOneAndTwo(String predicate) {
 		Predicate pred = parsePredicate(predicate);
-		PredicateBuilder pBuilder = new PredicateBuilder();
+		PredicateLoader pBuilder = new PredicateLoader();
 		pBuilder.build(pred,false);
 		ClauseBuilder cBuilder = new ClauseBuilder();
 		cBuilder.loadClausesFromContext(pBuilder.getContext());

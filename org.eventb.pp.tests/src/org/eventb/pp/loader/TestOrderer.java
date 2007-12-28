@@ -5,7 +5,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 public class TestOrderer extends AbstractPPTest {
 
@@ -30,7 +30,7 @@ public class TestOrderer extends AbstractPPTest {
 	}
 
 	public static void doTest(String... images) {
-		final PredicateBuilder builder = new PredicateBuilder();
+		final PredicateLoader builder = new PredicateLoader();
 		INormalizedFormula formula = null;
 		int index = 0;
 		for (String image : images) {

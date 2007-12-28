@@ -69,7 +69,7 @@ import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
  * 
  * @author François Terrier
  */
-public class PredicateBuilder extends DefaultVisitor {
+public class PredicateLoader extends DefaultVisitor {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
@@ -96,7 +96,7 @@ public class PredicateBuilder extends DefaultVisitor {
 	// Origin of the predicate currently being built.
 	private IOrigin origin;
 	
-	public PredicateBuilder() {
+	public PredicateLoader() {
 		// TODO remove this static call
 //		ArithmeticKey.resetCounter();
 		this.context = new AbstractContext();

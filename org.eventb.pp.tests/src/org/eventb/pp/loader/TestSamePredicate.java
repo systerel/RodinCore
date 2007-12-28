@@ -9,7 +9,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 /**
  * This class tests that two predicates having the same terms as arguments 
@@ -100,7 +100,7 @@ public class TestSamePredicate extends TestCase {
 			// TODO clauses !
 	};
 	
-	private SignedFormula<?> build(PredicateBuilder builder, String test) {
+	private SignedFormula<?> build(PredicateLoader builder, String test) {
 		Predicate expr = ff.parsePredicate(test).getParsedPredicate();
 		expr.typeCheck(env);
 		builder.build(expr,false);
@@ -109,7 +109,7 @@ public class TestSamePredicate extends TestCase {
 	
 	public void testSamePredicate() {
 		for (String[] tests : test1) {
-			PredicateBuilder builder = new PredicateBuilder();
+			PredicateLoader builder = new PredicateLoader();
 			LiteralDescriptor desc = null;
 			for (String test : tests) {
 				AbstractFormula<?> pp = ((SignedFormula<?>)build(builder, test)).getFormula();

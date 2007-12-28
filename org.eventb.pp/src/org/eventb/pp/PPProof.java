@@ -33,7 +33,7 @@ import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 import org.eventb.pp.PPResult.Result;
 import org.eventb.pptrans.Translator;
 
@@ -141,7 +141,7 @@ public class PPProof {
 	 * into the CNF required as an input to the prover.
 	 */
 	public void load() {
-		final PredicateBuilder pBuilder = new PredicateBuilder();
+		final PredicateLoader pBuilder = new PredicateLoader();
 		for (InputPredicate predicate : hypotheses) {
 			if (predicate.loadPhaseOne(pBuilder)) {
 				proofFound(predicate);
@@ -259,7 +259,7 @@ public class PPProof {
 			this.isGoal = isGoal;
 		}
 
-		public boolean loadPhaseOne(PredicateBuilder builder) {
+		public boolean loadPhaseOne(PredicateLoader builder) {
 			if (translatedPredicate == null) {
 				throw new IllegalStateException(
 						"Translator should be invoked first");

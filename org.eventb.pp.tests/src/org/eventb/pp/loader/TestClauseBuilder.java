@@ -49,7 +49,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 // TODO test negation of the goal
 public class TestClauseBuilder extends AbstractPPTest {
@@ -1837,7 +1837,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	}
 	
 	private ClauseBuilder load(List<String> strPredicate, boolean goal, Object... constants) {
-		PredicateBuilder builder = new PredicateBuilder();
+		PredicateLoader builder = new PredicateLoader();
 		ClauseBuilder cBuilder = new ClauseBuilder();
 		ITypeEnvironment tmp = env.clone();
 		
@@ -1876,7 +1876,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		assertTrue("\n"+predicate+"\n"+message.toString(), message.length()==0);
 	}
 	
-	private ITypeCheckResult getResult(String strPredicate, PredicateBuilder builder, ITypeEnvironment types, boolean goal) {
+	private ITypeCheckResult getResult(String strPredicate, PredicateLoader builder, ITypeEnvironment types, boolean goal) {
 		final Predicate predicate = Util.parsePredicate(strPredicate);
 		final ITypeCheckResult result = predicate.typeCheck(types);
 		assertTrue("TypeCheck failed for " + predicate, result.isSuccess());

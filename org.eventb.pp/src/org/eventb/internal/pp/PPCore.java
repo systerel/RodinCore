@@ -21,7 +21,7 @@ import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 import org.eventb.pp.PPProof;
 import org.osgi.framework.BundleContext;
 
@@ -71,7 +71,7 @@ public class PPCore extends Plugin {
 //				PredicateBuilder.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(LOADER_PHASE1_TRACE);
 			if (option != null)
-				PredicateBuilder.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				PredicateLoader.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(lOADER_PHASE2_TRACE);
 			if (option != null)
 				ClauseBuilder.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

@@ -17,7 +17,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
-import org.eventb.internal.pp.loader.predicate.PredicateBuilder;
+import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 
 /**
@@ -89,7 +89,7 @@ public class TestExpectedLiterals extends TestCase {
 	
 	public void doTest(String[] tests, Class<?> expectedClass) {
 		for (String string : tests) {
-			PredicateBuilder builder = new PredicateBuilder();
+			PredicateLoader builder = new PredicateLoader();
 			Predicate predicate = Util.parsePredicate(string);
 			predicate.typeCheck(env);
 			builder.build(predicate,false);
