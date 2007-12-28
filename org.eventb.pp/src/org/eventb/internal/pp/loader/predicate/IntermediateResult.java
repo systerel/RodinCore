@@ -44,7 +44,7 @@ public class IntermediateResult implements IIntermediateResult {
 		if (!(obj instanceof IntermediateResult))
 			return false;
 		final IntermediateResult other = (IntermediateResult) obj;
-		return terms.equals(other.terms);
+		return Arrays.equals(this.terms, other.terms);
 	}
 
 	public List<IIntermediateResult> getResultList() {
@@ -55,7 +55,7 @@ public class IntermediateResult implements IIntermediateResult {
 
 	@Override
 	public String toString() {
-		return terms.toString();
+		return Arrays.toString(terms);
 	}
 	
 }
