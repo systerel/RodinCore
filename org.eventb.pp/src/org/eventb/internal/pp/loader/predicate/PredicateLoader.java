@@ -84,10 +84,6 @@ class PredicateLoader extends DefaultVisitor {
 	
 	private static final BoundIdentDecl[] NO_BIDS = new BoundIdentDecl[0];
 
-	public static void debug(String message){
-		System.out.println(message);
-	}
-	
 	// these are persistent variables that are completed at each
 	// iteration
 	private final AbstractContext context;
@@ -370,7 +366,8 @@ class PredicateLoader extends DefaultVisitor {
 		ArithmeticDescriptor desc = updateDescriptor(key, context.getArithmeticTable(), interRes, "arithmetic");
 		desc.addResult(interRes);
 		ArithmeticFormula sig = new ArithmeticFormula(type,interRes.getTerms(),otherTerms,desc);
-		if (DEBUG) debug(prefix+"Adding terms to "+desc+": "+interRes);
+		if (DEBUG)
+			debug("Adding terms to " + desc + ": " + interRes);
 		
 		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig, sign),interRes);
 	}
@@ -475,35 +472,26 @@ class PredicateLoader extends DefaultVisitor {
 		pushNewList(NO_BIDS);
 	}
 	
-	private StringBuilder prefix = new StringBuilder("");
-	private void debugEnter(Predicate pred) {
-		if (DEBUG) debug(prefix+"Entering "+pred);
-		prefix.append("  ");
-	}
-	
-	private void debugExit() {
-		prefix.deleteCharAt(prefix.length()-1);
-		prefix.deleteCharAt(prefix.length()-1);
-	}
-	
 	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key, SymbolTable<T> table, IIntermediateResult res, String debug) {
 		T desc = table.get(key);
 		if (desc == null) {
 			desc = key.newDescriptor(context);
 			table.add(key, desc);
-			if (DEBUG) debug(prefix+"New "+debug+" with "+key+", becomes: "+desc.toString());
+			if (DEBUG)
+				debug("New " + debug + " with " + key + ", becomes: " + desc);
 		}
 		desc.addResult(res);
-		if (DEBUG) debug(prefix+"Adding terms to "+desc+": "+res);
+		if (DEBUG)
+			debug("Adding terms to " + desc + ": " + res);
 		return desc;
 	}
 	
-	private void exitLogicalOperator(boolean isEquivalence) {
+	private void exitLogicalOperator(int tag) {
 		NormalizedFormula res = result.pop();
 
 		// let us order the list
 		res.orderList();
-		if (isEquivalence) {
+		if (tag == Predicate.LEQV) {
 			// we order the list and put the negation in front before
 			// the key is created, ensuring a correct factorization
 			res.reduceNegations();
@@ -512,7 +500,7 @@ class PredicateLoader extends DefaultVisitor {
 		IIntermediateResult iRes = res.getNewIntermediateResult();
 		
 		AbstractClause<?> sig;
-		if (isEquivalence) {
+		if (tag == Predicate.LEQV) {
 			SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(literals);
 			EquivalenceClauseDescriptor desc = updateDescriptor(key, context.getEqClauseTable(), iRes, "equivalence clause");
 			sig = new EquivalenceClause(literals,iRes.getTerms(),desc);
@@ -541,14 +529,9 @@ class PredicateLoader extends DefaultVisitor {
 	}
 	
 	@Override
-	public boolean continueLOR(AssociativePredicate pred) {
-		return true;
-	}
-	
-	@Override
 	public boolean exitLOR(AssociativePredicate pred) {
 		isPositive = result.peek().isPositive();
-		exitLogicalOperator(false);
+		exitLogicalOperator(Predicate.LOR);
 		debugExit();
 		return true;
 	}
@@ -565,7 +548,7 @@ class PredicateLoader extends DefaultVisitor {
 	@Override
 	public boolean exitLAND(AssociativePredicate pred) {
 		isPositive = !result.peek().isPositive();
-		exitLogicalOperator(false);
+		exitLogicalOperator(Predicate.LOR);
 		debugExit();
 		return true;
 	}
@@ -588,7 +571,7 @@ class PredicateLoader extends DefaultVisitor {
 	@Override
 	public boolean exitLIMP(BinaryPredicate pred) {
 		isPositive = result.peek().isPositive();
-		exitLogicalOperator(false);
+		exitLogicalOperator(Predicate.LOR);
 		debugExit();
 		return true;
 	}
@@ -611,7 +594,7 @@ class PredicateLoader extends DefaultVisitor {
 	@Override
 	public boolean exitLEQV(BinaryPredicate pred) {
 		isPositive = result.peek().isPositive();
-		exitLogicalOperator(true);
+		exitLogicalOperator(Predicate.LEQV);
 		debugExit();
 		return true;
 	}
@@ -625,7 +608,7 @@ class PredicateLoader extends DefaultVisitor {
 
 	@Override
 	public boolean exitEXISTS(QuantifiedPredicate pred) {
-		exitQuantifiedPredicate(pred, false);
+		exitQuantifiedPredicate(pred, !isPositive);
 		return true;
 	}
 	
@@ -638,7 +621,7 @@ class PredicateLoader extends DefaultVisitor {
 	
 	@Override
 	public boolean exitFORALL(QuantifiedPredicate pred) {
-		exitQuantifiedPredicate(pred, true);
+		exitQuantifiedPredicate(pred, isPositive);
 		return true;
 	}
 	
@@ -647,8 +630,6 @@ class PredicateLoader extends DefaultVisitor {
 	}
 	
 	private void exitQuantifiedPredicate(QuantifiedPredicate pred, boolean isForall) {
-		isForall = isPositive?isForall:!isForall;
-		
 		termBuilder.popDecls(pred.getBoundIdentDecls());
 		
 		NormalizedFormula res = result.pop();
@@ -673,6 +654,29 @@ class PredicateLoader extends DefaultVisitor {
 			unquantifiedSignature.add(term.getUnquantifiedTerm(startOffset, endOffset, quantifiedTerms));
 		}
 		return unquantifiedSignature;
+	}
+
+	//-----------------------------
+	//  Debugging support methods
+	//-----------------------------
+
+	private StringBuilder indentationPrefix = new StringBuilder();
+
+	private void debug(String message) {
+		System.out.println(indentationPrefix + message);
+	}
+	
+	private void debugEnter(Predicate pred) {
+		if (DEBUG) {
+			debug("Entering " + pred);
+			indentationPrefix.append("  ");
+		}
+	}
+
+	private void debugExit() {
+		if (DEBUG) {
+			indentationPrefix.setLength(indentationPrefix.length() - 2);
+		}
 	}
 	
 }
