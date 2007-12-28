@@ -92,12 +92,13 @@ class PredicateLoader {
 	// Origin of the predicate currently being built.
 	private final IOrigin origin;
 	
+	private final boolean isGoal;
+	
 	private final TermBuilder termBuilder;
 	
 	// these are the encountered index and corresponding sorts
 	// these 3 variables are reset at each predicate
 	private final Stack<NormalizedFormula> result;
-	private boolean isPositive;
 	
 	// Result of the loading
 	private NormalizedFormula formula;
@@ -132,9 +133,9 @@ class PredicateLoader {
 		this.context = context;
 		this.predicate = predicate;
 		this.origin = new PredicateOrigin(originalPredicate, isGoal);
+		this.isGoal = isGoal;
 		this.termBuilder = new TermBuilder(context);
 		this.result = new Stack<NormalizedFormula>();
-		this.isPositive = !isGoal;
 	}
 	
 	/**
@@ -172,12 +173,12 @@ class PredicateLoader {
 		
 		if (DEBUG) {
 			debug("========================================");
-			debug("Loading " + (isPositive ? "hypothesis" : "goal") + ": "
+			debug("Loading " + (isGoal ? "goal" : "hypothesis") + ": "
 					+ predicate);
 		}
 	
 		pushNewList(NO_BIDS);
-		process(predicate);
+		process(predicate, !isGoal);
 
 		formula = result.pop();
 		assert result.isEmpty();
@@ -195,23 +196,28 @@ class PredicateLoader {
 		return formula;
 	}
 
-	private NormalizedFormula process(Predicate pred) {
+	private NormalizedFormula process(Predicate pred, boolean isPositive) {
 		try {
 			debugEnter(pred);
 			if (pred instanceof AssociativePredicate) {
-				return processAssociativePredicate((AssociativePredicate) pred);
+				final AssociativePredicate apred = (AssociativePredicate) pred;
+				return processAssociativePredicate(apred, isPositive);
 			}
 			if (pred instanceof BinaryPredicate) {
-				return processBinaryPredicate((BinaryPredicate) pred);
+				final BinaryPredicate bpred = (BinaryPredicate) pred;
+				return processBinaryPredicate(bpred, isPositive);
 			}
 			if (pred instanceof UnaryPredicate) {
-				return processUnaryPredicate((UnaryPredicate) pred);
+				final UnaryPredicate upred = (UnaryPredicate) pred;
+				return processUnaryPredicate(upred, isPositive);
 			}
 			if (pred instanceof QuantifiedPredicate) {
-				return processQuantifiedPredicate((QuantifiedPredicate) pred);
+				final QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
+				return processQuantifiedPredicate(qpred, isPositive);
 			}
 			if (pred instanceof RelationalPredicate) {
-				return processRelationalPredicate((RelationalPredicate) pred);
+				final RelationalPredicate rpred = (RelationalPredicate) pred;
+				return processRelationalPredicate(rpred, isPositive);
 			}
 			throw invalidPredicate(pred);
 		} finally {
@@ -222,9 +228,9 @@ class PredicateLoader {
 	private RuntimeException invalidPredicate(Predicate pred) {
 		return new IllegalArgumentException("Unexpected predicate " + pred);
 	}
-	
+
 	private NormalizedFormula processAssociativePredicate(
-			AssociativePredicate pred) {
+			AssociativePredicate pred, boolean isPositive) {
 		final int tag = pred.getTag();
 		final boolean negated;
 		switch (tag) {
@@ -239,17 +245,15 @@ class PredicateLoader {
 		}
 
 		pushNewList(NO_BIDS);
-		result.peek().setPositive(isPositive ^ negated);
-		isPositive = !negated;
-		for (Predicate child: pred.getChildren()) {
-			process(child);
+		for (Predicate child : pred.getChildren()) {
+			process(child, !negated);
 		}
-		isPositive = result.peek().isPositive() ^ negated;
-		exitLogicalOperator(tag);
-		return null;  // TODO
+		exitLogicalOperator(tag, isPositive ^ negated);
+		return null; // TODO
 	}
 
-	private NormalizedFormula processBinaryPredicate(BinaryPredicate pred) {
+	private NormalizedFormula processBinaryPredicate(BinaryPredicate pred,
+			boolean isPositive) {
 		final int tag = pred.getTag();
 		final boolean leftIsPositive;
 		switch (tag) {
@@ -264,28 +268,23 @@ class PredicateLoader {
 		}
 
 		pushNewList(NO_BIDS);
-		result.peek().setPositive(isPositive);
-		isPositive = leftIsPositive;
-		process(pred.getLeft());
-		isPositive = true;
-		process(pred.getRight());
-		isPositive = result.peek().isPositive();
-		exitLogicalOperator(tag);
-		return null;  // TODO
+		process(pred.getLeft(), leftIsPositive);
+		process(pred.getRight(), true);
+		exitLogicalOperator(tag, isPositive);
+		return null; // TODO
 	}
 
-	private NormalizedFormula processUnaryPredicate(UnaryPredicate pred) {
-		isPositive = !isPositive;
-		process(pred.getChild());
-		isPositive = !isPositive;
-		return null;  // TODO
+	private NormalizedFormula processUnaryPredicate(UnaryPredicate pred,
+			boolean isPositive) {
+		process(pred.getChild(), !isPositive);
+		return null; // TODO
 	}
 
 	private NormalizedFormula processQuantifiedPredicate(
-			QuantifiedPredicate pred) {
+			QuantifiedPredicate pred, boolean isPositive) {
 
 		pushNewList(pred.getBoundIdentDecls());
-		process(pred.getPredicate());
+		process(pred.getPredicate(), isPositive);
 		switch (pred.getTag()) {
 		case Predicate.EXISTS:
 			exitQuantifiedPredicate(pred, !isPositive);
@@ -299,7 +298,7 @@ class PredicateLoader {
 	}
 
 	private NormalizedFormula processRelationalPredicate(
-			RelationalPredicate pred) {
+			RelationalPredicate pred, boolean isPositive) {
 		final Sort sort = new Sort(pred.getRight().getType());
 		final boolean arithmetic = sort.equals(Sort.NATURAL);
 		final List<TermSignature> terms = getChildrenTerms(pred, arithmetic);
@@ -459,8 +458,8 @@ class PredicateLoader {
 		return desc;
 	}
 	
-	private void exitLogicalOperator(int tag) {
-		NormalizedFormula res = result.pop();
+	private void exitLogicalOperator(int tag, boolean isPositive) {
+		final NormalizedFormula res = result.pop();
 
 		// let us order the list
 		res.orderList();
@@ -469,23 +468,23 @@ class PredicateLoader {
 			// the key is created, ensuring a correct factorization
 			res.reduceNegations();
 		}
-		List<SignedFormula<?>> literals = res.getLiterals();
-		IIntermediateResult iRes = res.getNewIntermediateResult();
+		final List<SignedFormula<?>> literals = res.getLiterals();
+		final IIntermediateResult iRes = res.getNewIntermediateResult();
 		
-		AbstractClause<?> sig;
+		final AbstractClause<?> sig;
 		if (tag == Predicate.LEQV) {
-			SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(literals);
-			EquivalenceClauseDescriptor desc = updateDescriptor(key, context.getEqClauseTable(), iRes, "equivalence clause");
+			final SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(literals);
+			final EquivalenceClauseDescriptor desc = updateDescriptor(key, context.getEqClauseTable(), iRes, "equivalence clause");
 			sig = new EquivalenceClause(literals,iRes.getTerms(),desc);
 		} else {
-			SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(literals);
-			DisjunctiveClauseDescriptor desc = updateDescriptor(key, context.getDisjClauseTable(), iRes, "disjunctive clause");
+			final SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(literals);
+			final DisjunctiveClauseDescriptor desc = updateDescriptor(key, context.getDisjClauseTable(), iRes, "disjunctive clause");
 			sig = new DisjunctiveClause(literals,iRes.getTerms(),desc);
 		}
 
 		// we create the new signature
 		@SuppressWarnings("unchecked")
-		SignedFormula<?> lit = new SignedFormula(sig,res.isPositive());
+		final SignedFormula<?> lit = new SignedFormula(sig, isPositive);
 		
 		// we append the new literal to the result before
 		result.peek().addResult(lit, iRes);

@@ -31,7 +31,6 @@ public class NormalizedFormula implements INormalizedFormula {
 
 	private List<ResultPair> list = new ArrayList<ResultPair>();
 	
-	private boolean isPositive = false;
 	protected Comparator<SignedFormula<?>> orderer;
 	private int startOffset, endOffset;
 	private BoundIdentDecl[] boundIdentDecls;
@@ -45,10 +44,6 @@ public class NormalizedFormula implements INormalizedFormula {
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
 		this.origin = origin;
-	}
-	
-	public void setPositive(boolean isPositive) {
-		this.isPositive = isPositive;
 	}
 	
 	protected void orderList() {
@@ -107,10 +102,6 @@ public class NormalizedFormula implements INormalizedFormula {
 	
 	public IIntermediateResult getNewIntermediateResult() {
 		return new IntermediateResultList(getIntermediateResults());
-	}
-	
-	public boolean isPositive() {
-		return isPositive;
 	}
 	
 	public SignedFormula<?> getSignature() {
