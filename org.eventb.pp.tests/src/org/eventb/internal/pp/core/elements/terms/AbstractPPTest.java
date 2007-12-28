@@ -10,6 +10,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
@@ -25,8 +26,10 @@ public abstract class AbstractPPTest extends TestCase {
 	public List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
 
 	public static FormulaFactory ff = FormulaFactory.getDefault();
+
 	// Types used in these tests
 	public static IntegerType INT = ff.makeIntegerType();
+	public static BooleanType ty_BOOL = ff.makeBooleanType();
 
 	public static GivenType ty_A = ff.makeGivenType("A");
 	public static GivenType ty_B = ff.makeGivenType("B");
