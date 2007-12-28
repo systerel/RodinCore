@@ -9,14 +9,17 @@
 package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 /**
- * This class represents an intermediate result for a single literal.
- * See {@link IntermediateResultList} for the class representing a formula, i.e.
- * a list of intermediate result.
+ * Implementation of the argument list of a literal predicate.
+ * <p>
+ * See {@link IntermediateResultList} for the class representing a formula,
+ * i.e., a list of list of arguments.
+ * </p>
  * 
  * @see IntermediateResultList
  * 
@@ -24,22 +27,14 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class IntermediateResult implements IIntermediateResult {
 
-	private final List<TermSignature> results;
-	
-	public IntermediateResult() {
-		this.results  = new ArrayList<TermSignature>();
-	}
+	private final TermSignature[] terms;
 	
 	public IntermediateResult(List<TermSignature> list) {
-		this.results = new ArrayList<TermSignature>(list);
+		this.terms = list.toArray(new TermSignature[list.size()]);
 	}
 
-	public void addResult(TermSignature signature) {
-		this.results.add(signature);
-	}
-	
 	public List<TermSignature> getTerms() {
-		return results;
+		return new ArrayList<TermSignature>(Arrays.asList(terms));
 	}
 	
 	@Override
@@ -49,18 +44,18 @@ public class IntermediateResult implements IIntermediateResult {
 		if (!(obj instanceof IntermediateResult))
 			return false;
 		final IntermediateResult other = (IntermediateResult) obj;
-		return results.equals(other.results);
+		return terms.equals(other.terms);
 	}
 
 	public List<IIntermediateResult> getResultList() {
-		List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
+		final List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
 		result.add(this);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return results.toString();
+		return terms.toString();
 	}
 	
 }
