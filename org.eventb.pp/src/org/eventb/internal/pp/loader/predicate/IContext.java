@@ -35,7 +35,7 @@ public interface IContext {
 	 * 
 	 * @return all predicate descriptors produced by the normalization process
 	 */
-	public Collection<PredicateDescriptor> getAllPredicateDescriptors();
+	Collection<PredicateDescriptor> getAllPredicateDescriptors();
 	
 	/**
 	 * Returns all descriptors.
@@ -44,7 +44,7 @@ public interface IContext {
 	 * 
 	 * @return all descriptors
 	 */
-	public Collection<LiteralDescriptor> getAllDescriptors();
+	Collection<LiteralDescriptor> getAllDescriptors();
 	
 	/**
 	 * Returns a list containing the normalized formula of each formula 
@@ -52,7 +52,7 @@ public interface IContext {
 	 * 
 	 * @return a list with all normalized formulas of the sequent
 	 */
-	public List<INormalizedFormula> getResults();
+	List<INormalizedFormula> getResults();
 	
 	/**
 	 * Returns the next literal identifier.
@@ -61,12 +61,12 @@ public interface IContext {
 	 * 
 	 * @return the next literal identifier
 	 */
-	public int getNextLiteralIdentifier();
+	int getNextLiteralIdentifier();
 	
 	/**
 	 * Returns a fresh variable index.
 	 * 
 	 * @return a fresh variable index
 	 */
-	public int getFreshVariableIndex();
+	int getFreshVariableIndex();
 }
