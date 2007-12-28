@@ -41,33 +41,33 @@ public class AbstractContext implements IContext {
 	SymbolTable<ArithmeticDescriptor> arithmeticTable = new SymbolTable<ArithmeticDescriptor>();
 	SymbolTable<QuantifiedDescriptor> quantifierTable = new SymbolTable<QuantifiedDescriptor>();
 	
-	List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
+	final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 	
-	public SymbolTable<PredicateDescriptor> getLiteralTable() {
+	void addResult(INormalizedFormula signature) {
+		results.add(signature);
+	}
+	
+	SymbolTable<PredicateDescriptor> getLiteralTable() {
 		return predicateTable;
 	}
 
-	public void addResult(INormalizedFormula signature) {
-		results.add(signature);
-	}
-
-	public SymbolTable<DisjunctiveClauseDescriptor> getDisjClauseTable() {
+	SymbolTable<DisjunctiveClauseDescriptor> getDisjClauseTable() {
 		return disjunctionTable;
 	}
 
-	public SymbolTable<QuantifiedDescriptor> getQuantifiedTable() {
+	SymbolTable<QuantifiedDescriptor> getQuantifiedTable() {
 		return quantifierTable;
 	}
 
-	public SymbolTable<EquivalenceClauseDescriptor> getEqClauseTable() {
+	SymbolTable<EquivalenceClauseDescriptor> getEqClauseTable() {
 		return equivalenceTable;
 	}
 	
-	public SymbolTable<EqualityDescriptor> getEqualityTable() {
+	SymbolTable<EqualityDescriptor> getEqualityTable() {
 		return equalityTable;
 	}
 
-	public SymbolTable<ArithmeticDescriptor> getArithmeticTable() {
+	SymbolTable<ArithmeticDescriptor> getArithmeticTable() {
 		return arithmeticTable;
 	}
 	
