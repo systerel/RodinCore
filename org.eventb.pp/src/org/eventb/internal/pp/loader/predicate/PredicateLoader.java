@@ -16,9 +16,7 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -75,7 +73,7 @@ import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
  * 
  * @author François Terrier
  */
-class PredicateLoader extends DefaultVisitor {
+class PredicateLoader {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
@@ -128,8 +126,6 @@ class PredicateLoader extends DefaultVisitor {
 			Predicate originalPredicate, boolean isGoal) {
 
 		assert predicate.isTypeChecked() : "Untyped predicate";
-		assert checkPredicateTag(predicate) : "Unexpected predicate: "
-			+ predicate;
 
 		// TODO remove this static call
 //		ArithmeticKey.resetCounter();
@@ -181,7 +177,7 @@ class PredicateLoader extends DefaultVisitor {
 		}
 	
 		pushNewList(NO_BIDS);
-		predicate.accept(this);
+		process(predicate);
 
 		formula = result.pop();
 		assert result.isEmpty();
@@ -199,71 +195,154 @@ class PredicateLoader extends DefaultVisitor {
 		return formula;
 	}
 
-	private boolean checkPredicateTag(Predicate predicate) {
-		if (predicate == null) {
-			return false;
+	private NormalizedFormula process(Predicate pred) {
+		try {
+			debugEnter(pred);
+			if (pred instanceof AssociativePredicate) {
+				return processAssociativePredicate((AssociativePredicate) pred);
+			}
+			if (pred instanceof BinaryPredicate) {
+				return processBinaryPredicate((BinaryPredicate) pred);
+			}
+			if (pred instanceof UnaryPredicate) {
+				return processUnaryPredicate((UnaryPredicate) pred);
+			}
+			if (pred instanceof QuantifiedPredicate) {
+				return processQuantifiedPredicate((QuantifiedPredicate) pred);
+			}
+			if (pred instanceof RelationalPredicate) {
+				return processRelationalPredicate((RelationalPredicate) pred);
+			}
+			throw invalidPredicate(pred);
+		} finally {
+			debugExit();
 		}
-		switch (predicate.getTag()) {
-		case Formula.EXISTS:
-		case Formula.FORALL:
-		case Formula.NOT:
-		case Formula.LIMP:
-		case Formula.LEQV:
-		case Formula.LAND:
-		case Formula.LOR:
-		case Formula.IN:
-		case Formula.EQUAL:
-		case Formula.NOTEQUAL:
-		case Formula.LE:
-		case Formula.LT:
-		case Formula.GE:
-		case Formula.GT:
-			return true;
-		}
-		return false;
+	}
+
+	private RuntimeException invalidPredicate(Predicate pred) {
+		return new IllegalArgumentException("Unexpected predicate " + pred);
 	}
 	
-//	private NormalizedFormula process(Predicate pred) {
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//		if (pred instanceof AssociativePredicate) {
-//			return processAssociativePredicate((AssociativePredicate) pred);
-//		}
-//	}
+	private NormalizedFormula processAssociativePredicate(
+			AssociativePredicate pred) {
+		final int tag = pred.getTag();
+		final boolean negated;
+		switch (tag) {
+		case Predicate.LAND:
+			negated = true;
+			break;
+		case Predicate.LOR:
+			negated = false;
+			break;
+		default:
+			throw invalidPredicate(pred);
+		}
+
+		pushNewList(NO_BIDS);
+		result.peek().setPositive(isPositive ^ negated);
+		isPositive = !negated;
+		for (Predicate child: pred.getChildren()) {
+			process(child);
+		}
+		isPositive = result.peek().isPositive() ^ negated;
+		exitLogicalOperator(tag);
+		return null;  // TODO
+	}
+
+	private NormalizedFormula processBinaryPredicate(BinaryPredicate pred) {
+		final int tag = pred.getTag();
+		final boolean leftIsPositive;
+		switch (tag) {
+		case Predicate.LIMP:
+			leftIsPositive = false;
+			break;
+		case Predicate.LEQV:
+			leftIsPositive = true;
+			break;
+		default:
+			throw invalidPredicate(pred);
+		}
+
+		pushNewList(NO_BIDS);
+		result.peek().setPositive(isPositive);
+		isPositive = leftIsPositive;
+		process(pred.getLeft());
+		isPositive = true;
+		process(pred.getRight());
+		isPositive = result.peek().isPositive();
+		exitLogicalOperator(tag);
+		return null;  // TODO
+	}
+
+	private NormalizedFormula processUnaryPredicate(UnaryPredicate pred) {
+		isPositive = !isPositive;
+		process(pred.getChild());
+		isPositive = !isPositive;
+		return null;  // TODO
+	}
+
+	private NormalizedFormula processQuantifiedPredicate(
+			QuantifiedPredicate pred) {
+
+		pushNewList(pred.getBoundIdentDecls());
+		process(pred.getPredicate());
+		switch (pred.getTag()) {
+		case Predicate.EXISTS:
+			exitQuantifiedPredicate(pred, !isPositive);
+			return null; // TODO
+		case Predicate.FORALL:
+			exitQuantifiedPredicate(pred, isPositive);
+			return null; // TODO
+		default:
+			throw invalidPredicate(pred);
+		}
+	}
+
+	private NormalizedFormula processRelationalPredicate(
+			RelationalPredicate pred) {
+		final Sort sort = new Sort(pred.getRight().getType());
+		final boolean arithmetic = sort.equals(Sort.NATURAL);
+		final List<TermSignature> terms = getChildrenTerms(pred, arithmetic);
+		switch (pred.getTag()) {
+		case Predicate.GE:
+			exitArithmeticLiteral(terms, Type.LESS, !isPositive);
+			return null; // TODO
+		case Predicate.GT:
+			exitArithmeticLiteral(terms, Type.LESS_EQUAL, !isPositive);
+			return null; // TODO
+		case Predicate.LE:
+			exitArithmeticLiteral(terms, Type.LESS_EQUAL, isPositive);
+			return null; // TODO
+		case Predicate.LT:
+			exitArithmeticLiteral(terms, Type.LESS, isPositive);
+			return null; // TODO
+		case Predicate.EQUAL:
+			exitEquality(terms, isPositive);
+			return null; // TODO
+		case Predicate.NOTEQUAL:
+			exitEquality(terms, !isPositive);
+			return null; // TODO
+		case Predicate.IN:
+			final SymbolKey<PredicateDescriptor> key = new PredicateKey(sort);
+			final IntermediateResult inRes = new IntermediateResult(terms);
+			final PredicateDescriptor desc = updateDescriptor(key, context
+					.getLiteralTable(), inRes, "predicate");
+			final PredicateFormula lit = new PredicateFormula(terms, desc);
+
+			result.peek().addResult(
+					new SignedFormula<PredicateDescriptor>(lit, isPositive),
+					inRes);
+			return null; // TODO
+		default:
+			throw invalidPredicate(pred);
+		}
+	}
 
 	private void pushNewList(BoundIdentDecl[] decls) {
 		final int startOffset = termBuilder.getNumberOfDecls();
 		termBuilder.pushDecls(decls);
 		final int endOffset = termBuilder.getNumberOfDecls()-1;
 		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,origin));
-	}
-
-	@Override
-	public boolean enterNOT(UnaryPredicate pred) {
-		isPositive = !isPositive;
-		return true;
-	}
-
-	@Override
-	public boolean exitNOT(UnaryPredicate pred) {
-		isPositive = !isPositive;
-		return true;
 	}
 
 	private List<TermSignature> getChildrenTerms(RelationalPredicate pred,
@@ -296,62 +375,6 @@ class PredicateLoader extends DefaultVisitor {
 		terms.add(term);
 	}
 
-	@Override
-	public boolean enterGE(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-
-	@Override
-	public boolean enterGT(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-
-	@Override
-	public boolean enterLE(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-
-	@Override
-	public boolean enterLT(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-	
-	@Override
-	public boolean exitGE(RelationalPredicate pred) {
-		final List<TermSignature> terms = getChildrenTerms(pred, true);
-		exitArithmeticLiteral(terms, Type.LESS, !isPositive);
-		debugExit();
-		return true;
-	}
-
-	@Override
-	public boolean exitGT(RelationalPredicate pred) {
-		final List<TermSignature> terms = getChildrenTerms(pred, true);
-		exitArithmeticLiteral(terms, Type.LESS_EQUAL, !isPositive);
-		debugExit();
-		return true;
-	}
-
-	@Override
-	public boolean exitLE(RelationalPredicate pred) {
-		final List<TermSignature> terms = getChildrenTerms(pred, true);
-		exitArithmeticLiteral(terms, Type.LESS_EQUAL, isPositive);
-		debugExit();
-		return true;
-	}
-
-	@Override
-	public boolean exitLT(RelationalPredicate pred) {
-		final List<TermSignature> terms = getChildrenTerms(pred, true);
-		exitArithmeticLiteral(terms, Type.LESS, isPositive);
-		debugExit();
-		return true;
-	}
-	
 	private void exitArithmeticLiteral(List<TermSignature> terms, Type type,
 			boolean sign) {
 		assert terms.size() == 2;
@@ -380,32 +403,12 @@ class PredicateLoader extends DefaultVisitor {
 		return result;
 	}
 	
-	@Override
-	public boolean enterIN(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-	
-	@Override
-	public boolean exitIN(RelationalPredicate pred) {
-		List<TermSignature> terms = getChildrenTerms(pred,false);
-
-		final Sort sort = new Sort(pred.getRight().getType());
-		final SymbolKey<PredicateDescriptor> key = new PredicateKey(sort);
-		final IntermediateResult local = new IntermediateResult(terms);
-		final PredicateDescriptor desc = updateDescriptor(key, context.getLiteralTable(), local, "predicate");
-		final PredicateFormula lit = new PredicateFormula(terms, desc);		
-
-		result.peek().addResult(new SignedFormula<PredicateDescriptor>(lit,isPositive), local);
-		debugExit();
-		return true;
-	}
-
 	private void checkTag(Expression expr) {
 		switch (expr.getTag()) {
 		case Expression.BOUND_IDENT:
 		case Expression.FREE_IDENT:
 		case Expression.INTLIT:
+		case Expression.TRUE:
 			// OK
 			break;
 		default:
@@ -413,8 +416,7 @@ class PredicateLoader extends DefaultVisitor {
 		}
 	}
 	
-	public boolean exitEquality(RelationalPredicate pred, boolean sign) {
-		final List<TermSignature> terms = getChildrenTerms(pred, true);
+	private boolean exitEquality(List<TermSignature> terms, boolean sign) {
 		// treat arithmetic equality as arithmetic literals
 		final Sort sort = terms.get(0).getSort();
 		if (sort.equals(Sort.NATURAL)) {
@@ -422,14 +424,13 @@ class PredicateLoader extends DefaultVisitor {
 		} else {
 			exitEqualityLiteral(terms, sort, sign);
 		}
-		debugExit();
 		return true;
 	}
 	
 	private void exitEqualityLiteral(List<TermSignature> terms, Sort sort, boolean sign) {
 		SymbolKey<EqualityDescriptor> key = new EqualityKey(sort);
-		IntermediateResult local = new IntermediateResult(terms);
-		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), local, "equality");
+		IntermediateResult inRes = new IntermediateResult(terms);
+		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), inRes, "equality");
 		
 		AbstractFormula<EqualityDescriptor> sig;
 		if (sort.equals(Sort.BOOLEAN)) {
@@ -441,37 +442,9 @@ class PredicateLoader extends DefaultVisitor {
 		// TODO implement an ordering on terms
 		// inRes.orderList();
 		// from here indexes will be ordered
-		result.peek().addResult(new SignedFormula<EqualityDescriptor>(sig, sign), local);
-	}
-	
-	@Override
-	public boolean enterEQUAL(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-	
-	@Override
-	public boolean enterNOTEQUAL(RelationalPredicate pred) {
-		debugEnter(pred);
-		return true;
-	}
-	
-	@Override
-	public boolean exitNOTEQUAL(RelationalPredicate pred) {
-		exitEquality(pred, !isPositive);
-		return true;
+		result.peek().addResult(new SignedFormula<EqualityDescriptor>(sig, sign), inRes);
 	}
 
-	@Override
-	public boolean exitEQUAL(RelationalPredicate pred) {
-		exitEquality(pred, isPositive);
-		return true;
-	}
-	
-	private void enterLogicalOperator() {
-		pushNewList(NO_BIDS);
-	}
-	
 	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key, SymbolTable<T> table, IIntermediateResult res, String debug) {
 		T desc = table.get(key);
 		if (desc == null) {
@@ -518,117 +491,6 @@ class PredicateLoader extends DefaultVisitor {
 		result.peek().addResult(lit, iRes);
 	}
 	
-	@Override
-	public boolean enterLOR(AssociativePredicate pred) {
-		debugEnter(pred);
-		enterLogicalOperator();
-		
-		result.peek().setPositive(isPositive);
-		isPositive = true;
-		return true;
-	}
-	
-	@Override
-	public boolean exitLOR(AssociativePredicate pred) {
-		isPositive = result.peek().isPositive();
-		exitLogicalOperator(Predicate.LOR);
-		debugExit();
-		return true;
-	}
-	
-	@Override
-	public boolean enterLAND(AssociativePredicate pred) {
-		debugEnter(pred);
-		enterLogicalOperator();
-		result.peek().setPositive(!isPositive);
-		isPositive = false;
-		return true;
-	}
-	
-	@Override
-	public boolean exitLAND(AssociativePredicate pred) {
-		isPositive = !result.peek().isPositive();
-		exitLogicalOperator(Predicate.LOR);
-		debugExit();
-		return true;
-	}
-
-	@Override
-	public boolean enterLIMP(BinaryPredicate pred) {
-		debugEnter(pred);
-		enterLogicalOperator();
-		result.peek().setPositive(isPositive);
-		isPositive = false;
-		return true;
-	}
-	
-	@Override
-	public boolean continueLIMP(BinaryPredicate pred) {
-		isPositive = true;
-		return true;
-	}
-	
-	@Override
-	public boolean exitLIMP(BinaryPredicate pred) {
-		isPositive = result.peek().isPositive();
-		exitLogicalOperator(Predicate.LOR);
-		debugExit();
-		return true;
-	}
-	
-	@Override
-	public boolean enterLEQV(BinaryPredicate pred) {
-		debugEnter(pred);
-		enterLogicalOperator();
-		
-		result.peek().setPositive(isPositive);
-		isPositive = true;
-		return true;
-	}
-	
-	@Override
-	public boolean continueLEQV(BinaryPredicate pred) {
-		return true;
-	}
-	
-	@Override
-	public boolean exitLEQV(BinaryPredicate pred) {
-		isPositive = result.peek().isPositive();
-		exitLogicalOperator(Predicate.LEQV);
-		debugExit();
-		return true;
-	}
-	
-	@Override
-	public boolean enterEXISTS(QuantifiedPredicate pred) {
-		debugEnter(pred);
-		enterQuantifiedPredicate(pred);
-		return true;
-	}
-
-	@Override
-	public boolean exitEXISTS(QuantifiedPredicate pred) {
-		exitQuantifiedPredicate(pred, !isPositive);
-		return true;
-	}
-	
-	@Override
-	public boolean enterFORALL(QuantifiedPredicate pred) {
-		debugEnter(pred);
-		enterQuantifiedPredicate(pred);
-		return true;
-	}
-	
-	@Override
-	public boolean exitFORALL(QuantifiedPredicate pred) {
-		exitQuantifiedPredicate(pred, isPositive);
-		return true;
-	}
-	
-	private void enterQuantifiedPredicate(QuantifiedPredicate pred) {
-		pushNewList(pred.getBoundIdentDecls());
-	}
-	
 	private void exitQuantifiedPredicate(QuantifiedPredicate pred, boolean isForall) {
 		termBuilder.popDecls(pred.getBoundIdentDecls());
 		
@@ -645,7 +507,6 @@ class PredicateLoader extends DefaultVisitor {
 		QuantifiedFormula sig = new QuantifiedFormula(isForall,quantified,unquantifiedTerms,interRes.getTerms(),desc,res.getStartOffset(),res.getEndOffset());
 		
 		result.peek().addResult(new SignedFormula<QuantifiedDescriptor>(sig, true), interRes);
-		debugExit();
 	}
 	
 	private List<TermSignature> getUnquantifiedTerms(List<TermSignature> terms, List<TermSignature> quantifiedTerms, int startOffset, int endOffset) {
