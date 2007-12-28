@@ -57,18 +57,18 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
 
 /**
- * This class is responsible for building an intermediate data structure
- * that is used to construct the final clauses. The classes composing this
- * intermediate data structure are located in package org.eventb.internal.pp.loader.formula.
+ * This class is responsible for building an intermediate data structure that is
+ * used to construct the final clauses. The classes composing this intermediate
+ * data structure are located in package org.eventb.internal.pp.loader.formula.
  * <p>
- * In that intermediate data structure, all single predicate and all subformula
- * are factored and represented by the same descriptor (descriptors are located in
- * package org.eventb.internal.pp.loader.formula.descriptor). Each individual
- * instance of those predicates and sub-formulas are represented by a different
- * instance of {@link AbstractFormula} or {@link SignedFormula}.
- *
+ * In that intermediate data structure, all single predicates and all
+ * sub-formulas are factored and represented by the same descriptor (descriptors
+ * are located in package org.eventb.internal.pp.loader.formula.descriptor).
+ * Each individual instance of these predicates and sub-formulas are represented
+ * by a different instance of {@link AbstractFormula} or {@link SignedFormula}.
+ * </p>
+ * 
  * @author François Terrier
- *
  */
 public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder {
 
