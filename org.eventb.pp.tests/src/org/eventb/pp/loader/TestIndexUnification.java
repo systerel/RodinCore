@@ -21,8 +21,8 @@ public class TestIndexUnification extends AbstractPPTest {
 	private final TermSignature z = Util.mVariable(2, 2);
 
 	private final TermSignature xx = Util.mVariable(0, -1);
-	private final TermSignature yy = Util.mVariable(0, -2);
-	private final TermSignature zz = Util.mVariable(0, -3);
+	private final TermSignature yy = Util.mVariable(1, -2);
+	private final TermSignature zz = Util.mVariable(2, -3);
 
 	private static IIntermediateResult mList(TermSignature... terms) {
 		return new IntermediateResult(Arrays.asList(terms));
@@ -30,13 +30,13 @@ public class TestIndexUnification extends AbstractPPTest {
 
 	private static void doTest(IIntermediateResult source,
 			IIntermediateResult target, IIntermediateResult expected) {
-		PredicateDescriptor desc = new PredicateDescriptor(
+		final PredicateDescriptor desc = new PredicateDescriptor(
 				new AbstractContext(), 0, NAT);
 		desc.addResult(source);
 		desc.addResult(target);
-		List<TermSignature> list = desc.getUnifiedResults();
-
+		final List<TermSignature> list = desc.getUnifiedResults();
 		assertEquals(expected.getTerms(), list);
+		assertEquals(expected.getTerms().toString(), list.toString());
 	}
 
 	public void testIndex() {
