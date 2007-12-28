@@ -154,7 +154,7 @@ public class NormalizedFormula implements INormalizedFormula {
 		
 		@Override
 		public String toString() {
-			return signature.toString() + " " + result.toString();
+			return signature + " " + result;
 		}
 	}
 
