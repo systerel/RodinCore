@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.PPCore;
@@ -33,6 +32,7 @@ import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 import org.eventb.pp.PPResult.Result;
 import org.eventb.pptrans.Translator;
@@ -141,23 +141,23 @@ public class PPProof {
 	 * into the CNF required as an input to the prover.
 	 */
 	public void load() {
-		final PredicateLoader pBuilder = new PredicateLoader();
+		final AbstractContext loadContext = new AbstractContext();
 		for (InputPredicate predicate : hypotheses) {
-			if (predicate.loadPhaseOne(pBuilder)) {
+			if (predicate.loadPhaseOne(loadContext)) {
 				proofFound(predicate);
 				debugResult();
 				return;
 			}
 		}
-		if (goal.loadPhaseOne(pBuilder)) {
+		if (goal.loadPhaseOne(loadContext)) {
 			proofFound(goal);
 			debugResult();
 			return;
 		}
 
 		final ClauseBuilder cBuilder = new ClauseBuilder();
-		cBuilder.loadClausesFromContext(pBuilder.getContext());
-		cBuilder.buildPredicateTypeInformation(pBuilder.getContext());
+		cBuilder.loadClausesFromContext(loadContext);
+		cBuilder.buildPredicateTypeInformation(loadContext);
 
 		clauses = cBuilder.getClauses();
 		context = cBuilder.getVariableContext();
@@ -259,20 +259,21 @@ public class PPProof {
 			this.isGoal = isGoal;
 		}
 
-		public boolean loadPhaseOne(PredicateLoader builder) {
+		public boolean loadPhaseOne(AbstractContext loadContext) {
 			if (translatedPredicate == null) {
 				throw new IllegalStateException(
 						"Translator should be invoked first");
 			}
 			assert translatedPredicate.isTypeChecked();
 
-			if (translatedPredicate.getTag() == Formula.BTRUE) {
+			if (translatedPredicate.getTag() == Predicate.BTRUE) {
 				return isGoal;
 			}
-			if (translatedPredicate.getTag() == Formula.BFALSE) {
+			if (translatedPredicate.getTag() == Predicate.BFALSE) {
 				return !isGoal;
 			}
-			builder.build(translatedPredicate, originalPredicate, isGoal);
+			new PredicateLoader(loadContext, translatedPredicate,
+					originalPredicate, isGoal).load();
 			return false;
 		}
 

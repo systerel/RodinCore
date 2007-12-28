@@ -82,45 +82,124 @@ public class PredicateLoader extends DefaultVisitor {
 		System.out.println(message);
 	}
 	
-	private TermBuilder termBuilder;
-	
 	// these are persistent variables that are completed at each
 	// iteration
 	private final AbstractContext context;
 	
+	// The predicate to load
+	private final Predicate predicate;
+	
+	// Origin of the predicate currently being built.
+	private final IOrigin origin;
+	
+	private final TermBuilder termBuilder;
+	
 	// these are the encountered index and corresponding sorts
 	// these 3 variables are reset at each predicate
-	private Stack<NormalizedFormula> result;
+	private final Stack<NormalizedFormula> result;
 	private boolean isPositive;
-
-	// Origin of the predicate currently being built.
-	private IOrigin origin;
 	
-	public PredicateLoader() {
+	// Result of the loading
+	private NormalizedFormula formula;
+
+	/**
+	 * Creates a loader instance for the given predicate in the given context.
+	 * Just creating this instance doesn't actually load the predicate and the
+	 * context is not modified. The predicate will be loaded (and the context
+	 * updated) only when the {@link load()} method is called.
+	 * <p>
+	 * If <code>isGoal</code> is <code>true</code>, the predicate will be
+	 * loaded as a goal (negated).
+	 * </p>
+	 * 
+	 * @param context
+	 *            the context in which the loading will be performed
+	 * @param predicate
+	 *            the predicate to load
+	 * @param originalPredicate
+	 *            the original predicate (for origin tracking)
+	 * @param isGoal
+	 *            <code>true</code> iff the predicate should be loaded as a
+	 *            goal
+	 */
+	public PredicateLoader(AbstractContext context, Predicate predicate,
+			Predicate originalPredicate, boolean isGoal) {
+
+		assert predicate.isTypeChecked() : "Untyped predicate";
+		assert checkPredicateTag(predicate) : "Unexpected predicate: "
+			+ predicate;
+
 		// TODO remove this static call
 //		ArithmeticKey.resetCounter();
-		this.context = new AbstractContext();
+		this.context = context;
+		this.predicate = predicate;
+		this.origin = new PredicateOrigin(originalPredicate, isGoal);
+		this.termBuilder = new TermBuilder(context);
+		this.result = new Stack<NormalizedFormula>();
+		this.isPositive = !isGoal;
 	}
 	
 	/**
-	 * Builds the given predicate and use originalPredicate as its origin.
+	 * Creates a loader instance for the given predicate in the given context.
+	 * Just creating this instance doesn't actually load the predicate and the
+	 * context is not modified. The predicate will be loaded (and the context
+	 * updated) only when the {@link load()} method is called.
 	 * <p>
-	 * If isGoal is true, the predicate will be loaded as a goal (negated).
+	 * If <code>isGoal</code> is <code>true</code>, the predicate will be
+	 * loaded as a goal (negated).
+	 * </p>
 	 * 
-	 * @param predicate the predicate to load
-	 * @param originalPredicate the original predicate to use in the origin
-	 * @param isGoal <code>true</code> if the predicate should be loaded as the goal
+	 * @param context
+	 *            the context in which the loading will be performed
+	 * @param predicate
+	 *            the predicate to load
+	 * @param isGoal
+	 *            <code>true</code> iff the predicate should be loaded as a
+	 *            goal
 	 */
-	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal) {
-		this.origin = new PredicateOrigin(originalPredicate, isGoal);
-		buildInternal(predicate, isGoal);
-		this.origin = null;
+	public PredicateLoader(AbstractContext context, Predicate predicate,
+			boolean isGoal) {
+		this(context, predicate, predicate, isGoal);
 	}
 	
-	public void build(Predicate predicate, boolean isGoal) {
-		build(predicate, predicate, isGoal);
-	}
+	/**
+	 * Actually loads the predicate in the context (these are arguments to the
+	 * constructor). The context gets updated with all information gathered
+	 * during the loading process, and the final formula is added to the context
+	 * formulas.
+	 */
+	public void load() {
+		if (formula != null) {
+			throw new IllegalStateException("Predicate already loaded.");
+		}
+		
+		if (DEBUG) {
+			debug("========================================");
+			debug("Loading " + (isPositive ? "hypothesis" : "goal") + ": "
+					+ predicate);
+		}
 	
+		pushNewList(NO_BIDS);
+		predicate.accept(this);
+
+		formula = result.pop();
+		assert result.isEmpty();
+		context.addResult(formula);
+	}
+
+	/**
+	 * Returns the formula computed during loading. This formula has already
+	 * been added to the context.
+	 * <p>
+	 * Method {@link #load()} must have been called prior to this method.
+	 * </p>
+	 * 
+	 * @return the formula resulting from the loading
+	 */
+	public INormalizedFormula getResult() {
+		return formula;
+	}
+
 	private boolean checkPredicateTag(Predicate predicate) {
 		if (predicate == null) {
 			return false;
@@ -145,30 +224,6 @@ public class PredicateLoader extends DefaultVisitor {
 		return false;
 	}
 	
-	private void buildInternal(Predicate predicate, boolean isGoal) {
-		assert checkPredicateTag(predicate) : "Unexpected operator: "
-				+ predicate;
-		assert predicate.isTypeChecked() : predicate;
-		
-		if (DEBUG) {
-			debug("========================================");
-			debug("Loading " + (isGoal ? "goal" : "hypothese") + ": "
-					+ predicate);
-		}
-	
-		this.result = new Stack<NormalizedFormula>();
-		this.termBuilder = new TermBuilder(context);
-		this.isPositive = !isGoal;
-		
-		pushNewList(NO_BIDS);
-		predicate.accept(this);
-
-		final NormalizedFormula res = result.pop();
-		assert result.isEmpty();
-		
-		context.addResult(res);
-	}
-
 //	private NormalizedFormula process(Predicate pred) {
 //		if (pred instanceof AssociativePredicate) {
 //			return processAssociativePredicate((AssociativePredicate) pred);
@@ -198,10 +253,6 @@ public class PredicateLoader extends DefaultVisitor {
 		termBuilder.pushDecls(decls);
 		final int endOffset = termBuilder.getNumberOfDecls()-1;
 		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,origin));
-	}
-
-	public IContext getContext() {
-		return context;
 	}
 
 	@Override

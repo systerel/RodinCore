@@ -49,6 +49,7 @@ import org.eventb.internal.pp.loader.formula.terms.TimesSignature;
 import org.eventb.internal.pp.loader.formula.terms.UnaryMinusSignature;
 import org.eventb.internal.pp.loader.formula.terms.VariableHolder;
 import org.eventb.internal.pp.loader.formula.terms.VariableSignature;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResultList;
@@ -82,20 +83,20 @@ public class Util {
 	///////////////////////////
 	public static ClauseBuilder doPhaseOneAndTwo(String predicate, ITypeEnvironment environment,
 			VariableTable table) {
-		Predicate pred = parsePredicate(predicate, environment);
-		PredicateLoader pBuilder = new PredicateLoader();
-		pBuilder.build(pred,false);
-		ClauseBuilder cBuilder = new ClauseBuilder();
-		cBuilder.loadClausesFromContext(pBuilder.getContext(),table);
+		final AbstractContext context = new AbstractContext();
+		final Predicate pred = parsePredicate(predicate, environment);
+		new PredicateLoader(context, pred, false).load();
+		final ClauseBuilder cBuilder = new ClauseBuilder();
+		cBuilder.loadClausesFromContext(context, table);
 		return cBuilder;
 	}
 	
 	public static ClauseBuilder doPhaseOneAndTwo(String predicate) {
-		Predicate pred = parsePredicate(predicate);
-		PredicateLoader pBuilder = new PredicateLoader();
-		pBuilder.build(pred,false);
-		ClauseBuilder cBuilder = new ClauseBuilder();
-		cBuilder.loadClausesFromContext(pBuilder.getContext());
+		final AbstractContext context = new AbstractContext();
+		final Predicate pred = parsePredicate(predicate);
+		new PredicateLoader(context, pred, false).load();
+		final ClauseBuilder cBuilder = new ClauseBuilder();
+		cBuilder.loadClausesFromContext(context);
 		return cBuilder;
 	}
 	

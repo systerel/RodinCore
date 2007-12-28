@@ -4,6 +4,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
@@ -30,14 +31,13 @@ public class TestOrderer extends AbstractPPTest {
 	}
 
 	public static void doTest(String... images) {
-		final PredicateLoader builder = new PredicateLoader();
+		final AbstractContext context = new AbstractContext();
 		INormalizedFormula formula = null;
-		int index = 0;
 		for (String image : images) {
 			final Predicate pred = Util.parsePredicate(image, typenv);
-			builder.build(pred, false);
-			INormalizedFormula newFormula = builder.getContext().getResults()
-					.get(index++);
+			final PredicateLoader loader = new PredicateLoader(context, pred, false);
+			loader.load();
+			final INormalizedFormula newFormula = loader.getResult();
 			if (formula == null) {
 				formula = newFormula;
 				continue;

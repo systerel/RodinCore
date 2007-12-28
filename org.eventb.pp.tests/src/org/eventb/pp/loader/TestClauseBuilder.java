@@ -49,6 +49,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 // TODO test negation of the goal
@@ -1837,17 +1838,17 @@ public class TestClauseBuilder extends AbstractPPTest {
 	}
 	
 	private ClauseBuilder load(List<String> strPredicate, boolean goal, Object... constants) {
-		PredicateLoader builder = new PredicateLoader();
-		ClauseBuilder cBuilder = new ClauseBuilder();
+		final AbstractContext context = new AbstractContext();
+		final ClauseBuilder cBuilder = new ClauseBuilder();
 		ITypeEnvironment tmp = env.clone();
 		
 		for (String str : strPredicate) {
-			final ITypeCheckResult res = getResult(str, builder, tmp, goal);
+			final ITypeCheckResult res = getResult(str, context, tmp, goal);
 			tmp.addAll(res.getInferredEnvironment());
 		}
 		
 		VariableTable variableTable = getVariableTable(constants);
-		cBuilder.loadClausesFromContext(builder.getContext(), variableTable);
+		cBuilder.loadClausesFromContext(context, variableTable);
 		return cBuilder;
 	}
 	
@@ -1876,11 +1877,11 @@ public class TestClauseBuilder extends AbstractPPTest {
 		assertTrue("\n"+predicate+"\n"+message.toString(), message.length()==0);
 	}
 	
-	private ITypeCheckResult getResult(String strPredicate, PredicateLoader builder, ITypeEnvironment types, boolean goal) {
-		final Predicate predicate = Util.parsePredicate(strPredicate);
+	private ITypeCheckResult getResult(String strPredicate, AbstractContext context, ITypeEnvironment types, boolean goal) {
+		final Predicate predicate = Util.parsePredicate(strPredicate, types);
 		final ITypeCheckResult result = predicate.typeCheck(types);
 		assertTrue("TypeCheck failed for " + predicate, result.isSuccess());
-		builder.build(predicate,goal);
+		new PredicateLoader(context, predicate, goal).load();
 		return result;
 	}
 	

@@ -6,9 +6,11 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
+import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 /**
@@ -100,19 +102,19 @@ public class TestSamePredicate extends TestCase {
 			// TODO clauses !
 	};
 	
-	private SignedFormula<?> build(PredicateLoader builder, String test) {
-		Predicate expr = ff.parsePredicate(test).getParsedPredicate();
-		expr.typeCheck(env);
-		builder.build(expr,false);
-		return builder.getContext().getResults().get(0).getSignature();
+	private SignedFormula<?> build(AbstractContext context, String test) {
+		final Predicate pred = Util.parsePredicate(test, env);
+		final PredicateLoader loader = new PredicateLoader(context, pred, false);
+		loader.load();
+		return loader.getResult().getSignature();
 	}
 	
 	public void testSamePredicate() {
 		for (String[] tests : test1) {
-			PredicateLoader builder = new PredicateLoader();
+			final AbstractContext context = new AbstractContext();
 			LiteralDescriptor desc = null;
 			for (String test : tests) {
-				AbstractFormula<?> pp = ((SignedFormula<?>)build(builder, test)).getFormula();
+				AbstractFormula<?> pp = build(context, test).getFormula();
 				if (desc == null) desc = pp.getLiteralDescriptor();
 				else assertEquals(desc, pp.getLiteralDescriptor());
 			}
