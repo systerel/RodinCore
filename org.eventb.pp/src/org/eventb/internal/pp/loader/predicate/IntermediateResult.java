@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2007 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,48 +24,32 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class IntermediateResult implements IIntermediateResult {
 
-//	@SuppressWarnings("unused")
-//	private Comparator<TermSignature> orderer; 
+	private final List<TermSignature> results;
 	
-	private List<TermSignature> results = new ArrayList<TermSignature>();
-	
-//	public void orderList() {
-//		Collections.sort(results);
-//	}
-//	
-//	public void reverse() {
-//		Collections.reverse(results);
-//	}
-	
-	public IntermediateResult(/*Comparator<TermSignature> orderer*/) {
-//		this.orderer = orderer;
+	public IntermediateResult() {
+		this.results  = new ArrayList<TermSignature>();
 	}
 	
-	public IntermediateResult(List<TermSignature> list /*, Comparator<TermSignature> orderer */ ) {
-//		this.orderer = orderer;
-		this.results.addAll(list);
+	public IntermediateResult(List<TermSignature> list) {
+		this.results = new ArrayList<TermSignature>(list);
 	}
-	
 
-	
 	public void addResult(TermSignature signature) {
 		this.results.add(signature);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.pptrans.loader.IIntermediateResult#getTerms()
-	 */
 	public List<TermSignature> getTerms() {
 		return results;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IntermediateResult) {
-			IntermediateResult temp = (IntermediateResult) obj;
-			return results.equals(temp.results);
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (!(obj instanceof IntermediateResult))
+			return false;
+		final IntermediateResult other = (IntermediateResult) obj;
+		return results.equals(other.results);
 	}
 
 	public List<IIntermediateResult> getResultList() {
