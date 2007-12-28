@@ -17,7 +17,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 
 /**
  * This is the interface for the builder context. It is updated each time
- * {@link ILiteralBuilder#build(org.eventb.core.ast.Formula)} is called. It is 
+ * {@link PredicateBuilder#build()} is called. It is 
  * used to retrieve the list of all labels and normalized formulas that are 
  * available after the first phase of the normalization process.
  * <p>

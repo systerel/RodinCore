@@ -69,7 +69,7 @@ import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
  * 
  * @author François Terrier
  */
-public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder {
+public class PredicateBuilder extends DefaultVisitor {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
