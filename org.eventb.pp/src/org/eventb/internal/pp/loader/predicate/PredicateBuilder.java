@@ -116,11 +116,13 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	public void build(Predicate predicate, Predicate originalPredicate, boolean isGoal) {
 		this.origin = new PredicateOrigin(originalPredicate, isGoal);
 		buildInternal(predicate, isGoal);
+		this.origin = null;
 	}
 	
 	public void build(Predicate predicate, boolean isGoal) {
 		this.origin = new PredicateOrigin(predicate, isGoal);
 		buildInternal(predicate, isGoal);
+		this.origin = null;
 	}
 	
 	private boolean checkPredicateTag(Predicate predicate) {
@@ -248,37 +250,37 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	@Override
 	public boolean exitGE(RelationalPredicate pred) {
 		exitRelationalPredicate(pred,true);
-		exitArithmetic(pred,Type.LESS,true);
+		exitArithmetic(Type.LESS,! isPositive);
 		return true;
 	}
 
 	@Override
 	public boolean exitGT(RelationalPredicate pred) {
 		exitRelationalPredicate(pred,true);
-		exitArithmetic(pred,Type.LESS_EQUAL,true);
+		exitArithmetic(Type.LESS_EQUAL,! isPositive);
 		return true;
 	}
 
 	@Override
 	public boolean exitLE(RelationalPredicate pred) {
 		exitRelationalPredicate(pred,true);
-		exitArithmetic(pred,Type.LESS_EQUAL,false);
+		exitArithmetic(Type.LESS_EQUAL,isPositive);
 		return true;
 	}
 
 	@Override
 	public boolean exitLT(RelationalPredicate pred) {
 		exitRelationalPredicate(pred,true);
-		exitArithmetic(pred,Type.LESS,false);
+		exitArithmetic(Type.LESS,isPositive);
 		return true;
 	}
 	
-	private void exitArithmetic(RelationalPredicate pred, Type type, boolean inverseSign) {
-		exitArithmeticLiteral(type, inverseSign);
+	private void exitArithmetic(Type type, boolean sign) {
+		exitArithmeticLiteral(type, sign);
 		debugExit();
 	}
 	
-	private void exitArithmeticLiteral(Type type, boolean inverseSign) {
+	private void exitArithmeticLiteral(Type type, boolean sign) {
 		assert inRes.getTerms().size() == 2;
 		// TODO normalize arithmetic and order terms
 		
@@ -293,7 +295,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		ArithmeticFormula sig = new ArithmeticFormula(type,interRes.getTerms(),terms,desc);
 		if (DEBUG) debug(prefix+"Adding terms to "+desc+": "+interRes);
 		
-		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig,inverseSign?!isPositive:isPositive),interRes);
+		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig, sign),interRes);
 		clean();
 	}
 
@@ -354,20 +356,20 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		return true;
 	}
 	
-	public boolean exitEquality (RelationalPredicate pred, boolean negative) {
+	public boolean exitEquality (RelationalPredicate pred, boolean sign) {
 		exitRelationalPredicate(pred,true);
 		// treat arithmetic equality as arithmetic literals
 		if (pred.getRight().getType().equals(FormulaFactory.getDefault().makeIntegerType())) {
-			exitArithmeticLiteral(Type.EQUAL, negative);
+			exitArithmeticLiteral(Type.EQUAL, sign);
 		}
 		else {
-			exitEqualityLiteral(new Sort(pred.getRight().getType()), negative);
+			exitEqualityLiteral(new Sort(pred.getRight().getType()), sign);
 		}
 		debugExit();
 		return true;
 	}
 	
-	private void exitEqualityLiteral(Sort sort, boolean negative) {
+	private void exitEqualityLiteral(Sort sort, boolean sign) {
 		SymbolKey<EqualityDescriptor> key = new EqualityKey(sort);
 		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), inRes, "equality");
 		
@@ -381,7 +383,7 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		// TODO implement an ordering on terms
 		// inRes.orderList();
 		// from here indexes will be ordered
-		result.peek().addResult(new SignedFormula<EqualityDescriptor>(sig,negative?!isPositive:isPositive), inRes);
+		result.peek().addResult(new SignedFormula<EqualityDescriptor>(sig, sign), inRes);
 		clean();
 	}
 	
@@ -403,13 +405,13 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 	
 	@Override
 	public boolean exitNOTEQUAL(RelationalPredicate pred) {
-		exitEquality(pred, true);
+		exitEquality(pred, !isPositive);
 		return true;
 	}
 
 	@Override
 	public boolean exitEQUAL(RelationalPredicate pred) {
-		exitEquality(pred, false);
+		exitEquality(pred, isPositive);
 		return true;
 	}
 	
@@ -501,12 +503,6 @@ public class PredicateBuilder extends DefaultVisitor implements ILiteralBuilder 
 		enterLogicalOperator();
 		result.peek().setPositive(!isPositive);
 		isPositive = false;
-		return true;
-	}
-	
-	@Override
-	public boolean continueLAND(AssociativePredicate pred) {
-//		isPositive = false;
 		return true;
 	}
 	
