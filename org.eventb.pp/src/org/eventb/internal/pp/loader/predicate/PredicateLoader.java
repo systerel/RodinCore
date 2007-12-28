@@ -171,8 +171,7 @@ class PredicateLoader extends DefaultVisitor {
 	/**
 	 * Actually loads the predicate in the context (these are arguments to the
 	 * constructor). The context gets updated with all information gathered
-	 * during the loading process, and the final formula is added to the context
-	 * formulas.
+	 * during the loading process.
 	 */
 	public void load() {
 		if (formula != null) {
@@ -193,8 +192,7 @@ class PredicateLoader extends DefaultVisitor {
 	}
 
 	/**
-	 * Returns the formula computed during loading. This formula has already
-	 * been added to the context.
+	 * Returns the formula computed during loading.
 	 * <p>
 	 * Method {@link #load()} must have been called prior to this method.
 	 * </p>
