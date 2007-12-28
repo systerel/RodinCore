@@ -18,32 +18,40 @@ import org.eventb.internal.pp.loader.formula.ClauseContext;
  * This class represents a variable signature.
  * 
  * @author Francois Terrier
- *
+ * 
  */
 public class VariableSignature extends TermSignature {
 
-	private final int uniqueIndex;
-	private final int index;
-	
-	public VariableSignature(int uniqueIndex, int index, Sort sort) {
+	// Index associated to this variable occurrence in the given context (unique
+	// in that context)
+	private final int varIndex;
+
+	// Complement of the original index in the input formula (i.e., de Bruijn
+	// index).
+	// This index is computed by traversing the formula from the root down,
+	// while the de Bruijn index is computed from a leaf up.
+	private final int revBoundIndex;
+
+	public VariableSignature(int varIndex, int revBoundIndex, Sort sort) {
 		super(sort);
-		
-		this.index = index;
-		this.uniqueIndex = uniqueIndex;
+
+		this.revBoundIndex = revBoundIndex;
+		this.varIndex = varIndex;
 	}
-	
+
 	@Override
-	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset, List<TermSignature> termList) {
+	public TermSignature getUnquantifiedTerm(int startOffset, int endOffset,
+			List<TermSignature> termList) {
 		if (!isQuantified(startOffset, endOffset)) {
 			addTermCopy(this, termList);
 			return new VariableHolder(sort);
 		}
-		return new VariableSignature(uniqueIndex, index, sort);
+		return new VariableSignature(varIndex, revBoundIndex, sort);
 	}
 
 	@Override
 	public boolean isQuantified(int startOffset, int endOffset) {
-		if (index >= startOffset && index <= endOffset) {
+		if (revBoundIndex >= startOffset && revBoundIndex <= endOffset) {
 			return true;
 		}
 		return false;
@@ -51,61 +59,67 @@ public class VariableSignature extends TermSignature {
 
 	@Override
 	public TermSignature deepCopy() {
-		return new VariableSignature(uniqueIndex, index, sort);
+		return new VariableSignature(varIndex, revBoundIndex, sort);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this) return true;
-		if (obj instanceof VariableSignature) {
-			VariableSignature temp = (VariableSignature) obj;
-			return index == temp.index;
-		}
-		return false;
+		if (obj == this)
+			return true;
+		if (!(obj instanceof VariableSignature))
+			return false;
+		final VariableSignature other = (VariableSignature) obj;
+		return this.revBoundIndex == other.revBoundIndex;
 	}
 
 	@Override
 	public int hashCode() {
-		return index;
+		return revBoundIndex;
 	}
 
 	@Override
 	public boolean isConstant() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
-		return uniqueIndex + "," + index + "(" + sort + ")";
+		return varIndex + "," + revBoundIndex + "(" + sort + ")";
 	}
 
-	/* 
-	 * This method might not be called, there are no variables, only variable holder.
+	/*
+	 * This method might not be called, there are no variables, only variable
+	 * holder.
 	 * 
 	 * (non-Javadoc)
-	 * @see org.eventb.pptrans.loader.signature.TermSignature#appendTermFromTermsList(java.util.List, java.util.List, boolean)
+	 * 
+	 * @see org.eventb.pptrans.loader.signature.TermSignature#appendTermFromTermsList(java.util.List,
+	 *      java.util.List, boolean)
 	 */
 	@Override
-	public void appendTermFromTermList(List<TermSignature> indexList, List<TermSignature> newList, int startOffset, int endOffset) {
+	public void appendTermFromTermList(List<TermSignature> indexList,
+			List<TermSignature> newList, int startOffset, int endOffset) {
 		assert isQuantified(startOffset, endOffset);
 
 		newList.add(this.deepCopy());
 	}
-	
+
 	@Override
 	public Term getTerm(ClauseContext context) {
 		Term var;
-		if (!context.isQuantified() || !isQuantified(context.getStartOffset(), context.getEndOffset())) {
-			var = context.getVariableTable().getVariable(uniqueIndex, sort);
-		}
-		else if (context.isEquivalence()) {
-			var = context.getVariableTable().getLocalVariable(uniqueIndex, context.isForall(), sort);
-		}
-		else {
+		if (!context.isQuantified()
+				|| !isQuantified(context.getStartOffset(), context
+						.getEndOffset())) {
+			var = context.getVariableTable().getVariable(varIndex, sort);
+		} else if (context.isEquivalence()) {
+			var = context.getVariableTable().getLocalVariable(varIndex,
+					context.isForall(), sort);
+		} else {
 			if (context.isForall()) {
-				var = context.getVariableTable().getVariable(uniqueIndex, sort);
+				var = context.getVariableTable().getVariable(varIndex, sort);
 			} else {
-				var = context.getVariableTable().getLocalVariable(uniqueIndex, false, sort);
+				var = context.getVariableTable().getLocalVariable(varIndex,
+						false, sort);
 			}
 		}
 		return var;
