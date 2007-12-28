@@ -11,22 +11,55 @@ package org.eventb.internal.pp.loader.predicate;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 
 /**
  * This is the interface for the builder context. It is updated each time
- * {@link PredicateLoader#build()} is called. It is 
- * used to retrieve the list of all labels and normalized formulas that are 
- * available after the first phase of the normalization process.
+ * {@link PredicateLoader#build()} is called. It is used to retrieve the list of
+ * all labels and normalized formulas that are available after the first phase
+ * of the normalization process.
  * <p>
  * TODO review this interface
- *
+ * 
  * @author François Terrier
  * 
  */
 public interface IContext {
+
+	/**
+	 * Loads the given predicate in this context.
+	 * <p>
+	 * If <code>isGoal</code> is <code>true</code>, the predicate will be
+	 * loaded as a goal (negated).
+	 * </p>
+	 * 
+	 * @param predicate
+	 *            the predicate to load
+	 * @param originalPredicate
+	 *            the original predicate (for origin tracking)
+	 * @param isGoal
+	 *            <code>true</code> iff the predicate should be loaded as a
+	 *            goal
+	 */
+	void load(Predicate predicate, Predicate originalPredicate, boolean isGoal);
+
+	/**
+	 * Loads the given predicate in this context.
+	 * <p>
+	 * If <code>isGoal</code> is <code>true</code>, the predicate will be
+	 * loaded as a goal (negated).
+	 * </p>
+	 * 
+	 * @param predicate
+	 *            the predicate to load
+	 * @param isGoal
+	 *            <code>true</code> iff the predicate should be loaded as a
+	 *            goal
+	 */
+	void load(Predicate predicate, boolean isGoal);
 
 	/**
 	 * Returns all predicate descriptors produced by the normalization process.
@@ -36,7 +69,7 @@ public interface IContext {
 	 * @return all predicate descriptors produced by the normalization process
 	 */
 	Collection<PredicateDescriptor> getAllPredicateDescriptors();
-	
+
 	/**
 	 * Returns all descriptors.
 	 * <p>
@@ -45,15 +78,23 @@ public interface IContext {
 	 * @return all descriptors
 	 */
 	Collection<LiteralDescriptor> getAllDescriptors();
-	
+
 	/**
-	 * Returns a list containing the normalized formula of each formula 
-	 * appearing in the sequent.
+	 * Returns a list containing the normalized formula of each predicate that
+	 * has been loaded into this context.
 	 * 
-	 * @return a list with all normalized formulas of the sequent
+	 * @return a list of all normalized formulas of the loaded predicates
 	 */
 	List<INormalizedFormula> getResults();
-	
+
+	/**
+	 * Returns the normalized formula of the last predicate that
+	 * has been loaded into this context.
+	 * 
+	 * @return the normalized formulas of the last loaded predicates
+	 */
+	INormalizedFormula getLastResult();
+
 	/**
 	 * Returns the next literal identifier.
 	 * <p>
@@ -62,7 +103,7 @@ public interface IContext {
 	 * @return the next literal identifier
 	 */
 	int getNextLiteralIdentifier();
-	
+
 	/**
 	 * Returns a fresh variable index.
 	 * 

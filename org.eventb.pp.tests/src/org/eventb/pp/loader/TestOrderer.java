@@ -6,7 +6,6 @@ import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 public class TestOrderer extends AbstractPPTest {
 
@@ -35,9 +34,8 @@ public class TestOrderer extends AbstractPPTest {
 		INormalizedFormula formula = null;
 		for (String image : images) {
 			final Predicate pred = Util.parsePredicate(image, typenv);
-			final PredicateLoader loader = new PredicateLoader(context, pred, false);
-			loader.load();
-			final INormalizedFormula newFormula = loader.getResult();
+			context.load(pred, false);
+			final INormalizedFormula newFormula = context.getLastResult();
 			if (formula == null) {
 				formula = newFormula;
 				continue;

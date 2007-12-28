@@ -11,7 +11,6 @@ import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 /**
  * This class tests that two predicates having the same terms as arguments 
@@ -104,9 +103,8 @@ public class TestSamePredicate extends TestCase {
 	
 	private SignedFormula<?> build(AbstractContext context, String test) {
 		final Predicate pred = Util.parsePredicate(test, env);
-		final PredicateLoader loader = new PredicateLoader(context, pred, false);
-		loader.load();
-		return loader.getResult().getSignature();
+		context.load(pred, false);
+		return context.getLastResult().getSignature();
 	}
 	
 	public void testSamePredicate() {

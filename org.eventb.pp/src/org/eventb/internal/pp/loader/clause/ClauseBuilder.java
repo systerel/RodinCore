@@ -34,12 +34,10 @@ import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 /**
  * This is the builder for the second phase of the loading process. The input
- * is the context filled in by the {@link PredicateLoader}, which handles the
- * first part of the loading process.
+ * is the {@link IContext} filled in by the first part of the loading process.
  * 
  * At the end of this phase, no simplifications have been applied.
  *

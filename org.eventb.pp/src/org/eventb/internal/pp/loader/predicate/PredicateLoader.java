@@ -66,10 +66,16 @@ import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
  * Each individual instance of these predicates and sub-formulas are represented
  * by a different instance of {@link AbstractFormula} or {@link SignedFormula}.
  * </p>
+ * <p>
+ * This class is package protected. Instances should be created only by a
+ * context.
+ * </p>
+ * 
+ * @see IContext
  * 
  * @author François Terrier
  */
-public class PredicateLoader extends DefaultVisitor {
+class PredicateLoader extends DefaultVisitor {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
@@ -184,7 +190,6 @@ public class PredicateLoader extends DefaultVisitor {
 
 		formula = result.pop();
 		assert result.isEmpty();
-		context.addResult(formula);
 	}
 
 	/**

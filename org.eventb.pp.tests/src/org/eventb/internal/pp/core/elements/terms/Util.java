@@ -53,7 +53,6 @@ import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResult;
 import org.eventb.internal.pp.loader.predicate.IntermediateResultList;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 
 public class Util {
@@ -85,7 +84,7 @@ public class Util {
 			VariableTable table) {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate, environment);
-		new PredicateLoader(context, pred, false).load();
+		context.load(pred, false);
 		final ClauseBuilder cBuilder = new ClauseBuilder();
 		cBuilder.loadClausesFromContext(context, table);
 		return cBuilder;
@@ -94,7 +93,7 @@ public class Util {
 	public static ClauseBuilder doPhaseOneAndTwo(String predicate) {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate);
-		new PredicateLoader(context, pred, false).load();
+		context.load(pred, false);
 		final ClauseBuilder cBuilder = new ClauseBuilder();
 		cBuilder.loadClausesFromContext(context);
 		return cBuilder;

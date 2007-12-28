@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
@@ -29,6 +30,10 @@ import org.eventb.internal.pp.loader.formula.key.SymbolTable;
  *
  */
 public class AbstractContext implements IContext {
+	
+	public static void setDebugFlag(boolean value) {
+		PredicateLoader.DEBUG = value;
+	}
 
 	// TODO maybe use only one table with a good HASH algorithm
 	// it will factor out lots of code in PredicateBuilder (eg. in method
@@ -43,10 +48,21 @@ public class AbstractContext implements IContext {
 	
 	final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 	
-	void addResult(INormalizedFormula signature) {
-		results.add(signature);
+	public void load(Predicate predicate, Predicate originalPredicate,
+			boolean isGoal) {
+		final PredicateLoader loader = new PredicateLoader(this, predicate,
+				originalPredicate, isGoal);
+		loader.load();
+		results.add(loader.getResult());
 	}
-	
+
+	public void load(Predicate predicate, boolean isGoal) {
+		final PredicateLoader loader = new PredicateLoader(this, predicate,
+				predicate, isGoal);
+		loader.load();
+		results.add(loader.getResult());
+	}
+
 	SymbolTable<PredicateDescriptor> getLiteralTable() {
 		return predicateTable;
 	}
@@ -75,6 +91,12 @@ public class AbstractContext implements IContext {
 		return results;
 	}
 	
+	public INormalizedFormula getLastResult() {
+		final int size = results.size();
+		assert 0 < size;
+		return results.get(size - 1);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractContext) {

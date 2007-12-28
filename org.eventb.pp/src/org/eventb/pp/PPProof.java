@@ -33,7 +33,6 @@ import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 import org.eventb.pp.PPResult.Result;
 import org.eventb.pptrans.Translator;
 
@@ -272,8 +271,7 @@ public class PPProof {
 			if (translatedPredicate.getTag() == Predicate.BFALSE) {
 				return !isGoal;
 			}
-			new PredicateLoader(loadContext, translatedPredicate,
-					originalPredicate, isGoal).load();
+			loadContext.load(translatedPredicate, originalPredicate, isGoal);
 			return false;
 		}
 

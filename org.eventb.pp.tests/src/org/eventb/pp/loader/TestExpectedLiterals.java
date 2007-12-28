@@ -19,7 +19,6 @@ import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 
 /**
@@ -93,9 +92,8 @@ public class TestExpectedLiterals extends TestCase {
 		for (String string : tests) {
 			final AbstractContext context = new AbstractContext();
 			final Predicate predicate = Util.parsePredicate(string, env);
-			final PredicateLoader loader = new PredicateLoader(context, predicate, false);
-			loader.load();
-			final AbstractFormula<?> obj = loader.getResult().getSignature().getFormula();
+			context.load(predicate, false);
+			final AbstractFormula<?> obj = context.getLastResult().getSignature().getFormula();
 			assertEquals(expectedClass, obj.getClass());
 		}
 	}

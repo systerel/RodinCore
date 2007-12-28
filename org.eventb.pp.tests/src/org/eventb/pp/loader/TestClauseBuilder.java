@@ -50,7 +50,6 @@ import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.internal.pp.loader.predicate.PredicateLoader;
 
 // TODO test negation of the goal
 public class TestClauseBuilder extends AbstractPPTest {
@@ -1881,7 +1880,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		final Predicate predicate = Util.parsePredicate(strPredicate, types);
 		final ITypeCheckResult result = predicate.typeCheck(types);
 		assertTrue("TypeCheck failed for " + predicate, result.isSuccess());
-		new PredicateLoader(context, predicate, goal).load();
+		context.load(predicate, goal);
 		return result;
 	}
 	
