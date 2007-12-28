@@ -1,6 +1,8 @@
 package org.eventb.pp.loader;
 
-import java.util.Arrays;
+
+import static org.eventb.internal.pp.core.elements.terms.Util.mIR;
+
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -9,7 +11,6 @@ import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
-import org.eventb.internal.pp.loader.predicate.IntermediateResult;
 
 public class TestIndexUnification extends AbstractPPTest {
 
@@ -24,10 +25,6 @@ public class TestIndexUnification extends AbstractPPTest {
 	private final TermSignature yy = Util.mVariable(1, -2);
 	private final TermSignature zz = Util.mVariable(2, -3);
 
-	private static IIntermediateResult mList(TermSignature... terms) {
-		return new IntermediateResult(Arrays.asList(terms));
-	}
-
 	private static void doTest(IIntermediateResult source,
 			IIntermediateResult target, IIntermediateResult expected) {
 		final PredicateDescriptor desc = new PredicateDescriptor(
@@ -40,37 +37,37 @@ public class TestIndexUnification extends AbstractPPTest {
 	}
 
 	public void testIndex() {
-		doTest(mList(x), mList(x), mList(xx));
-		doTest(mList(a), mList(x), mList(xx));
-		doTest(mList(a), mList(a), mList(a));
-		doTest(mList(a), mList(a), mList(a));
-		doTest(mList(a), mList(a), mList(a));
-		doTest(mList(a), mList(b), mList(xx));
-		doTest(mList(a), mList(b), mList(xx));
-		doTest(mList(x), mList(a), mList(xx));
-		doTest(mList(x), mList(y), mList(xx));
-		doTest(mList(x, x), mList(y, y), mList(xx, xx));
-		doTest(mList(x, y), mList(y, y), mList(xx, yy));
-		doTest(mList(x, x), mList(x, y), mList(xx, yy));
-		doTest(mList(x, x, x), mList(x, x, x), mList(xx, xx, xx));
-		doTest(mList(x, y, y), mList(x, x, x), mList(xx, yy, yy));
-		doTest(mList(x, y, x), mList(x, x, x), mList(xx, yy, xx));
-		doTest(mList(y, x, x), mList(x, x, x), mList(xx, yy, yy));
-		doTest(mList(y, x, y), mList(x, x, x), mList(xx, yy, xx));
-		doTest(mList(x, x, x), mList(y, x, x), mList(xx, yy, yy));
-		doTest(mList(x, x, x), mList(x, y, x), mList(xx, yy, xx));
-		doTest(mList(x, x, x), mList(x, x, y), mList(xx, xx, yy));
-		doTest(mList(x, x, x), mList(y, y, x), mList(xx, xx, yy));
-		doTest(mList(x, x, x), mList(y, x, y), mList(xx, yy, xx));
-		doTest(mList(x, x, x), mList(x, y, y), mList(xx, yy, yy));
-		doTest(mList(x, y, z), mList(x, x, x), mList(xx, yy, zz));
-		doTest(mList(x, x, x), mList(x, y, z), mList(xx, yy, zz));
-		doTest(mList(y, x, y), mList(x, y, x), mList(xx, yy, xx));
-		doTest(mList(y, x, x), mList(y, y, x), mList(xx, yy, zz));
-		doTest(mList(x, y, z), mList(x, y, y), mList(xx, yy, zz));
-		doTest(mList(a, b, a), mList(x, x, x), mList(xx, yy, xx));
-		doTest(mList(a, a, a), mList(x, x, x), mList(xx, xx, xx));
-		doTest(mList(a, b, c), mList(a, x, x), mList(a, xx, yy));
+		doTest(mIR(x), mIR(x), mIR(xx));
+		doTest(mIR(a), mIR(x), mIR(xx));
+		doTest(mIR(a), mIR(a), mIR(a));
+		doTest(mIR(a), mIR(a), mIR(a));
+		doTest(mIR(a), mIR(a), mIR(a));
+		doTest(mIR(a), mIR(b), mIR(xx));
+		doTest(mIR(a), mIR(b), mIR(xx));
+		doTest(mIR(x), mIR(a), mIR(xx));
+		doTest(mIR(x), mIR(y), mIR(xx));
+		doTest(mIR(x, x), mIR(y, y), mIR(xx, xx));
+		doTest(mIR(x, y), mIR(y, y), mIR(xx, yy));
+		doTest(mIR(x, x), mIR(x, y), mIR(xx, yy));
+		doTest(mIR(x, x, x), mIR(x, x, x), mIR(xx, xx, xx));
+		doTest(mIR(x, y, y), mIR(x, x, x), mIR(xx, yy, yy));
+		doTest(mIR(x, y, x), mIR(x, x, x), mIR(xx, yy, xx));
+		doTest(mIR(y, x, x), mIR(x, x, x), mIR(xx, yy, yy));
+		doTest(mIR(y, x, y), mIR(x, x, x), mIR(xx, yy, xx));
+		doTest(mIR(x, x, x), mIR(y, x, x), mIR(xx, yy, yy));
+		doTest(mIR(x, x, x), mIR(x, y, x), mIR(xx, yy, xx));
+		doTest(mIR(x, x, x), mIR(x, x, y), mIR(xx, xx, yy));
+		doTest(mIR(x, x, x), mIR(y, y, x), mIR(xx, xx, yy));
+		doTest(mIR(x, x, x), mIR(y, x, y), mIR(xx, yy, xx));
+		doTest(mIR(x, x, x), mIR(x, y, y), mIR(xx, yy, yy));
+		doTest(mIR(x, y, z), mIR(x, x, x), mIR(xx, yy, zz));
+		doTest(mIR(x, x, x), mIR(x, y, z), mIR(xx, yy, zz));
+		doTest(mIR(y, x, y), mIR(x, y, x), mIR(xx, yy, xx));
+		doTest(mIR(y, x, x), mIR(y, y, x), mIR(xx, yy, zz));
+		doTest(mIR(x, y, z), mIR(x, y, y), mIR(xx, yy, zz));
+		doTest(mIR(a, b, a), mIR(x, x, x), mIR(xx, yy, xx));
+		doTest(mIR(a, a, a), mIR(x, x, x), mIR(xx, xx, xx));
+		doTest(mIR(a, b, c), mIR(a, x, x), mIR(a, xx, yy));
 	}
 
 }
