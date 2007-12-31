@@ -9,6 +9,7 @@
 package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativePredicate;
@@ -78,25 +79,25 @@ class PredicateLoader {
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
 	 */
 	public static boolean DEBUG = false;
-	
+
 	private static final LiteralOrderer literalOrderer = new LiteralOrderer();
 
 	// these are persistent variables that are completed at each
 	// iteration
 	private final AbstractContext context;
-	
+
 	// The predicate to load
 	private final Predicate predicate;
-	
+
 	// Origin of the predicate currently being built.
 	private final IOrigin origin;
-	
+
 	private final boolean isGoal;
-	
+
 	private final TermBuilder termBuilder;
-	
+
 	// Result of the loading
-	private NormalizedFormula formula;
+	private INormalizedFormula result;
 
 	/**
 	 * Creates a loader instance for the given predicate in the given context.
@@ -124,14 +125,14 @@ class PredicateLoader {
 		assert predicate.isTypeChecked() : "Untyped predicate";
 
 		// TODO remove this static call
-//		ArithmeticKey.resetCounter();
+		// ArithmeticKey.resetCounter();
 		this.context = context;
 		this.predicate = predicate;
 		this.origin = new PredicateOrigin(originalPredicate, isGoal);
 		this.isGoal = isGoal;
 		this.termBuilder = new TermBuilder(context);
 	}
-	
+
 	/**
 	 * Creates a loader instance for the given predicate in the given context.
 	 * Just creating this instance doesn't actually load the predicate and the
@@ -154,24 +155,24 @@ class PredicateLoader {
 			boolean isGoal) {
 		this(context, predicate, predicate, isGoal);
 	}
-	
+
 	/**
 	 * Actually loads the predicate in the context (these are arguments to the
 	 * constructor). The context gets updated with all information gathered
 	 * during the loading process.
 	 */
 	public void load() {
-		if (formula != null) {
+		if (result != null) {
 			throw new IllegalStateException("Predicate already loaded.");
 		}
-		
+
 		if (DEBUG) {
 			debug("========================================");
 			debug("Loading " + (isGoal ? "goal" : "hypothesis") + ": "
 					+ predicate);
 		}
-	
-		formula = process(predicate, !isGoal, new NormalizedFormula(literalOrderer, origin));
+
+		result = process(predicate, !isGoal);
 	}
 
 	/**
@@ -183,32 +184,34 @@ class PredicateLoader {
 	 * @return the formula resulting from the loading
 	 */
 	public INormalizedFormula getResult() {
-		return formula;
+		if (result == null) {
+			throw new IllegalStateException("Predicate not yet loaded.");
+		}
+		return result;
 	}
 
-	private NormalizedFormula process(Predicate pred, boolean isPositive,
-			NormalizedFormula acc) {
+	private NormalizedFormula process(Predicate pred, boolean isPositive) {
 		try {
 			debugEnter(pred);
 			if (pred instanceof AssociativePredicate) {
 				final AssociativePredicate apred = (AssociativePredicate) pred;
-				return processAssociativePredicate(apred, isPositive, acc);
+				return processAssociativePredicate(apred, isPositive);
 			}
 			if (pred instanceof BinaryPredicate) {
 				final BinaryPredicate bpred = (BinaryPredicate) pred;
-				return processBinaryPredicate(bpred, isPositive, acc);
+				return processBinaryPredicate(bpred, isPositive);
 			}
 			if (pred instanceof UnaryPredicate) {
 				final UnaryPredicate upred = (UnaryPredicate) pred;
-				return processUnaryPredicate(upred, isPositive, acc);
+				return processUnaryPredicate(upred, isPositive);
 			}
 			if (pred instanceof QuantifiedPredicate) {
 				final QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
-				return processQuantifiedPredicate(qpred, isPositive, acc);
+				return processQuantifiedPredicate(qpred, isPositive);
 			}
 			if (pred instanceof RelationalPredicate) {
 				final RelationalPredicate rpred = (RelationalPredicate) pred;
-				return processRelationalPredicate(rpred, isPositive, acc);
+				return processRelationalPredicate(rpred, isPositive);
 			}
 			throw invalidPredicate(pred);
 		} finally {
@@ -221,7 +224,7 @@ class PredicateLoader {
 	}
 
 	private NormalizedFormula processAssociativePredicate(
-			AssociativePredicate pred, boolean isPositive, NormalizedFormula acc) {
+			AssociativePredicate pred, boolean isPositive) {
 		final int tag = pred.getTag();
 		final boolean negated;
 		switch (tag) {
@@ -235,17 +238,15 @@ class PredicateLoader {
 			throw invalidPredicate(pred);
 		}
 
-		final NormalizedFormula result = new NormalizedFormula(literalOrderer, origin);
+		final ChildList children = new ChildList();
 		for (Predicate child : pred.getChildren()) {
-			process(child, !negated, result);
+			children.add(process(child, !negated));
 		}
-		exitLogicalOperator(tag, isPositive ^ negated, result, acc);
-		return acc;
+		return buildLogicalOperator(children, isPositive ^ negated, tag);
 	}
 
 	private NormalizedFormula processBinaryPredicate(BinaryPredicate pred,
-			boolean isPositive,
-			NormalizedFormula acc) {
+			boolean isPositive) {
 		final int tag = pred.getTag();
 		final boolean leftIsPositive;
 		switch (tag) {
@@ -259,29 +260,26 @@ class PredicateLoader {
 			throw invalidPredicate(pred);
 		}
 
-		final NormalizedFormula result = new NormalizedFormula(literalOrderer, origin);
-		process(pred.getLeft(), leftIsPositive, result);
-		process(pred.getRight(), true, result);
-		exitLogicalOperator(tag, isPositive, result, acc);
-		return acc;
+		final ChildList children = new ChildList();
+		children.add(process(pred.getLeft(), leftIsPositive));
+		children.add(process(pred.getRight(), true));
+		return buildLogicalOperator(children, isPositive, tag);
 	}
 
 	private NormalizedFormula processUnaryPredicate(UnaryPredicate pred,
-			boolean isPositive, NormalizedFormula acc) {
-		process(pred.getChild(), !isPositive, acc);
-		return acc;
+			boolean isPositive) {
+		return process(pred.getChild(), !isPositive);
 	}
 
 	private NormalizedFormula processQuantifiedPredicate(
-			QuantifiedPredicate pred, boolean isPositive, NormalizedFormula acc) {
+			QuantifiedPredicate pred, boolean isPositive) {
 
 		final BoundIdentDecl[] decls = pred.getBoundIdentDecls();
 		final int startOffset = termBuilder.getNumberOfDecls();
 		termBuilder.pushDecls(decls);
 		final int endOffset = termBuilder.getNumberOfDecls() - 1;
-		final NormalizedFormula result = new NormalizedFormula(literalOrderer,
-				origin);
-		process(pred.getPredicate(), isPositive, result);
+		final NormalizedFormula child = process(pred.getPredicate(), isPositive);
+		termBuilder.popDecls(decls);
 		switch (pred.getTag()) {
 		case Predicate.EXISTS:
 			isPositive = !isPositive;
@@ -291,48 +289,42 @@ class PredicateLoader {
 		default:
 			throw invalidPredicate(pred);
 		}
-		exitQuantifiedPredicate(pred, isPositive, result, acc, startOffset,
+		return buildQuantifiedPredicate(child, isPositive, startOffset,
 				endOffset);
-		return acc;
 	}
 
 	private NormalizedFormula processRelationalPredicate(
-			RelationalPredicate pred, boolean isPositive, NormalizedFormula acc) {
+			RelationalPredicate pred, boolean isPositive) {
 		final Sort sort = new Sort(pred.getRight().getType());
 		final boolean arithmetic = sort.equals(Sort.NATURAL);
 		final List<TermSignature> terms = getChildrenTerms(pred, arithmetic);
+		final NormalizedFormula r;
 		switch (pred.getTag()) {
 		case Predicate.GE:
-			exitArithmeticLiteral(terms, Type.LESS, !isPositive, acc);
-			return acc;
+			r = buildArithmeticLiteral(terms, !isPositive, Type.LESS);
+			break;
 		case Predicate.GT:
-			exitArithmeticLiteral(terms, Type.LESS_EQUAL, !isPositive, acc);
-			return acc;
+			r = buildArithmeticLiteral(terms, !isPositive, Type.LESS_EQUAL);
+			break;
 		case Predicate.LE:
-			exitArithmeticLiteral(terms, Type.LESS_EQUAL, isPositive, acc);
-			return acc;
+			r = buildArithmeticLiteral(terms, isPositive, Type.LESS_EQUAL);
+			break;
 		case Predicate.LT:
-			exitArithmeticLiteral(terms, Type.LESS, isPositive, acc);
-			return acc;
+			r = buildArithmeticLiteral(terms, isPositive, Type.LESS);
+			break;
 		case Predicate.EQUAL:
-			exitEquality(terms, isPositive, sort, acc);
-			return acc;
+			r = buildEquality(terms, isPositive, sort);
+			break;
 		case Predicate.NOTEQUAL:
-			exitEquality(terms, !isPositive, sort, acc);
-			return acc;
+			r = buildEquality(terms, !isPositive, sort);
+			break;
 		case Predicate.IN:
-			final SymbolKey<PredicateDescriptor> key = new PredicateKey(sort);
-			final IntermediateResult inRes = new IntermediateResult(terms);
-			final PredicateDescriptor desc = updateDescriptor(key, context
-					.getLiteralTable(), inRes, "predicate");
-			final PredicateFormula lit = new PredicateFormula(terms, desc);
-			final SignedFormula<?> sf = new SignedFormula<PredicateDescriptor>(
-					lit, isPositive);
-			acc.addResult(sf, inRes);
-			return acc;
+			r = buildMembershipLiteral(terms, isPositive, sort);
+			break;
 		default:
 			throw invalidPredicate(pred);
 		}
+		return r;
 	}
 
 	private List<TermSignature> getChildrenTerms(RelationalPredicate pred,
@@ -365,34 +357,51 @@ class PredicateLoader {
 		terms.add(term);
 	}
 
-	private void exitArithmeticLiteral(List<TermSignature> terms, Type type,
-			boolean sign, NormalizedFormula acc) {
-		assert terms.size() == 2;
-		// TODO normalize arithmetic and order terms
-		
-		List<TermSignature> simpleTerms = new ArrayList<TermSignature>();
-		List<TermSignature> otherTerms = getSimpleTerms(terms, simpleTerms);
-		
-		IntermediateResult interRes = new IntermediateResult(simpleTerms/*, new TermOrderer()*/);
-		
-		ArithmeticKey key = new ArithmeticKey(otherTerms,type);
-		ArithmeticDescriptor desc = updateDescriptor(key, context.getArithmeticTable(), interRes, "arithmetic");
-		desc.addResult(interRes);
-		ArithmeticFormula sig = new ArithmeticFormula(type,interRes.getTerms(),otherTerms,desc);
-		if (DEBUG)
-			debug("Adding terms to " + desc + ": " + interRes);
-		
-		acc.addResult(new SignedFormula<ArithmeticDescriptor>(sig, sign),interRes);
+	private NormalizedFormula buildMembershipLiteral(List<TermSignature> terms,
+			boolean isPositive, Sort sort) {
+		final SymbolKey<PredicateDescriptor> key = new PredicateKey(sort);
+		final IntermediateResult inRes = new IntermediateResult(terms);
+		final PredicateDescriptor desc = updateDescriptor(key, context
+				.getLiteralTable(), inRes, "predicate");
+		final PredicateFormula lit = new PredicateFormula(terms, desc);
+		final SignedFormula<?> sf = new SignedFormula<PredicateDescriptor>(lit,
+				isPositive);
+		return new NormalizedFormula(sf, inRes, literalOrderer, origin);
 	}
 
-	private List<TermSignature> getSimpleTerms(List<TermSignature> originalList, List<TermSignature> simpleTerms) {
+	private NormalizedFormula buildArithmeticLiteral(List<TermSignature> terms,
+			boolean isPositive, Type type) {
+		assert terms.size() == 2;
+		// TODO normalize arithmetic and order terms
+
+		final List<TermSignature> simpleTerms = new ArrayList<TermSignature>();
+		final List<TermSignature> otherTerms = getSimpleTerms(terms,
+				simpleTerms);
+
+		final IntermediateResult interRes = new IntermediateResult(simpleTerms);
+
+		final ArithmeticKey key = new ArithmeticKey(otherTerms, type);
+		final ArithmeticDescriptor desc = updateDescriptor(key, context
+				.getArithmeticTable(), interRes, "arithmetic");
+		desc.addResult(interRes);
+		final ArithmeticFormula sig = new ArithmeticFormula(type, interRes
+				.getTerms(), otherTerms, desc);
+		if (DEBUG)
+			debug("Adding terms to " + desc + ": " + interRes);
+
+		return new NormalizedFormula(new SignedFormula<ArithmeticDescriptor>(
+				sig, isPositive), interRes, literalOrderer, origin);
+	}
+
+	private List<TermSignature> getSimpleTerms(
+			List<TermSignature> originalList, List<TermSignature> simpleTerms) {
 		List<TermSignature> result = new ArrayList<TermSignature>();
 		for (TermSignature signature : originalList) {
 			result.add(signature.getSimpleTerm(simpleTerms));
 		}
 		return result;
 	}
-	
+
 	private void checkTag(Expression expr) {
 		switch (expr.getTag()) {
 		case Expression.BOUND_IDENT:
@@ -405,38 +414,40 @@ class PredicateLoader {
 			throw new IllegalArgumentException("Invalid term: " + expr);
 		}
 	}
-	
-	private boolean exitEquality(List<TermSignature> terms, boolean sign,
-			Sort sort, NormalizedFormula acc) {
+
+	private NormalizedFormula buildEquality(List<TermSignature> terms,
+			boolean sign, Sort sort) {
 		// treat arithmetic equality as arithmetic literals
 		if (sort.equals(Sort.NATURAL)) {
-			exitArithmeticLiteral(terms, Type.EQUAL, sign, acc);
+			return buildArithmeticLiteral(terms, sign, Type.EQUAL);
 		} else {
-			exitEqualityLiteral(terms, sort, sign, acc);
+			return buildEqualityLiteral(terms, sign, sort);
 		}
-		return true;
 	}
-	
-	private void exitEqualityLiteral(List<TermSignature> terms, Sort sort,
-			boolean sign, NormalizedFormula acc) {
+
+	private NormalizedFormula buildEqualityLiteral(List<TermSignature> terms,
+			boolean isPositive, Sort sort) {
 		SymbolKey<EqualityDescriptor> key = new EqualityKey(sort);
 		IntermediateResult inRes = new IntermediateResult(terms);
-		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), inRes, "equality");
-		
+		EqualityDescriptor desc = updateDescriptor(key, context
+				.getEqualityTable(), inRes, "equality");
+
 		AbstractFormula<EqualityDescriptor> sig;
 		if (sort.equals(Sort.BOOLEAN)) {
 			sig = new BooleanEqualityFormula(terms, desc);
-		}
-		else {
+		} else {
 			sig = new EqualityFormula(terms, desc);
 		}
 		// TODO implement an ordering on terms
 		// inRes.orderList();
 		// from here indexes will be ordered
-		acc.addResult(new SignedFormula<EqualityDescriptor>(sig, sign), inRes);
+		final SignedFormula<?> sf = new SignedFormula<EqualityDescriptor>(sig,
+				isPositive);
+		return new NormalizedFormula(sf, inRes, literalOrderer, origin);
 	}
 
-	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key, SymbolTable<T> table, IIntermediateResult res, String debug) {
+	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key,
+			SymbolTable<T> table, IIntermediateResult res, String debug) {
 		T desc = table.get(key);
 		if (desc == null) {
 			desc = key.newDescriptor(context);
@@ -449,46 +460,48 @@ class PredicateLoader {
 			debug("Adding terms to " + desc + ": " + res);
 		return desc;
 	}
-	
-	private void exitLogicalOperator(int tag, boolean isPositive,
-			NormalizedFormula res, NormalizedFormula acc) {
+
+	private NormalizedFormula buildLogicalOperator(ChildList children,
+			boolean isPositive, int tag) {
 		// let us order the list
-		res.orderList();
+		children.orderList();
 		if (tag == Predicate.LEQV) {
 			// we order the list and put the negation in front before
 			// the key is created, ensuring a correct factorization
-			res.reduceNegations();
+			children.reduceNegations();
 		}
-		final List<SignedFormula<?>> literals = res.getLiterals();
-		final IIntermediateResult iRes = res.getNewIntermediateResult();
-		
+		final List<SignedFormula<?>> literals = children.getLiterals();
+		final IIntermediateResult iRes = children.getNewIntermediateResult();
+
 		final AbstractClause<?> sig;
 		if (tag == Predicate.LEQV) {
-			final SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(literals);
-			final EquivalenceClauseDescriptor desc = updateDescriptor(key, context.getEqClauseTable(), iRes, "equivalence clause");
-			sig = new EquivalenceClause(literals,iRes.getTerms(),desc);
+			final SymbolKey<EquivalenceClauseDescriptor> key = new EquivalenceClauseKey(
+					literals);
+			final EquivalenceClauseDescriptor desc = updateDescriptor(key,
+					context.getEqClauseTable(), iRes, "equivalence clause");
+			sig = new EquivalenceClause(literals, iRes.getTerms(), desc);
 		} else {
-			final SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(literals);
-			final DisjunctiveClauseDescriptor desc = updateDescriptor(key, context.getDisjClauseTable(), iRes, "disjunctive clause");
-			sig = new DisjunctiveClause(literals,iRes.getTerms(),desc);
+			final SymbolKey<DisjunctiveClauseDescriptor> key = new DisjunctiveClauseKey(
+					literals);
+			final DisjunctiveClauseDescriptor desc = updateDescriptor(key,
+					context.getDisjClauseTable(), iRes, "disjunctive clause");
+			sig = new DisjunctiveClause(literals, iRes.getTerms(), desc);
 		}
 
 		// we create the new signature
 		@SuppressWarnings("unchecked")
 		final SignedFormula<?> lit = new SignedFormula(sig, isPositive);
-		
+
 		// we append the new literal to the result before
-		acc.addResult(lit, iRes);
+		return new NormalizedFormula(lit, iRes, literalOrderer, origin);
 	}
-	
-	private void exitQuantifiedPredicate(QuantifiedPredicate pred,
-			boolean isForall, NormalizedFormula res, NormalizedFormula acc,
-			int startOffset, int endOffset) {
-		termBuilder.popDecls(pred.getBoundIdentDecls());
-		SignedFormula<?> quantified = res.getSignature();
+
+	private NormalizedFormula buildQuantifiedPredicate(NormalizedFormula child,
+			boolean isForall, int startOffset, int endOffset) {
+		SignedFormula<?> quantified = child.getSignature();
 
 		List<TermSignature> quantifiedTerms = new ArrayList<TermSignature>();
-		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(res
+		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(child
 				.getTerms(), quantifiedTerms, startOffset, endOffset);
 
 		IntermediateResult interRes = new IntermediateResult(quantifiedTerms);
@@ -501,28 +514,91 @@ class PredicateLoader {
 				unquantifiedTerms, interRes.getTerms(), desc, startOffset,
 				endOffset);
 
-		acc.addResult(new SignedFormula<QuantifiedDescriptor>(sig, true),
-				interRes);
+		return new NormalizedFormula(new SignedFormula<QuantifiedDescriptor>(
+				sig, true), interRes, literalOrderer, origin);
 	}
-	
-	private List<TermSignature> getUnquantifiedTerms(List<TermSignature> terms, List<TermSignature> quantifiedTerms, int startOffset, int endOffset) {
+
+	private List<TermSignature> getUnquantifiedTerms(List<TermSignature> terms,
+			List<TermSignature> quantifiedTerms, int startOffset, int endOffset) {
 		List<TermSignature> unquantifiedSignature = new ArrayList<TermSignature>();
 		for (TermSignature term : terms) {
-			unquantifiedSignature.add(term.getUnquantifiedTerm(startOffset, endOffset, quantifiedTerms));
+			unquantifiedSignature.add(term.getUnquantifiedTerm(startOffset,
+					endOffset, quantifiedTerms));
 		}
 		return unquantifiedSignature;
 	}
 
-	//-----------------------------
-	//  Debugging support methods
-	//-----------------------------
+	private static class ChildList {
+
+		private final List<NormalizedFormula> list = new ArrayList<NormalizedFormula>();
+
+		public ChildList() {
+			// empty on purpose
+		}
+
+		protected void orderList() {
+			Collections.sort(list);
+		}
+
+		/**
+		 * Puts the negation sign on the first literal of the list, or no
+		 * negation sign. This is meant for equivalence clauses. The clause
+		 * should be ordered.
+		 */
+		protected void reduceNegations() {
+			boolean isPositive = true;
+			for (NormalizedFormula nf : list) {
+				if (!nf.isPositive()) {
+					isPositive = !isPositive;
+					nf.negate();
+				}
+			}
+			if (!isPositive) {
+				list.get(0).negate();
+			}
+		}
+
+		public void add(NormalizedFormula nf) {
+			list.add(nf);
+		}
+
+		public List<SignedFormula<?>> getLiterals() {
+			List<SignedFormula<?>> result = new ArrayList<SignedFormula<?>>();
+			for (NormalizedFormula nf : list) {
+				result.add(nf.getSignature());
+			}
+			return result;
+		}
+
+		private List<IIntermediateResult> getIntermediateResults() {
+			List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
+			for (NormalizedFormula nf : list) {
+				result.add(nf.getResult());
+			}
+			return result;
+		}
+
+		public IIntermediateResult getNewIntermediateResult() {
+			return new IntermediateResultList(getIntermediateResults());
+		}
+
+		@Override
+		public String toString() {
+			return list.toString();
+		}
+
+	}
+
+	// ----------------------------
+	// Debugging support methods
+	// ----------------------------
 
 	private StringBuilder indentationPrefix = new StringBuilder();
 
 	private void debug(String message) {
 		System.out.println(indentationPrefix + message);
 	}
-	
+
 	private void debugEnter(Predicate pred) {
 		if (DEBUG) {
 			debug("Entering " + pred);
@@ -535,5 +611,5 @@ class PredicateLoader {
 			indentationPrefix.setLength(indentationPrefix.length() - 2);
 		}
 	}
-	
+
 }
