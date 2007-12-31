@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
@@ -29,20 +28,14 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
  */
 public class NormalizedFormula implements INormalizedFormula {
 
-	private List<ResultPair> list = new ArrayList<ResultPair>();
+	private final List<ResultPair> list = new ArrayList<ResultPair>();
 	
-	protected Comparator<SignedFormula<?>> orderer;
-	private int startOffset, endOffset;
-	private BoundIdentDecl[] boundIdentDecls;
+	private final Comparator<SignedFormula<?>> orderer;
 	
 	private final IOrigin origin;
 	
-	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, int startOffset, int endOffset,
-			BoundIdentDecl[] boundIdentDecls, IOrigin origin) {
+	public NormalizedFormula(Comparator<SignedFormula<?>> orderer, IOrigin origin) {
 		this.orderer = orderer;
-		this.boundIdentDecls = boundIdentDecls;
-		this.startOffset = startOffset;
-		this.endOffset = endOffset;
 		this.origin = origin;
 	}
 	
@@ -50,38 +43,26 @@ public class NormalizedFormula implements INormalizedFormula {
 		Collections.sort(list);
 	}
 	
-	public BoundIdentDecl[] getBoundIdentDecls() {
-		return boundIdentDecls;
-	}
-	
-	public int getStartOffset() {
-		return startOffset;
-	}
-
-	public int getEndOffset() {
-		return endOffset;
-	}
-
 	/**
 	 * Puts the negation sign on the first literal of the list, or
 	 * no negation sign. This is meant for equivalence clauses. The clause
 	 * should be ordered.
 	 */
 	protected void reduceNegations() {
-		int numberOfNegations = 0;
+		boolean isPositive = true;
 		for (ResultPair pair : list) {
 			if (!pair.signature.isPositive()) {
-				numberOfNegations++;
+				isPositive = !isPositive;
 				pair.signature.negate();
 			}
 		}
-		if (numberOfNegations % 2 != 0) {
+		if (! isPositive) {
 			list.get(0).signature.negate();
 		}
 	}
 	
 	public void addResult(SignedFormula<?> signature, IIntermediateResult inRes) {
-		list.add(new ResultPair(signature, inRes));
+		list.add(new ResultPair(signature, inRes, orderer));
 	}
 
 	public List<SignedFormula<?>> getLiterals() {
@@ -121,11 +102,14 @@ public class NormalizedFormula implements INormalizedFormula {
 		return false;
 	}
 
-	private class ResultPair implements Comparable<ResultPair> {
-		IIntermediateResult result;
-		SignedFormula<?> signature;
+	private static class ResultPair implements Comparable<ResultPair> {
+		private final Comparator<SignedFormula<?>> orderer;
+		final IIntermediateResult result;
+		final SignedFormula<?> signature;
 		
-		ResultPair(SignedFormula<?> signature, IIntermediateResult result) {
+		ResultPair(SignedFormula<?> signature, IIntermediateResult result,
+				Comparator<SignedFormula<?>> orderer) {
+			this.orderer = orderer;
 			this.result = result;
 			this.signature = signature;
 		}
