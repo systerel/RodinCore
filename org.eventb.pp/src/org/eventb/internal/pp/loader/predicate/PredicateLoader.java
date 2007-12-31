@@ -10,7 +10,6 @@ package org.eventb.internal.pp.loader.predicate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
@@ -80,7 +79,7 @@ class PredicateLoader {
 	 */
 	public static boolean DEBUG = false;
 	
-	private static final BoundIdentDecl[] NO_BIDS = new BoundIdentDecl[0];
+	private static final LiteralOrderer literalOrderer = new LiteralOrderer();
 
 	// these are persistent variables that are completed at each
 	// iteration
@@ -95,10 +94,6 @@ class PredicateLoader {
 	private final boolean isGoal;
 	
 	private final TermBuilder termBuilder;
-	
-	// these are the encountered index and corresponding sorts
-	// these 3 variables are reset at each predicate
-	private final Stack<NormalizedFormula> result;
 	
 	// Result of the loading
 	private NormalizedFormula formula;
@@ -135,7 +130,6 @@ class PredicateLoader {
 		this.origin = new PredicateOrigin(originalPredicate, isGoal);
 		this.isGoal = isGoal;
 		this.termBuilder = new TermBuilder(context);
-		this.result = new Stack<NormalizedFormula>();
 	}
 	
 	/**
@@ -177,11 +171,7 @@ class PredicateLoader {
 					+ predicate);
 		}
 	
-		pushNewList(NO_BIDS);
-		process(predicate, !isGoal);
-
-		formula = result.pop();
-		assert result.isEmpty();
+		formula = process(predicate, !isGoal, new NormalizedFormula(literalOrderer, origin));
 	}
 
 	/**
@@ -196,28 +186,29 @@ class PredicateLoader {
 		return formula;
 	}
 
-	private NormalizedFormula process(Predicate pred, boolean isPositive) {
+	private NormalizedFormula process(Predicate pred, boolean isPositive,
+			NormalizedFormula acc) {
 		try {
 			debugEnter(pred);
 			if (pred instanceof AssociativePredicate) {
 				final AssociativePredicate apred = (AssociativePredicate) pred;
-				return processAssociativePredicate(apred, isPositive);
+				return processAssociativePredicate(apred, isPositive, acc);
 			}
 			if (pred instanceof BinaryPredicate) {
 				final BinaryPredicate bpred = (BinaryPredicate) pred;
-				return processBinaryPredicate(bpred, isPositive);
+				return processBinaryPredicate(bpred, isPositive, acc);
 			}
 			if (pred instanceof UnaryPredicate) {
 				final UnaryPredicate upred = (UnaryPredicate) pred;
-				return processUnaryPredicate(upred, isPositive);
+				return processUnaryPredicate(upred, isPositive, acc);
 			}
 			if (pred instanceof QuantifiedPredicate) {
 				final QuantifiedPredicate qpred = (QuantifiedPredicate) pred;
-				return processQuantifiedPredicate(qpred, isPositive);
+				return processQuantifiedPredicate(qpred, isPositive, acc);
 			}
 			if (pred instanceof RelationalPredicate) {
 				final RelationalPredicate rpred = (RelationalPredicate) pred;
-				return processRelationalPredicate(rpred, isPositive);
+				return processRelationalPredicate(rpred, isPositive, acc);
 			}
 			throw invalidPredicate(pred);
 		} finally {
@@ -230,7 +221,7 @@ class PredicateLoader {
 	}
 
 	private NormalizedFormula processAssociativePredicate(
-			AssociativePredicate pred, boolean isPositive) {
+			AssociativePredicate pred, boolean isPositive, NormalizedFormula acc) {
 		final int tag = pred.getTag();
 		final boolean negated;
 		switch (tag) {
@@ -244,16 +235,17 @@ class PredicateLoader {
 			throw invalidPredicate(pred);
 		}
 
-		pushNewList(NO_BIDS);
+		final NormalizedFormula result = new NormalizedFormula(literalOrderer, origin);
 		for (Predicate child : pred.getChildren()) {
-			process(child, !negated);
+			process(child, !negated, result);
 		}
-		exitLogicalOperator(tag, isPositive ^ negated);
-		return null; // TODO
+		exitLogicalOperator(tag, isPositive ^ negated, result, acc);
+		return acc;
 	}
 
 	private NormalizedFormula processBinaryPredicate(BinaryPredicate pred,
-			boolean isPositive) {
+			boolean isPositive,
+			NormalizedFormula acc) {
 		final int tag = pred.getTag();
 		final boolean leftIsPositive;
 		switch (tag) {
@@ -267,81 +259,80 @@ class PredicateLoader {
 			throw invalidPredicate(pred);
 		}
 
-		pushNewList(NO_BIDS);
-		process(pred.getLeft(), leftIsPositive);
-		process(pred.getRight(), true);
-		exitLogicalOperator(tag, isPositive);
-		return null; // TODO
+		final NormalizedFormula result = new NormalizedFormula(literalOrderer, origin);
+		process(pred.getLeft(), leftIsPositive, result);
+		process(pred.getRight(), true, result);
+		exitLogicalOperator(tag, isPositive, result, acc);
+		return acc;
 	}
 
 	private NormalizedFormula processUnaryPredicate(UnaryPredicate pred,
-			boolean isPositive) {
-		process(pred.getChild(), !isPositive);
-		return null; // TODO
+			boolean isPositive, NormalizedFormula acc) {
+		process(pred.getChild(), !isPositive, acc);
+		return acc;
 	}
 
 	private NormalizedFormula processQuantifiedPredicate(
-			QuantifiedPredicate pred, boolean isPositive) {
+			QuantifiedPredicate pred, boolean isPositive, NormalizedFormula acc) {
 
-		pushNewList(pred.getBoundIdentDecls());
-		process(pred.getPredicate(), isPositive);
+		final BoundIdentDecl[] decls = pred.getBoundIdentDecls();
+		final int startOffset = termBuilder.getNumberOfDecls();
+		termBuilder.pushDecls(decls);
+		final int endOffset = termBuilder.getNumberOfDecls() - 1;
+		final NormalizedFormula result = new NormalizedFormula(literalOrderer,
+				origin);
+		process(pred.getPredicate(), isPositive, result);
 		switch (pred.getTag()) {
 		case Predicate.EXISTS:
-			exitQuantifiedPredicate(pred, !isPositive);
-			return null; // TODO
+			isPositive = !isPositive;
+			break;
 		case Predicate.FORALL:
-			exitQuantifiedPredicate(pred, isPositive);
-			return null; // TODO
+			break;
 		default:
 			throw invalidPredicate(pred);
 		}
+		exitQuantifiedPredicate(pred, isPositive, result, acc, startOffset,
+				endOffset);
+		return acc;
 	}
 
 	private NormalizedFormula processRelationalPredicate(
-			RelationalPredicate pred, boolean isPositive) {
+			RelationalPredicate pred, boolean isPositive, NormalizedFormula acc) {
 		final Sort sort = new Sort(pred.getRight().getType());
 		final boolean arithmetic = sort.equals(Sort.NATURAL);
 		final List<TermSignature> terms = getChildrenTerms(pred, arithmetic);
 		switch (pred.getTag()) {
 		case Predicate.GE:
-			exitArithmeticLiteral(terms, Type.LESS, !isPositive);
-			return null; // TODO
+			exitArithmeticLiteral(terms, Type.LESS, !isPositive, acc);
+			return acc;
 		case Predicate.GT:
-			exitArithmeticLiteral(terms, Type.LESS_EQUAL, !isPositive);
-			return null; // TODO
+			exitArithmeticLiteral(terms, Type.LESS_EQUAL, !isPositive, acc);
+			return acc;
 		case Predicate.LE:
-			exitArithmeticLiteral(terms, Type.LESS_EQUAL, isPositive);
-			return null; // TODO
+			exitArithmeticLiteral(terms, Type.LESS_EQUAL, isPositive, acc);
+			return acc;
 		case Predicate.LT:
-			exitArithmeticLiteral(terms, Type.LESS, isPositive);
-			return null; // TODO
+			exitArithmeticLiteral(terms, Type.LESS, isPositive, acc);
+			return acc;
 		case Predicate.EQUAL:
-			exitEquality(terms, isPositive);
-			return null; // TODO
+			exitEquality(terms, isPositive, sort, acc);
+			return acc;
 		case Predicate.NOTEQUAL:
-			exitEquality(terms, !isPositive);
-			return null; // TODO
+			exitEquality(terms, !isPositive, sort, acc);
+			return acc;
 		case Predicate.IN:
 			final SymbolKey<PredicateDescriptor> key = new PredicateKey(sort);
 			final IntermediateResult inRes = new IntermediateResult(terms);
 			final PredicateDescriptor desc = updateDescriptor(key, context
 					.getLiteralTable(), inRes, "predicate");
 			final PredicateFormula lit = new PredicateFormula(terms, desc);
-
-			result.peek().addResult(
-					new SignedFormula<PredicateDescriptor>(lit, isPositive),
-					inRes);
-			return null; // TODO
+			final SignedFormula<?> sf = new SignedFormula<PredicateDescriptor>(
+					lit, isPositive);
+			acc.addResult(sf, inRes);
+			return acc;
 		default:
 			throw invalidPredicate(pred);
 		}
-	}
-
-	private void pushNewList(BoundIdentDecl[] decls) {
-		final int startOffset = termBuilder.getNumberOfDecls();
-		termBuilder.pushDecls(decls);
-		final int endOffset = termBuilder.getNumberOfDecls()-1;
-		result.push(new NormalizedFormula(new LiteralOrderer(),startOffset,endOffset,decls,origin));
 	}
 
 	private List<TermSignature> getChildrenTerms(RelationalPredicate pred,
@@ -375,7 +366,7 @@ class PredicateLoader {
 	}
 
 	private void exitArithmeticLiteral(List<TermSignature> terms, Type type,
-			boolean sign) {
+			boolean sign, NormalizedFormula acc) {
 		assert terms.size() == 2;
 		// TODO normalize arithmetic and order terms
 		
@@ -391,7 +382,7 @@ class PredicateLoader {
 		if (DEBUG)
 			debug("Adding terms to " + desc + ": " + interRes);
 		
-		result.peek().addResult(new SignedFormula<ArithmeticDescriptor>(sig, sign),interRes);
+		acc.addResult(new SignedFormula<ArithmeticDescriptor>(sig, sign),interRes);
 	}
 
 	private List<TermSignature> getSimpleTerms(List<TermSignature> originalList, List<TermSignature> simpleTerms) {
@@ -415,18 +406,19 @@ class PredicateLoader {
 		}
 	}
 	
-	private boolean exitEquality(List<TermSignature> terms, boolean sign) {
+	private boolean exitEquality(List<TermSignature> terms, boolean sign,
+			Sort sort, NormalizedFormula acc) {
 		// treat arithmetic equality as arithmetic literals
-		final Sort sort = terms.get(0).getSort();
 		if (sort.equals(Sort.NATURAL)) {
-			exitArithmeticLiteral(terms, Type.EQUAL, sign);
+			exitArithmeticLiteral(terms, Type.EQUAL, sign, acc);
 		} else {
-			exitEqualityLiteral(terms, sort, sign);
+			exitEqualityLiteral(terms, sort, sign, acc);
 		}
 		return true;
 	}
 	
-	private void exitEqualityLiteral(List<TermSignature> terms, Sort sort, boolean sign) {
+	private void exitEqualityLiteral(List<TermSignature> terms, Sort sort,
+			boolean sign, NormalizedFormula acc) {
 		SymbolKey<EqualityDescriptor> key = new EqualityKey(sort);
 		IntermediateResult inRes = new IntermediateResult(terms);
 		EqualityDescriptor desc = updateDescriptor(key, context.getEqualityTable(), inRes, "equality");
@@ -441,7 +433,7 @@ class PredicateLoader {
 		// TODO implement an ordering on terms
 		// inRes.orderList();
 		// from here indexes will be ordered
-		result.peek().addResult(new SignedFormula<EqualityDescriptor>(sig, sign), inRes);
+		acc.addResult(new SignedFormula<EqualityDescriptor>(sig, sign), inRes);
 	}
 
 	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key, SymbolTable<T> table, IIntermediateResult res, String debug) {
@@ -458,9 +450,8 @@ class PredicateLoader {
 		return desc;
 	}
 	
-	private void exitLogicalOperator(int tag, boolean isPositive) {
-		final NormalizedFormula res = result.pop();
-
+	private void exitLogicalOperator(int tag, boolean isPositive,
+			NormalizedFormula res, NormalizedFormula acc) {
 		// let us order the list
 		res.orderList();
 		if (tag == Predicate.LEQV) {
@@ -487,25 +478,31 @@ class PredicateLoader {
 		final SignedFormula<?> lit = new SignedFormula(sig, isPositive);
 		
 		// we append the new literal to the result before
-		result.peek().addResult(lit, iRes);
+		acc.addResult(lit, iRes);
 	}
 	
-	private void exitQuantifiedPredicate(QuantifiedPredicate pred, boolean isForall) {
+	private void exitQuantifiedPredicate(QuantifiedPredicate pred,
+			boolean isForall, NormalizedFormula res, NormalizedFormula acc,
+			int startOffset, int endOffset) {
 		termBuilder.popDecls(pred.getBoundIdentDecls());
-		
-		NormalizedFormula res = result.pop();
-		SignedFormula<?> quantified = res.getLiterals().get(0);
-		
-		List<TermSignature> quantifiedTerms = new ArrayList<TermSignature>();		
-		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(res.getTerms(), quantifiedTerms, res.getStartOffset(), res.getEndOffset());
-		
-		IntermediateResult interRes = new IntermediateResult(quantifiedTerms/*,new TermOrderer()*/);
-		SymbolKey<QuantifiedDescriptor> key = new QuantifiedLiteralKey(quantified,unquantifiedTerms,isForall);
-		
-		QuantifiedDescriptor desc = updateDescriptor(key, context.getQuantifiedTable(), interRes, "quantified");
-		QuantifiedFormula sig = new QuantifiedFormula(isForall,quantified,unquantifiedTerms,interRes.getTerms(),desc,res.getStartOffset(),res.getEndOffset());
-		
-		result.peek().addResult(new SignedFormula<QuantifiedDescriptor>(sig, true), interRes);
+		SignedFormula<?> quantified = res.getSignature();
+
+		List<TermSignature> quantifiedTerms = new ArrayList<TermSignature>();
+		List<TermSignature> unquantifiedTerms = getUnquantifiedTerms(res
+				.getTerms(), quantifiedTerms, startOffset, endOffset);
+
+		IntermediateResult interRes = new IntermediateResult(quantifiedTerms);
+		SymbolKey<QuantifiedDescriptor> key = new QuantifiedLiteralKey(
+				quantified, unquantifiedTerms, isForall);
+
+		QuantifiedDescriptor desc = updateDescriptor(key, context
+				.getQuantifiedTable(), interRes, "quantified");
+		QuantifiedFormula sig = new QuantifiedFormula(isForall, quantified,
+				unquantifiedTerms, interRes.getTerms(), desc, startOffset,
+				endOffset);
+
+		acc.addResult(new SignedFormula<QuantifiedDescriptor>(sig, true),
+				interRes);
 	}
 	
 	private List<TermSignature> getUnquantifiedTerms(List<TermSignature> terms, List<TermSignature> quantifiedTerms, int startOffset, int endOffset) {
