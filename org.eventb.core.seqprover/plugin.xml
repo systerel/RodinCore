@@ -109,9 +109,9 @@
              id="isFunGoal"
              name="%isFunGoalName"/>
        <reasoner
-             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites"
-             id="cardComparisonRewrites"
-             name="%cardComparisonRewritesName"/>
+             class="org.eventb.internal.core.seqprover.eventbExtensions.CardComparison"
+             id="cardComparison"
+             name="%cardComparisonName"/>
        <reasoner
              class="org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo"
              id="cardUpTo"

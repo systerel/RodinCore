@@ -1,6 +1,5 @@
 AutoRewriterImpl.java
 AndOrDistRewriterImpl.java
-CardComparisonRewriterImpl.java
 CompImgRewriterImpl.java
 CompUnionDistRewriterImpl.java
 ConvRewriterImpl.java

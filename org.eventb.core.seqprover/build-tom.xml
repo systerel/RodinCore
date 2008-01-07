@@ -52,6 +52,7 @@
 		<delete file="${rewriter.src}/TypeRewriterImpl.java" />
 		<delete file="${inference.src}/FunInterImg.java" />
 		<delete file="${inference.src}/FunSetMinusImg.java" />
+		<delete file="${inference.src}/CardComparison.java" />
     </target>
 	
 </project>

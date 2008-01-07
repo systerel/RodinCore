@@ -53,6 +53,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
+import org.eventb.internal.core.seqprover.eventbExtensions.CardComparison;
 import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
@@ -89,7 +90,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CardComparisonRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -956,7 +956,7 @@ public class Tactics {
 
 	public static boolean isParentTopLevelPredicate(Predicate pred,
 			IPosition pos) {
-		IPosition tmp = pos.getParent();
+		IPosition tmp = pos;
 
 		while (!tmp.isRoot()) {
 			Formula<?> subFormula = pred.getSubFormula(tmp);
@@ -3208,28 +3208,12 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static List<IPosition> cardComparisonGetPositions(Predicate predicate) {
-		return predicate.getPositions(new DefaultFilter() {
-
-			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.LE
-						|| predicate.getTag() == Predicate.GE
-						|| predicate.getTag() == Predicate.LT
-						|| predicate.getTag() == Predicate.GT
-						|| predicate.getTag() == Predicate.EQUAL) {
-					Expression left = predicate.getLeft();
-					Expression right = predicate.getRight();
-					return (Lib.isCardinality(left) && Lib.isCardinality(right));
-				}
-				return super.select(predicate);
-			}
-
-		});
+		return new CardComparison().getPositions(predicate, true);
 	}
 
 	/**
 	 * Return the tactic "arithmetic comparison of cardinality rewrites"
-	 * {@link CardComparisonRewrites} which is applicable to a hypothesis at a
+	 * {@link CardComparison} which is applicable to a hypothesis at a
 	 * given position.
 	 * <p>
 	 * 
@@ -3241,9 +3225,9 @@ public class Tactics {
 	 * @return The tactic "arithmetic comparison of cardinality rewrites"
 	 * @author htson
 	 */
-	public static ITactic cardComparisonRewrites(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new CardComparisonRewrites(),
-				new CardComparisonRewrites.Input(hyp, position));
+	public static ITactic cardComparison(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new CardComparison(),
+				new CardComparison.Input(hyp, position));
 	}
 
 
