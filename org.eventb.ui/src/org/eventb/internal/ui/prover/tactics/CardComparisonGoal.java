@@ -14,7 +14,7 @@ public class CardComparisonGoal extends DefaultTacticProvider {
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs, String globalInput) {
-		return Tactics.cardComparisonRewrites(null, position);
+		return Tactics.cardComparison(null, position);
 	}
 
 	@Override
