@@ -45,24 +45,6 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		super();
 	}
 
-	private RelationalPredicate makeRelationalPredicate(int tag, Expression left,
-			Expression right) {
-		return ff.makeRelationalPredicate(tag, left, right, null);
-	}
-	
-	private AssociativePredicate makeAssociativePredicate(int tag, Predicate ... children) {
-		return ff.makeAssociativePredicate(tag, children, null);
-	}
-	
-	private BinaryExpression makeBinaryExpression(int tag, Expression left,
-			Expression right) {
-		return ff.makeBinaryExpression(tag, left, right, null);
-	}
-
-	private UnaryExpression makeUnaryExpression(int tag, Expression child) {
-		return ff.makeUnaryExpression(tag, child, null);
-	}
-
 	%include {Formula.tom}
 
 	@Override
@@ -353,6 +335,15 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    	}
 		
+			/**
+	    	 * Set Theory: S ∈ ℙ1(T)  == S ∈ ℙ(T) ∧ S ≠ ∅
+	    	 */
+	    	In(S, Pow1(T)) -> {
+				Expression powT = makeUnaryExpression(Expression.POW, `T);
+				Predicate pred1 = makeRelationalPredicate(Predicate.IN, `S, `powT);
+				Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(`S.getType()));
+				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	}
 	    }
 	    return predicate;
 	}

@@ -1042,6 +1042,10 @@ public class Tactics {
 							&& rTag == Expression.POW) {
 						return true;
 					}
+					if (right instanceof UnaryExpression
+							&& rTag == Expression.POW1) {
+						return true;
+					}
 					if (right instanceof AssociativeExpression
 							&& (rTag == Expression.BUNION || rTag == Expression.BINTER)) {
 						return true;
