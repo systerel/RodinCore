@@ -557,7 +557,6 @@ public class RodinTests extends AbstractPPTest {
 				"k∈P ∖ {c} ↔ P"
 				),"¬x=c",true);
 	}
-
 	public void testFailingExample2() {
 		initDebug();
 		
@@ -1209,6 +1208,16 @@ public class RodinTests extends AbstractPPTest {
 		
 	}
 	
+	public void test1833264_1() throws Exception {
+		
+		doTest(mList("DO", "S"),
+				new HashSet<String>(),
+				"(DO=DC ∧ oD=TRUE) ⇔ " +
+				"((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE))",
+				false);
+				
+	}
+	
 	public void testBug1840292(){
 		doTest(mList("r3", "ℙ(S×S)", "r2", "ℙ(S×S)", "r", "ℙ(S×S)", "S",
 				"ℙ(S)", "R", "ℙ(ℙ(S×S))"), mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R",
@@ -1216,6 +1225,7 @@ public class RodinTests extends AbstractPPTest {
 				false,
 				2000);
 	}
+	
 	public void testBug1840292_1(){
 		doTest(mList("r", "ℙ(S×S)", "S", "ℙ(S)", "R", "ℙ(ℙ(S×S))"),
 				mSet("r∼∈ U", "∅∈R", "r∩id(S)=∅"),
@@ -1223,6 +1233,7 @@ public class RodinTests extends AbstractPPTest {
 				false,
 				2000);
 	}
+
 	private static void doTestHelper(TestPair test) {
 		test.typeCheck();
 
