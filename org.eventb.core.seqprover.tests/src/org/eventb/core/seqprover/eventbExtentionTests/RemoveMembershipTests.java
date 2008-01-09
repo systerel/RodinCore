@@ -424,6 +424,16 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	String resultP84 = "∀x·x=0⇒x ↦ (1 ↦ 2)∈p∧2 ↦ x ↦ 3∈q";
 
 	
+	// S : POW1(T) == S : POW(T) & S /= {}
+	String P86 = "(0 = x) ⇒ {x, 1} ∈ ℙ1(T)";
+	
+	String resultP86 = "0=x⇒{x,1}∈ℙ(T)∧{x,1}≠∅";
+	
+	String P87 = "∀x·x = 0 ⇒ {x, 1} ∈ ℙ1(T)";
+	
+	String resultP87 = "∀x·x=0⇒{x,1}∈ℙ(T)∧{x,1}≠∅";
+
+	
 	@Override
 	public String getReasonerID() {
 		return "org.eventb.core.seqprover.rm";
@@ -515,7 +525,9 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P81, "1",
 				P82, "1.1",
 				P83, "1",
-				P84, "1.1"
+				P84, "1.1",
+				P86, "1",
+				P87, "1.1"
 		};
 	}
 
@@ -610,7 +622,9 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P81, "1", resultP81),
 				new SuccessfulTest(P82, "1.1", resultP82),
 				new SuccessfulTest(P83, "1", resultP83),
-				new SuccessfulTest(P84, "1.1", resultP84)
+				new SuccessfulTest(P84, "1.1", resultP84),
+				new SuccessfulTest(P86, "1", resultP86),
+				new SuccessfulTest(P87, "1.1", resultP87)
 		};
 	}
 
@@ -702,7 +716,9 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P81, "0",
 				P82, "1.0",
 				P83, "0",
-				P84, "1.0"
+				P84, "1.0",
+				P86, "0",
+				P87, "1.0"
 		};
 	}
 
