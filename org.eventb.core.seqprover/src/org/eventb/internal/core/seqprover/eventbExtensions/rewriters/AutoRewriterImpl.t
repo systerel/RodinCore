@@ -57,48 +57,48 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		super(true, FormulaFactory.getDefault());
 	}
 
-	private UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
+	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
 		return ff.makeUnaryPredicate(tag, child, null);
 	}
 
-	private RelationalPredicate makeRelationalPredicate(int tag, Expression left,
+	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
 			Expression right) {
 		return ff.makeRelationalPredicate(tag, left, right, null);
 	}
 	
-	private AssociativePredicate makeAssociativePredicate(int tag, Predicate[] children) {
+	protected AssociativePredicate makeAssociativePredicate(int tag, Predicate... children) {
 		return ff.makeAssociativePredicate(tag, children, null);
 	}
 	
-	private QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
+	protected QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
 		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
 
-	private SetExtension makeSetExtension(Collection<Expression> expressions) {
+	protected SetExtension makeSetExtension(Collection<Expression> expressions) {
 		return ff.makeSetExtension(expressions, null);
 	}
 	
-	private UnaryExpression makeUnaryExpression(int tag, Expression child) {
+	protected UnaryExpression makeUnaryExpression(int tag, Expression child) {
 		return ff.makeUnaryExpression(tag, child, null);
 	}
 
-	private BinaryExpression makeBinaryExpression(int tag, Expression left, Expression right) {
+	protected BinaryExpression makeBinaryExpression(int tag, Expression left, Expression right) {
 		return ff.makeBinaryExpression(tag, left, right, null);
 	}
 
-	private AtomicExpression makeEmptySet(Type type) {
+	protected AtomicExpression makeEmptySet(Type type) {
 		return ff.makeEmptySet(type, null);
 	}
 		
-	private AssociativeExpression makeAssociativeExpression(int tag, Expression[] children) {
+	protected AssociativeExpression makeAssociativeExpression(int tag, Expression... children) {
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
-	private AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
+	protected AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
-	private SimplePredicate makeSimplePredicate(int tag, Expression expression) {
+	protected SimplePredicate makeSimplePredicate(int tag, Expression expression) {
 		return ff.makeSimplePredicate(tag, expression, null);
 	}
 
