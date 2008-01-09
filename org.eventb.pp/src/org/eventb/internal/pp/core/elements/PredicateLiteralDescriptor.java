@@ -100,11 +100,14 @@ public final class PredicateLiteralDescriptor {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PredicateLiteralDescriptor) {
-			PredicateLiteralDescriptor temp = (PredicateLiteralDescriptor) obj;
-			return index == temp.index;
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (this.getClass() != obj.getClass())
+			return false;
+		final PredicateLiteralDescriptor other = (PredicateLiteralDescriptor) obj;
+		return index == other.index;
 	}
 
 	@Override
