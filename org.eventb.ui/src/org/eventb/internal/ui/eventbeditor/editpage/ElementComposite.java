@@ -95,8 +95,10 @@ public class ElementComposite implements IElementComposite {
 		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
-			if (sectionComps == null)
+			if (sectionComps == null) {
 				createSectionComposites();
+				recursivelyExpandSectionComposites();
+			}
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			if (sectionComps.size() == 0) {
 				gridData.heightHint = 0;
@@ -114,6 +116,13 @@ public class ElementComposite implements IElementComposite {
 			long afterTime = System.currentTimeMillis();
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
+		}
+	}
+
+	private void recursivelyExpandSectionComposites() {
+		assert sectionComps != null;
+		for (ISectionComposite sectionComp : sectionComps) {
+			sectionComp.recursiveExpand();
 		}
 	}
 

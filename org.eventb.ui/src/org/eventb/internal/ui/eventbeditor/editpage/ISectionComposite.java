@@ -132,4 +132,9 @@ public interface ISectionComposite {
 	 */
 	void refresh(IRodinElement element, Set<IAttributeType> set);
 
+	/**
+	 * Recursively extend the section composite.
+	 */
+	void recursiveExpand();
+
 }

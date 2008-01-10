@@ -526,4 +526,12 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	public void recursiveExpand() {
+		setExpand(true);
+		assert elementComps != null;
+		for (IElementComposite elementComp : elementComps) {
+			elementComp.setExpand(true);
+		}
+	}
+
 }

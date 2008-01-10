@@ -157,4 +157,14 @@ public interface IElementComposite {
 	 */
 	public void refresh(IRodinElement element, Set<IAttributeType> set);
 
+	/**
+	 * Set the expand status of the element composite. If the element has not
+	 * been expanded before, this will be expanded recursively to its children.
+	 * 
+	 * @param isExpanded
+	 *            <code>true</code> if the element composite is going to
+	 *            expand, <code>false</code> otherwise.
+	 */
+	public void setExpand(boolean isExpanded);
+	
 }
