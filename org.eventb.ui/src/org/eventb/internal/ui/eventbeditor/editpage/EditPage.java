@@ -47,13 +47,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
@@ -64,6 +68,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -223,10 +228,36 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+		gridLayout.numColumns = 4;
 		comp.setLayout(gridLayout);
-		FormText widget = toolkit.createFormText(comp, true);
+		
+		// Expand all button
+		ImageHyperlink hyperlink = toolkit.createImageHyperlink(comp, SWT.TOP);
+		hyperlink.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_EXPAND_ALL));
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		hyperlink.setLayoutData(gd);
+		hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+
+			public void linkActivated(HyperlinkEvent e) {
+				assert sectionComps != null;
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.recursiveExpand();
+				}
+			}
+
+			public void linkEntered(HyperlinkEvent e) {
+				// Do nothing
+			}
+
+			public void linkExited(HyperlinkEvent e) {
+				// Do nothing
+			}
+			
+		});
+		
+		FormText widget = toolkit.createFormText(comp, true);
+		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
 		final IRodinFile rodinInput = editor.getRodinInput();
