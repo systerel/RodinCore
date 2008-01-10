@@ -157,6 +157,8 @@ public class EventBImage {
 				"icons/full/elcl16/expanded.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
 				"icons/full/elcl16/expandedHover.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EXPAND_ALL,
+				"icons/full/elcl16/expandall.gif");
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
 				"icons/full/elcl16/collapsed.gif");
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,

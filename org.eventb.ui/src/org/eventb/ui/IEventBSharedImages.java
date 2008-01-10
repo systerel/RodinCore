@@ -81,6 +81,8 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_EXPANDED_HOVER = "Expanded Hover";	
 	
+	public static final String IMG_EXPAND_ALL = "Expanded All";
+	
 	public static final String IMG_INVERSE = "Inverse";
 
 	public static final String IMG_SELECT_ALL = "Select All";
