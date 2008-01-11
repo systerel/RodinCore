@@ -17,22 +17,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class TwoListSelectionEditor extends FieldEditor {
 
     /**
-     * The left table viewer; <code>null</code> if none
-     * (before creation or after disposal).
-     */
-    List left;
+	 * The right table viewer: selected objects; can be <code>null</code>
+	 * (before creation or after disposal).
+	 */
+    List selected;
 
     /**
-     * The right list widget; <code>null</code> if none
+     * The left list widget: available objects; can be <code>null</code>
      * (before creation or after disposal).
      */
-    List right;
+    List available;
 	
     /**
      * The button box containing the Add, Remove, Up, and Down buttons;
@@ -65,9 +66,9 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     private SelectionListener selectionListener;
 
-    private ArrayList<Object> leftElements;
+    private ArrayList<Object> selectedElements;
     
-    private ArrayList<Object> rightElements;
+    private ArrayList<Object> availableElements;
        
     private int minWidth = 200;
 
@@ -87,8 +88,8 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
 	protected TwoListSelectionEditor(String name, String labelText,
 			Composite parent) {
-		leftElements = new ArrayList<Object>();
-		rightElements = new ArrayList<Object>();
+		selectedElements = new ArrayList<Object>();
+		availableElements = new ArrayList<Object>();
         init(name, labelText);
         createControl(parent);
     }
@@ -98,7 +99,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     void addPressed() {
         setPresentsDefaultValue(false);
-        move(right, left, rightElements, leftElements);
+        move(available, selected, availableElements, selectedElements);
     }
 
     /**
@@ -106,7 +107,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     void removePressed() {
         setPresentsDefaultValue(false);
-        move(left, right, leftElements, rightElements);
+        move(selected, available, selectedElements, availableElements);
     }
     
     private void move(List from, List to,
@@ -134,7 +135,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
             	to.add(getLabel(object), index++);
             }
             selectionChanged();
-            left.getParent().layout(true);
+            selected.getParent().layout(true);
         }    	
     }
     
@@ -146,8 +147,8 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      * @param box the box for the buttons
      */
     private void createButtons(Composite box) {
-        addButton = createPushButton(box, "<<");//$NON-NLS-1$
-        removeButton = createPushButton(box, ">>");//$NON-NLS-1$
+        addButton = createPushButton(box, ">>");//$NON-NLS-1$
+        removeButton = createPushButton(box, "<<");//$NON-NLS-1$
         upButton = createPushButton(box, "ListEditor.up");//$NON-NLS-1$
         downButton = createPushButton(box, "ListEditor.down");//$NON-NLS-1$
     }
@@ -206,9 +207,9 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
                     upPressed();
                 } else if (widget == downButton) {
                     downPressed();
-				} else if (widget == left) {
+				} else if (widget == selected) {
 					selectionChanged();
-				} else if (widget == right) {
+				} else if (widget == available) {
 					selectionChanged();
 				}
 			}
@@ -219,15 +220,15 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      * Notifies that the list selection has changed.
      */
     void selectionChanged() {
-        int leftIndex = left.getSelectionIndex();
-        int rightIndex = right.getSelectionIndex();
-        int leftSize = leftElements.size();
+        int selectedIndex = selected.getSelectionIndex();
+        int availableIndex = available.getSelectionIndex();
+        int selectedSize = selectedElements.size();
         
-        addButton.setEnabled(rightIndex >= 0);
-        removeButton.setEnabled(leftIndex >= 0);
-        upButton.setEnabled(leftSize > 1 && leftIndex > 0);
-		downButton.setEnabled(leftSize > 1 && leftIndex >= 0
-				&& leftIndex < leftSize - 1);
+        addButton.setEnabled(availableIndex >= 0);
+        removeButton.setEnabled(selectedIndex >= 0);
+        upButton.setEnabled(selectedSize > 1 && selectedIndex > 0);
+		downButton.setEnabled(selectedSize > 1 && selectedIndex >= 0
+				&& selectedIndex < selectedSize - 1);
     }
 
     /**
@@ -253,19 +254,19 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     private void swap(boolean up) {
         setPresentsDefaultValue(false);
-        int index = left.getSelectionIndex();
+        int index = selected.getSelectionIndex();
         int target = up ? index - 1 : index + 1;
 
         if (index >= 0) {
-            String[] selection = left.getSelection();
+            String[] selection = selected.getSelection();
             Assert.isTrue(selection.length == 1);
-            left.remove(index);
-            left.add(selection[0], target);
-            Object object = leftElements.get(index);
-            leftElements.remove(index);
-            leftElements.add(target, object);
+            selected.remove(index);
+            selected.add(selection[0], target);
+            Object object = selectedElements.get(index);
+            selectedElements.remove(index);
+            selectedElements.add(target, object);
             
-            left.setSelection(target);
+            selected.setSelection(target);
         }
         selectionChanged();
     }
@@ -274,9 +275,9 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 	protected void adjustForNumColumns(int numColumns) {
         Control control = getLabelControl();
         ((GridData) control.getLayoutData()).horizontalSpan = numColumns;
-        ((GridData) left.getLayoutData()).horizontalSpan = 1;
+        ((GridData) selected.getLayoutData()).horizontalSpan = 1;
         ((GridData) buttonBox.getLayoutData()).horizontalSpan = numColumns-2;
-        ((GridData) right.getLayoutData()).horizontalSpan = 1;
+        ((GridData) available.getLayoutData()).horizontalSpan = 1;
 	}
 
     /**
@@ -312,33 +313,48 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         gd.horizontalSpan = numColumns;
         control.setLayoutData(gd);
 
-        left = getListControl(parent);
+        Label availableLabel = new Label(parent, SWT.LEFT);
+        availableLabel.setText("Available:");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        availableLabel.setLayoutData(gd);
+
+        Label tmpLabel = new Label(parent, SWT.CENTER);
+        gd = new GridData();
+        gd.verticalAlignment = GridData.CENTER;
+        tmpLabel.setLayoutData(gd);
+        
+        Label selectedLabel = new Label(parent, SWT.LEFT);
+        selectedLabel.setText("Selected:");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        selectedLabel.setLayoutData(gd);
+
+        available = getListControl(parent);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.verticalAlignment = GridData.FILL;
         gd.horizontalSpan = 1;
         gd.minimumWidth = minWidth;
         gd.grabExcessHorizontalSpace = true;
-        left.setLayoutData(gd);
+        available.setLayoutData(gd);
 
         buttonBox = getButtonBoxControl(parent);
         gd = new GridData();
         gd.verticalAlignment = GridData.CENTER;
         buttonBox.setLayoutData(gd);
 
-        right = getListControl(parent);
+        selected = getListControl(parent);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.verticalAlignment = GridData.FILL;
         gd.horizontalSpan = 1;
         gd.minimumWidth = minWidth;
         gd.grabExcessHorizontalSpace = true;
-        right.setLayoutData(gd);
+        selected.setLayoutData(gd);
 
         selectionChanged();
 	}
 	
 	@Override
 	protected void doLoad() {
-		if (left != null) {
+		if (selected != null) {
 			if (getPreferenceStore().contains(getPreferenceName())) {
 				String s = getPreferenceStore().getString(getPreferenceName());
 				setPreference(s);
@@ -350,19 +366,19 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 	}
 
 	private void setPreference(String preference) {
-		left.removeAll();
-		leftElements = parseString(preference);
-		for (Object object : leftElements) {
-			left.add(getLabel(object));
+		selected.removeAll();
+		selectedElements = parseString(preference);
+		for (Object object : selectedElements) {
+			selected.add(getLabel(object));
 		}
 
 		Collection<Object> declaredElements = getDeclaredObjects();
-		rightElements.clear();
-		right.removeAll();
+		availableElements.clear();
+		available.removeAll();
 		for (Object object : declaredElements) {
-			if (!leftElements.contains(object)) {
-				rightElements.add(object);
-				right.add(getLabel(object));
+			if (!selectedElements.contains(object)) {
+				availableElements.add(object);
+				available.add(getLabel(object));
 			}
 		}		
 	}
@@ -370,7 +386,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 	
 	@Override
 	protected void doLoadDefault() {
-		if (left != null) {
+		if (selected != null) {
             String s = getPreferenceStore().getDefaultString(getPreferenceName());
             setPreference(s);
         }
@@ -378,7 +394,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 
 	@Override
 	protected void doStore() {
-		String s = createList(leftElements);
+		String s = createList(selectedElements);
         if (s != null) {
 			getPreferenceStore().setValue(getPreferenceName(), s);
 		}
@@ -432,7 +448,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
     }
 
 	public ArrayList<Object> getSelectedObjects() {
-		return leftElements;
+		return selectedElements;
 	}
 
 }
