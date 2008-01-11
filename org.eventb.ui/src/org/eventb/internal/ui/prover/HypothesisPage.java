@@ -18,10 +18,16 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportInformation;
+import org.eventb.core.pm.IUserSupportManagerChangedListener;
+import org.eventb.core.pm.IUserSupportManagerDelta;
 
 /**
  * @author htson
@@ -38,7 +44,7 @@ import org.eventb.core.pm.IUserSupport;
  *         </p>
  */
 public abstract class HypothesisPage extends Page implements
-		IHypothesisPage {
+		IHypothesisPage, IUserSupportManagerChangedListener {
 
 	// The User Support associated with this Hypothesis Page.
 	protected IUserSupport userSupport;
@@ -48,6 +54,8 @@ public abstract class HypothesisPage extends Page implements
 
 	// The hypothesis composite associate
 	HypothesisComposite hypComp;
+	
+	private ProofStatusLineManager statusManager;
 	
 	/**
 	 * Constructor.
@@ -67,6 +75,9 @@ public abstract class HypothesisPage extends Page implements
 		this.userSupport = userSupport;
 		this.proverUI = proverUI;
 		hypComp = getHypypothesisCompsite();
+		// Listen to the changes from the user support manager.
+		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
+				this);
 	}
 
 	/**
@@ -171,6 +182,71 @@ public abstract class HypothesisPage extends Page implements
 	public Control getControl() {
 		// Return the control of the hypothesis composite.
 		return hypComp.getControl();
+	}
+
+	void setInformation(final IUserSupportInformation[] information) {
+		if (statusManager == null) {
+			statusManager = new ProofStatusLineManager(this.getSite()
+					.getActionBars());
+		}
+		statusManager.setProofInformation(information);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
+	 */
+	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
+
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Begin User Support Manager Changed");
+
+		// Trying to get the changes for the current user support.
+		final IUserSupportDelta affectedUserSupport = ProverUIUtils
+				.getUserSupportDelta(delta, userSupport);
+
+		// Do nothing if there is no change for this current user support.
+		if (affectedUserSupport == null)
+			return;
+
+		// If the user support has been removed, do nothing. This will be handle
+		// by the main proof editor.
+		final int kind = affectedUserSupport.getKind();
+		if (kind == IUserSupportDelta.REMOVED) {
+			return; // Do nothing
+		}
+
+		// This case should NOT happened.
+		if (kind == IUserSupportDelta.ADDED) {
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the user Support is added");
+			return; // Do nothing
+		}
+
+		Display display = this.getSite().getShell().getDisplay();
+
+		display.syncExec(new Runnable() {
+			public void run() {
+
+				// Handle the case where the user support has changed.
+				if (kind == IUserSupportDelta.CHANGED) {
+					int flags = affectedUserSupport.getFlags();
+
+					// Set the information if it has been changed.
+					if ((flags & IUserSupportDelta.F_INFORMATION) != 0) {
+						setInformation(affectedUserSupport.getInformation());
+					}
+
+				}
+
+			}
+		});
+
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("End User Support Manager Changed");
+
 	}
 
 }
