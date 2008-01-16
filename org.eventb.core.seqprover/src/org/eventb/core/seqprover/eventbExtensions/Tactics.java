@@ -3203,16 +3203,16 @@ public class Tactics {
 
 	/**
 	 * Return the list of applicable positions of the tactic "cardinality
-	 * arithmetic comparison" {@link CardComparison} to a predicate.
+	 * arithmetic comparison" {@link CardComparison} to a goal predicate.
 	 * <p>
 	 * 
-	 * @param predicate
-	 *            a predicate
+	 * @param goal
+	 *            a goal predicate
 	 * @return a list of applicable positions
 	 * @author htson
 	 */
-	public static List<IPosition> cardComparisonGetPositions(Predicate predicate) {
-		return new CardComparison().getPositions(predicate, true);
+	public static List<IPosition> cardComparisonGetPositions(Predicate goal) {
+		return new CardComparison().getRootPositions(goal);
 	}
 
 	/**

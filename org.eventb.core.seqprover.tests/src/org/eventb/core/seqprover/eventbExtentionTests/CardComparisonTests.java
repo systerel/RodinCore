@@ -5,11 +5,11 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ConvRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.CardComparison;
 
 /**
- * Unit tests for the Converse Relation Rewrites reasoner
- * {@link ConvRewrites}
+ * Unit tests for the Cardinal Comparison Rewrites reasoner
+ * {@link CardComparison}
  * 
  * @author htson
  */
@@ -55,17 +55,26 @@ public class CardComparisonTests extends AbstractManualInferenceTests {
 
 	String resultP15Goal = "{x=ℤ}[][][⊤] |- x ‥ 3⊂1 ‥ x";
 	
+	String P16 = "¬ card(1‥x) > card(x‥3)";
+
 	protected String [] getTestGetPositions() {
 		return new String [] {
 				P1, "",
 				P2, "",
-				P3, "",
+				P3, "ROOT",
 				P4, "",
 				P5, "",
-				P6, "",
+				P6, "ROOT",
 				P7, "",
 				P8, "",
-				P9, "",
+				P9, "ROOT",
+				P10, "",
+				P11, "",
+				P12, "ROOT",
+				P13, "",
+				P14, "",
+				P15, "ROOT",
+				P16, ""
 		};
 	}
 
@@ -86,6 +95,10 @@ public class CardComparisonTests extends AbstractManualInferenceTests {
 				new SuccessfulTest(" ⊤ |- " + P6, null, "", resultP6Goal),
 				// P9 in goal
 				new SuccessfulTest(" ⊤ |- " + P9, null, "", resultP9Goal),
+				// P12 in goal
+				new SuccessfulTest(" ⊤ |- " + P12, null, "", resultP12Goal),
+				// P15 in goal
+				new SuccessfulTest(" ⊤ |- " + P15, null, "", resultP15Goal),
 			};
 	}
 
@@ -115,6 +128,10 @@ public class CardComparisonTests extends AbstractManualInferenceTests {
 				" ⊤ |- " + P9,
 				null,
 				"1",
+				// P16 in goal
+				" ⊤ |- " + P16,
+				null,
+				"0",
 		};
 	}
 
