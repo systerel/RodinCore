@@ -94,8 +94,8 @@ public abstract class AbstractManualInference implements IReasoner {
 		Predicate pred = input.pred;
 		IPosition position = input.position;
 
-		IAntecedent[] antecidents = getAntecedents(seq, pred, position);
-		if (antecidents == null)
+		IAntecedent[] antecedents = getAntecedents(seq, pred, position);
+		if (antecedents == null)
 			return ProverFactory.reasonerFailure(this, input,
 					"Inference " + getReasonerID()
 							+ " is not applicable for " + (pred == null ? seq
@@ -104,10 +104,10 @@ public abstract class AbstractManualInference implements IReasoner {
 		if (pred == null) {
 			// Generate the successful reasoner output
 			return ProverFactory.makeProofRule(this, input, seq.goal(),
-					getDisplayName(pred, position), antecidents);
+					getDisplayName(pred, position), antecedents);
 		} else {
 			return ProverFactory.makeProofRule(this, input, null, pred,
-					getDisplayName(pred, position), antecidents);
+					getDisplayName(pred, position), antecedents);
 		}
 	}
 
