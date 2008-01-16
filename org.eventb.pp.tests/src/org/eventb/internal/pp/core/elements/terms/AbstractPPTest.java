@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
@@ -51,6 +52,15 @@ public abstract class AbstractPPTest extends TestCase {
 	
 	public static Type REL(Type left, Type right) {
 		return ff.makeRelationalType(left, right);
+	}
+	
+	public static ITypeEnvironment mTypeEnvironment(Object...objs) {
+		assert (objs.length & 1) == 0;
+		ITypeEnvironment result = ff.makeTypeEnvironment();
+		for (int i = 0; i < objs.length; i += 2) {
+			result.addName((String) objs[i], (Type) objs[i+1]);
+		}
+		return result;
 	}
 	
 	public static Level BASE = Level.BASE;
@@ -128,6 +138,7 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Sort PC = Util.mSort(POW(ty_C));
 	public static Sort PD = Util.mSort(POW(ty_D));
 	public static Sort PS = Util.mSort(POW(ty_S));
+	public static Sort PSS = Util.mSort(REL(ty_S, ty_S));
 	public static Sort PAB = Util.mSort(REL(ty_A,ty_B));
 	public static Sort PAC = Util.mSort(REL(ty_A,ty_C));
 	public static Sort PBC = Util.mSort(REL(ty_B,ty_C));
