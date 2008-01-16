@@ -31,8 +31,9 @@ public class FiniteSetTests extends AbstractSingleExpressionInputReasonerTests {
 
 	protected String [] getTestGetPositions() {
 		return new String [] {
-				P1, "",
-				P2, ""
+				P1, "ROOT",
+				P2, "ROOT",
+				P3, "",
 		};
 	}
 

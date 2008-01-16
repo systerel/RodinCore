@@ -37,7 +37,7 @@ public class InclusionSetMinusRightTests extends AbstractManualRewriterTests {
 
 	public String [] getTestGetPositions() {
 		return new String[] {
-				P1, "",
+				P1, "ROOT",
 				P2, "1",
 				P3, "1.1",
 		};

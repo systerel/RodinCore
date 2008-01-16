@@ -26,7 +26,7 @@ public class FiniteFunDomTests extends AbstractSingleExpressionInputReasonerTest
 
 	protected String [] getTestGetPositions() {
 		return new String [] {
-				P1, "",
+				P1, "ROOT",
 				P2, "",
 				P3, ""
 		};

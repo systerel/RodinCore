@@ -80,12 +80,15 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	private void assertPositions(String message, String expected,
 			List<IPosition> positions) {
 		StringBuilder builder = new StringBuilder();
-		boolean sep = false;
+		String sep = "";
 		for (IPosition position : positions) {
-			if (sep)
-				builder.append('\n');
-			builder.append(position);
-			sep = true;
+			builder.append(sep);
+			if (position.isRoot()) {
+				builder.append("ROOT");
+			} else {
+				builder.append(position);
+			}
+			sep = "\n";
 		}
 		String actual = builder.toString();
 		if (!expected.equals(actual)) {

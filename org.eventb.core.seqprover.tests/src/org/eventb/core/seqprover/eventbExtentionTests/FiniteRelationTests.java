@@ -29,7 +29,7 @@ public class FiniteRelationTests extends AbstractSingleExpressionInputReasonerTe
 
 	protected String [] getTestGetPositions() {
 		return new String [] {
-				P1, "",
+				P1, "ROOT",
 				P2, "",
 				P3, ""
 		};

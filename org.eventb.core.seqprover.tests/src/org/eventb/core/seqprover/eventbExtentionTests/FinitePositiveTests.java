@@ -59,7 +59,7 @@ public class FinitePositiveTests extends AbstractEmptyInputReasonerTests {
 		return new String[] {
 				P1, "",
 				P2, "",
-				P3, "",
+				P3, "ROOT",
 				P4, ""
 		};
 	}

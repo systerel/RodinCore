@@ -64,7 +64,7 @@ public class ImpOrTests extends AbstractManualRewriterTests {
 	@Override
 	protected String[] getTestGetPositions() {
 		return new String[] {
-				P1, "",
+				P1, "ROOT",
 				P2, "1",
 				P3, "1.1",
 				P4, "1\n" + "1.0.0\n" + "1.0.1" 
