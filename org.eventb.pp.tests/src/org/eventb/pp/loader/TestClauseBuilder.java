@@ -39,6 +39,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
+import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Constant;
@@ -80,6 +81,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static final PredicateLiteralDescriptor d0APA = descriptor(0, Asort, PA);
 	private static final PredicateLiteralDescriptor d0SS = descriptor(0, Ssort, Ssort);
 	private static final PredicateLiteralDescriptor d0SPS = descriptor(0, Ssort, PS);
+	private static final PredicateLiteralDescriptor d0SPSS = descriptor(0, Ssort, PSS);
 	private static final PredicateLiteralDescriptor d0ZZ = descriptor(0, NAT, NAT);
 	private static final PredicateLiteralDescriptor d0ZZZ = descriptor(0, NAT, NAT, NAT);
 	private static final PredicateLiteralDescriptor d0BAA = descriptor(0, Bsort, Asort, Asort);
@@ -178,7 +180,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Variable zS = cVar(23,Ssort);
 	private static Variable xPS = cVar(24,PS);
 	
-	private static ITypeEnvironment env = ff.makeTypeEnvironment();
+	private static final ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
 		env.addName("x0", ff.makeGivenType("A"));
 		env.addName("x1", ff.makeGivenType("B"));
@@ -1817,29 +1819,115 @@ public class TestClauseBuilder extends AbstractPPTest {
 			)
 		);
 	}
-	
-	
+
+	public void testTypeInformation() {
+		// Shall create a predicate "∀x·x ∈ S"
+		doTestT(
+			mList("∀x·a ∈ x", "∀y·b ∈ y"),
+			mList(
+					cClause(cPred(d0SPS, a, xPS)),
+					cClause(cPred(d0SPS, b, xPS)),
+					cClause(cPred(d0SPS, xS, S))
+			),
+			mTypeEnvironment("a", ty_S, "b", ty_S),
+			"a", a,
+			"b", b,
+			"S", S
+		);
+		// Shall also create a predicate "∀x·x ∈ S"
+		doTestT(
+			mList("a ∈ A", "b ∈ B"),
+			mList(
+					cClause(cPred(d0SPS, a, A)),
+					cClause(cPred(d0SPS, b, B)),
+					cClause(cPred(d0SPS, xS, S))
+			),
+			mTypeEnvironment("a", ty_S, "b", ty_S),
+			"a", a,
+			"b", b,
+			"A", A,
+			"B", B,
+			"S", S
+		);
+		// Shall not create a predicate "∀x·x ∈ S"
+		doTestT(
+			mList("a ∈ A", "b ∈ A"),
+			mList(
+					cClause(cPred(d0S, a)),
+					cClause(cPred(d0S, b))
+			),
+			"a", a,
+			"b", b
+		);
+
+		// Shall not create a type predicate for the label
+		final PredicateTable table = new PredicateTable();
+		PredicateLiteralDescriptor L1SS = table.newDescriptor(1, 2, 4, true,
+				mList(Ssort, Ssort));
+		doTestT(
+			mList("∀x·∃y·x ∈ A ⇒ y ∈ B", "∀y·∃z·y ∈ A ⇒ z ∈ B"),
+			mList(
+					cClause(cPred(L1SS,cELocVar(0,Ssort), xS)),
+					cClause(cPred(L1SS,cELocVar(1,Ssort), xS)),
+					cClause(cNotPred(L1SS,xS,yS),cPred(d0SPS,xS,B),cNotPred(d0SPS,yS,A)),
+					cClause(cNotPred(L1SS,xS,yS),cPred(d0SPS,xS,B),cNotPred(d0SPS,yS,A)),
+					cClause(cPred(d0SPS, xS, S))
+			),
+			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
+			"A", A,
+			"B", B,
+			"S", S
+		);
+
+		// Shall not create a type predicate for the literal
+		final Constant AA = cCons("AA", PSS);
+		final Constant BB = cCons("BB", PSS);
+		doTestT(
+			mList("a ↦ a ∈ AA", "b ↦ b ∈ BB"),
+			mList(
+					cClause(cPred(d0SPSS, a, AA)),
+					cClause(cPred(d0SPSS, b, BB))
+			),
+			mTypeEnvironment("a", ty_S, "b", ty_S),
+			"a", a,
+			"b", b,
+			"AA", AA,
+			"BB", BB
+		);
+	}
+
 	public void doTestP(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
-		doTest(strPredicate, clauses, constants, false);
+		doTest(strPredicate, clauses, constants, false, false, env);
 	}
 	
 	public void doTestG(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
-		doTest(strPredicate, clauses, constants, true);
+		doTest(strPredicate, clauses, constants, true, false, env);
 	}
 	
+	public void doTestT(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
+		doTest(strPredicate, clauses, constants, false, true, env);
+	}
 	
-	public void doTest(List<String> strPredicate, Collection<Clause> clauses, Object[] constants, boolean goal) {
-		ClauseBuilder result = load(strPredicate, goal, constants);
+	public void doTestT(List<String> strPredicate, Collection<Clause> clauses,
+			ITypeEnvironment typenv, Object... constants) {
+		doTest(strPredicate, clauses, constants, false, true, typenv);
+	}
+	
+	public void doTest(List<String> strPredicate, Collection<Clause> clauses,
+			Object[] constants, boolean goal, boolean withTypeInfo,
+			ITypeEnvironment typenv) {
+		ClauseBuilder result = load(strPredicate, goal, withTypeInfo, typenv, constants);
 		
 		assertSameClauses(strPredicate, clauses, result.getClauses());
 		assertEquals("Actual: "+result.getClauses()+"\nExpected: "+clauses,result.getClauses().size(), clauses.size());
 //		assertSameClauses(strPredicate, literals, result.getLiterals());
 	}
 	
-	private ClauseBuilder load(List<String> strPredicate, boolean goal, Object... constants) {
+	private ClauseBuilder load(List<String> strPredicate, boolean goal,
+			boolean withTypeInfo, ITypeEnvironment typenv, Object... constants) {
 		final AbstractContext context = new AbstractContext();
 		final ClauseBuilder cBuilder = new ClauseBuilder();
-		ITypeEnvironment tmp = env.clone();
+		ITypeEnvironment tmp = typenv.clone();
 		
 		for (String str : strPredicate) {
 			final ITypeCheckResult res = getResult(str, context, tmp, goal);
@@ -1848,6 +1936,9 @@ public class TestClauseBuilder extends AbstractPPTest {
 		
 		VariableTable variableTable = getVariableTable(constants);
 		cBuilder.loadClausesFromContext(context, variableTable);
+		if (withTypeInfo) {
+			cBuilder.buildPredicateTypeInformation(context);
+		}
 		return cBuilder;
 	}
 	
@@ -1953,7 +2044,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 //	
 	
 	public void testNotSameVariable() {
-		ClauseBuilder result = load(mList("(∀x·x ∈ S ∨ x ∈ S) ⇒ (∀x·x ∈ S ∨ x ∈ S )"),false);
+		ClauseBuilder result = load(mList("(∀x·x ∈ S ∨ x ∈ S) ⇒ (∀x·x ∈ S ∨ x ∈ S )"),false,false,env);
 		for (Clause clause1 : result.getClauses()) {
 			for (Clause clause2 : result.getClauses()) {
 				if (clause1 == clause2) continue;
