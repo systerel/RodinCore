@@ -32,7 +32,6 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -54,7 +53,6 @@ import org.eventb.internal.pp.loader.predicate.AbstractContext;
 
 // TODO test negation of the goal
 public class TestClauseBuilder extends AbstractPPTest {
-	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	class TestPair {
 		List<String> predicate;
@@ -180,36 +178,34 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Variable zS = cVar(23,Ssort);
 	private static Variable xPS = cVar(24,PS);
 	
-	private static final ITypeEnvironment env = ff.makeTypeEnvironment();
-	static {
-		env.addName("x0", ff.makeGivenType("A"));
-		env.addName("x1", ff.makeGivenType("B"));
-		env.addName("a", ff.makeGivenType("S"));
+	private static final ITypeEnvironment env = mTypeEnvironment(
+		"x0", ty_A,
+		"x1", ty_B,
+		"a", ty_S,
 		
-		env.addName("VV", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B")),ff.makeGivenType("C"))));
-		env.addName("V", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B"))));
-		env.addName("W", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B"))));
-		env.addName("X", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("C"))));
-		env.addName("Y", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("C"))));
-		env.addName("AA", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("S"), ff.makeGivenType("S"))));
+		"VV", REL(CPROD(ty_A, ty_B),ty_C),
+		"V", REL(ty_A, ty_B),
+		"W", REL(ty_A, ty_B),
+		"X", REL(ty_A, ty_C),
+		"Y", REL(ty_A, ty_C),
+		"AA", REL(ty_S, ty_S),
 		
-		env.addName("e", ff.makeBooleanType());
-		env.addName("f", ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("A"), ff.makeGivenType("B"))));
-		env.addName("n", ff.makeIntegerType());
-		env.addName("N", ff.makePowerSetType(ff.makeIntegerType()));
-		env.addName("S", ff.makePowerSetType(ff.makeGivenType("S")));
-		env.addName("P", ff.makePowerSetType(ff.makeGivenType("B")));
-		env.addName("Q", ff.makePowerSetType(ff.makeGivenType("A")));
-		env.addName("R", ff.makePowerSetType(ff.makeGivenType("A")));
-		env.addName("U", ff.makePowerSetType(ff.makeGivenType("U")));
-		env.addName("M", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeGivenType("B"),ff.makeGivenType("A")),ff.makeGivenType("A"))));
-		env.addName("SS", ff.makePowerSetType(ff.makeGivenType("S")));
-		env.addName("T", ff.makePowerSetType(ff.makeProductType(ff.makeIntegerType(), ff.makeIntegerType())));
-		env.addName("TT", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(ff.makeIntegerType(),ff.makeIntegerType()), ff.makeIntegerType())));
-	}
+		"e", ty_BOOL,
+		"f", REL(ty_A, ty_B),
+		"n", INT,
+		"N", POW(INT),
+		"S", POW(ty_S),
+		"P", POW(ty_B),
+		"Q", POW(ty_A),
+		"R", POW(ty_A),
+		"U", POW(ty_U),
+		"M", REL(CPROD(ty_B,ty_A),ty_A),
+		"SS", POW(ty_S),
+		"T", REL(INT, INT),
+		"TT", REL(CPROD(INT,INT), INT)
+	);
 	
 	public void testSimple() {
-//		final GivenType tyS = ff.makeGivenType("S");
 //		final ITypeEnvironment env = ff.makeTypeEnvironment();
 //		env.addName("a", tyS);
 //		env.addName("b", tyS);
