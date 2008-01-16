@@ -140,7 +140,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Constant d = cCons("d", Usort);
 	private static Constant eS = cCons("e", Ssort);
 	private static Constant n = cCons("n",NAT);
-	private static Constant m = cCons("m",Asort);
+	private static Constant m = cCons("m",NAT);
 	private static Constant S = cCons("S", PS);
 	private static Constant SS = cCons("SS", PS);
 	private static Constant TRUE = cCons("TRUE",BOOL);
@@ -1516,9 +1516,12 @@ public class TestClauseBuilder extends AbstractPPTest {
 				mList("b = TRUE","c = e"),
 				mList(
 						cClause(cProp(0)),
-						cClause(cEqual(cS, eS))),
-						"c",cS,
-						"e",eS
+						cClause(cEqual(cS, eS))
+				),
+				mTypeEnvironment("c", ty_S),
+				"b", bbool,
+				"c", cS,
+				"e", eS
 		);
 
 		doTestP(
@@ -1894,6 +1897,11 @@ public class TestClauseBuilder extends AbstractPPTest {
 
 	public void doTestP(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
 		doTest(strPredicate, clauses, constants, false, false, env);
+	}
+	
+	public void doTestP(List<String> strPredicate, Collection<Clause> clauses,
+			ITypeEnvironment typenv, Object... constants) {
+		doTest(strPredicate, clauses, constants, false, false, typenv);
 	}
 	
 	public void doTestG(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
