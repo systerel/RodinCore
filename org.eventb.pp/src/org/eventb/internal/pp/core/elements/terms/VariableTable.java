@@ -49,6 +49,7 @@ public class VariableTable {
 			var = context.getNextVariable(sort);
 			variableTable.put(index, var);
 		}
+		assert var.sort.equals(sort);
 		return var;
 	}
 	
@@ -68,6 +69,8 @@ public class VariableTable {
 			var = context.getNextLocalVariable(isForall, sort);
 			localVariableTable.put(index, var);
 		}
+		assert var.isForall() == isForall;
+		assert var.sort.equals(sort);
 		return var;
 	}
 	
@@ -86,6 +89,7 @@ public class VariableTable {
 			constant = new Constant(name, sort);
 			constantTable.put(name, constant);
 		}
+		assert constant.sort.equals(sort);
 		return constant;
 	}
 	
