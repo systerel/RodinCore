@@ -68,8 +68,10 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		implements IElementChangedListener, IEventBEditor<F>,
 		ITabbedPropertySheetPageContributor {
 
+	// The last active page id before closing.
 	private String lastActivePageID = null;
 
+	// The context activation.
 	IContextActivation contextActivation; 
 	
 	/**
@@ -91,7 +93,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		 * <p>
 		 * 
 		 * @param formEditor
-		 *            the Form Eidtor contains this provider.
+		 *            the Form Editor contains this provider.
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
 			listenerList = new ListenerList();
@@ -495,22 +497,6 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 				}
 			}
 
-			// Save the file from the database to file
-			// Collection<IRodinElement> originals = new
-			// HashSet<IRodinElement>();
-			//
-			// for (Iterator<IRodinElement> it = newElements.iterator(); it
-			// .hasNext();) {
-			// IRodinElement element = it.next();
-			// UIUtils.debugEventBEditor("New element: "
-			// + element.getElementName());
-			// if (isOriginal(element)) {
-			// originals.add(element);
-			// ((IInternalElement) element).delete(true, null);
-			// }
-			// }
-			// newElements.removeAll(originals);
-
 			IRodinFile inputFile = this.getRodinInput();
 			inputFile.save(monitor, true);
 
@@ -628,6 +614,11 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ide.IGotoMarker#gotoMarker(org.eclipse.core.resources.IMarker)
+	 */
 	public void gotoMarker(IMarker marker) {
 		IInternalElement element;
 		try {
@@ -649,6 +640,20 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * Utility method for editing an element. This will be handle by the Edit
+	 * page.
+	 * 
+	 * @param element
+	 *            an internal element.
+	 * @param attributeType
+	 *            the attribute to be edited for the input element.
+	 * @param charStart
+	 *            the start character position.
+	 * @param charEnd
+	 *            the end character position.
+	 */
 	private void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
 		// select the element within the edit page
@@ -658,12 +663,28 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
+	 */
 	public String getContributorId() {
 		return this.getSite().getId(); // Return the ID of the editor
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.ui.eventbeditor.IEventBEditor#getEditorId()
+	 */
 	abstract public String getEditorId();
 
+	/**
+	 * A new page has been selected.
+	 * 
+	 * @param event
+	 *            the selection change event.
+	 */
 	public void pageSelectionChanged(SelectionChangedEvent event) {
 		FormEditorSelectionProvider selectionProvider = (FormEditorSelectionProvider) this
 				.getEditorSite().getSelectionProvider();
