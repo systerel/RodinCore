@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Widget;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -379,7 +380,8 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         control.setLayoutData(gd);
 
         Label availableLabel = new Label(parent, SWT.LEFT);
-        availableLabel.setText("Available:");
+        availableLabel
+				.setText(Messages.preferencepage_twolistselectioneditor_availablelabel);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         availableLabel.setLayoutData(gd);
 
@@ -389,7 +391,8 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         tmpLabel.setLayoutData(gd);
         
         Label selectedLabel = new Label(parent, SWT.LEFT);
-        selectedLabel.setText("Selected:");
+        selectedLabel
+				.setText(Messages.preferencepage_twolistselectioneditor_selectedlabel);
         gd = new GridData(GridData.FILL_HORIZONTAL);
         selectedLabel.setLayoutData(gd);
 
