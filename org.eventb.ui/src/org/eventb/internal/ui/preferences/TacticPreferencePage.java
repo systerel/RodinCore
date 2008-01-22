@@ -136,8 +136,8 @@ public abstract class TacticPreferencePage extends FieldEditorPreferencePage
 					IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 					if (!tacticRegistry.isRegistered(tacticID)) {
 						if (UIUtils.DEBUG) {
-							System.out.println("Tactic " + tacticID
-									+ " is not registered.");
+							System.out.println("Tactic " + tacticID //$NON-NLS-1$
+									+ " is not registered."); //$NON-NLS-1$
 						}
 						continue;
 					}
@@ -147,9 +147,9 @@ public abstract class TacticPreferencePage extends FieldEditorPreferencePage
 					if (!tacticPreference.isDeclared(tacticDescriptor)) {
 						if (UIUtils.DEBUG) {
 							System.out
-									.println("Tactic "
+									.println("Tactic " //$NON-NLS-1$
 											+ tacticID
-											+ " is not declared for using within this tactic preference.");
+											+ " is not declared for using within this tactic preference."); //$NON-NLS-1$
 						}
 					}
 					else {
