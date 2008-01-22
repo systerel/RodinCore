@@ -22,31 +22,31 @@ public class PreferenceConstants {
 	/**
 	 * Preference key for the enablement of Post-Tactics. 
 	 */
-	public static final String P_POSTTACTIC_ENABLE = "Post-Tactic enable";
+	public static final String P_POSTTACTIC_ENABLE = "Post-Tactic enable"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the list of selected Post-Tactics.
 	 */
-	public static final String P_POSTTACTICS = "Post-Tactics";
+	public static final String P_POSTTACTICS = "Post-Tactics"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the enablement of Auto-Tactics.
 	 */
-	public static final String P_AUTOTACTIC_ENABLE = "Auto-Tactic enable";
+	public static final String P_AUTOTACTIC_ENABLE = "Auto-Tactic enable"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the list of selected Auto-Tactics.
 	 */
-	public static final String P_AUTOTACTICS = "Auto-Tactics";
-	
+	public static final String P_AUTOTACTICS = "Auto-Tactics"; //$NON-NLS-1$
+
 	/**
 	 * Preference key for the list of machine editor pages.
 	 */
-	public static final String P_MACHINE_EDITOR_PAGE = "Machine editor pages";
-	
+	public static final String P_MACHINE_EDITOR_PAGE = "Machine editor pages"; //$NON-NLS-1$
+
 	/**
 	 * Preference key for the list of context editor pages.
 	 */
-	public static final String P_CONTEXT_EDITOR_PAGE = "Context editor pages";
+	public static final String P_CONTEXT_EDITOR_PAGE = "Context editor pages"; //$NON-NLS-1$
 
 }

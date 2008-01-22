@@ -15,6 +15,7 @@ package org.eventb.internal.ui.preferences;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -40,7 +41,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("General settings for Event-B Development");
+		setDescription(Messages.preferencepage_eventb_description);
 	}
 	
 	/*
