@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.preferences;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -32,9 +33,9 @@ public class MachineEditorPreferencePage extends EventBEditorPreferencePage
 	public MachineEditorPreferencePage() {
 		super(
 				MachineEditorPagesPreference.getDefault(),
-				"Event-B Editor for machines settings (changing this only effect newly opened editors)",
+				Messages.preferencepage_machineeditor_description,
 				PreferenceConstants.P_MACHINE_EDITOR_PAGE,
-				"Machine Editor &Pages");
+				Messages.preferencepage_machineeditor_editorpagedescription);
 	}
 
 }

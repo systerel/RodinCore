@@ -15,6 +15,7 @@ package org.eventb.internal.ui.preferences;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -41,7 +42,7 @@ public class ModellingUIPreferencePage extends FieldEditorPreferencePage
 	public ModellingUIPreferencePage() {
 		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("General settings for the Event-B Modelling User Interface");
+		setDescription(Messages.preferencepage_modellingui_description);
 	}
 	
 	/*

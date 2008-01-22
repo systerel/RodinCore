@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.preferences;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -32,9 +33,9 @@ public class ContextEditorPreferencePage extends EventBEditorPreferencePage
 	public ContextEditorPreferencePage() {
 		super(
 				ContextEditorPagesPreference.getDefault(),
-				"Event-B Editor for contexts settings (changing this only effect newly opened editors)",
+				Messages.preferencepage_contexteditor_description,
 				PreferenceConstants.P_CONTEXT_EDITOR_PAGE,
-				"Context Editor &Pages");
+				Messages.preferencepage_contexteditor_editorpagedescription);
 	}
 
 }

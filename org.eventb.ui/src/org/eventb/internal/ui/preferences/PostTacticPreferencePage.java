@@ -14,6 +14,7 @@ package org.eventb.internal.ui.preferences;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.core.EventBPlugin;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -30,9 +31,11 @@ public class PostTacticPreferencePage extends TacticPreferencePage implements
 	 * Calling the super constructor with values for POM-Tactics preference.
 	 */
 	public PostTacticPreferencePage() {
-		super("Preferences for the Post Tactic apply after every tactic application",
-				PreferenceConstants.P_POSTTACTIC_ENABLE, "Enable &post-tactic for proving",
-				PreferenceConstants.P_POSTTACTICS,"&Tactics are run as post-tactics");
+		super(Messages.preferencepage_posttactic_description,
+				PreferenceConstants.P_POSTTACTIC_ENABLE,
+				Messages.preferencepage_posttactic_enablementdescription,
+				PreferenceConstants.P_POSTTACTICS,
+				Messages.preferencepage_posttactic_selectedtacticsdescription);
 	}
 
 	/*

@@ -14,6 +14,7 @@ package org.eventb.internal.ui.preferences;
 
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.core.EventBPlugin;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -30,9 +31,11 @@ public class POMTacticPreferencePage extends TacticPreferencePage implements
 	 * Calling the super constructor with values for POM-Tactics preference.
 	 */
 	public POMTacticPreferencePage() {
-		super("Preferences for the Automatic Tactic",
-				PreferenceConstants.P_AUTOTACTIC_ENABLE, "&Enable auto-tactic for proving",
-				PreferenceConstants.P_AUTOTACTICS, "&Tactics are run as auto-tactics");
+		super(Messages.preferencepage_pomtactic_description,
+				PreferenceConstants.P_AUTOTACTIC_ENABLE,
+				Messages.preferencepage_pomtactic_enablementdescription,
+				PreferenceConstants.P_AUTOTACTICS,
+				Messages.preferencepage_pomtactic_selectedtacticsdescription);
 	}
 
 	/*
