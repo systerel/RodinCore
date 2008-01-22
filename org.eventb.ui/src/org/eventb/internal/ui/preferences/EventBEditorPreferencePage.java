@@ -16,12 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.internal.ui.UIUtils;
@@ -90,21 +84,25 @@ public abstract class EventBEditorPreferencePage extends
 	 */
 	@Override
 	public void createFieldEditors() {
-		final TabFolder tabFolder = new TabFolder( getFieldEditorParent(), SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		tabFolder.setLayoutData(gd);
-		
-		final Composite composite = new Composite(tabFolder, SWT.NO_FOCUS);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayoutData(gd);
-		GridLayout gridLayout = new GridLayout();
-		composite.setLayout(gridLayout);
-		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
-		tab.setText("Pages"); 
-		tab.setControl(composite);
+//		final TabFolder tabFolder = new TabFolder( getFieldEditorParent(), SWT.TOP);
+//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.minimumWidth = 200;
+//		gd.minimumHeight = 30;
+//		tabFolder.setLayoutData(gd);
+//		
+//		final Composite composite = new Composite(tabFolder, SWT.NO_FOCUS);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.minimumWidth = 200;
+//		gd.minimumHeight = 30;
+//		composite.setLayoutData(gd);
+//		GridLayout gridLayout = new GridLayout();
+//		composite.setLayout(gridLayout);
+//		final TabItem tab= new TabItem(tabFolder, SWT.NONE);
+//		tab.setText(Messages.preferencepage_editorpage_tab_title);
+//		tab.setControl(composite);
 
 		TwoListSelectionEditor pagesEditor = new TwoListSelectionEditor(
-				pagesFieldName, pagesFieldDescription, composite) {
+				pagesFieldName, pagesFieldDescription, getFieldEditorParent()) {
 		
 			/*
 			 * (non-Javadoc)
