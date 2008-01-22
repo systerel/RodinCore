@@ -186,7 +186,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 		// Initialise the post-tactics
 		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
-		String[] postTacticIDs = ProverUIUtils.parseString(s);
+		String[] postTacticIDs = UIUtils.parseString(s);
 		
 		IAutoTacticPreference postTacticPreference = EventBPlugin
 				.getPostTacticPreference();
@@ -199,7 +199,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 		// Initialise the auto-tactics
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
-		String[] autoTacticIDs = ProverUIUtils.parseString(s);
+		String[] autoTacticIDs = UIUtils.parseString(s);
 		IAutoTacticPreference autoTacticPreference = EventBPlugin
 				.getPOMTacticPreference();
 		autoTacticPreference

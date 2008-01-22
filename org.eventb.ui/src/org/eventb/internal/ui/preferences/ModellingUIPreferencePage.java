@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2008 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,7 +20,7 @@ import org.eventb.ui.EventBUIPlugin;
 /**
  * @author htson
  *         <p>
- *         The main preference page for the sequent prover. This is done by
+ *         The main preference page for the modelling user interface. This is done by
  *         subclassing {@link FieldEditorPreferencePage}, we can use the field
  *         support built into JFace that allows us to create a page that is
  *         small and knows how to save, restore and apply itself.
@@ -30,19 +30,28 @@ import org.eventb.ui.EventBUIPlugin;
  *         preferences can be accessed directly via the preference store.
  *         <p>
  *         At the moment, this page is empty. This acts as a place holder for
- *         sub-preferences such as POM-Tactics preference and Post-Tactics
- *         preference.
+ *         sub-preferences such as preferences for machine and context editors.
  */
-public class SeqProverPreferencePage extends FieldEditorPreferencePage
+public class ModellingUIPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 
 	/**
 	 * Constructor.
 	 */
-	public SeqProverPreferencePage() {
-		super();
+	public ModellingUIPreferencePage() {
+		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preferences for the Sequence Prover");
+		setDescription("General settings for the Event-B Modelling User Interface");
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 */
+	@Override
+	public void createFieldEditors() {
+		// Do nothing at the moment.
 	}
 
 	/*
@@ -53,15 +62,5 @@ public class SeqProverPreferencePage extends FieldEditorPreferencePage
 	public void init(IWorkbench workbench) {
 		// Do nothing.
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
-	@Override
-	protected void createFieldEditors() {
-		// Do nothing at the moment.
-	}
-
+	
 }

@@ -1,110 +1,211 @@
+/*******************************************************************************
+ * Copyright (c) 2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.ui.eventbeditor.tests;
+
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.ui.eventbeditor.DependenciesPage;
 import org.eventb.internal.ui.eventbeditor.EditorPagesRegistry;
-import org.eventb.internal.ui.prover.PredicateUtil;
+import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
+import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
+import org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry;
+import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
+import org.eventb.ui.tests.EventBUITestsPlugin;
+import org.eventb.ui.tests.utils.Util;
+import org.junit.Test;
 
+/**
+ * @author htson
+ *         <p>
+ *         This is the sets of JUnit tests for the editor pages registry
+ *         {@link EditorPagesRegistry}
+ */
 public class TestEditorPagesRegistry extends TestCase {
+
+	// The registry under test.
+	private IEditorPagesRegistry registry;
+
+	// The test registry.
+	private final static String EDITOR_PAGE_REGISTRY_TEST_ID = EventBUITestsPlugin.PLUGIN_ID
+			+ ".editorPages";
+
+	// Some pre-defined IDs and names.
+	private String htmlPageID = "org.eventb.ui.htmlpage";
+
+	private String htmlPageName = "%editorPages.HTMLPageName";
+
+	private String noIsDefaultPageID = "org.eventb.ui.variablepage";
+
+	private String syntheticViewPageID = "org.eventb.ui.syntheticviewpage";
+
+	private String dependenciesPageID = "org.eventb.ui.dependencypage";
+
+	private String dependenciesPageName = "%editorPages.DependenciesPageName";
+
+	private String editPageID = "org.eventb.ui.edit";
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		registry = EditorPagesRegistry.getDefault();
+		((EditorPagesRegistry) registry)
+				.setEditorPageRegistryID(EDITOR_PAGE_REGISTRY_TEST_ID);
 	}
 
-	public void testMachinePages() {
-		EventBEditorPage[] pages = EditorPagesRegistry.getDefault().getPages(
-				"org.eventb.ui.editors.machine");
+	/**
+	 * Tests for creating an individual editor pages.
+	 */
+	@Test
+	public void testCreatePage() {
+		EventBEditorPage page = registry.createPage(
+				EventBMachineEditor.EDITOR_ID, htmlPageID);
+		assertNotNull("HTML page should not be null", page);
+		assertTrue("Incorrect type for HTML page", page instanceof HTMLPage);
 
-		for (EventBEditorPage page : pages) {
-			if (page instanceof DependenciesPage)
-				return;
+		page = registry.createPage(EventBContextEditor.EDITOR_ID, htmlPageID);
+		assertNull("There should be no HTML Page for context editor", page);
+
+		page = registry.createPage(EventBMachineEditor.EDITOR_ID,
+				dependenciesPageID);
+		assertNotNull("Dependency page for machines should not be null", page);
+		assertTrue("Incorrect type for Dependency Page for machines",
+				page instanceof DependenciesPage);
+
+		page = registry.createPage(EventBContextEditor.EDITOR_ID,
+				dependenciesPageID);
+		assertNotNull("Dependency page for contexts should not be null", page);
+		assertTrue("Incorrect type for Dependency Page for contexts",
+				page instanceof DependenciesPage);
+	}
+
+	/**
+	 * Test for creating editor pages.
+	 */
+	@Test
+	public void testCreateAllPages() {
+		EventBEditorPage[] pages = registry
+				.createAllPages(EventBMachineEditor.EDITOR_ID);
+		List<String> pageIDs = registry
+				.getAllPageIDs(EventBMachineEditor.EDITOR_ID);
+		assertEquals("Incorrect number of pages", pageIDs.size(), pages.length);
+		int i = 0;
+		for (String pageID : pageIDs) {
+			assertEquals("Incorrect Page ID for page number " + i
+					+ " in machine editor", pageID, pages[i++].getId());
 		}
-
-		assertTrue("Cannot find the Dependencies Page", false);
+		pages = registry.createAllPages(EventBContextEditor.EDITOR_ID);
+		pageIDs = registry.getAllPageIDs(EventBContextEditor.EDITOR_ID);
+		assertEquals("Incorrect number of pages", pageIDs.size(), pages.length);
+		i = 0;
+		for (String pageID : pageIDs) {
+			assertEquals("Incorrect Page ID for page number " + i
+					+ " in context editor", pageID, pages[i++].getId());
+		}
 	}
 
-	private void addSpacingTest(String msg, String predString,
-			String expectedPrettyPrint) {
-		System.out.println("Predicate: \"" + predString + "\"");
-		IParseResult parseResult = Lib.ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+	/**
+	 * Tests for getting default pages' IDs.
+	 */
+	@Test
+	public void testGetDefaultPageIDs() {
+		List<String> defaultMachinePages = registry
+				.getDefaultPageIDs(EventBMachineEditor.EDITOR_ID);
+		assertStrings("Incorrect default pages for machine editor", htmlPageID
+				+ "\n" + noIsDefaultPageID + "\n" + dependenciesPageID,
+				defaultMachinePages);
 
-		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred);
-		System.out.println("Add Spacing: \"" + prettyPrint + "\"");
-
-		assertEquals(msg + ": ", expectedPrettyPrint, prettyPrint);
+		List<String> defaultContextPages = registry
+				.getDefaultPageIDs(EventBContextEditor.EDITOR_ID);
+		assertStrings("Incorrect default pages for context editor",
+				syntheticViewPageID + "\n" + dependenciesPageID,
+				defaultContextPages);
 	}
 
-	public void testAssociativePredicate() {
-		addSpacingTest("And 1", "⊤\u2227⊤", "⊤ \u2227 ⊤");
-		addSpacingTest(
-				"And 2",
-				"⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤",
-				"⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤");
-		addSpacingTest("Or 1", "⊤" + "\u2228" + "⊤", "⊤ \u2228 ⊤");
-		addSpacingTest(
-				"Or 2",
-				"⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤",
-				"⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤");
+	/**
+	 * Test for getting the list of all pages' IDs.
+	 */
+	@Test
+	public void testGetAllPageIDs() {
+		List<String> machinePageIDs = registry
+				.getAllPageIDs(EventBMachineEditor.EDITOR_ID);
+		assertStrings("Incorrect page IDs for machine editor", htmlPageID
+				+ "\n" + noIsDefaultPageID + "\n" + editPageID + "\n"
+				+ dependenciesPageID, machinePageIDs);
+
+		List<String> contextPageIDs = registry
+				.getAllPageIDs(EventBContextEditor.EDITOR_ID);
+		assertStrings("Incorrect page IDs for context editor",
+				syntheticViewPageID + "\n" + dependenciesPageID, contextPageIDs);
 	}
 
-	public void testBinaryPredicate() {
-		addSpacingTest("Imply 1", "⊤" + "\u21d2" + "⊤", "⊤ \u21d2 ⊤");
-		addSpacingTest(
-				"Imply 2",
-				"⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u21d2⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤",
-				"⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤  \u21d2  ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤");
-		addSpacingTest("Equivalent 1", "⊤" + "\u21d4" + "⊤", "⊤ \u21d4 ⊤");
-		addSpacingTest(
-				"Equivalent 2",
-				"⊤\u2227⊤\u2227⊤\u2227⊤\u2227⊤\u21d4⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤\u2228⊤",
-				"⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤ \u2227 ⊤  \u21d4  ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤ \u2228 ⊤");
+	/**
+	 * Test for getting the name of an individual editor page.
+	 */
+	@Test
+	public void testGetPageName() {
+		String pageName = registry.getPageName(EventBMachineEditor.EDITOR_ID,
+				htmlPageID);
+		assertNotNull("HTML Page should have a name", pageName);
+		assertEquals("Incorrect name for HTML Page", htmlPageName, pageName);
+
+		pageName = registry.getPageName(EventBContextEditor.EDITOR_ID,
+				htmlPageID);
+		assertNull("There should be no HTML Page for context editor", pageName);
+
+		pageName = registry.getPageName(EventBMachineEditor.EDITOR_ID,
+				dependenciesPageID);
+		assertNotNull("Dependencies Page for machines should have a name",
+				pageName);
+		assertEquals("Incorrect name for Dependencies Page for machines",
+				dependenciesPageName, pageName);
+
+		pageName = registry.getPageName(EventBContextEditor.EDITOR_ID,
+				dependenciesPageID);
+		assertNotNull("Dependencies Page for contexts should have a name",
+				pageName);
+		assertEquals("Incorrect name for Dependencies Page for contexts",
+				dependenciesPageName, pageName);
 	}
 
-	public void testLiteralPredicate() {
-		// Test Literal Predicate
-	}
-
-	public void testQuantifiedPredicate() {
-		// Test Quantified Predicate
-	}
-
-	public void testRelationalPred() {
-		addSpacingTest("Equal", "1" + "=" + "2", "1=2");
-		addSpacingTest("Not Equal", "1" + "\u2260" + "2", "1" + "\u2260" + "2");
-		addSpacingTest("Less Than", "1" + "<" + "2", "1<2");
-		addSpacingTest("Less Than Equal", "1" + "\u2264" + "2", "1" + "\u2264"
-				+ "2");
-		addSpacingTest("Greater Than", "1" + ">" + "2", "1>2");
-		addSpacingTest("Greater Than Equal", "1" + "\u2265" + "2", "1\u2265"
-				+ "2");
-		addSpacingTest("In", "1" + "\u2208" + "ℕ", "1\u2208ℕ");
-		addSpacingTest("Not In", "1" + "\u2209" + "ℕ", "1\u2209ℕ");
-		addSpacingTest("Subset", "ℕ" + "\u2282" + "ℕ", "ℕ\u2282ℕ");
-		addSpacingTest("Not Subset", "ℕ" + "\u2284" + "ℕ", "ℕ\u2284ℕ");
-		addSpacingTest("Subset Equal", "ℕ" + "\u2286" + "ℕ", "ℕ\u2286ℕ");
-		addSpacingTest("Not Subset Equal", "ℕ" + "\u2288" + "ℕ", "ℕ\u2288ℕ");
-	}
-
-	public void testSimplePredicate() {
-		// TODO Test Simple Predicate
-	}
-
-	public void testUnaryPredicate() {
-		addSpacingTest("Not", "\u00ac" + "⊤", " \u00ac " + "⊤");
-	}
-
-	public void testBrackets() {
-		addSpacingTest("Brackets", "(1=2" + "\u2228" + "2=3" + "\u2228"
-				+ "3=4)" + "\u2227" + "4=5", "(1=2" + " \u2228 " + "2=3"
-				+ " \u2228 " + "3=4)" + "  \u2227  " + "4 = 5");
+	/**
+	 * An utility method used for testing array of strings.
+	 * <p>
+	 * 
+	 * @param message
+	 *            a message
+	 * @param expected
+	 *            the expected string representation
+	 * @param objects
+	 *            a list of string object({@link String}
+	 */
+	private void assertStrings(String message, String expected,
+			List<String> objects) {
+		StringBuilder builder = new StringBuilder();
+		boolean sep = false;
+		for (Object object : objects) {
+			if (sep)
+				builder.append('\n');
+			builder.append(object);
+			sep = true;
+		}
+		String actual = builder.toString();
+		if (!expected.equals(actual)) {
+			System.out.println(Util.displayString(actual));
+			fail(message + ":\n" + actual);
+		}
 	}
 
 }

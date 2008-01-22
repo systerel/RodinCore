@@ -1,66 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.preferences;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
- * subclassing <samp>FieldEditorPreferencePage</samp>, we
- * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
- * save, restore and apply itself.
- * <p>
- * This page is used to modify preferences only. They
- * are stored in the preference store that belongs to
- * the main plug-in class. That way, preferences can
- * be accessed directly via the preference store.
+ * @author htson
+ *         <p>
+ *         The main preference page for Event-B. This is done by subclassing
+ *         {@link FieldEditorPreferencePage}, we can use the field support
+ *         built into JFace that allows us to create a page that is small and
+ *         knows how to save, restore and apply itself.
+ *         <p>
+ *         This page is used to modify preferences only. They are stored in the
+ *         preference store that belongs to the main plug-in class. That way,
+ *         preferences can be accessed directly via the preference store.
+ *         <p>
+ *         At the moment, this page is empty.
  */
+public class PreferencePage extends FieldEditorPreferencePage implements
+		IWorkbenchPreferencePage {
 
-public class PreferencePage
-	extends FieldEditorPreferencePage
-	implements IWorkbenchPreferencePage {
-
+	/**
+	 * Constructor.
+	 */
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preference for the Event-B");
+		setDescription("General settings for Event-B Development");
 	}
 	
-	/**
-	 * Creates the field editors. Field editors are abstractions of
-	 * the common GUI blocks needed to manipulate various types
-	 * of preferences. Each field editor knows how to save and
-	 * restore itself.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	@Override
 	public void createFieldEditors() {
-//		addField(new DirectoryFieldEditor(PreferenceConstants.P_PATH, 
-//				"&Directory preference:", getFieldEditorParent()));
-//		addField(
-//			new BooleanFieldEditor(
-//				PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT,
-//				"&Automatically layout in Proofs Page",
-//				getFieldEditorParent()));
-
-//		addField(new RadioGroupFieldEditor(
-//				PreferenceConstants.P_CHOICE,
-//			"An example of a multiple-choice preference",
-//			1,
-//			new String[][] { { "&Choice 1", "choice1" }, {
-//				"C&hoice 2", "choice2" }
-//		}, getFieldEditorParent()));
-//		addField(
-//			new StringFieldEditor(PreferenceConstants.P_STRING, "A &text preference:", getFieldEditorParent()));
+		// Do nothing at the moment.
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		// Do nothing
+		// Do nothing at the moment.
 	}
 	
 }

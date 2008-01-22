@@ -22,7 +22,7 @@ public class Util {
 	 * Generate a display string from the given String.
 	 * @param inputString the given input string
 	 *
-	 * Example of use: [org.eclipse.jdt.core.tests.util.Util.displayString("abc\ndef\tghi")]
+	 * Example of use: [displayString("abc\ndef\tghi")]
 	*/
 	public static String displayString(String inputString){
 		return displayString(inputString, 0);

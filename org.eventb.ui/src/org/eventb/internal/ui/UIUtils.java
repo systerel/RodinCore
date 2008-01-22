@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005-2008 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -61,8 +61,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This is a class which store utility static method that can be used in
- *         the development
+ *         This is a class which store utility static methods that can be used in
+ *         this Event-B User interface plug-in.
  */
 public class UIUtils {
 
@@ -580,5 +580,66 @@ public class UIUtils {
 			System.out.println(debugPrefix + tokenizer.nextToken());
 		}
 	}
+
+	/**
+	 * Return a comma separated representation of a list of input objects.
+	 * 
+	 * @param objects
+	 *            a list of objects.
+	 * @return the comma separated string representation of input objects.
+	 */
+	public static String toCommaSeparatedList(ArrayList<Object> objects) {
+		StringBuffer buffer = new StringBuffer();
+		boolean sep = false;
+		for (Object item : objects) {
+			if (sep) {
+				sep = true;
+			}
+			else {
+				buffer.append(",");
+			}
+			buffer.append(item);
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * Return a comma separated representation of an array of input objects.
+	 * 
+	 * @param objects
+	 *            an array of objects.
+	 * @return the comma separated string representation of input objects.
+	 */
+	public static String toCommaSeparatedList(String[] objects) {
+		StringBuffer buffer = new StringBuffer();
+		boolean sep = false;
+		for (Object item : objects) {
+			if (sep) {
+				sep = true;
+			}
+			else {
+				buffer.append(",");
+			}
+			buffer.append(item);
+		}
+		return buffer.toString();
+	}
+
+	/**
+	 * Parse a comma separated string to a list of string.
+	 * 
+	 * @param stringList
+	 *            the comma separated string.
+	 * @return an array of strings that make up the comma separted input string.
+	 */
+	public static String[] parseString(String stringList) {
+        StringTokenizer st = new StringTokenizer(stringList, ",");//$NON-NLS-1$
+        ArrayList<String> result = new ArrayList<String>();
+        while (st.hasMoreElements()) {
+            result.add((String) st.nextElement());
+        }
+        return result.toArray(new String[result.size()]);
+	}
+
 
 }

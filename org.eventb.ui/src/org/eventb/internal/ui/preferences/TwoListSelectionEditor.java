@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -21,6 +33,25 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Widget;
 
+/**
+ * @author htson
+ *         <p>
+ *         This is the base implementation of a two list selection editor, which
+ *         is a subclass of {@link FieldEditor}, i.e. it is used for editing a
+ *         preference and it knows how to save and restore itself.
+ *         </p>
+ *         <p>
+ *         This field editor contains two list: available objects on the left
+ *         and selected objects on the right. There are functions to select
+ *         (move object from left to right) or deselect (move object from right
+ *         to left). The objects in the selected list are ordered and there are
+ *         functions to chang this order (i.e. moving object up/down).
+ *         </p>
+ *         <p>
+ *         The preference is stored as a comma separated list of the selected
+ *         objects.
+ *         </p>
+ */
 public abstract class TwoListSelectionEditor extends FieldEditor {
 
     /**
@@ -66,10 +97,19 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     private SelectionListener selectionListener;
 
+    /**
+     * The list of selected objects.
+     */
     private ArrayList<Object> selectedElements;
     
+    /**
+     * The list of available objects.
+     */
     private ArrayList<Object> availableElements;
        
+    /**
+     * The minimum width for the two lists.
+     */
     private int minWidth = 200;
 
     /**
@@ -110,35 +150,58 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         move(selected, available, selectedElements, availableElements);
     }
     
-    private void move(List from, List to,
-			ArrayList<Object> fromElements, ArrayList<Object> toElements) {
-    	int[] indices = from.getSelectionIndices();
+    /**
+	 * Utility method for moving an object from one list (the source list) to
+	 * another list (the destination list).
+	 * 
+	 * @param sourceList
+	 *            the list where the elements move from.
+	 * 
+	 * @param destinationList
+	 *            the list where the elements move to.
+	 * @param sourceElements
+	 *            the set of elements will be moved.
+	 * @param destinationElements
+	 *            the set of elements which will be used as a destination. The
+	 *            source elements will be put as before the first elements of this set.
+	 */
+    private void move(List sourceList, List destinationList,
+			ArrayList<Object> sourceElements, ArrayList<Object> destinationElements) {
+    	int[] indices = sourceList.getSelectionIndices();
         if (indices.length != 0) {
             ArrayList<Object> elements = new ArrayList<Object>();
         	
         	for (int index : indices) {
-        		elements.add(fromElements.get(index));
+        		elements.add(sourceElements.get(index));
         	}
 
         	// Remove all selected objects in "from"
-        	fromElements.removeAll(elements);
-        	from.remove(indices);
+        	sourceElements.removeAll(elements);
+        	sourceList.remove(indices);
 
         	// Add to the objects to "to" at the correct index
-        	int index = to.getSelectionIndex();
+        	int index = destinationList.getSelectionIndex();
         	
-        	if (index < 0) index = to.getItemCount();
+        	if (index < 0) index = destinationList.getItemCount();
         	
-        	toElements.addAll(index, elements);
+        	destinationElements.addAll(index, elements);
 
             for (Object object : elements) {
-            	to.add(getLabel(object), index++);
+            	destinationList.add(getLabel(object), index++);
             }
             selectionChanged();
             selected.getParent().layout(true);
         }    	
     }
     
+    /**
+	 * Gets the label for an object. This label will be used to display the
+	 * elements in the lists.
+	 * 
+	 * @param object
+	 *            an object.
+	 * @return the label for the input object.
+	 */
     protected abstract String getLabel(Object object);
 
     /**
@@ -158,17 +221,13 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      * 
      * @param parent the parent control
      * @param key the resource name used to supply the button's label text
-     * @return Button
+     * @return the newly created push button
      */
     private Button createPushButton(Composite parent, String key) {
         Button button = new Button(parent, SWT.PUSH);
         button.setText(JFaceResources.getString(key));
         button.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
-//        int widthHint = convertHorizontalDLUsToPixels(button,
-//                IDialogConstants.BUTTON_WIDTH);
-//        data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT,
-//                SWT.DEFAULT, true).x);
         button.setLayoutData(data);
         button.addSelectionListener(getSelectionListener());
         return button;
@@ -176,7 +235,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
     
     /**
      * Returns this field editor's selection listener.
-     * The listener is created if nessessary.
+     * The listener is created if necessary.
      *
      * @return the selection listener
      */
@@ -306,6 +365,12 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
      */
     protected abstract ArrayList<Object> parseString(String stringList);
     
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite,
+	 *      int)
+	 */
 	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
         Control control = getLabelControl(parent);
@@ -365,6 +430,13 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         }
 	}
 
+	/**
+	 * Utility method for parsing the information from the preference and
+	 * display within the two lists.
+	 * 
+	 * @param preference
+	 *            the information from the preference as a string.
+	 */
 	private void setPreference(String preference) {
 		selected.removeAll();
 		selectedElements = parseString(preference);
@@ -384,6 +456,11 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 	}
 	protected abstract Collection<Object> getDeclaredObjects();
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
+	 */
 	@Override
 	protected void doLoadDefault() {
 		if (selected != null) {
@@ -392,6 +469,11 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         }
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditor#doStore()
+	 */
 	@Override
 	protected void doStore() {
 		String s = createList(selectedElements);
@@ -400,6 +482,11 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
+	 */
 	@Override
 	public int getNumberOfControls() {
 		return 3;
@@ -447,6 +534,11 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         return buttonBox;
     }
 
+	/**
+	 * Gets the list of selected objects.
+	 * 
+	 * @return the list of selected objects.
+	 */
 	public ArrayList<Object> getSelectedObjects() {
 		return selectedElements;
 	}

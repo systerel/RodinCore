@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.preferences;
 
 import java.util.List;
@@ -6,11 +18,13 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * Class used to initialize default preference values.
+ * @author htson
+ *         <p>
+ *         Class used to initialize default preference values.
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -23,7 +37,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_PROOFPAGE_AUTOLAYOUT, true);
 		
 		// Default value for post-tactic registry
 		List<ITacticDescriptor> defaultPostTacticDescriptors = EventBPlugin
@@ -34,11 +47,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			postTacticIDs[i] = tacticDesc.getTacticID();
 			++i;
 		}
-		store.setDefault(PreferenceConstants.P_POSTTACTICS, ProverUIUtils
+		store.setDefault(PreferenceConstants.P_POSTTACTICS, UIUtils
 				.toCommaSeparatedList(postTacticIDs));
 		store.setDefault(PreferenceConstants.P_POSTTACTIC_ENABLE, true);
 
-		// Default value for auto-tactic registry			
+		// Default value for auto-tactic registry
 		List<ITacticDescriptor> defaultAutoTacticDescriptors = EventBPlugin
 				.getPOMTacticPreference().getDefaultDescriptors();
 		String[] autoTacticIDs = new String[defaultAutoTacticDescriptors.size()];
@@ -47,9 +60,19 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			autoTacticIDs[i] = tacticDesc.getTacticID();
 			++i;
 		}
-		store.setDefault(PreferenceConstants.P_AUTOTACTICS, ProverUIUtils
+		store.setDefault(PreferenceConstants.P_AUTOTACTICS, UIUtils
 				.toCommaSeparatedList(autoTacticIDs));
 		store.setDefault(PreferenceConstants.P_AUTOTACTIC_ENABLE, true);
+
+		// Default value for machine editor pages
+		IEditorPagesPreference machinePreference = MachineEditorPagesPreference
+				.getDefault(); 
+		machinePreference.setDefault();
+
+		// Default value for context editor pages
+		IEditorPagesPreference contextPreference = ContextEditorPagesPreference
+				.getDefault();
+		contextPreference.setDefault();
 	}
 
 }

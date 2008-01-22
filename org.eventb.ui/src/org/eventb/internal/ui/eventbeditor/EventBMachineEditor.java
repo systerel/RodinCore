@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2008 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -18,6 +18,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.rodinp.core.RodinCore;
@@ -50,9 +51,10 @@ public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 	 */
 	@Override
 	protected void addPages() {
-		EventBEditorPage[] editorPages = EditorPagesRegistry.getDefault().getPages(
-				EDITOR_ID);
-
+		// Get the pages from the preference.
+		EventBEditorPage[] editorPages = MachineEditorPagesPreference
+				.getDefault().createPages();
+		
 		for (EventBEditorPage page : editorPages) {
 			page.initialize(this);
 			try {

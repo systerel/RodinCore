@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Event-B UI Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.ui.tests;singleton:=true
 Bundle-Version: 0.8.1
 Require-Bundle: org.junit,
@@ -8,3 +8,6 @@ Require-Bundle: org.junit,
  org.eclipse.swt,
  org.eventb.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: %providerName
+Bundle-Activator: org.eventb.ui.tests.EventBUITestsPlugin
+Eclipse-LazyStart: true

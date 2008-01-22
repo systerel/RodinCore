@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Rodin @ ETH Zurich
+ ******************************************************************************/
+
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -5,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -12,35 +25,61 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
  *         <p>
+ *         An abstract class for implementing preference page for auto-tactics,
+ *         e.g. Post-tactics or POM-tactics. Through this preference, the users
+ *         can customize the following fields:
+ *         <ul>
+ *         <li>The enablement field: Enable/Disable the specific auto-tactics.
+ *         <li>List of tactics to be selected to be run as auto-tactics.
+ *         <ul>
  */
-public abstract class TacticPreferencePage
-	extends PreferencePage
-	implements
-		IWorkbenchPreferencePage {
+public abstract class TacticPreferencePage extends FieldEditorPreferencePage
+		implements IWorkbenchPreferencePage {
 
+	// The two-list editor for choosing tactics from the set of available tactics.
 	TwoListSelectionEditor tacticsEditor;
 	
+	// The enablement field.
 	BooleanFieldEditor enablementEditor;
 
+	// Preference name (key) of the enablement field.
 	String enableFieldName;
 	
+	// Description for the enablement field.
 	String enableFieldDescription;
 
+	// Preference name (key) of the (selected) tactics field. 
 	String tacticsFieldName;
 	
+	// Description for the (selected) tactics field.
 	String tacticsFieldDescription;
 
+	// The tactic preference associated with this preference page. 
 	IAutoTacticPreference tacticPreference = null;
 	
-	public TacticPreferencePage(String description,
-			String enableFieldName, String enableFieldDescription,
-			String tacticsFieldName, String tacticsFieldDescription) {
+	/**
+	 * Constructor.
+	 * <p>
+	 * 
+	 * @param description
+	 *            Description of this tactic preference
+	 * @param enableFieldName
+	 *            the preference name (key) of the enablement field.
+	 * @param enableFieldDescription
+	 *            the description of the enablement field.
+	 * @param tacticsFieldName
+	 *            the preference name (key) of the (selected) tactics field.
+	 * @param tacticsFieldDescription
+	 *            the description of the (selected) tactics field.
+	 */
+	public TacticPreferencePage(String description, String enableFieldName,
+			String enableFieldDescription, String tacticsFieldName,
+			String tacticsFieldDescription) {
 		super();
 		this.enableFieldName = enableFieldName;
 		this.enableFieldDescription = enableFieldDescription;
@@ -51,10 +90,21 @@ public abstract class TacticPreferencePage
 		setDescription(description);
 	}
 
+	/**
+	 * Set the tactic preference to be use with this preference page. This is
+	 * the method to be called by the constructor.
+	 */
 	protected abstract void setTacticPreference();
 
+	/**
+	 * Creates the field editors for enablement field using
+	 * {@link BooleanFieldEditor} and selected tactics field using
+	 * {@link TwoListSelectionEditor}. Each field editor knows how to save and
+	 * restore itself.
+	 */
 	@Override
 	public void createFieldEditors() {
+		// Create the enablement field.
 		enablementEditor = new BooleanFieldEditor(
 			enableFieldName,
 			enableFieldDescription,
@@ -62,6 +112,7 @@ public abstract class TacticPreferencePage
 		addField(
 				enablementEditor);
 
+		// Create the (selected) tactics field.
 		tacticsEditor = new TwoListSelectionEditor(
 				tacticsFieldName,
 				tacticsFieldDescription,
@@ -74,13 +125,12 @@ public abstract class TacticPreferencePage
 					assert obj instanceof ITacticDescriptor;
 					tacticIDs.add(((ITacticDescriptor) obj).getTacticID());
 				}
-				return ProverUIUtils.toCommaSeparatedList(tacticIDs);
+				return UIUtils.toCommaSeparatedList(tacticIDs);
 			}
 
 			@Override
 			protected ArrayList<Object> parseString(String stringList) {
-				String [] tacticIDs = ProverUIUtils
-						.parseString(stringList);
+				String[] tacticIDs = UIUtils.parseString(stringList);
 				ArrayList<Object> result = new ArrayList<Object>();
 				for (String tacticID : tacticIDs) {
 					IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
@@ -129,11 +179,18 @@ public abstract class TacticPreferencePage
 
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
 	public void init(IWorkbench workbench) {
 		// Do nothing
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
+	 */
 	@Override
 	public boolean performOk() {
 		setTactics();
@@ -141,10 +198,18 @@ public abstract class TacticPreferencePage
 		return super.performOk();
 	}
 
+	/**
+	 * Utility method for setting the enablement value to the corresponding
+	 * tactic preference.
+	 */
 	private void setEnablement() {
 		tacticPreference.setEnabled(enablementEditor.getBooleanValue());
 	}
 
+	/**
+	 * Utility method for setting the selected tactics to the corresponding
+	 * tactic preference.
+	 */
 	private void setTactics() {
 		ArrayList<Object> objects = tacticsEditor.getSelectedObjects();
 		List<ITacticDescriptor> tacticDescs = new ArrayList<ITacticDescriptor>(
