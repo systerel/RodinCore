@@ -15,6 +15,7 @@ package org.eventb.internal.ui.preferences;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -40,7 +41,7 @@ public class ProverUIPreferencePage extends FieldEditorPreferencePage implements
 	public ProverUIPreferencePage() {
 		super(GRID);
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preference for the Event-B Proving User Interface");
+		setDescription(Messages.preferencepage_provingui_description);
 	}
 	
 	/*
