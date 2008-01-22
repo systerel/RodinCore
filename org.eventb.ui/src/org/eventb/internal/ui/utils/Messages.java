@@ -59,6 +59,25 @@ public class Messages {
 	public static String selectedHypothesis_toolItem_inverseSelection_toolTipText;
 	public static String selectedHypothesis_toolItem_selectNone_toolTipText;
 
+	// Preference pages
+	public static String preferencepage_contexteditor_description;
+	public static String preferencepage_contexteditor_editorpagedescription;
+	public static String preferencepage_machineeditor_description;
+	public static String preferencepage_machineeditor_editorpagedescription;
+	public static String preferencepage_editorpage_tab_title;
+	public static String preferencepage_modellingui_description;
+	public static String preferencepage_pomtactic_description;
+	public static String preferencepage_pomtactic_enablementdescription;
+	public static String preferencepage_pomtactic_selectedtacticsdescription;
+	public static String preferencepage_posttactic_description;
+	public static String preferencepage_posttactic_enablementdescription;
+	public static String preferencepage_posttactic_selectedtacticsdescription;
+	public static String preferencepage_eventb_description;
+	public static String preferencepage_provingui_description;
+	public static String preferencepage_seqprover_description;
+	public static String preferencepage_twolistselectioneditor_availablelabel;
+	public static String preferencepage_twolistselectioneditor_selectedlabel;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

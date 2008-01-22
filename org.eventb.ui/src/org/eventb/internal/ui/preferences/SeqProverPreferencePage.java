@@ -15,6 +15,7 @@ package org.eventb.internal.ui.preferences;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -42,7 +43,7 @@ public class SeqProverPreferencePage extends FieldEditorPreferencePage
 	public SeqProverPreferencePage() {
 		super();
 		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Preferences for the Sequence Prover");
+		setDescription(Messages.preferencepage_seqprover_description);
 	}
 
 	/*
