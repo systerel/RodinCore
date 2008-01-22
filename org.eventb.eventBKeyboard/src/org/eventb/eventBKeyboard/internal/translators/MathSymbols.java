@@ -8,7 +8,7 @@ public class MathSymbols extends AbstractSymbols {
 			"/=", "<=", ">=", "<<:", "<:", "<<->>", "<<->", "<->>", "<->",
 			">->>", "+->", ">+>", ">->", "+>>", "->>", "{}", "\\", "**", "<+",
 			"><", "||", "~", "<<|", "<|", "%", "..", ".", "-", "*", "/", ":=",
-			"::", ":|", ":", "|" };
+			"::", ":|", ":", "|", ",," };
 
 	// The translation of the above "math" combos
 	private static final String[] mathTranslation = { "\u2a65", "\u25b7",
@@ -19,7 +19,7 @@ public class MathSymbols extends AbstractSymbols {
 			"\u21a3", "\u2900", "\u21a0", "\u2205", "\u2216", "\u00d7",
 			"\ue103", "\u2297", "\u2225", "\u223c", "\u2a64", "\u25c1",
 			"\u03bb", "\u2025", "\u00b7", "\u2212", "\u2217", "\u00f7",
-			"\u2254", ":\u2208", ":\u2223", "\u2208", "\u2223" };
+			"\u2254", ":\u2208", ":\u2223", "\u2208", "\u2223", "\u21a6" };
 
 	@Override
 	protected String[] getTranslation() {

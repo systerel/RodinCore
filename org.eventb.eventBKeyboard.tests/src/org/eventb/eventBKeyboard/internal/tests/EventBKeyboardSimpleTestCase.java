@@ -433,7 +433,7 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		assertEquals(">->> ", expect, actual);
 	}
 
-	public void testMaplet() {
+	public void testMaplet1() {
 		formula.setText("");
 		insert("|");
 		insert("-");
@@ -441,6 +441,15 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		String expect = "\u21a6";
 		String actual = formula.getText();
 		assertEquals("|-> ", expect, actual);
+	}
+
+	public void testMaplet2() {
+		formula.setText("");
+		insert(",");
+		insert(",");
+		String expect = "\u21a6";
+		String actual = formula.getText();
+		assertEquals(",, ", expect, actual);
 	}
 
 	public void testEmptySet() {
