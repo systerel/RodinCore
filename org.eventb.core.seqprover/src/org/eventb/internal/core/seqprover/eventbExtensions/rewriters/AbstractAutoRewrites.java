@@ -48,26 +48,32 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 			// Check if rewriting generated something interesting
 			inferredHyps.remove(Lib.True);
 
+			Collection<Predicate> originalHyps = Collections.singleton(hyp);
+
+			// Hide the original if the inferredHyps is empty, i.e. the
+			// hypothesis get rewritten to Lib.True.
+			if (inferredHyps.isEmpty() && hideOriginal) {
+				hypActions.add(ProverFactory.makeHideHypAction(originalHyps));
+				continue;
+			}
+				
 			// Check if rewriting generated something new
 			if (seq.containsHypotheses(inferredHyps)) {
-				// Hide the original hypothesis.
-				if (hideOriginal)
-					hypActions.add(ProverFactory.makeHideHypAction(Collections
-							.singleton(hyp)));
+				// IMPORTANT: Do NOT de-select the original if the inferred
+				// hypotheses already exist.
 
 				// Do NOT re-select the inferred hyps
 				continue;
 			}
 
-			Collection<Predicate> originalHyps = Collections.singleton(hyp);
 
 			// make the forward inference action
 			if (!inferredHyps.isEmpty())
 				hypActions.add(ProverFactory.makeForwardInfHypAction(
 						originalHyps, inferredHyps));
 
-			// Hide the original hypothesis. IMPORTANT: Do it after the
-			// forward inference hypothesis action
+			// Hide the original hypothesis.
+			// IMPORTANT: Do it after the forward inference hypothesis action
 			if (hideOriginal)
 				hypActions.add(ProverFactory.makeHideHypAction(originalHyps));
 		}
