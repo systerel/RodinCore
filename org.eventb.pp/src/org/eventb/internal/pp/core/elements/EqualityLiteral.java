@@ -35,9 +35,7 @@ public final class EqualityLiteral extends Literal<EqualityLiteral,SimpleTerm> {
 		super(Arrays.asList(term1.compareTo(term2)<0?new SimpleTerm[]{term1,term2}:new SimpleTerm[]{term2,term1}), BASE_HASHCODE+(isPositive?0:1));
 		// TODO term must be ordered
 		
-		if (term1.getSort() != null && term2.getSort()!=null) {
-			assert term1.getSort().equals(term2.getSort()):"incompatible terms: "+term1+", "+term2;
-		}
+		assert term1.getSort().equals(term2.getSort()):"incompatible terms: "+term1+", "+term2;
 		
 		this.isPositive = isPositive;
 	}
