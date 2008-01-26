@@ -26,7 +26,7 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 public class SignedFormula<T extends LiteralDescriptor> {
 	// TODO voir les assert
 
-	private AbstractFormula<T> child;
+	private final AbstractFormula<T> child;
 	private boolean isPositive;
 
 	public SignedFormula(AbstractFormula<T> child, boolean isPositive) {
