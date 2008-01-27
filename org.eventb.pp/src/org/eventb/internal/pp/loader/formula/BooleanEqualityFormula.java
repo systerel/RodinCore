@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.formula.terms.TrueConstantSignature;
-import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
 
 public class BooleanEqualityFormula extends EqualityFormula {
 
@@ -31,26 +30,6 @@ public class BooleanEqualityFormula extends EqualityFormula {
 		super(terms,descriptor);
 		
 		assert descriptor.getSort().equals(Sort.BOOLEAN);
-	}
-	
-	@Override
-	void split() {
-		List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
-		for (IIntermediateResult res : getLiteralDescriptor().getResults()) {
-			if (contains(res.getTerms(), getTerms().get(0)) ||
-				contains(res.getTerms(), getTerms().get(1))) {
-					result.add(res);
-			}
-		}
-		
-		if (result.size() != descriptor.getResults().size()) {
-			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Splitting "+this+", terms remaining: "+result.toString());
-		}
-		descriptor = new EqualityDescriptor(descriptor.getContext(), result, descriptor.getSort());
-	}
-	
-	private boolean contains(List<TermSignature> list, TermSignature sig) {
-		return sig instanceof TrueConstantSignature ? false : list.contains(sig);
 	}
 	
 	@Override
