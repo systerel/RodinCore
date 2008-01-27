@@ -28,17 +28,19 @@ public final class PredicateLiteralDescriptor {
 	final private int arity;
 	final private int originalArity;
 	final private boolean isLabel;
+	final private boolean isMembership;
 	final private List<Sort> sortList = new ArrayList<Sort>();
 	
 	PredicateLiteralDescriptor(int index, 
-			int arity, int originalArity, boolean isLabel,
+			int arity, int originalArity, boolean isLabel, boolean isMembership,
 			List<Sort> sortList) {
 		assert sortList == null || sortList.size() == arity;
-		
+		assert !(isLabel && isMembership); 
 		this.index = index;
 		this.arity = arity;
 		this.originalArity = originalArity;
 		this.isLabel = isLabel;
+		this.isMembership = isMembership;
 		
 		if (sortList != null) this.sortList.addAll(sortList);
 	}
@@ -54,17 +56,17 @@ public final class PredicateLiteralDescriptor {
 	
 	/**
 	 * Returns <code>true</code> if this descriptor represents a 
-	 * complete predicate, <code>false</code> otherwise.
+	 * genuine membership predicate, <code>false</code> otherwise.
 	 * <p>
-	 * A predicate is complete if it is an original predicate (no label)
+	 * A predicate is a genuine membership if it is an original predicate (no label)
 	 * that has not been simplified by the loader (the original arity 
 	 * corresponds to the arity of the predicate).
 	 * 
 	 * @return <code>true</code> if this descriptor represents a 
-	 * complete predicate, <code>false</code> otherwise
+	 * genuine membership predicate, <code>false</code> otherwise
 	 */
-	public boolean isCompletePredicate() {
-		return arity == originalArity && !isLabel;
+	public boolean isGenuineMembership() {
+		return isMembership && arity == originalArity && !isLabel;
 	}
 	
 	/**
