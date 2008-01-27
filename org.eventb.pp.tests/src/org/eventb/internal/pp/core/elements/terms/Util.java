@@ -10,17 +10,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
@@ -68,11 +73,14 @@ public class Util {
 	}
 	
 	public static Predicate parsePredicate(String predicate) {
-		return ff.parsePredicate(predicate).getParsedPredicate();
+		IParseResult result = ff.parsePredicate(predicate);
+		assertTrue(result.isSuccess());
+		return result.getParsedPredicate();
 	}
 	
 	public static Predicate parsePredicate(String predicate, ITypeEnvironment environment) {
-		 Predicate pred = ff.parsePredicate(predicate).getParsedPredicate();
+		 Predicate pred = parsePredicate(predicate);
+		 
 		 final ITypeCheckResult tcResult = pred.typeCheck(environment);
 		 assertTrue("TypeCheck failed", tcResult.isSuccess());
 		 return pred;
@@ -183,6 +191,34 @@ public class Util {
 	
 	public static RelationalPredicate mIn(Expression left, Expression right) {
 		return ff.makeRelationalPredicate(Formula.IN, left, right, null);
+	}
+
+	public static UnaryPredicate mNot(Predicate p){
+		return ff.makeUnaryPredicate(Formula.NOT,p, null);
+	}
+	
+	public static AssociativePredicate mOr  (Predicate ... l){
+		return ff.makeAssociativePredicate(Formula.LOR, Arrays.asList(l), null);
+	}
+
+	public static AssociativePredicate mAnd  (Predicate ... l){
+		return ff.makeAssociativePredicate(Formula.LAND, Arrays.asList(l), null);
+	}
+
+	public static BinaryPredicate mImp  (Predicate l, Predicate r){
+		return ff.makeBinaryPredicate(Formula.LIMP, l, r, null);
+	}
+
+	public static BinaryPredicate mEqu  (Predicate l, Predicate r){
+		return ff.makeBinaryPredicate(Formula.LEQV, l, r, null);
+	}
+
+	public static QuantifiedPredicate mE(BoundIdentDecl[] boundIdentifiers, Predicate pred){
+		return ff.makeQuantifiedPredicate(Formula.EXISTS, boundIdentifiers, pred, null);
+	}
+	
+	public static QuantifiedPredicate mF(BoundIdentDecl[] boundIdentifiers, Predicate pred){
+		return ff.makeQuantifiedPredicate(Formula.FORALL, boundIdentifiers, pred, null);
 	}
 	
 	
@@ -330,7 +366,7 @@ public class Util {
 
 	public static PredicateLiteralDescriptor descriptor(int index, Sort... sorts) {
 		final int arity = sorts.length;
-		return table.newDescriptor(index, arity, arity, false, Arrays.asList(sorts));
+		return table.newDescriptor(index, arity, arity, false, true, Arrays.asList(sorts));
 	}
 
 	public static ComplexPredicateLiteral cPred(PredicateLiteralDescriptor descriptor, SimpleTerm... terms) {
@@ -461,6 +497,89 @@ public class Util {
 	
 	public static <T> T[] mArray(T... elements) {
 		return elements;
+	}
+
+	public static String displayString(String inputString, int indent) {
+		return displayString(inputString, indent, false);
+	}
+
+	private static String displayString(String inputString, int indent, boolean shift) {
+		if (inputString == null)
+			return "null";
+		int length = inputString.length();
+		StringBuffer buffer = new StringBuffer(length);
+		java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(inputString, "\n\r", true);
+		for (int i = 0; i < indent; i++) buffer.append("\t");
+		if (shift) indent++;
+		buffer.append("\"");
+		while (tokenizer.hasMoreTokens()){
+
+			String token = tokenizer.nextToken();
+			if (token.equals("\r")) {
+				buffer.append("\\r");
+				if (tokenizer.hasMoreTokens()) {
+					token = tokenizer.nextToken();
+					if (token.equals("\n")) {
+						buffer.append("\\n");
+						if (tokenizer.hasMoreTokens()) {
+							buffer.append("\" + \n");
+							for (int i = 0; i < indent; i++) buffer.append("\t");
+							buffer.append("\"");
+						}
+						continue;
+					}
+					buffer.append("\" + \n");
+					for (int i = 0; i < indent; i++) buffer.append("\t");
+					buffer.append("\"");
+				} else {
+					continue;
+				}
+			} else if (token.equals("\n")) {
+				buffer.append("\\n");
+				if (tokenizer.hasMoreTokens()) {
+					buffer.append("\" + \n");
+					for (int i = 0; i < indent; i++) buffer.append("\t");
+					buffer.append("\"");
+				}
+				continue;
+			}	
+
+			StringBuffer tokenBuffer = new StringBuffer();
+			for (int i = 0; i < token.length(); i++){ 
+				char c = token.charAt(i);
+				switch (c) {
+					case '\r' :
+						tokenBuffer.append("\\r");
+						break;
+					case '\n' :
+						tokenBuffer.append("\\n");
+						break;
+					case '\b' :
+						tokenBuffer.append("\\b");
+						break;
+					case '\t' :
+						tokenBuffer.append("\t");
+						break;
+					case '\f' :
+						tokenBuffer.append("\\f");
+						break;
+					case '\"' :
+						tokenBuffer.append("\\\"");
+						break;
+					case '\'' :
+						tokenBuffer.append("\\'");
+						break;
+					case '\\' :
+						tokenBuffer.append("\\\\");
+						break;
+					default :
+						tokenBuffer.append(c);
+				}
+			}
+			buffer.append(tokenBuffer.toString());
+		}
+		buffer.append("\"");
+		return buffer.toString();
 	}
 
 }
