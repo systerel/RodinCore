@@ -1862,7 +1862,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		// Shall not create a type predicate for the label
 		final PredicateTable table = new PredicateTable();
 		PredicateLiteralDescriptor L1SS = table.newDescriptor(1, 2, 4, true,
-				mList(Ssort, Ssort));
+				false, mList(Ssort, Ssort));
 		doTestT(
 			mList("∀x·∃y·x ∈ A ⇒ y ∈ B", "∀y·∃z·y ∈ A ⇒ z ∈ B"),
 			mList(
