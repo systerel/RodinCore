@@ -65,32 +65,31 @@ import org.eventb.internal.pp.loader.ordering.LiteralOrderer;
  * by a different instance of {@link AbstractFormula} or {@link SignedFormula}.
  * </p>
  * <p>
- * This class is package protected. Instances should be created only by a
- * context.
+ * Instances should be created only by a context.
  * </p>
  * 
  * @see IContext
  * 
  * @author François Terrier
  */
-class PredicateLoader {
+public class PredicateLoader {
 
 	/**
 	 * Debug flag for <code>LOADER_PHASE1_TRACE</code>
 	 */
 	public static boolean DEBUG = false;
 
-	private static final LiteralOrderer literalOrderer = new LiteralOrderer();
+	protected static final LiteralOrderer literalOrderer = new LiteralOrderer();
 
 	// these are persistent variables that are completed at each
 	// iteration
-	private final AbstractContext context;
+	protected final AbstractContext context;
 
 	// The predicate to load
 	private final Predicate predicate;
 
 	// Origin of the predicate currently being built.
-	private final IOrigin origin;
+	protected final IOrigin origin;
 
 	private final boolean isGoal;
 
@@ -219,7 +218,7 @@ class PredicateLoader {
 		}
 	}
 
-	private RuntimeException invalidPredicate(Predicate pred) {
+	protected RuntimeException invalidPredicate(Predicate pred) {
 		return new IllegalArgumentException("Unexpected predicate " + pred);
 	}
 
@@ -293,7 +292,7 @@ class PredicateLoader {
 				endOffset);
 	}
 
-	private NormalizedFormula processRelationalPredicate(
+	protected NormalizedFormula processRelationalPredicate(
 			RelationalPredicate pred, boolean isPositive) {
 		final Sort sort = new Sort(pred.getRight().getType());
 		final boolean arithmetic = sort.equals(Sort.NATURAL);
@@ -327,7 +326,7 @@ class PredicateLoader {
 		return r;
 	}
 
-	private List<TermSignature> getChildrenTerms(RelationalPredicate pred,
+	protected List<TermSignature> getChildrenTerms(RelationalPredicate pred,
 			boolean arith) {
 		final List<TermSignature> terms = new ArrayList<TermSignature>();
 		appendToTermList(terms, pred.getLeft(), arith);
@@ -336,7 +335,7 @@ class PredicateLoader {
 	}
 
 	// Adds several terms to the given list, checking their form.
-	private void appendToTermList(List<TermSignature> terms, Expression expr,
+	protected void appendToTermList(List<TermSignature> terms, Expression expr,
 			boolean arith) {
 		if (expr.getTag() == Expression.MAPSTO) {
 			final BinaryExpression bin = (BinaryExpression) expr;
@@ -363,7 +362,7 @@ class PredicateLoader {
 		final IntermediateResult inRes = new IntermediateResult(terms);
 		final PredicateDescriptor desc = updateDescriptor(key, context
 				.getLiteralTable(), inRes, "predicate");
-		final PredicateFormula lit = new PredicateFormula(terms, desc);
+		final PredicateFormula lit = new PredicateFormula(terms, desc, true);
 		final SignedFormula<?> sf = new SignedFormula<PredicateDescriptor>(lit,
 				isPositive);
 		return new NormalizedFormula(sf, inRes, literalOrderer, origin);
@@ -446,7 +445,7 @@ class PredicateLoader {
 		return new NormalizedFormula(sf, inRes, literalOrderer, origin);
 	}
 
-	private <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key,
+	protected <T extends LiteralDescriptor> T updateDescriptor(SymbolKey<T> key,
 			SymbolTable<T> table, IIntermediateResult res, String debug) {
 		T desc = table.get(key);
 		if (desc == null) {

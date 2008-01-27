@@ -23,14 +23,15 @@ import org.eventb.internal.pp.loader.formula.descriptor.QuantifiedDescriptor;
 import org.eventb.internal.pp.loader.formula.key.SymbolTable;
 
 /**
- * This class represents a context. Information stored in a context are information that
- * are needed to parse a sequent and that are completed by the builder for each sequent.
- *
+ * This class represents a context. Information stored in a context are
+ * information that are needed to parse a sequent and that are completed by the
+ * builder for each sequent.
+ * 
  * @author François Terrier
- *
+ * 
  */
 public class AbstractContext implements IContext {
-	
+
 	public static void setDebugFlag(boolean value) {
 		PredicateLoader.DEBUG = value;
 	}
@@ -38,32 +39,34 @@ public class AbstractContext implements IContext {
 	// TODO maybe use only one table with a good HASH algorithm
 	// it will factor out lots of code in PredicateBuilder (eg. in method
 	// exitIN and exitEqualityLiteral ...)
-	
+
 	SymbolTable<PredicateDescriptor> predicateTable = new SymbolTable<PredicateDescriptor>();
 	SymbolTable<DisjunctiveClauseDescriptor> disjunctionTable = new SymbolTable<DisjunctiveClauseDescriptor>();
 	SymbolTable<EquivalenceClauseDescriptor> equivalenceTable = new SymbolTable<EquivalenceClauseDescriptor>();
 	SymbolTable<EqualityDescriptor> equalityTable = new SymbolTable<EqualityDescriptor>();
 	SymbolTable<ArithmeticDescriptor> arithmeticTable = new SymbolTable<ArithmeticDescriptor>();
 	SymbolTable<QuantifiedDescriptor> quantifierTable = new SymbolTable<QuantifiedDescriptor>();
-	
-	final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
-	
+
+	protected final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
+
 	public void load(Predicate predicate, Predicate originalPredicate,
 			boolean isGoal) {
-		final PredicateLoader loader = new PredicateLoader(this, predicate,
+		final PredicateLoader loader = getPredicateLoader(predicate,
 				originalPredicate, isGoal);
 		loader.load();
 		results.add(loader.getResult());
 	}
 
-	public void load(Predicate predicate, boolean isGoal) {
-		final PredicateLoader loader = new PredicateLoader(this, predicate,
-				predicate, isGoal);
-		loader.load();
-		results.add(loader.getResult());
+	protected PredicateLoader getPredicateLoader(Predicate predicate,
+			Predicate originalPredicate, boolean isGoal) {
+		return new PredicateLoader(this, predicate, originalPredicate, isGoal);
 	}
 
-	SymbolTable<PredicateDescriptor> getLiteralTable() {
+	public void load(Predicate predicate, boolean isGoal) {
+		load(predicate, predicate, isGoal);
+	}
+
+	public SymbolTable<PredicateDescriptor> getLiteralTable() {
 		return predicateTable;
 	}
 
@@ -78,7 +81,7 @@ public class AbstractContext implements IContext {
 	SymbolTable<EquivalenceClauseDescriptor> getEqClauseTable() {
 		return equivalenceTable;
 	}
-	
+
 	SymbolTable<EqualityDescriptor> getEqualityTable() {
 		return equalityTable;
 	}
@@ -86,11 +89,11 @@ public class AbstractContext implements IContext {
 	SymbolTable<ArithmeticDescriptor> getArithmeticTable() {
 		return arithmeticTable;
 	}
-	
+
 	public List<INormalizedFormula> getResults() {
 		return results;
 	}
-	
+
 	public INormalizedFormula getLastResult() {
 		final int size = results.size();
 		assert 0 < size;
@@ -101,8 +104,10 @@ public class AbstractContext implements IContext {
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractContext) {
 			AbstractContext temp = (AbstractContext) obj;
-			return disjunctionTable.equals(temp.disjunctionTable) && predicateTable.equals(temp.predicateTable)
-				&& quantifierTable.equals(temp.quantifierTable) && results.equals(temp.results);
+			return disjunctionTable.equals(temp.disjunctionTable)
+					&& predicateTable.equals(temp.predicateTable)
+					&& quantifierTable.equals(temp.quantifierTable)
+					&& results.equals(temp.results);
 		}
 		return false;
 	}
@@ -116,20 +121,20 @@ public class AbstractContext implements IContext {
 		result.addAll(quantifierTable.getAllLiterals());
 		return result;
 	}
-	
+
 	public Collection<PredicateDescriptor> getAllPredicateDescriptors() {
 		return predicateTable.getAllLiterals();
 	}
 
 	private int nextIdentifier = 0;
-	
+
 	public int getNextLiteralIdentifier() {
 		return nextIdentifier++;
 	}
 
 	// Number of variables used in this context so far
 	private int numberOfVariables = 0;
-	
+
 	public int getFreshVariableIndex() {
 		return numberOfVariables++;
 	}

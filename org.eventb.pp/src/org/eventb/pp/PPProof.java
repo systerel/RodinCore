@@ -141,6 +141,10 @@ public class PPProof {
 	 */
 	public void load() {
 		final AbstractContext loadContext = new AbstractContext();
+		load(loadContext);
+		
+	}
+	protected void load(AbstractContext loadContext){
 		for (InputPredicate predicate : hypotheses) {
 			if (predicate.loadPhaseOne(loadContext)) {
 				proofFound(predicate);

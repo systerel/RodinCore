@@ -14,7 +14,7 @@ import org.eventb.internal.pp.core.tracing.IOrigin;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
-class NormalizedFormula implements Comparable<NormalizedFormula>,
+public class NormalizedFormula implements Comparable<NormalizedFormula>,
 		INormalizedFormula {
 
 	private final Comparator<SignedFormula<?>> orderer;
@@ -22,8 +22,9 @@ class NormalizedFormula implements Comparable<NormalizedFormula>,
 	private final SignedFormula<?> signature;
 	private final IOrigin origin;
 	
-	NormalizedFormula(SignedFormula<?> signature, IIntermediateResult result,
-			Comparator<SignedFormula<?>> orderer, IOrigin origin) {
+	public NormalizedFormula(SignedFormula<?> signature,
+			IIntermediateResult result, Comparator<SignedFormula<?>> orderer,
+			IOrigin origin) {
 		this.orderer = orderer;
 		this.result = result;
 		this.signature = signature;
