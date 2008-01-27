@@ -439,14 +439,6 @@ public class TestResolution extends AbstractInferrerTests {
 		// TODO variables mixed with local quantifiers
 	}
 
-	public void test1833264() throws Exception {
-		doTest(
-				cClause(cNotProp(1),cNotPred(d0A, a),cNotProp(0)),
-				cClause(cPred(d0A,b)),
-				cClause(mList(cNotProp(1),cNotProp(0)),cNEqual(a,b)) //, cClause(cNotProp(1), cNotPred(d0A, a))
-		);
-	}
-	
 	public void testInitialization() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		Clause clause = cClause(cProp(0));
