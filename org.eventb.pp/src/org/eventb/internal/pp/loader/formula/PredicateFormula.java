@@ -17,8 +17,12 @@ import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 
 public class PredicateFormula extends AbstractSingleFormula<PredicateDescriptor> {
 
-	public PredicateFormula(List<TermSignature> terms, PredicateDescriptor descriptor) {
-		super(terms,descriptor);
+	private final boolean isMembership;
+
+	public PredicateFormula(List<TermSignature> terms,
+			PredicateDescriptor descriptor, boolean isMembership) {
+		super(terms, descriptor);
+		this.isMembership = isMembership;
 	}
 	 
 	@Override
@@ -26,7 +30,7 @@ public class PredicateFormula extends AbstractSingleFormula<PredicateDescriptor>
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
 		PredicateLiteralDescriptor predicateDescriptor =
 			getPredicateDescriptor(context.getPredicateTable(),
-			descriptor.getIndex(), newList.size(), terms.size(), false, getSortList(newList), descriptor.getSort());
+			descriptor.getIndex(), newList.size(), terms.size(), false, isMembership, getSortList(newList), descriptor.getSort());
 		return AbstractLabelizableFormula.getLabelPredicateHelper(predicateDescriptor, newList, context);
 	}
 	

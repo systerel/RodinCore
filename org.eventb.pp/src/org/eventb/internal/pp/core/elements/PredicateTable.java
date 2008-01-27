@@ -35,10 +35,10 @@ public class PredicateTable {
 	}
 	
 	public PredicateLiteralDescriptor newDescriptor(int index, 
-			int arity, int realArity, boolean isLabel,
+			int arity, int realArity, boolean isLabel, boolean isMembership,
 			List<Sort> sortList) {
 		assert !integerMap.containsKey(index);
-		return new PredicateLiteralDescriptor(index, arity, realArity, isLabel, sortList);
+		return new PredicateLiteralDescriptor(index, arity, realArity, isLabel, isMembership, sortList);
 	}
 	
 	public void addDescriptor(int index, PredicateLiteralDescriptor descriptor) {

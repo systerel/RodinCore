@@ -62,7 +62,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 			int i = context.getBooleanTable().getIntegerForTermSignature(sig);
 			PredicateLiteralDescriptor predicateDescriptor =
 				getPredicateDescriptor(context.getPredicateTable(),
-				i, 0, terms.size(), false, new ArrayList<Sort>(), null);
+				i, 0, terms.size(), false, false, new ArrayList<Sort>(), null);
 			result = new AtomicPredicateLiteral(predicateDescriptor, context.isPositive());
 		} else {
 			List<Term> newTerms = getTermsFromTermSignature(termList, context);

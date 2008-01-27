@@ -65,16 +65,19 @@ public abstract class AbstractFormula<T extends LiteralDescriptor> {
 		return terms;
 	}
 	
-
-	static final PredicateLiteralDescriptor getPredicateDescriptor(PredicateTable table, int index, int arity, int realArity, boolean isLabel, List<Sort> sortList, Sort sort) {
-		PredicateLiteralDescriptor predicateDescriptor;
+	static final PredicateLiteralDescriptor getPredicateDescriptor(
+			PredicateTable table, int index, int arity, int realArity,
+			boolean isLabel, boolean isMembership, List<Sort> sortList,
+			Sort sort) {
+		final PredicateLiteralDescriptor predicateDescriptor;
 		if (table.hasDescriptor(index)) {
 			predicateDescriptor = table.getDescriptor(index);
-		}
-		else {
-			predicateDescriptor = table.newDescriptor(index,arity,realArity,isLabel,sortList);
+		} else {
+			predicateDescriptor = table.newDescriptor(index, arity, realArity,
+					isLabel, isMembership, sortList);
 			table.addDescriptor(index, predicateDescriptor);
-			if (sort != null) table.addSort(sort, predicateDescriptor);
+			if (sort != null)
+				table.addSort(sort, predicateDescriptor);
 		}
 		return predicateDescriptor;
 	}

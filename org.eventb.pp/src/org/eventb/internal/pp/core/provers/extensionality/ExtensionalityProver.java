@@ -133,7 +133,7 @@ public class ExtensionalityProver implements IProverModule {
 		PredicateLiteral literal1 = clause.getPredicateLiteral(0);
 		PredicateLiteral literal2 = clause.getPredicateLiteral(1);
 		if (!literal1.getDescriptor().equals(literal2.getDescriptor())) return false;
-		if (!literal1.getDescriptor().isCompletePredicate()) return false;
+		if (!literal1.getDescriptor().isGenuineMembership()) return false;
 		return true;
 	}
 	
@@ -205,7 +205,7 @@ public class ExtensionalityProver implements IProverModule {
 		if (!equality.getSort().isSetSort()) return false;
 		PredicateLiteralDescriptor descriptor = predicateTable.getDescriptor(equality.getSort());
 		if (descriptor == null) return false;
-		if (!descriptor.isCompletePredicate()) return false;
+		if (!descriptor.isGenuineMembership()) return false;
 		return true;
 	}
 	

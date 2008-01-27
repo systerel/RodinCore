@@ -77,7 +77,7 @@ public abstract class AbstractLabelizableFormula<T extends IndexedDescriptor>
 		List<TermSignature> newList = descriptor.getSimplifiedList(terms);
 		PredicateLiteralDescriptor predicateDescriptor =
 			getPredicateDescriptor(context.getPredicateTable(),
-			descriptor.getIndex(), newList.size(), terms.size(), true, getSortList(newList), null);
+			descriptor.getIndex(), newList.size(), terms.size(), true, false, getSortList(newList), null);
 		return AbstractLabelizableFormula.getLabelPredicateHelper(predicateDescriptor, newList, context);
 	}
 	
