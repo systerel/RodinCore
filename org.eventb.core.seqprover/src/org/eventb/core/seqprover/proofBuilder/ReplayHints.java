@@ -67,10 +67,12 @@ public class ReplayHints {
 	}
 	
 	public Predicate applyHints(Predicate predicate) {
+		if (predicate == null) return null;
 		return predicate.substituteFreeIdents(freeVarRename,factory);
 	}
 
 	public Expression applyHints(Expression expression) {
+		if (expression == null) return null;
 		return expression.substituteFreeIdents(freeVarRename,factory);
 	}
 	
