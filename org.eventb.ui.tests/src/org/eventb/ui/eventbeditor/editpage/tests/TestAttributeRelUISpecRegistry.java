@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Rodin @ ETH Zurich
+******************************************************************************/
+
 package org.eventb.ui.eventbeditor.editpage.tests;
 
 import org.eclipse.core.runtime.CoreException;
@@ -9,20 +21,36 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.internal.ui.eventbeditor.editpage.CComboEditComposite;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecRegistry;
 import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.editpage.TextEditComposite;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *         <p>
+ *         jUnit tests for {@link AttributeRelUISpecRegistry}.
+ */
 public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
+	/**
+	 * The registry for testing. Using an extension of
+	 * {@link AttributeRelUISpecRegistry} for testing.
+	 */
 	IAttributeRelUISpecRegistry registry = AttributeRelUISpecTestRegistry
 			.getDefault();
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IVariable}.
+	 */
 	@Test
 	public void testCreateVariables() {
 		IMachineFile m0;
@@ -79,6 +107,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IInvariant}.
+	 */
 	@Test
 	public void testCreateInvariants() {
 		IMachineFile m0;
@@ -141,6 +174,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 		}
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IEvent}.
+	 */
 	@Test
 	public void testCreateEvents() {
 		IMachineFile m0;
@@ -207,6 +245,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IVariable} (parameters).
+	 */
 	@Test
 	public void testCreateParameters() {
 		IMachineFile m0;
@@ -277,6 +320,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IGuard}.
+	 */
 	@Test
 	public void testCreateGuards() {
 		IMachineFile m0;
@@ -350,6 +398,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
+	 * for {@link IAction}.
+	 */
 	@Test
 	public void testCreateActions() {
 		IMachineFile m0;
@@ -425,6 +478,10 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#getNumberOfAttributes(org.rodinp.core.IElementType)}.
+	 */
 	@Test
 	public void testGetNumberOfAttributes() {
 		// IVariable
@@ -458,6 +515,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 				numActAttributes);
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#getEditComposites(org.rodinp.core.IElementType)}
+	 * for {@link IVariable}.
+	 */
 	@Test
 	public void testGetVariableEditComposites() {
 		IEditComposite[] editComposites = registry
@@ -469,6 +531,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 				editComposites[0] instanceof TextEditComposite);
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#getEditComposites(org.rodinp.core.IElementType)}
+	 * for {@link IInvariant}.
+	 */
 	@Test
 	public void testGetInvariantEditComposites() {
 		IEditComposite[] editComposites = registry
@@ -483,6 +550,11 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 				editComposites[1] instanceof TextEditComposite);
 	}
 
+	/**
+	 * Tests for
+	 * {@link AttributeRelUISpecRegistry#getEditComposites(org.rodinp.core.IElementType)}
+	 * for {@link IEvent}.
+	 */
 	@Test
 	public void testGetEventEditComposites() {
 		IEditComposite[] editComposites = registry
@@ -490,10 +562,10 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 		assertEquals("Incorrect number of edit composite", 2,
 				editComposites.length);
 
-		assertTrue("First edit composite should be a TextEditComposite",
+		assertTrue("First edit composite should be a CComboEditComposite",
 				editComposites[0] instanceof CComboEditComposite);
 
-		assertTrue("Second edit composite should be a TextEditComposite",
+		assertTrue("Second edit composite should be a CComboEditComposite",
 				editComposites[1] instanceof CComboEditComposite);
 	}
 

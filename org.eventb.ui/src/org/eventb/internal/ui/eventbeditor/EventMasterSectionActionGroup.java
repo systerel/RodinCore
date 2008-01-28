@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2008 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -227,8 +227,8 @@ public class EventMasterSectionActionGroup extends
 			menu.add(submenu);
 			if (ssel.size() == 1) {
 				IRodinElement element = (IRodinElement) ssel.getFirstElement();
-				submenu.add(new ShowAbstractEventContribution(file,
-						element.getAncestor(IEvent.ELEMENT_TYPE)));
+				submenu.add(new ShowAbstractEventContribution(element
+						.getAncestor(IEvent.ELEMENT_TYPE)));
 			}
 
 			// Abstract invariants

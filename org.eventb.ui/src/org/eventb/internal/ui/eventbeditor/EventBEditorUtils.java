@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2008 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,16 +34,15 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBProject;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
@@ -66,6 +65,10 @@ import org.rodinp.core.RodinDBException;
  */
 public class EventBEditorUtils {
 
+	/**
+	 * The debug flag. This is set by the option when the platform is launch.
+	 * Client should not try to reset this flag.
+	 */
 	public static boolean DEBUG = false;
 
 	public final static String DEBUG_PREFIX = "*** EventBEditor *** ";
@@ -645,8 +648,8 @@ public class EventBEditorUtils {
 							String namePrefix = UIUtils.getNamePrefix(editor,
 									IVariable.ELEMENT_TYPE,
 									defaultPrefix);
-							int nameIndex = UIUtils.getFreeElementNameIndex(
-									editor, newEvt, IVariable.ELEMENT_TYPE,
+							int nameIndex =EventBUtils.getFreeChildNameIndex(
+									newEvt, IVariable.ELEMENT_TYPE,
 									namePrefix);
 
 							String prefix = UIUtils.getFreeElementIdentifier(
@@ -654,7 +657,7 @@ public class EventBEditorUtils {
 									defaultPrefix);
 
 							int index = UIUtils.getFreeElementIdentifierIndex(
-									editor, newEvt, IVariable.ELEMENT_TYPE,
+									newEvt, IVariable.ELEMENT_TYPE,
 									prefix);
 
 							for (int i = 0; i < 3; i++) {
@@ -663,14 +666,14 @@ public class EventBEditorUtils {
 												+ nameIndex);
 								assert !newVar.exists();
 								newVar.create(null, monitor);
-								nameIndex = UIUtils.getFreeElementNameIndex(
+								nameIndex = EventBUtils.getFreeChildNameIndex(
 										newEvt, IVariable.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 
 								newVar.setIdentifierString(prefix + index,
 										new NullProgressMonitor());
 								index = UIUtils.getFreeElementIdentifierIndex(
-										editor, newEvt, IVariable.ELEMENT_TYPE,
+										newEvt, IVariable.ELEMENT_TYPE,
 										prefix, index + 1);
 								editor.addNewElement(newVar);
 							}
@@ -679,8 +682,8 @@ public class EventBEditorUtils {
 									.getDefaultPrefix("org.eventb.core.guardLabel");
 							namePrefix = UIUtils.getNamePrefix(editor,
 									IGuard.ELEMENT_TYPE, defaultPrefix);
-							nameIndex = UIUtils.getFreeElementNameIndex(editor,
-									newEvt, IGuard.ELEMENT_TYPE, namePrefix);
+							nameIndex = EventBUtils.getFreeChildNameIndex(newEvt,
+									IGuard.ELEMENT_TYPE, namePrefix);
 							prefix = UIUtils.getFreeElementLabel(editor,
 									newEvt, IGuard.ELEMENT_TYPE,
 									defaultPrefix);
@@ -693,7 +696,7 @@ public class EventBEditorUtils {
 												+ nameIndex);
 								assert !newGrd.exists();
 								newGrd.create(null, monitor);
-								nameIndex = UIUtils.getFreeElementNameIndex(
+								nameIndex = EventBUtils.getFreeChildNameIndex(
 										newEvt, IGuard.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 								newGrd.setLabel(prefix + index, monitor);
@@ -710,8 +713,8 @@ public class EventBEditorUtils {
 							namePrefix = UIUtils.getNamePrefix(editor,
 									IAction.ELEMENT_TYPE,
 									defaultPrefix);
-							nameIndex = UIUtils.getFreeElementNameIndex(editor,
-									newEvt, IAction.ELEMENT_TYPE, namePrefix);
+							nameIndex = EventBUtils.getFreeChildNameIndex(newEvt,
+									IAction.ELEMENT_TYPE, namePrefix);
 							prefix = UIUtils.getFreeElementLabel(editor,
 									newEvt, IAction.ELEMENT_TYPE,
 									defaultPrefix);
@@ -724,7 +727,7 @@ public class EventBEditorUtils {
 												+ nameIndex);
 								assert !newAct.exists();
 								newAct.create(null, monitor);
-								nameIndex = UIUtils.getFreeElementNameIndex(
+								nameIndex = EventBUtils.getFreeChildNameIndex(
 										newEvt, IAction.ELEMENT_TYPE,
 										namePrefix, nameIndex + 1);
 								newAct.setLabel(prefix + index, monitor);
@@ -1025,15 +1028,15 @@ public class EventBEditorUtils {
 				IRodinFile rodinFile = editor.getRodinInput();
 				String invPrefix = UIUtils.getNamePrefix(editor,
 						IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
-				int invIndex = UIUtils.getFreeElementNameIndex(editor,
-						rodinFile, IInvariant.ELEMENT_TYPE, invPrefix);
+				int invIndex = EventBUtils.getFreeChildNameIndex(rodinFile,
+						IInvariant.ELEMENT_TYPE, invPrefix);
 				if (invariants != null) {
 					for (Pair<String, String> pair : invariants) {
 						newInv = rodinFile.getInternalElement(
 								IInvariant.ELEMENT_TYPE, invPrefix + invIndex);
 						assert !newInv.exists();
 						newInv.create(null, m);
-						invIndex = UIUtils.getFreeElementNameIndex(rodinFile,
+						invIndex = EventBUtils.getFreeChildNameIndex(rodinFile,
 								IInvariant.ELEMENT_TYPE, invPrefix,
 								invIndex + 1);
 						newInv.setLabel(pair.getFirst(), m);
@@ -1125,14 +1128,14 @@ public class EventBEditorUtils {
 
 				String axmName = UIUtils.getNamePrefix(editor,
 						IAxiom.ELEMENT_TYPE, defaultPrefix);
-				int axmIndex = UIUtils.getFreeElementNameIndex(editor,
-						rodinFile, IAxiom.ELEMENT_TYPE, axmName);
+				int axmIndex = EventBUtils.getFreeChildNameIndex(rodinFile,
+						IAxiom.ELEMENT_TYPE, axmName);
 				for (int i = 0; i < axmNames.length; ++i) {
 					newAxm = rodinFile.getInternalElement(IAxiom.ELEMENT_TYPE,
 							axmName + axmIndex);
 					assert !newAxm.exists();
 					newAxm.create(null, pm);
-					axmIndex = UIUtils.getFreeElementNameIndex(rodinFile,
+					axmIndex = EventBUtils.getFreeChildNameIndex(rodinFile,
 							IAxiom.ELEMENT_TYPE, axmName, axmIndex + 1);
 					newAxm.setLabel(axmNames[i], pm);
 					newAxm.setPredicateString(axmSubs[i], null);
@@ -1211,8 +1214,8 @@ public class EventBEditorUtils {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IInvariant.ELEMENT_TYPE,
 							PrefixInvName.DEFAULT_PREFIX);
-					int index = UIUtils.getFreeElementNameIndex(editor,
-							rodinFile, IInvariant.ELEMENT_TYPE, prefix);
+					int index = EventBUtils.getFreeChildNameIndex(rodinFile,
+							IInvariant.ELEMENT_TYPE, prefix);
 					String[] names = dialog.getNewNames();
 					String[] contents = dialog.getNewContents();
 					for (int i = 0; i < names.length; i++) {
@@ -1222,7 +1225,7 @@ public class EventBEditorUtils {
 								IInvariant.ELEMENT_TYPE, prefix + index);
 						assert !newInv.exists();
 						newInv.create(null, monitor);
-						index = UIUtils.getFreeElementNameIndex(rodinFile,
+						index = EventBUtils.getFreeChildNameIndex(rodinFile,
 								IInvariant.ELEMENT_TYPE, prefix, index + 1);
 						newInv.setLabel(name, monitor);
 						newInv.setPredicateString(content, null);
@@ -1261,8 +1264,8 @@ public class EventBEditorUtils {
 					String prefix = UIUtils.getNamePrefix(editor,
 							IVariant.ELEMENT_TYPE,
 							"variant");
-					int index = UIUtils.getFreeElementNameIndex(editor,
-							rodinFile, IVariant.ELEMENT_TYPE, prefix);
+					int index = EventBUtils.getFreeChildNameIndex(rodinFile,
+							IVariant.ELEMENT_TYPE, prefix);
 					newVariant = rodinFile.getInternalElement(
 							IVariant.ELEMENT_TYPE, prefix + index);
 					assert !newVariant.exists();
@@ -1311,8 +1314,8 @@ public class EventBEditorUtils {
 					String prefix = UIUtils.getNamePrefix(editor,
 							ITheorem.ELEMENT_TYPE,
 							defaultPrefix);
-					int index = UIUtils.getFreeElementNameIndex(editor,
-							rodinFile, ITheorem.ELEMENT_TYPE, prefix);
+					int index = EventBUtils.getFreeChildNameIndex(rodinFile,
+							ITheorem.ELEMENT_TYPE, prefix);
 					String[] names = dialog.getNewNames();
 					String[] contents = dialog.getNewContents();
 
@@ -1322,7 +1325,7 @@ public class EventBEditorUtils {
 						newThm = rodinFile.getInternalElement(
 								ITheorem.ELEMENT_TYPE, prefix + index);
 						newThm.create(null, monitor);
-						index = UIUtils.getFreeElementNameIndex(rodinFile,
+						index = EventBUtils.getFreeChildNameIndex(rodinFile,
 								ITheorem.ELEMENT_TYPE, prefix, index + 1);
 						newThm.setLabel(name, monitor);
 						newThm.setPredicateString(content, null);
@@ -1388,15 +1391,15 @@ public class EventBEditorUtils {
 				.getDefaultPrefix("org.eventb.core.actionLabel");
 		String actPrefix = UIUtils.getNamePrefix(editor, IAction.ELEMENT_TYPE,
 				defaultPrefix);
-		int actIndex = UIUtils.getFreeElementNameIndex(editor, evt,
-				IAction.ELEMENT_TYPE, actPrefix);
+		int actIndex = EventBUtils.getFreeChildNameIndex(evt, IAction.ELEMENT_TYPE,
+				actPrefix);
 		for (int i = 0; i < actNames.length; i++) {
 			IAction act = evt.getAction(actPrefix + actIndex);
 			act.create(null, pm);
 			act.setLabel(actNames[i], pm);
 			act.setAssignmentString(actSubstitutions[i], pm);
 			editor.addNewElement(act);
-			actIndex = UIUtils.getFreeElementNameIndex(evt,
+			actIndex = EventBUtils.getFreeChildNameIndex(evt,
 					IAction.ELEMENT_TYPE, actPrefix, actIndex);
 		}
 	}
@@ -1408,15 +1411,15 @@ public class EventBEditorUtils {
 				.getDefaultPrefix("org.eventb.core.guardLabel");
 		String grdPrefix = UIUtils.getNamePrefix(editor, IGuard.ELEMENT_TYPE,
 				defaultPrefix);
-		int grdIndex = UIUtils.getFreeElementNameIndex(editor, evt,
-				IGuard.ELEMENT_TYPE, grdPrefix);
+		int grdIndex = EventBUtils.getFreeChildNameIndex(evt, IGuard.ELEMENT_TYPE,
+				grdPrefix);
 		for (int i = 0; i < grdNames.length; i++) {
 			IGuard grd = evt.getGuard(grdPrefix + grdIndex);
 			grd.create(null, pm);
 			grd.setLabel(grdNames[i], pm);
 			grd.setPredicateString(grdPredicates[i], null);
 			editor.addNewElement(grd);
-			grdIndex = UIUtils.getFreeElementNameIndex(evt,
+			grdIndex = EventBUtils.getFreeChildNameIndex(evt,
 					IGuard.ELEMENT_TYPE, grdPrefix, grdIndex + 1);
 		}
 	}
@@ -1430,17 +1433,15 @@ public class EventBEditorUtils {
 				IVariable.ELEMENT_TYPE,
 				defaultPrefix);
 
-		int varIndex = UIUtils.getFreeElementNameIndex(editor, evt,
+		int varIndex = EventBUtils.getFreeChildNameIndex(evt,
 				IVariable.ELEMENT_TYPE, varPrefix);
 		for (String varName : identifiers) {
 			IVariable var = evt.getVariable(varPrefix + varIndex);
 			var.create(null, pm);
 			var.setIdentifierString(varName, pm);
 			editor.addNewElement(var);
-			varIndex = UIUtils
-					.getFreeElementNameIndex(evt,
-							IVariable.ELEMENT_TYPE, varPrefix,
-							varIndex + 1);
+			varIndex = EventBUtils.getFreeChildNameIndex(evt,
+					IVariable.ELEMENT_TYPE, varPrefix, varIndex + 1);
 		}
 	}
 
@@ -1475,7 +1476,7 @@ public class EventBEditorUtils {
 					String setPrefix = UIUtils.getNamePrefix(editor,
 							IConstant.ELEMENT_TYPE,
 							PrefixCstName.DEFAULT_PREFIX);
-					int setIndex = UIUtils.getFreeElementNameIndex(editor, ctxFile,
+					int setIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 							ICarrierSet.ELEMENT_TYPE, setPrefix);
 					Collection<String> names = dialog.getAttributes();
 					
@@ -1485,7 +1486,7 @@ public class EventBEditorUtils {
 						set.create(null, pm);
 						set.setIdentifierString(name, pm);
 						editor.addNewElement(set);
-						setIndex = UIUtils.getFreeElementNameIndex(ctxFile,
+						setIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 								ICarrierSet.ELEMENT_TYPE, setPrefix,
 								setIndex + 1);
 					}
@@ -1543,8 +1544,8 @@ public class EventBEditorUtils {
 							.getDefaultPrefix("org.eventb.core.axiomLabel");
 					String namePrefix = UIUtils.getNamePrefix(editor,
 							IAxiom.ELEMENT_TYPE, defaultAxmPrefix);
-					int nameIndex = UIUtils.getFreeElementNameIndex(editor,
-							ctxFile, IAxiom.ELEMENT_TYPE, namePrefix);
+					int nameIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
+							IAxiom.ELEMENT_TYPE, namePrefix);
 
 					String labelPrefix = UIUtils.getPrefix(editor,
 							IAxiom.ELEMENT_TYPE, defaultAxmPrefix);
@@ -1561,7 +1562,7 @@ public class EventBEditorUtils {
 					String cstPrefix = UIUtils.getNamePrefix(editor,
 							IConstant.ELEMENT_TYPE,
 							PrefixCstName.DEFAULT_PREFIX);
-					int cstIndex = UIUtils.getFreeElementNameIndex(editor, ctxFile,
+					int cstIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 							IConstant.ELEMENT_TYPE, cstPrefix);
 					String axmSep = "";
 					for (String element : elements) {
@@ -1569,10 +1570,10 @@ public class EventBEditorUtils {
 						cst.create(null, pm);
 						cst.setIdentifierString(element, pm);
 						editor.addNewElement(cst);
-						cstIndex = UIUtils.getFreeElementNameIndex(ctxFile,
+						cstIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 								IConstant.ELEMENT_TYPE, cstPrefix, cstIndex + 1);
 
-						nameIndex = UIUtils.getFreeElementNameIndex(ctxFile,
+						nameIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 								IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 						labelIndex = UIUtils.getFreeElementLabelIndex(editor,
 								ctxFile, IAxiom.ELEMENT_TYPE, labelPrefix,
@@ -1586,7 +1587,7 @@ public class EventBEditorUtils {
 
 					for (int i = 0; i < nbElements; ++i) {
 						for (int j = i+1; j < nbElements; ++j) {
-							nameIndex = UIUtils.getFreeElementNameIndex(ctxFile,
+							nameIndex = EventBUtils.getFreeChildNameIndex(ctxFile,
 									IAxiom.ELEMENT_TYPE, namePrefix, nameIndex);
 							labelIndex = UIUtils.getFreeElementLabelIndex(editor,
 									ctxFile, IAxiom.ELEMENT_TYPE,
@@ -1645,8 +1646,8 @@ public class EventBEditorUtils {
 					String[] names = dialog.getNewNames();
 					String[] contents = dialog.getNewContents();
 
-					int index = UIUtils.getFreeElementNameIndex(editor,
-							rodinFile, IAxiom.ELEMENT_TYPE, prefix);
+					int index = EventBUtils.getFreeChildNameIndex(rodinFile,
+							IAxiom.ELEMENT_TYPE, prefix);
 					for (int i = 0; i < names.length; i++) {
 						String name = names[i];
 						String content = contents[i];
@@ -1654,7 +1655,7 @@ public class EventBEditorUtils {
 								IAxiom.ELEMENT_TYPE, prefix + index);
 						assert !newAxm.exists();
 						newAxm.create(null, monitor);
-						index = UIUtils.getFreeElementNameIndex(rodinFile,
+						index = EventBUtils.getFreeChildNameIndex(rodinFile,
 								IAxiom.ELEMENT_TYPE, prefix, index + 1);
 						newAxm.setLabel(name, monitor);
 						newAxm.setPredicateString(content, null);
@@ -1669,25 +1670,10 @@ public class EventBEditorUtils {
 		}
 	}
 
-	public static IRodinFile getAbstractFile(IRodinFile concreteFile)
-			throws RodinDBException {
-		IRodinElement[] refines = concreteFile
-				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-		if (refines.length == 1) {
-			IRefinesMachine refine = (IRefinesMachine) refines[0];
-			String name = refine.getAbstractMachineName();
-			IEventBProject prj = (IEventBProject) concreteFile
-					.getRodinProject().getAdapter(IEventBProject.class);
-			return prj.getMachineFile(name);
-		}
-		return null;
-
-	}
-
 	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
 			throws RodinDBException {
-		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
-		IRodinFile abstractFile = getAbstractFile(rodinFile);
+		IMachineFile rodinFile = (IMachineFile) concreteElement.getOpenable();
+		IRodinFile abstractFile = EventBUtils.getAbstractMachine(rodinFile);
 		if (abstractFile == null)
 			return null;
 		if (!abstractFile.exists())
@@ -1710,21 +1696,7 @@ public class EventBEditorUtils {
 		return abstractElement;
 	}
 
-	public static IEvent getAbstractEvent(IRodinFile abstractFile,
-			IEvent conc_evt) throws RodinDBException {
-		IRodinElement abs_evt = null;
-		IRodinElement[] abs_evts = conc_evt
-				.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-		if (abs_evts.length != 0) {
-			abs_evt = UIUtils.getFirstChildOfTypeWithLabel(abstractFile,
-					IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
-							.getAbstractEventLabel());
-		} else {
-			// Do nothing at the moment. Should try to get the event with same
-			// name?
-		}
-		return (IEvent) abs_evt;
-	}
+
 
 	public static void debug(String message) {
 		System.out.println(EventBEditorUtils.DEBUG_PREFIX + message);

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Rodin @ ETH Zurich
+******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -12,8 +24,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -21,28 +35,47 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *         <p>
+ *         An extension of {@link AbstractHandler} for handling Paste action.
+ */
 public class PasteHandler extends AbstractHandler implements IHandler {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
 	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 
-		ISelection selection = EventBUIPlugin.getActivePage().getSelection();
-		if (selection == null)
+		// Get the current selection from the active page.
+		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
+		ISelection selection = activePage.getSelection();
+		
+		// Do nothing if there is no selection.
+		if (selection == null) {
+			if (EventBEditorUtils.DEBUG) {
+				EventBEditorUtils.debug("Paste action: Current active page is "
+						+ activePage);
+			}
 			return "Must have a selection to paste";
+		}
 
+		// Create the clipboard associated with the workbench.
 		IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
-		// try a rodin handle transfer
+		// Try to handle by using a rodin handle transfer.
 		RodinHandleTransfer rodinHandleTransfer = RodinHandleTransfer
 				.getInstance();
 		final IRodinElement[] handleData = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
 
+		// There is no data in the clipboard for rodin handle transfer then do nothing.
 		if (handleData == null)
 			return "Nothing to paste";
 		
-		
+		// Check for the existing of the elements to be pasted.
 		for (IRodinElement element : handleData) {
 			if (!element.exists()) {
 				Shell shell = workbench.getActiveWorkbenchWindow().getShell();
@@ -50,11 +83,14 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 						+ element + " does not exist.");
 			}
 		}
+		
+		// Get the target from the current selection.
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		final IRodinElement sibling = getTarget(ssel);
 		if (sibling == null || !sibling.exists())
 			return "Target does not exist";
 		
+		// Copy the elements from clipboard to the target.
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
@@ -63,7 +99,7 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 						IRodinElement parent = sibling.getParent();
 						IInternalElement internalElement = (IInternalElement) element;
 						(internalElement).copy(parent, sibling, "element"
-								+ UIUtils.getFreeElementNameIndex(
+								+ EventBUtils.getFreeChildNameIndex(
 										(IInternalParent) parent,
 										internalElement.getElementType(),
 										"element", 0), false, null);
@@ -75,7 +111,8 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 			return "Paste unsuccessful";
 		}
 	
-		System.out.println("PASTE SUCCESSFULLY");
+		if (EventBEditorUtils.DEBUG)
+			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
 		return null;
 	}
 	
@@ -95,6 +132,5 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 
 		return null;
 	}
-
 
 }

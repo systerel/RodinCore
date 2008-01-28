@@ -52,7 +52,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -61,11 +60,15 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This is a class which store utility static methods that can be used in
+ *         This class contains some utility static methods that are used in
  *         this Event-B User interface plug-in.
  */
 public class UIUtils {
 
+	/**
+	 * The debug flag. This is set by the option when the platform is launch.
+	 * Client should not try to reset this flag.
+	 */
 	public static boolean DEBUG = false;
 
 	public static void log(Throwable exc, String message) {
@@ -76,7 +79,7 @@ public class UIUtils {
 			}
 		}
 		if (message == null) {
-			message = "Unknown context";
+			message = "Unknown context"; //$NON-NLS-1$
 		}
 		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, exc);
@@ -134,7 +137,7 @@ public class UIUtils {
 
 		Assert
 				.isTrue(component != null,
-						"Component must be initialised by now");
+						"Component must be initialised by now"); //$NON-NLS-1$
 		try {
 			IEditorInput fileInput = new FileEditorInput(component
 					.getResource());
@@ -207,9 +210,9 @@ public class UIUtils {
 	 */
 	public static String XMLWrapUp(String input) {
 		String output = input;
-		output = output.replaceAll("&", "&amp;");
-		output = output.replaceAll("<", "&lt;");
-		output = output.replaceAll(">", "&gt;");
+		output = output.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		output = output.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		output = output.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
 		return output;
 	}
 
@@ -224,10 +227,10 @@ public class UIUtils {
 	 */
 	public static String HTMLWrapUp(String input) {
 		String output = input;
-		output = output.replaceAll("&", "&amp;");
-		output = output.replaceAll("<", "&lt;");
-		output = output.replaceAll(">", "&gt;");
-		output = output.replaceAll(" ", "&nbsp;");
+		output = output.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		output = output.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		output = output.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		output = output.replaceAll(" ", "&nbsp;"); //$NON-NLS-1$ //$NON-NLS-2$
 		return output;
 	}
 	
@@ -240,8 +243,8 @@ public class UIUtils {
 	 * @return XML formatted string represents the link
 	 */
 	public static String makeHyperlink(String link) {
-		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">"
-				+ UIUtils.XMLWrapUp(link) + "</a>";
+		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" //$NON-NLS-1$ //$NON-NLS-2$
+				+ UIUtils.XMLWrapUp(link) + "</a>"; //$NON-NLS-1$
 	}
 
 	/**
@@ -253,8 +256,8 @@ public class UIUtils {
 	 * @return XML formatted string represents the link
 	 */
 	public static String makeHyperlink(String link, String text) {
-		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">"
-				+ UIUtils.XMLWrapUp(text) + "</a>";
+		return "<a href=\"" + UIUtils.XMLWrapUp(link) + "\">" //$NON-NLS-1$ //$NON-NLS-2$
+				+ UIUtils.XMLWrapUp(text) + "</a>"; //$NON-NLS-1$
 	}
 
 	/**
@@ -351,7 +354,7 @@ public class UIUtils {
 
 	public static String getNamePrefix(IEventBEditor<?> editor,
 			IInternalElementType<?> type, String defaultPrefix) {
-		return "internal_" + getPrefix(editor, type, defaultPrefix);
+		return "internal_" + getPrefix(editor, type, defaultPrefix); //$NON-NLS-1$
 	}
 
 	public static String getPrefix(IEventBEditor<?> editor,
@@ -376,29 +379,7 @@ public class UIUtils {
 			IInternalElementType<T> type,
 			String defaultPrefix) throws RodinDBException {
 		String prefix = getNamePrefix(editor, type, defaultPrefix);
-		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
-	}
-
-	public static <T extends IInternalElement> int getFreeElementNameIndex(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<T> type, String prefix)
-			throws RodinDBException {
-		return getFreeElementNameIndex(parent, type, prefix, 1);
-	}
-
-	public static <T extends IInternalElement> int getFreeElementNameIndex(
-			IInternalParent parent, IInternalElementType<T> type,
-			String prefix, int beginIndex) throws RodinDBException {
-
-		T[] elements = parent.getChildrenOfType(type);
-
-		int i;
-		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			T element = parent.getInternalElement(type, prefix + i);
-			if (!element.exists())
-				break;
-		}
-		return i;
+		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
 	public static String getFreeElementLabel(
@@ -443,18 +424,18 @@ public class UIUtils {
 			IInternalElementType<? extends IInternalElement> type, String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, type, defaultPrefix);
 		return prefix
-				+ getFreeElementIdentifierIndex(editor, parent, type, prefix);
+				+ getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 
 	public static int getFreeElementIdentifierIndex(
-			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type, String prefix)
 			throws RodinDBException {
-		return getFreeElementIdentifierIndex(editor, parent, type, prefix, 1);
+		return getFreeElementIdentifierIndex(parent, type, prefix, 1);
 	}
 
 	public static int getFreeElementIdentifierIndex(
-			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type, String prefix, int beginIndex)
 			throws RodinDBException {
 
@@ -474,18 +455,6 @@ public class UIUtils {
 				break;
 		}
 		return i;
-	}
-
-	public static <T extends ILabeledElement> T getFirstChildOfTypeWithLabel(
-			IParent parent, IInternalElementType<T> type, String label)
-			throws RodinDBException {
-
-		for (T child : parent.getChildrenOfType(type)) {
-			if (child.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE)
-					&& label.equals(child.getLabel()))
-				return child;
-		}
-		return null;
 	}
 
 	public static Collection<IRodinElement> addToTreeSet(
@@ -525,8 +494,8 @@ public class UIUtils {
 				element.setAttributeValue(attrType, newValue, pm);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "Error changing attribute " + attrType.getId()
-					+ " for element " + element.getElementName());
+			UIUtils.log(e, "Error changing attribute " + attrType.getId() //$NON-NLS-1$
+					+ " for element " + element.getElementName()); //$NON-NLS-1$
 			if (UIUtils.DEBUG)
 				e.printStackTrace();
 		}
@@ -537,7 +506,7 @@ public class UIUtils {
 			IInternalElementType<T> type) throws RodinDBException {
 		String defaultPrefix = "element"; // TODO Get this from extentions
 		String prefix = getNamePrefix(editor, type, defaultPrefix);
-		return prefix + getFreeElementNameIndex(editor, parent, type, prefix);
+		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
 	public static QualifiedName getQualifiedName(
@@ -575,7 +544,7 @@ public class UIUtils {
 	 *            the debug message
 	 */
 	public static void printDebugMessage(String debugPrefix, String message) {
-		StringTokenizer tokenizer = new StringTokenizer(message, "\n");
+		StringTokenizer tokenizer = new StringTokenizer(message, "\n"); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			System.out.println(debugPrefix + tokenizer.nextToken());
 		}
@@ -596,7 +565,7 @@ public class UIUtils {
 				sep = true;
 			}
 			else {
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			}
 			buffer.append(item);
 		}
@@ -618,7 +587,7 @@ public class UIUtils {
 				sep = true;
 			}
 			else {
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			}
 			buffer.append(item);
 		}
@@ -640,6 +609,5 @@ public class UIUtils {
         }
         return result.toArray(new String[result.size()]);
 	}
-
 
 }

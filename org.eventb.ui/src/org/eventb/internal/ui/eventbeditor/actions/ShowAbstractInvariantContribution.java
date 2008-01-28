@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Rodin @ ETH Zurich
+******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.ContributionItem;
@@ -7,31 +19,58 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @author htson
+ *         <p>
+ *         An extension of {@link ContributionItem} for contributing actions to
+ *         the context menu. The actions is for showing the invariants of
+ *         different abstract models.
+ */
 public class ShowAbstractInvariantContribution extends ContributionItem {
 
-	private IRodinFile file;
+	/**
+	 * The concrete machine.
+	 */
+	private IMachineFile file;
 
+	/**
+	 * Constructor.
+	 * <p>
+	 * Store the concrete machine.
+	 * 
+	 * @param file
+	 *            the concrete machine.
+	 */
 	public ShowAbstractInvariantContribution(IRodinFile file) {
-		this.file = file;
+		assert file instanceof IMachineFile;
+		this.file = (IMachineFile) file;
 	}
 
+	/**
+	 * Loop to find get all the abstract machine corresponding to the input
+	 * machine. For each abstract machine, create the corresponding menu item.
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+	 *      int)
+	 */
 	@Override
 	public void fill(Menu menu, int index) {
 		try {
-			IRodinFile abstractFile = EventBEditorUtils.getAbstractFile(file);
+			IMachineFile abstractFile = EventBUtils.getAbstractMachine(file);
 			while (abstractFile != null && abstractFile.exists()) {
 				createMenuItem(menu, abstractFile);
-				abstractFile = EventBEditorUtils.getAbstractFile(abstractFile);
+				abstractFile = EventBUtils.getAbstractMachine(abstractFile);
 			}
 
 		} catch (RodinDBException e) {
@@ -40,10 +79,21 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 		}
 	}
 
-	private void createMenuItem(Menu menu, final IRodinFile abstractFile) throws RodinDBException {
+	/**
+	 * Utility method for creating a menu item corresponding to an abstract
+	 * event.
+	 * 
+	 * @param menu
+	 *            the parent menu
+	 * @param abstractFile the abstract machine
+	 * @throws RodinDBException if some problems occur.
+	 */
+	private void createMenuItem(Menu menu, final IRodinFile abstractFile)
+			throws RodinDBException {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 		menuItem.setText(abstractFile.getBareName());
-		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
+		menuItem
+				.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		final IRodinElement inv;
 		IRodinElement[] invs = abstractFile

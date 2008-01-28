@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Rodin @ ETH Zurich
+******************************************************************************/
+
 package org.eventb.ui.eventbeditor.editpage.tests;
 
 import java.util.List;
@@ -12,14 +24,29 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.elementSpecs.ElementRelationship;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
+import org.eventb.internal.ui.eventbeditor.editpage.ElementRelUISpecRegistry;
 import org.eventb.internal.ui.eventbeditor.editpage.IElementRelUISpecRegistry;
+import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
 
+/**
+ * @author htson
+ *         <p>
+ *         jUnit tests for {@link ElementRelUISpecRegistry}.
+ */
 public class TestElementRelUISpecRegistry extends EventBUITest {
 
+	/**
+	 * The registry for testing. Using an extension of
+	 * {@link ElementRelUISpecRegistry} for testing.
+	 */
 	IElementRelUISpecRegistry registry = ElementRelUISpecTestRegistry
 			.getDefault();
 	
+	/**
+	 * Tests for
+	 * {@link ElementRelUISpecRegistry#getElementRelationships(org.rodinp.core.IElementType)}.
+	 */
 	@Test
 	public void testGetElementRelationships() {
 		
@@ -123,6 +150,10 @@ public class TestElementRelUISpecRegistry extends EventBUITest {
 		
 	}
 
+	/**
+	 * Tests for
+	 * {@link ElementRelUISpecRegistry#getPrefix(IElementRelationship)}.
+	 */
 	@Test
 	public void testGetPrefix() {
 		// IMachineFile
@@ -162,6 +193,10 @@ public class TestElementRelUISpecRegistry extends EventBUITest {
 				"THEN", registry.getPrefix(eventRelationships.get(2)));
 	}
 	
+	/**
+	 * Tests for
+	 * {@link ElementRelUISpecRegistry#getPostfix(IElementRelationship)}.
+	 */
 	@Test
 	public void testGetPostfix() {
 		// IMachineFile

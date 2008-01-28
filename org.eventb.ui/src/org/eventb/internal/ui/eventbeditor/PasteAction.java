@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2008 ETH Zurich.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Rodin @ ETH Zurich
+******************************************************************************/
+
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.core.resources.IContainer;
@@ -24,8 +36,8 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariant;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
@@ -38,6 +50,12 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
+/**
+ * @author htson
+ *         <p>
+ *         An extension of {@link SelectionListenerAction} providing the paste
+ *         action.
+ */
 public class PasteAction extends SelectionListenerAction {
 
 	/**
@@ -149,7 +167,7 @@ public class PasteAction extends SelectionListenerAction {
 						if (element instanceof IEvent)
 							((IInternalElement) element).copy(
 									pasteInto, null, "evt"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IEvent.ELEMENT_TYPE, "evt",
 													0), false,
@@ -157,7 +175,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof IInvariant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "inv"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IInvariant.ELEMENT_TYPE,
 													"inv", 0), false,
@@ -165,7 +183,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof ITheorem)
 							((IInternalElement) element).copy(
 									pasteInto, null, "thm"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													ITheorem.ELEMENT_TYPE,
 													"thm", 0), false,
@@ -173,7 +191,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof IVariant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "variant"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IVariant.ELEMENT_TYPE,
 													"variant", 0), false,
@@ -181,7 +199,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof IAxiom)
 							((IInternalElement) element).copy(
 									pasteInto, null, "axm"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IAxiom.ELEMENT_TYPE, "axm",
 													0), false,
@@ -189,7 +207,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof IConstant)
 							((IInternalElement) element).copy(
 									pasteInto, null, "cst"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IConstant.ELEMENT_TYPE,
 													"cst", 0), false,
@@ -197,7 +215,7 @@ public class PasteAction extends SelectionListenerAction {
 						else if (element instanceof ICarrierSet)
 							((IInternalElement) element).copy(
 									pasteInto, null, "set"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													ICarrierSet.ELEMENT_TYPE,
 													"set", 0), false,
@@ -205,7 +223,7 @@ public class PasteAction extends SelectionListenerAction {
 						else
 							((IInternalElement) element).copy(parent, null,
 									"element"
-											+ UIUtils.getFreeElementNameIndex(
+											+ EventBUtils.getFreeChildNameIndex(
 													(IInternalParent) parent,
 													((InternalElement) element).getElementType(),
 													"element", 1), false,
@@ -341,8 +359,6 @@ public class PasteAction extends SelectionListenerAction {
 		if (firstElement instanceof IRodinElement)
 			return (IRodinElement) firstElement;
 
-		// if (firstElement instanceof TreeNode)
-		// return (IRodinElement) ((TreeNode) firstElement).getParent();
 		return null;
 	}
 

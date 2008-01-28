@@ -78,6 +78,10 @@ public class Messages {
 	public static String preferencepage_twolistselectioneditor_availablelabel;
 	public static String preferencepage_twolistselectioneditor_selectedlabel;
 	
+	// Attribute Factory
+	public static String attributeFactory_inherited_true;
+	public static String attributeFactory_inherited_false;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
