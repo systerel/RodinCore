@@ -23,6 +23,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -86,15 +87,18 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 		
 		ArrayList<IPOGPredicate> hyp =  makeActionHypothesis(varPredicate);
 		
+		String sequentNameVAR = concreteEventLabel + "/VAR";
 		createPO(
 				target, 
-				concreteEventLabel + "/VAR", 
+				sequentNameVAR, 
 				"Variant of event", 
 				eventHypothesisManager.getFullHypothesis(), 
 				hyp, 
 				makePredicate(varPredicate, variantSource), 
 				sources, 
-				NO_HINTS, 
+				new IPOGHint[] {
+						getLocalHypothesisSelectionHint(target, sequentNameVAR)
+					}, 
 				accurate,
 				monitor);
 		
@@ -105,15 +109,18 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 						varExpression, 
 						factory.makeAtomicExpression(Formula.NATURAL, null), 
 						null);
+			String sequentNameNAT = concreteEventLabel + "/NAT";
 			createPO(
 					target, 
-					concreteEventLabel + "/NAT", 
+					sequentNameNAT, 
 					"Natural number variant of event", 
 					eventHypothesisManager.getFullHypothesis(), 
 					hyp, 
 					makePredicate(natPredicate, variantSource), 
 					sources, 
-					NO_HINTS, 
+					new IPOGHint[] {
+							getLocalHypothesisSelectionHint(target, sequentNameNAT)
+						}, 
 					accurate,
 					monitor);
 		}

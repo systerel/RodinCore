@@ -350,6 +350,46 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		sequentHasSelectionHints(sequent, typeEnvironment, "x≤z(x)");
 		sequentHasNotSelectionHints(sequent, typeEnvironment, "x=min(0‥4)", "z∈ℕ→ℕ");
 	}
+	
+	/**
+	 * variant hints for progress proof obligation
+	 */
+	public void testMachineHints_07() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"));
+		IEvent evt = addEvent(mac, "evt", 
+				makeSList("y"), 
+				makeSList("G", "H", "K"), makeSList("y>1", "x÷x=0", "x+y=0"), 
+				makeSList("A"), makeSList("x ≔ x−1"));
+		setConvergent(evt);
+		addVariant(mac, "x+1");
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		typeEnvironment.addName("y", intType);
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		IPOFile po = mac.getPOFile();
+		
+		containsIdentifiers(po, "x");
+		
+		IPOSequent sequent = getSequent(po, "evt/VAR");
+		
+		sequentHasIdentifiers(sequent, "x'", "y");
+		sequentHasSelectionHints(sequent, typeEnvironment, "y>1", "x÷x=0", "x+y=0");
+		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4");
+		
+		sequent = getSequent(po, "evt/NAT");
+		
+		sequentHasIdentifiers(sequent, "x'", "y");
+		sequentHasSelectionHints(sequent, typeEnvironment, "y>1", "x÷x=0", "x+y=0");
+		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4");
+	}
 
 	@Override
 	protected IGenericPOTest<IMachineFile> newGeneric() {
