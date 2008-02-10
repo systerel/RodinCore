@@ -19,7 +19,9 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 
 public class TracingReasoner extends EmptyInputReasoner {
 
-	public static String REASONER_ID = "org.eventb.core.tests.tracingReasoner";
+	public static final String REASONER_ID = "org.eventb.core.tests.tracingReasoner";
+
+	public static final String TACTIC_ID = "org.eventb.core.tests.tracingTactic";
 
 	public static class TracingTactic implements ITactic {
 
