@@ -24,31 +24,28 @@ public abstract class ConfElement implements IConfigurationElement {
 	private final static IConfigurationElement[] NO_CONF = new IConfigurationElement[0];
 
 	public Object createExecutableExtension(String propertyName) throws CoreException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
-	public String getAttributeAsIs(String name)
-			throws InvalidRegistryObjectException {
-				return getAttribute(name);
-			}
+	public String getAttributeAsIs(String name) throws InvalidRegistryObjectException {
+		throw new UnsupportedOperationException();
+	}
 
 	public String[] getAttributeNames() throws InvalidRegistryObjectException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public IConfigurationElement[] getChildren() throws InvalidRegistryObjectException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
-	public IConfigurationElement[] getChildren(String name)
-			throws InvalidRegistryObjectException {
+	public IConfigurationElement[] getChildren(String name) throws InvalidRegistryObjectException {
 				return NO_CONF;
-			}
+	}
 
-	public IExtension getDeclaringExtension()
-			throws InvalidRegistryObjectException {
-				return null;
-			}
+	public IExtension getDeclaringExtension() throws InvalidRegistryObjectException {
+		throw new UnsupportedOperationException();
+	}
 
 	public String getNamespace() throws InvalidRegistryObjectException {
 		return null;
@@ -75,15 +72,15 @@ public abstract class ConfElement implements IConfigurationElement {
 	}
 
 	public String getValue() throws InvalidRegistryObjectException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public String getValueAsIs() throws InvalidRegistryObjectException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public boolean isValid() {
-		return true;
+		throw new UnsupportedOperationException();
 	}
 
 
