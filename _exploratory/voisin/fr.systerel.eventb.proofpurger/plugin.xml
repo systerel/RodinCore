@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="fr.systerel.eventb.proofpurger.contribution"
+            objectClass="org.rodinp.core.IOpenable">
+         <action
+               class="fr.systerel.eventb.proofpurger.popup.actions.FilePurgeAction"
+               id="fr.systerel.eventb.proofpurger.filePurgeAction"
+               label="%action.label"
+               tooltip="%action.tooltip">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
