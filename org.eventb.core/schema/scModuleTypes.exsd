@@ -10,8 +10,6 @@
       </documentation>
    </annotation>
 
-   <include schemaLocation="modules.exsd"/>
-
    <element name="extension">
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
