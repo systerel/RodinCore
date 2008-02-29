@@ -44,7 +44,8 @@ public class LRUCache<K, V> implements Cloneable {
 	 * 
 	 * @see LRUCache
 	 */
-	protected static class LRUCacheEntry<KI, VI> {
+	// TODO put back protected when eclipse bug #216692 is fixed
+	public static class LRUCacheEntry<KI, VI> {
 
 		/**
 		 * Hash table key
