@@ -267,6 +267,29 @@ public class ProofState implements IProofState {
 		});
 	}
 
+	/**
+	 * Get the next reviewed subgoal from the input node. This method does not
+	 * change the current proof tree node.
+	 * <p>
+	 * 
+	 * @param node
+	 *            a proof tree node
+	 * @return a next reviewed proof tree node if any. Return <code>null</code>
+	 *         otherwise.
+	 */
+	protected IProofTreeNode getNextReviewedSubgoal(IProofTreeNode node) {
+		if (node.getProofTree() != pt) {
+			node = pt.getRoot();
+		}
+		return node.getNextNode(true, new IProofTreeNodeFilter() {
+			public boolean select(IProofTreeNode n) {
+				int confidence = n.getConfidence();
+				return (confidence > IConfidence.PENDING && confidence <= IConfidence.REVIEWED_MAX);
+			}
+			
+		});
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -555,7 +578,7 @@ public class ProofState implements IProofState {
 			public void run() {
 				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
 						applyPostTactic)) {
-					selectNextPendingSubGoal(node);
+					selectNextUndischargedSubGoal(node);
 				}
 			}
 
@@ -580,7 +603,7 @@ public class ProofState implements IProofState {
 				ProofState.this.addAllToCached(hyps);
 				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
 						applyPostTactic)) {
-					selectNextPendingSubGoal(node);
+					selectNextUndischargedSubGoal(node);
 				}
 			}
 
@@ -588,14 +611,37 @@ public class ProofState implements IProofState {
 
 	}
 
-	protected void selectNextPendingSubGoal(IProofTreeNode node) {
-		final IProofTreeNode newNode = this.getNextPendingSubgoal(node);
-		if (newNode != null) {
+	/**
+	 * Select the next undischarged subgoal starting from the current node.
+	 * <ul>
+	 * <li> Select the next pending subgoal if any,</li>
+	 * <li> otherwise, select the next reviewed subgoal if any.</li>
+	 * <li> Do nothing if there is no pending or reviewed subgoal.</li>
+	 * </ul>
+	 * 
+	 * @param node
+	 *            the node where the search start.
+	 */
+	protected void selectNextUndischargedSubGoal(IProofTreeNode node) {
+		// Try pending subgoal first
+		final IProofTreeNode pendingNode = this.getNextPendingSubgoal(node);
+		if (pendingNode != null) {
 			try {
-				setCurrentNode(newNode);
+				setCurrentNode(pendingNode);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		else {
+			final IProofTreeNode reviewedNode = this.getNextReviewedSubgoal(node);
+			if (reviewedNode != null) {
+				try {
+					setCurrentNode(reviewedNode);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
