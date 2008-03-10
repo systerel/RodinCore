@@ -89,6 +89,129 @@ public class ArithFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("−(x + y)", "z − (x + y + z)");
 		expressionTest("−(x + z)", "y − (x + y + z)");
 		expressionTest("−(y + z)", "x − (x + y + z)");
+		
+		// C = A + ... + C + ... + B  ==  0 = A + ... + B
+		predicateTest("0 = x", "y = x + y");
+		predicateTest("0 = y", "x = x + y");
+		predicateTest("0 = x + y", "z = x + y + z");
+		predicateTest("0 = x + y", "z = z + x + y");
+		predicateTest("0 = x + y", "z = x + z + y");
+
+		// A + ... + C + ... + B = C  ==  A + ... + B = 0
+		predicateTest("x = 0", "x + y = y");
+		predicateTest("y = 0", "x + y = x");
+		predicateTest("x + y = 0", "x + y + z = z");
+		predicateTest("x + y = 0", "z + x + y = z");
+		predicateTest("x + y = 0", "x + z + y = z");
+		
+		// A + ... + E + ... + B  = C + ... + E + ... + D   == A + ... + B = C + ... + D
+		predicateTest("a = c ∗ 2", "a + b = c ∗ 2 + b");
+		predicateTest("a = c ∗ 2", "b + a = c ∗ 2 + b");
+		predicateTest("a = c ∗ 2", "a + b = b + c ∗ 2");
+		predicateTest("a = c ∗ 2", "b + a = b + c ∗ 2");
+		predicateTest("a = c + d", "a + b = c + b + d");
+		predicateTest("a = c + d", "a + b = c + d + b");
+		predicateTest("a = c + d", "a + b = b + c + d");
+		predicateTest("a + b = c", "a + b + d = c + d");
+		predicateTest("a + b = c", "a + d + b = c + d");
+		predicateTest("a + b = c", "d + a + b = c + d");
+		predicateTest("a + b = c + d", "a + b + e = c + d + e");
+		predicateTest("a + b = c + d", "a + e + b = c + d + e");
+		predicateTest("a + b = c + d", "e + a + b = c + d + e");
+		predicateTest("a + b = c + d", "a + b + e = c + e + d");
+		predicateTest("a + b = c + d", "a + e + b = c + e + d");
+		predicateTest("a + b = c + d", "e + a + b = c + e + d");
+		predicateTest("a + b = c + d", "a + b + e = e + c + d");
+		predicateTest("a + b = c + d", "a + e + b = e + c + d");
+		predicateTest("a + b = c + d", "e + a + b = e + c + d");
+		
+		// C < A + ... + C + ... + B  ==  0 < A + ... + B
+		predicateTest("0 < x", "y < x + y");
+		predicateTest("0 < y", "x < x + y");
+		predicateTest("0 < x + y", "z < x + y + z");
+		predicateTest("0 < x + y", "z < z + x + y");
+		predicateTest("0 < x + y", "z < x + z + y");
+
+		// A + ... + C + ... + B < C  ==  A + ... + B < 0
+		predicateTest("x < 0", "x + y < y");
+		predicateTest("y < 0", "x + y < x");
+		predicateTest("x + y < 0", "x + y + z < z");
+		predicateTest("x + y < 0", "z + x + y < z");
+		predicateTest("x + y < 0", "x + z + y < z");
+
+		// A + ... + E + ... + B  < C + ... + E + ... + D   == A + ... + B < C + ... + D
+		predicateTest("a < c ∗ 2", "a + b < c ∗ 2 + b");
+		predicateTest("a < c ∗ 2", "b + a < c ∗ 2 + b");
+		predicateTest("a < c ∗ 2", "a + b < b + c ∗ 2");
+		predicateTest("a < c ∗ 2", "b + a < b + c ∗ 2");
+		predicateTest("a < c + d", "a + b < c + b + d");
+		predicateTest("a < c + d", "a + b < c + d + b");
+		predicateTest("a < c + d", "a + b < b + c + d");
+		predicateTest("a + b < c", "a + b + d < c + d");
+		predicateTest("a + b < c", "a + d + b < c + d");
+		predicateTest("a + b < c", "d + a + b < c + d");
+		predicateTest("a + b < c + d", "a + b + e < c + d + e");
+		predicateTest("a + b < c + d", "a + e + b < c + d + e");
+		predicateTest("a + b < c + d", "e + a + b < c + d + e");
+		predicateTest("a + b < c + d", "a + b + e < c + e + d");
+		predicateTest("a + b < c + d", "a + e + b < c + e + d");
+		predicateTest("a + b < c + d", "e + a + b < c + e + d");
+		predicateTest("a + b < c + d", "a + b + e < e + c + d");
+		predicateTest("a + b < c + d", "a + e + b < e + c + d");
+		predicateTest("a + b < c + d", "e + a + b < e + c + d");
+
+		// C <= A + ... + C + ... + B  ==  0 <= A + ... + B
+		predicateTest("0 ≤ x", "y ≤ x + y");
+		predicateTest("0 ≤ y", "x ≤ x + y");
+		predicateTest("0 ≤ x + y", "z ≤ x + y + z");
+		predicateTest("0 ≤ x + y", "z ≤ z + x + y");
+		predicateTest("0 ≤ x + y", "z ≤ x + z + y");
+
+		// A + ... + C + ... + B <= C  ==  A + ... + B <= 0
+		predicateTest("x ≤ 0", "x + y ≤ y");
+		predicateTest("y ≤ 0", "x + y ≤ x");
+		predicateTest("x + y ≤ 0", "x + y + z ≤ z");
+		predicateTest("x + y ≤ 0", "z + x + y ≤ z");
+		predicateTest("x + y ≤ 0", "x + z + y ≤ z");
+
+		// A + ... + E + ... + B  <= C + ... + E + ... + D   == A + ... + B <= C + ... + D
+		predicateTest("a ≤ c ∗ 2", "a + b ≤ c ∗ 2 + b");
+		predicateTest("a ≤ c ∗ 2", "b + a ≤ c ∗ 2 + b");
+		predicateTest("a ≤ c ∗ 2", "a + b ≤ b + c ∗ 2");
+		predicateTest("a ≤ c ∗ 2", "b + a ≤ b + c ∗ 2");
+		predicateTest("a ≤ c + d", "a + b ≤ c + b + d");
+		predicateTest("a ≤ c + d", "a + b ≤ c + d + b");
+		predicateTest("a ≤ c + d", "a + b ≤ b + c + d");
+		predicateTest("a + b ≤ c", "a + b + d ≤ c + d");
+		predicateTest("a + b ≤ c", "a + d + b ≤ c + d");
+		predicateTest("a + b ≤ c", "d + a + b ≤ c + d");
+		predicateTest("a + b ≤ c + d", "a + b + e ≤ c + d + e");
+		predicateTest("a + b ≤ c + d", "a + e + b ≤ c + d + e");
+		predicateTest("a + b ≤ c + d", "e + a + b ≤ c + d + e");
+		predicateTest("a + b ≤ c + d", "a + b + e ≤ c + e + d");
+		predicateTest("a + b ≤ c + d", "a + e + b ≤ c + e + d");
+		predicateTest("a + b ≤ c + d", "e + a + b ≤ c + e + d");
+		predicateTest("a + b ≤ c + d", "a + b + e ≤ e + c + d");
+		predicateTest("a + b ≤ c + d", "a + e + b ≤ e + c + d");
+		predicateTest("a + b ≤ c + d", "e + a + b ≤ e + c + d");
+		
+		// A - C = B - C  ==  A = B
+		predicateTest("a = c ∗ 2", "a − b = c ∗ 2 − b");
+		
+		// A - C < B - C  ==  A < B
+		predicateTest("a < c ∗ 2", "a − b < c ∗ 2 − b");
+		
+		// A - C <= B - C  ==  A <= B
+		predicateTest("a ≤ c ∗ 2", "a − b ≤ c ∗ 2 − b");
+		
+		// C - A = C - B  ==  A = B
+		predicateTest("a = c ∗ 2", "b − a = b − c ∗ 2");
+		
+		// C - A < C - B  ==  B < A
+		predicateTest("c ∗ 2 < a", "b − a < b − c ∗ 2");
+		
+		// C - A <= C - B  ==  B <= A
+		predicateTest("c ∗ 2 ≤ a", "b − a ≤ b − c ∗ 2");
 	}
 
 }
