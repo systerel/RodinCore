@@ -19,6 +19,7 @@
    </license>
 
    <url>
+      <discovery label="Europa discovery site" url="http://download.eclipse.org/releases/europa"/>
       <discovery label="Main Rodin update site" url="http://rodin-b-sharp.sourceforge.net/updates"/>
       <discovery label="B4free update site" url="http://bmethod.com/update_site/b4free_provers)"/>
       <discovery label="B2Rodin update site" url="http://bmethod.com/update_site/b2rodin"/>
