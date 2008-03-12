@@ -634,14 +634,11 @@ public final class ProofTreeNode implements IProofTreeNode {
 			str.append("\n");
 			child.toStringHelper(childIndent, this.children.length > 1, str);
 		}
-		return;
 	}
 
 	private String rootToString() {
-		String ruleStr;
-		if (this.rule == null) { ruleStr = "-"; }
-		else { ruleStr = this.rule.getDisplayName(); };
-		return getSequent().toString().replace("\n"," ") + "\t\t" + ruleStr;
+		final String ruleStr = rule == null ? "-" : rule.getDisplayName();
+		return getSequent().toString().replace("\n", " ") + "\t\t" + ruleStr;
 	}
 
 	private Iterator<IProofTreeNode> iterator(boolean rootIncluded) {
@@ -650,15 +647,17 @@ public final class ProofTreeNode implements IProofTreeNode {
 
 	public IProofTreeNode getNextNode(boolean rootIncluded,
 			IProofTreeNodeFilter filter) {
-		Iterator<IProofTreeNode> iterator = iterator(rootIncluded);
-		for (; iterator.hasNext();) {
-			IProofTreeNode node = iterator.next();
-			if (filter.select(node))
+		final Iterator<IProofTreeNode> iterator = iterator(rootIncluded);
+		while (iterator.hasNext()) {
+			final IProofTreeNode node = iterator.next();
+			if (filter.select(node)) {
 				return node;
+			}
 		}
-		// Reconsider the root node if no node match the filter.
-		if (!rootIncluded && filter.select(this))
+		// Reconsider the root node if no node matches the filter.
+		if (!rootIncluded && filter.select(this)) {
 			return this;
+		}
 		return null;
 	}
 	
