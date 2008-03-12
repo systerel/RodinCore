@@ -656,6 +656,9 @@ public final class ProofTreeNode implements IProofTreeNode {
 			if (filter.select(node))
 				return node;
 		}
+		// Reconsider the root node if no node match the filter.
+		if (!rootIncluded && filter.select(this))
+			return this;
 		return null;
 	}
 	
