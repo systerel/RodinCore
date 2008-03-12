@@ -177,12 +177,10 @@ public class ElementComposite implements IElementComposite {
 				}
 				createSectionComposites();
 			}
-		} else {
-			if (rElement.isAncestorOf(element)) {
-				if (sectionComps != null) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.refresh(element);
-					}
+		} else if (rElement.isAncestorOf(element)) {
+			if (sectionComps != null) {
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.refresh(element);
 				}
 			}
 		}
