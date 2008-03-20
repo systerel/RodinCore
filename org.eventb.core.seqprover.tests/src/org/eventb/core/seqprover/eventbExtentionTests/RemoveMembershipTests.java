@@ -188,6 +188,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 
 	String resultP32 = "∀x·x=0⇒1∈{1}∧1 ↦ x∈{1 ↦ x,x ↦ 2}";
 	
+	String domRes3 = "e ∈ {1} ◁ {1 ↦ 0}";
 	
 	// E |-> F : S <<| r == E /: S & E |-> F : r
 	String P33 = "(0 = 1) ⇒ (1 ↦ 0 ∈ {1} ⩤ {1 ↦ 0})";
@@ -198,6 +199,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 
 	String resultP34 = "∀x·x=0⇒1∉{1}∧1 ↦ x∈{1 ↦ x,x ↦ 2}";
 	
+	String domSub3 = "e ∈ {1} ⩤ {1 ↦ 0}";
 	
 	//	 E |-> F : r |> T == E |-> F : r & F : T
 	String P35 = "(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ▷ {0})";
@@ -208,6 +210,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 
 	String resultP36 = "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∈{x}";
 	
+	String ranRes3 = "e ∈ {1 ↦ 0} ▷ {0}";
 
 	//	 E |-> F : r |>> T == E |-> F : r & F /: T
 	String P37 = "(0 = 1) ⇒ (1 ↦ 0 ∈ {1 ↦ 0} ⩥ {0})";
@@ -218,6 +221,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	String resultP38 = "∀x·x=0⇒1 ↦ x∈{1 ↦ x,x ↦ 2}∧x∉{x}";
 
+	String ranSub3 = "e ∈ {1 ↦ 0} ⩥ {0}";
 	
 	// F : r[w] = #x.x : w & x |-> F : r
 	String P39 = "(0 = 1) ⇒ 1 ∈ r[{0, 1}]";
@@ -527,7 +531,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P83, "1",
 				P84, "1.1",
 				P86, "1",
-				P87, "1.1"
+				P87, "1.1",
+				domRes3, "",
+				domSub3, "",
+				ranRes3, "",
+				ranSub3, ""
 		};
 	}
 
@@ -632,6 +640,10 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	@Override
 	protected String[] getUnsuccessfulTests() {
 		return new String[] {
+				domRes3, "",
+				domSub3, "",
+				ranRes3, "",
+				ranSub3, "",
 				P1, "0",
 				P2, "1.0",
 				P3, "0",
@@ -718,7 +730,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P83, "0",
 				P84, "1.0",
 				P86, "0",
-				P87, "1.0"
+				P87, "1.0",
 		};
 	}
 
