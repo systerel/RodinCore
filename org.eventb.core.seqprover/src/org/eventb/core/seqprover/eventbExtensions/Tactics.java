@@ -1075,11 +1075,11 @@ public class Tactics {
 					}
 					if (right instanceof BinaryExpression
 							&& (rTag == Expression.DOMRES || rTag == Expression.DOMSUB)) {
-						return true;
+						return (left instanceof BinaryExpression && lTag == Expression.MAPSTO);
 					}
 					if (right instanceof BinaryExpression
 							&& (rTag == Expression.RANRES || rTag == Expression.RANSUB)) {
-						return true;
+						return (left instanceof BinaryExpression && lTag == Expression.MAPSTO);
 					}
 					if (right instanceof BinaryExpression
 							&& rTag == Expression.RELIMAGE) {
