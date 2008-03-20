@@ -45,7 +45,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 		if (predicate instanceof Predicate
 				&& Lib.isInclusion((Predicate) predicate))
 			newSubPredicate = rewriter.rewrite((RelationalPredicate) predicate);
-		if (newSubPredicate == null)
+		if (newSubPredicate == null || newSubPredicate == predicate)
 			return null;
 		return pred.rewriteSubFormula(position, newSubPredicate, ff);
 	}
