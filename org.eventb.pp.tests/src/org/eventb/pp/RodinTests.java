@@ -1242,7 +1242,7 @@ public class RodinTests extends AbstractPPTest {
 		prover.load();
 		prover.prove(test.timeout);
 		PPResult result = prover.getResult();
-		assertEquals(result.getResult() == Result.valid, test.result);
+		assertEquals(test.result, result.getResult() == Result.valid);
 	}
 
 	
