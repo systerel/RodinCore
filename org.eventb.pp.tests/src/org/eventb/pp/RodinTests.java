@@ -1245,6 +1245,36 @@ public class RodinTests extends AbstractPPTest {
 		assertEquals(result.getResult() == Result.valid, test.result);
 	}
 
+	
+	/**
+	 * Initial lemma as entered in the bug report
+	 */
+	public void testBug_1920747() {
+		doTest(
+				mList(
+					"set1","ℙ(set1)"
+				), mSet(
+					"cst1 ⊆ set1",
+					"cst2 ⊆ set1",
+					"cst3 ∈ cst1"
+				), "cst3 ∈ cst2"
+				, false);
+	}
+
+	/**
+	 * Simplified version of the lemma from the bug report
+	 */
+	public void testBug_1920747_1() {
+		doTest(
+				mList(
+					"A","ℙ(S)",
+					"B","ℙ(S)"
+				), mSet(
+					"x ∈ A"
+				), "x ∈ B"
+				, false);
+	}
+
 	// public static void main(String[] args) {
 	// RodinTests test = new RodinTests();
 	// test.testAll();
