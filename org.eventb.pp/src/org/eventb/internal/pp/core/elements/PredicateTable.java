@@ -8,7 +8,10 @@
 
 package org.eventb.internal.pp.core.elements;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -17,7 +20,7 @@ import java.util.List;
  * @author François Terrier
  *
  */
-public class PredicateTable {
+public class PredicateTable implements Iterable<PredicateLiteralDescriptor> {
 
 	private HashMap<Sort, PredicateLiteralDescriptor> map = new HashMap<Sort, PredicateLiteralDescriptor>();
 	private HashMap<Integer, PredicateLiteralDescriptor> integerMap = new HashMap<Integer, PredicateLiteralDescriptor>();
@@ -51,6 +54,11 @@ public class PredicateTable {
 	
 	public PredicateLiteralDescriptor getDescriptor(Sort sort) {
 		return map.get(sort);
+	}
+
+	public Iterator<PredicateLiteralDescriptor> iterator() {
+		final Collection<PredicateLiteralDescriptor> vs = integerMap.values();
+		return Collections.unmodifiableCollection(vs).iterator();
 	}
 	
 }

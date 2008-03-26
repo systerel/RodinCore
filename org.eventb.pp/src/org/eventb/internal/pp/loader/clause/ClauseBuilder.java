@@ -17,6 +17,7 @@ import org.eventb.internal.pp.core.elements.ClauseFactory;
 import org.eventb.internal.pp.core.elements.ComplexPredicateLiteral;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
+import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.PredicateTable;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
@@ -30,8 +31,6 @@ import org.eventb.internal.pp.loader.formula.AbstractLabelizableFormula;
 import org.eventb.internal.pp.loader.formula.ClauseResult;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
-import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
-import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 
@@ -150,12 +149,11 @@ public final class ClauseBuilder {
 	}
 	
 	public void buildPredicateTypeInformation(IContext context) {
-		for (PredicateDescriptor descriptor : context.getAllPredicateDescriptors()) {
-			List<TermSignature> unifiedTerms = descriptor.getUnifiedResults();
-			if (unifiedTerms.size() == 2 && !unifiedTerms.get(1).isConstant()) {
-				TermSignature term1 = unifiedTerms.get(0);
-				TermSignature term2 = unifiedTerms.get(1);
-				Clause clause = createTypeClause(descriptor.getIndex(), term1.getSort(), term2.getSort());
+		for (PredicateLiteralDescriptor pld : predicateTable) {
+			if (pld.isGenuineMembership() && pld.getArity() == 2) {
+				final List<Sort> sorts = pld.getSortList();
+				final Clause clause = createTypeClause(pld.getIndex(), sorts
+						.get(0), sorts.get(1));
 				clauses.add(clause);
 			}
 		}
