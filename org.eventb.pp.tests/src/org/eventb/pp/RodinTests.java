@@ -14,6 +14,7 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.pp.PPResult.Result;
 
 public class RodinTests extends AbstractPPTest {
@@ -1273,6 +1274,21 @@ public class RodinTests extends AbstractPPTest {
 					"x ∈ A"
 				), "x ∈ B"
 				, false);
+	}
+
+	/**
+	 * Ensures that a simple lemma of typed set-theory is discharged.
+	 * <p>
+	 * Here, we need that a quantified variable gets instantiated by a simple type.
+	 * </p>
+	 */
+	public void testTypeInstantiation() {
+		doTest(
+				mList(
+						"S","ℙ(S)"
+				), Util.<String>mSet(
+				), "∃y·∀x·x ∈ S ⇒ x ∈ y"
+				, true);
 	}
 
 	// public static void main(String[] args) {
