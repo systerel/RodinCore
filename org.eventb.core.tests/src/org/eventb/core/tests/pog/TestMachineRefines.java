@@ -1162,4 +1162,46 @@ public class TestMachineRefines extends EventBPOTest {
 		noSequent(po, "evt/a/WWD");
 	}
 
+	/*
+	 * Check that there are no witness-related POs (WFIS, WWD) for an inherited event.
+	 */
+	public void testBug_1920752() throws Exception {
+		final IMachineFile abs = createMachine("abs");
+		addVariables(abs, "v1", "v2");
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("v1∈ℤ", "v2∈ℤ"));
+		addInitialisation(abs, "v1", "v2");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1", "A2"), makeSList("v1 :∈ ℤ", "v2 ≔ v1"));
+		abs.save(null, true);
+		
+		final IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "v3");
+		addInvariants(ref, makeSList("J"), makeSList("v3 = v1 ↦ v2"));
+	
+		final IEvent ini = addInitialisation(ref, "v3");
+		addEventWitnesses(ini,
+				makeSList("v1'", "v2'"),
+				makeSList("v1' ∈ dom({v3'})", "v2' ∈ ran({v3'})"));
+
+		final IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("v3 :∈ ℤ×dom({v3})"));
+		addEventRefines(evt, "evt");
+		addEventWitnesses(evt, makeSList("v1'"), makeSList("v1' ∈ dom({v3'})"));
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		final IPOFile po = ref.getPOFile();
+		final IPOSequent sequent = getSequent(po, "evt/J/INV");
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		typenv.addName("v1", intType);
+		typenv.addName("v1'", intType);
+		sequentHasGoal(sequent, typenv, "v3' = v1' ↦ v1");
+	}
+
 }
