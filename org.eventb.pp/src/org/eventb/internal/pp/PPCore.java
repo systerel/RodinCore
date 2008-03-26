@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006,2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,15 @@ public class PPCore extends Plugin {
 		super.start(context);
 		plugin = this;
 		
+		enableAssertions();
 		configureDebugOptions();
+	}
+
+	/**
+	 * Enables Java assertion checks for this plug-in.
+	 */
+	private void enableAssertions() {
+		getClass().getClassLoader().setDefaultAssertionStatus(true);
 	}
 
 	/**
