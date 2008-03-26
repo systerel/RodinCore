@@ -21,8 +21,11 @@ import org.eventb.internal.pptrans.translator.PredicateSimplification;
  * @author Matthias Konrad
  */
 
-public abstract class Translator {
+public class Translator {
 	
+	private Translator() {
+		// Non instanciable class.sxs
+	}
 	
 	/**
 	 * Decomposes every free or bound idetnifier of a cartesian product type. Decomposed
