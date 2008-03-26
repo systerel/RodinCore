@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005,2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,6 +185,7 @@ public class EventBPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
+		enableAssertions();
 		configureDebugOptions();
 	}
 
@@ -194,6 +195,13 @@ public class EventBPlugin extends Plugin {
 		plugin = null;
 	}
 	
+	/**
+	 * Enable Java assertion checks for this plug-in.
+	 */
+	private void enableAssertions() {
+		getClass().getClassLoader().setDefaultAssertionStatus(true);
+	}
+
 	/**
 	 * Process debugging/tracing options coming from Eclipse.
 	 */

@@ -54,7 +54,15 @@ public class SequentProver extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
+		enableAssertions();
 		configureDebugOptions();
+	}
+
+	/**
+	 * Enable Java assertion checks for this plug-in.
+	 */
+	private void enableAssertions() {
+		getClass().getClassLoader().setDefaultAssertionStatus(true);
 	}
 
 	/**
