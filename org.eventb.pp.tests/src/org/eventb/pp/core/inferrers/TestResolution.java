@@ -25,6 +25,7 @@ import org.eventb.internal.pp.core.inferrers.ResolutionInferrer;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResolver;
 import org.eventb.internal.pp.core.provers.predicate.ResolutionResult;
 import org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable;
+import org.junit.Test;
 
 /**
  * This class tests the one point rule. There are several tests :
@@ -45,6 +46,7 @@ public class TestResolution extends AbstractInferrerTests {
 //		return new Clause[0];
 //	}
 
+    @Test
 	public void testSimple() {
 		// normal case
 		doTest(
@@ -108,6 +110,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule1() {
 		// PREDICATE LOGIC
 		doTest(
@@ -122,6 +125,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule2NewWithPredicatePreparation() {
 		doTest(
 				cClause(cPred(d0A,evar1),cProp(1)),
@@ -130,6 +134,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule2() {
 		doTest(
 				cClause(cPred(d0A,evar1),cProp(1)),
@@ -159,6 +164,7 @@ public class TestResolution extends AbstractInferrerTests {
 		
 	}
 
+    @Test
 	public void testRule3() {
 		doTest(
 				cClause(cPred(d0A,var0),cProp(1)),
@@ -167,6 +173,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule4and5() {
 		// PREDICATE LOGIC WITH EQUIVALENCE
 		doTest(
@@ -183,6 +190,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule4and5WithTransformation() {
 		// Tests transformation eqclause->disjclause
 		doTest(
@@ -217,6 +225,7 @@ public class TestResolution extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testRule6and7() {
 		// 4 TESTS with local variables + transformation
 		doTest(
@@ -253,6 +262,7 @@ public class TestResolution extends AbstractInferrerTests {
 //		);
 	}
 
+    @Test
 	public void testRule8And9() {
 		doTest(
 				cEqClause(cPred(d0A,evar2),cPred(d1A,var0)),
@@ -308,6 +318,7 @@ public class TestResolution extends AbstractInferrerTests {
 //		);
 	}
 
+    @Test
 	public void testOtherRule() {
 		// TODO check this
 		doTest(
@@ -375,6 +386,7 @@ public class TestResolution extends AbstractInferrerTests {
 	//	cClause(mList(cProp(1)),cNEqual(evar1, a))
 	//	);
 
+    @Test
 	public void testRuleDoNotApply() {
 		// disjunctive clauses
 		doTest(
@@ -439,6 +451,7 @@ public class TestResolution extends AbstractInferrerTests {
 		// TODO variables mixed with local quantifiers
 	}
 
+    @Test
 	public void testInitialization() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		Clause clause = cClause(cProp(0));
@@ -492,6 +505,7 @@ public class TestResolution extends AbstractInferrerTests {
 		}
 	}
 	
+    @Test
 	public void testSubsumption() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cProp(0)));
@@ -501,6 +515,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotProp(0), cProp(1))));
 	}
 
+    @Test
 	public void testNoSubsumptionWithConstants() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cPred(d0A,a)));
@@ -510,6 +525,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
+    @Test
 	public void testSubsumptionWithConstants() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cPred(d0A,a)));
@@ -519,6 +535,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(d0A,a), cProp(1))));
 	}
 	
+    @Test
 	public void testNoSubsumptionWithVariables() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cPred(d0A,a)));
@@ -528,6 +545,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause()==null);
 	}
 	
+    @Test
 	public void testSubsumptionWithVariables() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cPred(d0A,x)));
@@ -537,6 +555,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause().equals(cClause(cNotPred(d0A,a), cProp(1))));
 	}
 	
+    @Test
 	public void testSubsumptionWithVariables2() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(cPred(d0A,x)));
@@ -547,6 +566,7 @@ public class TestResolution extends AbstractInferrerTests {
 	}
 	
 	
+    @Test
 	public void testSubsumptionWithLevels() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(BASE,cProp(0)));
@@ -556,6 +576,7 @@ public class TestResolution extends AbstractInferrerTests {
 		assertTrue(inferrer.getSubsumedClause().equals(cClause(ONE,cNotProp(0), cProp(1))));
 	}
 
+    @Test
 	public void testNoSubsumptionWithLevels() {
 		ResolutionInferrer inferrer = new ResolutionInferrer(new VariableContext());
 		inferrer.setUnitClause(cClause(ONE,cProp(0)));

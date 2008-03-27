@@ -16,6 +16,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.pp.PPResult.Result;
+import org.junit.Test;
 
 public class RodinTests extends AbstractPPTest {
 
@@ -178,6 +179,7 @@ public class RodinTests extends AbstractPPTest {
 		doTestHelper(pair);
 	}
 	
+    @Test
 	public void testList() {
 		doTest(
 			mList(
@@ -204,6 +206,7 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testFailingLevels() {
 		doTest(mList("B","ℙ(S×S×S)","R","ℙ(S×S)"),
 				mSet(
@@ -222,6 +225,7 @@ public class RodinTests extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testSoundness() {
 		doTest(
 				mList(
@@ -252,6 +256,7 @@ public class RodinTests extends AbstractPPTest {
 				),"l=f",false,2000);
 	}
 	
+    @Test
 	public void testSimpleSplit() {
 		doTest(
 				new ArrayList<String>(),
@@ -265,6 +270,7 @@ public class RodinTests extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testBirthday() {
 		doTest(
 				mList(
@@ -282,6 +288,7 @@ public class RodinTests extends AbstractPPTest {
 				),"brithday∪{p ↦ d}∈PERSON ⇸ DATE",true);	
 	}
 	
+    @Test
 	public void testPOW() {
 //		f : s >->t
 //		a : POW1(s)
@@ -319,6 +326,7 @@ public class RodinTests extends AbstractPPTest {
 		
 	}
 	
+    @Test
 	public void testJR() {
 //		f : A-->E
 //		f[a] <: b
@@ -356,6 +364,7 @@ public class RodinTests extends AbstractPPTest {
 		,true);
 	}
 	
+    @Test
 	public void testConjunctiveGoals() {
 //		q : t <-> t
 //		!a,b. a:t & b:t => (a|->b : q <=> a<:b)
@@ -425,6 +434,7 @@ public class RodinTests extends AbstractPPTest {
 				),"x∈t∧x=x0",true);
 	}
 	
+    @Test
 	public void testConjunctiveGoals2() {
 //		 (∀x0,x1,x2·((x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))∧((x0 ↦ x2∈f∧x0∈x)∨(x2 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x2∈f)))⇒x1=x2)
 //		 ∧
@@ -523,6 +533,7 @@ public class RodinTests extends AbstractPPTest {
 				),"(x ◁ f)∪((T ∖ f[x]) ◁ g)∼∈S ⤖ T",true);
 	}
 	
+    @Test
 	public void testCelebrity() {
 		doTest(
 				mList(
@@ -541,6 +552,7 @@ public class RodinTests extends AbstractPPTest {
 				"k∈P ∖ {c} ↔ P"
 				),"¬x=c",true);
 	}
+    @Test
 	public void testFailingExample2() {
 		doTest(
 				mList(
@@ -613,6 +625,7 @@ public class RodinTests extends AbstractPPTest {
 //				),"¬roomk(r0)=snd(c0)",true);
 //	}
 	
+    @Test
 	public void testfifth() {
 		doTest(
 				mList(
@@ -685,6 +698,7 @@ public class RodinTests extends AbstractPPTest {
 //				),"ran(r)⊆q",true);	
 //	}
 
+    @Test
 	public void testRelation() {
 		doTest(
 				mList(
@@ -698,6 +712,7 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testProfile() {
 		// !x!y!z (Rxy & Ryz -> Rxz),
 		// !x Rxx,
@@ -715,6 +730,7 @@ public class RodinTests extends AbstractPPTest {
 				true);
 	}
 	
+    @Test
 	public void testRubin() {
 		doTest(
 				mList("A","ℙ(E)"),
@@ -733,6 +749,7 @@ public class RodinTests extends AbstractPPTest {
 		doTest(mList("P","ℙ(E)"),new HashSet<String>(),"(∀x·x∈P⇔x∈Q)⇒((∀x·x∈P)⇔(∀x·x∈Q))",true);
 	}
 	
+    @Test
 	public void testInjection() {
 		
 //		doTest(mSet("r ∈ E ↣ E" , "s ∈ E ↣ E"), 
@@ -819,10 +836,12 @@ public class RodinTests extends AbstractPPTest {
 				"r;s∈S ↣ S",true);
 	}
 	
+    @Test
 	public void testFunction() {
 		doTest(mSet("r ∈ E → E", "s ∈ E → E"), "r;s ∈ E → E", true);
 	}
 	
+    @Test
 	public void testFunctionWithExtraHypotheses() {
 		doTest(
 				mList(
@@ -841,6 +860,7 @@ public class RodinTests extends AbstractPPTest {
 				),"h;k∈S → S",true);
 	}
 	
+    @Test
 	public void testAllFunctionSameType() {
 		
 		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
@@ -868,6 +888,7 @@ public class RodinTests extends AbstractPPTest {
 				"r;s∈S → S",true);
 	}
 	
+    @Test
 	public void testSurjection() {
 		
 //		doTest(mSet("r ∈ E ↣ E", "s ∈ E ↣ E"), "r;s ∈ E ↣ E", true);
@@ -964,6 +985,7 @@ public class RodinTests extends AbstractPPTest {
 		doTest(mSet("r ∈ E ⤀ E", "s ∈ E ⤀ E"), "r;s ∈ E ⤀ E", true);
 	}
 
+    @Test
 	public void testOverride() {
 		
 		doTest(mList("C","ℙ(C)","D","ℙ(D)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
@@ -997,6 +1019,7 @@ public class RodinTests extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testAll() {
 			// f: S-->T
 			// a/:S
@@ -1161,14 +1184,17 @@ public class RodinTests extends AbstractPPTest {
 	// "(∀x,x0,x1·x0 ↦ x∈SIG∧x1 ↦ x∈SIG⇒x0=x1)"),"⊥",false)
 	}
 
+    @Test
 	public void testTrueGoal() {
 		doTest(new HashSet<String>(), "⊤", true);
 	}
 
+    @Test
 	public void testFalseHypothesis() {
 		doTest(mSet("⊥"), "⊥", true);
 	}
 	
+    @Test
 	public void testBug1833264() {
 		doTest(mList("DO", "S"),
 				new HashSet<String>(),
@@ -1178,6 +1204,7 @@ public class RodinTests extends AbstractPPTest {
 		
 	}
 	
+    @Test
 	public void test1833264_1() throws Exception {
 		
 		doTest(mList("DO", "S"),
@@ -1188,6 +1215,7 @@ public class RodinTests extends AbstractPPTest {
 				
 	}
 	
+    @Test
 	public void testBug1840292(){
 		doTest(mList("r3", "ℙ(S×S)", "r2", "ℙ(S×S)", "r", "ℙ(S×S)", "S",
 				"ℙ(S)", "R", "ℙ(ℙ(S×S))"), mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R",
@@ -1196,6 +1224,7 @@ public class RodinTests extends AbstractPPTest {
 				2000);
 	}
 	
+    @Test
 	public void testBug1840292_1(){
 		doTest(mList("r", "ℙ(S×S)", "S", "ℙ(S)", "R", "ℙ(ℙ(S×S))"),
 				mSet("r∼∈ U", "∅∈R", "r∩id(S)=∅"),
@@ -1219,6 +1248,7 @@ public class RodinTests extends AbstractPPTest {
 	/**
 	 * Initial lemma as entered in the bug report
 	 */
+    @Test
 	public void testBug_1920747() {
 		doTest(
 				mList(
@@ -1234,6 +1264,7 @@ public class RodinTests extends AbstractPPTest {
 	/**
 	 * Simplified version of the lemma from the bug report
 	 */
+    @Test
 	public void testBug_1920747_1() {
 		doTest(
 				mList(
@@ -1251,6 +1282,7 @@ public class RodinTests extends AbstractPPTest {
 	 * Here, we need that a quantified variable gets instantiated by a simple type.
 	 * </p>
 	 */
+    @Test
 	public void testTypeInstantiation() {
 		doTest(
 				mList(

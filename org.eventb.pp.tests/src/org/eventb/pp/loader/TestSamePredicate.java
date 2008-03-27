@@ -11,6 +11,7 @@ import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
+import org.junit.Test;
 
 /**
  * This class tests that two predicates having the same terms as arguments 
@@ -107,6 +108,7 @@ public class TestSamePredicate extends TestCase {
 		return context.getLastResult().getSignature();
 	}
 	
+    @Test
 	public void testSamePredicate() {
 		for (String[] tests : test1) {
 			final AbstractContext context = new AbstractContext();

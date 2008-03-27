@@ -12,6 +12,8 @@ import org.eventb.internal.pp.core.provers.seedsearch.solver.InstantiationValue;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.LiteralSignature;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.SeedSearchSolver;
 import org.eventb.internal.pp.core.provers.seedsearch.solver.VariableLink;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestSeedSearchSolver extends AbstractPPTest {
 
@@ -120,8 +122,9 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	
 	private SeedSearchSolver solver;
 	
+    @Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		solver = new SeedSearchSolver();
 		
 		Pcx = S("Pcx");
@@ -217,6 +220,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		assertTrue(!set.isEmpty());
 	}
 	
+    @Test
 	public void testSimpleInstantiation() {
 		Ia = new InstantiationValue(a, Pxc);
 		assertEmpty(solver.addInstantiationValue(Ia));
@@ -227,6 +231,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		),dump(Pxc,nPxc));
 	}
 
+    @Test
 	public void testSimpleInstantiationFirst() {
 		Ia = new InstantiationValue(a, Pxc);
 		assertEmpty(solver.addInstantiable(nPex));
@@ -237,12 +242,14 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		),dump(Pxc,nPxc));
 	}
 
+    @Test
 	public void testSimpleNoInstantiation() {
 		assertEquals(mSet(
 				"¬Pxc[]"
 		),dump(nPxc));
 	}
 
+    @Test
 	public void testSimpleLinkedInstantiation() {
 		Ia = new InstantiationValue(a, nQxc);
 		assertEmpty(solver.addInstantiationValue(Ia));
@@ -256,6 +263,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		),dump(nQxc,nPxc,Pxc,Qxc));
 	}
 
+    @Test
 	public void testSimpleLinkedInstantiationFirst() {
 		assertEmpty(solver.addInstantiable(nPex));
 		Ia = new InstantiationValue(a, nQxc);
@@ -269,6 +277,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		),dump(nQxc,nPxc,Pxc,Qxc));
 	}
 
+    @Test
 	public void testSimpleLinkedVariableLast() {
 		assertEmpty(solver.addInstantiable(nPex));
 		Ia = new InstantiationValue(a, nQxc);
@@ -282,6 +291,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		),dump(nQxc,nPxc,Pxc,Qxc));
 	}
 	
+    @Test
 	public void testMutliLinkedVariable() {
 		assertEmpty(solver.addInstantiable(nPex));
 		assertEmpty(solver.addVariableLink(PQxc));
@@ -302,6 +312,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 
+    @Test
 	public void testLooping() {
 		assertEmpty(solver.addInstantiable(nPex));
 		assertEmpty(solver.addVariableLink(PQxc));
@@ -316,6 +327,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 
+    @Test
 	public void testRedundantInstantiation() {
 		assertEmpty(solver.addInstantiable(nPex));
 		assertEmpty(solver.addVariableLink(PQxc));
@@ -331,6 +343,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 
+    @Test
 	public void testRemoveSimpleVariableLink() {
 		solver.addVariableLink(nPnQxc);
 		solver.addInstantiable(Pex);
@@ -349,6 +362,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 	
+    @Test
 	public void testRemoveComplexVariableLink() {
 		solver.addVariableLink(PQxc);
 		solver.addVariableLink(nQnRxc);
@@ -387,6 +401,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc,nRxc,Rxc,Sxc,nSxc));
 	}
 	
+    @Test
 	public void testRemoveComplexVariableLinkWithLoop() {
 		solver.addVariableLink(PQxc);
 		solver.addVariableLink(nQnRxc);
@@ -419,6 +434,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc,nRxc,Rxc));
 	}
 	
+    @Test
 	public void testRemoveMutliLinkedVariable() {
 		solver.addVariableLink(PQxc);
 		solver.addVariableLink(PnQxc);
@@ -444,6 +460,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 	
+    @Test
 	public void testRemoveVariableLink() {
 		solver.addVariableLink(PQxc);
 		solver.addVariableLink(nPnQxc);
@@ -465,6 +482,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nPxc,Pxc,Qxc));
 	}
 	
+    @Test
 	public void testRemoveVariableLinkComplexGraphWithConstantFirst() {
 		solver.addInstantiable(Qex);
 		solver.addVariableLink(PRxc);
@@ -491,6 +509,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 	}
 	
+    @Test
 	public void testRemoveVariableLinkComplexGraph() {
 		solver.addVariableLink(PRxc);
 		solver.addVariableLink(nQnRxc);
@@ -526,6 +545,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 	}
 	
+    @Test
 	public void testRemoveVariableLinkComplexGraph2() {
 		// begins like preceding test
 		solver.addVariableLink(PRxc);
@@ -563,6 +583,7 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 		), dump(nQxc,nRxc,Rxc,Pxc,nPxc,Sxc,nSxc));
 	}
 	
+    @Test
 	public void testRemoveVariableLinkComplexGraph3() {
 		solver.addVariableLink(PRxc);
 		solver.addVariableLink(nQnRxc);

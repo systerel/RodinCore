@@ -11,6 +11,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
+import org.junit.Test;
 
 public class TestCaseSplit extends AbstractPPTest {
 
@@ -34,6 +35,7 @@ public class TestCaseSplit extends AbstractPPTest {
 		return result.getGeneratedClauses().iterator().next();
 	}
 	
+    @Test
 	public void testCaseSplit1() {
 		MyDispatcher dispatcher = new MyDispatcher();
 		CaseSplitter casesplitter = getCaseSplitter(dispatcher);
@@ -69,6 +71,7 @@ public class TestCaseSplit extends AbstractPPTest {
 	
 	
 	
+    @Test
 	public void testCaseSplit2() {
 		MyDispatcher dispatcher = new MyDispatcher();
 		CaseSplitter casesplitter = getCaseSplitter(dispatcher);
@@ -93,6 +96,7 @@ public class TestCaseSplit extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testCaseSplit3() {	
 		MyDispatcher dispatcher = new MyDispatcher();
 		CaseSplitter casesplitter = getCaseSplitter(dispatcher);

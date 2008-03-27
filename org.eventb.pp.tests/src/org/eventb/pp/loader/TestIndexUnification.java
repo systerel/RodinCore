@@ -11,6 +11,7 @@ import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.IIntermediateResult;
+import org.junit.Test;
 
 public class TestIndexUnification extends AbstractPPTest {
 
@@ -36,6 +37,7 @@ public class TestIndexUnification extends AbstractPPTest {
 		assertEquals(expected.getTerms().toString(), list.toString());
 	}
 
+    @Test
 	public void testIndex() {
 		doTest(mIR(x), mIR(x), mIR(xx));
 		doTest(mIR(a), mIR(x), mIR(xx));

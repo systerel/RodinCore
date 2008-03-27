@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.eventb.internal.pp.core.search.IRandomAccessList;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
+import org.junit.Test;
 
 public class TestRandom extends TestCase {
 
@@ -24,6 +25,7 @@ public class TestRandom extends TestCase {
 //	private Object k = new Object();
 	
 	
+    @Test
 	public void testConstruction() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -46,6 +48,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testNoSuchElement() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -66,6 +69,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testHasNext() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -86,6 +90,7 @@ public class TestRandom extends TestCase {
 	}
 	
 
+    @Test
 	public void testRemoveFirstNoIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
@@ -103,6 +108,7 @@ public class TestRandom extends TestCase {
 	
 	
 	
+    @Test
 	public void testRemoveLastNoIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -117,6 +123,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), c);
 	}
 	
+    @Test
 	public void testRemoveMidNoIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -131,6 +138,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveInexistantNoIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -146,6 +154,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveFirstIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -160,6 +169,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveFirstItOneElement() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -175,6 +185,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testAddAfterEnd1() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
@@ -186,6 +197,7 @@ public class TestRandom extends TestCase {
 	}
 	
 
+    @Test
 	public void testAddAfterEnd2() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -199,6 +211,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), b);
 	}
 	
+    @Test
 	public void testAddAfterEnd3() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		
@@ -214,6 +227,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testAddAfterEnd4() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		Iterator<Object> it = set.iterator();
@@ -232,6 +246,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveFirstItAfter() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -267,6 +282,7 @@ public class TestRandom extends TestCase {
 //		}
 //	}
 	
+    @Test
 	public void testRemoveLastIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -287,6 +303,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testRemoveIterator() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		ResetIterator<Object> it = set.iterator();
@@ -299,6 +316,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testRemoveMidIt1() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -318,6 +336,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveMidIt2() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -337,6 +356,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveMidIt3() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -357,6 +377,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveMidIt4() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -377,6 +398,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveMidIt5() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -393,6 +415,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testRemoveInexistantIt() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -408,6 +431,7 @@ public class TestRandom extends TestCase {
 		assertEquals(it.next(), d);
 	}
 	
+    @Test
 	public void testAppendsSame() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -487,6 +511,7 @@ public class TestRandom extends TestCase {
 //		assertEquals(it.next(), d);
 //	}
 	
+    @Test
 	public void testremoveLast() {
 		IRandomAccessList<Object> set = new RandomAccessList<Object>();
 		set.add(a);
@@ -510,6 +535,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testRemoveSameObject() {
 		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		MyObject a1 = new MyObject("a");
@@ -533,6 +559,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testRemoveSameObjectWithIterator() {
 		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		MyObject b = new MyObject("b");
@@ -561,6 +588,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testInvalidateNext() {
 		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		ResetIterator<MyObject> it = set.iterator();
@@ -574,6 +602,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testInvalidateHasNext() {
 		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		ResetIterator<MyObject> it = set.iterator();
@@ -587,6 +616,7 @@ public class TestRandom extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testInvalidateReset() {
 		IRandomAccessList<MyObject> set = new RandomAccessList<MyObject>();
 		ResetIterator<MyObject> it = set.iterator();

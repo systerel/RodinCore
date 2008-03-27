@@ -14,9 +14,11 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.EqualityInferrer;
+import org.junit.Test;
 
 public class TestEqualityInferrer extends AbstractInferrerTests {
 
+    @Test
 	public void testSimpleDisjunctiveClauses() {
 		doTest(
 				cClause(cProp(0),ab), mList(ab), EMPTY, mList(cClause(ab)), 
@@ -40,6 +42,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 	}
 	
+    @Test
 	public void testSimpleDisjunctiveClausesWithVariables() {
 		doTest(
 				cClause(cPred(d0A,x),ab), mList(ab), EMPTY, mList(cClause(ab)), 
@@ -59,6 +62,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);		
 	}
 
+    @Test
 	public void testSimpleEquivalenceClauses () {
 		doTest(
 				cEqClause(cProp(0),ab), mList(ab), EMPTY, mList(cClause(ab)), 
@@ -78,6 +82,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	public void testSimpleEquivalenceClausesWithConditions() {
 		// conditions
 		doTest(
@@ -98,6 +103,7 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 		);
 	}
 
+    @Test
 	@SuppressWarnings("unchecked")
 	public void testSimpleEquivalenceClausesWithConditionsAndEqualities() {
 		// mixed

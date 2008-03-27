@@ -18,9 +18,11 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
+import org.junit.Test;
 
 public class TestLiteralEquality extends AbstractPPTest {
 
+    @Test
 	public void testProposition() {
 		doEqualTests(cProp(0), cProp(0));
 		doEqualTests(cNotProp(0), cNotProp(0));
@@ -37,6 +39,7 @@ public class TestLiteralEquality extends AbstractPPTest {
 //		doUnequalTests(cNotProp(0), cNEqual(a, b), true);
 	}
 	
+    @Test
 	public void testPredicate() {
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cPred(d0A, a), cPred(d0A, a));
 		TestLiteralEquality.<PredicateLiteral>doEqualTests(cNotPred(d0A, a), cNotPred(d0A, a));
@@ -87,6 +90,7 @@ public class TestLiteralEquality extends AbstractPPTest {
 //		TestLiteralEquality.<PredicateLiteral>doUnequalTests(cPred(d0AA,a,b), cEqual(a, b), true);
 	}
 	
+    @Test
 	public void testEquality() {
 		TestLiteralEquality.<EqualityLiteral>doEqualTests(cEqual(a, a),cEqual(a, a));
 		TestLiteralEquality.<EqualityLiteral>doEqualTests(cNEqual(a, a),cNEqual(a, a));

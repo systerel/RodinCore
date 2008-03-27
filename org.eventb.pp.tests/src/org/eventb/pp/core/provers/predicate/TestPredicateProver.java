@@ -19,6 +19,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
+import org.junit.Test;
 
 /**
  * TODO Comment
@@ -262,12 +263,14 @@ public class TestPredicateProver extends AbstractPPTest {
 			
 	};
 
+    @Test
 	public void testDisj() {
 		for (TestPair test : tests) {
 			doTest(test);
 		}
 	}
 	
+    @Test
 	public void testEq() {
 		for (TestPair test : testEq) {
 			doTest(test);
@@ -275,6 +278,7 @@ public class TestPredicateProver extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testHiddenInferrence() {
 		doTest(new TestPair(mList(cClause(cPred(d0A,evar1),cProp(1)),cClause(cPred(d0A,a),cProp(1))),
 				mList(cClause(cNotPred(d0A,a))),
@@ -303,12 +307,14 @@ public class TestPredicateProver extends AbstractPPTest {
 			assertEquals(test.result.length, i);
 	}
 	
+    @Test
 	public void testEmptyResult() {
 		IProverModule predicateProver = getProver();
 		
 		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
 	}
 	
+    @Test
 	public void testEmptyResultWithClauses() {
 		IProverModule predicateProver = getProver();
 		
@@ -316,6 +322,7 @@ public class TestPredicateProver extends AbstractPPTest {
 		assertEquals(predicateProver.next(false), ProverResult.EMPTY_RESULT);
 	}
 	
+    @Test
 	public void testContradictionResult() {
 		IProverModule prover = getProver();
 		

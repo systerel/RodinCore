@@ -3,10 +3,12 @@ package org.eventb.pp.core.elements.terms;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
 
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.junit.Test;
 
 
 public class TestQuantifierBooleans extends AbstractPPTest {
 
+    @Test
 	public void testConstant() {
 		assertFalse(x.isConstant());
 		assertTrue(evar0.isConstant());
@@ -23,6 +25,7 @@ public class TestQuantifierBooleans extends AbstractPPTest {
 		assertFalse(cPlus(x,fvar0).isConstant());
 	}
 	
+    @Test
 	public void testQuantified() {
 		assertTrue(evar0.isQuantified());
 		assertTrue(fvar0.isQuantified());
@@ -39,6 +42,7 @@ public class TestQuantifierBooleans extends AbstractPPTest {
 		assertTrue(cPlus(x,fvar0).isQuantified());
 	}
 	
+    @Test
 	public void testForall() {
 		assertFalse(evar0.isForall());
 		assertTrue(fvar0.isForall());

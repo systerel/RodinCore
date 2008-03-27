@@ -17,6 +17,7 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.EqualitySimplifier;
+import org.junit.Test;
 
 @SuppressWarnings("unchecked")
 public class TestEqualitySimplifier extends AbstractPPTest {
@@ -156,6 +157,7 @@ public class TestEqualitySimplifier extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testEquality() {
 		for (TestPair test : tests) {
 			EqualitySimplifier rule = new EqualitySimplifier(variableContext());

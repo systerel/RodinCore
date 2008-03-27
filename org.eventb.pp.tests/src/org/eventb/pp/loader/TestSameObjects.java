@@ -20,6 +20,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
+import org.junit.Test;
 
 /**
  * This class verifies that the variables, constants, ...
@@ -47,6 +48,7 @@ public class TestSameObjects extends AbstractPPTest {
 		env.addGivenSet("T");
 	}
 	
+    @Test
 	public void testSimpleConstant() {
 		final String formula = "∀x,y·a ∈ S ∨ b ∈ T ∨ x ∈ S ∨ y ∈ T";
 		final ClauseBuilder result = Util.doPhaseOneAndTwo(formula, env,

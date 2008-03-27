@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
+import org.junit.Test;
 
 public class TestSubstitution extends AbstractPPTest {
 	
@@ -80,6 +81,7 @@ public class TestSubstitution extends AbstractPPTest {
 			),
 	};
 
+    @Test
 	public void test() {
 		for (TestPair test : tests) {
 			assertEquals(Term.substituteSimpleTerms(test.getMap(),test.input), test.output);

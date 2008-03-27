@@ -29,9 +29,11 @@ import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
+import org.junit.Test;
 
 public class TestConditions extends AbstractPPTest {
 
+    @Test
 	public void testConditions() {
 		List<Clause> clauses = mList(
 				cClause(cPred(d0A, a), cPred(d1A, a), cPred(d2A, a)),

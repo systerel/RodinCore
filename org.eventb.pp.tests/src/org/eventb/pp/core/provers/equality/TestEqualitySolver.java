@@ -18,6 +18,8 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
 import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
+import org.junit.Before;
+import org.junit.Test;
 
 @SuppressWarnings("unused")
 public class TestEqualitySolver extends AbstractPPTest {
@@ -162,8 +164,9 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	
+    @Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		// init solver
 		init();
 	}
@@ -180,6 +183,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 
 	// deductions
+    @Test
 	public void testEmptyManager() {
 		init();
 		assertNull(solver.addFactEquality(E(a,b,ES)));
@@ -192,6 +196,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 
 	
+    @Test
 	public void testSimpleEquality() {
 		solver.addFactEquality(E(a,b,R1L0));
 		assertEquals(mSet(
@@ -210,6 +215,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 	
+    @Test
 	public void testMergingTree() {
 		solver.addFactEquality(E(a,b,R1L0));
 		solver.addFactEquality(E(b,c,R2L0));
@@ -232,6 +238,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 	
+    @Test
 	public void testAlreadyEqual() {
 		solver.addFactEquality(E(a,b,R1L0));
 		solver.addFactEquality(E(b,c,R2L0));
@@ -242,6 +249,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 	
+    @Test
 	public void testOptimization1() {
 		solver.addFactEquality(E(a,b,R1L0));
 		solver.addFactEquality(E(c,d,R2L0));
@@ -259,6 +267,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 	
+    @Test
 	public void testOptimization2() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(c, d, R2L0));
@@ -272,6 +281,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 	
+    @Test
 	public void testFactInequality() {
 		solver.addFactInequality(E(a, b, ES));
 		assertEquals(mSet(
@@ -280,6 +290,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 
+    @Test
 	public void testFactInequalityComplex() {
 		solver.addFactEquality(E(a, b, ES));
 		solver.addFactInequality(E(b, c, ES));
@@ -290,6 +301,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.dump());
 	}
 
+    @Test
 	public void testFactInequalityComplex2() {
 		solver.addFactEquality(E(a, b, ES));
 		solver.addFactInequality(E(c, d, ES));
@@ -302,6 +314,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		), solver.dump());
 	}
 	
+    @Test
 	public void testFactInequalityComplex3() {
 		solver.addFactInequality(E(b, c, ES));		
 		solver.addFactEquality(E(a, c, ES));
@@ -312,6 +325,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		), solver.dump());
 	}
 	
+    @Test
 	public void testSimpleContradictionEqualityFirst() {
 		solver.addFactEquality(E(a, b, ES));
 		IFactResult result = solver.addFactInequality(E(a, b, ES));
@@ -319,6 +333,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertNull(result.getSolvedQueries());
 	}
 	
+    @Test
 	public void testSimpleContradictionInequalityFirst() {
 		solver.addFactInequality(E(a, b, ES));
 		IFactResult result = solver.addFactEquality(E(a, b, ES));
@@ -326,6 +341,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertNull(result.getSolvedQueries());
 	}
 	
+    @Test
 	public void testContradiction1() {
 		assertNull(solver.addFactEquality(E(a, b, R1L0)));
 		assertNull(solver.addFactEquality(E(c, d, R2L0)));
@@ -335,6 +351,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertNull(result.getSolvedQueries());
 	}
 	
+    @Test
 	public void testContradiction2() {
 		assertNull(solver.addFactEquality(E(a, b, R1L0)));
 		assertNull(solver.addFactEquality(E(c, d, R2L0)));
@@ -345,6 +362,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertNull(result.getSolvedQueries());
 	}
 	
+    @Test
 	public void testRedundantInequality() {
 		assertNull(solver.addFactEquality(E(a, b, R1L0)));
 		assertNull(solver.addFactEquality(E(a, c, R2L1)));
@@ -357,6 +375,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(Level.BASE, result.getContradictionLevel());
 	}
 	
+    @Test
 	public void testSimpleQueryContradiction1() {
 		assertNull(solver.addQuery(E(a, b, ESq), true));
 		IFactResult result = solver.addFactEquality(E(a, b, ES));
@@ -364,6 +383,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertTrue(result.getSolvedQueries().get(0).getValue());
 	}
 	
+    @Test
 	public void testSimpleQueryContradiction2() {
 		assertNull(solver.addQuery(E(a, b, ESq), false));
 		IFactResult result = solver.addFactEquality(E(a, b, ES));
@@ -371,6 +391,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertFalse(result.getSolvedQueries().get(0).getValue());
 	}
 	
+    @Test
 	public void testSimpleQueryContradiction3() {
 		assertNull(solver.addQuery(E(a, b, ESq), true));
 		IFactResult result = solver.addFactInequality(E(a, b, ES));
@@ -379,6 +400,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	// TODO check this
+    @Test
 	public void testSimpleQueryContradiction4() {
 		assertNull(solver.addQuery(E(a, b, ESq), false));
 		IFactResult result = solver.addFactInequality(E(a, b, ES));
@@ -387,6 +409,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	// TODO check this
+    @Test
 	public void testSimpleQueryContradiction5() {
 		solver.addFactInequality(E(a, b, ES));
 		QueryResult result = solver.addQuery(E(a, b, ESq), true);
@@ -395,6 +418,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	// sources without levels
+    @Test
 	public void testSourceTableSimple() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(a, c, R2L0));
@@ -404,6 +428,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		,solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableWithEdge1() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(b, c, R2L0));
@@ -414,6 +439,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableWithEdge2() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(c, d, R2L0));
@@ -426,6 +452,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableWithEdgeRedundant() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(b, c, R2L0));
@@ -437,6 +464,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableOptimisation() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(c, d, R2L0));
@@ -452,12 +480,14 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 
 	
+    @Test
 	public void testSimpleSource1() {
 		solver.addFactEquality(E(a, b, R1L0));
 		FactResult result = solver.addFactInequality(E(a, b, R2L0));
 		assertEquals(result.getContradictionSource(), mSet(R2L0,R1L0));
 	}
 	
+    @Test
 	public void testSimpleSource2() {
 		solver.addFactInequality(E(a, b, R1L0));
 		FactResult result = solver.addFactEquality(E(a, b, R2L0));
@@ -465,6 +495,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testSource1() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(c, d, R2L0));
@@ -473,6 +504,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(result.getContradictionSource(), mSet(R4L0,R3L0,R2L0,R1L0));
 	}
 	
+    @Test
 	public void testSource2() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(b, c, R2L0));
@@ -480,6 +512,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(result.getContradictionSource(), mSet(R1L0,R2L0,R3L0));
 	}
 	
+    @Test
 	public void testSimpleSourceQuery1() {
 		solver.addFactEquality(E(a, b, R1L0));
 		QueryResult result = solver.addQuery(E(a, b, R2L0q), true);
@@ -488,6 +521,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertTrue(result.getValue());
 	}
 	
+    @Test
 	public void testSimpleSourceQuery2() {
 		solver.addFactInequality(E(a, b, R1L0));
 		QueryResult result = solver.addQuery(E(a, b, R2L0q), true);
@@ -496,6 +530,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertFalse(result.getValue());
 	}
 	
+    @Test
 	public void testSimpleSourceQuery3() {
 		solver.addFactEquality(E(a, b, R1L0));
 		QueryResult result = solver.addQuery(E(a, b, R2L0q), false);
@@ -504,6 +539,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertFalse(result.getValue());
 	}
 	
+    @Test
 	public void testSimpleSourceQuery4() {
 		solver.addFactInequality(E(a, b, R1L0));
 		QueryResult result = solver.addQuery(E(a, b, R2L0q), false);
@@ -512,6 +548,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertTrue(result.getValue());
 	}
 	
+    @Test
 	public void testComplexSourceQuery1() {
 		assertNull(solver.addQuery(E(c, f, R6L0q), true));
 		
@@ -529,6 +566,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(R6L0q, queries.get(0).getQuerySource());
 	}
 	
+    @Test
 	public void testComplexSourceQuery12() {
 		assertNull(solver.addQuery(E(c, f, R6L0q), false));
 		
@@ -546,6 +584,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(R6L0q, queries.get(0).getQuerySource());
 	}
 	
+    @Test
 	public void testComplexSourceQuery2() {
 		assertNull(solver.addFactEquality(E(a,b,R1L0)));
 		assertNull(solver.addFactEquality(E(b,c,R2L0)));
@@ -560,6 +599,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(R6L0q, result.getQuerySource());
 	}
 	
+    @Test
 	public void testComplexSourceQuery22() {
 		assertNull(solver.addFactEquality(E(a,b,R1L0)));
 		assertNull(solver.addFactEquality(E(b,c,R2L0)));
@@ -574,6 +614,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(R6L0q, result.getQuerySource());
 	}
 	
+    @Test
 	public void testComplexSourceQuery3() {
 		assertNull(solver.addQuery(E(a, d, R6L0q), true));
 		assertNull(solver.addQuery(E(c, f, R7L0q), true));
@@ -595,6 +636,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertFalse(queries.get(1).getValue());
 	}
 	
+    @Test
 	public void testComplexSourceQuery32() {
 		assertNull(solver.addQuery(E(a, d, R6L0q), false));
 		assertNull(solver.addQuery(E(c, f, R7L0q), false));
@@ -616,6 +658,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertTrue(queries.get(1).getValue());
 	}
 	
+    @Test
 	public void testComplexSourceQuery4() {
 		assertNull(solver.addQuery(E(a, d, R6L0q), true));
 		assertNull(solver.addQuery(E(c, f, R7L0q), true));
@@ -637,6 +680,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertTrue(queries.get(1).getValue());
 	}
 	
+    @Test
 	public void testComplexSourceQuery42() {
 		assertNull(solver.addQuery(E(a, d, R6L0q), false));
 		assertNull(solver.addQuery(E(c, f, R7L0q), false));
@@ -670,6 +714,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	
 	// origin with different levels
 //	 sources without levels
+    @Test
 	public void testSourceTableSimpleWithLevels() {
 		solver.addFactEquality(E(a, b, R1L1));
 		solver.addFactEquality(E(a, c, R2L1));
@@ -679,6 +724,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		,solver.getSourceTable().dump());
 	}
 
+    @Test
 	public void testSourceTableWithEdgeRedundantWithLevel1() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(b, c, R2L0));
@@ -690,6 +736,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableWithEdgeRedundantWithLevel2() {
 		solver.addFactEquality(E(a, b, R1L1));
 		solver.addFactEquality(E(b, c, R2L0));
@@ -701,6 +748,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		),solver.getSourceTable().dump());
 	}
 	
+    @Test
 	public void testSourceTableOptimisationWithoutLevels() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(c, d, R2L0));
@@ -745,6 +793,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 //	}
 	
 	
+    @Test
 	public void testRedundantQuery() {
 		solver.addQuery(E(a, b, R1L0q), true);
 		solver.addQuery(E(a, b, R2L0q), true);
@@ -757,6 +806,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 	
 	// instantiations
 	
+    @Test
 	public void testSimpleInstantiationInequalityFirst() {
 		solver.addFactInequality(E(a, b, R1L0));
 		List<InstantiationResult> result = solver.addInstantiation(I(a, R2L0q));
@@ -769,6 +819,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(mSet(R1L0), res1.getSolvedValueSource());
 	}
 
+    @Test
 	public void testSimpleInstantiationFirst() {
 		solver.addInstantiation(I(a, R2L0q));
 		FactResult factResult = solver.addFactInequality(E(a, b, R1L0));
@@ -782,6 +833,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(mSet(R1L0), result.getSolvedValueSource());
 	}
 	
+    @Test
 	public void testMultipleInstantiation() {
 		solver.addFactEquality(E(a, b, R1L1));
 		solver.addFactEquality(E(a, c, R2L0));
@@ -801,6 +853,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		assertEquals(mSet(R2L0, R4L0), result2.getSolvedValueSource());
 	}
 	
+    @Test
 	public void testMultipleInstantiation2() {
 		solver.addFactEquality(E(a, b, R1L0));
 		solver.addFactEquality(E(a, c, R2L1));

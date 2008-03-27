@@ -13,6 +13,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
+import org.junit.Test;
 
 /**
  * This class tests the one point rule. There are several tests :
@@ -28,6 +29,7 @@ import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 public class TestOnePoint extends AbstractPPTest {
 
 	
+    @Test
 	public void testOnePoint() {
 		// standard test
 			testOnePoint(
@@ -124,6 +126,7 @@ public class TestOnePoint extends AbstractPPTest {
 			);		
 	}
 	
+    @Test
 	public void testNotOnePoint () {
 			// standard test
 			testOnePoint(

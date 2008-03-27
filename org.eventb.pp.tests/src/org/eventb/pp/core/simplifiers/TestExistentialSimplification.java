@@ -18,6 +18,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.ExistentialSimplifier;
+import org.junit.Test;
 
 public class TestExistentialSimplification extends AbstractPPTest {
 	
@@ -100,6 +101,7 @@ public class TestExistentialSimplification extends AbstractPPTest {
 			
 	};
 	
+    @Test
 	public void testExistential() {
 		for (TestPair test : tests) {
 			ExistentialSimplifier rule = new ExistentialSimplifier(new MyVariableContext());

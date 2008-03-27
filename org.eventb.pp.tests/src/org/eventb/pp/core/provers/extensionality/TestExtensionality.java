@@ -32,6 +32,7 @@ import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.extensionality.ExtensionalityProver;
+import org.junit.Test;
 
 public class TestExtensionality extends AbstractPPTest {
 
@@ -51,6 +52,7 @@ public class TestExtensionality extends AbstractPPTest {
 	
 	private static Constant c0 = cCons("0", A);
 	
+    @Test
 	public void testAllowedInputWithEquality() {
 		doTest(cClause(cProp(0)), null);
 		doTest(cClause(cPred(d0A, x)), null);
@@ -61,6 +63,7 @@ public class TestExtensionality extends AbstractPPTest {
 		doTest(cClause(cEqual(a1,a2)),null);
 	}
 	
+    @Test
 	public void testEquality() {
 		doTest(	cClause(cEqual(a1,a2)),
 				cEqClause(cPred(P0,x,a1),cPred(P0,x,a2)),
@@ -68,6 +71,7 @@ public class TestExtensionality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testInEquality() {
 		final VariableContext variableContext = new VariableContext() {
 			@Override
@@ -80,6 +84,7 @@ public class TestExtensionality extends AbstractPPTest {
 				cPred(P0, c0, a2)), variableContext, P0, PA);
 	}
 	
+    @Test
 	public void testAllowedInputWithEquivalence() {
 		doTest(cEqClause(cPred(P0,x,a1),cPred(P0,a,a2)),null);
 		doTest(cClause(cPred(P0,x,a1),cPred(P0,x,a2)),null);
@@ -93,6 +98,7 @@ public class TestExtensionality extends AbstractPPTest {
 		doTest(cEqClause(cNotPred(P0,x,a1),cNotPred(P0,x,py)), null, P0, PA);
 	}
 	
+    @Test
 	public void testPositiveEquivalenceClause() {
 		doTest(	cEqClause(cPred(P0,x,a1),cPred(P0,x,a2)),
 				cClause(cEqual(a1,a2)),
@@ -104,6 +110,7 @@ public class TestExtensionality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testNegativeEquivalenceClause() {
 		doTest(	cEqClause(cNotPred(P0,e,a1),cPred(P0,e,a2)),
 				cClause(cNEqual(a1,a2)),
@@ -115,6 +122,7 @@ public class TestExtensionality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testPositiveDisjunctiveClauses() {
 		doTest(	mList(
 				cClause(cNotPred(P0,x,a1),cPred(P0,x,a2)),
@@ -124,6 +132,7 @@ public class TestExtensionality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testNegativeDisjunctiveClauses() {
 		doTest(	mList(
 				cClause(cPred(P0,a,a1),cPred(P0,b,a2)),
@@ -133,6 +142,7 @@ public class TestExtensionality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testOneDisjunctiveClause() {
 		doTest(	cClause(cNotPred(P0,x,a1),cPred(P0,x,a2)),
 				null,
@@ -141,6 +151,7 @@ public class TestExtensionality extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testLooping() {
 		IProverModule module = getProver(getPredicateTable(P0, PA), new VariableContext());
 		Clause clause = cEqClause(cPred(P0,x,a1),cPred(P0,x,a2));

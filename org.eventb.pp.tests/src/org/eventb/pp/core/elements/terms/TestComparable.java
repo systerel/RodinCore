@@ -2,6 +2,7 @@ package org.eventb.pp.core.elements.terms;
 
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Term;
+import org.junit.Test;
 
 public class TestComparable extends AbstractPPTest {
 
@@ -16,6 +17,7 @@ public class TestComparable extends AbstractPPTest {
 		}
 	}
 	
+    @Test
 	public void testIntegerConstants() {
 		doTest(new TestPair(
 				zero,one,-1
@@ -28,6 +30,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 
+    @Test
 	public void testConstants() {
 		doTest(new TestPair(
 				a,b,-1
@@ -40,6 +43,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 	
+    @Test
 	public void testConstantsWithVariables() {
 		doTest(new TestPair(
 				a,x,1
@@ -49,6 +53,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 
+    @Test
 	public void testVariables() {
 		doTest(new TestPair(
 				x,y,-1
@@ -61,6 +66,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 	
+    @Test
 	public void testLocalVariablesWithVariables() {
 		doTest(new TestPair(
 				x,evar0,-1
@@ -70,6 +76,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 	
+    @Test
 	public void testLocalVariables() {
 		doTest(new TestPair(
 				evar0,evar1,-1
@@ -82,6 +89,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 
+    @Test
 	public void testLocalVariablesWithConstants() {
 		doTest(new TestPair(
 				evar0,a,-1
@@ -91,6 +99,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 	
+    @Test
 	public void testConstantWithIntegerConstants() {
 		doTest(new TestPair(
 				a,zero,-1
@@ -101,6 +110,7 @@ public class TestComparable extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testVariableWithIntegerConstant() {
 		doTest(new TestPair(
 				x,zero,-1
@@ -110,6 +120,7 @@ public class TestComparable extends AbstractPPTest {
 		));
 	}
 	
+    @Test
 	public void testLocalVariableWithIntegerConstant() {
 		doTest(new TestPair(
 				evar0,zero,-1

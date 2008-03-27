@@ -19,6 +19,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
 import org.eventb.internal.pp.loader.predicate.PredicateLoader;
+import org.junit.Test;
 
 public class TestPredicateLoader extends AbstractPPTest {
 
@@ -33,6 +34,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 
 	private static final BoundIdentDecl[] x = {mBoundIdentDecl("x", ty_A)};
 	
+    @Test
 	public void testNot() {
 		doTest(mNot(la), "not P0[a, A]");
 	}
@@ -42,10 +44,12 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 *       |
 	 *       *
 	 */
+    @Test
 	public void testNotNot() {
 		doTest(mNot(mNot(la)), "P0[a, A]");
 	}
 
+    @Test
 	public void testNotOr() {
 		doTest(mNot(mOr(la,lb)), 
 				"not Ld1[a, A, b, A]\n" + 
@@ -54,6 +58,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotAnd() {
 		doTest(mNot(mAnd(la,lb)), 
 				"Ld1[a, A, b, A]\n" + 
@@ -62,6 +67,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotImp() {
 		doTest(mNot(mImp(la,lb)), 
 				"not Ld1[b, A, a, A]\n" + 
@@ -71,6 +77,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	}
 
 
+    @Test
 	public void testNotEqv() {
 		doTest(mNot(mEqu(la,lb)), 
 				"not Le1[a, A, b, A]\n" + 
@@ -79,6 +86,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotE() {
 		doTest(mNot(mE(la)), 
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -86,6 +94,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotF() {
 		doTest(mNot(mF(la)), 
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -98,6 +107,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  *
 	 */
+    @Test
 	public void testExistLi() {
 		doTest(mE(la),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -105,6 +115,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testExistNot() {
 		doTest(mE(mNot(la)),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -112,6 +123,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testExistOr() {
 		doTest(mE(mOr(la,lb)), 
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -121,6 +133,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testExistAnd() {
 		doTest(mE(mAnd(la,lb)), 
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -129,6 +142,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 				"   not P0[b, A]"
 		);
 	}
+    @Test
 	public void testExistImp() {
 		doTest(mE(mImp(la,lb)), 
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][b, A, a, A]\n" + 
@@ -139,6 +153,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	}
 
 
+    @Test
 	public void testExistEqv() {
 		doTest(mE(mEqu(la,lb)), 
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -148,6 +163,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testExistE() {
 		doTest(mE(mE(la)), 
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -156,6 +172,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testExistF() {
 		doTest(mE(mF(la)), 
 
@@ -170,6 +187,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 *       |
 	 *       *
 	 */
+    @Test
 	public void testForallLi() {
 		doTest(mF(la),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -177,12 +195,14 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallNot() {
 		doTest(mF(mNot(la)),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
 				"  not P0[a, A]"
 		);
 	}
+    @Test
 	public void testForallOr() {
 		doTest(mF(mOr(la,lb)),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -192,6 +212,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallAnd() {
 		doTest(mF(mAnd(la,lb)), 
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -201,6 +222,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallImp() {
 		doTest(mF(mImp(la,lb)), 
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][b, A, a, A]\n" + 
@@ -210,6 +232,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallEqv() {
 		doTest(mF(mEqu(la,lb)), 
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A)), {&}(A), {&}(ℙ(A))][a, A, b, A]\n" + 
@@ -219,6 +242,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallE() {
 		doTest(mF(mE(la)), 
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -227,6 +251,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testForallF() {
 		doTest(mF(mF(la)), 
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -240,6 +265,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		/ \
 	 * 	   li *
 	 */
+    @Test
 	public void testOrNot() {
 		doTest(mOr(lc,mNot(la)),
 				"Ld1[c, A, a, A]\n" + 
@@ -248,6 +274,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrOr() {
 		doTest(mOr(lc,mOr(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -258,6 +285,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrAnd() {
 		doTest(mOr(lc,mAnd(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -268,6 +296,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrImp() {
 		doTest(mOr(lc,mImp(la,lb)),
 				"Ld2[c, A, b, A, a, A]\n" + 
@@ -278,6 +307,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrEqv() {
 		doTest(mOr(lc,mEqu(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" + 
@@ -288,6 +318,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrE() {
 		doTest(mOr(lc,mE(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -297,6 +328,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testOrF() {
 		doTest(mOr(lc,mF(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -311,6 +343,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		/ \
 	 * 	   li *
 	 */
+    @Test
 	public void testAndNot() {
 		doTest(mAnd(lc,mNot(la)),
 				"not Ld1[a, A, c, A]\n" + 
@@ -319,6 +352,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndOr() {
 		doTest(mAnd(lc,mOr(la,lb)),
 				"not Ld2[c, A, a, A, b, A]\n" +
@@ -329,6 +363,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndAnd() {
 		doTest(mAnd(lc,mAnd(la,lb)),
 				"not Ld2[c, A, a, A, b, A]\n" +
@@ -339,6 +374,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndImp() {
 		doTest(mAnd(lc,mImp(la,lb)),
 				"not Ld2[c, A, b, A, a, A]\n" + 
@@ -349,6 +385,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndEqv() {
 		doTest(mAnd(lc,mEqu(la,lb)),
 				"not Ld2[c, A, a, A, b, A]\n" + 
@@ -359,6 +396,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndE() {
 		doTest(mAnd(lc,mE(la)),
 				"not Ld2[c, A, a, A]\n" + 
@@ -368,6 +406,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testAndF() {
 		doTest(mAnd(lc,mF(la)),
 				"not Ld2[c, A, a, A]\n" + 
@@ -382,6 +421,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		/ \
 	 * 	   li *
 	 */
+    @Test
 	public void testEquNot() {
 		doTest(mEqu(lc,mNot(la)),
 				"Le1[c, A, a, A]\n" + 
@@ -390,6 +430,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquOr() {
 		doTest(mEqu(lc,mOr(la,lb)),
 				"Le2[c, A, a, A, b, A]\n" +
@@ -400,6 +441,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquAnd() {
 		doTest(mEqu(lc,mAnd(la,lb)),
 				"Le2[c, A, a, A, b, A]\n" +
@@ -410,6 +452,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquImp() {
 		doTest(mEqu(lc,mImp(la,lb)),
 				"Le2[c, A, b, A, a, A]\n" + 
@@ -420,6 +463,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquEqv() {
 		doTest(mEqu(lc,mEqu(la,lb)),
 				"Le2[c, A, a, A, b, A]\n" + 
@@ -430,6 +474,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquE() {
 		doTest(mEqu(lc,mE(la)),
 				"Le2[c, A, a, A]\n" + 
@@ -439,6 +484,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquF() {
 		doTest(mEqu(lc,mF(la)),
 				"Le2[c, A, a, A]\n" + 
@@ -453,6 +499,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		/ \
 	 * 	   li *
 	 */
+    @Test
 	public void testImpNot() {
 		doTest(mImp(lc,mNot(la)),
 				"Ld1[c, A, a, A]\n" + 
@@ -461,6 +508,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testImpOr() {
 		doTest(mImp(lc,mOr(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -471,6 +519,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testImpAnd() {
 		doTest(mImp(lc,mAnd(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -481,6 +530,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testImpImp() {
 		doTest(mImp(lc,mImp(la,lb)),
 				"Ld2[c, A, b, A, a, A]\n" + 
@@ -491,6 +541,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testImpEqv() {
 		doTest(mImp(lc,mEqu(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" + 
@@ -501,6 +552,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testImpE() {
 		doTest(mImp(lc,mE(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -509,6 +561,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 				"   P0[a, A]"
 		);
 	}
+    @Test
 	public void testImpF() {
 		doTest(mImp(lc,mF(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -525,6 +578,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 *      |
 	 *      li
 	 */
+    @Test
 	public void testNotLiImpNot() {
 		doTest(mImp(mNot(lc),mNot(la)),
 				"Ld1[c, A, a, A]\n" + 
@@ -533,6 +587,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpOr() {
 		doTest(mImp(mNot(lc),mOr(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -543,6 +598,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpAnd() {
 		doTest(mImp(mNot(lc),mAnd(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" +
@@ -553,6 +609,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpImp() {
 		doTest(mImp(mNot(lc),mImp(la,lb)),
 				"Ld2[c, A, b, A, a, A]\n" + 
@@ -563,6 +620,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpEqv() {
 		doTest(mImp(mNot(lc),mEqu(la,lb)),
 				"Ld2[c, A, a, A, b, A]\n" + 
@@ -573,6 +631,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpE() {
 		doTest(mImp(mNot(lc),mE(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -582,6 +641,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotLiImpF() {
 		doTest(mImp(mNot(lc),mF(la)),
 				"Ld2[c, A, a, A]\n" + 
@@ -596,6 +656,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		 |
 	 * 		 unary
 	 */
+    @Test
 	public void testENot() {
 		doTest(mE(mNot(la)),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -603,6 +664,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEE() {
 		doTest(mE(mE(la)),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -611,6 +673,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEF() {
 		doTest(mE(mF(la)),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -624,6 +687,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		 |
 	 * 		 unary
 	 */
+    @Test
 	public void testFNot() {
 		doTest(mF(mNot(la)),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -631,6 +695,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFE() {
 		doTest(mF(mE(la)),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -639,6 +704,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFF() {
 		doTest(mF(mF(la)),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -654,12 +720,14 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		 unary
 	 */
+    @Test
 	public void testNotNotNot() {
 		doTest(mNot(mNot(mNot(la))),
 				"not P0[a, A]"
 		);
 	}
 
+    @Test
 	public void testNotNotE() {
 		doTest(mNot(mNot(mE(la))),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -667,6 +735,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotNotF() {
 		doTest(mNot(mNot(mF(la))),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -681,6 +750,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testNotENot() {
 		doTest(mNot(mE(mNot(la))),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -688,6 +758,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotEE() {
 		doTest(mNot(mE(mE(la))),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -696,6 +767,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotEF() {
 		doTest(mNot(mE(mF(la))),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -711,6 +783,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testNotFNot() {
 		doTest(mNot(mF(mNot(la))),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -718,6 +791,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotFE() {
 		doTest(mNot(mF(mE(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -726,6 +800,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testNotFF() {
 		doTest(mNot(mF(mF(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -741,6 +816,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testENotNot() {
 		doTest(mE(mNot(mNot(la))),
 				"∃ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -748,6 +824,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testENotE() {
 		doTest(mE(mNot(mE(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -756,6 +833,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testENotF() {
 		doTest(mE(mNot(mF(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -771,6 +849,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testEENot() {
 		doTest(mE(mE(mNot(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -779,6 +858,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEEE() {
 		doTest(mE(mE(mE(la))),
 				"∃ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -788,6 +868,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEEF() {
 		doTest(mE(mE(mF(la))),
 				"∃ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -804,6 +885,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testEFNot() {
 		doTest(mE(mF(mNot(la))),
 				"∃ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -812,6 +894,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEFE() {
 		doTest(mE(mF(mE(la))),
 				"∃ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -821,6 +904,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEFF() {
 		doTest(mE(mF(mF(la))),
 				"∃ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -837,6 +921,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testFNotNot() {
 		doTest(mF(mNot(mNot(la))),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -844,6 +929,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFNotE() {
 		doTest(mF(mNot(mE(la))),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -852,6 +938,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFNotF() {
 		doTest(mF(mNot(mF(la))),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -867,6 +954,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testFENot() {
 		doTest(mF(mNot(mNot(la))),
 				"∀ [0-0]Q1[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -874,6 +962,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFEE() {
 		doTest(mF(mE(mE(la))),
 				"∀ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -883,6 +972,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFEF() {
 		doTest(mF(mE(mF(la))),
 				"∀ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -899,6 +989,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	 * 		  |
 	 * 		  unary
 	 */
+    @Test
 	public void testFFNot() {
 		doTest(mF(mF(mNot(la))),
 				"∀ [0-0]Q2[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -907,6 +998,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFFE() {
 		doTest(mF(mF(mE(la))),
 				"∀ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -916,6 +1008,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testFFF() {
 		doTest(mF(mF(mF(la))),
 				"∀ [0-0]Q3[{&}(A), {&}(ℙ(A))][a, A]\n" + 
@@ -928,6 +1021,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 	/*
 	 * Others
 	 */
+    @Test
 	public void test1() {
 		doTest(mNot(mEqu(mF(la),lb)), 
 				"not Le2[b, A, a, A]\n" + 
@@ -937,6 +1031,7 @@ public class TestPredicateLoader extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void test2() {
 		doTest(mNot(mImp(mF(la),lb)), 
 				"not Ld2[b, A, a, A]\n" + 

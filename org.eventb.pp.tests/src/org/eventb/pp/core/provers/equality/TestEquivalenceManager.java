@@ -12,27 +12,33 @@ import org.eventb.internal.pp.core.provers.equality.EquivalenceManager;
 import org.eventb.internal.pp.core.provers.equality.IInstantiationResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.FactResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResult;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestEquivalenceManager extends AbstractPPTest {
 	
 	private EquivalenceManager manager;
 	
+    @Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		// init solver
 		manager = new EquivalenceManager();
 	}
 	
+    @Test
 	public void testSimpleContradiction1() {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 		assertNotNull(manager.addFactEquality(nab, cClause(nab)));
 	}
 	
+    @Test
 	public void testSimpleContradiction2() {
 		assertNull(manager.addFactEquality(nab, cClause(ab)));
 		assertNotNull(manager.addFactEquality(ab, cClause(nab)));
 	}
 	
+    @Test
 	public void testQueryInformationRemovedOnNodes() {
 		assertNull(manager.addQueryEquality(ab, cClause(cProp(0),ab)));
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
@@ -41,6 +47,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testQueryInformationRemovedOnNodes2() {
 		assertNull(manager.addQueryEquality(nab, cClause(cProp(0),nab)));
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
@@ -49,6 +56,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testMultipleQuerySameClause() {
 		assertNull(manager.addQueryEquality(ab, cClause(cProp(0),ab,bc)));
 		assertNull(manager.addQueryEquality(bc, cClause(cProp(0),ab,bc)));
@@ -61,6 +69,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addQueryEquality(bc, cClause(cProp(0),bc)));
 	}
 	
+    @Test
 	public void testSimpleLevel() {
 		assertNull(manager.addFactEquality(ab, cClause(ONE,ab)));
 		FactResult result = manager.addFactEquality(nab, cClause(BASE,nab));
@@ -68,6 +77,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(result.getContradictionLevel(),ONE);
 	}
 	
+    @Test
 	public void testLevelUnitClauses() {
 		assertNull(manager.addFactEquality(ab, cClause(ONE,ab)));
 		assertNull(manager.addFactEquality(ab, cClause(BASE,ab)));
@@ -77,10 +87,12 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(result.getContradictionLevel(),BASE);
 	}
 	
+    @Test
 	public void testRemoveInexistantClause() {
 		manager.removeQueryEquality(ab, cClause(cProp(0),ab));
 	}
 	
+    @Test
 	public void testRemoveInexistantClauseWithLevel() {
 		manager.addQueryEquality(ab, cClause(BASE,cProp(0),ab));
 		manager.removeQueryEquality(ab, cClause(ONE, cProp(0),ab));
@@ -88,6 +100,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testRemoveInexistantClauseWithLevel2() {
 		manager.addQueryEquality(ab, cClause(ONE,cProp(0),ab));
 		manager.addQueryEquality(ab, cClause(BASE, cProp(0),ab));
@@ -95,6 +108,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testRemoveInexistantClauseWithLevel3() {
 		manager.addQueryEquality(ab, cClause(BASE,cProp(0),ab));
 		manager.addQueryEquality(ab, cClause(ONE, cProp(0),ab));
@@ -102,6 +116,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testRemoveClauseRootInfo() {
 		manager.addQueryEquality(ab, cClause(cProp(0),ab));
 		manager.removeQueryEquality(ab, cClause(cProp(0),ab));
@@ -109,6 +124,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testRemoveClauseRootInfo2() {
 		manager.addQueryEquality(nab, cClause(cProp(0),nab));
 		manager.removeQueryEquality(nab, cClause(cProp(0),nab));
@@ -116,6 +132,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testRemoveClauseRootInfoWithBacktrack() {
 		manager.addQueryEquality(ab, cClause(cProp(0),ab));
 		manager.removeQueryEquality(ab, cClause(cProp(0),ab));
@@ -124,24 +141,28 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 
+    @Test
 	public void testBacktrack1() {
 		manager.addFactEquality(ab, cClause(ab));
 		manager.backtrack(BASE);
 		assertNotNull(manager.addFactEquality(nab, cClause(ab)));
 	}
 	
+    @Test
 	public void testBacktrack2() {
 		manager.addFactEquality(nab, cClause(nab));
 		manager.backtrack(BASE);
 		assertNotNull(manager.addFactEquality(ab, cClause(ab)));
 	}
 	
+    @Test
 	public void testQueryBacktrack1() {
 		manager.addQueryEquality(ab, cClause(ab));
 		manager.backtrack(BASE);
 		assertNotNull(manager.addFactEquality(nab, cClause(ab)));
 	}
 	
+    @Test
 	public void testQueryBacktrack2() {
 		manager.addQueryEquality(nab, cClause(nab));
 		manager.backtrack(BASE);
@@ -149,6 +170,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testRedundantQuery() {
 		manager.addQueryEquality(ab, cClause(ab,cProp(0)));
 		manager.addQueryEquality(ab, cClause(ab,cProp(1)));
@@ -159,6 +181,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(result.getSolvedQueries().size(), 1);
 	}
 	
+    @Test
 	public void testRedundantFact() {
 		manager.addFactEquality(nab, cClause(nab));
 		manager.addFactEquality(nab, cClause(ONE,nab));
@@ -170,6 +193,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 //		manager.backtrack(BASE);
 	}
 	
+    @Test
 	public void testRedundantFact2() {
 		manager.addFactEquality(nab, cClause(ONE,nab));
 		manager.addFactEquality(nab, cClause(nab));
@@ -182,6 +206,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 	}
 	
 	// instantiations
+    @Test
 	public void testInstantiation() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
 		FactResult result = manager.addFactEquality(nab, cClause(nab));
@@ -194,6 +219,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
 	}
 	
+    @Test
 	public void testInstantiation2() {
 		assertNull(manager.addInstantiationEquality(xb, cClause(cProp(0),xb)));
 		FactResult result = manager.addFactEquality(nab, cClause(nab));
@@ -207,6 +233,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testInstantiationFactFirst() {
 		assertNull(manager.addFactEquality(nab, cClause(nab)));
 		List<InstantiationResult> result = manager.addInstantiationEquality(xa, cClause(cProp(0),xa));
@@ -219,6 +246,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
 	}
 	
+    @Test
 	public void testInstantiationStays() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
 		manager.addFactEquality(nab, cClause(nab));
@@ -232,6 +260,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(nac)), result1.getSolvedValueOrigin());
 	}
 	
+    @Test
 	public void testRedundantInstantiation() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
 		manager.addFactEquality(nab, cClause(nab));
@@ -239,12 +268,14 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(nac, cClause(nac)));
 	}
 	
+    @Test
 	public void testBacktrackInstantiation() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(ONE, cProp(0),xa)));
 		manager.backtrack(BASE);
 		assertNull(manager.addFactEquality(nab, cClause(nab)));
 	}
 	
+    @Test
 	public void testSeveralSolvedInstantiations() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(0),xa)));
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
@@ -258,6 +289,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
 	}
 	
+    @Test
 	public void testSeveralSolvedInstantiationsWithBacktrack() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
@@ -272,6 +304,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(nab)), result1.getSolvedValueOrigin());
 	}
 	
+    @Test
 	public void testSeveralSolvedInstantiationsWithBacktrackAfter() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
@@ -289,6 +322,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertNull(manager.addFactEquality(nac, cClause(nac)));
 	}
 	
+    @Test
 	public void testSeveralSolvedInstantiationsWithBacktrackAfter2() {
 		assertNull(manager.addInstantiationEquality(xa, cClause(ONE,cProp(0),xa)));
 		assertNull(manager.addInstantiationEquality(xa, cClause(cProp(1),xa)));
@@ -307,6 +341,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(cProp(1),xa)), result1.getSolvedClauses());
 	}
 	
+    @Test
 	public void testInstantiationOnEqualTree() {
 		manager.addFactEquality(ab, cClause(ab));
 		manager.addFactEquality(bc, cClause(bc));
@@ -322,6 +357,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(ncd)), result1.getSolvedValueOrigin());
 	}	
 	
+    @Test
 	public void testInstantiationOnEqualTree2() {
 		manager.addFactEquality(ab, cClause(ab));
 		manager.addFactEquality(bc, cClause(bc));
@@ -337,6 +373,7 @@ public class TestEquivalenceManager extends AbstractPPTest {
 		assertEquals(mSet(cClause(bc),cClause(nbd)), result1.getSolvedValueOrigin());
 	}	
 	
+    @Test
 	public void testRemoveQueryEqualityWithLevels() {
 		manager.addQueryEquality(nab, cClause(BASE,ab));
 		

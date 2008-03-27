@@ -6,6 +6,7 @@ import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
+import org.junit.Test;
 
 public class TestOrderer extends AbstractPPTest {
 
@@ -44,6 +45,7 @@ public class TestOrderer extends AbstractPPTest {
 		}
 	}
 
+    @Test
 	public void testOrdering() {
 		doTest("a ∈ S ∨ d ∈ U", "d ∈ U ∨ a ∈ S");
 		doTest("a ∈ S ∨ ¬(a ∈ S)", "¬(a ∈ S) ∨ a ∈ S");

@@ -8,6 +8,7 @@ import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.tracing.IOrigin;
+import org.junit.Test;
 
 public class TestTracer extends AbstractPPTest {
 
@@ -107,12 +108,14 @@ public class TestTracer extends AbstractPPTest {
 		}
 	}
 	
+    @Test
 	public void testSimpleTracer() {
 		tracer.addClosingClauseAndUpdateLevel(o0);
 		assertEquals(tracer.getLastClosedLevel(), BASE);
 		assertEquals(mSet(o0), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroWithUselessClosings() {
 		tracer.addClosingClauseAndUpdateLevel(o1);
 		assertEquals(tracer.getLastClosedLevel(), ONE);
@@ -121,6 +124,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o0), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroWithUselessClosings1() {
 		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -131,6 +135,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o31,o4,o2), tracer.getClosingOrigins());
 	}
 
+    @Test
 	public void testProofAtOneWithUselessClosings() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -141,6 +146,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o1, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -152,6 +158,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o3, o94, o10_4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight2() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -164,6 +171,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o2, o3, o94, o10_1), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight3() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -176,6 +184,7 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	//
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight4() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -188,6 +197,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o2, o3, o91, o10_4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight5() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -200,6 +210,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o2, o91, o10_1), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelRight6() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -213,6 +224,7 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	//
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelRight1() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -224,6 +236,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o3, o9, o10_4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelRight2() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -236,6 +249,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o2, o9, o10_1), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelRight3() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -247,6 +261,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o9, o10), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtFourClosingAtLowerLevelRight() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -258,6 +273,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtFourClosingAtLowerLevelRight2() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -269,6 +285,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o3, o4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtFourClosingAtLowerLevelRight3() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -281,6 +298,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o2, o3, o41), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtFourClosingAtLowerLevelRight4() {
 		tracer.addClosingClauseAndUpdateLevel(o3);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -293,6 +311,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o1, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -305,6 +324,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o731, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft2() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -317,6 +337,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o731, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft3() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -330,6 +351,7 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft4() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -342,6 +364,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft5() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -354,6 +377,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft6() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -366,6 +390,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o81, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft7() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -378,6 +403,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o71, o831, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft8() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -390,6 +416,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o71, o83, o41, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtOneClosingAtLowerLevelLeft9() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -402,6 +429,7 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -414,6 +442,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o731, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft2() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -426,6 +455,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o731, o83, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft3() {
 		tracer.addClosingClauseAndUpdateLevel(o731);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -439,6 +469,7 @@ public class TestTracer extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft4() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -451,6 +482,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft5() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -462,6 +494,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o83, o4), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft6() {
 		tracer.addClosingClauseAndUpdateLevel(o73);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -474,6 +507,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o73, o81, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft7() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -486,6 +520,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o71, o831, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft8() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -498,6 +533,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o71, o83, o4, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAtZeroClosingAtLowerLevelLeft9() {
 		tracer.addClosingClauseAndUpdateLevel(o71);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -509,6 +545,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o71, o81, o2), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testProofAlreadyExistant1() {
 		tracer.addClosingClauseAndUpdateLevel(o7);
 		assertEquals(tracer.getLastClosedLevel(), SEVEN);
@@ -520,6 +557,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o7, o8), tracer.getClosingOrigins());
 	}
 
+    @Test
 	public void testSameSplitTwice() {
 		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);
@@ -530,6 +568,7 @@ public class TestTracer extends AbstractPPTest {
 		assertEquals(mSet(o31, o41), tracer.getClosingOrigins());
 	}
 	
+    @Test
 	public void testClosingGetBackOnLeftBranch() {
 		tracer.addClosingClauseAndUpdateLevel(o31);
 		assertEquals(tracer.getLastClosedLevel(), THREE);

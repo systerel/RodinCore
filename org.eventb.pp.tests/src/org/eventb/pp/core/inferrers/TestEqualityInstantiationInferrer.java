@@ -21,10 +21,12 @@ import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.terms.Constant;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.EqualityInstantiationInferrer;
+import org.junit.Test;
 
 public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 
 	
+    @Test
 	public void testSimple() {
 		doTest(
 				cClause(cPred(d0A, x),cEqual(x, a)), 
@@ -40,6 +42,7 @@ public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 		);
 	}
 	
+    @Test
 	public void testEquivalenceTransformation() {
 		doTest(
 				cEqClause(cPred(d0A, x),cEqual(x, a)), 
@@ -61,6 +64,7 @@ public class TestEqualityInstantiationInferrer extends AbstractInferrerTests {
 		);
 	}
 	
+    @Test
 	public void testSeveralEquivalenceTransformation() {
 		doTest(
 				cEqClause(cPred(d0AA, x, y),cEqual(y, b),cEqual(x, a)), 

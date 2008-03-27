@@ -10,10 +10,12 @@ import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
+import org.junit.Test;
 
 public class TestLiteralCopy extends AbstractPPTest {
 
 	
+    @Test
 	public void testSimplePredicate() {
 		TestLiteralCopy.<PredicateLiteral>doTest(cPred(d1AA, evar0, evar0));
 		TestLiteralCopy.<PredicateLiteral>doTest(cPred(d1AA, evar1, evar0));

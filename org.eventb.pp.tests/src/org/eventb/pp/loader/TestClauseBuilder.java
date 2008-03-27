@@ -50,6 +50,7 @@ import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.elements.terms.VariableTable;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
+import org.junit.Test;
 
 // TODO test negation of the goal
 public class TestClauseBuilder extends AbstractPPTest {
@@ -205,6 +206,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		"TT", REL(CPROD(INT,INT), INT)
 	);
 	
+    @Test
 	public void testSimple() {
 //		final ITypeEnvironment env = ff.makeTypeEnvironment();
 //		env.addName("a", tyS);
@@ -416,6 +418,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testComplex() {
 		Object[] constants = new Object[]{
 				"a", a,
@@ -560,6 +563,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testQuantifiers() {
 		doTestP(
 				mList("∃x·x ∈ P ∨ (a ∈ S ∧ b ∈ U)"),
@@ -754,6 +758,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testQuantifier() {
 		doTestP(
 				mList("¬(A=TRUE⇒(∀x·∃y·x∈P∧y∈Q))"),
@@ -779,6 +784,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquivalence() {
 		doTestP(
 				mList("a ∈ S ⇔ a ∈ S"),
@@ -985,6 +991,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testArithmetic() {
 		doTestP(
 				mList("∃x· x = n + 1 ∧ x ∈ N"),
@@ -1483,6 +1490,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 
 	}
 
+    @Test
 	public void testBool() {
 		doTestP(
 				mList("b = TRUE"),
@@ -1556,6 +1564,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testGoal() {
 		doTestG(
 				mList("∀x,y·x ↦ y ∈ V ∨ (∀z·(x ↦ y) ↦ z ∈ VV) ∨ (∀z·(x ↦ y) ↦ z ∈ VV)"),
@@ -1629,6 +1638,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testEquivalence2() {
 		doTestP(
 				mList("A=TRUE∨B=TRUE⇔A=TRUE"),
@@ -1664,6 +1674,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testPairVariable() {
 		Constant X = cCons("X",PAC);
 		Constant Y = cCons("Y",PAC);
@@ -1697,6 +1708,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testHypotheses() {
 			doTestG(
 					mList("b ∈ S", "a ∈ C"),
@@ -1719,6 +1731,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			);
 	}
 	
+    @Test
 	public void testExistentialBUG() {
 		doTestP(
 			mList("∃x·x∈A∧¬(∃y·y∈B∧x ↦ y∈AA)"),
@@ -1819,6 +1832,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		);
 	}
 
+    @Test
 	public void testTypeInformation() {
 		// Shall create a predicate "∀x·x ∈ S"
 		doTestT(
@@ -2047,6 +2061,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 //	}
 //	
 	
+    @Test
 	public void testNotSameVariable() {
 		ClauseBuilder result = load(mList("(∀x·x ∈ S ∨ x ∈ S) ⇒ (∀x·x ∈ S ∨ x ∈ S )"),false,false,env);
 		for (Clause clause1 : result.getClauses()) {

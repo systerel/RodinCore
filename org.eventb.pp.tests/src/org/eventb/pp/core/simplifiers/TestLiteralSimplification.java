@@ -22,6 +22,7 @@ import org.eventb.internal.pp.core.elements.Literal;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
+import org.junit.Test;
 
 public class TestLiteralSimplification extends AbstractPPTest {
 	private class TestPair {
@@ -386,6 +387,7 @@ public class TestLiteralSimplification extends AbstractPPTest {
 		return new VariableContext();
 	}
 	
+    @Test
 	public void testSimplifier() {
 		for (TestPair test : tests) {
 			LiteralSimplifier rule = new LiteralSimplifier(variableContext());

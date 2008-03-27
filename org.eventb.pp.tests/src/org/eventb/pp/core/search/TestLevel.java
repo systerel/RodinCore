@@ -2,11 +2,13 @@ package org.eventb.pp.core.search;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.junit.Test;
 
 
 public class TestLevel extends AbstractPPTest {
 
 	
+    @Test
 	public void testEquals() {
 		assertTrue(BASE.equals(Level.BASE));
 		assertTrue(ONE.equals(ONE));
@@ -19,18 +21,21 @@ public class TestLevel extends AbstractPPTest {
 //		assertTrue(THREE.getSibling().equals(FOUR));
 //	}
 	
+    @Test
 	public void testLeftBranch() {
 		assertTrue(ONE.getLeftBranch().equals(THREE));
 		assertTrue(TWO.getLeftBranch().equals(FIVE));
 		assertTrue(BASE.getLeftBranch().equals(ONE));
 	}
 	
+    @Test
 	public void testRightBranch() {
 		assertTrue(ONE.getRightBranch().equals(FOUR));
 		assertTrue(TWO.getRightBranch().equals(SIX));
 		assertTrue(BASE.getRightBranch().equals(TWO));
 	}
 	
+    @Test
 	public void testParent() {
 		assertTrue(BASE.getParent().equals(BASE));
 		assertTrue(ONE.getParent().equals(BASE));
@@ -41,6 +46,7 @@ public class TestLevel extends AbstractPPTest {
 		assertTrue(SIX.getParent().equals(TWO));
 	}
 	
+    @Test
 	public void testIsLeftBranch() {
 		assertFalse(BASE.isLeftBranch());
 		assertTrue(ONE.isLeftBranch());
@@ -51,6 +57,7 @@ public class TestLevel extends AbstractPPTest {
 		assertFalse(SIX.isLeftBranch());
 	}
 	
+    @Test
 	public void testIsRightBranch() {
 		assertFalse(BASE.isRightBranch());
 		assertFalse(ONE.isRightBranch());
@@ -61,6 +68,7 @@ public class TestLevel extends AbstractPPTest {
 		assertTrue(SIX.isRightBranch());
 	}
 	
+    @Test
 	public void testHeight() {
 		assertTrue(BASE.getHeight() == 0);
 		assertTrue(ONE.getHeight() == 1);
@@ -75,6 +83,7 @@ public class TestLevel extends AbstractPPTest {
 		assertTrue(SEVEN.getRightBranch().getHeight() == 4);
 	}
 	
+    @Test
 	public void testComparable() {
 		assertTrue(BASE.compareTo(ONE) <= 1);
 		assertTrue(BASE.compareTo(BASE) == 0);
@@ -87,6 +96,7 @@ public class TestLevel extends AbstractPPTest {
 	}
 	
 	
+    @Test
 	public void testAncestorInSameTree() {
 		assertTrue(BASE.isAncestorInSameTree(ONE));
 		assertTrue(BASE.isAncestorInSameTree(TWO));

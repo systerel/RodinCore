@@ -21,6 +21,7 @@ import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.core.search.RandomAccessList;
+import org.junit.Test;
 
 public class TestSeedSearch extends AbstractPPTest {
 
@@ -119,6 +120,7 @@ public class TestSeedSearch extends AbstractPPTest {
 		return prover;
 	}
 	
+    @Test
 	public void testEmptyResult() {
 		final SeedSearchProver prover = getProver();
 		assertEquals(prover.next(false), ProverResult.EMPTY_RESULT);
@@ -126,6 +128,7 @@ public class TestSeedSearch extends AbstractPPTest {
 	}
 		
 	
+    @Test
 	public void test() {
 		for (TestPair test : tests) {
 			doTest(test);

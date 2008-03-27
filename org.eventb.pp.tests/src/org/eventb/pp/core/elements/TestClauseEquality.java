@@ -18,16 +18,19 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d3A;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
+import org.junit.Test;
 
 public class TestClauseEquality extends AbstractPPTest {
 	
 	
+    @Test
 	public void testPropositionalEqual() {
 		testEqual(
 				cClause(cProp(0)),cClause(cProp(0))	
 		);
 	}
 
+    @Test
 	public void testPredicateEqual() {
 		testEqual(
 				cClause(cPred(d0A,x)),cClause(cPred(d0A,y))	
@@ -87,6 +90,7 @@ public class TestClauseEquality extends AbstractPPTest {
 	}
 
 
+    @Test
 	public void testUnequalClauses() {
 		testUnequal(
 				cClause(cProp(0)),cClause(cNotProp(0))
@@ -163,10 +167,12 @@ public class TestClauseEquality extends AbstractPPTest {
 		);
 	}
 	
+    @Test
 	public void testUnequalDisjAndEqClauses() {
 		testUnequal(cClause(cProp(0),cProp(0)),cEqClause(cProp(0),cProp(0)));
 	}
 	
+    @Test
 	public void testEqualClauseWithEquality() {
 		// this is unequal
 		testUnequal(cClause(cPred(d0A,x),cEqual(x,y)),cClause(cPred(d0A,y),cEqual(x,y)));

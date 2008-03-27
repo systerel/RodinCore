@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.search.ConditionIterator;
+import org.junit.Test;
 
 public class TestIterator extends TestCase {
 
@@ -36,6 +37,7 @@ public class TestIterator extends TestCase {
 		return new NiceIterator(objects.iterator());
 	}
 	
+    @Test
 	public void testEmptyIterator1() {
 		Iterator<Object> it = createEmptyIterator();
 		assertFalse(it.hasNext());
@@ -47,6 +49,7 @@ public class TestIterator extends TestCase {
 		}
 	}
 	
+    @Test
 	public void testEmptyIterator2() {
 		Iterator<Object> it = createEmptyIterator();
 		try {
@@ -58,6 +61,7 @@ public class TestIterator extends TestCase {
 		assertFalse(it.hasNext());
 	}
 	
+    @Test
 	public void testEmptyIteratorSeveral1() {
 		Iterator<Object> it = createEmptyIterator();
 		assertFalse(it.hasNext());
@@ -77,6 +81,7 @@ public class TestIterator extends TestCase {
 		assertFalse(it.hasNext());
 	}
 	
+    @Test
 	public void testEmptyIteratorSeveral2() {
 		Iterator<Object> it = createEmptyIterator();
 		try {
@@ -96,6 +101,7 @@ public class TestIterator extends TestCase {
 		assertFalse(it.hasNext());
 	}
 	
+    @Test
 	public void testHasNext() {
 		testHasNext(createOneIterableIteratorTwoElements());
 //		testHasNext(createTwoIterableIteratorTwoElements());

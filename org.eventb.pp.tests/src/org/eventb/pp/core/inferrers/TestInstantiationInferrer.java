@@ -12,6 +12,7 @@ import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Variable;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.InstantiationInferrer;
+import org.junit.Test;
 
 public class TestInstantiationInferrer extends AbstractInferrerTests {
 
@@ -83,6 +84,7 @@ public class TestInstantiationInferrer extends AbstractInferrerTests {
 	
 	
 	
+    @Test
 	public void testInstantiationInferrer() {
 		InstantiationInferrer inferrer = new InstantiationInferrer(new VariableContext());
 		for (TestPair test : tests) {

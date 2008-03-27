@@ -26,6 +26,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
+import org.junit.Test;
 
 public class TestTermBuilder extends AbstractPPTest {
 
@@ -70,6 +71,7 @@ public class TestTermBuilder extends AbstractPPTest {
 	/**
 	 * Ensures that simple terms are build correctly.
 	 */
+    @Test
 	public void testTerms() {
 		doTest("a", a);
 		doTest("−a", mUnaryMinus(a));
@@ -112,6 +114,7 @@ public class TestTermBuilder extends AbstractPPTest {
 	 * Ensures that when the top quantifier is changed, variables associated to
 	 * bound identifiers are computed correctly.
 	 */
+    @Test
 	public void testChangeTopQuantifier() {
 		final TermBuilder builder = new TermBuilder(new AbstractContext());
 		final BoundIdentDecl[] decls_1 = mArray(dS);
@@ -134,6 +137,7 @@ public class TestTermBuilder extends AbstractPPTest {
 	 * Ensures that when a nested quantifier contains several declarations,
 	 * variables associated to bound identifiers are computed correctly.
 	 */
+    @Test
 	public void testLongNestedQuantifier() {
 		final TermBuilder builder = new TermBuilder(new AbstractContext());
 		final BoundIdentDecl[] decls_1 = mArray(dS, dT);
@@ -157,6 +161,7 @@ public class TestTermBuilder extends AbstractPPTest {
 	 * Ensures that when a nested quantifier is changed, variables associated to
 	 * bound identifiers are computed correctly.
 	 */
+    @Test
 	public void testChangeNestedQuantifier() {
 		final TermBuilder builder = new TermBuilder(new AbstractContext());
 		final BoundIdentDecl[] decls_1 = mArray(dS);

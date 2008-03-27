@@ -18,6 +18,7 @@ import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
+import org.junit.Test;
 
 public class TestTermEquality extends AbstractPPTest {
 
@@ -310,6 +311,7 @@ public class TestTermEquality extends AbstractPPTest {
 			
 	};
 
+    @Test
 	public void testEqualWithDifferentVariables() {
 		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : equalTerms) {
@@ -324,6 +326,7 @@ public class TestTermEquality extends AbstractPPTest {
 		}
 	}
 	
+    @Test
 	public void testUnEqual() {
 //		HashMap<SimpleTerm, SimpleTerm> map;
 		for (Term[] terms : unequalTerms) {
@@ -334,6 +337,7 @@ public class TestTermEquality extends AbstractPPTest {
 		}
 	}
 	
+    @Test
 	public void testEqualNormal() {
 		assertEquals(x,x);
 		assertEquals(x.hashCode(), x.hashCode());
@@ -368,6 +372,7 @@ public class TestTermEquality extends AbstractPPTest {
 	private static Sort A = new Sort(FormulaFactory.getDefault().makeGivenType("A"));
 	private static Sort B = new Sort(FormulaFactory.getDefault().makeGivenType("B"));
 	
+    @Test
 	public void testEqualSort() {
 		assertTrue(cVar(1,A).equalsWithDifferentVariables(cVar(1,A),new HashMap<SimpleTerm, SimpleTerm>()));
 		assertFalse(cVar(1,A).equalsWithDifferentVariables(cVar(1,B),new HashMap<SimpleTerm, SimpleTerm>()));

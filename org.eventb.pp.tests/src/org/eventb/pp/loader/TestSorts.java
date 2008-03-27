@@ -14,6 +14,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
+import org.junit.Test;
 
 /**
  * This class tests that the sorts created by the term builder are indeed the
@@ -61,6 +62,7 @@ public class TestSorts extends AbstractPPTest {
 		doTest(expr, expected, decls);
 	}
 
+    @Test
 	public void testSorts() {
 		doTest(a, mSort(S));
 		doTest(b, mSort(T));

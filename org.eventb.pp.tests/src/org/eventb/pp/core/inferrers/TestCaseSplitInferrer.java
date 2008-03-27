@@ -18,6 +18,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.VariableContext;
 import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
+import org.junit.Test;
 
 /**
  * This class tests the case split inferrer. Case split inferrer behaves
@@ -31,6 +32,7 @@ import org.eventb.internal.pp.core.inferrers.CaseSplitInferrer;
  */
 public class TestCaseSplitInferrer extends AbstractPPTest {
 
+    @Test
 	public void testCaseSplitInferrer () {
 			doTest(
 					cClause(BASE, cProp(0),cProp(1)),
@@ -84,6 +86,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 		assertTrue("Expected: "+right+", was: "+inferrer.getRightCase()+", from :"+original,inferrer.getRightCase().equals(right));
 	}
 	
+    @Test
 	public void testIllegal() {
 		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 
@@ -97,6 +100,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 		}
 	}	
 	
+    @Test
 	public void testCanInfer() {
 		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 		
@@ -118,6 +122,7 @@ public class TestCaseSplitInferrer extends AbstractPPTest {
 		}
 	}
 	
+    @Test
 	public void testCannotInfer() {
 		CaseSplitInferrer inferrer = new CaseSplitInferrer(new VariableContext());
 		

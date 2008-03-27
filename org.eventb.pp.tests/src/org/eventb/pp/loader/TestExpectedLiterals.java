@@ -19,6 +19,7 @@ import org.eventb.internal.pp.loader.formula.ArithmeticFormula;
 import org.eventb.internal.pp.loader.formula.EqualityFormula;
 import org.eventb.internal.pp.loader.formula.PredicateFormula;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
+import org.junit.Test;
 
 
 /**
@@ -76,14 +77,17 @@ public class TestExpectedLiterals extends TestCase {
 	
 	
 	
+    @Test
 	public void testArithmetic() {
 		doTest(testArithmetic, ArithmeticFormula.class);
 	}
 	
+    @Test
 	public void testEquality() {
 		doTest(testEquality, EqualityFormula.class);
 	}
 	
+    @Test
 	public void testPredicates() {
 		doTest(testPredicates, PredicateFormula.class);
 	}
