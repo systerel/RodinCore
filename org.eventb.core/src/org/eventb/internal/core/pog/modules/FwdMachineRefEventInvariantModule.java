@@ -60,13 +60,13 @@ public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModu
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)
 			substitution.add(concreteEventActionTable.getDeltaPrime());
+		substitution.addAll(witnessTable.getMachineDetAssignments());
+		if (witnessTable.getPrimeSubstitution() != null)
+			substitution.add(witnessTable.getPrimeSubstitution());
 		substitution.addAll(abstractEventActionTable.getDisappearingWitnesses());
 		Predicate predicate = invPredicate.applyAssignments(substitution, factory);
 		substitution.clear();		
 		substitution.addAll(witnessTable.getEventDetAssignments());
-		substitution.addAll(witnessTable.getMachineDetAssignments());
-		if (witnessTable.getPrimeSubstitution() != null)
-			substitution.add(witnessTable.getPrimeSubstitution());
 		predicate = predicate.applyAssignments(substitution, factory);
 		substitution.clear();
 		if (concreteEventActionTable.getXiUnprime() != null)
