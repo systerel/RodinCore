@@ -263,10 +263,10 @@ public class Util {
 		return new Sort(type);
 	}
 	
-	static Sort A = Util.mSort(ff.makeGivenType("A"));
-	static Sort B = Util.mSort(ff.makeGivenType("B"));
-	static Sort PA = Util.mSort(ff.makePowerSetType(ff.makeGivenType("A")));
-	static Sort PAB = Util.mSort(ff.makePowerSetType(ff.makeProductType(ff
+	static final Sort A = mSort(ff.makeGivenType("A"));
+	static final Sort B = mSort(ff.makeGivenType("B"));
+	static final Sort PA = mSort(ff.makePowerSetType(ff.makeGivenType("A")));
+	static final Sort PAB = mSort(ff.makePowerSetType(ff.makeProductType(ff
 			.makeGivenType("A"), ff.makeGivenType("B"))));
 	
 	public static Constant cCons(String name, Sort sort) {
@@ -277,24 +277,8 @@ public class Util {
 		return new IntegerConstant(BigInteger.valueOf(value));
 	}
 	
-	static Constant cCons(String name) {
-		return new Constant(name, A);
-	}
-	
 	public static Variable cVar(int index, Sort sort) {
 		return new Variable(index, sort);
-	}
-	
-	static Variable cVar(Sort sort) {
-		return new Variable(1,sort);
-	}
-	
-	static Variable cVar(int index) {
-		return new Variable(index, A);
-	}
-	
-	static Variable cVar() {
-		return new Variable(1,A);
 	}
 	
 	public static LocalVariable cFLocVar(int index, Sort sort) {
@@ -303,14 +287,6 @@ public class Util {
 	
 	public static LocalVariable cELocVar(int index, Sort sort) {
 		return new LocalVariable(index, false, sort);
-	}
-	
-	static LocalVariable cFLocVar(int index) {
-		return new LocalVariable(index, true, A);
-	}
-	
-	static LocalVariable cELocVar(int index) {
-		return new LocalVariable(index, false, A);
 	}
 	
 	public static Plus cPlus(Term... terms) {
@@ -492,7 +468,7 @@ public class Util {
 	}
 
 	public static <T> List<T> mList(T... elements) {
-		return new ArrayList<T>(Arrays.asList(elements));
+		return Arrays.asList(elements);
 	}
 	
 	public static <T> T[] mArray(T... elements) {

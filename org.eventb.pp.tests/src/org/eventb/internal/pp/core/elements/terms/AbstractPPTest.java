@@ -3,6 +3,7 @@ package org.eventb.internal.pp.core.elements.terms;
 import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
+import static org.eventb.internal.pp.core.elements.terms.Util.cIntCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 
 import java.util.ArrayList;
@@ -78,53 +79,6 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Level NINETEEN = NINE.getLeftBranch();
 	public static Level TWENTY = NINE.getRightBranch();
 	
-	public static Variable x = cVar(1);
-	public static Variable y = cVar(2);
-	public static Variable z = cVar(3);
-	
-	public static IntegerConstant zero = Util.cIntCons(0);
-	public static IntegerConstant one = Util.cIntCons(1);
-	
-	public static Constant a = cCons("a");
-	public static Constant b = cCons("b");
-	public static Constant c = cCons("c");
-	public static Constant d = cCons("d");
-	public static Constant e = cCons("e");
-	public static Constant f = cCons("f");
-	
-	public static Variable var00 = Util.cVar(2);
-	public static Variable var11 = Util.cVar(3);
-	public static Variable var0 = Util.cVar(4);
-	public static Variable var1 = Util.cVar(5);
-	public static Variable var2 = Util.cVar(6);
-	public static Variable var3 = Util.cVar(7);
-	public static Variable var4 = Util.cVar(8);
-	
-	public static LocalVariable evar0 = cELocVar(0);
-	public static LocalVariable evar1 = cELocVar(1);
-	public static LocalVariable evar2 = cELocVar(2);
-	public static LocalVariable fvar0 = cFLocVar(0);
-	public static LocalVariable fvar1 = cFLocVar(1);
-	public static LocalVariable fvar2 = cFLocVar(2);
-	
-	public static EqualityLiteral ab = Util.cEqual(a,b);
-	public static EqualityLiteral ac = Util.cEqual(a,c);
-	public static EqualityLiteral nab = Util.cNEqual(a,b);
-	public static EqualityLiteral bc = Util.cEqual(b,c);
-	public static EqualityLiteral nbc = Util.cNEqual(b,c);
-	public static EqualityLiteral cd = Util.cEqual(c,d);
-	public static EqualityLiteral ncd = Util.cNEqual(c,d);
-	public static EqualityLiteral nbd = Util.cNEqual(b,d);
-	public static EqualityLiteral nac = Util.cNEqual(a,c);
-	
-	public static EqualityLiteral xa = Util.cEqual(x, a);
-	public static EqualityLiteral xb = Util.cEqual(x, b);
-	public static EqualityLiteral yb = Util.cEqual(y, b);
-	public static EqualityLiteral nxa = Util.cNEqual(x, a);
-	public static EqualityLiteral nxb = Util.cNEqual(x, b);
-	public static EqualityLiteral xc = Util.cEqual(x, c);
-	public static EqualityLiteral xd = Util.cEqual(x, d);
-	
 	public static Sort A = Util.A;
 	public static Sort B = Util.mSort(ty_B);
 	public static Sort C = Util.mSort(ty_C);
@@ -145,6 +99,53 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Sort PBC = Util.mSort(REL(ty_B,ty_C));
 	public static Sort NAT = Sort.NATURAL;
 	public static Sort BOOL = Sort.BOOLEAN;
+	
+	public static Variable x = cVar(1, A);
+	public static Variable y = cVar(2, A);
+	public static Variable z = cVar(3, A);
+	
+	public static IntegerConstant zero = cIntCons(0);
+	public static IntegerConstant one = cIntCons(1);
+	
+	public static Constant a = cCons("a", A);
+	public static Constant b = cCons("b", A);
+	public static Constant c = cCons("c", A);
+	public static Constant d = cCons("d", A);
+	public static Constant e = cCons("e", A);
+	public static Constant f = cCons("f", A);
+	
+	public static Variable var00 = cVar(2, A);
+	public static Variable var11 = cVar(3, A);
+	public static Variable var0 = cVar(4, A);
+	public static Variable var1 = cVar(5, A);
+	public static Variable var2 = cVar(6, A);
+	public static Variable var3 = cVar(7, A);
+	public static Variable var4 = cVar(8, A);
+	
+	public static LocalVariable evar0 = cELocVar(0, A);
+	public static LocalVariable evar1 = cELocVar(1, A);
+	public static LocalVariable evar2 = cELocVar(2, A);
+	public static LocalVariable fvar0 = cFLocVar(0, A);
+	public static LocalVariable fvar1 = cFLocVar(1, A);
+	public static LocalVariable fvar2 = cFLocVar(2, A);
+	
+	public static EqualityLiteral ab = Util.cEqual(a,b);
+	public static EqualityLiteral ac = Util.cEqual(a,c);
+	public static EqualityLiteral nab = Util.cNEqual(a,b);
+	public static EqualityLiteral bc = Util.cEqual(b,c);
+	public static EqualityLiteral nbc = Util.cNEqual(b,c);
+	public static EqualityLiteral cd = Util.cEqual(c,d);
+	public static EqualityLiteral ncd = Util.cNEqual(c,d);
+	public static EqualityLiteral nbd = Util.cNEqual(b,d);
+	public static EqualityLiteral nac = Util.cNEqual(a,c);
+	
+	public static EqualityLiteral xa = Util.cEqual(x, a);
+	public static EqualityLiteral xb = Util.cEqual(x, b);
+	public static EqualityLiteral yb = Util.cEqual(y, b);
+	public static EqualityLiteral nxa = Util.cNEqual(x, a);
+	public static EqualityLiteral nxb = Util.cNEqual(x, b);
+	public static EqualityLiteral xc = Util.cEqual(x, c);
+	public static EqualityLiteral xd = Util.cEqual(x, d);
 	
 	public static Clause TRUE = Util.TRUE(Level.BASE);
 	public static Clause FALSE = Util.FALSE(Level.BASE);
