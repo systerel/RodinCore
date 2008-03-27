@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,15 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import org.eventb.core.IAxiom;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Predicate;
 
 /**
  * @author Stefan Hallerstede
@@ -1204,4 +1208,156 @@ public class TestMachineRefines extends EventBPOTest {
 		sequentHasGoal(sequent, typenv, "v3' = v1' ↦ v1");
 	}
 
+	/**
+	 * Test with all possible data refinements together.
+	 */
+	public void testRefines_23() throws Exception {
+		
+		// Context
+		final IContextFile ctx = createContext("con");
+		addConstants(ctx, "gp", "fvdd", "fvdn", "fvd", "ga",
+				"glue", "ip", "fpwd", "gpwn", "fvnwd", "gvnwn",
+				"hvdd", "hvnd", "hvrd", "ia");
+		addAxioms(ctx,
+				"gp", "gp ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"fvdd", "fvdd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"fvdn", "fvdn ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ ",
+				"fvd", "fvd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ ",
+				"ga", "ga ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"glue", "glue ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"ip", "ip ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"fpwd", "fpwd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"gpwn", "gpwn ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"fvnwd", "fvnwd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"gvnwn", "gvnwn ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ",
+				"hvdd", "hvdd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"hvnd", "hvnd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"hvrd", "hvrd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
+				"ia", "ia ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ"
+		);
+		ctx.save(null, true);
+		
+		// Abstract machine
+		final IMachineFile abs = createMachine("abs");
+		addMachineSees(abs, ctx.getBareName());
+
+		final String[] absVars = makeSList("vdd", "vdn", "vd", "vnd", "vnn",
+				"vnwd", "vnwn");
+		final String absVarMaplet = makeMaplet(absVars);
+		addVariables(abs, absVars);
+		addInvariant(abs, "I", absVarMaplet + " ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ");
+		addInitialisation(abs, absVars);
+		
+		final String[] absPars = makeSList("p", "pwd", "pwn");
+		final String absParMaplet = makeMaplet(absPars);
+		final String absFullMaplet = makeMaplet(absParMaplet, absVarMaplet);
+		final IEvent absEvt = addEvent(abs, "evt",
+				makeSList(absPars),
+				makeSList("G"),
+				makeSList(absFullMaplet + " ∈ gp"),
+				makeSList("vdd", "vdn", "vd", "act"),
+				makeSList(
+						"vdd ≔ fvdd(" + absFullMaplet + ")",
+						"vdn ≔ fvdn(" + absFullMaplet + ")",
+						"vd  ≔ fvd (" + absFullMaplet + ")",
+						"vnd, vnn, vnwd, vnwn :∣ " + absFullMaplet + " ↦ vnd' ↦ vnn' ↦ vnwd' ↦ vnwn' ∈ ga"
+				)
+		);
+		abs.save(null, true);
+		
+		// Concrete machine
+		final IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, abs.getBareName());
+		addMachineSees(ref, ctx.getBareName());
+
+		final String[] refVars = makeSList("vdd", "vdn", "vnd", "vnn", "vrd",
+				"vrn");
+		final String[] refPostVars = makePrime(refVars);
+		final String refVarMaplet = makeMaplet(refVars);
+		final String bothVarMaplet = makeMaplet(refVarMaplet, "vd", "vnwd", "vnwn");
+		addVariables(ref, refVars);
+		addInvariant(ref, "J", bothVarMaplet + " ∈ glue");
+		final IEvent refInit = addInitialisation(ref, refVars);
+		addEventWitnesses(refInit, "vd'", "⊤", "vnwd'", "⊤", "vnwn'", "⊤");
+
+		final String[] refPars = makeSList("p", "pr");
+		final String refParMaplet = makeMaplet(refPars);
+		final String refFullMaplet = makeMaplet(refParMaplet, refVarMaplet);
+		final IEvent refEvt = addEvent(ref, "evt",
+				makeSList(refPars),
+				makeSList("H"),
+				makeSList(refFullMaplet + " ∈ ip"),
+				makeSList("vdd", "vnd", "vrd", "act"),
+				makeSList(
+						"vdd ≔ hvdd(" + refFullMaplet + ")",
+						"vnd ≔ hvnd(" + refFullMaplet + ")",
+						"vrd ≔ hvrd (" + refFullMaplet + ")",
+						"vdn, vnn, vrn :∣ " + refFullMaplet + " ↦ vdn' ↦ vnn' ↦ vrn' ∈ ia"
+				)
+		);
+		addEventRefines(refEvt, absEvt.getLabel());
+		final String bothFullMaplet = makeMaplet(refParMaplet, bothVarMaplet);
+		final String bothFullMapletPlusPost = makeMaplet(bothFullMaplet,
+				makeMaplet(refPostVars));
+		addEventWitnesses(refEvt, 
+				"pwd", "pwd = fpwd(" + bothFullMaplet + ")",
+				"pwn", "pwn ↦ " + bothFullMaplet + " ∈ gpwn",
+				"vnwd'", "vnwd' = fvnwd(" + bothFullMapletPlusPost + ")", 
+				"vnwn'", bothFullMapletPlusPost + " ↦ vnwn' ∈ gvnwn"
+		);
+		ref.save(null, true);
+		
+		/////////////
+		runBuilder();
+		/////////////
+
+		// Populate type environment with axioms
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		for (IAxiom axiom: ctx.getAxioms()) {
+			final String s = axiom.getPredicateString();
+			final Predicate p = factory.parsePredicate(s).getParsedPredicate();
+			final ITypeCheckResult tcResult = p.typeCheck(typenv);
+			assertTrue(p.isTypeChecked());
+			typenv.addAll(tcResult.getInferredEnvironment());
+		}
+		
+		// Evaluate some post values
+		final String refVarMaplet_p = makeMaplet(
+				"hvdd(" + refFullMaplet + ")",
+				"vdn'",
+				"hvnd(" + refFullMaplet + ")",
+				"vnn'",
+				"hvrd (" + refFullMaplet + ")",
+				"vrn'"
+		);
+		final String absParMaplet_i = makeMaplet(
+				"p",
+				"fpwd(" + bothFullMaplet + ")",
+				"pwn"
+		);
+		final String absFullMaplet_i = makeMaplet(absParMaplet_i, absVarMaplet);
+		final String bothFullMaplet_p = makeMaplet(refParMaplet, bothVarMaplet);
+		final String bothFullMapletPlusPost_p = makeMaplet(bothFullMaplet_p,
+				refVarMaplet_p);
+		final String bothVarMaplet_p = makeMaplet(refVarMaplet_p,
+				"fvd (" + absFullMaplet_i + ")",
+				"fvnwd(" + bothFullMapletPlusPost_p + ")",
+				"vnwn'"
+		);
+		
+		// evt/J/INV
+		final IPOFile po = ref.getPOFile();
+		final IPOSequent inv = getSequent(po, "evt/J/INV");
+		sequentHasGoal(inv, typenv, bothVarMaplet_p + " ∈ glue");
+
+		// evt/act/SIM
+		final IPOSequent sim = getSequent(po, "evt/act/SIM");
+		final String lhs = makeMaplet(absFullMaplet_i,
+				"hvnd(" + refFullMaplet + ")",
+				"vnn'",
+				"fvnwd(" + bothFullMapletPlusPost_p + ")",
+				"vnwn'"
+		);
+		sequentHasGoal(sim, typenv, lhs + " ∈ ga");
+	}
 }
