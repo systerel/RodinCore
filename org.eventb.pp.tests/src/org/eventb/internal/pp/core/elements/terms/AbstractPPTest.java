@@ -159,18 +159,4 @@ public abstract class AbstractPPTest extends TestCase {
 		assertTrue(result.getGeneratedClauses().iterator().next().isTrue());
 	}
 
-	
-	public void initDebug() {
-//		PredicateBuilder.DEBUG = true;
-//		ClauseBuilder.DEBUG = true;
-		
-//		PPProof.DEBUG = true;
-//		ClauseDispatcher.DEBUG = true;
-//		SeedSearchProver.DEBUG = true;
-//		EqualityProver.DEBUG = true;
-//		PredicateProver.DEBUG = true;
-//		ClauseSimplifier.DEBUG = true;
-//		CaseSplitter.DEBUG = true;
-//		Dumper.DEBUG = true;
-	}
 }

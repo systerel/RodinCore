@@ -179,8 +179,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testList() {
-		initDebug();
-		
 		doTest(
 			mList(
 			"m","ℙ(M×M)",
@@ -207,8 +205,6 @@ public class RodinTests extends AbstractPPTest {
 	
 	
 	public void testFailingLevels() {
-		initDebug();
-
 		doTest(mList("B","ℙ(S×S×S)","R","ℙ(S×S)"),
 				mSet(
 						"∀x,y·x ↦ y∈R⇒¬y ↦ x∈R",
@@ -227,8 +223,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testSoundness() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"m","ℙ(M×M)",
@@ -259,8 +253,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testSimpleSplit() {
-		initDebug();
-		
 		doTest(
 				new ArrayList<String>(),
 				mSet(
@@ -274,8 +266,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testBirthday() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"brithday","ℙ(PERSON×DATE)",
@@ -293,7 +283,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testPOW() {
-		initDebug();
 //		f : s >->t
 //		a : POW1(s)
 //		|--
@@ -331,7 +320,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testJR() {
-		initDebug();
 //		f : A-->E
 //		f[a] <: b
 //		|---
@@ -369,8 +357,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testConjunctiveGoals() {
-		initDebug();
-		
 //		q : t <-> t
 //		!a,b. a:t & b:t => (a|->b : q <=> a<:b)
 //		x|->x0 : q/\q~
@@ -440,7 +426,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testConjunctiveGoals2() {
-		initDebug();
 //		 (∀x0,x1,x2·((x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))∧((x0 ↦ x2∈f∧x0∈x)∨(x2 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x2∈f)))⇒x1=x2)
 //		 ∧
 //		 (∀x0·∃x1·(x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))
@@ -539,8 +524,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testCelebrity() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"Q","ℙ(ℤ)",
@@ -559,8 +542,6 @@ public class RodinTests extends AbstractPPTest {
 				),"¬x=c",true);
 	}
 	public void testFailingExample2() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"S","ℙ(S)",
@@ -633,8 +614,6 @@ public class RodinTests extends AbstractPPTest {
 //	}
 	
 	public void testfifth() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"T","ℙ(T)",
@@ -720,7 +699,6 @@ public class RodinTests extends AbstractPPTest {
 	
 	
 	public void testProfile() {
-		initDebug();
 		// !x!y!z (Rxy & Ryz -> Rxz),
 		// !x Rxx,
 		// !x!y#z (Rxz & Ryz)
@@ -738,8 +716,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testRubin() {
-		initDebug();
-		
 		doTest(
 				mList("A","ℙ(E)"),
 				mSet(	"∀x·x∈A⇒x∈B",
@@ -758,7 +734,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testInjection() {
-		initDebug();
 		
 //		doTest(mSet("r ∈ E ↣ E" , "s ∈ E ↣ E"), 
 //				"r;s ∈ E ↣ E", true);
@@ -849,8 +824,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testFunctionWithExtraHypotheses() {
-		initDebug();
-		
 		doTest(
 				mList(
 				"h","ℙ(S×S)",
@@ -869,7 +842,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testAllFunctionSameType() {
-		initDebug();
 		
 		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
 				"r∈S ↣ S", "s∈S ↣ S"),
@@ -897,7 +869,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testSurjection() {
-		initDebug();
 		
 //		doTest(mSet("r ∈ E ↣ E", "s ∈ E ↣ E"), "r;s ∈ E ↣ E", true);
 		
@@ -994,7 +965,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 
 	public void testOverride() {
-		initDebug();
 		
 		doTest(mList("C","ℙ(C)","D","ℙ(D)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 				"(∀x,x0,x1·((x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b))∧((x ↦ x1∈f∧¬x=c)∨(x=c∧x1=b))⇒x0=x1)", true);
@@ -1028,7 +998,6 @@ public class RodinTests extends AbstractPPTest {
 	}
 	
 	public void testAll() {
-		initDebug();
 			// f: S-->T
 			// a/:S
 			// b/:T

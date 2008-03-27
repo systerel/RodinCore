@@ -33,8 +33,6 @@ import org.eventb.pp.PPResult.Result;
 public class TestConditions extends AbstractPPTest {
 
 	public void testConditions() {
-		initDebug();
-		
 		List<Clause> clauses = mList(
 				cClause(cPred(d0A, a), cPred(d1A, a), cPred(d2A, a)),
 				cClause(cProp(3), Util.cEqual(a, b)),
