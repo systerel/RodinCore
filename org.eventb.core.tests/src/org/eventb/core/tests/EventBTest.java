@@ -83,6 +83,18 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 		
+	public void addAxioms(IContextFile rodinFile, String... strings)
+			throws RodinDBException {
+		final int length = strings.length;
+		assert length % 2 == 0;
+		for (int i = 0; i < length; i += 2) {
+			final IAxiom axiom = rodinFile.getAxiom(getUniqueName());
+			axiom.create(null, null);
+			axiom.setLabel(strings[i], null);
+			axiom.setPredicateString(strings[i + 1], null);
+		}
+	}
+		
 	public void addCarrierSets(IContextFile rodinFile, String... names) throws RodinDBException {
 		for(String name : names) {
 			ICarrierSet set = rodinFile.getCarrierSet(getUniqueName());
@@ -108,13 +120,27 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
-	public void addEventWitnesses(IEvent event, String[] labels, String[] predicates) throws RodinDBException {
+	public void addEventWitness(IEvent event, String label, String pred)
+			throws RodinDBException {
+		final IWitness witness = event.getWitness(getUniqueName());
+		witness.create(null, null);
+		witness.setLabel(label, null);
+		witness.setPredicateString(pred, null);
+	}
+
+	public void addEventWitnesses(IEvent event, String... strings)
+			throws RodinDBException {
+		assert strings.length % 2 == 0;
+		for (int i = 0; i < strings.length; i += 2) {
+			addEventWitness(event, strings[i], strings[i + 1]);
+		}
+	}
+
+	public void addEventWitnesses(IEvent event, String[] labels,
+			String[] predicates) throws RodinDBException {
 		assert labels.length == predicates.length;
-		for (int i=0; i<labels.length; i++) {
-			IWitness witness = event.getWitness(getUniqueName());
-			witness.create(null, null);
-			witness.setLabel(labels[i], null);
-			witness.setPredicateString(predicates[i], null);
+		for (int i = 0; i < labels.length; i++) {
+			addEventWitness(event, labels[i], predicates[i]);
 		}
 	}
 
@@ -204,12 +230,18 @@ public abstract class EventBTest extends BuilderTest {
 		setConvergence(event, IConvergenceElement.Convergence.CONVERGENT);
 	}
 	
-	public void addInvariants(IMachineFile rodinFile, String[] names, String[] invariants) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			IInvariant invariant = rodinFile.getInvariant(getUniqueName());
-			invariant.create(null, null);
-			invariant.setPredicateString(invariants[i], null);
-			invariant.setLabel(names[i], null);
+	public void addInvariant(IMachineFile rodinFile, String label, String pred)
+			throws RodinDBException {
+		final IInvariant invariant = rodinFile.getInvariant(getUniqueName());
+		invariant.create(null, null);
+		invariant.setLabel(label, null);
+		invariant.setPredicateString(pred, null);
+	}
+
+	public void addInvariants(IMachineFile rodinFile, String[] labels,
+			String[] preds) throws RodinDBException {
+		for (int i = 0; i < labels.length; i++) {
+			addInvariant(rodinFile, labels[i], preds[i]);
 		}
 	}
 
@@ -265,6 +297,25 @@ public abstract class EventBTest extends BuilderTest {
 
 	public static String[] makeSList(String...strings) {
 		return strings;
+	}
+
+	public static String[] makePrime(String...strings) {
+		String[] result = strings.clone();
+		for (int i = 0; i < strings.length; i++) {
+			result[i] = strings[i] + "'";
+		}
+		return result;
+	}
+
+	public static String makeMaplet(String...strings) {
+		final StringBuilder b = new StringBuilder();
+		String sep = "";
+		for (String s: strings) {
+			b.append(sep);
+			b.append(s);
+			sep = " ↦ ";
+		}
+		return b.toString();
 	}
 
 	// generic methods
