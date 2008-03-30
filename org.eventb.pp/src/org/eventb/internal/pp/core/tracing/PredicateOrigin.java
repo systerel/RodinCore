@@ -33,7 +33,7 @@ public class PredicateOrigin implements IOrigin {
 		this.isGoal = isGoal;
 	}
 
-	public void getDependencies(Set<Level> dependencies) {
+	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}

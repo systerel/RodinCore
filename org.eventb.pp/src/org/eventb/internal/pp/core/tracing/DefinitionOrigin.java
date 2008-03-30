@@ -21,7 +21,7 @@ import org.eventb.internal.pp.core.Tracer;
  */
 public class DefinitionOrigin implements IOrigin {
 
-	public void getDependencies(Set<Level> dependencies) {
+	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}

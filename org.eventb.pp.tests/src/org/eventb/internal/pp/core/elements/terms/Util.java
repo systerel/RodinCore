@@ -249,7 +249,7 @@ public class Util {
 			return level;
 		}
 
-		public void getDependencies(Set<Level> dependencies) {
+		public void addDependenciesTo(Set<Level> dependencies) {
 			// skip
 		}
 

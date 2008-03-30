@@ -90,7 +90,7 @@ public final class Tracer implements ITracer, ILevelController {
 		}
 		
 		Set<Level> dependencies = new HashSet<Level>();
-		origin.getDependencies(dependencies);
+		origin.addDependenciesTo(dependencies);
 		
 		for (Iterator<Entry<Level, Pair>> iter = origins.entrySet().iterator(); iter.hasNext();) {
 			Entry<Level, Pair> entry = iter.next();

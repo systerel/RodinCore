@@ -38,7 +38,7 @@ public interface IOrigin {
 	 * 
 	 * @param dependencies the set of dependencies to be populated
 	 */
-	void getDependencies(Set<Level> dependencies);
+	void addDependenciesTo(Set<Level> dependencies);
 	
 	/**
 	 * Returns <code>true</code> if this origin depends
@@ -68,7 +68,7 @@ public interface IOrigin {
 	/**
 	 * Returns the depth of this origin.
 	 * <p>
-	 * Corresponds to the number of inferrence steps needed to get
+	 * Corresponds to the number of inference steps needed to get
 	 * to this origin.
 	 * 
 	 * @return the depth of this origin

@@ -389,7 +389,7 @@ public final class ClauseDispatcher  {
 		if (DEBUG) debug("= Contradiction found on: "+origin+" =");
 		Level oldLevel = tracer.getCurrentLevel();
 		Set<Level> dependencies = new HashSet<Level>();
-		origin.getDependencies(dependencies);
+		origin.addDependenciesTo(dependencies);
 		if (DEBUG) debug("= Level dependencies: "+dependencies+" =");
 		adjustLevel(origin);
 		if (terminated) return;

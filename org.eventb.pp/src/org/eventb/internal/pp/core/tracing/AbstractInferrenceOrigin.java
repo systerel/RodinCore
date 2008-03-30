@@ -62,11 +62,10 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 		}
 	}
 
-	public void getDependencies(Set<Level> dependencies) {
-		if (!dependencies.contains(getLevel()))
-			dependencies.add(getLevel());
+	public void addDependenciesTo(Set<Level> dependencies) {
+		dependencies.add(getLevel());
 		for (Clause clause : parents) {
-			clause.getOrigin().getDependencies(dependencies);
+			clause.getOrigin().addDependenciesTo(dependencies);
 		}
 	}
 

@@ -27,7 +27,7 @@ public class TypingOrigin implements IOrigin {
 		return false;
 	}
 
-	public void getDependencies(Set<Level> dependencies) {
+	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}
