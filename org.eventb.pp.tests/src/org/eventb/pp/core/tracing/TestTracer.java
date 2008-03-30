@@ -30,7 +30,7 @@ public class TestTracer extends AbstractPPTest {
 			return false;
 		}
 
-		public void getDependencies(Set<Level> dependencies) {
+		public void addDependenciesTo(Set<Level> dependencies) {
 			dependencies.addAll(this.dependencies);
 		}
 
