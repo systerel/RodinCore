@@ -73,7 +73,7 @@ public class ProcessMonitor {
 				process.getErrorStream(), errorStream);
 		errorPumper.start();
 
-		Timer timer = new Timer(true);
+		final Timer timer = new Timer(true);
 		try {
 			timer.schedule(new TimerTask() {
 				@Override
@@ -93,7 +93,25 @@ public class ProcessMonitor {
 			// ignore, process will be destroyed
 		} finally {
 			timer.cancel();
+			destroyAndWaitForProcess(process);
+		}
+	}
+
+	private void destroyAndWaitForProcess(Process process) {
+		// Ensures that the process has indeed terminated
+		while (true) {
+			try {
+				process.exitValue();
+				break;
+			} catch (IllegalThreadStateException e) {
+				// Ignore, process has not yet terminated
+			}
 			process.destroy();
+			try {
+				Thread.sleep(DEFAULT_PERIOD);
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 	
