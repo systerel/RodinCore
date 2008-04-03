@@ -56,6 +56,8 @@ import org.eventb.internal.core.seqprover.Util;
  */
 public abstract class XProverReasoner implements IReasoner {
 	
+	public static boolean DEBUG = false;
+	
 	/**
 	 * Returns a new object encapsulating a run of the external prover with the
 	 * given input.

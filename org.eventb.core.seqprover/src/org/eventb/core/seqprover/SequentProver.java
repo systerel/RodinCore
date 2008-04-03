@@ -2,6 +2,7 @@ package org.eventb.core.seqprover;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.seqprover.xprover.XProverReasoner;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.AutoTacticRegistry;
@@ -25,7 +26,9 @@ public class SequentProver extends Plugin {
 			+ "/debug/reasonerRegistry"; //$NON-NLS-1$	
 	private static final String TACTIC_REGISTRY_TRACE = PLUGIN_ID
 			+ "/debug/tacticRegistry"; //$NON-NLS-1$
-
+	private static final String XPROVER_TRACE = PLUGIN_ID
+			+ "/debug/xProver"; //$NON-NLS-1$
+	
 	/**
 	 * The shared instance.
 	 */
@@ -83,6 +86,9 @@ public class SequentProver extends Plugin {
 			option = Platform.getDebugOption(TACTIC_REGISTRY_TRACE);
 			if (option != null)
 				AutoTacticRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(XPROVER_TRACE);
+			if (option != null)
+				XProverReasoner.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

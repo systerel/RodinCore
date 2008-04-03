@@ -80,6 +80,9 @@ public class ProcessMonitor {
 				public void run() {
 					if (cancellable.isCancelled()) {
 						process.destroy();
+						if (XProverReasoner.DEBUG) {
+							System.out.println("Destroying external prover.");
+						}
 					}
 				}
 			}, DEFAULT_PERIOD, DEFAULT_PERIOD);
@@ -102,6 +105,9 @@ public class ProcessMonitor {
 		while (true) {
 			try {
 				process.exitValue();
+				if (XProverReasoner.DEBUG) {
+					System.out.println("External prover is now terminated.");
+				}
 				break;
 			} catch (IllegalThreadStateException e) {
 				// Ignore, process has not yet terminated
