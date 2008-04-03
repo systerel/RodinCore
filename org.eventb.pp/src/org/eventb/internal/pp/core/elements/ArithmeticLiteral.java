@@ -34,7 +34,7 @@ public final class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 	final private AType type;
 	
 	// TODO get rid of this when normalizing
-	public enum AType {LESS, LESS_EQUAL, EQUAL, UNEQUAL} 
+	public static enum AType {LESS, LESS_EQUAL, EQUAL, UNEQUAL} 
 	
 	public ArithmeticLiteral(Term left, Term right, AType type) {
 		super(Arrays.asList(new Term[]{left,right}), BASE_HASHCODE);
@@ -54,6 +54,10 @@ public final class ArithmeticLiteral extends Literal<ArithmeticLiteral,Term> {
 		return terms.get(1);
 	}
 
+	public AType getType() {
+		return type;
+	}
+	
 	@Override
 	public String toString(HashMap<Variable, String> variableMap) {
 		StringBuffer str = new StringBuffer();
