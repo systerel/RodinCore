@@ -73,6 +73,7 @@ public final class ClauseBuilder {
 		loadClausesFromContext(context, null);
 	}
 	
+	// TODO remove parameter table when tests are repaired
 	public void loadClausesFromContext(IContext context, VariableTable table) {
 		debugContext(context);
 		initialize(context, table);
