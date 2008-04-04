@@ -9,6 +9,7 @@ package org.eventb.internal.core.sc.modules;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -108,9 +109,11 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	
 	private void checkAndSaveWitnesses(
 			ISCEvent target, 
-			HashSet<String> witnessNames,
+			Set<String> witnessNames,
 			IRodinElement event,
 			IProgressMonitor monitor) throws RodinDBException {
+		
+		Set<String> permissible = new HashSet<String>(witnessNames);
 		
 		int index = 0;
 		
@@ -128,10 +131,17 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 							formulas[i], 
 							monitor);
 				} else {
-					createProblemMarker(
-							formulaElements[i], 
-							EventBAttributes.LABEL_ATTRIBUTE, 
-							GraphProblem.WitnessLabelNeedLessError, label);
+					if (permissible.contains(label)) {
+						createProblemMarker(
+								formulaElements[i], 
+								EventBAttributes.LABEL_ATTRIBUTE, 
+								GraphProblem.WitnessLabelNeedLessError, label);
+					} else {
+						createProblemMarker(
+								formulaElements[i], 
+								EventBAttributes.LABEL_ATTRIBUTE, 
+								GraphProblem.WitnessLabelNotPermissible, label);
+					}
 				}
 			}
 		}
@@ -170,7 +180,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	}
 
 	private void getWitnessNames(
-			HashSet<String> witnessNames,
+			Set<String> witnessNames,
 			ISCStateRepository repository) throws CoreException {
 		
 		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
@@ -192,7 +202,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getGlobalWitnessNames(
 			IAbstractEventInfo abstractEventInfo, 
-			HashSet<String> witnessNames) throws CoreException {
+			Set<String> witnessNames) throws CoreException {
 		List<Assignment> assignments = abstractEventInfo.getActions();
 		
 		for (Assignment assignment : assignments) {
@@ -222,7 +232,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private void getLocalWitnessNames(
 			IEventRefinesInfo eventRefinesInfo, 
-			HashSet<String> witnessNames) throws CoreException {
+			Set<String> witnessNames) throws CoreException {
 		
 		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
 			

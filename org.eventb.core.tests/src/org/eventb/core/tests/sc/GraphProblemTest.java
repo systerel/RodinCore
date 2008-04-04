@@ -144,6 +144,7 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.WitnessLabelConflictWarning, 1),
 			spec(GraphProblem.WitnessLabelMissingWarning, 1),			
 			spec(GraphProblem.WitnessLabelNeedLessError, 1),
+			spec(GraphProblem.WitnessLabelNotPermissible, 1),
 			spec(GraphProblem.ContextOnlyInAbstractMachineWarning, 1),
 			spec(GraphProblem.WasAbstractEventLabelWarning, 1),
 			spec(GraphProblem.InconsistentEventLabelWarning, 1),

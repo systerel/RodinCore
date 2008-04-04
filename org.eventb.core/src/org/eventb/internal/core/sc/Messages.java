@@ -117,7 +117,7 @@ public final class Messages {
     public static String scuser_WitnessLabelConflict;
     public static String scuser_WitnessLabelMissing;
     public static String scuser_WitnessLabelNeedLess;
-   
+    public static String scuser_WitnessLabelNotPermissible;
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
     public static String scuser_WasAbstractEventLabelProblem;
