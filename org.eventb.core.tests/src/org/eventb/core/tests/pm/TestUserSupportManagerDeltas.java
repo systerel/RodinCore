@@ -4,7 +4,6 @@
 package org.eventb.core.tests.pm;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.pm.IUserSupport;
@@ -34,9 +33,11 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating first user support", "[+] null []");
 
 		clearDeltas();
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport1.setInput(psFile1, monitor);
-
+		userSupport1.setInput(psFile1);
+		assertDeltas("No deltas should have been produced", "");
+		
+		clearDeltas();
+		userSupport1.loadProofStates();
 		assertDeltas("Set input for the first user support",
 				"[*] x.bps [STATE]\n" + 
 				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
@@ -53,8 +54,11 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating the second user support", "[+] null []");
 
 		clearDeltas();
-		userSupport2.setInput(psFile2, monitor);
-
+		userSupport2.setInput(psFile2);
+		assertDeltas("No deltas should have been produced", "");
+		
+		clearDeltas();
+		userSupport2.loadProofStates();
 		assertDeltas("Set input for the second user support",
 				"[*] y.bps [STATE]\n" + 
 				"  [+] PO1[org.eventb.core.psStatus] []\n" + 

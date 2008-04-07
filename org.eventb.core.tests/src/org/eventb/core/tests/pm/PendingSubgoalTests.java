@@ -135,7 +135,7 @@ public class PendingSubgoalTests extends TestPM {
 		runBuilder();
 
 		userSupport = new UserSupport();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 	}
 
 	@Override

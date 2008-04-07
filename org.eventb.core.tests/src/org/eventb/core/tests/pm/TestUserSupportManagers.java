@@ -6,7 +6,6 @@ package org.eventb.core.tests.pm;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.pm.IUserSupport;
@@ -43,7 +42,7 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
-		userSupport1.setInput(psFile1, new NullProgressMonitor());
+		userSupport1.setInput(psFile1);
 
 		assertEquals(
 				"The input for first user support has been set correctly ",
@@ -63,7 +62,7 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The second user support is stored ", userSupports
 				.contains(userSupport2));
 
-		userSupport2.setInput(psFile2, new NullProgressMonitor());
+		userSupport2.setInput(psFile2);
 
 		assertEquals(
 				"The input for second user support has been set correctly ",

@@ -45,11 +45,13 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 		IUserSupport userSupport = new UserSupport();
 
-		NullProgressMonitor monitor = new NullProgressMonitor();
 		startDeltas();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
+		assertDeltas("No deltas should have been produced", "");
 		
 		// The proof states has been created but not initialized for all POs.
+		clearDeltas();
+		userSupport.loadProofStates();
 		assertDeltas("Set input ", "[*] x.bps [STATE]\n" + 
 				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
 				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
@@ -72,7 +74,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -113,7 +115,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -168,7 +170,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -208,7 +210,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -261,7 +263,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -305,7 +307,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -362,7 +364,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -392,7 +394,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -439,7 +441,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -500,7 +502,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -525,7 +527,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -564,7 +566,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 

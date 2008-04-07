@@ -57,7 +57,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -82,13 +82,11 @@ public class TestUserSupports extends TestPM {
 
 		IUserSupport userSupport = new UserSupport();
 
-		NullProgressMonitor monitor = new NullProgressMonitor();
-
 		IPSFile input = userSupport.getInput();
 
 		assertNull("Input for user support has not been set ", input);
 
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 
 		input = userSupport.getInput();
 
@@ -106,7 +104,8 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
+		userSupport.loadProofStates();
 
 		// Checks that all POs are discharged except the last one.
 
@@ -143,7 +142,8 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
+
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -193,7 +193,8 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
+		userSupport.loadProofStates();
 
 		IProofState[] states = userSupport.getPOs();
 
@@ -228,7 +229,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -283,7 +284,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -316,13 +317,17 @@ public class TestUserSupports extends TestPM {
 
 		IUserSupport userSupport = new UserSupport();
 
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
+		
+		// Check that the POs are not yet loaded
+		assertEquals("There should be no PO loaded ", 0,
+				userSupport.getPOs().length);
 
 		// Checks that all POs are consistent discharged except the last one.
+		userSupport.loadProofStates();
 		IProofState[] states = userSupport.getPOs();
-
 		assertEquals("There should be 7 POs ", 7, states.length);
+		// TODO add test on PO statuses?
 
 		userSupport.dispose();
 	}
@@ -336,7 +341,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -377,7 +382,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -442,7 +447,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -498,7 +503,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -526,7 +531,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -570,7 +575,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -617,7 +622,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -643,7 +648,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -678,7 +683,7 @@ public class TestUserSupports extends TestPM {
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 

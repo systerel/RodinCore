@@ -87,7 +87,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		poFile.save(null, true);
 
 		runBuilder();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
+		userSupport.loadProofStates();
 
 		startDeltas();
 		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
@@ -111,7 +112,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
+		userSupport.loadProofStates();
 
 		startDeltas();
 		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
@@ -135,7 +137,9 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
+		userSupport.loadProofStates();
+
 		startDeltas();
 		PSWrapperUtil
 				.copyPO(poFile, psFile, prFile, originalPO, copyOriginalPO);
@@ -158,7 +162,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment());
 		poFile.save(null, true);
 		runBuilder();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		startDeltas();
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, originalPO, dischargedPO);
 		assertDeltas("Changed: PO is not loaded ", "");
@@ -182,7 +186,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		startDeltas();
@@ -214,7 +218,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -256,7 +260,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -299,7 +303,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO

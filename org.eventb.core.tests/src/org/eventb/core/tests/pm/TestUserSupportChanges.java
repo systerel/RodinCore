@@ -96,7 +96,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, monitor);
+		userSupport.setInput(psFile);
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -138,7 +138,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -183,7 +183,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil
@@ -240,7 +240,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		String original = userSupport.toString();
@@ -266,7 +266,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
@@ -316,7 +316,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -376,7 +376,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -447,7 +447,7 @@ public class TestUserSupportChanges extends TestPM {
 		poFile.save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile, null);
+		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
