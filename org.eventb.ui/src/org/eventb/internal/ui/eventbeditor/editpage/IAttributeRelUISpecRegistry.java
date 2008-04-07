@@ -54,9 +54,9 @@ public interface IAttributeRelUISpecRegistry {
 	 * @throws CoreException
 	 *             if some problems occurred.
 	 */
-	public abstract IInternalElement createElement(
-			final IEventBEditor<?> editor, IInternalParent parent,
-			final IInternalElementType<?> type, final IInternalElement sibling)
+	public abstract <T extends IInternalElement> T createElement(
+			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElementType<T> type, IInternalElement sibling)
 			throws CoreException;
 
 	/**

@@ -383,16 +383,15 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecReigstry#createElement(org.eventb.ui.eventbeditor.IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, org.rodinp.core.IInternalElement)
 	 */
-	public synchronized IInternalElement createElement(
+	public <T extends IInternalElement> T createElement(
 			final IEventBEditor<?> editor, IInternalParent parent,
-			final IInternalElementType<?> type, final IInternalElement sibling)
+			final IInternalElementType<T> type, final IInternalElement sibling)
 			throws CoreException {
 		if (attributeRelationships == null)
 			loadRegistry();
 
 		String newName = UIUtils.getFreeChildName(editor, parent, type);
-		final IInternalElement newElement = parent.getInternalElement(type,
-				newName);
+		final T newElement = parent.getInternalElement(type, newName);
 		RodinCore.run(new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws RodinDBException {
