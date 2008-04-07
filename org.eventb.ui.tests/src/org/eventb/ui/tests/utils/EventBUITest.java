@@ -34,6 +34,8 @@ import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -197,10 +199,7 @@ public abstract class EventBUITest extends TestCase {
 		return refinesClause;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Before
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -222,11 +221,10 @@ public abstract class EventBUITest extends TestCase {
 		rodinProject = RodinCore.valueOf(project);
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@After
 	@Override
 	protected void tearDown() throws Exception {
+		EventBUIPlugin.getActivePage().closeAllEditors(false);
 		rodinProject.getProject().delete(true, true, null);
 		super.tearDown();
 	}

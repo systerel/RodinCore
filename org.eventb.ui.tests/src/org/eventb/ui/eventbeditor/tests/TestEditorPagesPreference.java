@@ -30,6 +30,7 @@ import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.tests.EventBUITestsPlugin;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -63,7 +64,8 @@ public class TestEditorPagesPreference extends TestCase {
 
 	// The preference for context editor.	
 	private IEditorPagesPreference contextPreference;
-	
+
+	@Before
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
