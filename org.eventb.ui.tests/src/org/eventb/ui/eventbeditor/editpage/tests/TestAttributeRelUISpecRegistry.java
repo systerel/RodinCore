@@ -8,13 +8,10 @@
  * 
  * Contributors:
  *     Rodin @ ETH Zurich
-******************************************************************************/
+ ******************************************************************************/
 
 package org.eventb.ui.eventbeditor.editpage.tests;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.ui.PartInitException;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -28,9 +25,11 @@ import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.editpage.TextEditComposite;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
 
 /**
  * @author htson
@@ -43,439 +42,111 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	 * The registry for testing. Using an extension of
 	 * {@link AttributeRelUISpecRegistry} for testing.
 	 */
-	IAttributeRelUISpecRegistry registry = AttributeRelUISpecTestRegistry
+	private static final IAttributeRelUISpecRegistry registry = AttributeRelUISpecTestRegistry
 			.getDefault();
 
-	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IVariable}.
-	 */
-	@Test
-	public void testCreateVariables() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
+	private IMachineFile m0;
 
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
+	private IEventBEditor<?> editor;
 
-		// Test creating variable
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0,
-					IVariable.ELEMENT_TYPE, null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new variable within m0",
-					false);
-			return;
-		}
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		m0 = createMachine("m0");
+		m0.save(null, true);
+		editor = openEditor(m0);
+	}
 
-		assertTrue("Creating a variable unsuccessfully", element != null);
-		assertTrue("Element created is not a variable",
-				element instanceof IVariable);
-		IVariable var = (IVariable) element;
-		try {
-			assertTrue("New variable should has identifier string", var
-					.hasIdentifierString());
-			assertEquals("Incorrect identifier string for new variable",
-					"var1", var.getIdentifierString());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New variable should has identifier string",
-					false);
-			return;
-		}
-
-		try {
-			assertFalse("New variable should has no comment", var.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New variable should has no comment", false);
-			return;
-		}
-
+	public <T extends IInternalElement> T createElement(IInternalParent parent,
+			IInternalElementType<T> type) throws Exception {
+		final T e = registry.createElement(editor, parent, type, null);
+		assertNotNull("Couldn't create an element of type " + type, e);
+		return e;
 	}
 
 	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IInvariant}.
+	 * Ensures that a machine variable can be created through the editor
+	 * registry.
 	 */
 	@Test
-	public void testCreateInvariants() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
-
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
-
-		// Test creating invariant
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0,
-					IInvariant.ELEMENT_TYPE, null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new invariant within m0",
-					false);
-			return;
-		}
-
-		assertTrue("Creating an invariant unsuccessfully", element != null);
-		assertTrue("Element created is not an invariant",
-				element instanceof IInvariant);
-		IInvariant inv = (IInvariant) element;
-		try {
-			assertTrue("New invariant should has label", inv.hasLabel());
-			assertEquals("Incorrect label for new invariant", "inv1", inv
-					.getLabel());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New invariant should has label", false);
-			return;
-		}
-
-		try {
-			assertFalse("New invariant should has no predicate", inv
-					.hasPredicateString());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New invariant should has no predicate",
-					false);
-			return;
-		}
-
-		try {
-			assertFalse("New invariant should has no comment", inv.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New invariant should has no comment", false);
-			return;
-		}
+	public void testCreateVariables() throws Exception {
+		final IVariable var = createElement(m0, IVariable.ELEMENT_TYPE);
+		assertTrue("New variable should has identifier string", var
+				.hasIdentifierString());
+		assertEquals("Incorrect identifier string for new variable", "var1",
+				var.getIdentifierString());
+		assertFalse("New variable should has no comment", var.hasComment());
 	}
 
 	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IEvent}.
+	 * Ensures that an invariant can be created through the editor registry.
 	 */
 	@Test
-	public void testCreateEvents() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
-
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
-
-		// Test creating event
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0, IEvent.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new event within m0",
-					false);
-			return;
-		}
-
-		assertTrue("Creating an event unsuccessfully", element != null);
-		assertTrue("Element created is not an event", element instanceof IEvent);
-		IEvent evt = (IEvent) element;
-		try {
-			assertFalse("New event should has no label", evt.hasLabel());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New event should has no label", false);
-			return;
-		}
-
-		try {
-			assertFalse("New event should has no comment", evt.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New event should has no comment", false);
-			return;
-		}
-
-		try {
-			assertTrue("New event should has inherited attribute", evt.hasInherited());
-			assertFalse("New event should not be inherited", evt.isInherited());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New event should has no inherited", false);
-			return;
-		}
-	
-		try {
-			assertFalse("New event should has no convergence", evt.hasConvergence());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New event should has no convergence", false);
-			return;
-		}
-	
+	public void testCreateInvariants() throws Exception {
+		final IInvariant inv = createElement(m0, IInvariant.ELEMENT_TYPE);
+		assertTrue("New invariant should has label", inv.hasLabel());
+		assertEquals("Incorrect label for new invariant", "inv1", inv
+				.getLabel());
+		assertFalse("New invariant should has no predicate", inv
+				.hasPredicateString());
+		assertFalse("New invariant should has no comment", inv.hasComment());
 	}
 
 	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IVariable} (parameters).
+	 * Ensures that an event can be created through the editor registry.
 	 */
 	@Test
-	public void testCreateParameters() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
-
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
-
-		// Creating event
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0, IEvent.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new event within m0",
-					false);
-			return;
-		}
-
-		IEvent evt = (IEvent) element;
-
-		// Test creating parameter
-		try {
-			element = registry.createElement(editor, evt,
-					IVariable.ELEMENT_TYPE, null);
-		} catch (CoreException e) {
-			assertTrue(
-					"Problem occured when creating new parameter within evt1",
-					false);
-			return;
-		}
-
-		assertTrue("Creating a parameter unsuccessfully", element != null);
-		assertTrue("Element created is not a parameter",
-				element instanceof IVariable);
-		IVariable param = (IVariable) element;
-		try {
-			assertTrue("New parameter should has identifier string", param
-					.hasIdentifierString());
-			assertEquals("Incorrect identifier string for new parameter",
-					"var1", param.getIdentifierString());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New parameter should has identifier string",
-					false);
-			return;
-		}
-
-		try {
-			assertFalse("New parameter should has no comment", param
-					.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New variable should has no comment", false);
-			return;
-		}
-
+	public void testCreateEvents() throws Exception {
+		final IEvent evt = createElement(m0, IEvent.ELEMENT_TYPE);
+		assertFalse("New event should has no label", evt.hasLabel());
+		assertFalse("New event should has no comment", evt.hasComment());
+		assertTrue("New event should has inherited attribute", evt
+				.hasInherited());
+		assertFalse("New event should not be inherited", evt.isInherited());
+		assertFalse("New event should has no convergence", evt.hasConvergence());
 	}
 
 	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IGuard}.
+	 * Ensures that an event parameter can be created through the editor
+	 * registry.
 	 */
 	@Test
-	public void testCreateGuards() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
-
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
-
-		// Creating event
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0, IEvent.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new event within m0",
-					false);
-			return;
-		}
-
-		IEvent evt = (IEvent) element;
-
-		// Test creating guard
-		try {
-			element = registry.createElement(editor, evt, IGuard.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new guard within evt1",
-					false);
-			return;
-		}
-
-		assertTrue("Creating a guard unsuccessfully", element != null);
-		assertTrue("Element created is not a guard", element instanceof IGuard);
-		IGuard guard = (IGuard) element;
-
-		try {
-			assertFalse("New guard should has no label", guard.hasLabel());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New guard should has no label", false);
-			return;
-		}
-
-		try {
-			assertFalse("New guard should has no predicate string", guard
-					.hasPredicateString());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New guard should has no predicate string",
-					false);
-			return;
-		}
-
-		try {
-			assertFalse("New guard should has no comment", guard.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New guard should has no comment", false);
-			return;
-		}
-
+	public void testCreateParameters() throws Exception {
+		final IEvent evt = createElement(m0, IEvent.ELEMENT_TYPE);
+		final IVariable param = createElement(evt, IVariable.ELEMENT_TYPE);
+		assertTrue("New parameter should has identifier string", param
+				.hasIdentifierString());
+		assertEquals("Incorrect identifier string for new parameter", "var1",
+				param.getIdentifierString());
+		assertFalse("New parameter should has no comment", param.hasComment());
 	}
 
 	/**
-	 * Tests for
-	 * {@link AttributeRelUISpecRegistry#createElement(IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, IInternalElement)}
-	 * for {@link IAction}.
+	 * Ensures that an event guard can be created through the editor registry.
 	 */
 	@Test
-	public void testCreateActions() {
-		IMachineFile m0;
-		try {
-			m0 = createMachine("m0");
-			m0.save(new NullProgressMonitor(), true);
-		} catch (RodinDBException e) {
-			assertTrue("Problem occured when creating machine m0", false);
-			return;
-		}
+	public void testCreateGuards() throws Exception {
+		final IEvent evt = createElement(m0, IEvent.ELEMENT_TYPE);
+		final IGuard guard = createElement(evt, IGuard.ELEMENT_TYPE);
+		assertFalse("New guard should has no label", guard.hasLabel());
+		assertFalse("New guard should has no predicate string", guard
+				.hasPredicateString());
+		assertFalse("New guard should has no comment", guard.hasComment());
+	}
 
-		IEventBEditor<?> editor;
-		try {
-			editor = openEditor(m0);
-		} catch (PartInitException e) {
-			assertTrue(
-					"Problem occured when opening machine m0 with Event-B Editor",
-					false);
-			return;
-		}
-
-		// Creating event
-		IInternalElement element;
-		try {
-			element = registry.createElement(editor, m0, IEvent.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new event within m0",
-					false);
-			return;
-		}
-
-		IEvent evt = (IEvent) element;
-
-		// Test creating action
-		try {
-			element = registry.createElement(editor, evt, IAction.ELEMENT_TYPE,
-					null);
-		} catch (CoreException e) {
-			assertTrue("Problem occured when creating new action within evt1",
-					false);
-			return;
-		}
-
-		assertTrue("Creating an action unsuccessfully", element != null);
-		assertTrue("Element created is not an action",
-				element instanceof IAction);
-		IAction act = (IAction) element;
-		try {
-			assertTrue("New action should has a label", act.hasLabel());
-			assertEquals("Incorrect label for new action", "act1", act
-					.getLabel());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New action should has a label", false);
-			return;
-		}
-
-		try {
-			assertFalse("New action should has no assignment string", act
-					.hasAssignmentString());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New action should has no assignment string",
-					false);
-			return;
-		}
-
-		try {
-			assertFalse("New action should has no comment", act.hasComment());
-		} catch (RodinDBException e) {
-			assertTrue("Exception: New action should has no comment", false);
-			return;
-		}
-
+	/**
+	 * Ensures that an event action can be created through the editor registry.
+	 */
+	@Test
+	public void testCreateActions() throws Exception {
+		final IEvent evt = createElement(m0, IEvent.ELEMENT_TYPE);
+		final IAction act = createElement(evt, IAction.ELEMENT_TYPE);
+		assertTrue("New action should has a label", act.hasLabel());
+		assertEquals("Incorrect label for new action", "act1", act.getLabel());
+		assertFalse("New action should has no assignment string", act
+				.hasAssignmentString());
+		assertFalse("New action should has no comment", act.hasComment());
 	}
 
 	/**
@@ -484,35 +155,18 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	 */
 	@Test
 	public void testGetNumberOfAttributes() {
-		// IVariable
-		int numVarAttributes = registry
-				.getNumberOfAttributes(IVariable.ELEMENT_TYPE);
-		assertEquals("Incorrect number of attributes for IVariable", 1,
-				numVarAttributes);
+		assertNumberOfAttributes(IVariable.ELEMENT_TYPE, 1);
+		assertNumberOfAttributes(IInvariant.ELEMENT_TYPE, 2);
+		assertNumberOfAttributes(IEvent.ELEMENT_TYPE, 2);
+		assertNumberOfAttributes(IGuard.ELEMENT_TYPE, 0);
+		assertNumberOfAttributes(IAction.ELEMENT_TYPE, 1);
+	}
 
-		// IInvariant
-		int numInvAttributes = registry
-				.getNumberOfAttributes(IInvariant.ELEMENT_TYPE);
-		assertEquals("Incorrect number of attributes for IInvariant", 2,
-				numInvAttributes);
-
-		// IEvent
-		int numEvtAttributes = registry
-				.getNumberOfAttributes(IEvent.ELEMENT_TYPE);
-		assertEquals("Incorrect number of attributes for IEvent", 2,
-				numEvtAttributes);
-
-		// IGuard
-		int numGrdAttributes = registry
-				.getNumberOfAttributes(IGuard.ELEMENT_TYPE);
-		assertEquals("Incorrect number of attributes for IGuard", 0,
-				numGrdAttributes);
-
-		// IEvent
-		int numActAttributes = registry
-				.getNumberOfAttributes(IAction.ELEMENT_TYPE);
-		assertEquals("Incorrect number of attributes for IAction", 1,
-				numActAttributes);
+	private void assertNumberOfAttributes(IInternalElementType<?> type,
+			int expected) {
+		final int actual = registry.getNumberOfAttributes(type);
+		assertEquals("Incorrect number of attributes for " + type, expected,
+				actual);
 	}
 
 	/**
@@ -522,13 +176,8 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	 */
 	@Test
 	public void testGetVariableEditComposites() {
-		IEditComposite[] editComposites = registry
-				.getEditComposites(IVariable.ELEMENT_TYPE);
-		assertEquals("Incorrect number of edit composite", 1,
-				editComposites.length);
-
-		assertTrue("First edit composite should be a TextEditComposite",
-				editComposites[0] instanceof TextEditComposite);
+		assertEditCompositeClasses(IVariable.ELEMENT_TYPE,
+				TextEditComposite.class);
 	}
 
 	/**
@@ -538,16 +187,8 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	 */
 	@Test
 	public void testGetInvariantEditComposites() {
-		IEditComposite[] editComposites = registry
-				.getEditComposites(IInvariant.ELEMENT_TYPE);
-		assertEquals("Incorrect number of edit composite", 2,
-				editComposites.length);
-
-		assertTrue("First edit composite should be a TextEditComposite",
-				editComposites[0] instanceof TextEditComposite);
-
-		assertTrue("Secibd edit composite should be a TextEditComposite",
-				editComposites[1] instanceof TextEditComposite);
+		assertEditCompositeClasses(IInvariant.ELEMENT_TYPE,
+				TextEditComposite.class, TextEditComposite.class);
 	}
 
 	/**
@@ -557,16 +198,20 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	 */
 	@Test
 	public void testGetEventEditComposites() {
-		IEditComposite[] editComposites = registry
-				.getEditComposites(IEvent.ELEMENT_TYPE);
-		assertEquals("Incorrect number of edit composite", 2,
-				editComposites.length);
+		assertEditCompositeClasses(IEvent.ELEMENT_TYPE,
+				CComboEditComposite.class, CComboEditComposite.class);
+	}
 
-		assertTrue("First edit composite should be a CComboEditComposite",
-				editComposites[0] instanceof CComboEditComposite);
-
-		assertTrue("Second edit composite should be a CComboEditComposite",
-				editComposites[1] instanceof CComboEditComposite);
+	private void assertEditCompositeClasses(IInternalElementType<?> type,
+			Class<?>... expected) {
+		final IEditComposite[] composites = registry.getEditComposites(type);
+		final int expLen = expected.length;
+		assertEquals("Incorrect number of composites for " + type, expLen,
+				composites.length);
+		for (int i = 0; i < expLen; i++) {
+			assertTrue("Wrong class for edit composite " + composites[i],
+					expected[i].isInstance(composites[i]));
+		}
 	}
 
 }

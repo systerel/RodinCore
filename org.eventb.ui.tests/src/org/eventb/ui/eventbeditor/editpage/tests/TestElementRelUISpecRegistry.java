@@ -8,9 +8,11 @@
  * 
  * Contributors:
  *     Rodin @ ETH Zurich
-******************************************************************************/
+ ******************************************************************************/
 
 package org.eventb.ui.eventbeditor.editpage.tests;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -22,218 +24,102 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
-import org.eventb.internal.ui.elementSpecs.ElementRelationship;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.editpage.ElementRelUISpecRegistry;
 import org.eventb.internal.ui.eventbeditor.editpage.IElementRelUISpecRegistry;
-import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
+import org.rodinp.core.IElementType;
 
 /**
  * @author htson
  *         <p>
  *         jUnit tests for {@link ElementRelUISpecRegistry}.
  */
-public class TestElementRelUISpecRegistry extends EventBUITest {
+public class TestElementRelUISpecRegistry {
+
+	private static final class MockRelationship {
+		final String id;
+		final String prefix;
+		final String postfix;
+
+		MockRelationship(String id, String prefix, String postfix) {
+			this.id = id;
+			this.prefix = prefix;
+			this.postfix = postfix;
+		}
+
+		void matches(IElementRelationship rel) {
+			assertEquals(id, rel.getID());
+			assertEquals(prefix, registry.getPrefix(rel));
+			assertEquals(postfix, registry.getPostfix(rel));
+		}
+	}
 
 	/**
 	 * The registry for testing. Using an extension of
 	 * {@link ElementRelUISpecRegistry} for testing.
 	 */
-	IElementRelUISpecRegistry registry = ElementRelUISpecTestRegistry
+	static final IElementRelUISpecRegistry registry = ElementRelUISpecTestRegistry
 			.getDefault();
 	
-	/**
-	 * Tests for
-	 * {@link ElementRelUISpecRegistry#getElementRelationships(org.rodinp.core.IElementType)}.
-	 */
-	@Test
-	public void testGetElementRelationships() {
-		
-		// IMachineFile
-		List<IElementRelationship> machineRelationships = registry
-				.getElementRelationships(IMachineFile.ELEMENT_TYPE);
-		
-		assertNotNull("There should be some relationships for IMachineFile",
-				machineRelationships);
-		assertEquals("Incorrect number of relationships for IMachineFile", 4,
-				machineRelationships.size());
-
-		assertEquals(
-				"Incorrect first relationship for IMachineFile",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".variable",
-						null, null), machineRelationships.get(0));
-		
-		assertEquals(
-				"Incorrect second relationship for IMachineFile",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".invariant",
-						null, null), machineRelationships.get(1));
-		
-		assertEquals(
-				"Incorrect third relationship for IMachineFile",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".event",
-						null, null), machineRelationships.get(2));
-		
-		assertEquals(
-				"Incorrect third relationship for IMachineFile",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".variant",
-						null, null), machineRelationships.get(3));
-
-		// IVariable
-		List<IElementRelationship> variableRelationships = registry
-			.getElementRelationships(IVariable.ELEMENT_TYPE);
-
-		assertNotNull("Relationships for IVariable should not be null ",
-				variableRelationships);
-		assertEquals("There should be no relationships for IVariable", 0,
-				variableRelationships.size());
-
-		// IInvariant
-		List<IElementRelationship> invariantRelationships = registry
-			.getElementRelationships(IInvariant.ELEMENT_TYPE);
-
-		assertNotNull("Relationships for IInvariant should not be null ",
-				invariantRelationships);
-		assertEquals("There should be no relationships for IInvariant", 0,
-				invariantRelationships.size());
-		
-		// IEvent
-		List<IElementRelationship> eventRelationships = registry
-				.getElementRelationships(IEvent.ELEMENT_TYPE);
-		
-		assertNotNull("There should be some relationships for IEvent",
-				eventRelationships);
-		assertEquals("Incorrect number of relationships for IEvent", 3,
-				eventRelationships.size());
-
-		assertEquals(
-				"Incorrect first relationship for IEvent",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".parameter",
-						null, null), eventRelationships.get(0));
-		
-		assertEquals(
-				"Incorrect second relationship for IEvent",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".guard",
-						null, null), eventRelationships.get(1));
-		
-		assertEquals(
-				"Incorrect third relationship for IEvent",
-				new ElementRelationship(EventBPlugin.PLUGIN_ID + ".action",
-						null, null), eventRelationships.get(2));
-		
-		// IGuard
-		List<IElementRelationship> guardRelationships = registry
-			.getElementRelationships(IGuard.ELEMENT_TYPE);
-
-		assertNotNull("Relationships for IGuard should not be null ",
-				guardRelationships);
-		assertEquals("There should be no relationships for IGuard", 0,
-				guardRelationships.size());
-		
-		// IAction
-		List<IElementRelationship> actionRelationships = registry
-			.getElementRelationships(IAction.ELEMENT_TYPE);
-
-		assertNotNull("Relationships for IAction should not be null ",
-				actionRelationships);
-		assertEquals("There should be no relationships for IAction", 0,
-				actionRelationships.size());
-		
-		// IVariant
-		List<IElementRelationship> variantRelationships = registry
-			.getElementRelationships(IVariant.ELEMENT_TYPE);
-
-		assertNotNull("Relationships for IVariant should not be null ",
-				variantRelationships);
-		assertEquals("There should be no relationships for IVariant", 0,
-				variantRelationships.size());
-		
+	private static final MockRelationship rel(String id, String prefix, String postfix) {
+		return new MockRelationship(EventBPlugin.PLUGIN_ID + "." + id, prefix, postfix);
 	}
 
-	/**
-	 * Tests for
-	 * {@link ElementRelUISpecRegistry#getPrefix(IElementRelationship)}.
-	 */
 	@Test
-	public void testGetPrefix() {
-		// IMachineFile
-		List<IElementRelationship> machineRelationships = registry
-				.getElementRelationships(IMachineFile.ELEMENT_TYPE);
-		
-		assertEquals(
-				"Incorrect prefix for the relationship between IMachineFile and IVariable",
-				"VARIABLES", registry.getPrefix(machineRelationships.get(0)));
-		
-		assertEquals(
-				"Incorrect prefix for the relationship between IMachineFile and IInvariant",
-				"INVARIANTS", registry.getPrefix(machineRelationships.get(1)));
-		
-		assertEquals(
-				"Incorrect prefix for the relationship between IMachineFile and IEvent",
-				"EVENTS", registry.getPrefix(machineRelationships.get(2)));
+	public void machineRelationships() {
+		assertRelationships(IMachineFile.ELEMENT_TYPE,
+				rel("variable", "VARIABLES", null),
+				rel("invariant", "INVARIANTS", null),
+				rel("event", "EVENTS", "END"),
+				rel("variant", "VARIANT", null)
+		);
+	}
 
-		assertEquals(
-				"Incorrect prefix for the relationship between IMachineFile and IVariant",
-				"VARIANT", registry.getPrefix(machineRelationships.get(3)));
-
-		// IEvent
-		List<IElementRelationship> eventRelationships = registry
-				.getElementRelationships(IEvent.ELEMENT_TYPE);
-
-		assertEquals(
-				"Incorrect prefix for the relationship between IEvent and IVariable",
-				"ANY", registry.getPrefix(eventRelationships.get(0)));
-
-		assertEquals(
-				"Incorrect prefix for the relationship between IEvent and IGuard",
-				"WHERE", registry.getPrefix(eventRelationships.get(1)));
-
-		assertEquals(
-				"Incorrect prefix for the relationship between IEvent and IAction",
-				"THEN", registry.getPrefix(eventRelationships.get(2)));
+	@Test
+	public void variableRelationships() {
+		assertRelationships(IVariable.ELEMENT_TYPE);
 	}
 	
-	/**
-	 * Tests for
-	 * {@link ElementRelUISpecRegistry#getPostfix(IElementRelationship)}.
-	 */
 	@Test
-	public void testGetPostfix() {
-		// IMachineFile
-		List<IElementRelationship> machineRelationships = registry
-				.getElementRelationships(IMachineFile.ELEMENT_TYPE);
-		
-		assertNull(
-				"There should be no postfix for the relationship between IMachineFile and IVariable",
-				registry.getPostfix(machineRelationships.get(0)));
-		
-		assertNull(
-				"There should be no postfix for the relationship between IMachineFile and IInvariant",
-				registry.getPostfix(machineRelationships.get(1)));
-		
-		assertEquals(
-				"Incorrect postfix for the relationship between IMachineFile and IEvent",
-				"END", registry.getPostfix(machineRelationships.get(2)));
-
-		assertNull(
-				"There should be no postfix for the relationship between IMachineFile and IVariant",
-				registry.getPostfix(machineRelationships.get(3)));
-
-		// IEvent
-		List<IElementRelationship> eventRelationships = registry
-				.getElementRelationships(IEvent.ELEMENT_TYPE);
-
-		assertNull(
-				"There should be no postfix for the relationship between IEvent and IVariable",
-				registry.getPostfix(eventRelationships.get(0)));
-
-		assertNull(
-				"There should be no postfix for the relationship between IEvent and IGuard",
-				registry.getPostfix(eventRelationships.get(1)));
-
-		assertEquals(
-				"Incorrect postfix for the relationship between IEvent and IAction",
-				"END", registry.getPostfix(eventRelationships.get(2)));
+	public void invariantRelationships() {
+		assertRelationships(IInvariant.ELEMENT_TYPE);
 	}
 	
+	@Test
+	public void eventRelationships() {
+		assertRelationships(IEvent.ELEMENT_TYPE,
+				rel("parameter", "ANY", null),
+				rel("guard", "WHERE", null),
+				rel("action", "THEN", "END")
+		);
+	}
+	
+	@Test
+	public void guardRelationships() {
+		assertRelationships(IGuard.ELEMENT_TYPE);
+	}
+	
+	@Test
+	public void actionRelationships() {
+		assertRelationships(IAction.ELEMENT_TYPE);
+	}
+	
+	@Test
+	public void variantRelationships() {
+		assertRelationships(IVariant.ELEMENT_TYPE);
+	}
+	
+	private void assertRelationships(IElementType<?> type,
+			MockRelationship... expected) {
+		final List<IElementRelationship> actual = registry
+				.getElementRelationships(type);
+		final int expLen = expected.length;
+		assertEquals("Incorrect number of relationships for " + type, expLen,
+				actual.size());
+		for (int i = 0; i < expLen; i++) {
+			expected[i].matches(actual.get(i));
+		}
+	}
+
 }
