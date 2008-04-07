@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006,2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,47 +22,65 @@ import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author htson
- *         <p>
- *         This is the interface for the user support which used to manage the
- *         state of the proof obligations corresponding to a single component.
- *         <p>
- *         This interface is not supposed to be extended or implemented.
+ * Common protocol for manipulating the state of a proof and its proof tree.
+ * <p>
+ * A user support instance is associated to a Proof Status file, which is set
+ * with the {@link #setInput(IPSFile)} method. This method
+ * should be called only once, and prior to any other method call (except
+ * {@link #dispose()} which can be called at any time).
+ * </p>
+ * <p>
+ * Once the input set, there is no proof obligation associated to a user support
+ * instance yet. A proof obligation will get associated when one of the
+ * following method is called:
+ * <ul>
+ * <li>{@link #setCurrentPO(IPSStatus, IProgressMonitor)}</li>
+ * <li>{@link #nextUndischargedPO(boolean, IProgressMonitor)}</li>
+ * <li>{@link #prevUndischargedPO(boolean, IProgressMonitor)}</li>
+ * </ul>
+ * For the latter two, one needs in addition that there exists an undischarged
+ * proof obligation in the associated proof file.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @author Thai Son Hoang
+ * @author Laurent Voisin
  */
 public interface IUserSupport extends IElementChangedListener {
 
 	/**
-	 * Set the input file for the user support.
-	 * <p>
+	 * Sets the input file to associate with this user support.
 	 * 
 	 * @param psFile
-	 *            a proof State file (IPSFile)
-	 * @param monitor
-	 *            a progress monitor (may be null)
-	 * @throws RodinDBException
-	 *             a Rodin Exception when there are some errors openning the
-	 *             psFile
+	 *            a proof state file (IPSFile)
 	 */
-	public abstract void setInput(IPSFile psFile, IProgressMonitor monitor)
-			throws RodinDBException;
+	// TODO check for RodinDBException !
+	void setInput(IPSFile psFile);
 
 	/**
-	 * Dispose the user support.
+	 * Disconnects this user support from the Rodin Database and the user
+	 * support manager.
 	 */
-	public abstract void dispose();
+	void dispose();
 
 	/**
-	 * Return the current input of the User Support which is a psFile.
-	 * <p>
+	 * Returns the current input of the User Support which is a psFile.
 	 * 
 	 * @return the input psFile of this User Support
 	 */
-	public abstract IPSFile getInput();
+	IPSFile getInput();
+	
+	/**
+	 * Loads the proof statuses from the proof status file.
+	 */
+	void loadProofStates() throws RodinDBException;
 
 	/**
 	 * Go to the next undischarged proof obligation. If there is no undischarged
 	 * obligation and the force flag is <code>false</code> then the User
-	 * Support state is unchaged. If the <code>force</code> flag is
+	 * Support state is unchanged. If the <code>force</code> flag is
 	 * <code>true</code> and there is no undischarged obligation then the
 	 * current PO will be set to <code>null</code>.
 	 * <p>
@@ -74,13 +92,13 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws RodinDBException
 	 *             a Rodin Exception
 	 */
-	public abstract void nextUndischargedPO(boolean force,
-			IProgressMonitor monitor) throws RodinDBException;
+	void nextUndischargedPO(boolean force, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Go to the previous undischarged proof obligation. If there is no
 	 * undischarged obligation and the force flag is <code>false</code> then
-	 * the User Support state is unchaged. If the <code>force</code> flag is
+	 * the User Support state is unchanged. If the <code>force</code> flag is
 	 * <code>true</code> and there is no undischarged obligation then the
 	 * current PO will be set to <code>null</code>.
 	 * <p>
@@ -92,19 +110,19 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws RodinDBException
 	 *             a Rodin Exception
 	 */
-	public abstract void prevUndischargedPO(boolean force,
-			IProgressMonitor monitor) throws RodinDBException;
+	void prevUndischargedPO(boolean force, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * This method return the current Obligation (Proof State). This should be
-	 * called at the initialisation of a listener of the User Support. After
+	 * called at the initialization of a listener of the User Support. After
 	 * that the listeners will update their states by listen to the changes from
 	 * the User Support.
 	 * <p>
 	 * 
 	 * @return the current ProofState (can be null).
 	 */
-	public abstract IProofState getCurrentPO();
+	IProofState getCurrentPO();
 
 	/**
 	 * Set the current PO corresponding to a specific proof obligation. The
@@ -122,8 +140,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws RodinDBException
 	 *             a Rodin Exception
 	 */
-	public abstract void setCurrentPO(final IPSStatus psStatus,
-			final IProgressMonitor monitor) throws RodinDBException;
+	void setCurrentPO(IPSStatus psStatus, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Return all the proof obligations which are managed by this User Support.
@@ -131,7 +149,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @return a collection of proof state stored in this User Support
 	 */
-	public abstract IProofState[] getPOs();
+	IProofState[] getPOs();
 
 	/**
 	 * Return <code>true</code> or <code>false</code> depending on if there
@@ -141,7 +159,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @return <code>true</code> if there are some unsaved proof obligations
 	 *         stored in this User Support
 	 */
-	public abstract boolean hasUnsavedChanges();
+	boolean hasUnsavedChanges();
 
 	/**
 	 * Get an array of unsaved proof obligations.
@@ -149,7 +167,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @return an array of unsaved proof obligations
 	 */
-	public IProofState[] getUnsavedPOs();
+	IProofState[] getUnsavedPOs();
 
 	/**
 	 * Getting the list of information stored in the user support (including the
@@ -161,8 +179,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @deprecated Use #IUserSupportDelta.getInformation() instead
 	 */
 	@Deprecated
-	public abstract Object[] getInformation();
-	
+	Object[] getInformation();
+
 	/**
 	 * Remove a collection of hypotheses from the cache.
 	 * <p>
@@ -170,7 +188,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param hyps
 	 *            a collection of hypotheses
 	 */
-	public abstract void removeCachedHypotheses(Collection<Predicate> hyps);
+	void removeCachedHypotheses(Collection<Predicate> hyps);
 
 	/**
 	 * Search the hypothesis set for a string token. In particular, if token is
@@ -181,7 +199,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param token
 	 *            a string token
 	 */
-	public abstract void searchHyps(String token);
+	void searchHyps(String token);
 
 	/**
 	 * Remove a collection of predicates from the searched hypothesis set.
@@ -190,7 +208,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param hyps
 	 *            a collection of predicates
 	 */
-	public abstract void removeSearchedHypotheses(Collection<Predicate> hyps);
+	void removeSearchedHypotheses(Collection<Predicate> hyps);
 
 	/**
 	 * Select a node in the current obligation's proof tree.
@@ -200,7 +218,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tree node
 	 * @throws RodinDBException
 	 */
-	public abstract void selectNode(IProofTreeNode pt) throws RodinDBException;
+	void selectNode(IProofTreeNode pt) throws RodinDBException;
 
 	/**
 	 * Apply a tactic to the current proof obligation to a set of hypothesis
@@ -219,9 +237,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 *             instead
 	 */
 	@Deprecated
-	public abstract void applyTacticToHypotheses(final ITactic t,
-			final Set<Predicate> hyps, final IProgressMonitor monitor)
-			throws RodinDBException;
+	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Apply a tactic to the current proof obligation to a set of hypothesis
@@ -238,9 +255,9 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws RodinDBException
 	 *             in case where there are some error in applying tactic
 	 */
-	public abstract void applyTacticToHypotheses(final ITactic t,
-			final Set<Predicate> hyps, final boolean applyPostTactic,
-			final IProgressMonitor monitor) throws RodinDBException;
+	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
+			boolean applyPostTactic, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
@@ -252,13 +269,13 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param monitor
 	 *            a progress monitor
 	 * @throws RodinDBException
-	 *            in case where there are some error in applying tactic
+	 *             in case where there are some error in applying tactic
 	 * @deprecated use {@link #applyTactic(ITactic, boolean, IProgressMonitor)}
 	 *             instead
 	 */
 	@Deprecated
-	public abstract void applyTactic(final ITactic t,
-			final IProgressMonitor monitor) throws RodinDBException;
+	void applyTactic(ITactic t, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
@@ -272,10 +289,10 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param monitor
 	 *            a progress monitor
 	 * @throws RodinDBException
-	 *            in case where there are some error in applying tactic
+	 *             in case where there are some error in applying tactic
 	 */
-	public abstract void applyTactic(final ITactic t, boolean applyPostTactic, 
-			final IProgressMonitor monitor) throws RodinDBException;
+	void applyTactic(ITactic t, boolean applyPostTactic,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Backtracking from the current proof tree node in the current proof
@@ -299,20 +316,20 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tree node
 	 * @throws RodinDBException
 	 */
-	public abstract void setComment(String text, IProofTreeNode node)
-			throws RodinDBException;
+	void setComment(String text, IProofTreeNode node) throws RodinDBException;
 
 	/**
 	 * Save the set of input proof obligations to disk.
 	 * <p>
+	 * 
 	 * @param states
-	 *        an array of proof states to be saved
+	 *            an array of proof states to be saved
 	 * @param monitor
-	 *        a Progress Monitor
+	 *            a Progress Monitor
 	 * @throws RodinDBException
-	 *        if some error occurred while saving
+	 *             if some error occurred while saving
 	 */
-	public abstract void doSave(IProofState[] states, IProgressMonitor monitor)
+	void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**
@@ -331,8 +348,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @throws RodinDBException
 	 *             if some error occurred
 	 */
-	public abstract boolean selectNextSubgoal(boolean rootIncluded,
-			IProofTreeNodeFilter filter)
+	boolean selectNextSubgoal(boolean rootIncluded, IProofTreeNodeFilter filter)
 			throws RodinDBException;
 
 }

@@ -29,101 +29,89 @@ import org.rodinp.core.RodinDBException;
 
 public class UserSupport implements IElementChangedListener, IUserSupport {
 
-	LinkedHashSet<IProofState> proofStates;
+	private static final class ProofStateLoader implements Runnable {
+
+		private final UserSupport us;
+
+		private RodinDBException exc;
+
+		public ProofStateLoader(UserSupport us) {
+			this.us = us;
+		}
+
+		public void run() {
+			try {
+				final IPSStatus[] psStatuses = us.psWrapper.getPSStatuses();
+				for (IPSStatus psStatus : psStatuses) {
+					final ProofState state = new ProofState(us, psStatus);
+					us.proofStates.add(state);
+					us.deltaProcessor.newProofState(us, state);
+				}
+			} catch (RodinDBException e) {
+				exc = e;
+			}
+		}
+
+		public void checkNestedException() throws RodinDBException {
+			if (exc != null)
+				throw exc;
+		}
+	}
+
+	private static final IProofState[] NO_PROOF_STATES = new IProofState[0];
+	
+	protected LinkedHashSet<IProofState> proofStates;
 
 	protected ProofState currentPS;
 
-	private UserSupportManager manager;
+	protected UserSupportManager manager;
 
-	DeltaProcessor deltaProcessor;
+	protected DeltaProcessor deltaProcessor;
 
-	IPSWrapper psWrapper; // Unique for an instance of UserSupport
+	protected IPSWrapper psWrapper; // Unique for an instance of UserSupport
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
-		proofStates = new LinkedHashSet<IProofState>();
+		proofStates = null;
 		manager = (UserSupportManager) EventBPlugin.getDefault()
 				.getUserSupportManager();
 		deltaProcessor = manager.getDeltaProcessor();
 		manager.addUserSupport(this);
-
 		deltaProcessor.newUserSupport(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#setInput(org.eventb.core.IPSFile,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void setInput(final IPSFile psFile, final IProgressMonitor monitor)
-			throws RodinDBException {
-
+	public void setInput(final IPSFile psFile) {
 		psWrapper = new PSWrapper(psFile);
-
-		proofStates = new LinkedHashSet<IProofState>();
-
-		manager.run(new Runnable() {
-
-			public void run() {
-				try {
-					IPSStatus[] statuses = psWrapper.getPSStatuses();
-					for (int i = 0; i < statuses.length; i++) {
-						IPSStatus psStatus = statuses[i];
-						ProofState state = new ProofState(UserSupport.this,
-								psStatus);
-						proofStates.add(state);
-						deltaProcessor.newProofState(UserSupport.this, state);
-					}
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-			}
-
-		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#dispose()
-	 */
+	private void loadProofStatesIfNeeded() throws RodinDBException {
+		if (proofStates == null) {
+			loadProofStates();
+		}
+	}
+
+	public void loadProofStates() throws RodinDBException {
+		final ProofStateLoader loader = new ProofStateLoader(this);
+		proofStates = new LinkedHashSet<IProofState>();
+		manager.run(loader);
+		loader.checkNestedException();
+	}
+
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
 		manager.removeUserSupport(this);
 		deltaProcessor.removeUserSupport(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#getInput()
-	 */
 	public IPSFile getInput() {
 		if (psWrapper != null)
 			return psWrapper.getPSFile();
 		return null;
 	}
 
-//	void startInformation() {
-//		information = new ArrayList<IUserSupportInformation>();
-//	}
-
-//	void addInformation(Object obj, int priority) {
-//		assert (information != null);
-//		assert (IUserSupportInformation.MIN_PRIORITY <= priority);
-//		assert (priority <= IUserSupportInformation.MAX_PRIORITY);
-//		information.add(new UserSupportInformation(obj, priority));
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#nextUndischargedPO(boolean,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void nextUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
+		loadProofStatesIfNeeded();
 		boolean found = false;
 		IProofState newProofState = null;
 		IProofState firstOpenedProofState = null;
@@ -177,14 +165,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#prevUndischargedPO(boolean,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void prevUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
+		loadProofStatesIfNeeded();
 		boolean found = false;
 		IProofState newProofState = null;
 		IProofState lastOpenedProofState = null;
@@ -253,6 +236,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 */
 	public void setCurrentPO(IPSStatus psStatus, IProgressMonitor monitor)
 			throws RodinDBException {
+		loadProofStatesIfNeeded();
 		if (psStatus == null) {
 			setProofState(null, monitor);
 			return;
@@ -310,6 +294,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getPOs()
 	 */
 	public IProofState[] getPOs() {
+		if (proofStates == null) {
+			return NO_PROOF_STATES;
+		}
 		return proofStates.toArray(new IProofState[proofStates.size()]);
 	}
 
@@ -319,6 +306,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#hasUnsavedChanges()
 	 */
 	public boolean hasUnsavedChanges() {
+		if (proofStates == null) {
+			return false;
+		}
 		for (IProofState proofState : proofStates) {
 			if (proofState.isDirty())
 				return true;
@@ -332,6 +322,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#getUnsavedPOs()
 	 */
 	public IProofState[] getUnsavedPOs() {
+		if (proofStates == null) {
+			return NO_PROOF_STATES;
+		}
 		Collection<IProofState> unsaved = new HashSet<IProofState>();
 		for (IProofState proofState : proofStates) {
 			if (proofState.isDirty())
@@ -354,6 +347,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#removeCachedHypotheses(java.util.Collection)
 	 */
 	public void removeCachedHypotheses(final Collection<Predicate> hyps) {
+		checkCurrentPS();
 		manager.run(new Runnable() {
 
 			public void run() {
@@ -364,47 +358,38 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#searchHyps(java.lang.String)
-	 */
-	public void searchHyps(String token) {
-		token = token.trim();
+	private void checkCurrentPS() throws IllegalStateException {
+		if (currentPS == null) {
+			throw new IllegalStateException("No current PO");
+		}
+	}
 
+	public void searchHyps(String token) {
+		checkCurrentPS();
+		token = token.trim();
 		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS
 				.getCurrentNode().getSequent(), token);
 		manager.run(new Runnable() {
-
 			public void run() {
 				currentPS.setSearched(hyps);
 				deltaProcessor.informationChanged(UserSupport.this,
 						new UserSupportInformation("Search hypotheses",
 								IUserSupportInformation.MAX_PRIORITY));
 			}
-
 		});
-
-		return;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#removeSearchedHypotheses(java.util.Collection)
-	 */
 	public void removeSearchedHypotheses(final Collection<Predicate> hyps) {
+		checkCurrentPS();
 		manager.run(new Runnable() {
-
 			public void run() {
 				currentPS.removeAllFromSearched(hyps);
 			}
-
 		});
-		return;
 	}
 
 	public void selectNode(IProofTreeNode node) throws RodinDBException {
+		checkCurrentPS();
 		currentPS.setCurrentNode(node);
 	}
 
@@ -412,36 +397,19 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		currentPS.addAllToCached(hyps);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Deprecated
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
 			throws RodinDBException {
 		applyTactic(t, true, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#applyTactic(org.eventb.core.seqprover.ITactic,
-	 *      boolean, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void applyTactic(final ITactic t, boolean applyPostTactic,
-			final IProgressMonitor monitor) throws RodinDBException {
+	public void applyTactic(ITactic t, boolean applyPostTactic,
+			IProgressMonitor monitor) throws RodinDBException {
+		checkCurrentPS();
 		IProofTreeNode node = currentPS.getCurrentNode();
 		currentPS.applyTactic(t, node, applyPostTactic, monitor);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#applyTacticToHypotheses(org.eventb.core.seqprover.ITactic,
-	 *      java.util.Set, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -451,11 +419,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			boolean applyPostTactic, IProgressMonitor monitor)
 			throws RodinDBException {
+		checkCurrentPS();
 		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(), hyps,
 				applyPostTactic, monitor);
 	}
 
 	void refresh() {
+		assert proofStates != null;
 		manager.run(new Runnable() {
 
 			public void run() {
@@ -496,23 +466,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#back(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void back(IProgressMonitor monitor) throws RodinDBException {
+		checkCurrentPS();
 		currentPS.back(currentPS.getCurrentNode(), monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.pm.IUserSupport#setComment(java.lang.String,
-	 *      org.eventb.core.seqprover.IProofTreeNode)
-	 */
 	public void setComment(String text, IProofTreeNode node)
 			throws RodinDBException {
+		checkCurrentPS();
 		currentPS.setComment(text, node);
 	}
 
@@ -585,6 +546,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	public void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws RodinDBException {
+		if (proofStates == null) {
+			return;
+		}
 		for (IProofState state : states) {
 			state.setProofTree(monitor);
 			// state.getPSStatus().setManualProof(true, monitor);
@@ -612,6 +576,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	public IProofState getProofState(IPSStatus psStatus) {
+		if (proofStates == null) {
+			return null;
+		}
 		for (IProofState proofState : proofStates) {
 			if (proofState.getPSStatus().equals(psStatus))
 				return proofState;
@@ -626,6 +593,5 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return currentPS.selectNextSubGoal(currentPS.getCurrentNode(),
 				rootIncluded, filter);
 	}
-
 	
 }
