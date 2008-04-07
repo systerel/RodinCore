@@ -130,19 +130,7 @@ public class ProverUI extends FormEditor implements
 		if (input instanceof IFileEditorInput) {
 			IFile inputFile = ((IFileEditorInput) input).getFile();
 			prFile = (IPSFile) RodinCore.valueOf(inputFile);
-			UIUtils.runWithProgressDialog(this.getEditorSite().getShell(),
-					new IRunnableWithProgress() {
-
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException,
-								InterruptedException {
-							try {
-								userSupport.setInput(prFile, monitor);
-							} catch (RodinDBException e) {
-								e.printStackTrace();
-							}
-						}
-			});
+			userSupport.setInput(prFile);
 			this.setPartName(prFile.getComponentName());
 		}
 		editorDirtyStateChanged();
