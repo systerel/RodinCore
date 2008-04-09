@@ -47,11 +47,6 @@ public class CopyAction extends SelectionListenerAction {
 	public static final String ID = EventBUIPlugin.PLUGIN_ID + ".CopyAction"; //$NON-NLS-1$
 
 	/**
-	 * The shell in which to show any dialogs.
-	 */
-	private Shell shell;
-
-	/**
 	 * System clipboard
 	 */
 	private Clipboard clipboard;
@@ -63,17 +58,12 @@ public class CopyAction extends SelectionListenerAction {
 
 	/**
 	 * Creates a new action.
-	 * 
-	 * @param shell
-	 *            the shell for any dialogs
 	 * @param clipboard
 	 *            a platform clipboard
 	 */
-	protected CopyAction(Shell shell, Clipboard clipboard) {
+	protected CopyAction(Clipboard clipboard) {
 		super(Messages.editorAction_copy_title);
-		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
-		this.shell = shell;
 		this.clipboard = clipboard;
 		setToolTipText(Messages.editorAction_copy_toolTip);
 		setId(CopyAction.ID);
@@ -94,7 +84,7 @@ public class CopyAction extends SelectionListenerAction {
 	 * @since 2.0
 	 */
 	public CopyAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
-		this(shell, clipboard);
+		this(clipboard);
 		this.pasteAction = pasteAction;
 	}
 
