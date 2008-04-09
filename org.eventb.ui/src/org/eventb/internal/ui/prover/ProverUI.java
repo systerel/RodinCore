@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -99,8 +98,8 @@ public class ProverUI extends FormEditor implements
 	// The associated UserSupport
 	IUserSupport userSupport;
 
-	// The associated rodin file handle
-	IPSFile prFile = null;
+	// The associated Rodin file handle
+	IPSFile psFile = null;
 
 	private ProofStatusLineManager statusManager = null;
 	
@@ -128,10 +127,10 @@ public class ProverUI extends FormEditor implements
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
 		if (input instanceof IFileEditorInput) {
-			IFile inputFile = ((IFileEditorInput) input).getFile();
-			prFile = (IPSFile) RodinCore.valueOf(inputFile);
-			userSupport.setInput(prFile);
-			this.setPartName(prFile.getComponentName());
+			final IFile inputFile = ((IFileEditorInput) input).getFile();
+			psFile = (IPSFile) RodinCore.valueOf(inputFile);
+			userSupport.setInput(psFile);
+			this.setPartName(psFile.getComponentName());
 		}
 		editorDirtyStateChanged();
 	}
@@ -140,15 +139,15 @@ public class ProverUI extends FormEditor implements
 	 * Set the current Proof Obligation.
 	 * <p>
 	 * 
-	 * @param prSequent
+	 * @param psStatus
 	 *            current pr Sequent
 	 */
-	public void setCurrentPO(IPSStatus prSequent, IProgressMonitor monitor) {
-		IProofState proofState = userSupport.getCurrentPO();
-		if (proofState != null && proofState.getPSStatus().equals(prSequent))
+	public void setCurrentPO(IPSStatus psStatus, IProgressMonitor monitor) {
+		final IProofState proofState = userSupport.getCurrentPO();
+		if (proofState != null && proofState.getPSStatus().equals(psStatus))
 			return;
 		try {
-			userSupport.setCurrentPO(prSequent, monitor);
+			userSupport.setCurrentPO(psStatus, monitor);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -399,19 +398,20 @@ public class ProverUI extends FormEditor implements
 		// }
 		final IProofState currentPO = userSupport.getCurrentPO();
 		if (currentPO != null && currentPO.isUninitialised())
-			UIUtils.runWithProgressDialog(this.getEditorSite().getShell(), new IRunnableWithProgress() {
+			UIUtils.runWithProgressDialog(this.getEditorSite().getShell(),
+					new IRunnableWithProgress() {
 
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						userSupport.setCurrentPO(currentPO.getPSStatus(),
-								new NullProgressMonitor());
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-			});
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException {
+							try {
+								userSupport.setCurrentPO(currentPO
+										.getPSStatus(), monitor);
+							} catch (RodinDBException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+
+					});
 		syncObligationExplorer();
 		super.setFocus();
 		// UIUtils.debugProverUI("Focus");
@@ -452,15 +452,15 @@ public class ProverUI extends FormEditor implements
 	 * @return a handle to a Rodin file
 	 */
 	public IPSFile getRodinInput() {
-		if (prFile == null) {
+		if (psFile == null) {
 			FileEditorInput editorInput = (FileEditorInput) this
 					.getEditorInput();
 
 			IFile inputFile = editorInput.getFile();
 
-			prFile = (IPSFile) RodinCore.valueOf(inputFile);
+			psFile = (IPSFile) RodinCore.valueOf(inputFile);
 		}
-		return prFile;
+		return psFile;
 	}
 
 	/**
