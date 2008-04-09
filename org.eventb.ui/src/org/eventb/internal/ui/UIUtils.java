@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,6 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
@@ -105,49 +105,26 @@ public class UIUtils {
 	}
 
 	/**
-	 * Link the current object to an Prover UI editor.
+	 * Link the current object to a Prover UI editor.
 	 * <p>
 	 * 
 	 * @param obj
 	 *            the object (e.g. a proof obligation or a Rodin file)
 	 */
 	public static void linkToProverUI(final Object obj) {
-		String editorId = ProverUI.EDITOR_ID;
-
-		IPSFile component = null;
-		if (obj instanceof IRodinProject)
+		final IPSFile psFile = getPSFileFor(obj);
+		if (psFile == null) {
+			// Not a PS file element
+			// TODO log error here ?
 			return;
-
-		if (!(obj instanceof IRodinElement))
-			return;
-
-		IRodinElement element = (IRodinElement) obj;
-
-		IOpenable file = element.getOpenable();
-
-		if (file instanceof IPSFile) {
-			component = (IPSFile) file;
-		} else if (file instanceof IMachineFile) {
-			component = ((IMachineFile) file).getPSFile();
-		} else if (file instanceof IContextFile) {
-			component = ((IContextFile) file).getPSFile();
-		} else {
-			return; // Not recorgnised
 		}
-
-		Assert
-				.isTrue(component != null,
-						"Component must be initialised by now"); //$NON-NLS-1$
 		try {
-			IEditorInput fileInput = new FileEditorInput(component
-					.getResource());
-
+			IEditorInput fileInput = new FileEditorInput(psFile.getResource());
 			final ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
-					.openEditor(fileInput, editorId);
+					.openEditor(fileInput, ProverUI.EDITOR_ID);
 			if (obj instanceof IPSStatus)
 				UIUtils.runWithProgressDialog(editor.getSite().getShell(),
 						new IRunnableWithProgress() {
-
 							public void run(IProgressMonitor monitor)
 									throws InvocationTargetException,
 									InterruptedException {
@@ -157,11 +134,25 @@ public class UIUtils {
 						});
 		} catch (PartInitException e) {
 			MessageDialog
-					.openError(null, null, "Error open the proving editor");
+					.openError(null, null, "Error opening the proving editor");
 			e.printStackTrace();
 			// TODO EventBImage.logException(e);
 		}
-		return;
+	}
+
+	private static IPSFile getPSFileFor(Object obj) {
+		if (!(obj instanceof IRodinElement)) {
+			return null;
+		}
+		
+		final IOpenable file = ((IRodinElement) obj).getOpenable();
+		if (file instanceof IPSFile) {
+			return (IPSFile) file;
+		}
+		if (file instanceof IEventBFile) {
+			return ((IEventBFile) file).getPSFile();
+		}
+		return null;
 	}
 
 	/**
