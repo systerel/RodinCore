@@ -28,6 +28,8 @@ import org.eventb.ui.prover.ITacticProvider;
  */
 public class GlobalTacticToolItem {
 
+	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
+
 	ToolItem item;
 
 	String tacticID;
@@ -69,29 +71,26 @@ public class GlobalTacticToolItem {
 	 *            the (optional) string input
 	 */
 	public void updateStatus(IUserSupport us, String input) {
-		ITacticProvider provider = TacticUIRegistry.getDefault()
-				.getTacticProvider(tacticID);
-		if (provider != null) {
+		item.setEnabled(shouldBeEnabled(us, input));
+	}
 
-			IProofState currentPO = us.getCurrentPO();
+	private boolean shouldBeEnabled(IUserSupport us, String input) {
+		final ITacticProvider provider = registry.getTacticProvider(tacticID);
+		if (provider != null) {
+			final IProofState currentPO = us.getCurrentPO();
 			if (currentPO == null) {
-				item.setEnabled(false);
-				return;
+				return false;
 			}
-			IProofTreeNode node = currentPO.getCurrentNode();
-			item
-					.setEnabled(provider.getApplicablePositions(node, null,
-							input) != null);
-			return;
-		} else {
-			IProofCommand command = TacticUIRegistry.getDefault()
-					.getProofCommand(tacticID, TacticUIRegistry.TARGET_GLOBAL);
-			if (command != null) {
-				item.setEnabled(command.isApplicable(us, null, input));
-				return;
-			}
+			final IProofTreeNode node = currentPO.getCurrentNode();
+			return provider.getApplicablePositions(node, null, input) != null;
 		}
-		item.setEnabled(false);
+
+		final IProofCommand command = registry.getProofCommand(tacticID,
+				TacticUIRegistry.TARGET_GLOBAL);
+		if (command != null) {
+			return command.isApplicable(us, null, input);
+		}
+		return false;
 	}
 
 	/**

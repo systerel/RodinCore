@@ -43,6 +43,9 @@ public abstract class GlobalTacticDropdownToolItem {
 
 	String active = null;
 
+	static final TacticUIRegistry registry = TacticUIRegistry
+			.getDefault();
+
 	/**
 	 * @author htson
 	 *         <p>
@@ -70,7 +73,6 @@ public abstract class GlobalTacticDropdownToolItem {
 		 * 
 		 */
 		public void add(String tacticID) {
-			final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 			if (menu.getItemCount() == 0) { // First Item becomes default item
 				active = tacticID;
 				dropdown.setToolTipText(registry.getTip(tacticID));
@@ -162,29 +164,26 @@ public abstract class GlobalTacticDropdownToolItem {
 	 *            the (optional) string input
 	 */
 	public void updateStatus(IUserSupport us, String input) {
-		TacticUIRegistry registry = TacticUIRegistry.getDefault();
-		ITacticProvider provider = registry.getTacticProvider(active);
+		item.setEnabled(shouldBeEnabled(us, input));
+	}
+
+	private boolean shouldBeEnabled(IUserSupport us, String input) {
+		final ITacticProvider provider = registry.getTacticProvider(active);
 		if (provider != null) {
-			IProofState currentPO = us.getCurrentPO();
+			final IProofState currentPO = us.getCurrentPO();
 			if (currentPO == null) {
-				item.setEnabled(false);
-				return;
+				return false;
 			}
-			IProofTreeNode node = currentPO.getCurrentNode();
-			item
-					.setEnabled(provider.getApplicablePositions(node, null,
-							input) != null);
-			return;
+			final IProofTreeNode node = currentPO.getCurrentNode();
+			return provider.getApplicablePositions(node, null, input) != null;
 		}
 
-		IProofCommand command = registry.getProofCommand(active,
+		final IProofCommand command = registry.getProofCommand(active,
 				TacticUIRegistry.TARGET_GLOBAL);
 		if (command != null) {
-			item.setEnabled(command.isApplicable(us, null, input));
-			return;
+			return command.isApplicable(us, null, input);
 		}
-
-		item.setEnabled(false);
+		return false;
 	}
 
 	/**
