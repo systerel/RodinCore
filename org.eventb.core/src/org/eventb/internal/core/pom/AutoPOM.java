@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package org.eventb.internal.core.pom;
+
+import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +50,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	 * <code>true</code>.
 	 * </p> 
 	 */
-	private static int toalRuns = 0;
+	private static int totalRuns = 0;
 	
 	
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
@@ -62,37 +64,37 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		
 		final IPOSequent[] poSequents = poFile.getSequents();
 		final int nbOfPOs = poSequents.length;
-		final int workUnits = 2 + nbOfPOs * 2 + 1 + nbOfPOs;
+		final int workUnits = 2 + nbOfPOs * 2 + 2 + nbOfPOs;
 		
 		try {
-			pm.beginTask("Proving " + componentName, workUnits);
+			pm.beginTask("Proving " + componentName + ": ", workUnits);
 			
-			createFreshProofFile(prFile, new SubProgressMonitor(pm, 1));
+			pm.subTask("loading");
+			createFreshProofFile(prFile, newSubProgressMonitor(pm, 1));
 			checkCancellation(pm, prFile, psFile);
 			
 			// update proof statuses
 			final IPSWrapper psWrapper = new PSWrapper(psFile);
 			final PSUpdater updater = new PSUpdater(psWrapper,
-					new SubProgressMonitor(pm, 1));
+					newSubProgressMonitor(pm, 1));
 			for (final IPOSequent poSequent : poSequents) {
-				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
-				updater.updatePO(poSequent, spm);
+				pm.subTask("updating status of " + poSequent.getElementName());
+				updater.updatePO(poSequent, newSubProgressMonitor(pm, 1));
 				checkCancellation(pm, prFile, psFile);
 			}
 			
-			updater.cleanup(new SubProgressMonitor(pm, nbOfPOs));
+			updater.cleanup(newSubProgressMonitor(pm, nbOfPOs));
 			
 			pm.subTask("saving");
-			prFile.save(new SubProgressMonitor(pm, 1), true, true);
-			psFile.save(new SubProgressMonitor(pm, 1), true, false);
+			prFile.save(newSubProgressMonitor(pm, 1), true, true);
+			psFile.save(newSubProgressMonitor(pm, 1), true, false);
 			
 			checkCancellation(pm, prFile, psFile);
 
-			SubProgressMonitor spm = new SubProgressMonitor(pm, nbOfPOs,
-					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK					
-			);
-			if (AutoProver.isEnabled())
+			IProgressMonitor spm = newSubProgressMonitor(pm, nbOfPOs);
+			if (AutoProver.isEnabled()) {
 				AutoProver.run(prFile, psFile, updater.getOutOfDateStatuses(), spm);
+			}
 			return true;
 		} finally {
 			pm.done();
@@ -100,7 +102,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			// Output performance trace if required
 			if (PERF_PROOFREUSE)
 			{
-				toalRuns++;
+				totalRuns++;
 
 				// Calculate percentage of proofs reused
 				float proofReuse;
@@ -114,7 +116,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				
 				System.out.println(
 						"=========== Cumulative POM Proof reuse performance ==========" +
-						"\nTotal runs of the POM: " + toalRuns +						
+						"\nTotal runs of the POM: " + totalRuns +						
 						"\nTotal # POs processed: " + PSUpdater.totalPOs +
 						"\n # Unchanged: " + PSUpdater.unchangedPOs +
 						"\t\t(with non-empty proofs: " + PSUpdater.unchangedPOsWithProofs +")" +
@@ -127,6 +129,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 						"\n=============================================================\n");
 			}
 		}
+	}
+
+	private IProgressMonitor newSubProgressMonitor(IProgressMonitor pm,
+			int ticks) {
+		return new SubProgressMonitor(pm, ticks, PREPEND_MAIN_LABEL_TO_SUBTASK);
 	}
 
 	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile, IPSFile psFile) {
