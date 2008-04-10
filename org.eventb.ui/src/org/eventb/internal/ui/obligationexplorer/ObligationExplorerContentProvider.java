@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
@@ -388,13 +389,8 @@ public class ObligationExplorerContentProvider implements
 		}
 
 		try {
-			if (parent instanceof IMachineFile) {
-				IPSFile psFile = ((IMachineFile) parent).getPSFile();
-				if (psFile.exists())
-					return psFile.getStatuses();
-			}
-			if (parent instanceof IContextFile) {
-				IPSFile psFile = ((IContextFile) parent).getPSFile();
+			if (parent instanceof IEventBFile) {
+				IPSFile psFile = ((IEventBFile) parent).getPSFile();
 				if (psFile.exists())
 					return psFile.getStatuses();
 			}
