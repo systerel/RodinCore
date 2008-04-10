@@ -19,7 +19,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -81,7 +80,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	public void setInput(final IPSFile psFile) {
-		psWrapper = new PSWrapper(psFile);
+		psWrapper = EventBPlugin.getPSWrapper(psFile);
 	}
 
 	private void loadProofStatesIfNeeded() throws RodinDBException {

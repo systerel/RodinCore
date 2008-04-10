@@ -20,6 +20,7 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -30,7 +31,6 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
-import org.eventb.internal.core.PSWrapper;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -94,7 +94,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	private void setReviewed() throws RodinDBException {
 		final IPSFile psFile = getPSFile();
-		final PSWrapper wrapper = new PSWrapper(psFile);
+		final IPSWrapper wrapper = EventBPlugin.getPSWrapper(psFile);
 		final IPSStatus psStatus = wrapper.getPSStatus(PO_NAME);
 		final IProofTree proofTree = wrapper.getFreshProofTree(psStatus);
 		final IProofTreeNode root = proofTree.getRoot();

@@ -1,6 +1,7 @@
 package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
@@ -16,7 +17,6 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
-import org.eventb.internal.core.PSWrapper;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -128,7 +128,7 @@ public class AutoPOMTest extends BuilderTest {
 		assertNotDischarged(prs[prs.length-1]);
 		
 		// Try an interactive proof on the last one via the PSWrapper
-		IPSWrapper psWrapper= new PSWrapper(psFile);
+		IPSWrapper psWrapper= EventBPlugin.getPSWrapper(psFile);
 		IProofTree proofTree = psWrapper.getFreshProofTree(prs[prs.length-1]);		
 		// Tactics.lasoo().apply(proofTree.getRoot(), null);
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);

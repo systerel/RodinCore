@@ -14,12 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSWrapper;
-import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -74,7 +74,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			checkCancellation(pm, prFile, psFile);
 			
 			// update proof statuses
-			final IPSWrapper psWrapper = new PSWrapper(psFile);
+			final IPSWrapper psWrapper = EventBPlugin.getPSWrapper(psFile);
 			final PSUpdater updater = new PSUpdater(psWrapper,
 					newSubProgressMonitor(pm, 1));
 			for (final IPOSequent poSequent : poSequents) {

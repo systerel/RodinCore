@@ -13,6 +13,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
@@ -307,4 +308,17 @@ public class EventBPlugin extends Plugin {
 		return PostTacticPreference.getDefault();
 	}
 
+	/**
+	 * Returns an object encapsulating the proofs and proof statuses associated
+	 * to the given event-B file.
+	 * 
+	 * @param file
+	 *            an event-B file (machine, context, PO file, ...)
+	 * @return an object encapsulating the PR and PS files associated to the
+	 *         given file.
+	 */
+	public static IPSWrapper getPSWrapper(IEventBFile file) {
+		return new PSWrapper(file.getPSFile());
+	}
+	
 }
