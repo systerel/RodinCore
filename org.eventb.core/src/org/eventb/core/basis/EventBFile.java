@@ -49,36 +49,51 @@ public abstract class EventBFile extends RodinFile implements IEventBFile,
 	}
 
 	public final IContextFile getContextFile() {
+		if (this instanceof IContextFile) {
+			return (IContextFile) this.getMutableCopy();
+		}
 		final String name = EventBPlugin.getContextFileName(getComponentName());
 		return (IContextFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final IMachineFile getMachineFile() {
+		if (this instanceof IMachineFile) {
+			return (IMachineFile) this.getMutableCopy();
+		}
 		final String name = EventBPlugin.getMachineFileName(getComponentName());
 		return (IMachineFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final IPRFile getPRFile() {
+		if (this instanceof IPRFile) {
+			return (IPRFile) this.getMutableCopy();
+		}
 		final String name = EventBPlugin.getPRFileName(getComponentName());
 		return (IPRFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final ISCContextFile getSCContextFile() {
+		// Do not optimize here due to temporary files.
 		final String name = EventBPlugin.getSCContextFileName(getComponentName());
 		return (ISCContextFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final ISCMachineFile getSCMachineFile() {
+		// Do not optimize here due to temporary files.
 		final String name = EventBPlugin.getSCMachineFileName(getComponentName());
 		return (ISCMachineFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final IPOFile getPOFile() {
+		// Do not optimize here due to temporary files.
 		final String name = EventBPlugin.getPOFileName(getComponentName());
 		return (IPOFile) getRodinProject().getRodinFile(name);
 	}
 
 	public final IPSFile getPSFile() {
+		if (this instanceof IPSFile) {
+			return (IPSFile) this.getMutableCopy();
+		}
 		final String name = EventBPlugin.getPSFileName(getComponentName());
 		return (IPSFile) getRodinProject().getRodinFile(name);
 	}
