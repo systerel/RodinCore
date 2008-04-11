@@ -63,6 +63,10 @@ public class PSWrapper implements IPSWrapper {
 		this.loadedTrees = new HashMap<IPSStatus, StampedProofTree>();
 	}
 
+	public IPRFile getPRFile() {
+		return prFile;
+	}
+
 	public IPSFile getPSFile() {
 		return psFile;
 	}

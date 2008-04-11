@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007,2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,18 @@ import org.rodinp.core.IOpenable;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Common protocol for accessing to the proof status and proofs of an event-B
- * component. This interface provides the methods needed for accessing the
- * contents of the ".bps" and ".bpr" files. The underlying implementation
- * ensures that both files are kept in sync, so that proof statuses indeed
- * reflect the current status of a proof obligation.
+ * Common protocol for manipulating proofs of an event-B component. This
+ * interface provides the methods needed for accessing and changing the contents
+ * of the ".bps" and ".bpr" files. The underlying implementation ensures that
+ * both files are kept in sync, so that proof statuses indeed reflect the
+ * current status of a proof obligation.
+ * <p>
+ * Instances of this interface can be obtained by using the factory method
+ * {@link EventBPlugin#getPSWrapper(IEventBFile)}.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Thai Son Hoang
  * @author Laurent Voisin
@@ -27,22 +34,29 @@ import org.rodinp.core.RodinDBException;
 public interface IPSWrapper {
 
 	/**
-	 * Returns the PS file encapsulated by this interface.
+	 * Returns the proof status file encapsulated by this interface.
 	 * 
 	 * @return the wrapped-up PS file
 	 */
-	public IPSFile getPSFile();
+	IPSFile getPSFile();
+
+	/**
+	 * Returns the proof file encapsulated by this interface.
+	 * 
+	 * @return the wrapped-up PR file
+	 */
+	IPRFile getPRFile();
 
 	/**
 	 * Returns the status of the proof obligation with the given name.
 	 * 
 	 * @param name
-	 *            of a proof obligation
+	 *            name of a proof obligation
 	 * @return the status of the given PO in the wrapped-up PS file
 	 * @throws RodinDBException
 	 *             if an error occurs accessing the Rodin database
 	 */
-	public IPSStatus getPSStatus(String name) throws RodinDBException;
+	IPSStatus getPSStatus(String name) throws RodinDBException;
 
 	/**
 	 * Returns all PS statuses of the wrapped-up PS file.
@@ -51,7 +65,7 @@ public interface IPSWrapper {
 	 * @throws RodinDBException
 	 *             if an error occurs accessing the Rodin database
 	 */
-	public IPSStatus[] getPSStatuses() throws RodinDBException;
+	IPSStatus[] getPSStatuses() throws RodinDBException;
 
 	/**
 	 * Returns a fresh proof tree for the given proof obligation.
@@ -66,8 +80,7 @@ public interface IPSWrapper {
 	 */
 	// TODO add progress monitor as this is a long-running operation
 	// TODO split into two methods: createFreshProofTree() and getProofTree()
-	public IProofTree getFreshProofTree(IPSStatus psStatus)
-			throws RodinDBException;
+	IProofTree getFreshProofTree(IPSStatus psStatus) throws RodinDBException;
 
 	/**
 	 * Returns the current proof skeleton of the given proof obligation.
@@ -82,8 +95,8 @@ public interface IPSWrapper {
 	 * @throws RodinDBException
 	 *             if an error occurs accessing the Rodin database
 	 */
-	public IProofSkeleton getProofSkeleton(IPSStatus psStatus,
-			IProgressMonitor monitor) throws RodinDBException;
+	IProofSkeleton getProofSkeleton(IPSStatus psStatus, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * @deprecated use
@@ -91,8 +104,8 @@ public interface IPSWrapper {
 	 *             instead.
 	 */
 	@Deprecated
-	public void setProofTree(IPSStatus status, IProofTree pt,
-			IProgressMonitor monitor) throws RodinDBException;
+	void setProofTree(IPSStatus status, IProofTree pt, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Serializes the given proof tree into the corresponding {@link IPRProof}
@@ -112,9 +125,8 @@ public interface IPSWrapper {
 	 *             instead.
 	 */
 	@Deprecated
-	public void setProofTree(IPSStatus status, IProofTree pt,
-			boolean hasManualProof, IProgressMonitor monitor)
-			throws RodinDBException;
+	void setProofTree(IPSStatus status, IProofTree pt, boolean hasManualProof,
+			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Updates the given status and associated proof using the state of the last
@@ -158,7 +170,6 @@ public interface IPSWrapper {
 	 *             if an error occurred accessing the Rodin database
 	 * @see IOpenable#save(IProgressMonitor, boolean, boolean)
 	 */
-	public void save(IProgressMonitor monitor, boolean force)
-			throws RodinDBException;
+	void save(IProgressMonitor monitor, boolean force) throws RodinDBException;
 
 }
