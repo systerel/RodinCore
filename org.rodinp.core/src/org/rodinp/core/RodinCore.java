@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.JavaCore.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.JavaCore
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added getRodinDB()
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -707,5 +710,13 @@ public class RodinCore extends Plugin {
 			
 	}
 
+	/**
+	 * Returns the Rodin database element.
+	 * 
+	 * @return the Rodin database
+	 */
+	public static IRodinDB getRodinDB() {
+		return RodinDBManager.getRodinDBManager().getRodinDB();
+	}
 
 }
