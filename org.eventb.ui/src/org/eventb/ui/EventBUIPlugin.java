@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,13 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored getRodinDatabase()
  ******************************************************************************/
 
 package org.eventb.ui;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -119,9 +118,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	// The shared instance.
 	private static EventBUIPlugin plugin;
 
-	// The instance to connect with the data base
-	private static IRodinDB database;
-
 	/**
 	 * The constructor, also store the database instance of the current
 	 * Workspace.
@@ -132,30 +128,21 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Getting the RODIN database for the current Workspace.
+	 * Returns the Rodin database element.
 	 * 
-	 * @return the RODIN database
+	 * @return the Rodin database
 	 */
 	public static IRodinDB getRodinDatabase() {
-		return database;
+		return RodinCore.getRodinDB();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
 		configureDebugOptions();
-
-		// Stored the database instance starting at the root workspace
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		database = RodinCore.valueOf(root);
 		
-		initialisePreferences();
+		initializePreferences();
 		
 		loadFont();
 	}
@@ -178,13 +165,13 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Reading the value of the preferences and initialise various components
+	 * Reads the value of the preferences and initialize various components
 	 */
-	private void initialisePreferences() {
+	private void initializePreferences() {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 
-		// Initialise the post-tactics
+		// Initialize the post-tactics
 		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
 		String[] postTacticIDs = UIUtils.parseString(s);
 		
@@ -197,7 +184,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		boolean b = store.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		postTacticPreference.setEnabled(b);
 
-		// Initialise the auto-tactics
+		// Initialize the auto-tactics
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
 		String[] autoTacticIDs = UIUtils.parseString(s);
 		IAutoTacticPreference autoTacticPreference = EventBPlugin
@@ -265,11 +252,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
@@ -277,20 +259,14 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Getting the shared instance of the plugin.
-	 * <p>
+	 * Returns the shared instance of this plug-in.
 	 * 
-	 * @returns the shared instance of the plugin.
+	 * @returns the shared instance of this plug-in.
 	 */
 	public static EventBUIPlugin getDefault() {
 		return plugin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
-	 */
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		EventBImage.initializeImageRegistry(reg);
