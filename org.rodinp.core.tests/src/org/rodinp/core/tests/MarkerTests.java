@@ -11,10 +11,6 @@ package org.rodinp.core.tests;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
-import static org.rodinp.core.tests.AttributeTests.setHandleAttrPositive;
-import static org.rodinp.core.tests.AttributeTests.setIntAttrPositive;
-import static org.rodinp.core.tests.AttributeTests.setLongAttrPositive;
-import static org.rodinp.core.tests.AttributeTests.setStringAttrPositive;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -311,7 +307,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerAttr() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setStringAttrPositive(ne, fString, "bar");
+		ne.setAttributeValue(fString, "bar", null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fString, TestProblem.err0);
 	}
@@ -334,7 +330,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerAttrLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setStringAttrPositive(ne, fString, "bar");
+		ne.setAttributeValue(fString, "bar", null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fString, 0, 3, TestProblem.err0);
 	}
@@ -358,7 +354,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne1 = createNEPositive(rodinFile, "ne1", null);
 		IInternalElement ne11 = createNEPositive(ne1, "ne11", null);
-		setStringAttrPositive(ne11, fString, "baz");
+		ne11.setAttributeValue(fString, "baz", null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne11, fString, 0, 3, TestProblem.err0);
 	}
@@ -418,7 +414,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testMarkerAttrHandle() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setHandleAttrPositive(ne, fHandle, rodinFile);
+		ne.setAttributeValue(fHandle, rodinFile, null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fHandle, TestProblem.err0);
 	}
@@ -430,7 +426,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testMarkerAttrInt() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setIntAttrPositive(ne, fInt, -55);
+		ne.setAttributeValue(fInt, -55, null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fInt, TestProblem.err0);
 	}
@@ -442,7 +438,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testMarkerAttrLong() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setLongAttrPositive(ne, fLong, 12345678901L);
+		ne.setAttributeValue(fLong, 12345678901L, null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fLong, TestProblem.err0);
 	}
@@ -469,7 +465,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testMarkerAttrBadLoc() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setStringAttrPositive(ne, fString, "bar");
+		ne.setAttributeValue(fString, "bar", null);
 		rodinFile.save(null, false);
 		// no end location
 		createMarkerNegative(INVALID_MARKER_LOCATION, ne, fString, 0, -1,
@@ -517,7 +513,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinProject rp2 = createRodinProject("P2");
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
-		 setStringAttrPositive(top, fString, "foo");
+		 top.setAttributeValue(fString, "foo", null);
 		 rf.save(null, false);
 		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 		
@@ -536,7 +532,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
 		 IInternalElement ne = createNEPositive(top, "ne11", null);
-		 setStringAttrPositive(ne, fString, "bar");
+		 ne.setAttributeValue(fString, "bar", null);
 		 rf.save(null, false);
 		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
 		
@@ -555,7 +551,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinProject rp2 = createRodinProject("P2");
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
-		 setStringAttrPositive(top, fString, "foo");
+		 top.setAttributeValue(fString, "foo", null);
 		 rf.save(null, false);
 		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 		
@@ -574,7 +570,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
 		 IInternalElement ne = createNEPositive(top, "ne11", null);
-		 setStringAttrPositive(ne, fString, "bar");
+		 ne.setAttributeValue(fString, "bar", null);
 		 rf.save(null, false);
 		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
 		
@@ -592,7 +588,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerCopyFile() throws Exception {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
-		 setStringAttrPositive(top, fString, "foo");
+		 top.setAttributeValue(fString, "foo", null);
 		 rf.save(null, false);
 		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 		
@@ -609,7 +605,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
 		 IInternalElement ne = createNEPositive(top, "ne11", null);
-		 setStringAttrPositive(ne, fString, "bar");
+		 ne.setAttributeValue(fString, "bar", null);
 		 rf.save(null, false);
 		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
 		
@@ -625,7 +621,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerRenameProject() throws Exception {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
-		 setStringAttrPositive(top, fString, "foo");
+		 top.setAttributeValue(fString, "foo", null);
 		 rf.save(null, false);
 		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 
@@ -643,7 +639,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testTopMarkerRenameFile() throws Exception {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
-		 setStringAttrPositive(top, fString, "foo");
+		 top.setAttributeValue(fString, "foo", null);
 		 rf.save(null, false);
 		 createMarkerPositive(top, fString, 0, 3, TestProblem.err0);
 		
@@ -661,7 +657,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		 IRodinFile rf = createRodinFile("P/x.test");
 		 IInternalElement top = createNEPositive(rf, "ne1", null);
 		 IInternalElement ne = createNEPositive(top, "ne11", null);
-		 setStringAttrPositive(ne, fString, "bar");
+		 ne.setAttributeValue(fString, "bar", null);
 		 rf.save(null, false);
 		 createMarkerPositive(ne, fString, 0, 1, TestProblem.warn1, "baz");
 		
