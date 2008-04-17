@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added checks of generated deltas
  *******************************************************************************/
 
 package org.rodinp.core.tests;
@@ -19,6 +23,7 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -30,7 +35,6 @@ import org.rodinp.core.tests.basis.NamedElement;
  */
 
 // TODO finish tests: test for all error conditions
-//TODO finish tests: test for generated deltas
 
 public class AttributeTests extends ModifyingResourceTests {
 	
@@ -133,133 +137,216 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void removeAttrPositive(IAttributedElement element, IAttributeType type)
+	void removeAttrPositive(IAttributedElement element, IAttributeType type)
 			throws RodinDBException {
 
 		assertExists("Element should exist", element);
-		element.removeAttribute(type, null);
-		assertFalse("Attribute should have been removed", 
-				element.hasAttribute(type));
+		final boolean attributeExists = element.hasAttribute(type);
+		try {
+			startDeltas();
+			element.removeAttribute(type, null);
+			if (attributeExists) {
+				assertAttributeDelta(element);
+			} else {
+				assertNoDelta(element);
+			}
+		} finally {
+			stopDeltas();
+		}
+
+		assertFalse("Attribute should have been removed", element
+				.hasAttribute(type));
 	}
 
-	static void removeAttrNegative(IAttributedElement element, IAttributeType type,
+	private void assertNoDelta(IAttributedElement element) {
+		final IRodinElementDelta delta = getDeltaFor(element, true);
+		assertNull("No delta should have been generated", delta);
+	}
+
+	private void assertAttributeDelta(IAttributedElement element) {
+		final IRodinElementDelta delta = getDeltaFor(element, true);
+		assertNotNull("No delta", delta);
+		assertEquals("Wrong delta kind", IRodinElementDelta.CHANGED,
+				delta.getKind());
+		assertEquals("Wrong delta flag",
+				IRodinElementDelta.F_ATTRIBUTE, delta.getFlags());
+	}
+
+	void removeAttrNegative(IAttributedElement element, IAttributeType type,
 			int failureCode) throws RodinDBException {
 		
 		try {
+			startDeltas();
 			element.removeAttribute(type, null);
 			fail("Removing the attribute should have failed");
 		} catch (RodinDBException e) {
 			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
 
-	static void setBoolAttrPositive(IAttributedElement element, IAttributeType.Boolean type,
-			boolean newValue) throws RodinDBException {
+	void setBoolAttrPositive(IAttributedElement element,
+			IAttributeType.Boolean type, boolean newValue)
+			throws RodinDBException {
 		assertExists("Element should exist", element);
-		element.setAttributeValue(type, newValue, null);
-		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type));
-		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type));
+		try {
+			startDeltas();
+			element.setAttributeValue(type, newValue, null);
+			assertTrue("Attribute should have been created", element
+					.hasAttribute(type));
+			assertEquals("New value should have been set", newValue, element
+					.getAttributeValue(type));
+			assertAttributeDelta(element);
+		} finally {
+			stopDeltas();
+		}
 	}
 
-	static void setHandleAttrPositive(IAttributedElement element, IAttributeType.Handle type,
-			IRodinElement newValue) throws RodinDBException {
+	void setHandleAttrPositive(IAttributedElement element,
+			IAttributeType.Handle type, IRodinElement newValue)
+			throws RodinDBException {
 		assertExists("Element should exist", element);
-		element.setAttributeValue(type, newValue, null);
-		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type));
-		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type));
+		try {
+			startDeltas();
+			element.setAttributeValue(type, newValue, null);
+			assertTrue("Attribute should have been created", element
+					.hasAttribute(type));
+			assertEquals("New value should have been set", newValue, element
+					.getAttributeValue(type));
+			assertAttributeDelta(element);
+		} finally {
+			stopDeltas();
+		}
 	}
 
-	static void setIntAttrPositive(IAttributedElement element, IAttributeType.Integer type,
-			int newValue) throws RodinDBException {
+	void setIntAttrPositive(IAttributedElement element,
+			IAttributeType.Integer type, int newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
-		element.setAttributeValue(type, newValue, null);
-		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type));
-		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type));
+		try {
+			startDeltas();
+			element.setAttributeValue(type, newValue, null);
+			assertTrue("Attribute should have been created", element
+					.hasAttribute(type));
+			assertEquals("New value should have been set", newValue, element
+					.getAttributeValue(type));
+			assertAttributeDelta(element);
+		} finally {
+			stopDeltas();
+		}
 	}
 
-	static void setLongAttrPositive(IAttributedElement element, IAttributeType.Long type,
-			long newValue) throws RodinDBException {
+	void setLongAttrPositive(IAttributedElement element,
+			IAttributeType.Long type, long newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
-		element.setAttributeValue(type, newValue, null);
-		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type));
-		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type));
+		try {
+			startDeltas();
+			element.setAttributeValue(type, newValue, null);
+			assertTrue("Attribute should have been created", element
+					.hasAttribute(type));
+			assertEquals("New value should have been set", newValue, element
+					.getAttributeValue(type));
+			assertAttributeDelta(element);
+		} finally {
+			stopDeltas();
+		}
 	}
 
-	static void setStringAttrPositive(IAttributedElement element, IAttributeType.String type,
-			String newValue) throws RodinDBException {
+	void setStringAttrPositive(IAttributedElement element,
+			IAttributeType.String type, String newValue)
+			throws RodinDBException {
 		assertExists("Element should exist", element);
-		element.setAttributeValue(type, newValue, null);
-		assertTrue("Attribute should have been created", 
-				element.hasAttribute(type));
-		assertEquals("New value should have been set",
-				newValue, element.getAttributeValue(type));
+		try {
+			startDeltas();
+			element.setAttributeValue(type, newValue, null);
+			assertTrue("Attribute should have been created", element
+					.hasAttribute(type));
+			assertEquals("New value should have been set", newValue, element
+					.getAttributeValue(type));
+			assertAttributeDelta(element);
+		} finally {
+			stopDeltas();
+		}
 	}
 
-	static void setBoolAttrNegative(IAttributedElement element,
+	void setBoolAttrNegative(IAttributedElement element,
 			IAttributeType.Boolean type, boolean newValue, int failureCode)
 			throws RodinDBException {
 
 		try {
+			startDeltas();
 			element.setAttributeValue(type, newValue, null);
 			fail("Setting the attribute should have failed");
 		} catch (RodinDBException e) {
-				assertErrorCode(e, failureCode);
+			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
 
-	static void setHandleAttrNegative(IAttributedElement element,
+	void setHandleAttrNegative(IAttributedElement element,
 			IAttributeType.Handle type, IRodinElement newValue, int failureCode)
 			throws RodinDBException {
 
 		try {
+			startDeltas();
 			element.setAttributeValue(type, newValue, null);
 			fail("Setting the attribute should have failed");
 		} catch (RodinDBException e) {
-				assertErrorCode(e, failureCode);
+			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
 
-	static void setIntAttrNegative(IAttributedElement element,
+	void setIntAttrNegative(IAttributedElement element,
 			IAttributeType.Integer type, int newValue, int failureCode)
 			throws RodinDBException {
-		
+
 		try {
+			startDeltas();
 			element.setAttributeValue(type, newValue, null);
 			fail("Setting the attribute should have failed");
 		} catch (RodinDBException e) {
-				assertErrorCode(e, failureCode);
+			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
 
-	static void setLongAttrNegative(IAttributedElement element,
+	void setLongAttrNegative(IAttributedElement element,
 			IAttributeType.Long type, long newValue, int failureCode)
 			throws RodinDBException {
-		
+
 		try {
+			startDeltas();
 			element.setAttributeValue(type, newValue, null);
 			fail("Setting the attribute should have failed");
 		} catch (RodinDBException e) {
-				assertErrorCode(e, failureCode);
+			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
-	
-	static void setStringAttrNegative(IAttributedElement element,
+
+	void setStringAttrNegative(IAttributedElement element,
 			IAttributeType.String type, String newValue, int failureCode)
 			throws RodinDBException {
-		
+
 		try {
+			startDeltas();
 			element.setAttributeValue(type, newValue, null);
 			fail("Setting the attribute should have failed");
 		} catch (RodinDBException e) {
-				assertErrorCode(e, failureCode);
+			assertErrorCode(e, failureCode);
+			assertNoDelta(element);
+		} finally {
+			stopDeltas();
 		}
 	}
 	
