@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added deleteAll() method
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -24,7 +28,6 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesEvent;
-import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -51,8 +54,10 @@ import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -218,12 +223,9 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		abstractSCEvent.copy(target, null, eventName, false, monitor);
 		ISCEvent scEvent = target.getSCEvent(eventName);
 		scEvent.setSource(event, monitor);
-		
-		for (ISCRefinesEvent refinesEvent : scEvent.getSCRefinesClauses())
-			refinesEvent.delete(true, monitor);
-		
-		for (ISCWitness witness : scEvent.getSCWitnesses())
-			witness.delete(true, monitor);
+
+		deleteAll(scEvent.getSCRefinesClauses(), monitor);
+		deleteAll(scEvent.getSCWitnesses(), monitor);
 		
 		ISCRefinesEvent refinesEvent = scEvent.getSCRefinesClause(INHERITED_REFINES_NAME);
 		refinesEvent.create(null, monitor);
@@ -231,6 +233,14 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		refinesEvent.setSource(scEvent.getSource(), monitor);
 		
 		return scEvent;
+	}
+
+	private void deleteAll(IRodinElement[] elements,
+			IProgressMonitor monitor) throws RodinDBException {
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		if (elements.length != 0) {
+			rodinDB.delete(elements, true, monitor);
+		}
 	}
 
 	private ISCEvent createSCEvent(
