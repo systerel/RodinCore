@@ -4,6 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - optimized setProofTree()
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -59,12 +63,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	// TODO fix usage of monitor.
 	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {
 		
-		// Delete the previous proof and creates a new proof
-		// (the next delete can be a simple delete() since the stamp does not need to jump by 2)
-		// (but this way is safer in case create is canceled)
-		delete(false, monitor);
-		create(null, monitor);
-		
+		clear(false, monitor);
 		
 		if (pt.getConfidence() <= IConfidence.UNATTEMPTED) return;
 		
@@ -89,7 +88,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		
 		store.writeOut(this, monitor);
 	}
-	
+
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IProofStoreReader store = new ProofStoreReader(this, factory);
