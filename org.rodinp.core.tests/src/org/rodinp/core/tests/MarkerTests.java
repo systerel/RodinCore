@@ -11,7 +11,6 @@ package org.rodinp.core.tests;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
-import static org.rodinp.core.tests.AttributeTests.setBoolAttrPositive;
 import static org.rodinp.core.tests.AttributeTests.setHandleAttrPositive;
 import static org.rodinp.core.tests.AttributeTests.setIntAttrPositive;
 import static org.rodinp.core.tests.AttributeTests.setLongAttrPositive;
@@ -407,7 +406,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	public void testMarkerAttrBool() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
 		IInternalElement ne = createNEPositive(rodinFile, "ne1", null);
-		setBoolAttrPositive(ne, fBool, true);
+		ne.setAttributeValue(fBool, true, null);
 		rodinFile.save(null, false);
 		createMarkerPositive(ne, fBool, TestProblem.err0);
 	}
