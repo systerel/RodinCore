@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.ISourceManipulation.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ * 			org.eclipse.jdt.core.ISourceManipulation
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added clear() method
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -65,6 +68,30 @@ public interface IElementManipulation extends IRodinElement {
 	 */
 	void copy(IRodinElement container, IRodinElement sibling, String rename,
 			boolean replace, IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Removes all attributes and children of this element, forcing if specified
+	 * and necessary.
+	 * 
+	 * @param force
+	 *            a flag controlling whether underlying resources that are not
+	 *            in sync with the local file system will be tolerated (same as
+	 *            the force flag in IResource operations).
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element could not be cleared. Reasons include:
+	 *                <ul>
+	 *                <li> This Rodin element does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li> A <code>CoreException</code> occurred while
+	 *                updating an underlying resource (CORE_EXCEPTION)</li>
+	 *                <li> This element is read-only (READ_ONLY)</li>
+	 *                </ul>
+	 */
+	void clear(boolean force, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Deletes this element, forcing if specified and necessary.

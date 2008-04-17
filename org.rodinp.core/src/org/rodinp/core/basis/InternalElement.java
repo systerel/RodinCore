@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added clear() method
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -21,6 +25,7 @@ import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
+import org.rodinp.internal.core.ClearElementsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
@@ -60,6 +65,11 @@ public abstract class InternalElement extends RodinElement implements
 		// Name must not be null
 		if (name == null)
 			throw new IllegalArgumentException();
+	}
+
+	public void clear(boolean force, IProgressMonitor monitor)
+			throws RodinDBException {
+		new ClearElementsOperation(this, force).runOperation(monitor);
 	}
 
 	public void copy(IRodinElement container, IRodinElement sibling,

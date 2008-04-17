@@ -10,6 +10,7 @@
  * 			org.eclipse.jdt.core.tests.model.AbstractJavaModelTests
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - refactored getRodinDB()
+ *     Systerel - added assertions for clearing
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -43,6 +44,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IElementManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
@@ -200,6 +202,16 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			assertFalse("Inexistent element should not be open",
 					openable.isOpen());
 		}
+	}
+	
+	/*
+	 * Assert that the given element has been cleared (doesn't have any
+	 * attribute or children)
+	 */
+	protected static void assertCleared(String message, IInternalParent element)
+			throws RodinDBException {
+		assertEquals(message, 0, element.getAttributeTypes().length);
+		assertEquals(message, 0, element.getChildren().length);
 	}
 	
 	/**
@@ -450,11 +462,24 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	
 	/**
 	 * Creates an operation to delete the given element, asserts
-	 * the operation is successfull, and ensures the element is no
+	 * the operation is successful, and ensures the element is no
 	 * longer present in the database.
 	 */
 	public void assertDeletion(IRodinElement elementToDelete) throws RodinDBException {
 		assertDeletion(new IRodinElement[] {elementToDelete});
+	}
+
+	/**
+	 * Creates an operation to clear the given element, asserts the operation is
+	 * successful, and ensures the element has no longer any attribute nor child
+	 * present in the database.
+	 */
+	public void assertClearing(IInternalParent elementToClear)
+			throws RodinDBException {
+		assertExists("Element must be present to be cleared", elementToClear);
+		((IElementManipulation) elementToClear).clear(false, null);
+		assertCleared("Element should be cleared after clearing: "
+				+ elementToClear, elementToClear);
 	}
 
 	/**

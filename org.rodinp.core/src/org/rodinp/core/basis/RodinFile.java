@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.ICompilationUnit.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     IBM Corporation - added J2SE 1.5 support
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.ICompilationUnit
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added clear() method
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -29,6 +28,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
+import org.rodinp.internal.core.ClearElementsOperation;
 import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
@@ -98,6 +98,11 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		RodinFileElementInfo fileInfo = (RodinFileElementInfo) info;
 		//return false;
 		return fileInfo.parseFile(pm, this);
+	}
+
+	public void clear(boolean force, IProgressMonitor monitor)
+			throws RodinDBException {
+		new ClearElementsOperation(this, force).runOperation(monitor);
 	}
 
 	@Override

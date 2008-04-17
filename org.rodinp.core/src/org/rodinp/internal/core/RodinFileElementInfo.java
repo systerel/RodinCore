@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added clearChildren() method
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -53,6 +57,42 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		internalElements.put(element, domElement);
 	}
 	
+	public synchronized RodinElement[] clearChildren(IInternalParent element)
+			throws RodinDBException {
+
+		if (DEBUG) {
+			System.out.println("--- CLEAR ---");
+			System.out.println("Destination file "
+					+ buffer.getOwner().getResource());
+			if (element instanceof InternalElement) {
+				printInternalElement("element: ", (InternalElement) element);
+			} else {
+				System.out.println("root element");
+			}
+			printCaches();
+		}
+
+		final Element domElement = getDOMElementCheckExists(element);
+		final RodinElementInfo info;
+		if (element instanceof InternalElement) {
+			info = getElementInfo((InternalElement) element);
+		} else {
+			info = this;
+		}
+		final RodinElement[] children = info.getChildren();
+		for (final RodinElement child : children) {
+			removeFromMap((InternalElement) child);
+		}
+		buffer.deleteElementChildren(domElement);
+		info.setChildren(RodinElement.NO_ELEMENTS);
+
+		if (DEBUG) {
+			printCaches();
+			System.out.println("--- END OF CLEAR ---");
+		}
+		return children;
+	}
+
 	@Deprecated
 	public synchronized void changeDescendantContents(
 			InternalElement element, String newContents) throws RodinDBException {
@@ -362,7 +402,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	private void removeFromMap(InternalElement element) {
 		final Element domElement = internalElements.remove(element);
 		if (domElement == null) {
-			// This element is not cached, neither its children
+			// This element is not cached, nor its children
 			return;
 		}
 
