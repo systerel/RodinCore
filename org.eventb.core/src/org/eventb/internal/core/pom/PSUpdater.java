@@ -27,6 +27,8 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -129,12 +131,21 @@ public class PSUpdater {
 		};
 		try {
 			pm.beginTask("Cleaning up proof statuses", initialNbOfStatuses);
-			for (IPSStatus psStatus : unusedStatuses) {
-				psStatus.delete(false, new SubProgressMonitor(pm, 1));
-			}
+			removeUnusedStatuses(pm);
 			sorter.sort(psFile.getStatuses(), mover);
 		} finally {
 			pm.done();
+		}
+	}
+
+	private void removeUnusedStatuses(final IProgressMonitor pm)
+			throws RodinDBException {
+		final int size = unusedStatuses.size();
+		if (size != 0) {
+			final IRodinElement[] es = new IRodinElement[size];
+			unusedStatuses.toArray(es);
+			final IProgressMonitor spm = new SubProgressMonitor(pm, size);
+			RodinCore.getRodinDB().delete(es, false, spm);
 		}
 	}
 
