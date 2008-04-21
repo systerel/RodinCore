@@ -9,19 +9,21 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.pm.PostTacticPreference;
+import org.eventb.internal.core.pm.ProofManager;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.ProofObligationGenerator;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
-import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.pom.POLoader;
+import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.osgi.framework.BundleContext;
 
@@ -319,6 +321,15 @@ public class EventBPlugin extends Plugin {
 	 */
 	public static IPSWrapper getPSWrapper(IEventBFile file) {
 		return new PSWrapper(file.getPSFile());
+	}
+
+	/**
+	 * Returns the proof manager of this plug-in.
+	 * 
+	 * @return the proof manager
+	 */
+	public static IProofManager getProofManager() {
+		return ProofManager.getDefault();
 	}
 	
 }
