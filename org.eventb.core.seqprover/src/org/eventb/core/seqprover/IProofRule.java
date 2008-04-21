@@ -11,7 +11,7 @@ import org.eventb.core.ast.Predicate;
  * Common protocol for a proof rule for the sequent prover.
  * <p>
  * A proof rule contains a goal, needed hypotheses, and a possibly empty array of
- * anticidents.
+ * antecedents.
  * </p>
  * 
  * <p>
@@ -29,7 +29,7 @@ import org.eventb.core.ast.Predicate;
  * <p>
  * Note that in addition to the set of hypotheses explicitly stated in a sequent,
  * the well-definedness predicates of each hypothesis, and that of the goal may be assumed.
- * If this is the case, the actual hypotheses or goal need to be stated explicity
+ * If this is the case, the actual hypotheses or goal need to be stated explicitly
  * in the needed hypotheses or the goal of the rule respectively. 
  * </p>
  * 
@@ -53,7 +53,7 @@ public interface IProofRule extends IReasonerOutput{
 	 * applicable to a sequent with any goal. In this case it is permitted that
 	 * the antecedents also have a <code>null</code> goal. The <code>null</code>
 	 * value then serves as a wildcard that can be instantiated upon rule application
-	 * for any predicate occuring as the goal of the sequent on which the rule is 
+	 * for any predicate occurring as the goal of the sequent on which the rule is 
 	 * applied.
 	 * </p>
 	 * @return the goal {@link Predicate} of this proof rule, or <code>null</code>
@@ -97,25 +97,25 @@ public interface IProofRule extends IReasonerOutput{
 	String getDisplayName();
 	
 	/**
-	 * Returns the anticidents of this proof rule as returned by the reasoner.
+	 * Returns the antecedents of this proof rule as returned by the reasoner.
 	 * 
 	 * <p>
 	 * Note : The returned object must not be modified in any way.
 	 * </p>
 	 * 
-	 * @return the anticidents of this proof rule (see {@see IAntecedent})
+	 * @return the antecedents of this proof rule (see {@see IAntecedent})
 	 */
 	IAntecedent[] getAntecedents();
 	
 
 	/**
-	 * Common protocol for an anticident for a proof rule.
+	 * Common protocol for an antecedent for a proof rule.
 	 * <p>
-	 * An anticident contains a goal, added hypotheses, added free identifiers, and hypothesis
+	 * An antecedent contains a goal, added hypotheses, added free identifiers, and hypothesis
 	 * selection information.
 	 * </p>
 	 * <p>
-	 * Typically, an andicident records the changes made by a reasoner on the sequent
+	 * Typically, an antecedent records the changes made by a reasoner on the sequent
 	 * to be proven. 
 	 * </p>
 	 * <p>
@@ -130,7 +130,7 @@ public interface IProofRule extends IReasonerOutput{
 	public interface IAntecedent {
 		
 		/**
-		 * Returns the goal of this anticident.
+		 * Returns the goal of this antecedent.
 		 * <p> 
 		 * In case the goal is <code>null</code>, the goal of this antecedent 
 		 * is intended to be identical to the goal of the sequent on which the
@@ -148,9 +148,9 @@ public interface IProofRule extends IReasonerOutput{
 		Predicate getGoal();
 		
 		/**
-		 * Returns the added hypotheses of this anticident.
+		 * Returns the added hypotheses of this antecedent.
 		 * <p>
-		 * Added hyps are by default selected.
+		 * Added hypotheses are selected by default.
 		 * </p>
 		 * 
 		 * <p>
@@ -162,43 +162,44 @@ public interface IProofRule extends IReasonerOutput{
 		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 * 
-		 * @return the added hypotheses of this anticident
+		 * @return the added hypotheses of this antecedent
 		 */
 		Set<Predicate> getAddedHyps();
 		
 		/**
-		 * Returns the added free identifiers of this anticident.
+		 * Returns the added free identifiers of this antecedent.
 		 * 
 		 * <p>
 		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 *
-		 * @return the added free identifiers of this anticident
+		 * @return the added free identifiers of this antecedent
 		 */
 		FreeIdentifier[] getAddedFreeIdents();
 		
 		/**
-		 * Returns hypotheses selection information for this anticident.
+		 * Returns hypotheses selection information for this antecedent.
 		 * <p>
-		 * Added hyps are by default selected. The hypAction should not contain 
-		 * added hypotheses. (simlifier constraint)
+		 * Added hypotheses are selected by default. The hypAction should not
+		 * contain added hypotheses (simplifier constraint).
 		 * </p>
 		 * 
 		 * <p>
 		 * Note : The returned object must not be modified in any way.
 		 * </p>
 		 * 
-		 * @return the hypotheses selection information for this anticident
+		 * @return the hypotheses selection information for this antecedent
 		 */
 		List<IHypAction> getHypActions();
 		
 		/**
-		 * Returns hypotheses selection information for this anticident.
+		 * Returns hypotheses selection information for this antecedent.
 		 * <p>
-		 * Added hyps are by default selected. The hypAction should not contain 
-		 * added hypotheses. (simlifier constraint)
+		 * Added hypotheses are selected by default. The hypAction should not
+		 * contain added hypotheses (simplifier constraint).
 		 * </p>
-		 * @return the hypotheses selection information for this anticident
+		 * 
+		 * @return the hypotheses selection information for this antecedent
 		 * 
 		 * <p>
 		 * The returned object must not be modified in any way.
@@ -218,7 +219,7 @@ public interface IProofRule extends IReasonerOutput{
 	 * <p>
 	 * Note that during normal operation, this method is meant to be used only
 	 * internally within the sequent prover. It has been made public so that people
-	 * implementing their own rules have a way of testing them independantly of the
+	 * implementing their own rules have a way of testing them independently of the
 	 * proof tree data structure.
 	 * </p>
 	 * 

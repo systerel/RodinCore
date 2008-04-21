@@ -19,10 +19,10 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
  * <ul>
  * <li> Reuse : The simplest and most efficient, but also the most quick to fail way to reconstruct
  * 				a proof tree node from a proof skeleton node. Only the rule stored in the proof skeleton
- * 				node is tried for reuse. No reasoners are called. This way is guaranteed to succeed if the sequent
+ * 				node is tried for reuse. No reasoner is called. This way is guaranteed to succeed if the sequent
  * 				of the open proof tree node satisfies the dependencies of the proof skeleton.
  * <li> Replay : Each reasoner that is mentioned in the proof skeleton in replayed to generate a rule to use. The rules 
- * 				present in the proof skeleton nodes are ignored. This method can be used to re-validate proof sleletons since 
+ * 				present in the proof skeleton nodes are ignored. This method can be used to re-validate proof skeletons since 
  * 				it completely ignores stored rules.
  * <li> Rebuild : A mixture between reuse and replay. Reuse is performed when possible, and if not, replay is tried. In addition,
  * 				replay hints are taken into account and generated to be used in subsequent replays in order to support refactoring.
@@ -43,13 +43,13 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
 public class ProofBuilder {
 
 	/**
-	 *  Singeleton class; Should not be instantiated.
+	 *  Singleton class; Should not be instantiated.
 	 */
 	private ProofBuilder() {
 	}
 	
 	/**
-	 * A method that recursively consrtucts proof tree nodes only using the rules from a proof skeleton.
+	 * A method that recursively constructs proof tree nodes only using the rules from a proof skeleton.
 	 * 
 	 * <p>
 	 * No reasoners are called for this proof reconstruction method
@@ -111,11 +111,11 @@ public class ProofBuilder {
 	 * A method that recursively constructs proof tree nodes using a proof skeleton and replay hints using only reasoner replay.
 	 * 
 	 * <p>
-	 * This method can be used to re-validate proof sleletons since it completely ignores stored rules.
+	 * This method can be used to re-validate proof skeletons since it completely ignores stored rules.
 	 * </p>
 	 * 
 	 * @param node
-	 * 			The open proof tree node where rebiulding should start. This node MUST be checked to be open before calling this method.
+	 * 			The open proof tree node where rebuilding should start. This node MUST be checked to be open before calling this method.
 	 * @param skeleton
 	 * 			The proof skeleton to use
 	 * @param proofMonitor
@@ -139,12 +139,12 @@ public class ProofBuilder {
 			return true;
 		}
 		
-		// Check if replay was cancelled. 
+		// Check if replay was canceled. 
 		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
 		
 		// Try to replay the rule
 		IReasoner reasoner = reuseProofRule.generatedBy();
-		// Check if the reasoner is instaled.
+		// Check if the reasoner is installed.
 		if (reasoner == null) return false;
 
 		// Get reasoner input.
@@ -188,7 +188,7 @@ public class ProofBuilder {
 	 * </p>
 	 * 
 	 * @param node
-	 * 			The open proof tree node where rebiulding should start. This node MUST be checked to be open before calling this method.
+	 * 			The open proof tree node where rebuilding should start. This node MUST be checked to be open before calling this method.
 	 * @param skeleton
 	 * 			The proof skeleton to use
 	 * @param replayHints
@@ -216,7 +216,7 @@ public class ProofBuilder {
 			return true;
 		}
 		
-		// Check if replay was cancelled. 
+		// Check if replay was canceled. 
 		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
 
 		boolean reuseSuccessfull = false;
@@ -248,7 +248,7 @@ public class ProofBuilder {
 			}
 		}	
 
-		// Check if rebuild for this node was succesfull
+		// Check if rebuild for this node was successful
 		if (!(reuseSuccessfull || replaySuccessfull)) return false;
 		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
 		IProofTreeNode[] nodeChildren = node.getChildNodes();
@@ -280,7 +280,7 @@ public class ProofBuilder {
 	 * </p>
 	 * 
 	 * @param node
-	 * 			The open proof tree node where rebiulding should start
+	 * 			The open proof tree node where rebuilding should start
 	 * @param skeleton
 	 * 			The proof skeleton to use
 	 * @param proofMonitor
