@@ -1,5 +1,7 @@
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;

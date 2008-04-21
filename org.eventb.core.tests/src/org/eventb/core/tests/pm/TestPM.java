@@ -1,11 +1,10 @@
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.tests.pom.POUtil;
 import org.rodinp.core.RodinDBException;
@@ -28,30 +27,6 @@ public abstract class TestPM extends BasicTest {
 		super.tearDown();
 	}
 	
-	/**
-	 * Creates a new type environment from the given strings. The given strings
-	 * are alternatively an identifier name and its type.
-	 * 
-	 * @param strings
-	 *            an even number of strings
-	 * @return a new type environment
-	 */
-	protected ITypeEnvironment mTypeEnvironment(String... strings) {
-		// even number of strings
-		assert (strings.length & 1) == 0;
-		final ITypeEnvironment result = factory.makeTypeEnvironment();
-		for (int i = 0; i < strings.length; i += 2) {
-			final String name = strings[i];
-			final String typeString = strings[i + 1];
-			final IParseResult pResult = factory.parseType(typeString);
-			assertTrue("Parsing type failed for " + typeString, pResult
-					.isSuccess());
-			final Type type = pResult.getParsedType();
-			result.addName(name, type);
-		}
-		return result;
-	}
-
 	IPOFile createPOFile(String fileName) throws RodinDBException {
 		IPOFile poFile = (IPOFile) rodinProject.getRodinFile(fileName + ".bpo");
 		poFile.create(true, null);

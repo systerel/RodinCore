@@ -16,7 +16,10 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.Type;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -26,6 +29,31 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 public class POUtil {
+	
+	public static final FormulaFactory ff = FormulaFactory.getDefault();
+
+	/**
+	 * Creates a new type environment from the given strings. The given strings
+	 * are alternatively an identifier name and its type.
+	 * 
+	 * @param strings
+	 *            an even number of strings
+	 * @return a new type environment
+	 */
+	public static final ITypeEnvironment mTypeEnvironment(String... strings) {
+		// even number of strings
+		assert (strings.length & 1) == 0;
+		final ITypeEnvironment result = ff.makeTypeEnvironment();
+		for (int i = 0; i < strings.length; i += 2) {
+			final String name = strings[i];
+			final String typeString = strings[i + 1];
+			final IParseResult pResult = ff.parseType(typeString);
+			assert pResult.isSuccess();
+			final Type type = pResult.getParsedType();
+			result.addName(name, type);
+		}
+		return result;
+	}
 
 	/**
 	 * Adds a predicate set to the given PO file, using the given contents.
