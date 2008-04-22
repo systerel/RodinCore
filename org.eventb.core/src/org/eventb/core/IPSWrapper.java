@@ -8,6 +8,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IOpenable;
@@ -27,10 +28,15 @@ import org.rodinp.core.RodinDBException;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @deprecated This API is now deprecated and will be removed in a subsequent
+ *             version. Please use the proof manager interface instead.
+ * 
+ * @see IProofManager
+ * 
  * @author Thai Son Hoang
  * @author Laurent Voisin
  */
-// Rename to IPSPR
+@Deprecated
 public interface IPSWrapper {
 
 	/**

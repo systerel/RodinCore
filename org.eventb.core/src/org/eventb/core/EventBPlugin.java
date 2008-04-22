@@ -14,7 +14,6 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
-import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
 import org.eventb.internal.core.pm.UserSupportManager;
@@ -271,7 +270,7 @@ public class EventBPlugin extends Plugin {
 	 * @return the default user support manager
 	 * @author htson
 	 */
-	public IUserSupportManager getUserSupportManager() {
+	public static IUserSupportManager getUserSupportManager() {
 		return UserSupportManager.getDefault();
 	}
 
@@ -318,9 +317,13 @@ public class EventBPlugin extends Plugin {
 	 *            an event-B file (machine, context, PO file, ...)
 	 * @return an object encapsulating the PR and PS files associated to the
 	 *         given file.
+	 * 
+	 * @deprecated Please use the Proof Manager API rather than this.
+	 * @see #getProofManager()
 	 */
-	public static IPSWrapper getPSWrapper(IEventBFile file) {
-		return new PSWrapper(file.getPSFile());
+	@Deprecated
+	public static org.eventb.core.IPSWrapper getPSWrapper(IEventBFile file) {
+		return new org.eventb.internal.core.PSWrapper(file.getPSFile());
 	}
 
 	/**

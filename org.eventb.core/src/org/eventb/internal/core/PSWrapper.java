@@ -37,6 +37,7 @@ import org.rodinp.core.RodinDBException;
  * @author Thai Son Hoang
  * @author Laurent Voisin
  */
+@Deprecated
 public class PSWrapper implements IPSWrapper {
 	
 	private static class StampedProofTree {
