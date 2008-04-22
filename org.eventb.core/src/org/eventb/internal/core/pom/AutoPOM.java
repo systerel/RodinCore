@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored for using the Proof Manager API
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -19,7 +23,8 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRFile;
 import org.eventb.core.IPSFile;
-import org.eventb.core.IPSWrapper;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -52,17 +57,17 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	 */
 	private static int totalRuns = 0;
 	
+	private static final IProofManager manager = EventBPlugin.getProofManager();
 	
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
 			throws RodinDBException {
 		
 		final IPSFile psFile = (IPSFile) RodinCore.valueOf(target);
-		final IPOFile poFile = (IPOFile) psFile.getPOFile().getSnapshot();
-		final IPRFile prFile = psFile.getPRFile();
+		final IProofComponent pc = manager.getProofComponent(psFile);
 
 		final String componentName = psFile.getComponentName();
 		
-		final IPOSequent[] poSequents = poFile.getSequents();
+		final IPOSequent[] poSequents = pc.getPOFile().getSequents();
 		final int nbOfPOs = poSequents.length;
 		final int workUnits = 2 + nbOfPOs * 2 + 2 + nbOfPOs;
 		
@@ -70,30 +75,28 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			pm.beginTask("Proving " + componentName + ": ", workUnits);
 			
 			pm.subTask("loading");
-			createFreshProofFile(prFile, newSubProgressMonitor(pm, 1));
-			checkCancellation(pm, prFile, psFile);
+			createFreshProofFile(pc, newSubProgressMonitor(pm, 1));
+			checkCancellation(pm, pc);
 			
 			// update proof statuses
-			final IPSWrapper psWrapper = EventBPlugin.getPSWrapper(psFile);
-			final PSUpdater updater = new PSUpdater(psWrapper,
+			final PSUpdater updater = new PSUpdater(pc,
 					newSubProgressMonitor(pm, 1));
 			for (final IPOSequent poSequent : poSequents) {
 				pm.subTask("updating status of " + poSequent.getElementName());
 				updater.updatePO(poSequent, newSubProgressMonitor(pm, 1));
-				checkCancellation(pm, prFile, psFile);
+				checkCancellation(pm, pc);
 			}
 			
 			updater.cleanup(newSubProgressMonitor(pm, nbOfPOs));
 			
 			pm.subTask("saving");
-			prFile.save(newSubProgressMonitor(pm, 1), true, true);
-			psFile.save(newSubProgressMonitor(pm, 1), true, false);
+			pc.save(newSubProgressMonitor(pm, 2), true);
 			
-			checkCancellation(pm, prFile, psFile);
+			checkCancellation(pm, pc);
 
 			IProgressMonitor spm = newSubProgressMonitor(pm, nbOfPOs);
 			if (AutoProver.isEnabled()) {
-				AutoProver.run(prFile, psFile, updater.getOutOfDateStatuses(), spm);
+				AutoProver.run(pc, updater.getOutOfDateStatuses(), spm);
 			}
 			return true;
 		} finally {
@@ -136,16 +139,14 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		return new SubProgressMonitor(pm, ticks, PREPEND_MAIN_LABEL_TO_SUBTASK);
 	}
 
-	private void checkCancellation(IProgressMonitor monitor, IPRFile prFile, IPSFile psFile) {
-//		 TODO harmonize cleanup after cancellation
+	private void checkCancellation(IProgressMonitor monitor, IProofComponent pc) {
 		if (monitor.isCanceled()) {
 			// Cleanup PR & PS files (may have unsaved changes).
 			try {
-				prFile.makeConsistent(null);
-				psFile.makeConsistent(null);
+				pc.makeConsistent(null);
 			} catch (RodinDBException e) {
 				Util.log(e, "when reverting changes to proof and status files for"
-						+ prFile.getElementName());
+						+ pc.getPRFile().getComponentName());
 			}
 			throw new OperationCanceledException();
 		}
@@ -178,9 +179,12 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		return psFile.getResource();
 	}
 
-	private void createFreshProofFile(IPRFile prFile, IProgressMonitor pm) throws RodinDBException {
-		if (!prFile.exists())
+	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)
+			throws RodinDBException {
+		final IPRFile prFile = pc.getPRFile();
+		if (!prFile.exists()) {
 			prFile.create(true, pm);
+		}
 	}
 	
 }

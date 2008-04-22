@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored for using the Proof Manager API
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -21,8 +25,8 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
@@ -40,8 +44,8 @@ public class PSUpdater {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	// access to the PR and PS files
-	final IPSWrapper psWrapper;
+	// access to the proof files
+	final IProofComponent pc;
 	
 	final IPSFile psFile;
 
@@ -70,13 +74,13 @@ public class PSUpdater {
 	protected static int irrecoverablePOs = 0;
 	protected static int irrecoverablePOsWithProofs = 0;
 
-	public PSUpdater(IPSWrapper psWrapper, IProgressMonitor pm)
+	public PSUpdater(IProofComponent pc, IProgressMonitor pm)
 			throws RodinDBException {
 		try {
-			this.psWrapper = psWrapper;
-			psFile = psWrapper.getPSFile();
+			this.pc = pc;
+			psFile = pc.getPSFile();
 			if (psFile.exists()) {
-				final IPSStatus[] ss = psWrapper.getPSStatuses();
+				final IPSStatus[] ss = psFile.getStatuses();
 				initialNbOfStatuses = ss.length;
 				unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
 			} else {
@@ -95,7 +99,7 @@ public class PSUpdater {
 	public void updatePO(IPOSequent poSequent, IProgressMonitor pm)
 			throws RodinDBException {
 		final String poName = poSequent.getElementName();
-		final IPSStatus status = psWrapper.getPSStatus(poName);
+		final IPSStatus status = pc.getStatus(poName);
 		unusedStatuses.remove(status);
 		sorter.addItem(status);
 
