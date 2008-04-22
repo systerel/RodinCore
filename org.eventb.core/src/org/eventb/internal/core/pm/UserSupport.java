@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored for using the Proof Manager API
+ *     Systerel - added missing cleanup in dispose() and refresh()
+ ******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import java.util.Collection;
@@ -10,8 +22,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportInformation;
@@ -40,8 +52,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 		public void run() {
 			try {
-				final IPSStatus[] psStatuses = us.psWrapper.getPSStatuses();
-				for (IPSStatus psStatus : psStatuses) {
+				for (IPSStatus psStatus : us.getStatuses()) {
 					final ProofState state = new ProofState(us, psStatus);
 					us.proofStates.add(state);
 					us.deltaProcessor.newProofState(us, state);
@@ -67,20 +78,19 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	protected DeltaProcessor deltaProcessor;
 
-	protected IPSWrapper psWrapper; // Unique for an instance of UserSupport
+	protected IProofComponent pc;
 
 	public UserSupport() {
 		RodinCore.addElementChangedListener(this);
 		proofStates = null;
-		manager = (UserSupportManager) EventBPlugin.getDefault()
-				.getUserSupportManager();
+		manager = UserSupportManager.getDefault();
 		deltaProcessor = manager.getDeltaProcessor();
 		manager.addUserSupport(this);
 		deltaProcessor.newUserSupport(this);
 	}
 
 	public void setInput(final IPSFile psFile) {
-		psWrapper = EventBPlugin.getPSWrapper(psFile);
+		pc = EventBPlugin.getProofManager().getProofComponent(psFile);
 	}
 
 	private void loadProofStatesIfNeeded() throws RodinDBException {
@@ -100,11 +110,15 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		RodinCore.removeElementChangedListener(this);
 		manager.removeUserSupport(this);
 		deltaProcessor.removeUserSupport(this);
+		if (proofStates != null) {
+			for (IProofState pss : proofStates) {
+				pss.unloadProofTree();
+			}
+		}
 	}
-
 	public IPSFile getInput() {
-		if (psWrapper != null)
-			return psWrapper.getPSFile();
+		if (pc != null)
+			return pc.getPSFile();
 		return null;
 	}
 
@@ -434,13 +448,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				for (IProofState proofState : usDeltaProcessor.getToBeDeleted()) {
 					deltaProcessor.removeProofState(UserSupport.this,
 							proofState);
+					proofState.unloadProofTree();
 					proofStates.remove(proofState);
 				}
 				
-				// Contruct the Proof States
+				// Construct the Proof States
 				IPSStatus[] psStatuses;
 				try {
-					psStatuses = psWrapper.getPSStatuses();
+					psStatuses = getStatuses();
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 					return;
@@ -539,10 +554,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	}
 
-	public IPSWrapper getPSWrapper() {
-		return psWrapper;
-	}
-
 	public void doSave(IProofState[] states, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (proofStates == null) {
@@ -552,7 +563,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			state.setProofTree(monitor);
 			// state.getPSStatus().setManualProof(true, monitor);
 		}
-		this.getPSWrapper().save(monitor, true);
+		pc.save(monitor, true);
 		for (IProofState state : states) {
 			state.setDirty(false);
 		}
@@ -593,4 +604,11 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 				rootIncluded, filter);
 	}
 	
+	public IPSStatus[] getStatuses() throws RodinDBException {
+		return pc.getPSFile().getStatuses();
+	}
+
+	public IProofComponent getProofComponent() {
+		return pc;
+	}
 }

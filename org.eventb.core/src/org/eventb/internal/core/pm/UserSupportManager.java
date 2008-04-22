@@ -26,7 +26,7 @@ public class UserSupportManager implements IUserSupportManager {
 	@Deprecated
 	private static org.eventb.core.pm.IProvingMode provingMode;
 
-	private static IUserSupportManager instance;
+	private static UserSupportManager instance;
 	
 	private DeltaProcessor deltaProcessor;
 	
@@ -35,7 +35,7 @@ public class UserSupportManager implements IUserSupportManager {
 		deltaProcessor = new DeltaProcessor(this);
 	}
 
-	public static IUserSupportManager getDefault() {
+	public static UserSupportManager getDefault() {
 		if (instance == null)
 			instance = new UserSupportManager();
 		return instance;

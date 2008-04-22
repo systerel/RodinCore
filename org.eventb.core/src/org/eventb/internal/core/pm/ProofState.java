@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored for using the Proof Manager API
  ******************************************************************************/
-
 package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
@@ -21,8 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IPSWrapper;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IConfidence;
@@ -45,14 +46,25 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This class keep the proof state for one proof obligation including
+ *         This class keeps the proof state for one proof obligation including
  *         the proof tree, the current proof node, the set of cached and
  *         searched hypotheses.
  */
 public class ProofState implements IProofState {
 
+	private static final String US = "UserSupport";
+	
+	private static final UserSupportManager usm = UserSupportManager.getDefault();
+
+	static final FormulaFactory ff = FormulaFactory.getDefault();
+	
 	// The PR sequent associated with this proof obligation.
-	IPSStatus status;
+	final IPSStatus status;
+	
+	final String poName;
+
+	// The current proof attempt, can be null when it is not initialized.
+	IProofAttempt pa;
 
 	// The current proof tree, this might be different from the proof tree in
 	// the disk, can be null when it is not initialised.
@@ -73,17 +85,18 @@ public class ProofState implements IProofState {
 
 	DeltaProcessor deltaProcessor;
 
-	UserSupport userSupport;
-
+	final UserSupport userSupport;
+	
 	public ProofState(UserSupport userSupport, IPSStatus ps) {
 		assert userSupport != null;
 		assert ps != null;
 		this.userSupport = userSupport;
 		this.status = ps;
+		this.poName = status.getElementName();
+
 		cached = new ArrayList<Predicate>();
 		searched = new ArrayList<Predicate>();
-		deltaProcessor = ((UserSupportManager) UserSupportManager.getDefault())
-				.getDeltaProcessor();
+		deltaProcessor = usm.getDeltaProcessor();
 	}
 
 	/*
@@ -93,28 +106,17 @@ public class ProofState implements IProofState {
 	 */
 	public void loadProofTree(final IProgressMonitor monitor)
 			throws RodinDBException {
-		EventBPlugin.getDefault().getUserSupportManager().run(new Runnable() {
+		usm.run(new Runnable() {
 
 			public void run() {
-				if (pt != null)
-					pt.removeChangeListener(ProofState.this);
-
-				IPSWrapper psWrapper = userSupport.getPSWrapper();
-
-				// Construct the proof tree from the PO file.
-				try {
-					pt = psWrapper.getFreshProofTree(status);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
+				createFreshProofAttempt(monitor);
 
 				// Get the proof skeleton and rebuild the tree
 				IProofSkeleton proofSkeleton;
 				try {
 					ProofState.this.setDirty(false);
-					proofSkeleton = psWrapper.getProofSkeleton(status, monitor);
+					IProofComponent pc = pa.getComponent();
+					proofSkeleton = pc.getProofSkeleton(poName, ff, monitor);
 					if (proofSkeleton != null) {
 						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
 						Object result = BasicTactics.rebuildTac(proofSkeleton).apply(
@@ -149,19 +151,7 @@ public class ProofState implements IProofState {
 								new ProofMonitor(monitor));
 					}
 				}
-				// Current node is the next pending subgoal or the root of the
-				// proof tree if there are no pending subgoal.
-				IProofTreeNode node = getNextPendingSubgoal();
-
-				if (node == null) {
-					node = pt.getRoot();
-				}
-				try {
-					setCurrentNode(node);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				selectInitialSubgoal();
 
 				ProofState.this.setCached(new HashSet<Predicate>());
 				ProofState.this.setSearched(new HashSet<Predicate>());
@@ -171,6 +161,24 @@ public class ProofState implements IProofState {
 			}
 
 		});
+	}
+
+	void createFreshProofAttempt(IProgressMonitor monitor) {
+		// Dispose the previous proof attempt
+		if (pa != null) {
+			pa.getProofTree().removeChangeListener(this);
+			pa.dispose();
+		}
+
+		// Construct the proof tree from the PO file.
+		final IProofComponent pc = userSupport.getProofComponent();
+		try {
+			pa = pc.createProofAttempt(poName, US, monitor);
+			pt = pa.getProofTree();
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void newProofTree() {
@@ -223,12 +231,11 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#setCurrentNode(org.eventb.core.seqprover.IProofTreeNode)
 	 */
-	public void setCurrentNode(final IProofTreeNode newNode)
-			throws RodinDBException {
+	public void setCurrentNode(final IProofTreeNode newNode) {
 		if (newNode.getProofTree() != pt)
 			return;
 
-		UserSupportManager.getDefault().run(new Runnable() {
+		usm.run(new Runnable() {
 			public void run() {
 				if (current != newNode) {
 					current = newNode;
@@ -246,8 +253,6 @@ public class ProofState implements IProofState {
 				}
 			}
 		});
-
-		return;
 	}
 
 	/*
@@ -391,9 +396,8 @@ public class ProofState implements IProofState {
 	 */
 	public void setProofTree(IProgressMonitor monitor) throws RodinDBException {
 		if (UserSupportUtils.DEBUG)
-			UserSupportUtils.debug("Saving: " + status.getElementName());
-
-		userSupport.getPSWrapper().updateStatus(status, true, monitor);
+			UserSupportUtils.debug("Saving: " + pa.getName());
+		pa.commit(true, monitor);
 		setDirty(false);
 	}
 
@@ -432,43 +436,32 @@ public class ProofState implements IProofState {
 	 * supported using proofSkeletons & rebuildTac()
 	 */
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
-		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(
-				status);
-		
 		IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
-		ITactic reuseTac = BasicTactics.reuseTac(proofSkeleton);
-		reuseTac.apply(newTree.getRoot(), monitor);
-		pt.removeChangeListener(this);
-		
-		pt = newTree;
-		newTree.addChangeListener(this);
-		IProofTreeNode newNode = getNextPendingSubgoal();
+		createFreshProofAttempt(null);	//TODO add monitor here.
+		BasicTactics.reuseTac(proofSkeleton).apply(pt.getRoot(), monitor);
+		pt.addChangeListener(this);
+		selectInitialSubgoal();
+		deltaProcessor.newProofTree(userSupport, this);
+	}
+
+	void selectInitialSubgoal() {
+		final IProofTreeNode root = pt.getRoot();
+		IProofTreeNode newNode = getNextUndischargedSubgoal(root);
 		if (newNode == null) {
-			newNode = pt.getRoot();
+			newNode = root;
 		}
 		setCurrentNode(newNode);
-		deltaProcessor.newProofTree(userSupport, this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#proofRebuilt(org.eventb.internal.core.ProofMonitor)
 	 */
 	public void proofRebuilt(ProofMonitor monitor) throws RodinDBException {
-		IProofTree newTree = userSupport.getPSWrapper().getFreshProofTree(
-				status);
-		
-		IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
-		ITactic rebuiltTac = BasicTactics.rebuildTac(proofSkeleton);
-		rebuiltTac.apply(newTree.getRoot(), monitor);
-		
-		pt.removeChangeListener(this);
-
-		pt = newTree;
-		newTree.addChangeListener(this);
-		current = getNextPendingSubgoal();
-		if (current == null) {
-			current = pt.getRoot();
-		}
+		final IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
+		createFreshProofAttempt(null); //TODO add monitor here.
+		BasicTactics.rebuildTac(proofSkeleton).apply(pt.getRoot(), monitor);
+		pt.addChangeListener(this);
+		selectInitialSubgoal();
 		deltaProcessor.newProofTree(userSupport, this);
 	}
 
@@ -509,20 +502,9 @@ public class ProofState implements IProofState {
 	 */
 	@Deprecated
 	public void reloadProofTree() throws RodinDBException {
-
-		// Construct the proof tree from the file.
-		if (pt != null)
-			pt.removeChangeListener(this);
-		pt = userSupport.getPSWrapper().getFreshProofTree(status);
+		createFreshProofAttempt(null);
 		pt.addChangeListener(this);
-
-		// Current node is the next pending subgoal or the root of the proof
-		// tree if there are no pending subgoal.
-		current = getNextPendingSubgoal();
-		if (current == null) {
-			current = pt.getRoot();
-		}
-
+		selectInitialSubgoal();
 		// if the proof tree was previously broken then the rebuild would
 		// fix the proof, making it dirty.
 		dirty = status.isBroken();
@@ -534,6 +516,11 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#unloadProofTree()
 	 */
 	public void unloadProofTree() {
+		if (pa != null) {
+			pt.removeChangeListener(this);
+			pa.dispose();
+		}
+		pa = null;
 		pt = null;
 		current = null;
 	}
@@ -573,7 +560,7 @@ public class ProofState implements IProofState {
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
 			final boolean applyPostTactic, final IProgressMonitor monitor)
 			throws RodinDBException {
-		UserSupportManager.getDefault().run(new Runnable() {
+		usm.run(new Runnable() {
 
 			public void run() {
 				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
@@ -597,7 +584,7 @@ public class ProofState implements IProofState {
 			final IProofTreeNode node, final Set<Predicate> hyps,
 			final boolean applyPostTactic, final IProgressMonitor monitor)
 			throws RodinDBException {
-		UserSupportManager.getDefault().run(new Runnable() {
+		usm.run(new Runnable() {
 
 			public void run() {
 				ProofState.this.addAllToCached(hyps);
@@ -623,27 +610,22 @@ public class ProofState implements IProofState {
 	 *            the node where the search start.
 	 */
 	protected void selectNextUndischargedSubGoal(IProofTreeNode node) {
-		// Try pending subgoal first
+		final IProofTreeNode target = getNextUndischargedSubgoal(node);
+		if (target != null) {
+			setCurrentNode(target);
+		}
+	}
+
+	private IProofTreeNode getNextUndischargedSubgoal(IProofTreeNode node) {
 		final IProofTreeNode pendingNode = this.getNextPendingSubgoal(node);
 		if (pendingNode != null) {
-			try {
-				setCurrentNode(pendingNode);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return pendingNode;
 		}
-		else {
-			final IProofTreeNode reviewedNode = this.getNextReviewedSubgoal(node);
-			if (reviewedNode != null) {
-				try {
-					setCurrentNode(reviewedNode);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		final IProofTreeNode reviewedNode = this.getNextReviewedSubgoal(node);
+		if (reviewedNode != null) {
+			return reviewedNode;
 		}
+		return null;
 	}
 
 	protected boolean internalApplyTactic(ITactic t, IProofTreeNode node,
@@ -691,7 +673,7 @@ public class ProofState implements IProofState {
 
 		final IProofTreeNode parent = node.getParent();
 		if (node.isOpen() && parent != null) {
-			UserSupportManager.getDefault().run(new Runnable() {
+			usm.run(new Runnable() {
 
 				public void run() {
 					try {
