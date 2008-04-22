@@ -146,6 +146,15 @@ public interface IProofAttempt {
 	IProofTree getProofTree();
 
 	/**
+	 * Returns a handle to the proof status associated with this proof attempt.
+	 * The proof status is the database element that will be updated when this
+	 * proof attempt gets committed.
+	 * 
+	 * @return the proof status associated with this proof attempt.
+	 */
+	IPSStatus getStatus();
+
+	/**
 	 * Tells whether this proof attempt is still in sync with the corresponding
 	 * proof obligation. This proof attempt is considered as broken if the
 	 * corresponding proof obligation has changed since the creation of this

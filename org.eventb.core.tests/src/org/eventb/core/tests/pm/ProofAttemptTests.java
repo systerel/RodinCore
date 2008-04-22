@@ -87,6 +87,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 		assertEquals(pc, pa.getComponent());
 		assertEquals(PO1, pa.getName());
 		assertEquals(TEST, pa.getOwner());
+		assertEquals(pc.getStatus(PO1), pa.getStatus());
 
 		final IProofTree pt = pa.getProofTree();
 		final IProverSequent sequent = pt.getSequent();
