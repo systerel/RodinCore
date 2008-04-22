@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.prover;
 
 import java.lang.reflect.InvocationTargetException;
@@ -70,6 +69,9 @@ import org.rodinp.core.RodinDBException;
 public class ProverUI extends FormEditor implements
 		IUserSupportManagerChangedListener {
 
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
+
 	/**
 	 * The identifier of the Prover UI editor (value
 	 * <code>"org.eventb.internal.ui"</code>).
@@ -111,11 +113,8 @@ public class ProverUI extends FormEditor implements
 	public ProverUI() {
 		super();
 		saving = false;
-
-		IUserSupportManager manager = EventBPlugin.getDefault()
-				.getUserSupportManager();
-		this.userSupport = manager.newUserSupport();
-		manager.addChangeListener(this);
+		this.userSupport = USM.newUserSupport();
+		USM.addChangeListener(this);
 	}
 
 	/*
@@ -190,8 +189,7 @@ public class ProverUI extends FormEditor implements
 	 */
 	@Override
 	public void dispose() {
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
-				this);
+		USM.removeChangeListener(this);
 		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);

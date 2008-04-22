@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -74,6 +74,9 @@ import org.eventb.core.seqprover.IProverSequent;
  */
 public abstract class HypothesisComposite implements
 		IUserSupportManagerChangedListener, SelectionListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
 
 	// The User Support associated with this Hypothesis Composite.
 	IUserSupport userSupport;
@@ -123,8 +126,7 @@ public abstract class HypothesisComposite implements
 		rows = new ArrayList<HypothesisRow>();
 
 		// Listen to the changes from the user support manager.
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
+		USM.addChangeListener(this);
 	}
 
 	/**
@@ -132,8 +134,7 @@ public abstract class HypothesisComposite implements
 	 */
 	public void dispose() {
 		// Disconnect from the user support manager.
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
-				this);
+		USM.removeChangeListener(this);
 		
 		// Disposing the hypothesis row.
 		for (HypothesisRow row : rows) {

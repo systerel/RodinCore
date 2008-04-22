@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,6 +30,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.ui.EventBUIPlugin;
@@ -43,6 +43,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofsPage extends FormPage implements
 		IUserSupportManagerChangedListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
 
 	// ID, title and the tab-title
 	public static final String PAGE_ID = "Selected Hypotheses"; //$NON-NLS-1$
@@ -77,15 +80,13 @@ public class ProofsPage extends FormPage implements
 	public ProofsPage(ProverUI editor) {
 		super(editor, PAGE_ID, PAGE_TAB_TITLE); //$NON-NLS-1$
 		userSupport = editor.getUserSupport();
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
+		USM.addChangeListener(this);
 	}
 
 	@Override
 	public void dispose() {
 		hypComposite.dispose();
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
-				this);
+		USM.removeChangeListener(this);
 		super.dispose();
 	}
 

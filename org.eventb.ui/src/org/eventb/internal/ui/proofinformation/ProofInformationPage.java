@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.proofinformation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +40,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
@@ -59,6 +59,10 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofInformationPage extends Page implements
 		IProofInformationPage, IUserSupportManagerChangedListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
+
 	ScrolledForm scrolledForm;
 
 //	private ProverUI editor;
@@ -79,8 +83,7 @@ public class ProofInformationPage extends Page implements
 	public ProofInformationPage(IUserSupport userSupport) {
 		this.userSupport = userSupport;
 		this.proofState = userSupport.getCurrentPO();
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
+		USM.addChangeListener(this);
 	}
 
 	/*
@@ -91,8 +94,7 @@ public class ProofInformationPage extends Page implements
 	@Override
 	public void dispose() {
 		// Deregister with the user support.
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
-				this);
+		USM.removeChangeListener(this);
 		formText.dispose();
 		super.dispose();
 	}

@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.proofcontrol;
 
 import java.lang.reflect.InvocationTargetException;
@@ -75,6 +74,7 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportInformation;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
@@ -105,6 +105,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofControlPage extends Page implements IProofControlPage,
 		IUserSupportManagerChangedListener, IPropertyChangeListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
 
 	boolean share;
 
@@ -143,8 +146,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
+		USM.addChangeListener(this);
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.addPropertyChangeListener(this);
@@ -180,8 +182,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	@Override
 	public void dispose() {
 		// Deregister with the UserSupport
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(
-				this);
+		USM.removeChangeListener(this);
 		IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);

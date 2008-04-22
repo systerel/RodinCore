@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.Collection;
@@ -62,6 +61,7 @@ import org.eventb.core.basis.PSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IConfidence;
@@ -87,6 +87,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class ObligationExplorer extends ViewPart implements
 		ISelectionChangedListener, IUserSupportManagerChangedListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
 
 	// Action when double clicking.
 	Action doubleClickAction;
@@ -176,8 +179,7 @@ public class ObligationExplorer extends ViewPart implements
 
 	int getStatus(IPSStatus status) throws RodinDBException {
 		// Try to synchronize with the proof tree in memory
-		Collection<IUserSupport> userSupports = EventBPlugin.getDefault().getUserSupportManager()
-				.getUserSupports();
+		Collection<IUserSupport> userSupports = USM.getUserSupports();
 		final boolean proofBroken = status.isBroken();
 		for (IUserSupport userSupport : userSupports) {
 			IProofState [] proofStates = userSupport.getPOs();
@@ -366,7 +368,7 @@ public class ObligationExplorer extends ViewPart implements
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(this);
+		USM.addChangeListener(this);
 		handler = new ProofStatusToolTip(fViewer.getControl().getShell());
 		handler.activateHoverHelp(fViewer.getControl());
 
@@ -601,7 +603,7 @@ public class ObligationExplorer extends ViewPart implements
 	public void dispose() {
 		if (fViewer == null)
 			return;
-		EventBPlugin.getDefault().getUserSupportManager().removeChangeListener(this);
+		USM.removeChangeListener(this);
 		fViewer.removeSelectionChangedListener(this);
 		super.dispose();
 	}

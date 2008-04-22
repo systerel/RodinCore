@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
-
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.runtime.Assert;
@@ -26,6 +25,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportInformation;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 
@@ -45,6 +45,9 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
  */
 public abstract class HypothesisPage extends Page implements
 		IHypothesisPage, IUserSupportManagerChangedListener {
+
+	private static final IUserSupportManager USM = EventBPlugin
+			.getUserSupportManager();
 
 	// The User Support associated with this Hypothesis Page.
 	protected IUserSupport userSupport;
@@ -76,8 +79,7 @@ public abstract class HypothesisPage extends Page implements
 		this.proverUI = proverUI;
 		hypComp = getHypypothesisCompsite();
 		// Listen to the changes from the user support manager.
-		EventBPlugin.getDefault().getUserSupportManager().addChangeListener(
-				this);
+		USM.addChangeListener(this);
 	}
 
 	/**
@@ -96,6 +98,7 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void dispose() {
+		USM.removeChangeListener(this);
 		// Disposing the main hypothesis composite
 		hypComp.dispose();
 		super.dispose();
