@@ -20,9 +20,11 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -94,13 +96,15 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	private void setReviewed() throws RodinDBException {
 		final IPSFile psFile = getPSFile();
-		final IPSWrapper wrapper = EventBPlugin.getPSWrapper(psFile);
-		final IPSStatus psStatus = wrapper.getPSStatus(PO_NAME);
-		final IProofTree proofTree = wrapper.getFreshProofTree(psStatus);
+		final IProofManager pm = EventBPlugin.getProofManager();
+		final IProofComponent pc = pm.getProofComponent(psFile);
+		final IProofAttempt pa = pc.createProofAttempt(PO_NAME, "test", null);
+		final IProofTree proofTree = pa.getProofTree();
 		final IProofTreeNode root = proofTree.getRoot();
 		Tactics.review(REVIEWED_MAX).apply(root, null);
 		assertTrue(proofTree.isClosed());
-		wrapper.updateStatus(psStatus, true, null);
+		pa.commit(true, null);
+		pa.dispose();
 	}
 
 	/**

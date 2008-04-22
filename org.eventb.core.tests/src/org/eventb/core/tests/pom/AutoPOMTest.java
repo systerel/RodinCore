@@ -9,10 +9,12 @@ import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -128,23 +130,21 @@ public class AutoPOMTest extends BuilderTest {
 		assertNotDischarged(prs[prs.length-1]);
 		
 		// Try an interactive proof on the last one via the PSWrapper
-		IPSWrapper psWrapper= EventBPlugin.getPSWrapper(psFile);
-		IProofTree proofTree = psWrapper.getFreshProofTree(prs[prs.length-1]);		
-		// Tactics.lasoo().apply(proofTree.getRoot(), null);
+		final IProofManager pm = EventBPlugin.getProofManager();
+		final IProofComponent pc = pm.getProofComponent(psFile);
+		final String poName = prs[prs.length-1].getElementName();
+		final IProofAttempt pa = pc.createProofAttempt(poName, "test", null);
+		final IProofTree proofTree = pa.getProofTree();
 		Tactics.lemma("∀x· x∈ℤ ⇒ x=x").apply(proofTree.getRoot().getFirstOpenDescendant(), null);
-		// Tactics.norm().apply(proofTree.getRoot(), null);
-		// System.out.println(proofTree.getRoot());
-		
-		psWrapper.updateStatus(prs[prs.length-1], true, null);
+		pa.commit(true, null);
+		pa.dispose();
 		
 		// Checks that proof is marked as manual
 		assertManualProof(prs[prs.length-1]);
-		
 		// Checks that status in PS file corresponds POs in PO file.
 		checkPOsConsistent(poFile, psFile);		
 		// Checks that status in PS file corresponds Proofs in PR file.
 		checkProofsConsistent(prFile, psFile);
-		
 	}
 	
 
