@@ -14,11 +14,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPRFile;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
@@ -62,6 +63,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
+				final IProofManager pm = EventBPlugin.getProofManager();
 				for (Object obj : objects) {
 					if (obj instanceof IRodinProject) {
 						// Run the Auto Prover on all IPSFile in this project
@@ -77,7 +79,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							continue;
 						}
 						for (IPSFile psFile : psFiles) {
-							IPRFile prFile = psFile.getPRFile();
+							IProofComponent pc = pm.getProofComponent(psFile);
 							IPSStatus[] statuses;
 							try {
 								statuses = psFile.getStatuses();
@@ -88,8 +90,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 								continue;
 							}
 							try {
-								AutoProver.run(prFile, psFile, statuses, monitor);
-								// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+								AutoProver.run(pc, statuses, monitor);
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler.handleRodinException(
 										e, UserAwareness.IGNORE);
@@ -97,17 +98,12 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							}							
 						}
 					}
-					if (obj instanceof IMachineFile || obj instanceof IContextFile) {
-						IPSFile psFile;
-						if (obj instanceof IMachineFile)
-							psFile = ((IMachineFile) obj).getPSFile();
-						else {
-							psFile = ((IContextFile) obj).getPSFile();
-						}
-						IPRFile prFile = psFile.getPRFile();
+					if (obj instanceof IEventBFile) {
+						final IEventBFile file = (IEventBFile) obj;
+						final IProofComponent pc = pm.getProofComponent(file);
 						IPSStatus[] statuses;
 						try {
-							statuses = psFile.getStatuses();
+							statuses = pc.getPSFile().getStatuses();
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,
@@ -115,7 +111,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							continue;
 						}
 						try {
-							AutoProver.run(prFile, psFile, statuses, monitor);
+							AutoProver.run(pc, statuses, monitor);
 							// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
@@ -128,10 +124,10 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 						
 						IPSStatus status = (IPSStatus)obj;
 						IPSFile psFile = (IPSFile) status.getOpenable();
-						IPRFile prFile = psFile.getPRFile();
+						final IProofComponent pc = pm.getProofComponent(psFile);
 						IPSStatus[] statuses = new IPSStatus[]{status};
 						try {
-							AutoProver.run(prFile, psFile, statuses, monitor);
+							AutoProver.run(pc, statuses, monitor);
 							// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
