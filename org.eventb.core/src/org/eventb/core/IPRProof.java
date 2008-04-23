@@ -1,7 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - updated Javadoc
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
@@ -45,8 +57,10 @@ import org.rodinp.core.RodinDBException;
  * <code>org.eventb.core.prSets</code> which contains a list of all carrier
  * sets used in the proof (set names separated by commas).
  * </p>
- * 
- * 
+ * <p>
+ * Clients should use the Proof Manager API rather than direct access to this
+ * Rodin database API.
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -54,9 +68,9 @@ import org.rodinp.core.RodinDBException;
  * @see IProofTree
  * @see IProofDependencies
  * @see IProofSkeleton
+ * @see IProofManager
  * 
  * @author Farhad Mehta
- * 
  */
 public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 
@@ -109,7 +123,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 */
 	void setHasManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
-	
+
 	/**
 	 * Sets the proof tree of this proof element by serializing the given proof
 	 * tree into the database.
@@ -281,7 +295,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	IPRProofRule getProofRule(String name);
 
 	/**
-	 * Returns all children proof rule elements.  In a well-formed file, this
+	 * Returns all children proof rule elements. In a well-formed file, this
 	 * array should contain only one element.
 	 * 
 	 * @return an array of all chidren element of type proof rule
