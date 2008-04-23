@@ -149,7 +149,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 
 		// Change the auto-tactic and enable it.
 		final IAutoTacticPreference autoPref = EventBPlugin
-				.getPOMTacticPreference();
+				.getAutoTacticPreference();
 		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>();
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		descrs.add(reg.getTacticDescriptor(TracingReasoner.TACTIC_ID));

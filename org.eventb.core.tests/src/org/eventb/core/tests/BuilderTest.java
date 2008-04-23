@@ -127,7 +127,7 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected static void enableAutoProver() {
 		final IAutoTacticPreference autoPref = EventBPlugin
-				.getPOMTacticPreference();
+				.getAutoTacticPreference();
 		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
 				autoTacticIds.length);
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
@@ -139,7 +139,7 @@ public abstract class BuilderTest extends TestCase {
 	}
 
 	protected static void disableAutoProver() {
-		EventBPlugin.getPOMTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoTacticPreference().setEnabled(false);
 	}
 
 	protected void setUp() throws Exception {

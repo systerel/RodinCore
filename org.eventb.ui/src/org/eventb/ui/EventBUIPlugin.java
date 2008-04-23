@@ -188,7 +188,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
 		String[] autoTacticIDs = UIUtils.parseString(s);
 		IAutoTacticPreference autoTacticPreference = EventBPlugin
-				.getPOMTacticPreference();
+				.getAutoTacticPreference();
 		autoTacticPreference
 				.setSelectedDescriptors(ProverUIUtils
 						.stringsToTacticDescriptors(autoTacticPreference,

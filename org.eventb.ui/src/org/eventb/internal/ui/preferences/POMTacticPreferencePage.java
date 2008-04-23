@@ -45,7 +45,7 @@ public class POMTacticPreferencePage extends TacticPreferencePage implements
 	 */
 	@Override
 	protected void setTacticPreference() {
-		tacticPreference = EventBPlugin.getPOMTacticPreference();
+		tacticPreference = EventBPlugin.getAutoTacticPreference();
 	}
 
 }

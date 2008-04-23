@@ -37,7 +37,7 @@ public final class AutoProver {
 	public static final String AUTO_PROVER = "auto-prover";
 
 	private static final IAutoTacticPreference PREF = EventBPlugin
-			.getPOMTacticPreference();
+			.getAutoTacticPreference();
 
 	public static boolean isEnabled() {
 		return PREF.isEnabled();

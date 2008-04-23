@@ -15,11 +15,11 @@ public abstract class TestPM extends BasicTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		manager = EventBPlugin.getPlugin().getUserSupportManager();
+		manager = EventBPlugin.getUserSupportManager();
 		// Disable the Post tactic
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
 		// Enable the POM-Tactic
-		EventBPlugin.getPOMTacticPreference().setEnabled(true);
+		EventBPlugin.getAutoTacticPreference().setEnabled(true);
 	}
 
 	@Override

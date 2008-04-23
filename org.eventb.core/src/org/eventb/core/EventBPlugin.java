@@ -292,9 +292,20 @@ public class EventBPlugin extends Plugin {
 	 * <p>
 	 * 
 	 * @return the default POM-tactic preference
-	 * @author htson
+	 * @deprecated Use {@link #getAutoTacticPreference()} instead
 	 */
+	@Deprecated
 	public static IAutoTacticPreference getPOMTacticPreference() {
+		return getAutoTacticPreference();
+	}
+
+	/**
+	 * Return the preference describing the tactic to be used by the automated
+	 * prover.
+	 * 
+	 * @return the auto-prover tactic preference
+	 */
+	public static IAutoTacticPreference getAutoTacticPreference() {
 		return POMTacticPreference.getDefault();
 	}
 

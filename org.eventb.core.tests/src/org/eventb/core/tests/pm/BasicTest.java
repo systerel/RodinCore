@@ -113,7 +113,7 @@ public abstract class BasicTest extends TestCase {
 	
 	protected static void enableAutoProver(boolean limited) {
 		final IAutoTacticPreference autoPref = EventBPlugin
-				.getPOMTacticPreference();
+				.getAutoTacticPreference();
 		final List<ITacticDescriptor> descrs;
 		if (limited) {
 			final IAutoTacticRegistry reg = SequentProver
@@ -130,7 +130,7 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected static void disableAutoProver() {
-		EventBPlugin.getPOMTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoTacticPreference().setEnabled(false);
 	}
 
 	protected void setUp() throws Exception {

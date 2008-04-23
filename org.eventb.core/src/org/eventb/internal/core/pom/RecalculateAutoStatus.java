@@ -103,7 +103,7 @@ public final class RecalculateAutoStatus {
 	}
 
 	private static ITactic autoTactic() {
-		return EventBPlugin.getPOMTacticPreference()
+		return EventBPlugin.getAutoTacticPreference()
 				.getSelectedComposedTactic();
 	}
 
