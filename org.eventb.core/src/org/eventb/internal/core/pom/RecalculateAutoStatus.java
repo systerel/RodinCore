@@ -32,11 +32,11 @@ import org.rodinp.core.RodinDBException;
  * marked as manually created.
  * 
  * This is intended to be used as a post-development operation to estimate the
- * %age of automated proofs over a changing auto prover. It is recommended to
- * restore to the default autoprovers before runnning this.
+ * percentage of automated proofs over a changing auto prover. It is recommended
+ * to restore to the default autoprovers before running this.
  * 
  * WARNING : This code is not yet mature. WARNING : The run method will discard
- * all proofs (manual or otherwise) that can now be proven automatically.
+ * all proofs (manual or otherwise) that can now be discharged automatically.
  * 
  * @author Farhad Mehta
  * 
