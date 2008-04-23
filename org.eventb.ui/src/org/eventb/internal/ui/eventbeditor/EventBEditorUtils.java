@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - changed axiom form for enumerated sets
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.Collection;
@@ -1595,8 +1594,8 @@ public class EventBEditorUtils {
 							IAxiom axm = ctxFile.getAxiom(namePrefix + nameIndex);
 							axm.create(null, pm);
 							axm.setLabel(labelPrefix + labelIndex, pm);
-							axm.setPredicateString(elements[i] + " \u2260 "
-									+ elements[j], null);
+							axm.setPredicateString("\u00ac " + elements[i]
+									+ " = " + elements[j], null);
 						}
 					}
 
