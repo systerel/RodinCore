@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.pp;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
@@ -5,181 +15,46 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
-import org.eventb.pp.PPResult.Result;
 import org.junit.Test;
 
-public class RodinTests extends AbstractPPTest {
-
-	static FormulaFactory ff = FormulaFactory.getDefault();
+public class RodinTests extends AbstractRodinTest {
 
 	static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
 		env.addName("f", REL(ty_S, ty_T));
 		env.addName("g", REL(ty_T, ty_U));
-
 		env.addName("a", ty_U);
-		// env.addName("SIG",
-		// ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("B"),
-		// ff.makeGivenType("S"))));
-		// env.addName("fst",
-		// ff.makePowerSetType(ff.makeProductType(ff.makeGivenType("S"),
-		// ff.makeGivenType("B"))));
-
 		env.addName("A", POW(ty_S));
-
 		env.addName("B", POW(ty_S));
-
 		env.addName("k", POW(ty_S));
-
-		// env.addName("r", REL(ty_S, ty_S));
 		env.addName("R", POW(ty_T));
 		env.addName("rtbl", REL(ty_S, ty_T));
-
 		env.addName("U", POW(POW(ty_S)));
-
 		env.addName("S", POW(ty_S));
-
 		env.addName("q", POW(ty_T));
 		env.addName("r", REL(ty_T, ty_T));
 		env.addName("s", REL(ty_T, ty_T));
-
 		env.addName("org", REL(ty_T, ty_S));
 		env.addName("sit", REL(ty_T, ty_S));
-
 		env.addName("M", POW(POW(ty_M)));
 		env.addName("N", POW(ty_M));
 	}
 
-	private static class TestPair {
-		ITypeEnvironment typeEnvironment = env;
-
-		Set<Predicate> hypotheses;
-
-		Predicate goal;
-
-		public int timeout = -1;
-
-		boolean result;
-
-		public TestPair(List<String> typeEnvironment, Set<String> hypotheses,
-				String goal, boolean result) {
-			this.hypotheses = new LinkedHashSet<Predicate>();
-			for (String string : hypotheses) {
-				this.hypotheses.add(ff.parsePredicate(string)
-						.getParsedPredicate());
-			}
-			this.goal = ff.parsePredicate(goal).getParsedPredicate();
-			this.result = result;
-			this.typeEnvironment = parseTypeEnvironment(typeEnvironment);
-		}
-		
-		public TestPair(List<String> typeEnvironment, Set<String> hypotheses,
-				String goal, boolean result, int timeout) {
-			this.hypotheses = new LinkedHashSet<Predicate>();
-			for (String string : hypotheses) {
-				this.hypotheses.add(ff.parsePredicate(string)
-						.getParsedPredicate());
-			}
-			this.goal = ff.parsePredicate(goal).getParsedPredicate();
-			this.result = result;
-			this.typeEnvironment = parseTypeEnvironment(typeEnvironment);
-			this.timeout = timeout;
-		}
-
-		private ITypeEnvironment parseTypeEnvironment(
-				List<String> typeEnvironment2) {
-			ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
-			for (int i = 0; i < typeEnvironment2.size(); i=i+2) {
-				String name = typeEnvironment2.get(i);
-				String type = typeEnvironment2.get(i+1);
-				
-				typeEnvironment.addName(name, ff.parseType(type).getParsedType());
-			}
-			return typeEnvironment;
-		}
-
-		public TestPair(ITypeEnvironment typeEnvironment,
-				Set<String> hypotheses, String goal, boolean result) {
-			this.hypotheses = new LinkedHashSet<Predicate>();
-			for (String string : hypotheses) {
-				this.hypotheses.add(ff.parsePredicate(string)
-						.getParsedPredicate());
-			}
-			this.goal = ff.parsePredicate(goal).getParsedPredicate();
-			this.result = result;
-			this.typeEnvironment = typeEnvironment;
-		}
-
-		public TestPair(Set<String> hypotheses, String goal, boolean result) {
-			this.hypotheses = new LinkedHashSet<Predicate>();
-			for (String string : hypotheses) {
-				this.hypotheses.add(ff.parsePredicate(string)
-						.getParsedPredicate());
-			}
-			this.goal = ff.parsePredicate(goal).getParsedPredicate();
-			this.result = result;
-		}
-
-		public TestPair(Set<String> hypotheses, String goal, boolean result,
-				int timeout) {
-			this.hypotheses = new LinkedHashSet<Predicate>();
-			for (String string : hypotheses) {
-				this.hypotheses.add(ff.parsePredicate(string)
-						.getParsedPredicate());
-			}
-			this.goal = ff.parsePredicate(goal).getParsedPredicate();
-			this.result = result;
-			this.timeout = timeout;
-		}
-
-		void typeCheck() {
-			ITypeEnvironment env = typeEnvironment.clone();
-			for (Predicate pred : hypotheses) {
-				typeCheck(pred, env);
-			}
-			typeCheck(goal, env);
-		}
-
-		private void typeCheck(Predicate predicate, ITypeEnvironment environment) {
-			ITypeCheckResult result = predicate.typeCheck(environment);
-			assertTrue(predicate + " " + result.toString(), result.isSuccess());
-			environment.addAll(result.getInferredEnvironment());
-		}
+	protected static void doTest(Set<String> hypotheses, String goal,
+			boolean result, int timeout) {
+		doTest(env, hypotheses, goal, result, timeout);
 	}
 
-	private static void doTest(List<String> typeEnvironment,
-			Set<String> hypotheses, String goal, boolean result) {
-		TestPair pair = new TestPair(typeEnvironment, hypotheses, goal, result);
-		doTestHelper(pair);
+	protected static void doTest(Set<String> hypotheses, String goal,
+			boolean result) {
+		doTest(env, hypotheses, goal, result);
 	}
-	
-	private static void doTest(List<String> typeEnvironment,
-			Set<String> hypotheses, String goal, boolean result, int timeout) {
-		TestPair pair = new TestPair(typeEnvironment, hypotheses, goal, result, timeout);
-		doTestHelper(pair);
-	}
-	
-	private static void doTest(Set<String> hypotheses, String goal, boolean result, int timeout) {
-		TestPair pair = new TestPair(hypotheses, goal, result, timeout);
-		doTestHelper(pair);
-	}
-	
-	private static void doTest(Set<String> hypotheses, String goal, boolean result) {
-		TestPair pair = new TestPair(hypotheses, goal, result);
-		doTestHelper(pair);
-	}
-	
-    @Test
+
+	@Test
 	public void testList() {
 		doTest(
 			mList(
@@ -1233,18 +1108,6 @@ public class RodinTests extends AbstractPPTest {
 				2000);
 	}
 
-	private static void doTestHelper(TestPair test) {
-		test.typeCheck();
-
-		PPProof prover = new PPProof(test.hypotheses, test.goal);
-		prover.translate();
-		prover.load();
-		prover.prove(test.timeout);
-		PPResult result = prover.getResult();
-		assertEquals(test.result, result.getResult() == Result.valid);
-	}
-
-	
 	/**
 	 * Initial lemma as entered in the bug report
 	 */
