@@ -1163,6 +1163,9 @@
       <tactic
             id="org.eventb.core.seqprover.clarifyGoalTac">
       </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.funOvrGoalTac">
+      </tactic>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1203,6 +1206,9 @@
       </tactic>
       <tactic
             id="org.eventb.core.seqprover.clarifyGoalTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.funOvrGoalTac">
       </tactic>
    </extension>
 
