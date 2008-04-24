@@ -1,9 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added FunOvrGoalTac tactic
+ ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
@@ -426,6 +438,46 @@ public class AutoTactics {
 		}
 	}
 
+	/**
+	 * Applies automatically the <code>funOvrGoal</code> tactic to the first
+	 * applicable position in the goal.
+	 * 
+	 * @author Laurent Voisin
+	 */
+	private static class FunOvrGoalOnceTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			final Predicate goal = ptNode.getSequent().goal();
+			final List<IPosition> pos = Tactics.funOvrGetPositions(goal);
+			if (pos.size() == 0) {
+				return "Tactic unapplicable";
+			}
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			return Tactics.funOvrGoal(pos.get(0)).apply(ptNode, pm);
+		}
+
+	}
+
+	/**
+	 * Applies automatically, repeatedly and recursively the
+	 * <code>FunOvrGoalOnceTac</code> to the proof subtree rooted at the given
+	 * node.
+	 * 
+	 * @author Laurent Voisin
+	 */
+	public static class FunOvrGoalTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new FunOvrGoalOnceTac());
+		}
+
+	}
 	
 	//*************************************************
 	//

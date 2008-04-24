@@ -435,6 +435,12 @@
             description="%clarifyGoalTacDesc"
             id="clarifyGoalTac"
             name="%clarifyGoalTacName"/>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunOvrGoalTac"
+            description="%funOvrGoalTacDesc"
+            id="funOvrGoalTac"
+            name="%funOvrGoalTacName">
+      </autoTactic>
 
    </extension>
 
