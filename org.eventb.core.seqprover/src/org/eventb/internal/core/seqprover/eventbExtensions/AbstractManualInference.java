@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added getters to Input class for testing purposes
+ ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
@@ -84,6 +95,14 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		public boolean hasError() {
 			return false;
+		}
+
+		public Predicate getPred() {
+			return pred;
+		}
+
+		public IPosition getPosition() {
+			return position;
 		}
 
 	}
