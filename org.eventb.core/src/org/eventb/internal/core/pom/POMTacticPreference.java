@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added funOvrGoalTac to the default
+ *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import org.eventb.core.EventBPlugin;
@@ -6,7 +17,7 @@ import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 public class POMTacticPreference extends AutoTacticPreference {
 
 	// The identifier of the extension point (value
-	// <code>"org.eventb.core.autoTactics"</code>).
+	// <code>"org.eventb.core.pomTactics"</code>).
 	private final static String AUTOTACTICS_ID = EventBPlugin.PLUGIN_ID
 			+ ".pomTactics";	
 
@@ -39,7 +50,8 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.findContrHypsTac",
 	            "org.eventb.core.seqprover.eqHypTac",
 	            "org.eventb.core.seqprover.shrinkImpHypTac",
-	            "org.eventb.core.seqprover.clarifyGoalTac"
+	            "org.eventb.core.seqprover.funOvrGoalTac",
+	            "org.eventb.core.seqprover.clarifyGoalTac",
 		};
 	}
 
