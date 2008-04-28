@@ -609,7 +609,7 @@ public abstract class AstConverter {
 
 				try {
 					Convergence convergence = evt.getConvergence();
-					keyword("WHICH IS", 1);
+					keyword("STATUS", 1);
 					beginLevel3();
 					appendConvergence(convergence);
 					endLevel3();
