@@ -466,15 +466,15 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 		
 		// A \/ ... \/ B <<: S == A <<: S & ... & B <<: S
-		predicateTest("A ⊂ {x ∣ x > 0} ∧ B ⊂ {x ∣ x > 0}", "A ∪ B ⊂ {x ∣ x > 0}");
-		predicateTest("A ⊂ {x ∣ x > 0} ∧ B ⊂ {x ∣ x > 0} ∧ C ⊂ {x ∣ x > 0}",
-				"A ∪ B ∪ C ⊂ {x ∣ x > 0}");
+		// This is failed tests, no rewriting should occur.
+		predicateTest("A ∪ B ⊂ {x ∣ x > 0}", "A ∪ B ⊂ {x ∣ x > 0}");
+		predicateTest("A ∪ B ∪ C ⊂ {x ∣ x > 0}",	"A ∪ B ∪ C ⊂ {x ∣ x > 0}");
 
 		
 		// S <<: A /\ ... /\ B == S <<: A & ... & S <<: B
-		predicateTest("{x ∣ x > 0} ⊂ A ∧ {x ∣ x > 0} ⊂ B", "{x ∣ x > 0} ⊂ A ∩ B");
-		predicateTest("{x ∣ x > 0} ⊂ A ∧ {x ∣ x > 0} ⊂ B ∧ {x ∣ x > 0} ⊂ C",
-				"{x ∣ x > 0} ⊂ A ∩ B ∩ C");
+		// This is failed tests, no rewriting should occur.
+		predicateTest("{x ∣ x > 0} ⊂ A ∩ B", "{x ∣ x > 0} ⊂ A ∩ B");
+		predicateTest("{x ∣ x > 0} ⊂ A ∩ B ∩ C",	"{x ∣ x > 0} ⊂ A ∩ B ∩ C");
 
 		
 		// E : {} == false

@@ -597,26 +597,26 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * Set Theory: A ∪ ... ∪ B ⊂ S == A ⊂ S ∧ ... ∧ B ⊂ S
 	    	 */
-	    	Subset(BUnion(children), S) -> {
+	    	/*Subset(BUnion(children), S) -> {
 	    		Predicate [] newChildren = new Predicate[`children.length];
 	    		for (int i = 0; i < `children.length; ++i) {
 	    			newChildren[i] = makeRelationalPredicate(Predicate.SUBSET,
 	    					`children[i], `S);
 	    		}
 	    		return makeAssociativePredicate(Predicate.LAND, newChildren);
-	    	}
+	    	}*/
 			
 			/**
 	    	 * Set Theory: S ⊂ A ∩ ... ∩ B  == S ⊂ A ∧ ... ∧ S ⊂ B
 	    	 */
-	    	Subset(S, BInter(children)) -> {
+	    	/*Subset(S, BInter(children)) -> {
 	    		Predicate [] newChildren = new Predicate[`children.length];
 	    		for (int i = 0; i < `children.length; ++i) {
 	    			newChildren[i] = makeRelationalPredicate(Predicate.SUBSET,
 	    					`S, `children[i]);
 	    		}
 	    		return makeAssociativePredicate(Predicate.LAND, newChildren);
-	    	}
+	    	}*/
 
 			/**
 	    	 * Set Theory 7: E ∈ ∅ == ⊥
