@@ -51,11 +51,11 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		if (extensionPoint == null) // Invalid registry ID
 			return;
 
+		IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 		IConfigurationElement[] configurations = extensionPoint
 				.getConfigurationElements();
 		for (IConfigurationElement configuration : configurations) {
 			String tacticID = configuration.getAttribute("id"); //$NON-NLS-1$
-			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 			
 			// Check if the id is registered as a tactic
 			if (!tacticRegistry.isRegistered(tacticID)) {
@@ -172,17 +172,14 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private List<ITacticDescriptor> stringsToTacticDescriptors(
 			String[] tacticIDs) {
-		ArrayList<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
-		for (String tacticID : tacticIDs) {
-			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
-			if (!tacticRegistry.isRegistered(tacticID)) {
-				continue;
-			}
-
-			ITacticDescriptor tacticDescriptor = tacticRegistry
-					.getTacticDescriptor(tacticID);
-			if (this.isDeclared(tacticDescriptor)) {
-				result.add(tacticDescriptor);
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final List<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
+		for (String id : tacticIDs) {
+			if (reg.isRegistered(id)) {
+				final ITacticDescriptor desc = reg.getTacticDescriptor(id);
+				if (isDeclared(desc)) {
+					result.add(desc);
+				}
 			}
 		}
 		return result;
