@@ -126,6 +126,7 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 		}
 		store.setDefault(getPreferenceName(), UIUtils
 				.toCommaSeparatedList(machinePages));
+		validPageIDs = null;
 	}
 		
 }
