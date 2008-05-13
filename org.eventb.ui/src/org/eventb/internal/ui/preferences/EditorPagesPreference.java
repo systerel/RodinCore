@@ -36,13 +36,13 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 	/**
 	 * The preference store for this preference page. 
 	 */
-	private IPreferenceStore pStore = EventBUIPlugin.getDefault()
+	private final IPreferenceStore pStore = EventBUIPlugin.getDefault()
 			.getPreferenceStore();
 
 	/**
 	 * The editor pages registry.
 	 */
-	private IEditorPagesRegistry registry = EditorPagesRegistry.getDefault();
+	private final IEditorPagesRegistry registry = EditorPagesRegistry.getDefault();
 
 	/**
 	 * The list of valid page IDs.
@@ -115,16 +115,14 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 	 * @see org.eventb.internal.ui.preferences.IEditorPagesPreference#setDefault()
 	 */
 	public void setDefault() {
-		IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
-		List<String> defaultMachineEditorPages = EditorPagesRegistry
-				.getDefault().getDefaultPageIDs(getEditorID());
+		List<String> defaultMachineEditorPages = registry
+				.getDefaultPageIDs(getEditorID());
 		ArrayList<Object> machinePages = new ArrayList<Object>(
 				defaultMachineEditorPages.size());
 		for (String page : defaultMachineEditorPages) {
 			machinePages.add(page);
 		}
-		store.setDefault(getPreferenceName(), UIUtils
+		pStore.setDefault(getPreferenceName(), UIUtils
 				.toCommaSeparatedList(machinePages));
 		validPageIDs = null;
 	}
