@@ -32,7 +32,7 @@ public class TextEditComposite extends AbstractEditComposite {
 
 	protected StyledText text;
 	private Button undefinedButton;
-	protected int style = SWT.MULTI | SWT.BORDER;
+	protected int style = SWT.MULTI;
 	private boolean isMath;
 	
 	IContextActivation contextActivation; 
@@ -105,8 +105,8 @@ public class TextEditComposite extends AbstractEditComposite {
 				}
 
 			};
-			text.setForeground(Display.getDefault().getSystemColor(
-					SWT.COLOR_DARK_GREEN));
+//			text.setForeground(Display.getDefault().getSystemColor(
+//					SWT.COLOR_DARK_GREEN));
 			new TimerStyledText(text, 200) {
 				@Override
 				protected void response() {

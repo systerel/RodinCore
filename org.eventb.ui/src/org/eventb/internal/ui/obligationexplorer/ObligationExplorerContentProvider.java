@@ -28,6 +28,7 @@ import org.eventb.core.IEventBFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 import org.eventb.ui.EventBUIPlugin;
@@ -354,18 +355,26 @@ public class ObligationExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				IRodinElement[] machines = prj
+				IMachineFile[] machines = prj
 						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-				IRodinElement[] contexts = prj
+				IContextFile[] contexts = prj
 						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 
-				IRodinElement[] results = new IRodinElement[machines.length
-						+ contexts.length];
-				System.arraycopy(machines, 0, results, 0, machines.length);
-				System.arraycopy(contexts, 0, results, machines.length,
-						contexts.length);
+				try{
+					return buildList(machines,contexts);
 
-				return results;
+				}
+				catch(RodinDBException e){
+					// skip
+				}
+
+					final IRodinElement[] results = new IRodinElement[machines.length
+							+ contexts.length];
+					System.arraycopy(machines, 0, results, 0, machines.length);
+					System.arraycopy(contexts, 0, results, machines.length,
+							contexts.length);
+					
+					return results;
 			} catch (RodinDBException e) {
 				// If it is out of date then prompt the user to refresh
 				if (!prj.getResource().isSynchronized(IResource.DEPTH_INFINITE)) {
@@ -413,6 +422,34 @@ public class ObligationExplorerContentProvider implements
 		return new Object[0];
 	}
 
+	private Object[] buildList(IMachineFile[] machines,
+			IContextFile[] contexts) throws RodinDBException {
+		ArrayList<IMachineFile> toAdd = new ArrayList<IMachineFile>(machines.length);
+		for (IMachineFile m : machines){
+			toAdd.add(m);
+		}	
+		ArrayList<IEventBFile> result = new ArrayList<IEventBFile>(machines.length);
+		while (!toAdd.isEmpty()){
+			IMachineFile m = toAdd.get(0);
+			addRecursively(m,toAdd,result);
+		}
+		for (IContextFile ctx :contexts){
+			result.add(ctx);
+		}
+		return result.toArray();
+	}
+
+
+	private void addRecursively(IMachineFile m, ArrayList<IMachineFile> toAdd, ArrayList<IEventBFile> result) throws RodinDBException {
+		toAdd.remove(m);
+		for (IRefinesMachine refM : m.getRefinesClauses()){
+			IMachineFile abs = refM.getAbstractMachine();
+			if (abs.exists() && toAdd.contains(abs)){
+				addRecursively(abs, toAdd, result);
+			}
+		}
+		result.add(m);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
