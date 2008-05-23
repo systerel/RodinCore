@@ -13,9 +13,7 @@
 package org.eventb.internal.ui.projectexplorer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -29,10 +27,8 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBFile;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
@@ -289,26 +285,18 @@ public class ProjectExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				IMachineFile[] machines = prj
+				IRodinElement[] machines = prj
 						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-				IContextFile[] contexts = prj
+				IRodinElement[] contexts = prj
 						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 
-				try{
-					return buildList(machines,contexts);
+				IRodinElement[] results = new IRodinElement[machines.length
+						+ contexts.length];
+				System.arraycopy(machines, 0, results, 0, machines.length);
+				System.arraycopy(contexts, 0, results, machines.length,
+						contexts.length);
 
-				}
-				catch(RodinDBException e){
-					// skip
-				}
-
-					final IRodinElement[] results = new IRodinElement[machines.length
-							+ contexts.length];
-					System.arraycopy(machines, 0, results, 0, machines.length);
-					System.arraycopy(contexts, 0, results, machines.length,
-							contexts.length);
-					
-					return results;
+				return results;
 			} catch (RodinDBException e) {
 				// If it is out of date then prompt the user to refresh
 				if (!prj.getResource().isSynchronized(IResource.DEPTH_INFINITE)) {
@@ -359,34 +347,6 @@ public class ProjectExplorerContentProvider implements
 			return ((TreeNode<?>) parent).getChildren();
 		}
 		return new Object[0];
-	}
-
-	private Object[] buildList(IMachineFile[] machines,
-			IContextFile[] contexts) throws RodinDBException {
-		ArrayList<IMachineFile> toAdd = new ArrayList<IMachineFile>(machines.length);
-		for (IMachineFile m : machines){
-			toAdd.add(m);
-		}	
-		ArrayList<IEventBFile> result = new ArrayList<IEventBFile>(machines.length);
-		while (!toAdd.isEmpty()){
-			IMachineFile m = toAdd.get(0);
-			addRecursively(m,toAdd,result);
-		}
-		for (IContextFile ctx :contexts){
-			result.add(ctx);
-		}
-		return result.toArray();
-	}
-
-	private void addRecursively(IMachineFile m, ArrayList<IMachineFile> toAdd, ArrayList<IEventBFile> result) throws RodinDBException {
-		toAdd.remove(m);
-		for (IRefinesMachine refM : m.getRefinesClauses()){
-			IMachineFile abs = refM.getAbstractMachine();
-			if (abs.exists() && toAdd.contains(abs)){
-				addRecursively(abs, toAdd, result);
-			}
-		}
-		result.add(m);
 	}
 
 	/*

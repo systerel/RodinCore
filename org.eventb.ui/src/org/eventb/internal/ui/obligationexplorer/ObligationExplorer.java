@@ -350,7 +350,7 @@ public class ObligationExplorer extends ViewPart implements
 		fViewer.setContentProvider(new ObligationExplorerContentProvider(
 				fViewer));
 		fViewer.setLabelProvider(new ObligationExplorerLabelProvider(fViewer));
-//		fViewer.setSorter(new ElementSorter());
+		fViewer.setSorter(new ElementSorter());
 		fViewer.addFilter(new ObligationTextFilter());
 		fViewer.addFilter(new DischargedFilter());
 		FormData textData = new FormData();

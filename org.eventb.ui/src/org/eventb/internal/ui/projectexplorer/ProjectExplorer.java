@@ -99,7 +99,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
 		viewer.setLabelProvider(new RodinElementTreeLabelProvider(viewer));
-//		viewer.setSorter(new ElementSorter());
+		viewer.setSorter(new ElementSorter());
 		viewer.setInput(EventBUIPlugin.getRodinDatabase());
 		makeActions();
 		hookContextMenu();
