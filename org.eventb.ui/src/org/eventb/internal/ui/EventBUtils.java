@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
+ * Copyright (c) 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used getFreeIndex to factorize several methods
+ *******************************************************************************/
 
 package org.eventb.internal.ui;
 
@@ -207,31 +208,7 @@ public class EventBUtils {
 		return prefix + getFreeChildNameIndex(parent, type, prefix);
 	}
 
-	/**
-	 * Get a free index for a new child element, given the parent element, the
-	 * type of the child element and a proposed prefix for the name. A new free
-	 * index will be the index appended to so that the name by appending the
-	 * index to the input prefix is also new.
-	 * 
-	 * @param <T>
-	 *            an internal element class (i.e. extends
-	 *            {@link IInternalElement}.
-	 * @param parent
-	 *            the internal parent ({@link IInternalParent}).
-	 * @param type
-	 *            the type of the child ({@link IInternalElementType}).
-	 * @param prefix
-	 *            the proposed prefix for the child internal name.
-	 * @return the new free index for the child of the input parent which has
-	 *         the input type.
-	 * @throws RodinDBException
-	 *             if some problems occur.
-	 */
-	public static <T extends IInternalElement> int getFreeChildNameIndex(
-			IInternalParent parent, IInternalElementType<T> type, String prefix)
-			throws RodinDBException {
-		return getFreeChildNameIndex(parent, type, prefix, 1);
-	}
+
 
 	/**
 	 * Get a free index for a new child element, given the parent element, the
@@ -249,25 +226,15 @@ public class EventBUtils {
 	 *            the type of the child ({@link IInternalElementType}).
 	 * @param prefix
 	 *            the proposed prefix for the child internal name.
-	 * @param beginIndex
-	 *            the starting index for searching.
 	 * @return the new free index for the child of the input parent which has
 	 *         the input type.
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	public static <T extends IInternalElement> int getFreeChildNameIndex(
+	public static <T extends IInternalElement> String getFreeChildNameIndex(
 			IInternalParent parent, IInternalElementType<T> type,
-			String prefix, int beginIndex) throws RodinDBException {
-		T[] elements = parent.getChildrenOfType(type);
-
-		int i;
-		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			T element = parent.getInternalElement(type, prefix + i);
-			if (!element.exists())
-				break;
-		}
-		return i;
+			String prefix) throws RodinDBException {
+		return UIUtils.getFreePrefixIndex(parent, type, null, prefix);		
 	}
 
 }

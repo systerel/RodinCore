@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
+ * Copyright (c) 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - modified expected results after getFreeIndex modification
+ *******************************************************************************/
 
 package org.eventb.ui.tests;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
@@ -33,11 +33,11 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetAbstractMachine() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
 		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
-		m1.save(new NullProgressMonitor(), true);
+		m1.save(null, true);
 		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
 
 		// Testing that m1 refines m0
@@ -75,7 +75,7 @@ public class TestEventBUtils extends EventBUITest {
 
 		// Test if m0 refines m2 (m2 does not exist).
 		refinesMachineClause.setAbstractMachineName("m2", //$NON-NLS-1$
-				new NullProgressMonitor());
+				null);
 		abstractMachine = EventBUtils.getAbstractMachine(m0);
 		assertNotNull("The abstract machine should not be null ", //$NON-NLS-1$
 				abstractMachine);
@@ -98,7 +98,7 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetAbstractEvent() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
 		IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class TestEventBUtils extends EventBUITest {
 				m0Event);
 
 		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
-		m1.save(new NullProgressMonitor(), true);
+		m1.save(null, true);
 		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
 
 		IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class TestEventBUtils extends EventBUITest {
 
 		// Test for having abstract event since m1Event is inherited and m0Event
 		// having the same label as m1Event.
-		m1Event.setInherited(true, new NullProgressMonitor());
+		m1Event.setInherited(true, null);
 		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
 		assertNotNull(
 				"There should be an abstract event corresponding to m1Event", //$NON-NLS-1$
@@ -148,7 +148,7 @@ public class TestEventBUtils extends EventBUITest {
 
 		// Test for having no abstract event because m1Event is inherited and
 		// there is no corresponding event in the m0.
-		m0Event.setLabel("abstract_event", new NullProgressMonitor()); //$NON-NLS-1$
+		m0Event.setLabel("abstract_event", null); //$NON-NLS-1$
 		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
 		assertNull(
 				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
@@ -156,7 +156,7 @@ public class TestEventBUtils extends EventBUITest {
 
 		// Test for having abstract event because m1Event is non-inherited and
 		// having refines event clause point to an existing event in m0.
-		m1Event.setInherited(false, new NullProgressMonitor());
+		m1Event.setInherited(false, null);
 		createRefinesEventClause(m1Event, "abstract_event"); //$NON-NLS-1$
 		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
 		assertNotNull(
@@ -172,7 +172,7 @@ public class TestEventBUtils extends EventBUITest {
 		// Test for having no abstract event because m1Event is non-inherited
 		// and
 		// having refines event clause point to an non-existing event in m0.
-		m0Event.setLabel("event", new NullProgressMonitor()); //$NON-NLS-1$
+		m0Event.setLabel("event", null); //$NON-NLS-1$
 		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
 		assertNull(
 				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
@@ -181,7 +181,7 @@ public class TestEventBUtils extends EventBUITest {
 		// Test for having no abstract event because m1 refines a non-existing
 		// machine m2.
 		refinesMachine.setAbstractMachineName("m2", //$NON-NLS-1$
-				new NullProgressMonitor());
+				null);
 		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
 		assertNull(
 				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetNonInheritedAbstractEvent() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
 		IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
@@ -203,7 +203,7 @@ public class TestEventBUtils extends EventBUITest {
 				m0Event);
 
 		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
-		m1.save(new NullProgressMonitor(), true);
+		m1.save(null, true);
 		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
 
 		IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
@@ -212,7 +212,7 @@ public class TestEventBUtils extends EventBUITest {
 				m1Event);
 
 		IMachineFile m2 = createMachine("m2"); //$NON-NLS-1$
-		m2.save(new NullProgressMonitor(), true);
+		m2.save(null, true);
 		assertNotNull("m2 should be created successfully ", m2); //$NON-NLS-1$
 
 		IEvent m2Event = createEvent(m2, "event"); //$NON-NLS-1$
@@ -234,7 +234,7 @@ public class TestEventBUtils extends EventBUITest {
 		createRefinesMachineClause(m2, "m1"); //$NON-NLS-1$
 
 		// m2Event is inherited, i.e m2Event refines m1Event.
-		m2Event.setInherited(true, new NullProgressMonitor());
+		m2Event.setInherited(true, null);
 		nonInheritedAbstractEvent = EventBUtils
 				.getNonInheritedAbstractEvent(m2Event);
 		assertNotNull(
@@ -247,7 +247,7 @@ public class TestEventBUtils extends EventBUITest {
 		// m1
 		// and m2Event refines m1Event, and m1Event is inherited but does not
 		// correspond to any abstract event.
-		m1Event.setInherited(true, new NullProgressMonitor());
+		m1Event.setInherited(true, null);
 		nonInheritedAbstractEvent = EventBUtils
 				.getNonInheritedAbstractEvent(m2Event);
 		assertNull(
@@ -271,7 +271,7 @@ public class TestEventBUtils extends EventBUITest {
 		// and m2Event refines m1Event, and m1Event is inherited, and m1 refines
 		// m0 hence m1Event refines m0Event.
 		m1RefinesMachine.setAbstractMachineName("m0", //$NON-NLS-1$
-				new NullProgressMonitor());
+				null);
 		nonInheritedAbstractEvent = EventBUtils
 				.getNonInheritedAbstractEvent(m2Event);
 		assertNotNull(
@@ -288,7 +288,7 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetFreeChildName() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
 		// Currently, there are no events so the free child name should be
@@ -314,15 +314,15 @@ public class TestEventBUtils extends EventBUITest {
 		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// There are "event1", "event3" so the free child name now should be
-		// "event2"
+		// "event4"
 		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event2", childName); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Incorrect child name", "event4", childName); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// Gets the free child name again and it should be "event2".
+		// Gets the free child name again and it should be "event4".
 		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event2", childName); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Incorrect child name", "event4", childName); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Create "event2"
 		createEvent(m0, "event2", "event2Label"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -340,18 +340,18 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetFreeChildNameIndex() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
 		// There are no events, so the free index now should be 1.
-		int freeIndex = EventBUtils.getFreeChildNameIndex(m0,
+		String freeIndex = EventBUtils.getFreeChildNameIndex(m0,
 				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 1, freeIndex); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
 
 		// Do it again and should be 1 still.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 1, freeIndex); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
 
 		// Create "event1"
 		createEvent(m0, "event1", "event1Label"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -359,75 +359,53 @@ public class TestEventBUtils extends EventBUITest {
 		// There is "event1" so the free index now should be 2.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 2, freeIndex); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
 
 		// Gets the free index again and it should be 2 still.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 2, freeIndex); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
 
 		// Create "event3"
 		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// There are now "event1", "event3" so the free index should be 2.
+		// There are now "event1", "event3" so the free index should be 4.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
 				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 2, freeIndex); //$NON-NLS-1$
+		assertEquals("Incorrect child name", "4", freeIndex); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests for
-	 * {@link EventBUtils#getFreeChildNameIndex(org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, String, int)}.
+	 * {@link EventBUtils#getFreeChildNameIndex(org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, String)}.
 	 */
 	@Test
 	public void testGetFreeChildNameIndexWithBeginIndex() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(new NullProgressMonitor(), true);
+		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
-		// There are no events so the free index starting from 1 is 1.
-		int freeIndex = EventBUtils.getFreeChildNameIndex(m0,
-				IEvent.ELEMENT_TYPE, "event", 1); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 1, freeIndex); //$NON-NLS-1$
-
-		// There are no events so the free index starting from 3 is 3.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 3); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 3, freeIndex); //$NON-NLS-1$
+		// There are no events so the free index is 1.
+		String freeIndex = EventBUtils.getFreeChildNameIndex(m0,
+				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
 
 		// Create "event1".
 		createEvent(m0, "event1", "event1Label"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// There is "event1" so the free index starting from 2 is 2.
+		// There is "event1" so the free index is 2.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 2); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 2, freeIndex); //$NON-NLS-1$
-
-		// There is "event1" so the free index starting from 3 is 3.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 3); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 3, freeIndex); //$NON-NLS-1$
+				"event"); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
 
 		// Create "event3"
 		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// There are "event1" and "event3" so the free index starting from 2 is
-		// 2.
+		// There are "event1" and "event3" so the free index is 4.
 		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 2); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 2, freeIndex); //$NON-NLS-1$
+				"event"); //$NON-NLS-1$
+		assertEquals("Incorrect free child name index ", "4", freeIndex); //$NON-NLS-1$
 
-		// There are "event1" and "event3" so the free index starting from 3 is
-		// 4.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 3); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 4, freeIndex); //$NON-NLS-1$
-
-		// There are "event1" and "event3" so the free index starting from 5 is
-		// 5.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event", 5); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", 5, freeIndex); //$NON-NLS-1$
 	}
 
 }

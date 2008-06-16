@@ -55,7 +55,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 
 	private String message;
 
-	private int index;
+	private String index;
 
 	private IEventBEditor<?> editor;
 
@@ -78,7 +78,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 	 */
 	public ElementNameContentInputDialog(Shell parentShell, String title,
 			String message, IEventBEditor<?> editor, IInternalElementType<T> type,
-			String prefix, int index) {
+			String prefix, String index) {
 		super(parentShell, title);
 		this.message = message;
 		this.prefix = prefix;
@@ -139,7 +139,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 					prefix + index));
 			try {
 				index = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), type, prefix, index + 1);
+						.getRodinInput(), type, prefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -179,7 +179,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 					scrolledForm.getBody(), prefix + index));
 			try {
 				index = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), type, prefix, index + 1);
+						.getRodinInput(), type, prefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

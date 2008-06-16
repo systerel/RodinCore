@@ -50,7 +50,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private String invPrefix;
 
-	private int invIndex;
+	private String invIndex;
 
 	private String identifier;
 
@@ -81,7 +81,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 */
 	public IntelligentNewVariableInputDialog(IEventBEditor<IMachineFile> editor,
 			Shell parentShell, String title,
-			String invPrefix, int invIndex) {
+			String invPrefix, String invIndex) {
 		super(parentShell, title);
 		this.editor = editor;
 		this.invIndex = invIndex;
@@ -225,8 +225,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 			try {
 				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix,
-						invIndex + 1);
+						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -292,8 +291,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			IEventBInputText invariantNameText = pair.getFirst();
 			try {
 				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix,
-						invIndex + 1);
+						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -374,10 +372,10 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	}
 
 	/**
-	 * Get the initialisation action.
+	 * Get the initialization action.
 	 * <p>
 	 * 
-	 * @return the initialisation action as input by the user
+	 * @return the initialization action as input by the user
 	 */
 	public String getInitActionSubstitution() {
 		return initSubstitution;

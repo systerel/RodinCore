@@ -102,7 +102,7 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 								+ EventBUtils.getFreeChildNameIndex(
 										(IInternalParent) parent,
 										internalElement.getElementType(),
-										"element", 0), false, null);
+										"element"), false, null);
 					}
 				}
 

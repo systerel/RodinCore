@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added getFreeIndex method to factorize several methods 
+ *******************************************************************************/
 
 package org.eventb.internal.ui;
 
@@ -16,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,11 +37,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBFile;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.internal.ui.ParsingUtils.Parseability;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
@@ -60,17 +61,116 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author htson
  *         <p>
- *         This class contains some utility static methods that are used in
- *         this Event-B User interface plug-in.
+ *         This class contains some utility static methods that are used in this
+ *         Event-B User interface plug-in.
  */
 public class UIUtils {
 
 	/**
-	 * The debug flag. This is set by the option when the platform is launch.
+	 * The debug flag. This is set by the option when the platform is launched.
 	 * Client should not try to reset this flag.
 	 */
 	public static boolean DEBUG = false;
 
+
+	/**
+	 * Returns a non already used String index intended to be concatenated to
+	 * the name or the attribute of an element.
+	 * 
+	 * @param parent
+	 *            the parent node to be looked for
+	 * @param type
+	 *            the type of the element to be looked for
+	 * @param attributeType
+	 *            the type of the attribute to be looked for
+	 *            set it to null if the index is intended
+	 *            to the name of the element
+	 * @param prefix
+	 *            the prefix of the element to be looked for
+	 * @return a non already used integer index intended to be concatenated to
+	 *         the name or the attribute of an element (if no element of that
+	 *         type already exists, returns beginIndex)
+	 * @throws RodinDBException
+	 */
+	public static String getFreePrefixIndex(
+			IInternalParent parent,
+			IInternalElementType<?> type,
+			IAttributeType.String attributeType,
+			String prefix)
+	throws RodinDBException, IllegalStateException  {
+
+		long maxIndexFound = 0;
+
+		IInternalElement[] elements = parent.getChildrenOfType(type);
+		Pattern prefixDigits = Pattern.compile(prefix + "\\d+");
+
+		for (IInternalElement element : elements) {
+			final String elementString;
+			if (attributeType == null) {
+				// name research
+				elementString = element.getElementName();
+			} else if (element.hasAttribute(attributeType)) {
+				// attribute research
+				elementString = element.getAttributeValue(attributeType);
+			} else {
+				elementString = null;
+			}
+
+			if (elementString != null) {
+
+				if (prefixDigits.matcher(elementString).matches()) {
+					String currentIndexString = elementString
+					.substring(prefix.length());
+
+					maxIndexFound = 
+						maxIndexString(currentIndexString, maxIndexFound);
+					if (maxIndexFound == Long.MAX_VALUE) {
+						throw new IllegalStateException(
+								"max value for index reached");
+					}
+				}
+			}
+		}
+		return Long.toString(maxIndexFound + 1);
+	}
+
+
+
+	/**
+	 * Private method that parses the long index from the indexString,
+	 * compares it with maxIndexFound and returns the max.
+	 *   
+	 * @param indexString
+	 *            the String from which to extract the index
+	 * @param maxIndexFound
+	 *            the index to be compared to the current index
+	 * @return the max index between maxIndex and the index found in
+	 *         elementString
+	 */
+	private static long maxIndexString(String indexString, long maxIndexFound)
+	throws IllegalStateException {
+
+		long currentIndexLong = -1;
+		Parseability parseability =
+			ParsingUtils.determineParseability(indexString);
+
+		switch (parseability) {
+		case PARSEABLE_INT:
+		case PARSEABLE_LONG:
+			currentIndexLong =
+				Long.parseLong(indexString);
+			break;
+		default:
+			throw new IllegalStateException("number to parse is too big");
+		}
+
+		if (currentIndexLong > maxIndexFound) {
+			maxIndexFound = currentIndexLong;
+		}
+		return maxIndexFound;
+	}
+
+	
 	public static void log(Throwable exc, String message) {
 		if (exc instanceof RodinDBException) {
 			final Throwable nestedExc = ((RodinDBException) exc).getException();
@@ -133,8 +233,8 @@ public class UIUtils {
 
 						});
 		} catch (PartInitException e) {
-			MessageDialog
-					.openError(null, null, "Error opening the proving editor");
+			MessageDialog.openError(null, null,
+					"Error opening the proving editor");
 			e.printStackTrace();
 			// TODO EventBImage.logException(e);
 		}
@@ -144,7 +244,7 @@ public class UIUtils {
 		if (!(obj instanceof IRodinElement)) {
 			return null;
 		}
-		
+
 		final IOpenable file = ((IRodinElement) obj).getOpenable();
 		if (file instanceof IPSFile) {
 			return (IPSFile) file;
@@ -208,8 +308,8 @@ public class UIUtils {
 	}
 
 	/**
-	 * Convert a string input to HTML format by replacing special characters (&, <,
-	 * >, space, tab).
+	 * Convert a string input to HTML format by replacing special characters (&, <, >,
+	 * space, tab).
 	 * <p>
 	 * 
 	 * @param input
@@ -224,7 +324,7 @@ public class UIUtils {
 		output = output.replaceAll(" ", "&nbsp;"); //$NON-NLS-1$ //$NON-NLS-2$
 		return output;
 	}
-	
+
 	/**
 	 * Utitlity method to create a text and link with the same label
 	 * <p>
@@ -284,7 +384,7 @@ public class UIUtils {
 	}
 
 	/**
-	 * Running a runable asynchronously.
+	 * Running a runnable asynchronously.
 	 * <p>
 	 * 
 	 * @param r
@@ -314,7 +414,7 @@ public class UIUtils {
 	}
 
 	/**
-	 * Running a runable synchronously.
+	 * Running a runnable synchronously.
 	 * <p>
 	 * 
 	 * @param r
@@ -367,86 +467,62 @@ public class UIUtils {
 
 	public static <T extends IInternalElement> String getFreeElementName(
 			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<T> type,
-			String defaultPrefix) throws RodinDBException {
+			IInternalElementType<T> type, String defaultPrefix)
+			throws RodinDBException {
 		String prefix = getNamePrefix(editor, type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
-	public static String getFreeElementLabel(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String defaultPrefix) throws RodinDBException {
+	public static String getFreeElementLabel(IEventBEditor<?> editor,
+			IInternalParent parent,
+			IInternalElementType<? extends IInternalElement> type,
+			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, type, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
-	public static int getFreeElementLabelIndex(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String prefix)
-			throws RodinDBException {
-		return getFreeElementLabelIndex(editor, parent, type, prefix, 1);
+
+	/**
+	 * Returns an integer that can be used as a label index for a newly created
+	 * element.
+	 * 
+	 * @param editor
+	 *            unused parameter
+	 * @param parent
+	 *            the parent node to be looked for
+	 * @param type
+	 *            the type of the element to be looked for
+	 * @param prefix
+	 *            the prefix of the element to be looked for
+	 * @return a non already used integer identifier intended for a new element
+	 *         of that type (if no element of that type already exists, returns
+	 *         beginIndex)
+	 * @throws RodinDBException
+	 */
+	public static String getFreeElementLabelIndex(IEventBEditor<?> editor,
+			IInternalParent parent,
+			IInternalElementType<? extends IInternalElement> type,
+			String prefix) throws RodinDBException {
+		return getFreePrefixIndex(parent, type,
+				EventBAttributes.LABEL_ATTRIBUTE, prefix);
 	}
 
-	public static int getFreeElementLabelIndex(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String prefix, int beginIndex)
-			throws RodinDBException {
-
-		IInternalElement[] elements = parent.getChildrenOfType(type);
-
-		int i;
-		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			boolean exists = false;
-			for (IInternalElement element : elements) {
-				if (element.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE)
-						&& ((ILabeledElement) element).getLabel().equals(prefix + i)) {
-					exists = true;
-					break;
-				}
-			}
-			if (!exists)
-				break;
-		}
-		return i;
-	}
-
-	public static String getFreeElementIdentifier(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String defaultPrefix) throws RodinDBException {
+	public static String getFreeElementIdentifier(IEventBEditor<?> editor,
+			IInternalParent parent,
+			IInternalElementType<? extends IInternalElement> type,
+			String defaultPrefix) throws RodinDBException {
 		String prefix = getPrefix(editor, type, defaultPrefix);
-		return prefix
-				+ getFreeElementIdentifierIndex(parent, type, prefix);
+		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 
-	public static int getFreeElementIdentifierIndex(
-			IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String prefix)
+	public static String getFreeElementIdentifierIndex(IInternalParent parent,
+			IInternalElementType<?> type, String prefix)
 			throws RodinDBException {
-		return getFreeElementIdentifierIndex(parent, type, prefix, 1);
+		return getFreePrefixIndex(parent, type, 
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, prefix);
 	}
 
-	public static int getFreeElementIdentifierIndex(
-			IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type, String prefix, int beginIndex)
-			throws RodinDBException {
 
-		IInternalElement[] elements = parent.getChildrenOfType(type);
-
-		int i;
-		for (i = beginIndex; i < elements.length + beginIndex; i++) {
-			boolean exists = false;
-			for (IInternalElement element : elements) {
-				if (element.hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE)
-						&& ((IIdentifierElement) element).getIdentifierString().equals(prefix + i)) {
-					exists = true;
-					break;
-				}
-			}
-			if (!exists)
-				break;
-		}
-		return i;
-	}
 
 	public static Collection<IRodinElement> addToTreeSet(
 			Collection<IRodinElement> set, IRodinElement element) {
@@ -495,13 +571,12 @@ public class UIUtils {
 	public static <T extends IInternalElement> String getFreeChildName(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
-		String defaultPrefix = "element"; // TODO Get this from extentions
+		String defaultPrefix = "element"; // TODO Get this from extensions
 		String prefix = getNamePrefix(editor, type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
-	public static QualifiedName getQualifiedName(
-			IInternalElementType<?> type) {
+	public static QualifiedName getQualifiedName(IInternalElementType<?> type) {
 		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
 	}
 
@@ -554,8 +629,7 @@ public class UIUtils {
 		for (Object item : objects) {
 			if (sep) {
 				sep = true;
-			}
-			else {
+			} else {
 				buffer.append(","); //$NON-NLS-1$
 			}
 			buffer.append(item);
@@ -576,8 +650,7 @@ public class UIUtils {
 		for (Object item : objects) {
 			if (sep) {
 				sep = true;
-			}
-			else {
+			} else {
 				buffer.append(","); //$NON-NLS-1$
 			}
 			buffer.append(item);
@@ -593,12 +666,12 @@ public class UIUtils {
 	 * @return an array of strings that make up the comma separted input string.
 	 */
 	public static String[] parseString(String stringList) {
-        StringTokenizer st = new StringTokenizer(stringList, ",");//$NON-NLS-1$
-        ArrayList<String> result = new ArrayList<String>();
-        while (st.hasMoreElements()) {
-            result.add((String) st.nextElement());
-        }
-        return result.toArray(new String[result.size()]);
+		StringTokenizer st = new StringTokenizer(stringList, ",");//$NON-NLS-1$
+		ArrayList<String> result = new ArrayList<String>();
+		while (st.hasMoreElements()) {
+			result.add((String) st.nextElement());
+		}
+		return result.toArray(new String[result.size()]);
 	}
 
 }

@@ -169,8 +169,8 @@ public class PasteAction extends SelectionListenerAction {
 									pasteInto, null, "evt"
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
-													IEvent.ELEMENT_TYPE, "evt",
-													0), false,
+													IEvent.ELEMENT_TYPE,
+													"evt"), false,
 									null);
 						else if (element instanceof IInvariant)
 							((IInternalElement) element).copy(
@@ -178,7 +178,7 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IInvariant.ELEMENT_TYPE,
-													"inv", 0), false,
+													"inv"), false,
 									null);
 						else if (element instanceof ITheorem)
 							((IInternalElement) element).copy(
@@ -186,7 +186,7 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													ITheorem.ELEMENT_TYPE,
-													"thm", 0), false,
+													"thm"), false,
 									null);
 						else if (element instanceof IVariant)
 							((IInternalElement) element).copy(
@@ -194,15 +194,15 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IVariant.ELEMENT_TYPE,
-													"variant", 0), false,
+													"variant"), false,
 									null);
 						else if (element instanceof IAxiom)
 							((IInternalElement) element).copy(
 									pasteInto, null, "axm"
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
-													IAxiom.ELEMENT_TYPE, "axm",
-													0), false,
+													IAxiom.ELEMENT_TYPE,
+													"axm"), false,
 									null);
 						else if (element instanceof IConstant)
 							((IInternalElement) element).copy(
@@ -210,7 +210,7 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													IConstant.ELEMENT_TYPE,
-													"cst", 0), false,
+													"cst"), false,
 									null);
 						else if (element instanceof ICarrierSet)
 							((IInternalElement) element).copy(
@@ -218,7 +218,7 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													pasteInto,
 													ICarrierSet.ELEMENT_TYPE,
-													"set", 0), false,
+													"set"), false,
 									null);
 						else
 							((IInternalElement) element).copy(parent, null,
@@ -226,7 +226,7 @@ public class PasteAction extends SelectionListenerAction {
 											+ EventBUtils.getFreeChildNameIndex(
 													(IInternalParent) parent,
 													((InternalElement) element).getElementType(),
-													"element", 1), false,
+													"element"), false,
 									null);
 					}
 				}

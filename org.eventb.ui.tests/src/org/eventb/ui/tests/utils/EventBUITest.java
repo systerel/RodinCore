@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Rodin @ ETH Zurich
-******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added methods for creating elements
+ *******************************************************************************/
 
 package org.eventb.ui.tests.utils;
 
@@ -19,11 +20,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
@@ -36,6 +37,9 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.junit.After;
 import org.junit.Before;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -127,9 +131,9 @@ public abstract class EventBUITest extends TestCase {
 		String childName = EventBUtils.getFreeChildName(machine,
 				IRefinesMachine.ELEMENT_TYPE, "refines_machine"); //$NON-NLS-1$
 		IRefinesMachine refinesClause = machine.getRefinesClause(childName);
-		refinesClause.create(null, new NullProgressMonitor());
+		refinesClause.create(null, null);
 		refinesClause.setAbstractMachineName(abstractMachineName,
-				new NullProgressMonitor());
+				null);
 		return refinesClause;
 	}
 	
@@ -170,9 +174,9 @@ public abstract class EventBUITest extends TestCase {
 	protected IEvent createEvent(IMachineFile machine, String internalName,
 			String eventLabel) throws RodinDBException {
 		IEvent event = machine.getEvent(internalName);
-		event.create(null, new NullProgressMonitor());
-		event.setLabel(eventLabel, new NullProgressMonitor());
-		event.setInherited(false, new NullProgressMonitor());
+		event.create(null, null);
+		event.setLabel(eventLabel, null);
+		event.setInherited(false, null);
 		return event;
 	}
 
@@ -193,9 +197,8 @@ public abstract class EventBUITest extends TestCase {
 		String childName = EventBUtils.getFreeChildName(event,
 				IRefinesEvent.ELEMENT_TYPE, "refines_event"); //$NON-NLS-1$
 		IRefinesEvent refinesClause = event.getRefinesClause(childName);
-		refinesClause.create(null, new NullProgressMonitor());
-		refinesClause.setAbstractEventLabel(abstractEventLabel,
-				new NullProgressMonitor());
+		refinesClause.create(null, null);
+		refinesClause.setAbstractEventLabel(abstractEventLabel, null);
 		return refinesClause;
 	}
 	
@@ -251,6 +254,45 @@ public abstract class EventBUITest extends TestCase {
 		}
 		return (IEventBEditor<?>) EventBUIPlugin.getActivePage().openEditor(
 				fileInput, editorId);
+	}
+
+	/**
+	 * Method to create an internal element
+	 * 
+	 * @param <T>		the type of internal element to create
+	 * @param parent	the parent of the element to create
+	 * @param childType	the type of the child to create
+	 * @param childName	the name of the element to create
+	 * @return			the created element
+	 * @throws RodinDBException
+	 */
+	protected <T extends IInternalElement> T createInternalElement(
+			IInternalParent parent, IInternalElementType<T> childType,
+			String childName) throws RodinDBException {
+
+		T element = parent.getInternalElement(childType, childName);
+		element.create(null, null);
+		return element;
+	}
+
+	protected void createNAxioms(IInternalParent parent,
+			String childNamePrefix, String elementAttributePrefix, long n,
+			long beginIndex) throws RodinDBException {
+
+		for (long i = beginIndex; i < beginIndex + n; i++) {
+			final IAxiom newAxiom = createInternalElement(parent,
+					IAxiom.ELEMENT_TYPE, childNamePrefix + i);
+			newAxiom.setLabel(elementAttributePrefix + i, null);
+		}
+	}
+
+	protected void createNEvents(IMachineFile machine,
+			String internalNamePrefix, String eventLabelPrefix, long n,
+			long beginIndex) throws RodinDBException {
+
+		for (long i = beginIndex; i < beginIndex + n; i++) {
+			createEvent(machine, internalNamePrefix + i, eventLabelPrefix + i);
+		}
 	}
 
 }

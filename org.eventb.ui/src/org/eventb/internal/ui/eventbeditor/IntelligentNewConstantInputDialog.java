@@ -49,7 +49,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
-	private int axmIndex;
+	private String axmIndex;
 
 	String identifier;
 
@@ -149,7 +149,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 					IAxiom.ELEMENT_TYPE, axmPrefix);
 		} catch (RodinDBException e1) {
 			// TODO Auto-generated catch block
-			axmIndex = 1;
+			axmIndex = "1";
 			e1.printStackTrace();
 		}
 
@@ -211,8 +211,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 			try {
 				axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix,
-						axmIndex + 1);
+						.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
