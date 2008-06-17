@@ -11,6 +11,8 @@
 
 package org.eventb.ui.tests;
 
+import java.math.BigInteger;
+
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
@@ -149,84 +151,39 @@ public class TestUIUtils extends EventBUITest {
 				"1");
 	}
 
-	public void testBigIndexes() throws RodinDBException {
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, Long
-				.parseLong("31415926"));
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, "31415927");
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, Long
-				.parseLong("314159265"));
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, "314159266");
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1,
-				Integer.MAX_VALUE);
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, Long
-						.toString(((long) (Integer.MAX_VALUE)) + 1));
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, Long
-				.parseLong("3141592653"));
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, "3141592654");
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, Long
-				.parseLong("31415926535"));
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, "31415926536");
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, Long
-				.parseLong("314159265358979323"));
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, "314159265358979324");
-
-		m0.clear(true, null);
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1,
-				Long.MAX_VALUE - 1);
-		assertFreeIndex(IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
-				axiomLabelPrefix, Long.toString(Long.MAX_VALUE));
-	}
-
-	public void testIndexesMaxLong() throws RodinDBException {
+	public void testConstantIdentifier() throws Exception {
 		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE,
 				constantNamePrefix);
-		cst.setIdentifierString(constantIdentifierPrefix
-				+ Long.toString(Long.MAX_VALUE), null);
-
-		try {
-			UIUtils.getFreePrefixIndex(m0, IConstant.ELEMENT_TYPE,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					constantIdentifierPrefix);
-			fail("should have raised an exception");
-		} catch (IllegalStateException e) {
-			assertEquals("bad exception message for max long",
-					"max value for index reached", e.getMessage());
-		}
+		cst.setIdentifierString(constantIdentifierPrefix + "1", null);
+		assertFreeIndex(IConstant.ELEMENT_TYPE,
+				EventBAttributes.IDENTIFIER_ATTRIBUTE,
+				constantIdentifierPrefix, "2");
 	}
 
-	public void testIndexesTooBig() throws RodinDBException {
-		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE,
-				constantNamePrefix);
-		cst.setIdentifierString(constantIdentifierPrefix
-				+ "314159265358979323846264338327950288419"
+	private void doBigIndex(String idx) throws Exception {
+		createInternalElement(m0, IConstant.ELEMENT_TYPE, constantNamePrefix
+				+ idx);
+		final BigInteger expected = new BigInteger(idx).add(BigInteger.ONE);
+		assertFreeIndex(IConstant.ELEMENT_TYPE, null, constantNamePrefix,
+				expected.toString());
+	}
+
+	public void testMaxInt() throws Exception {
+		doBigIndex(Integer.toString(Integer.MAX_VALUE));
+	}
+
+	public void testMaxLong() throws Exception {
+		doBigIndex(Long.toString(Long.MAX_VALUE));
+	}
+
+	public void testBig() throws Exception {
+		doBigIndex("3141592653");
+	}
+
+	public void testVeryBig() throws Exception {
+		doBigIndex("314159265358979323846264338327950288419"
 				+ "716939937510582097494459230781640628620"
-				+ "89986280348253421170679821480865132823", null);
-		try {
-			UIUtils.getFreePrefixIndex(m0, IConstant.ELEMENT_TYPE,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE,
-					constantIdentifierPrefix);
-			// should raise exception
-			fail("should have raised an exception");
-		} catch (IllegalStateException e) {
-			assertEquals("bad exception message for max long",
-					"number to parse is too big", e.getMessage());
-		}
+				+ "89986280348253421170679821480865132823");
 	}
 
 	// CALLING THE CALLING METHODS //
@@ -277,4 +234,13 @@ public class TestUIUtils extends EventBUITest {
 		assertFreeIndex(IConstant.ELEMENT_TYPE, null, "cst", "1");
 	}
 
+	/**
+	 * Ensures that the case where an attribute doesn't exist in the database is
+	 * correctly handled (the element is ignored and no exception is thrown).
+	 */
+	public void testInexistentLabel() throws Exception {
+		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst1");
+		assertFreeIndex(IConstant.ELEMENT_TYPE,
+				EventBAttributes.LABEL_ATTRIBUTE, "constant", "1");
+	}
 }

@@ -14,6 +14,7 @@
 package org.eventb.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.StringTokenizer;
@@ -41,7 +42,6 @@ import org.eventb.core.IEventBFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.internal.ui.ParsingUtils.Parseability;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.projectexplorer.TreeNode;
@@ -66,13 +66,51 @@ import org.rodinp.core.RodinDBException;
  *         Event-B User interface plug-in.
  */
 public class UIUtils {
+	
+	public static abstract class MaxFinder {
+
+		/**
+		 * Inserts a number given in string format.
+		 * 
+		 * @param number
+		 *            a string of decimal digits.
+		 */
+		public abstract void insert(String number);
+
+		/**
+		 * Returns a number which was not inserted previously as a string of
+		 * decimal digits. Currently, returns the maximum of the inserted
+		 * numbers plus one (or one if no number was inserted).
+		 * 
+		 * @return an available number
+		 */
+		public abstract String getAvailable();
+	}
+
+	public static class BigMaxFinder extends MaxFinder {
+
+		BigInteger max = BigInteger.ZERO;
+
+		@Override
+		public void insert(String number) {
+			final BigInteger n = new BigInteger(number);
+			if (max.compareTo(n) < 0) {
+				max = n;
+			}
+		}
+
+		@Override
+		public String getAvailable() {
+			return max.add(BigInteger.ONE).toString();
+		}
+
+	}
 
 	/**
 	 * The debug flag. This is set by the option when the platform is launched.
 	 * Client should not try to reset this flag.
 	 */
 	public static boolean DEBUG = false;
-
 
 	/**
 	 * Returns a non already used String index intended to be concatenated to
@@ -98,8 +136,7 @@ public class UIUtils {
 
 		final String regex = Pattern.quote(prefix) + "(\\d+)";
 		final Pattern prefixDigits = Pattern.compile(regex);
-
-		long maxIndexFound = 0;
+		final MaxFinder maxFinder = new BigMaxFinder();
 		for (IInternalElement element : parent.getChildrenOfType(type)) {
 			final String elementString;
 			if (attributeType == null) {
@@ -115,55 +152,13 @@ public class UIUtils {
 			if (elementString != null) {
 				final Matcher matcher = prefixDigits.matcher(elementString);
 				if (matcher.matches()) {
-					maxIndexFound = maxIndexString(matcher.group(1),
-							maxIndexFound);
-					if (maxIndexFound == Long.MAX_VALUE) {
-						throw new IllegalStateException(
-								"max value for index reached");
-					}
+					maxFinder.insert(matcher.group(1));
 				}
 			}
 		}
-		return Long.toString(maxIndexFound + 1);
+		return maxFinder.getAvailable();
 	}
 
-
-
-	/**
-	 * Private method that parses the long index from the indexString, compares
-	 * it with maxIndexFound and returns the max.
-	 * 
-	 * @param indexString
-	 *            the String from which to extract the index
-	 * @param maxIndexFound
-	 *            the index to be compared to the current index
-	 * @return the max index between maxIndex and the index found in
-	 *         elementString
-	 */
-	private static long maxIndexString(String indexString, long maxIndexFound)
-	throws IllegalStateException {
-
-		long currentIndexLong = -1;
-		Parseability parseability =
-			ParsingUtils.determineParseability(indexString);
-
-		switch (parseability) {
-		case PARSEABLE_INT:
-		case PARSEABLE_LONG:
-			currentIndexLong =
-				Long.parseLong(indexString);
-			break;
-		default:
-			throw new IllegalStateException("number to parse is too big");
-		}
-
-		if (currentIndexLong > maxIndexFound) {
-			maxIndexFound = currentIndexLong;
-		}
-		return maxIndexFound;
-	}
-
-	
 	public static void log(Throwable exc, String message) {
 		if (exc instanceof RodinDBException) {
 			final Throwable nestedExc = ((RodinDBException) exc).getException();
