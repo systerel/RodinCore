@@ -250,4 +250,31 @@ public class TestUIUtils extends EventBUITest {
 				freeIndexFound);
 	}
 
+	/**
+	 * Ensures that the given prefix can look like a regular expression, in
+	 * which case meta-characters are ignored.
+	 */
+	public void testRegexPrefix() throws Exception {
+		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst+1");
+		assertFreeIndex(IConstant.ELEMENT_TYPE, null, "cst+", "2");
+	}
+
+	/**
+	 * Ensures that the whole prefix of existing elements is taken into account
+	 * (no partial match).
+	 */
+	public void testLongerPrefix() throws Exception {
+		createInternalElement(m0, IConstant.ELEMENT_TYPE, "foo_cst1");
+		assertFreeIndex(IConstant.ELEMENT_TYPE, null, "cst", "1");
+	}
+
+	/**
+	 * Ensures that the whole suffix of existing elements is taken into account
+	 * (no partial match).
+	 */
+	public void testLongerSuffix() throws Exception {
+		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst1a");
+		assertFreeIndex(IConstant.ELEMENT_TYPE, null, "cst", "1");
+	}
+
 }

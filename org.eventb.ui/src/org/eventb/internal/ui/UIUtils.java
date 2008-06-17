@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
@@ -82,9 +83,8 @@ public class UIUtils {
 	 * @param type
 	 *            the type of the element to be looked for
 	 * @param attributeType
-	 *            the type of the attribute to be looked for
-	 *            set it to null if the index is intended
-	 *            to the name of the element
+	 *            the type of the attribute to be looked for set it to null if
+	 *            the index is intended to the name of the element
 	 * @param prefix
 	 *            the prefix of the element to be looked for
 	 * @return a non already used integer index intended to be concatenated to
@@ -92,19 +92,15 @@ public class UIUtils {
 	 *         type already exists, returns beginIndex)
 	 * @throws RodinDBException
 	 */
-	public static String getFreePrefixIndex(
-			IInternalParent parent,
-			IInternalElementType<?> type,
-			IAttributeType.String attributeType,
-			String prefix)
-	throws RodinDBException, IllegalStateException  {
+	public static String getFreePrefixIndex(IInternalParent parent,
+			IInternalElementType<?> type, IAttributeType.String attributeType,
+			String prefix) throws RodinDBException, IllegalStateException {
+
+		final String regex = Pattern.quote(prefix) + "(\\d+)";
+		final Pattern prefixDigits = Pattern.compile(regex);
 
 		long maxIndexFound = 0;
-
-		IInternalElement[] elements = parent.getChildrenOfType(type);
-		Pattern prefixDigits = Pattern.compile(prefix + "\\d+");
-
-		for (IInternalElement element : elements) {
+		for (IInternalElement element : parent.getChildrenOfType(type)) {
 			final String elementString;
 			if (attributeType == null) {
 				// name research
@@ -117,13 +113,10 @@ public class UIUtils {
 			}
 
 			if (elementString != null) {
-
-				if (prefixDigits.matcher(elementString).matches()) {
-					String currentIndexString = elementString
-					.substring(prefix.length());
-
-					maxIndexFound = 
-						maxIndexString(currentIndexString, maxIndexFound);
+				final Matcher matcher = prefixDigits.matcher(elementString);
+				if (matcher.matches()) {
+					maxIndexFound = maxIndexString(matcher.group(1),
+							maxIndexFound);
 					if (maxIndexFound == Long.MAX_VALUE) {
 						throw new IllegalStateException(
 								"max value for index reached");
@@ -137,9 +130,9 @@ public class UIUtils {
 
 
 	/**
-	 * Private method that parses the long index from the indexString,
-	 * compares it with maxIndexFound and returns the max.
-	 *   
+	 * Private method that parses the long index from the indexString, compares
+	 * it with maxIndexFound and returns the max.
+	 * 
 	 * @param indexString
 	 *            the String from which to extract the index
 	 * @param maxIndexFound
