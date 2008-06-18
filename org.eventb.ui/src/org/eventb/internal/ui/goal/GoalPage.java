@@ -258,7 +258,7 @@ public class GoalPage extends Page implements IGoalPage {
 		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
-		goalText = new EventBPredicateText(toolkit, goalComposite, proverUI, scrolledForm);
+		goalText = new EventBPredicateText(true, toolkit, goalComposite, proverUI, scrolledForm);
 		final StyledText styledText = goalText.getMainTextWidget();
 		// styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true));

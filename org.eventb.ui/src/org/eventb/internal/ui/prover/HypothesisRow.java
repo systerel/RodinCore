@@ -186,7 +186,7 @@ public class HypothesisRow {
 	public void createHypothesisText() {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
-		hypothesisText = new EventBPredicateText(toolkit, hypothesisComposite,
+		hypothesisText = new EventBPredicateText(false, toolkit, hypothesisComposite,
 				proverUI, scrolledForm);
 		StyledText textWidget = hypothesisText.getMainTextWidget();
 		textWidget.setBackground(background);

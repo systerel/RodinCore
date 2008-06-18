@@ -75,7 +75,10 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	private ScrolledForm scrolledForm;
 
-	public EventBPredicateText(FormToolkit toolkit, final Composite parent, ProverUI proverUI, ScrolledForm scrolledForm) {
+	boolean isGoal;
+	
+	public EventBPredicateText(boolean isGoal, FormToolkit toolkit, final Composite parent, ProverUI proverUI, ScrolledForm scrolledForm) {
+		this.isGoal = isGoal;
 		this.proverUI = proverUI;
 		this.scrolledForm = scrolledForm;
 		dirtyStates = new ArrayList<Point>();
@@ -310,8 +313,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
 		if (provider != null)
 			try {
+				Predicate pred = null;
+				if (!isGoal)
+					pred = hyp;
 				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
-						.getCurrentNode(), hyp, position, inputs, globalInput),
+						.getCurrentNode(), pred, position, inputs, globalInput),
 						hypSet, true, new NullProgressMonitor());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
