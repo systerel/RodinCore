@@ -73,6 +73,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEditorPagesPreference contextPreference = ContextEditorPagesPreference
 				.getDefault();
 		contextPreference.setDefault();
+		
+		store.setDefault(PreferenceConstants.P_BORDER_ENABLE, true);
 	}
 
 }

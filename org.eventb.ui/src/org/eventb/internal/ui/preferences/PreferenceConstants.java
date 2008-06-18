@@ -49,4 +49,9 @@ public class PreferenceConstants {
 	 */
 	public static final String P_CONTEXT_EDITOR_PAGE = "Context editor pages"; //$NON-NLS-1$
 
+	/**
+	 * Preference key for the enablement of borders drawing
+	 */
+	public static final String P_BORDER_ENABLE = "Border enable"; //$NON-NLS-1$
+
 }

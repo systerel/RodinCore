@@ -12,6 +12,7 @@
 
 package org.eventb.internal.ui.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -52,7 +53,9 @@ public class ModellingUIPreferencePage extends FieldEditorPreferencePage
 	 */
 	@Override
 	public void createFieldEditors() {
-		// Do nothing at the moment.
+		addField(new BooleanFieldEditor(PreferenceConstants.P_BORDER_ENABLE,
+				Messages.preferencepage_modellingui_borderenable,
+				getFieldEditorParent()));
 	}
 
 	/*

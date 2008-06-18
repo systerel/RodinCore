@@ -66,6 +66,7 @@ public class Messages {
 	public static String preferencepage_machineeditor_editorpagedescription;
 	public static String preferencepage_editorpage_tab_title;
 	public static String preferencepage_modellingui_description;
+	public static String preferencepage_modellingui_borderenable;
 	public static String preferencepage_pomtactic_description;
 	public static String preferencepage_pomtactic_enablementdescription;
 	public static String preferencepage_pomtactic_selectedtacticsdescription;

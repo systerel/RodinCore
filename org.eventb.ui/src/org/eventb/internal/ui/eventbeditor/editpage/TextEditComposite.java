@@ -23,6 +23,7 @@ import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
@@ -32,14 +33,20 @@ public class TextEditComposite extends AbstractEditComposite {
 
 	protected StyledText text;
 	private Button undefinedButton;
-	protected int style = SWT.MULTI | SWT.BORDER;
-	private boolean isMath;
+	protected final int style;
+	private final boolean isMath;
 	
 	IContextActivation contextActivation; 
 
 	public TextEditComposite(IAttributeUISpec uiSpec, boolean isMath) {
 		super(uiSpec);
 		this.isMath = isMath;
+		if (EventBUIPlugin.getDefault().getPreferenceStore().getBoolean(
+				PreferenceConstants.P_BORDER_ENABLE)) {
+			style = SWT.MULTI | SWT.BORDER;
+		} else {
+			style = SWT.MULTI;
+		}
 	}
 
 	@Override
