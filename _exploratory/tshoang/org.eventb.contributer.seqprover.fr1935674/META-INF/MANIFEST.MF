@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fr1935674 Plug-in
+Bundle-SymbolicName: org.eventb.contributer.seqprover.fr1935674; singleton:=true
+Bundle-Version: 1.0.0
+Require-Bundle: org.eventb.core.seqprover
+Export-Package: org.eventb.contributer.seqprover.fr1935674
