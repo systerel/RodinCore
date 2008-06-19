@@ -1,7 +1,14 @@
-/*
- * Created on 03-jun-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added accept for ISimpleVisitor
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
@@ -182,6 +189,11 @@ public class BoundIdentifier extends Identifier {
 	@Override
 	public boolean accept(IVisitor visitor) {
 		return visitor.visitBOUND_IDENT(this);
+	}
+
+	@Override
+	public void accept(ISimpleVisitor visitor) {
+		visitor.visitBoundIdentifier(this);
 	}
 
 	@Override

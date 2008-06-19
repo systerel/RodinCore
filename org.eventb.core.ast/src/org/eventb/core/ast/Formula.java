@@ -1,6 +1,14 @@
-/*
- * Created on Mar 13, 2005
- */
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract accept method for ISimpleVisitor
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
@@ -1839,7 +1847,8 @@ public abstract class Formula<T extends Formula<T>> {
 			StringBuilder builder, String[] boundNames);
 
 	/**
-	 * Traverses this formula with the given visitor.
+	 * Traverses this formula with the given visitor. In this complex version,
+	 * the accept method also manages stepping through AST children nodes.
 	 * 
 	 * @param visitor
 	 *            the visitor to call back during traversal
@@ -1850,6 +1859,20 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public abstract boolean accept(IVisitor visitor);
 	
+	/**
+	 * Accept the visit of this formula with the given simple visitor. In this
+	 * simple version, this method only calls the visit method of the visitor
+	 * corresponding to the dynamic class of the formula. Ast traversal is not
+	 * managed by this method and shall be implemented in the visit methods of
+	 * the client.
+	 * 
+	 * @param visitor
+	 *            the visitor to call back during traversal
+	 * 
+	 * @see ISimpleVisitor
+	 */
+	public abstract void accept(ISimpleVisitor visitor);
+
 	/**
 	 * Returns whether this formula has been type-checked.
 	 * 
