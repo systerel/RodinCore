@@ -2,14 +2,12 @@ package org.eventb.contributer.seqprover.fr1834715.manual;
 
 import java.util.List;
 
-import org.eventb.contributer.seqprover.fr1834715.Tactic1;
 import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 import org.eventb.ui.prover.ITacticProvider;
