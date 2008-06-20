@@ -29,6 +29,11 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		this.hideOriginal = hideOriginal;
 	}
 	
+	public void reset_rewriter(IFormulaRewriter a_rewriter)
+	{
+		rewriter=a_rewriter;
+	}
+
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		
