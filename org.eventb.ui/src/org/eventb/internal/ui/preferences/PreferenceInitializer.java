@@ -1,21 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added "show borders" and "font color" options
+ *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
@@ -74,7 +76,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				.getDefault();
 		contextPreference.setDefault();
 		
+		// Default values for borders and colors and fonts
 		store.setDefault(PreferenceConstants.P_BORDER_ENABLE, true);
+		
+		PreferenceConverter.setDefault(store,
+				PreferenceConstants.P_TEXT_FOREGROUND, Display.getDefault()
+						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());		
 	}
 
 }

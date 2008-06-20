@@ -1,6 +1,5 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2008 ETH Zurich and others.
- * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored getRodinDatabase()
+ *     Systerel - added ColorManager
  ******************************************************************************/
 
 package org.eventb.ui;
@@ -30,6 +30,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.BundledFileExtractor;
+import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -255,6 +256,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		ColorManager.getDefault().dispose();
 		plugin = null;
 	}
 

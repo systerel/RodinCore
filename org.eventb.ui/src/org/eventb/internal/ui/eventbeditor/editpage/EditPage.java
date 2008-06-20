@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added "show borders" preference
+ *******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -30,6 +30,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -65,6 +66,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
@@ -313,7 +315,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				e.printStackTrace();
 			}
 		}
-		toolkit.paintBordersFor(comp);
+		final IPreferenceStore preferenceStore = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		if (preferenceStore.getBoolean(PreferenceConstants.P_BORDER_ENABLE)) {
+			toolkit.paintBordersFor(comp);
+		}
 	}
 
 	/**

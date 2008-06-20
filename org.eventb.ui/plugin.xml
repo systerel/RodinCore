@@ -1325,14 +1325,26 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            class="org.eventb.internal.ui.preferences.PreferencePage"
+            id="org.eventb.ui.preferences.eventB"
+            name="%preferencePage.eventBCategory.name"/>
+      <page
             category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.ProverUIPreferencePage"
             id="org.eventb.ui.preferences.provingUI"
             name="%preferencePage.provingUIPage.name"/>
       <page
-            class="org.eventb.internal.ui.preferences.PreferencePage"
-            id="org.eventb.ui.preferences.eventB"
-            name="%preferencePage.eventBCategory.name"/>
+            category="org.eventb.ui.preferences.eventB"
+            class="org.eventb.internal.ui.preferences.AppearancePreferencePage"
+            id="org.eventb.ui.preferences.appearance"
+            name="%preferencePage.appearancePage.name">
+      </page>
+      <page
+            category="org.eventb.ui.preferences.appearance"
+            class="org.eventb.internal.ui.preferences.ColorsAndFontsPreferencePage"
+            id="org.eventb.ui.colorsAndFonts"
+            name="%preferencePage.colorsAndFontsPage.name">
+      </page>
       <page
             category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.SeqProverPreferencePage"

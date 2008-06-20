@@ -1,8 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added "show borders" and "font color" options
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -19,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
@@ -41,8 +55,10 @@ public class TextEditComposite extends AbstractEditComposite {
 	public TextEditComposite(IAttributeUISpec uiSpec, boolean isMath) {
 		super(uiSpec);
 		this.isMath = isMath;
-		if (EventBUIPlugin.getDefault().getPreferenceStore().getBoolean(
-				PreferenceConstants.P_BORDER_ENABLE)) {
+		final IPreferenceStore preferenceStore = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		// TODO implement a listener on the preference store
+		if (preferenceStore.getBoolean(PreferenceConstants.P_BORDER_ENABLE)) {
 			style = SWT.MULTI | SWT.BORDER;
 		} else {
 			style = SWT.MULTI;
@@ -112,8 +128,13 @@ public class TextEditComposite extends AbstractEditComposite {
 				}
 
 			};
-			text.setForeground(Display.getDefault().getSystemColor(
-					SWT.COLOR_DARK_GREEN));
+			// TODO implement a listener on the preference store
+			final IPreferenceStore preferenceStore = EventBUIPlugin
+					.getDefault().getPreferenceStore();
+			Color textForeground = ColorManager.getDefault().getColor(
+					PreferenceConverter.getColor(preferenceStore,
+							PreferenceConstants.P_TEXT_FOREGROUND));
+			text.setForeground(textForeground);
 			new TimerStyledText(text, 200) {
 				@Override
 				protected void response() {

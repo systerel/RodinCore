@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added "show borders" and "font color" options
+ *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
 import java.text.MessageFormat;
@@ -66,7 +77,6 @@ public class Messages {
 	public static String preferencepage_machineeditor_editorpagedescription;
 	public static String preferencepage_editorpage_tab_title;
 	public static String preferencepage_modellingui_description;
-	public static String preferencepage_modellingui_borderenable;
 	public static String preferencepage_pomtactic_description;
 	public static String preferencepage_pomtactic_enablementdescription;
 	public static String preferencepage_pomtactic_selectedtacticsdescription;
@@ -78,7 +88,11 @@ public class Messages {
 	public static String preferencepage_seqprover_description;
 	public static String preferencepage_twolistselectioneditor_availablelabel;
 	public static String preferencepage_twolistselectioneditor_selectedlabel;
-	
+	public static String preferencepage_appearance_description;
+	public static String preferencepage_colorsandfonts_description;
+	public static String preferencepage_colorsandfonts_showborders;
+	public static String preferencepage_colorsandfonts_textForeground;
+
 	// Attribute Factory
 	public static String attributeFactory_inherited_true;
 	public static String attributeFactory_inherited_false;

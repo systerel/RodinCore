@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added "show borders" and "font color" options
+ *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 /**
@@ -50,8 +49,12 @@ public class PreferenceConstants {
 	public static final String P_CONTEXT_EDITOR_PAGE = "Context editor pages"; //$NON-NLS-1$
 
 	/**
-	 * Preference key for the enablement of borders drawing
+	 * Preference key for the enablement of border drawing.
 	 */
 	public static final String P_BORDER_ENABLE = "Border enable"; //$NON-NLS-1$
 
+	/**
+	 * Preference key for the choice of font color.
+	 */
+	public static final String P_TEXT_FOREGROUND = "Text foreground"; //$NON-NLS-1$
 }
