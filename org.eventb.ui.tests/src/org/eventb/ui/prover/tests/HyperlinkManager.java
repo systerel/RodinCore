@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
 import java.util.ArrayList;
@@ -16,10 +27,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.internal.ui.EventBSharedColor;
 
 public abstract class HyperlinkManager {
 
-	final Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	final Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
 
 	final Cursor arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);
 
