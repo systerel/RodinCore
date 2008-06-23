@@ -25,7 +25,7 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests
 		
 		//test associative predicates land and lor
 		predicateTest("1=2∧3=4", "1↦2↦3↦4∈{w↦x↦y↦z∣w=x∧y=z}");
-		predicateTest("1=2∨3=4", "1↦2↦3↦4∈{w↦x↦y↦z∣w=x∨y=z}");
+		predicateTest("1=2∨3=4", "1↦(2↦3)↦4∈{w↦(x↦y)↦z∣w=x∨y=z}");
 		
 		// test binary predicate limp and leqv
 		predicateTest("1=2⇒3=4", "1↦2↦3↦4∈{w↦x↦y↦z∣w=x⇒y=z}");
