@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.IEventBSharedImages;
@@ -129,13 +129,13 @@ public class HypothesisRow {
 
 		this.toolkit = toolkit;
 		if (odd)
-			background = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
 		else
 			background = new Color(Display.getDefault(), 225, 255, 255);
 
 		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
 		if (ProverUIUtils.DEBUG) {
-			checkBox.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+			checkBox.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
 		}
 		else {
 			checkBox.setBackground(background);
@@ -152,7 +152,7 @@ public class HypothesisRow {
 
 		buttonComposite.setLayout(layout);
 		if (ProverUIUtils.DEBUG) {
-			buttonComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+			buttonComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
 		}
 		else {
 			buttonComposite.setBackground(background);
@@ -166,7 +166,7 @@ public class HypothesisRow {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		hypothesisComposite.setLayoutData(gd);
 		if (ProverUIUtils.DEBUG) {
-			hypothesisComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+			hypothesisComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
 		}
 		else {
 			hypothesisComposite.setBackground(background);		

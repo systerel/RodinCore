@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
+ *     Systerel - added new options
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -57,4 +58,21 @@ public class PreferenceConstants {
 	 * Preference key for the choice of font color.
 	 */
 	public static final String P_TEXT_FOREGROUND = "Text foreground"; //$NON-NLS-1$
+	
+	/**
+	 * Preference key for the choice of required field background color
+	 */
+	public static final String P_REQUIRED_FIELD_BACKGROUND = "Required field background";
+
+	/**
+	 * Preference key for the choice of dirty state color
+	 */
+	public static final String P_DIRTY_STATE_COLOR = "Dirty state color";
+	
+	/**
+	 * Preference key for the choice of box border color
+	 */
+	public static final String P_BOX_BORDER_COLOR = "Box border color";
+
+
 }

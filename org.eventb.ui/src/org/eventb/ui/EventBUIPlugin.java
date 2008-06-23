@@ -9,8 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored getRodinDatabase()
  *     Systerel - added ColorManager
- ******************************************************************************/
-
+ *     Systerel - used EventBPreferenceStore
+ *******************************************************************************/
 package org.eventb.ui;
 
 import org.eclipse.core.runtime.Assert;
@@ -33,13 +33,12 @@ import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.IEventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
@@ -169,8 +168,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * Reads the value of the preferences and initialize various components
 	 */
 	private void initializePreferences() {
-		final IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
+		final IPreferenceStore store = getPreferenceStore();
 
 		// Initialize the post-tactics
 		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
@@ -182,7 +180,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 				.setSelectedDescriptors(ProverUIUtils
 						.stringsToTacticDescriptors(postTacticPreference,
 								postTacticIDs));
-		boolean b = store.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
+		boolean b = EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		postTacticPreference.setEnabled(b);
 
 		// Initialize the auto-tactics
@@ -194,7 +193,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 				.setSelectedDescriptors(ProverUIUtils
 						.stringsToTacticDescriptors(autoTacticPreference,
 								autoTacticIDs));
-		b = store.getBoolean(PreferenceConstants.P_AUTOTACTIC_ENABLE);
+		b = EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_AUTOTACTIC_ENABLE);
 		autoTacticPreference.setEnabled(b);
 	}
 
@@ -319,14 +319,4 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-
-	/**
-	 * Get the shared color registry.
-	 * 
-	 * @return the default shared color registry.
-	 */
-	public static IEventBSharedColor getSharedColor() {
-		return EventBSharedColor.getDefault();
-	}
-
 }

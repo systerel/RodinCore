@@ -8,7 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
- ******************************************************************************/
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -33,7 +34,7 @@ import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
-import org.eventb.ui.EventBUIPlugin;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -112,8 +113,8 @@ public class ProofsPage extends FormPage implements
 		control.setLayout(gridLayout);
 
 		if (ProverUIUtils.DEBUG) {
-			control.setBackground(EventBUIPlugin.getDefault().getWorkbench()
-					.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			control.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_BLUE));
 		}
 		else {
 			control.setBackground(form.getBackground());
@@ -121,8 +122,8 @@ public class ProofsPage extends FormPage implements
 
 		tmpComp = new Composite(control, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
-			tmpComp.setBackground(EventBUIPlugin.getDefault().getWorkbench()
-					.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			tmpComp.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_CYAN));
 		}
 		else {
 			tmpComp.setBackground(form.getBackground());

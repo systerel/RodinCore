@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
@@ -22,6 +33,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
@@ -103,7 +115,7 @@ public class SectionComposite implements ISectionComposite {
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
-			composite.setBackground(composite.getDisplay().getSystemColor(
+			composite.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_DARK_CYAN));
 		}
 		
@@ -127,7 +139,7 @@ public class SectionComposite implements ISectionComposite {
 		elementComposite.setLayoutData(gridData);
 		elementComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
-			elementComposite.setBackground(composite.getDisplay().getSystemColor(
+			elementComposite.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_GREEN));
 		}
 
@@ -499,10 +511,10 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void updatePrefixFormText() {
-		Color RED = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_RED);
-		Color YELLOW = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-		Color WHITE = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-		Color BLACK = prefixFormText.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
+		Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+		Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
 		try {
 			int currentSeverity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(
 					parent, rel.getChildType());

@@ -8,8 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" preference
+ *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -59,6 +58,7 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
@@ -66,6 +66,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBFormText;
@@ -148,7 +149,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 		// Try to set the background color if in debug mode.
 		if (EventBEditorUtils.DEBUG) {
-			body.setBackground(form.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			body
+					.setBackground(EventBSharedColor
+							.getSystemColor(SWT.COLOR_BLUE));
 		}
 		
 		// Create the top declaration. 
@@ -226,7 +229,9 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
 		if (EventBEditorUtils.DEBUG) {
-			comp.setBackground(comp.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+			comp
+					.setBackground(EventBSharedColor
+							.getSystemColor(SWT.COLOR_CYAN));
 		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
@@ -281,8 +286,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		final Text commentWidget = toolkit.createText(comp, "", SWT.MULTI);
 		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false));
-		commentWidget.setForeground(commentWidget.getDisplay().getSystemColor(
-				SWT.COLOR_DARK_GREEN));
+		commentWidget.setForeground(EventBPreferenceStore
+				.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND));
 		commentText = new EventBText(commentWidget);
 		new TimerText(commentWidget, 1000) {
 
@@ -315,9 +320,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				e.printStackTrace();
 			}
 		}
-		final IPreferenceStore preferenceStore = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
-		if (preferenceStore.getBoolean(PreferenceConstants.P_BORDER_ENABLE)) {
+		if (EventBPreferenceStore.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
 			toolkit.paintBordersFor(comp);
 		}
 	}

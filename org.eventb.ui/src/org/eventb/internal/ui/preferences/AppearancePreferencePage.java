@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - used EventBPreferenceStore
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -14,7 +15,6 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * The main preference page for the appearance. This is done by subclassing
@@ -40,7 +40,7 @@ public class AppearancePreferencePage extends FieldEditorPreferencePage
 	 */
 	public AppearancePreferencePage() {
 		super();
-		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(EventBPreferenceStore.getPreferenceStore());
 		setDescription(Messages.preferencepage_appearance_description);
 	}
 

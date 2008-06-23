@@ -8,7 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
- ******************************************************************************/
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.internal.ui.EventBSharedColor;
 
 /**
  * @author htson
@@ -157,7 +159,7 @@ public abstract class HypothesisComposite implements
 		// Create the top-level composite.
 		control = toolkit.createComposite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
-			control.setBackground(Display.getDefault().getSystemColor(
+			control.setBackground(EventBSharedColor.getSystemColor(
 				SWT.COLOR_DARK_GRAY));
 		}
 		// Set the layout of the top-level control to a form layout.
@@ -209,7 +211,7 @@ public abstract class HypothesisComposite implements
 		
 		if (ProverUIUtils.DEBUG) {
 			comp
-				.setBackground(Display.getDefault().getSystemColor(
+				.setBackground(EventBSharedColor.getSystemColor(
 						SWT.COLOR_GREEN));
 		}
 

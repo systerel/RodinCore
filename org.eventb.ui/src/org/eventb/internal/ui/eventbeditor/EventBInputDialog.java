@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.Collection;
@@ -21,11 +21,11 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBSharedColor;
 
 /**
  * @author htson
@@ -145,24 +145,22 @@ public abstract class EventBInputDialog extends Dialog {
 	protected class DirtyStateListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
-			Display display = Display.getCurrent();
 			Text text = (Text) e.widget;
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Modified: " + text.getText());
 			if (text.getText().equals("")) {
 				dirtyTexts.remove(text);
-				text.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+				text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_WHITE));
 			} else if (text.isFocusControl()) {
 				dirtyTexts.add(text);
-				text.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+				text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_BLACK));//(SWT.COLOR_YELLOW));
 			}
 		}
 	}
 
 	protected void clearDirtyTexts() {
-		Display display = Display.getCurrent();
 		for (Text text : dirtyTexts) {
-			text.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+			text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_WHITE));
 		}
 		dirtyTexts.clear();
 	}

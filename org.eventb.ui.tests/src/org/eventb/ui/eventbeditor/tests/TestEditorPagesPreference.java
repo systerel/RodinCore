@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
- * 
+ * Copyright (c) 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBPreferenceStore
+ *******************************************************************************/
 package org.eventb.ui.eventbeditor.tests;
 
 import java.util.List;
@@ -24,10 +23,10 @@ import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry;
 import org.eventb.internal.ui.preferences.ContextEditorPagesPreference;
 import org.eventb.internal.ui.preferences.EditorPagesPreference;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.IEditorPagesPreference;
 import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.tests.EventBUITestsPlugin;
 import org.junit.Before;
@@ -77,7 +76,7 @@ public class TestEditorPagesPreference extends TestCase {
 		machinePreference.setDefault();
 		contextPreference = ContextEditorPagesPreference.getDefault();
 		contextPreference.setDefault();
-		pStore = EventBUIPlugin.getDefault().getPreferenceStore();
+		pStore = EventBPreferenceStore.getPreferenceStore();
 	}
 
 	/**

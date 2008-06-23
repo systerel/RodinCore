@@ -7,15 +7,14 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - added "show borders" and "font color" options
+ *     Systerel - added "show borders" preference
+ *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -28,15 +27,15 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.internal.ui.ColorManager;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -55,10 +54,9 @@ public class TextEditComposite extends AbstractEditComposite {
 	public TextEditComposite(IAttributeUISpec uiSpec, boolean isMath) {
 		super(uiSpec);
 		this.isMath = isMath;
-		final IPreferenceStore preferenceStore = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
 		// TODO implement a listener on the preference store
-		if (preferenceStore.getBoolean(PreferenceConstants.P_BORDER_ENABLE)) {
+		if (EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
 			style = SWT.MULTI | SWT.BORDER;
 		} else {
 			style = SWT.MULTI;
@@ -129,11 +127,8 @@ public class TextEditComposite extends AbstractEditComposite {
 
 			};
 			// TODO implement a listener on the preference store
-			final IPreferenceStore preferenceStore = EventBUIPlugin
-					.getDefault().getPreferenceStore();
-			Color textForeground = ColorManager.getDefault().getColor(
-					PreferenceConverter.getColor(preferenceStore,
-							PreferenceConstants.P_TEXT_FOREGROUND));
+			Color textForeground = EventBPreferenceStore
+					.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND);
 			text.setForeground(textForeground);
 			new TimerStyledText(text, 200) {
 				@Override
@@ -160,8 +155,8 @@ public class TextEditComposite extends AbstractEditComposite {
 		text.setStyleRange(null);
 		
 		try {
-			Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-			Color YELLOW = Display.getDefault()
+			Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+			Color YELLOW = EventBSharedColor
 					.getSystemColor(SWT.COLOR_YELLOW);
 			IMarker[] markers = MarkerUIRegistry.getDefault()
 					.getAttributeMarkers(element, uiSpec.getAttributeType());
@@ -229,10 +224,10 @@ public class TextEditComposite extends AbstractEditComposite {
 	public void setSelected(boolean selection) {
 		Control control = text == null ? undefinedButton : text;
 		if (selection)
-			control.setBackground(control.getDisplay().getSystemColor(
+			control.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_GRAY));
 		else {
-			control.setBackground(control.getDisplay().getSystemColor(
+			control.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);

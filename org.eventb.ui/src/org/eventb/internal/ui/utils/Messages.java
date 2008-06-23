@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
+ *     Systerel - added new options
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -92,6 +93,10 @@ public class Messages {
 	public static String preferencepage_colorsandfonts_description;
 	public static String preferencepage_colorsandfonts_showborders;
 	public static String preferencepage_colorsandfonts_textForeground;
+	public static String preferencepage_colorsandfonts_requiredfieldbackground;
+	public static String preferencepage_colorsandfonts_dirtystatecolor;
+	public static String preferencepage_colorsandfonts_boxbordercolor;
+	
 
 	// Attribute Factory
 	public static String attributeFactory_inherited_true;

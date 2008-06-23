@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -16,7 +27,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -29,6 +39,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
 import org.rodinp.core.RodinDBException;
 
@@ -62,7 +73,6 @@ public class ProofTreeUIToolTip {
 	 *            the parent Shell
 	 */
 	public ProofTreeUIToolTip(Shell parent, IUserSupport US) {
-		final Display display = parent.getDisplay();
 		this.parentShell = parent;
 		this.userSupport = US;
 
@@ -73,7 +83,7 @@ public class ProofTreeUIToolTip {
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		tipShell.setLayout(gridLayout);
-		tipShell.setBackground(display
+		tipShell.setBackground(EventBSharedColor
 				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tipShell.addKeyListener(new KeyListener() {
 
@@ -102,9 +112,9 @@ public class ProofTreeUIToolTip {
 
 						text.setText(node.getComment());
 						text.setSize(200, 100);
-						text.setForeground(display
+						text.setForeground(EventBSharedColor
 								.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-						text.setBackground(display
+						text.setBackground(EventBSharedColor
 								.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 						text.setLayoutData(new GridData(
 								GridData.FILL_HORIZONTAL
@@ -126,9 +136,9 @@ public class ProofTreeUIToolTip {
 
 		// Tip label
 		tipLabel = new Label(tipShell, SWT.LEFT | SWT.WRAP);
-		tipLabel.setForeground(display
+		tipLabel.setForeground(EventBSharedColor
 				.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		tipLabel.setBackground(display
+		tipLabel.setBackground(EventBSharedColor
 				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
 				| GridData.VERTICAL_ALIGN_CENTER));
@@ -148,10 +158,10 @@ public class ProofTreeUIToolTip {
 		// Create the F2 label
 		labelF2 = new Label(tipShell, SWT.RIGHT);
 		labelF2
-				.setForeground(display
+				.setForeground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		labelF2
-				.setBackground(display
+				.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		labelF2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_CENTER));

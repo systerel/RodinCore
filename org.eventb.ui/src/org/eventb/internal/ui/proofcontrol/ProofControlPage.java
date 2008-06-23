@@ -8,7 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
- ******************************************************************************/
+ *     Systerel - used EventBPreferenceStore
+ *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
 import java.lang.reflect.InvocationTargetException;
@@ -87,12 +88,12 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
@@ -147,7 +148,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
 		USM.addChangeListener(this);
-		IPreferenceStore store = EventBUIPlugin.getDefault()
+		IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 		store.addPropertyChangeListener(this);
 	}
@@ -183,7 +184,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public void dispose() {
 		// Deregister with the UserSupport
 		USM.removeChangeListener(this);
-		IPreferenceStore store = EventBUIPlugin.getDefault()
+		IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
 		textInput.dispose();
@@ -784,7 +785,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * Creat the actions used in this page.
 	 */
 	private void makeActions() {
-		final IPreferenceStore store = EventBUIPlugin.getDefault()
+		final IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 
 		expertMode = new Action("Disable post-tactic", SWT.CHECK) {
@@ -798,8 +799,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				postTacticPreference.setEnabled(checked);
 			}
 		};
-		boolean b = store
-						.getBoolean(PreferenceConstants.P_POSTTACTIC_ENABLE);
+		boolean b = EventBPreferenceStore.getBooleanPreference(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
 
 		IAutoTacticPreference postTacticPreference = EventBPlugin

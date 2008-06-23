@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     Systerel - used EventBSharedColor
  ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
@@ -46,6 +47,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IOpenable;
@@ -69,7 +71,7 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 
 	TreeViewer viewer;
 	
-	private final Color yellow = Display.getCurrent().getSystemColor(
+	private final Color yellow = EventBSharedColor.getSystemColor(
 			SWT.COLOR_YELLOW);
 
 	public ObligationExplorerLabelProvider(TreeViewer viewer) {

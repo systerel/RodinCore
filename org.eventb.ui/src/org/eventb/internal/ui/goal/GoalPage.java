@@ -8,8 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     Systerel - used EventBSharedColor
  ******************************************************************************/
-
 package org.eventb.internal.ui.goal;
 
 import java.util.ArrayList;
@@ -58,6 +58,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
@@ -255,7 +256,7 @@ public class GoalPage extends Page implements IGoalPage {
 	}
 
 	private void createGoalText(final IProofTreeNode node) {
-		Color color = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+		Color color = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
 		goalText = new EventBPredicateText(true, toolkit, goalComposite, proverUI, scrolledForm);

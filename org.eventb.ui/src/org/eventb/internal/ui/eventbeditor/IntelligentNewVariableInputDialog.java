@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
@@ -115,7 +115,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	protected void createContents() {
 		Composite body = scrolledForm.getBody();
 		if (EventBEditorUtils.DEBUG)
-			body.setBackground(body.getDisplay().getSystemColor(
+			body.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_CYAN));
 
 		GridLayout layout = new GridLayout();

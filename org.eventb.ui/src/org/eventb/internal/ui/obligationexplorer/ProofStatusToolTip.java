@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -12,7 +23,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -26,6 +36,7 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.EventBSharedColor;
 
 public class ProofStatusToolTip {
 	Shell parentShell;
@@ -42,8 +53,6 @@ public class ProofStatusToolTip {
 
 	Shell helpShell;
 
-	Display display;
-
 	Listener labelListener;
 
 	/**
@@ -53,7 +62,6 @@ public class ProofStatusToolTip {
 	 *            the parent Shell
 	 */
 	public ProofStatusToolTip(Shell parent) {
-		display = parent.getDisplay();
 		this.parentShell = parent;
 
 		// Implement a "fake" tooltip
@@ -173,16 +181,16 @@ public class ProofStatusToolTip {
 				gridLayout.marginWidth = 0;
 				gridLayout.marginHeight = 0;
 				tipShell.setLayout(gridLayout);
-				tipShell.setBackground(display
+				tipShell.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 				// FillLayout layout = new FillLayout();
 				// layout.marginWidth = 2;
 				// tipShell.setLayout(layout);
 				tipLabel = new Label(tipShell, SWT.NONE);
-				tipLabel.setForeground(display
+				tipLabel.setForeground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-				tipLabel.setBackground(display
+				tipLabel.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 				tipLabel.setLayoutData(new GridData(GridData.FILL_BOTH
 						| GridData.VERTICAL_ALIGN_CENTER));

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - used EventBPreferenceStore
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -16,7 +17,6 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author Nicolas Beauger
@@ -29,7 +29,7 @@ public class ColorsAndFontsPreferencePage extends FieldEditorPreferencePage impl
 	 */
 	public ColorsAndFontsPreferencePage() {
 		super(GRID);
-		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(EventBPreferenceStore.getPreferenceStore());
 		setDescription(Messages.preferencepage_colorsandfonts_description);
 	}
 
@@ -46,6 +46,15 @@ public class ColorsAndFontsPreferencePage extends FieldEditorPreferencePage impl
 		addField(new ColorFieldEditor(PreferenceConstants.P_TEXT_FOREGROUND,
 				Messages.preferencepage_colorsandfonts_textForeground,
 				getFieldEditorParent()));
+//		addField(new ColorFieldEditor(PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,
+//				Messages.preferencepage_colorsandfonts_requiredfieldbackground,
+//				getFieldEditorParent()));
+//		addField(new ColorFieldEditor(PreferenceConstants.P_DIRTY_STATE_COLOR,
+//				Messages.preferencepage_colorsandfonts_dirtystatecolor,
+//				getFieldEditorParent()));
+//		addField(new ColorFieldEditor(PreferenceConstants.P_BOX_BORDER_COLOR,
+//				Messages.preferencepage_colorsandfonts_boxbordercolor,
+//				getFieldEditorParent()));		
 	}
 
 }

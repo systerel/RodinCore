@@ -4,17 +4,17 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *******************************************************************************/
+ *     Systerel - used EventBPreferenceStore
+ ******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -39,7 +39,7 @@ public class ModellingUIPreferencePage extends FieldEditorPreferencePage
 	 */
 	public ModellingUIPreferencePage() {
 		super(GRID);
-		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(EventBPreferenceStore.getPreferenceStore());
 		setDescription(Messages.preferencepage_modellingui_description);
 	}
 	

@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBPreferenceStore
  ******************************************************************************/
-
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -86,7 +84,7 @@ public abstract class TacticPreferencePage extends FieldEditorPreferencePage
 		this.tacticsFieldName = tacticsFieldName;
 		this.tacticsFieldDescription = tacticsFieldDescription;
 		setTacticPreference();
-		setPreferenceStore(EventBUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(EventBPreferenceStore.getPreferenceStore());
 		setDescription(description);
 	}
 

@@ -38,6 +38,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.DrillDownComposite;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -234,8 +236,10 @@ public class RodinProjectSelectionGroup extends Composite {
 			projectNameField.addListener(SWT.Modify, listener);
 			projectNameField.setFont(this.getFont());
 			// Mark as required field.
-			projectNameField.setBackground(EventBSharedColor
-					.getRequiredFieldBackgroundColor(projectNameField));
+			projectNameField
+					.setBackground(EventBPreferenceStore
+							.getColorPreference(PreferenceConstants
+									.P_REQUIRED_FIELD_BACKGROUND));
 		} else {
 			// filler...
 			new Label(this, SWT.NONE);

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
+ *     Systerel - used EventBPreferenceStore
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -17,11 +18,10 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -37,8 +37,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
+		IPreferenceStore store = EventBPreferenceStore.getPreferenceStore();
 		
 		// Default value for post-tactic registry
 		List<ITacticDescriptor> defaultPostTacticDescriptors = EventBPlugin
@@ -80,8 +79,21 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_BORDER_ENABLE, true);
 		
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_TEXT_FOREGROUND, Display.getDefault()
-						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());		
-	}
+				PreferenceConstants.P_TEXT_FOREGROUND, EventBSharedColor
+						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
+		
+		PreferenceConverter
+				.setDefault(store,
+						PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,
+						EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW)
+								.getRGB());
+		
+		PreferenceConverter.setDefault(store,
+				PreferenceConstants.P_DIRTY_STATE_COLOR, EventBSharedColor
+						.getSystemColor(SWT.COLOR_YELLOW).getRGB());
 
+		PreferenceConverter.setDefault(store,
+				PreferenceConstants.P_BOX_BORDER_COLOR, EventBSharedColor
+						.getSystemColor(SWT.COLOR_RED).getRGB());
+	}
 }

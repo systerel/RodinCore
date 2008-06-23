@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.resources.IMarker;
@@ -23,8 +22,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
@@ -57,10 +56,10 @@ public class CComboEditComposite extends AbstractEditComposite {
 	}
 
 	private void displayMarkers() {
-		Color WHITE = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
-		Color BLACK = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-		Color RED = Display.getDefault().getSystemColor(SWT.COLOR_RED);
-		Color YELLOW = Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+		Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+		Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
+		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
 		try {
 			int maxSeverity = MarkerUIRegistry.getDefault()
 				.getMaxMarkerSeverity(element, uiSpec.getAttributeType());
@@ -85,10 +84,10 @@ public class CComboEditComposite extends AbstractEditComposite {
 	public void setSelected(boolean selection) {
 		Control control = combo == null ? undefinedButton : combo;
 		if (selection)
-			control.setBackground(control.getDisplay().getSystemColor(
+			control.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_GRAY));
 		else {
-			control.setBackground(control.getDisplay().getSystemColor(
+			control.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_WHITE));
 		}
 		super.setSelected(selection);

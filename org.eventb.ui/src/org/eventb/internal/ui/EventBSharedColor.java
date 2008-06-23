@@ -1,39 +1,56 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.ui.EventBUIPlugin;
 
-public class EventBSharedColor implements IEventBSharedColor {
-	
-	private static IEventBSharedColor instance;
-	
-	private Display display;
+/**
+ * Provides Colors management facilities. This class is used in order to prevent
+ * from allocating the same Color several times, by taking advantage of the
+ * ColorManager.
+ * 
+ * @author Nicolas Beauger
+ * 
+ */
+public class EventBSharedColor {
 	
 	private EventBSharedColor() {
-		// Singleton: Private constructor
-		display = EventBUIPlugin.getActiveWorkbenchShell().getDisplay();
-	}
-
-	public static IEventBSharedColor getDefault() {
-		if (instance == null)
-			instance = new EventBSharedColor();
-		return instance;
+		// Functional class: Private constructor
 	}
 	
-	public static Color getRequiredFieldBackgroundColor(Control control) {
-		Display display = control.getDisplay();
-		return display.getSystemColor(SWT.COLOR_YELLOW);
+	/**
+	 * Returns a Color from a given RGB. This method prevents from allocating
+	 * the same Color several times.
+	 * 
+	 * @param rgb
+	 *            RGB color.
+	 * @return the converted color.
+	 */
+	public static Color getColor(RGB rgb) {
+		return ColorManager.getDefault().getColor(rgb);
 	}
 
-	public Color getColor(String key) {
-		if (key.equals(IEventBSharedColor.DIRTY_STATE))
-			return display.getSystemColor(SWT.COLOR_YELLOW);
-		if (key.equals(IEventBSharedColor.BOX_BORDER))
-			return display.getSystemColor(SWT.COLOR_RED);
-		return null;
+	/**
+	 * Returns a System Color. This method uses system colors, which prevents
+	 * from allocating the same Color several times.
+	 * 
+	 * @param id
+	 *            the integer identifier of the system color.
+	 * @return the converted color.
+	 * 
+	 * @see Display#getSystemColor(int)
+	 */
+	public static Color getSystemColor(int id) {
+		return Display.getCurrent().getSystemColor(id);
 	}
-
 }

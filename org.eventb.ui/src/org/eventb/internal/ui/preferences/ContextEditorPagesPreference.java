@@ -1,19 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
- * 
+ * Copyright (c) 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBPreferenceStore
  ******************************************************************************/
-
 package org.eventb.internal.ui.preferences;
 
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -34,7 +32,7 @@ public class ContextEditorPagesPreference extends EditorPagesPreference {
 	 */
 	private ContextEditorPagesPreference() {
 		// Register for the changes in the preference store.
-		EventBUIPlugin.getDefault().getPreferenceStore()
+		EventBPreferenceStore.getPreferenceStore()
 				.addPropertyChangeListener(this);
 	}
 

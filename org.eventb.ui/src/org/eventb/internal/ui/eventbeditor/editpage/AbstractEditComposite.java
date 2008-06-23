@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.Set;
@@ -24,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
@@ -114,7 +114,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		
 		prefixLabel.setLayoutData(gridData);
 		if (EventBEditorUtils.DEBUG)
-			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
+			prefixLabel.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_CYAN));
 
 		composite = toolkit.createComposite(parent);
@@ -132,9 +132,10 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		if (postfix == null)
 			gridData.widthHint = 0;
 		postfixLabel.setLayoutData(gridData);
-		if (EventBEditorUtils.DEBUG)
-			postfixLabel.setBackground(postfixLabel.getDisplay()
+		if (EventBEditorUtils.DEBUG) {
+			postfixLabel.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_CYAN));
+		}
 	}
 
 	public abstract void initialise(boolean refreshMarker);
@@ -145,26 +146,26 @@ public abstract class AbstractEditComposite implements IEditComposite {
 
 	public void setSelected(boolean selection) {
 		if (selection) {
-			postfixLabel.setBackground(postfixLabel.getDisplay()
+			postfixLabel.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_GRAY));
-			composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			prefixLabel.setBackground(prefixLabel.getDisplay().getSystemColor(
+			composite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_GRAY));
+			prefixLabel.setBackground(EventBSharedColor.getSystemColor(
 					SWT.COLOR_GRAY));
 		} else {
 			if (EventBEditorUtils.DEBUG) {
-				postfixLabel.setBackground(postfixLabel.getDisplay()
+				postfixLabel.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_CYAN));
-				composite.setBackground(composite.getDisplay().getSystemColor(
+				composite.setBackground(EventBSharedColor.getSystemColor(
 						SWT.COLOR_CYAN));
-				prefixLabel.setBackground(prefixLabel.getDisplay()
+				prefixLabel.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_CYAN));
 			}
 			else {
-				postfixLabel.setBackground(postfixLabel.getDisplay()
+				postfixLabel.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_WHITE));
-				composite.setBackground(composite.getDisplay().getSystemColor(
+				composite.setBackground(EventBSharedColor.getSystemColor(
 						SWT.COLOR_WHITE));
-				prefixLabel.setBackground(prefixLabel.getDisplay()
+				prefixLabel.setBackground(EventBSharedColor
 						.getSystemColor(SWT.COLOR_WHITE));
 			}
 		}

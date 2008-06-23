@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.Collection;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -323,7 +323,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		if (isNotSelectable(itemData, column))
 			return;
 
-		final Color black = tree.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+		final Color black = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
 		boolean isCarbon = SWT.getPlatform().equals("carbon");
 		final Composite composite = new Composite(tree, SWT.NONE);
 		if (!isCarbon)

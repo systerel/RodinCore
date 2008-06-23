@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used EventBSharedColor
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
@@ -32,6 +43,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TacticPositionUI;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
@@ -139,7 +151,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		// reposition widgets on paint event and draw a box around the widgets.
 		styledText.addPaintObjectListener(new PaintObjectListener() {
 			public void paintObject(PaintObjectEvent event) {
-				event.gc.setForeground(styledText.getDisplay().getSystemColor(
+				event.gc.setForeground(EventBSharedColor.getSystemColor(
 						SWT.COLOR_RED));
 				StyleRange style = event.style;
 				int start = style.start;
@@ -175,7 +187,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			final int offset = offsets[i];
 			text.setText("     ");
 			boxes[i] = new EventBMath(text);
-			text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW));
 			
 			text.addModifyListener(new ModifyListener() {
 
