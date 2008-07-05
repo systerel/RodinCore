@@ -40,6 +40,7 @@ import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 
@@ -95,7 +96,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ProjectExplorerContentProvider(this));
 		viewer.setLabelProvider(new RodinElementTreeLabelProvider(viewer));
@@ -120,16 +121,18 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	private class StatusBarUpdater implements ISelectionChangedListener {
 		private IStatusLineManager slManager;
 
-		StatusBarUpdater(IStatusLineManager slManager) {
+		StatusBarUpdater(final IStatusLineManager slManager) {
 			this.slManager = slManager;
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 * @see
+		 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged
+		 * (org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
-		public void selectionChanged(SelectionChangedEvent event) {
+		public void selectionChanged(final SelectionChangedEvent event) {
 			slManager.setMessage(event.getSelection().toString());
 		}
 
@@ -142,7 +145,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(final IMenuManager manager) {
 				ActionContext context = new ActionContext(viewer.getSelection());
 				context.setInput(getCurrentProject());
 				groupActionSet.setContext(context);
@@ -171,7 +174,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	 * @param manager
 	 *            A Menu manager
 	 */
-	private void fillLocalPullDown(IMenuManager manager) {
+	private void fillLocalPullDown(final IMenuManager manager) {
 		MenuManager newMenu = new MenuManager("&New");
 		newMenu.add(ProjectExplorerActionGroup.newProjectAction);
 		newMenu.add(ProjectExplorerActionGroup.newComponentAction);
@@ -187,7 +190,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	 * @param manager
 	 *            a menu manager
 	 */
-	private void fillLocalToolBar(IToolBarManager manager) {
+	private void fillLocalToolBar(final IToolBarManager manager) {
 
 		manager.add(ProjectExplorerActionGroup.newProjectAction);
 		manager.add(ProjectExplorerActionGroup.newComponentAction);
@@ -224,7 +227,7 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	 */
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
+			public void doubleClick(final DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
 		});
@@ -248,14 +251,15 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	 * @param root
 	 *            the root of the tree
 	 */
-	public void setRoot(Object root) {
+	public void setRoot(final Object root) {
 		IRodinElement curr;
 		if (root instanceof IRodinElement) {
 			curr = (IRodinElement) root;
 		} else if (root instanceof TreeNode) {
 			curr = (IRodinElement) ((TreeNode<?>) root).getParent();
-		} else
+		} else {
 			curr = null;
+		}
 		while (!(curr instanceof IRodinProject || curr == null)) {
 			curr = curr.getParent();
 		}
@@ -278,7 +282,8 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 		return currentProject;
 	}
 
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+	public void addSelectionChangedListener(
+			final ISelectionChangedListener listener) {
 		viewer.addSelectionChangedListener(listener);
 	}
 
@@ -287,11 +292,11 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 	}
 
 	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
+			final ISelectionChangedListener listener) {
 		viewer.removeSelectionChangedListener(listener);
 	}
 
-	public void setSelection(ISelection selection) {
+	public void setSelection(final ISelection selection) {
 		viewer.setSelection(selection);
 	}
 
@@ -301,9 +306,10 @@ public class ProjectExplorer extends ViewPart implements ISelectionProvider,
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		if (adapter == IPropertySheetPage.class)
+	public Object getAdapter(final Class adapter) {
+		if (adapter == IPropertySheetPage.class) {
 			return new TabbedPropertySheetPage(this);
+		}
 		return super.getAdapter(adapter);
 	}
 

@@ -44,7 +44,8 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.projectexplorer.ExplorerUtilities;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -252,30 +253,33 @@ public class UIUtils {
 	 */
 	public static void linkToEventBEditor(Object obj) {
 
-		IRodinFile component;
-
-		if (!(obj instanceof IRodinProject)) {
-			component = (IRodinFile) UIUtils.getOpenable(obj);
-			try {
-				IEditorInput fileInput = new FileEditorInput(component
-						.getResource());
-				String editorId = "";
-				if (component instanceof IMachineFile) {
-					editorId = EventBMachineEditor.EDITOR_ID;
-				} else if (component instanceof IContextFile) {
-					editorId = EventBContextEditor.EDITOR_ID;
-				}
-				IEventBEditor<?> editor = (IEventBEditor<?>) EventBUIPlugin
-						.getActivePage().openEditor(fileInput, editorId);
-				editor.getSite().getSelectionProvider().setSelection(
-						new StructuredSelection(obj));
-			} catch (PartInitException e) {
-				MessageDialog.openError(null, null,
-						"Error open the Event-B Editor");
-				e.printStackTrace();
-			}
-		}
-		return;
+//		IRodinFile component;
+//
+//		if (!(obj instanceof IRodinProject)) {
+//			component = (IRodinFile) UIUtils.getOpenable(obj);
+//			try {
+//				IEditorInput fileInput = new FileEditorInput(component
+//						.getResource());
+//				String editorId = "";
+//				if (component instanceof IMachineFile) {
+//					editorId = EventBMachineEditor.EDITOR_ID;
+//				} else if (component instanceof IContextFile) {
+//					editorId = EventBContextEditor.EDITOR_ID;
+//				}
+//				IEventBEditor<?> editor = (IEventBEditor<?>) EventBUIPlugin
+//						.getActivePage().openEditor(fileInput, editorId);
+//				editor.getSite().getSelectionProvider().setSelection(
+//						new StructuredSelection(obj));
+//			} catch (PartInitException e) {
+//				MessageDialog.openError(null, null,
+//						"Error open the Event-B Editor");
+//				e.printStackTrace();
+//			}
+//		}
+//		return;
+		
+		ExplorerUtilities.linkToEditor(obj);
+		
 	}
 
 	/**

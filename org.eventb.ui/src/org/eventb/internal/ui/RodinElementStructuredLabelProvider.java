@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 

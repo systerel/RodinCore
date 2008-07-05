@@ -32,7 +32,7 @@ import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;

@@ -25,5 +25,6 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.prover;x-friends:="org.eventb.ui.tests",
  org.eventb.ui,
  org.eventb.ui.eventbeditor,
+ org.eventb.ui.projectexplorer,
  org.eventb.ui.prover
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

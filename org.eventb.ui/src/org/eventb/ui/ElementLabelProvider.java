@@ -41,7 +41,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 

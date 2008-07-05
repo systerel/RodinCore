@@ -1,7 +1,7 @@
 package org.eventb.internal.ui.markers;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.internal.ui.projectexplorer.TreeNode;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IParent;
 

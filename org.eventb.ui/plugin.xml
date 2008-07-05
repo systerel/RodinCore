@@ -11,7 +11,9 @@
       schema="schema/elementui.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
    <extension-point id="elementUISpecs" name="%point.elementUISpecsName" schema="schema/elementUISpecs.exsd"/>
-  
+   <extension-point id="contentProvider" name="%point.contentProvider" schema="schema/contentProvider.exsd"/>
+
+   
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -2744,6 +2746,19 @@
             </and>
          </activeWhen>
       </handler>
+   </extension>
+   <extension
+         point="org.eventb.ui.contentProvider">
+      <provider
+            class="org.eventb.internal.ui.projectexplorer.MachineContentProvider"
+            name="Event B Machine File"
+            rodinElementId="org.eventb.core.machineFile">
+      </provider>
+      <provider
+            class="org.eventb.internal.ui.projectexplorer.ContextContentProvider"
+            name="Event B Context File"
+            rodinElementId="org.eventb.core.contextFile">
+      </provider>
    </extension>
 
 </plugin>

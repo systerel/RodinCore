@@ -10,9 +10,10 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.projectexplorer;
+package org.eventb.ui.projectexplorer;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
