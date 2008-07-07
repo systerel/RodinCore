@@ -8,7 +8,8 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - added getFreeIndex method to factorize several methods 
+ *     Systerel - added getFreeIndex method to factorize several methods
+ *     Systerel - added methods indicateUser() and showUnexpectedError()
  *******************************************************************************/
 
 package org.eventb.internal.ui;
@@ -26,10 +27,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -37,18 +38,17 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBFile;
-import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
-import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
-import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
-import org.eventb.ui.projectexplorer.ExplorerUtilities;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.ui.projectexplorer.ExplorerUtilities;
+import org.eventb.ui.projectexplorer.TreeNode;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
@@ -57,7 +57,6 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -135,7 +134,7 @@ public class UIUtils {
 			IInternalElementType<?> type, IAttributeType.String attributeType,
 			String prefix) throws RodinDBException, IllegalStateException {
 
-		final String regex = Pattern.quote(prefix) + "(\\d+)";
+		final String regex = Pattern.quote(prefix) + "(\\d+)"; //$NON-NLS-1$
 		final Pattern prefixDigits = Pattern.compile(regex);
 		final MaxFinder maxFinder = new BigMaxFinder();
 		for (IInternalElement element : parent.getChildrenOfType(type)) {
@@ -223,7 +222,7 @@ public class UIUtils {
 						});
 		} catch (PartInitException e) {
 			MessageDialog.openError(null, null,
-					"Error opening the proving editor");
+					Messages.uiUtils_errorOpeningProvingEditor);
 			e.printStackTrace();
 			// TODO EventBImage.logException(e);
 		}
@@ -252,34 +251,7 @@ public class UIUtils {
 	 *            the object (e.g. an internal element or a Rodin file)
 	 */
 	public static void linkToEventBEditor(Object obj) {
-
-//		IRodinFile component;
-//
-//		if (!(obj instanceof IRodinProject)) {
-//			component = (IRodinFile) UIUtils.getOpenable(obj);
-//			try {
-//				IEditorInput fileInput = new FileEditorInput(component
-//						.getResource());
-//				String editorId = "";
-//				if (component instanceof IMachineFile) {
-//					editorId = EventBMachineEditor.EDITOR_ID;
-//				} else if (component instanceof IContextFile) {
-//					editorId = EventBContextEditor.EDITOR_ID;
-//				}
-//				IEventBEditor<?> editor = (IEventBEditor<?>) EventBUIPlugin
-//						.getActivePage().openEditor(fileInput, editorId);
-//				editor.getSite().getSelectionProvider().setSelection(
-//						new StructuredSelection(obj));
-//			} catch (PartInitException e) {
-//				MessageDialog.openError(null, null,
-//						"Error open the Event-B Editor");
-//				e.printStackTrace();
-//			}
-//		}
-//		return;
-		
 		ExplorerUtilities.linkToEditor(obj);
-		
 	}
 
 	/**
@@ -563,7 +535,7 @@ public class UIUtils {
 	public static <T extends IInternalElement> String getFreeChildName(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
-		String defaultPrefix = "element"; // TODO Get this from extensions
+		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
 		String prefix = getNamePrefix(editor, type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
@@ -579,15 +551,16 @@ public class UIUtils {
 			dialog.run(true, true, op);
 		} catch (InterruptedException exception) {
 			if (UIUtils.DEBUG)
-				System.out.println("Interrupt");
+				System.out.println("Interrupt"); //$NON-NLS-1$
 			return;
 		} catch (InvocationTargetException exception) {
 			final Throwable realException = exception.getTargetException();
 			if (UIUtils.DEBUG)
-				System.out.println("Interrupt");
+				System.out.println("Interrupt"); //$NON-NLS-1$
 			realException.printStackTrace();
 			final String message = realException.getMessage();
-			MessageDialog.openError(shell, "Unexpected Error", message);
+			MessageDialog.openError(shell, Messages.uiUtils_unexpectedError,
+					message);
 			return;
 		}
 	}
@@ -666,4 +639,32 @@ public class UIUtils {
 		return result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * Opens an information dialog to the user indicating the given message.
+	 *  
+	 * @param message The dialog message.
+	 */
+	public static void indicateUser(String message) {
+		MessageDialog.openInformation(EventBUIPlugin.getActiveWorkbenchWindow()
+				.getShell(), getPluginName(), message);
+	}
+
+	/**
+	 * Opens an error dialog to the user showing the given unexpected error.
+	 * 
+	 * @param e The unexpected error.
+	 */
+	public static void showUnexpectedError(CoreException e) {
+		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+				IStatus.ERROR, e.getStatus().getMessage(), null);
+		ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
+				.getShell(), getPluginName(), Messages.uiUtils_unexpectedError,
+				status);
+	}
+
+	private static String getPluginName() {
+		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
+		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
+	}
+	
 }
