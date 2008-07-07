@@ -153,7 +153,7 @@ public abstract class EventBInputDialog extends Dialog {
 				text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_WHITE));
 			} else if (text.isFocusControl()) {
 				dirtyTexts.add(text);
-				text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_BLACK));//(SWT.COLOR_YELLOW));
+				text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW));
 			}
 		}
 	}
