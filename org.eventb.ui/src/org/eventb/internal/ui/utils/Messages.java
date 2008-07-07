@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - added new options
+ *     Systerel - added messages for UIUtils
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -101,6 +102,10 @@ public class Messages {
 	// Attribute Factory
 	public static String attributeFactory_inherited_true;
 	public static String attributeFactory_inherited_false;
+
+	// UIUtils
+	public static String uiUtils_errorOpeningProvingEditor;
+	public static String uiUtils_unexpectedError;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
