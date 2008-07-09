@@ -161,8 +161,10 @@ public class Parser {
 			switch (n) {-->errors
 				default: s = "error " + n; break;
 			}
-			SourceLocation loc = new SourceLocation(la.pos, la.pos + la.val.length());
-			result.addProblem(new ASTProblem(loc, ProblemKind.SyntaxError, ProblemSeverities.Error, s));
+			SourceLocation loc = new SourceLocation(la.pos,
+					la.pos + la.val.length(), result.getOrigin());
+			result.addProblem(new ASTProblem(loc, ProblemKind.SyntaxError,
+					ProblemSeverities.Error, s));
 			throw new ParserException(s);
 		}
 		errDist = 0;

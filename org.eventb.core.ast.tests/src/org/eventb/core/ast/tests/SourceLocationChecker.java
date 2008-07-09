@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - passed methods to protected to allow inheritance
  *******************************************************************************/
-
 package org.eventb.core.ast.tests;
 
 import java.util.Stack;
@@ -52,12 +55,12 @@ public class SourceLocationChecker extends DefaultVisitor {
 		this.stack = new Stack<SourceLocation>();
 	}
 
-	private boolean enterFormula(Formula<?> formula) {
+	protected boolean enterFormula(Formula<?> formula) {
 		visitFormula(formula, true);
 		return true;
 	}
 
-	private boolean exitFormula(Formula<?> formula) {
+	protected boolean exitFormula(Formula<?> formula) {
 		SourceLocation currentLoc = formula.getSourceLocation();
 		if (currentLoc != null) {
 			stack.pop();
@@ -65,7 +68,7 @@ public class SourceLocationChecker extends DefaultVisitor {
 		return true;
 	}
 	
-	private boolean visitFormula(Formula<?> formula, boolean push) {
+	protected boolean visitFormula(Formula<?> formula, boolean push) {
 		SourceLocation currentLoc = formula.getSourceLocation();
 		if (currentLoc != null) {
 			Assert.assertTrue("Improper source location",

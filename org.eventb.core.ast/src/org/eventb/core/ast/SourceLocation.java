@@ -1,6 +1,14 @@
-/*
- * Created on Mar 13, 2005
- */
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added origin
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 
@@ -22,6 +30,7 @@ public class SourceLocation {
 	// from which this formula was parsed
 	private final int start;
 	private final int end;
+	private Object origin;
 
 	/**
 	 * Creates a new source location.
@@ -31,6 +40,18 @@ public class SourceLocation {
 	public SourceLocation(final int start, final int end) {
 		this.start = start;
 		this.end = end;
+		this.origin = null;
+	}
+
+	/**
+	 * Creates a new source location.
+	 * @param start
+	 * @param end
+	 * @param origin
+	 */
+	public SourceLocation(final int start, final int end, final Object origin) {
+		this(start, end);
+		this.origin = origin;
 	}
 
 	/**
@@ -58,6 +79,14 @@ public class SourceLocation {
 	 */
 	public final int getEnd() {
 		return end;
+	}
+	
+	/**
+	 * Returns the origin.
+	 * @return the origin
+	 */
+	public Object getOrigin() {
+		return origin;
 	}
 
 	@Override

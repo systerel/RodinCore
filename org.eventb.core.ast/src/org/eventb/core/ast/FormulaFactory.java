@@ -1,7 +1,14 @@
-/*
- * Created on 27-may-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added origin
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.math.BigInteger;
@@ -734,7 +741,18 @@ public class FormulaFactory {
 	 * @return the result of the parse
 	 */
 	public IParseResult parseAssignment(String formula) {
-		ParseResult result = new ParseResult(this);
+		return parseAssignment(formula, null);
+	}
+	
+	/**
+	 * Parses the specified formula and returns the corresponding result.
+	 * 
+	 * @param formula formula the formula to be parsed.
+	 * @param origin the origin to be traced to the built AST.
+	 * @return the result of the parse.
+	 */
+	public IParseResult parseAssignment(String formula, Object origin) {
+		ParseResult result = new ParseResult(this, origin);
 		Scanner scanner = new Scanner(formula, result);
 		Parser parser = new Parser(Assignment.class, scanner, result);
 		parser.Parse();
@@ -748,7 +766,18 @@ public class FormulaFactory {
 	 * @return the result of the parse
 	 */
 	public IParseResult parseExpression(String formula) {
-		ParseResult result = new ParseResult(this);
+		return parseExpression(formula, null);
+	}
+	
+	/**
+	 * Parses the specified formula and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed.
+	 * @param origin the origin to be traced to the built AST.
+	 * @return the result of the parse.
+	 */
+	public IParseResult parseExpression(String formula, Object origin) {
+		ParseResult result = new ParseResult(this, origin);
 		Scanner scanner = new Scanner(formula, result);
 		Parser parser = new Parser(Expression.class, scanner, result);
 		parser.Parse();
@@ -762,7 +791,18 @@ public class FormulaFactory {
 	 * @return the result of the parse
 	 */
 	public IParseResult parsePredicate(String formula) {
-		ParseResult result = new ParseResult(this);
+		return parsePredicate(formula, null);
+	}
+
+	/**
+	 * Parses the specified predicate and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed.
+	 * @param origin the origin to be traced to the built AST.
+	 * @return the result of the parse.
+	 */
+	public IParseResult parsePredicate(String formula, Object origin) {
+		ParseResult result = new ParseResult(this, origin);
 		Scanner scanner = new Scanner(formula, result);
 		Parser parser = new Parser(Predicate.class, scanner, result);
 		parser.Parse();

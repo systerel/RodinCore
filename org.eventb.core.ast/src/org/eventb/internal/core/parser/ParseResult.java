@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added origin
+ *******************************************************************************/
 package org.eventb.internal.core.parser;
 
 import org.eventb.core.ast.Assignment;
@@ -31,8 +42,17 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Parsed type
 	private Type type = null;
 
+	// Origin
+	private final Object origin;
+	
 	public ParseResult(FormulaFactory factory) {
 		this.factory = factory;
+		this.origin = null;
+	}
+
+	public ParseResult(FormulaFactory factory, Object origin) {
+		this.factory = factory;
+		this.origin = origin;
 	}
 	
 	/*
@@ -73,6 +93,10 @@ public class ParseResult extends AbstractResult implements IParseResult {
 		if (!isSuccess())
 			return null;
 		return type;
+	}
+	
+	public Object getOrigin() {
+		return origin;
 	}
 
 	/**

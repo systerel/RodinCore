@@ -204,7 +204,8 @@ COMPILER Bmath
     // Takes care of the bindings.
     private Identifier makeIdent(Token token, Binding binding) {
     	int index = binding.getBoundIndex(token.val);
-    	SourceLocation loc = new SourceLocation(token.pos, token.getEnd());
+    	SourceLocation loc = new SourceLocation(token.pos, token.getEnd(),
+    			result.getOrigin());
     	if (index == -1) {
 			return factory.makeFreeIdentifier(token.val, loc);
     	}
@@ -215,7 +216,8 @@ COMPILER Bmath
 
     // Creates an identifier for the given token.
     private FreeIdentifier makeIdent(Token token) {
-    	SourceLocation loc = new SourceLocation(token.pos, token.getEnd());
+    	SourceLocation loc = new SourceLocation(token.pos, token.getEnd(),
+    			result.getOrigin());
 		return factory.makeFreeIdentifier(token.val, loc);
     }
 
@@ -247,7 +249,7 @@ COMPILER Bmath
 			msg = "Too few expressions";
 
 		result.addProblem(new ASTProblem(
-				new SourceLocation(token.pos, token.getEnd()),
+				new SourceLocation(token.pos, token.getEnd(), result.getOrigin()),
 				ProblemKind.SyntaxError, 
 				ProblemSeverities.Error, 
 				msg));
@@ -264,7 +266,7 @@ COMPILER Bmath
 	}
 
 	private SourceLocation newSourceLoc(int startPos) {
-		return new SourceLocation(startPos, t.getEnd());
+		return new SourceLocation(startPos, t.getEnd(), result.getOrigin());
 	}
 
 	private Expression reduceAssociativeList(int tag,
@@ -281,7 +283,7 @@ COMPILER Bmath
 	}
 
 	private ParserException unexpectedLPARInDeclList() {
-		final SourceLocation loc = new SourceLocation(t.pos, t.pos);
+		final SourceLocation loc = new SourceLocation(t.pos, t.pos, result.getOrigin());
 		final ASTProblem problem = new ASTProblem(
 				loc,
 				ProblemKind.UnexpectedLPARInDeclList,
@@ -698,7 +700,7 @@ PRODUCTIONS
 				                                        endPos = t.getEnd(); .)
 			|
 				MINUS
-				Term <out expr, binding>             (. SourceLocation loc = new SourceLocation(startPos, endPos);
+				Term <out expr, binding>             (. SourceLocation loc = new SourceLocation(startPos, endPos, result.getOrigin());
                                                         final Expression lhs = reduceAssociativeList(Formula.PLUS, exprList, loc);
                                                         loc = newSourceLoc(startPos);
                                                         exprList.add(factory.makeBinaryExpression(Formula.MINUS, lhs, expr, loc)); .)
@@ -791,7 +793,7 @@ PRODUCTIONS
         	TYPING					 (. int typeStart = la.pos; .)
         	Type<out Type type>      (. if (! (type instanceof PowerSetType)) {
 						                   	final SourceLocation loc = 
-								        		new SourceLocation(typeStart, t.getEnd());
+								        		new SourceLocation(typeStart, t.getEnd(), result.getOrigin());
 						                	result.addProblem(new ASTProblem(
 								        		loc, 
 								        		ProblemKind.InvalidTypeExpression, 
