@@ -19,42 +19,41 @@ package org.eventb.core.ast;
 public enum ProblemKind {
 	
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location
+	 * Argument 0 is the name of the variable.
 	 */
-	FreeIdentifierHasBoundOccurences ("%1$s appears bound at %2$d"),
+	FreeIdentifierHasBoundOccurences ("%1$s appears bound"),
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location
+	 * Argument 0 is the name of the variable.
 	 */
-	BoundIdentifierHasFreeOccurences ("%1$s appears free at %2$d"),
+	BoundIdentifierHasFreeOccurences ("%1$s appears free"),
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location
+	 * Argument 0 is the name of the variable.
 	 */
-	BoundIdentifierIsAlreadyBound ("%1$s is bound twice at %2$d"),
+	BoundIdentifierIsAlreadyBound ("%1$s is bound twice"),
 	/**
-	 * Argument 1 is the location, argument 0 is unused
+	 * No argument.
 	 */
-	BoundIdentifierIndexOutOfBounds ("Bound ident has no corresponding quantifier at %2d"),
+	BoundIdentifierIndexOutOfBounds ("Bound ident has no corresponding quantifier"),
 	
 	
 	/**
-	 * Argument 0 is the name of the variable, argument 1 is the location start,
-	 * argument 2 is the location end.
+	 * Argument 0 is the name of the variable.
 	 */
-	SyntaxError ("Syntax error at %2$d:%3$d: %1$s"),
+	SyntaxError ("Syntax error: %1$s"),
 	/**
 	 * No argument.
 	 */
 	UnexpectedLPARInDeclList("Unexpected left parenthesis "
-			+ "in bound identifier declaration at %1$s:%2$s"),	
+			+ "in bound identifier declaration"),	
 	/**
-	 * Argument 0 is the name of the variable
+	 * Argument 0 is the name of the variable.
 	 */
 	ParserException ("Parser exception: %1$s"),
 	
 	/**
-	 * Argument 0 is the contents of the token, argument 1 is the location
+	 * Argument 0 is the contents of the token.
 	 */
-	LexerError ("Lexer error at %2$d, character '%1$s' has been ignored."),
+	LexerError ("Lexer error, character '%1$s' has been ignored."),
 	
 	/**
 	 * No argument.
@@ -64,39 +63,38 @@ public enum ProblemKind {
 	
 	/**
 	 * Argument 0 is the name of the first type, argument 1 is the name of the second type.
-	 * Argument 2 and 3 is the start and the end of the expression where the conflict appears.
 	 */
-	TypesDoNotMatch ("Type: %1$s does not match type: %2$s. Expression between: %3$d and %4$d"),
+	TypesDoNotMatch ("Type: %1$s does not match type: %2$s."),
 	
 	/**
-	 * Arguments 0 and 1 is the name of the location of the expression causing the conflict
+	 * No argument.
 	 */
-	Circularity ("Types do not match. Expression between: %1$d and %2$d"),
+	Circularity ("Types do not match."),
 	
 	/**
-	 * Argument 0 is the location (i.e. start) of the variable causing the problem
+	 * No argument.
 	 */
-	TypeUnknown ("Variable has an unknown type at: %1$d"),
+	TypeUnknown ("Variable has an unknown type"),
 	
 	/**
-	 * No parameter
+	 * No argument.
 	 */
 	InvalidTypeExpression("Expression doesn't denote a type"),
 	
 	/**
-	 * Unlocated failure when type-checking
+	 * Unlocated failure when type-checking.
 	 */
 	TypeCheckFailure("Couldn't infer some types"),
 	
 	/**
-	 * No parameter
+	 * No argument.
 	 */
-	MinusAppliedToSet ("Arithmetic subtraction applied to a set expression. Expression between: %1$d and %2$d"),
+	MinusAppliedToSet ("Arithmetic subtraction applied to a set expression."),
 	
 	/**
-	 * No parameter
+	 * No argument.
 	 */
-	MulAppliedToSet ("Arithmetic multiplication applied to a set expression. Expression between: %1$d and %2$d"),
+	MulAppliedToSet ("Arithmetic multiplication applied to a set expression."),
 	;
 		
 	private String message;
