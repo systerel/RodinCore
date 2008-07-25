@@ -32,9 +32,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
@@ -640,13 +642,19 @@ public class UIUtils {
 	}
 
 	/**
-	 * Opens an information dialog to the user indicating the given message.
+	 * Opens an information dialog to the user displaying the given message.
 	 *  
 	 * @param message The dialog message.
 	 */
-	public static void indicateUser(String message) {
-		MessageDialog.openInformation(EventBUIPlugin.getActiveWorkbenchWindow()
-				.getShell(), getPluginName(), message);
+	public static void showInfo(final String message) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
+						.getActiveWorkbenchWindow();
+				MessageDialog.openInformation(activeWorkbenchWindow.getShell(),
+						getPluginName(), message);
+			}
+		});
 	}
 
 	/**
@@ -654,15 +662,20 @@ public class UIUtils {
 	 * 
 	 * @param e The unexpected error.
 	 */
-	public static void showUnexpectedError(CoreException e) {
-		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
-				IStatus.ERROR, e.getStatus().getMessage(), null);
-		ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
-				.getShell(), getPluginName(), Messages.uiUtils_unexpectedError,
-				status);
+	public static void showUnexpectedError(final CoreException e) {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				final IStatus status = new Status(IStatus.ERROR,
+						EventBUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getStatus()
+								.getMessage(), null);
+				ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
+						.getShell(), getPluginName(),
+						Messages.uiUtils_unexpectedError, status);
+			}
+		});
 	}
 
-	private static String getPluginName() {
+	static String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
