@@ -33,6 +33,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -95,7 +96,11 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected void runBuilder() throws CoreException {
-		final IProject project = rodinProject.getProject();
+		runBuilder(rodinProject);
+	}
+
+	protected void runBuilder(IRodinProject rp) throws CoreException {
+		final IProject project = rp.getProject();
 		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 		IMarker[] buildPbs= project.findMarkers(
 				RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER,
@@ -152,20 +157,30 @@ public abstract class BuilderTest extends TestCase {
 			workspace.setDescription(wsDescription);
 		}
 		
-		// Create a new project
-		IProject project = workspace.getRoot().getProject("P");
+		rodinProject = createRodinProject("P");
+		
+		disableAutoProver();
+	}
+
+	protected IRodinProject createRodinProject(String projectName)
+			throws CoreException {
+		IProject project = workspace.getRoot().getProject(projectName);
 		project.create(null);
 		project.open(null);
 		IProjectDescription pDescription = project.getDescription();
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.valueOf(project);
-		
-		disableAutoProver();
+		IRodinProject result = RodinCore.valueOf(project);
+		return result;
 	}
 	
 	protected void tearDown() throws Exception {
-		rodinProject.getProject().delete(true, true, null);
+		// Delete all Rodin projects
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		for (IRodinProject rp: rodinDB.getRodinProjects()) {
+			rp.getProject().delete(true, true, null);
+		}
+		
 		super.tearDown();
 	}
 
