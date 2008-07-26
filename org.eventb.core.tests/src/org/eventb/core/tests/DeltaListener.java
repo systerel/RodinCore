@@ -113,6 +113,7 @@ public class DeltaListener implements IElementChangedListener {
 		clear();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, length = this.deltas.length; i < length; i++) {

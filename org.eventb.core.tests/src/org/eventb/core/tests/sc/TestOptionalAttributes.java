@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestOptionalAttributes extends BasicSCTest {
+public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	
 	private abstract class OptAttrTest<F extends IRodinFile> {
 		protected F f;
@@ -77,7 +77,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 		
 		a.save(null, true);
 		c.save(null, true);
-		// m is saved after some attribute will have been removed
+		m.save(null, true);
 		
 		return m;
 	}
@@ -92,7 +92,7 @@ public class TestOptionalAttributes extends BasicSCTest {
 		addTheorems(c, makeSList("T"), makeSList("⊤"));
 		
 		a.save(null, true);
-		// c is saved after some attribute will have been removed
+		c.save(null, true);
 		
 		return c;
 	}

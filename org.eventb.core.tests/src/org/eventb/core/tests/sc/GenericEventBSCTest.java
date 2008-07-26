@@ -14,7 +14,7 @@ import org.rodinp.core.IRodinElement;
  *
  */
 public abstract class GenericEventBSCTest<E extends IRodinElement, SCE extends IRodinElement> 
-extends BasicSCTest {
+extends BasicSCTestWithFwdConfig {
 	
 	@Override
 	protected void setUp() throws Exception {

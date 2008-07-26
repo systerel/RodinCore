@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestSeesContext extends BasicSCTest {
+public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	
 	/*
 	 * Seen contexts are copied into internal contexts

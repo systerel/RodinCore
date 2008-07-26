@@ -42,18 +42,27 @@ public class SimpleConversionSheet extends ConversionSheet {
 	public SimpleConversionSheet(IConfigurationElement configElement, IFileElementType<IRodinFile> type) {
 		super(configElement, type);
 		IConfigurationElement[] confElements = configElement.getChildren("element");
-		conversions = new Conversion[confElements.length];
+		Conversion[] convs = new Conversion[confElements.length];
 		final List<String> paths = new ArrayList<String>(confElements.length);
+		boolean hasRoot = false;
 		for (int i=0; i<confElements.length; i++) {
-			conversions[i] = new Conversion(confElements[i], this);
-			String path = conversions[i].getPath();
+			convs[i] = new ElementConversion(confElements[i], this);
+			hasRoot |= convs[i].isRoot();
+			String path = convs[i].getPath();
 			if (paths.contains(path)) {
 				throw new IllegalStateException(
 						"Paths of different groups of operations must be distinct");
 			} else {
 				paths.add(path);
 			}
-		}		
+		}
+		if (hasRoot) {
+			conversions = convs;
+		} else {
+			conversions = new Conversion[convs.length + 1];
+			System.arraycopy(convs, 0, conversions, 0, convs.length);
+			conversions[convs.length] = new FakeRootConversion(type, this);
+		}
 	}
 
 	@Override
@@ -118,18 +127,11 @@ public class SimpleConversionSheet extends ConversionSheet {
 		"\t<" + XSLConstants.XSL_ATTRIBUTE + " " + XSLConstants.XSL_NAME + "=\"version\">";
 	private static String TB = "</" + XSLConstants.XSL_ATTRIBUTE + ">\n";
 		
-	protected void createCopyTemplate(StringBuffer document, String match) {
+	protected void createCopyTemplate(StringBuffer document) {
 		
 		document.append(T1);
-		document.append(match);
+		document.append(XSLConstants.XSL_ALL);
 		document.append(T2);
-		
-		if (match == XSLConstants.XSL_ROOT) {
-			document.append("\t");
-			document.append(TA);
-			document.append(getVersion());
-			document.append(TB);
-		}
 		
 		document.append(T9);
 		if (hasSorter()) {
@@ -166,13 +168,11 @@ public class SimpleConversionSheet extends ConversionSheet {
 		document.append(TB);
 		document.append(TC);
 		
-		createCopyTemplate(document, XSLConstants.XSL_ROOT);
-		
 	}
 	
 	private void addPostfix(StringBuffer document) {
 		
-		createCopyTemplate(document, XSLConstants.XSL_ALL);
+		createCopyTemplate(document);
 	}
 
 }

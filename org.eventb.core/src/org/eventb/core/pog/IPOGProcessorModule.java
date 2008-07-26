@@ -40,7 +40,7 @@ public interface IPOGProcessorModule extends IProcessorModule {
 	/**
 	 * Initialisation code for the module
 	 * 
-	 * @param element the input "unchecked" element
+	 * @param element statically checked element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem initialising this module
@@ -51,9 +51,8 @@ public interface IPOGProcessorModule extends IProcessorModule {
 			IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Runs the static checker module: process the element. 
-	 * The element itself has already been accepted.
-	 * @param element the input "unchecked" element
+	 * Runs the proof obligation generator module: process the element. 
+	 * @param element statically checked element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem running this module
@@ -66,7 +65,7 @@ public interface IPOGProcessorModule extends IProcessorModule {
 	/**
 	 * Termination code for the module
 	 * 
-	 * @param element the input "unchecked" element
+	 * @param element statically checked element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem terminating this module

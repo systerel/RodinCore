@@ -15,7 +15,7 @@ import org.eventb.core.IMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestAccuracy extends BasicSCTest {
+public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 	/**
 	 * erroneous axioms should make an sc context inaccurate

@@ -34,9 +34,12 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class EventBPOTest extends EventBTest {
 
+	private static final String FWD_CONFIG = "org.eventb.core.fwd";
+
 	@Override
 	protected IContextFile createContext(String bareName) throws RodinDBException {
 		IContextFile file = super.createContext(bareName);
+		file.setConfiguration(FWD_CONFIG, null);
 		addFile(file.getPOFile());
 		return file;
 	}
@@ -44,6 +47,7 @@ public abstract class EventBPOTest extends EventBTest {
 	@Override
 	protected IMachineFile createMachine(String bareName) throws RodinDBException {
 		IMachineFile file = super.createMachine(bareName);
+		file.setConfiguration(FWD_CONFIG, null);
 		addFile(file.getPOFile());
 		return file;
 	}

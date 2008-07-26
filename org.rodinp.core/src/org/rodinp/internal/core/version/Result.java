@@ -32,6 +32,15 @@ import org.rodinp.internal.core.util.Messages;
 public class Result implements IConversionResult {
 	
 	private static class Entry implements IEntry {
+		
+		@Override
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			for (byte b : buffer) {
+				sb.append((char) b);
+			}
+			return sb.toString();
+		}
 		protected final RodinFile file;
 		protected long version;
 		protected long reqVersion;
@@ -100,6 +109,10 @@ public class Result implements IConversionResult {
 					} else {
 						Converter converter = vManager.getConverter(type);
 						byte[] contents = getBytes(entry, force);
+						String s = new String();
+						for (byte b : contents) {
+							s += (char) b;
+						}
 						entry.buffer = converter.convert(contents, entry.version, entry.reqVersion);
 					}
 				} catch (Exception e) {

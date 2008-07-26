@@ -20,6 +20,7 @@ import org.rodinp.core.IRodinProblem;
  */
 public enum GraphProblem implements IRodinProblem {
 
+	ConfigurationMissingError(IMarker.SEVERITY_ERROR, Messages.scuser_ConfigurationMissing),
 	IdentifierUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_IdentifierUndef),
 	PredicateUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_PredicateUndef),
 	ExpressionUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ExpressionUndef),

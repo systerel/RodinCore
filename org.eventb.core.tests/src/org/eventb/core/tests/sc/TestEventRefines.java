@@ -18,7 +18,7 @@ import org.eventb.core.sc.GraphProblem;
  * @author Stefan Hallerstede
  *
  */
-public class TestEventRefines extends BasicSCTest {
+public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	
 	/*
 	 * simple refines clause

@@ -37,7 +37,7 @@ import org.rodinp.core.IRodinElement;
 public interface ISCFilterModule extends IFilterModule {
 
 	/**
-	 * Runs the static checker module. Returns wether the <code>element</code>
+	 * Runs the static checker module. Returns whether the <code>element</code>
 	 * should be accepted. If an error marker was associated with the
 	 * <code>element</code> the returned value should usually be
 	 * <code>false</code>. Exceptions from this rule are possible, in
@@ -49,7 +49,7 @@ public interface ISCFilterModule extends IFilterModule {
 	 *            the state repository to use
 	 * @param monitor
 	 *            a progress monitor
-	 * @return wether the element should be accepted
+	 * @return whether the element should be accepted
 	 * @throws CoreException
 	 *             if there was a problem running this module
 	 */

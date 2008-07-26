@@ -118,6 +118,18 @@ public abstract class EventBFile extends RodinFile implements IEventBFile,
 		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
 	}
 	
+	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE, configuration, monitor);
+	}
+	
+	public String getConfiguration() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE);
+	}
+	
+	public boolean hasConfiguration() throws RodinDBException {
+		return hasAttribute(EventBAttributes.CONFIGURATION_ATTRIBUTE);
+	}
+	
 	@Deprecated
 	protected final <T extends IRodinElement> T getSingletonChild(
 			IElementType<T> elementType, String message) throws RodinDBException {

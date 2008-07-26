@@ -23,6 +23,12 @@ public class AddAttribute extends Operation {
 		checkId(newId);
 		getSheet().checkBundle(newId, this);
 	}
+	
+	public AddAttribute(String newId, String newValue, SimpleConversionSheet sheet) {
+		super(null, sheet);
+		this.newId = newId;
+		this.newValue = newValue;
+	}
 
 	private final String newId;
 	private final String newValue;

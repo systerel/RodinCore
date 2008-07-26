@@ -23,7 +23,8 @@ public abstract class ConversionSheet extends ExtensionDesc {
 	@Override
 	public String toString() {
 		StringBuffer b = new StringBuffer("SHEET ");
-		b.append(getBundleName());
+		String bundleName = getBundleName();
+		b.append(bundleName == null ? "?" : bundleName);
 		b.append(":");
 		b.append(type);
 		b.append(":");
@@ -50,6 +51,8 @@ public abstract class ConversionSheet extends ExtensionDesc {
 	}
 	
 	public void checkBundle(String typeString, ExtensionDesc desc) {
+		assert desc.getBundleName() != null;
+		
 		String typeBundle = typeString.substring(0, typeString.lastIndexOf('.'));
 		
 		if (typeBundle.equals(desc.getBundleName())) {

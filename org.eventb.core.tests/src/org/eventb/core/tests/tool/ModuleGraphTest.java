@@ -51,6 +51,7 @@ public class ModuleGraphTest extends Declarations {
 			super(items);
 			this.sorted = sorted;
 		}
+		@Override
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			assertEquals("sorting failed", "[" + sorted + "]", graph.getSorted().toString());
@@ -88,6 +89,7 @@ public class ModuleGraphTest extends Declarations {
 				map.put(desc.getId(), desc);
 			}
 		}
+		@Override
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			ModuleFactory factory = new ModuleFactory(graph, map);
@@ -287,7 +289,6 @@ public class ModuleGraphTest extends Declarations {
 		}
 	};
 	
-	@SuppressWarnings("unchecked")
 	private static final ModuleTest[] testItems = new ModuleTest[] {
 			// empty list should work
 			new SortingTest(moduleDescs[0], ""),

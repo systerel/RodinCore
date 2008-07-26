@@ -342,6 +342,11 @@
    <extension
          point="org.rodinp.core.attributeTypes">
       <attributeType
+            id="configuration"
+            kind="string"
+            name="%eventBConfigurationAttribute">
+      </attributeType>
+      <attributeType
             id="label"
             kind="string"
             name="%eventBLabelAttribute"/>
@@ -362,10 +367,6 @@
             kind="string"
             name="%eventBIdentifierAttribute"/>
       <attributeType
-            id="poDesc"
-            kind="string"
-            name="%eventBpoDescriptionAttribute"/>
-      <attributeType
             id="preserved"
             kind="boolean"
             name="%eventBpreservedVariableAttribute"/>
@@ -373,6 +374,10 @@
             id="poRole"
             kind="string"
             name="%eventBpoSourceRoleAttribute"/>
+      <attributeType
+            id="poDesc"
+            kind="string"
+            name="%eventBpoDescriptionAttribute"/>
       <attributeType
             id="comment"
             kind="string"
@@ -1168,6 +1173,42 @@
       <tactic id="org.eventb.core.seqprover.shrinkImpHypTac"/>
       <tactic id="org.eventb.core.seqprover.clarifyGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
+   </extension>
+   <extension
+         point="org.rodinp.core.fileElementVersions">
+      <fileElementVersion
+            id="org.eventb.core.contextFile"
+            version="1">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.eventb.core.machineFile"
+            version="1">
+      </fileElementVersion>
+   </extension>
+   <extension
+         point="org.rodinp.core.conversions">
+      <simple
+            type="org.eventb.core.contextFile"
+            version="1">
+         <element
+               elementPath="/org.eventb.core.contextFile">
+            <addAttribute
+                  newId="org.eventb.core.configuration"
+                  newValue="org.eventb.core.fwd">
+            </addAttribute>
+         </element>
+      </simple>
+      <simple
+            type="org.eventb.core.machineFile"
+            version="1">
+         <element
+               elementPath="/org.eventb.core.machineFile">
+            <addAttribute
+                  newId="org.eventb.core.configuration"
+                  newValue="org.eventb.core.fwd">
+            </addAttribute>
+         </element>
+      </simple>
    </extension>
 
 </plugin>

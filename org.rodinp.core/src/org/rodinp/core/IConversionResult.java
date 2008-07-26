@@ -154,7 +154,7 @@ public interface IConversionResult {
 	 * @return the entries of this conversion describing the status of each file
 	 */
 	IEntry[] getEntries();
-	
+		
 	/**
 	 * Accept the conversion of the project. This method changes the corresponding files of the project.
 	 * However, only files with a successful conversion are modified.

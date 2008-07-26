@@ -31,7 +31,6 @@ import org.eventb.core.pog.state.IConcreteEventGuardTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -82,7 +81,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 
 	private void createMergeProofObligation(
 			IPOFile target, 
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		List<IAbstractEventGuardTable> absGuardTables = 
 			abstractEventGuardList.getAbstractEventGuardTables();
@@ -172,7 +171,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 			IPOFile target, 
 			ISCEvent abstractEvent, 
 			IAbstractEventGuardTable abstractEventGuardTable,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
 		List<ISCGuard> absGuardElements = abstractEventGuardTable.getElements();
 		List<Predicate> absGuardPredicates = abstractEventGuardTable.getPredicates();

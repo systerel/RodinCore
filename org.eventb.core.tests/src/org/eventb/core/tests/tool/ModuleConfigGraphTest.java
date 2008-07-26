@@ -128,7 +128,6 @@ public class ModuleConfigGraphTest extends Declarations {
 		}
 	};
 	
-	@SuppressWarnings("unchecked")
 	private static ConfigItem[][] configItems = new ConfigItem[][] {
 		new ConfigItem[] {
 				new ConfigItem(modules[0], "X", "org.t.Y", "org.t.Z"),

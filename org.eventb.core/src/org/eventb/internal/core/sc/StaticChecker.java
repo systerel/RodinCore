@@ -14,17 +14,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IEventBFile;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.tool.IModuleFactory;
+import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.core.basis.RodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -39,6 +46,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	public static boolean DEBUG_MARKERS = false;
 	public static boolean DEBUG_MODULECONF = false;
 	
+	@Deprecated
 	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
 
 	protected final ISCStateRepository createRepository(
@@ -134,5 +142,61 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		scTmpFile.move(project, null, name, true, subPM);
 		return true;
 	}
+	
+	protected String getConfiguration(final IConfigurationElement confElement) throws CoreException {
+		
+		if (confElement.hasConfiguration()) {
+	
+			return confElement.getConfiguration();
+	
+		} else {
+			createProblemMarker(confElement, 
+					GraphProblem.ConfigurationMissingError, 
+					((RodinFile) confElement).getBareName());
+			return null;
+		}
+	}
+
+	protected ISCProcessorModule getRootModule(final IRodinFile rodinFile, String config) throws CoreException {
+	
+		IModuleFactory moduleFactory = SCModuleManager.getInstance().getModuleFactory(config);
+	
+		printModuleTree(rodinFile, moduleFactory);
+	
+		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory.getRootModule(rodinFile.getElementType());
+		
+		return rootModule;
+	}
+	
+	public static void createProblemMarker(
+			IRodinElement element, 
+			IRodinProblem problem, 
+			Object... args)
+	throws RodinDBException {
+		if (StaticChecker.DEBUG_MARKERS)
+			traceMarker(element, problem.getLocalizedMessage(args));
+
+		element.createProblemMarker(problem, args);
+	}
+
+	public static void traceMarker(IRodinElement element, String message) {
+		
+		String name = element.getElementName();
+		
+		try {
+			if (element instanceof ILabeledElement)
+				name = ((ILabeledElement) element).getLabel();
+			else if (element instanceof IIdentifierElement)
+				name = ((IIdentifierElement) element).getIdentifierString();
+			else if (element instanceof IEventBFile)
+				name = ((IEventBFile) element).getBareName();
+		} catch (RodinDBException e) {
+			// ignore
+		} finally {
+		
+			System.out.println("SC MARKER: " + name + ": " + message);
+		}
+	}
+	
 
 }

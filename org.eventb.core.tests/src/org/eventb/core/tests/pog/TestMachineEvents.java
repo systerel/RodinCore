@@ -22,7 +22,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * simple case of invariant preservation
 	 */
-	public void testEvents_00() throws Exception {
+	public void testEvents_00_invariantPreservation() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -54,7 +54,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation with local variable
 	 */
-	public void testEvents_01() throws Exception {
+	public void testEvents_01_invPresWParameter() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -87,7 +87,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation with non-deterministic assignment
 	 */
-	public void testEvents_03() throws Exception {
+	public void testEvents_03_invPresNonDet() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -120,7 +120,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * no PO for invariants outside frame
 	 */
-	public void testEvents_04() throws Exception {
+	public void testEvents_04_invPresNonFrame() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
@@ -155,7 +155,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation for simultaneous non-deterministic assignment
 	 */
-	public void testEvents_05() throws Exception {
+	public void testEvents_05_invPresSimNondetAssgn() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
@@ -199,7 +199,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation for simultaneous assignment containing local variables
 	 */
-	public void testEvents_06() throws Exception {
+	public void testEvents_06_invPresSimAssgnWParam() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V0", "V1", "V2");
@@ -245,7 +245,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * two invariant preservation POs
 	 */
-	public void testEvents_07() throws Exception {
+	public void testEvents_07_twoInvPresPOs() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -285,9 +285,9 @@ public class TestMachineEvents extends EventBPOTest {
 	}
 	
 	/**
-	 * two invariant preservation POs whith differently typed local variables
+	 * two invariant preservation POs with differently typed local variables
 	 */
-	public void testEvents_08() throws Exception {
+	public void testEvents_08_invPresParamTyping() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1");
@@ -334,7 +334,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation: context in hypothesis
 	 */
-	public void testEvents_09() throws Exception {
+	public void testEvents_09_invPresContextInHyp() throws Exception {
 		IContextFile con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1"));
@@ -380,7 +380,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * no PO for NOT generated trivial invariants
 	 */
-	public void testEvents_10() throws Exception {
+	public void testEvents_10_invPresTriv() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2", "V3");
@@ -447,7 +447,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * well-definedness PO.  That PO should declare the local variable, although
 	 * no predicate involving that variable occurs in hypothesis. 
 	 */
-	public void testEvents_11() throws Exception {
+	public void testEvents_11_paramTypingInWDefPO() throws Exception {
 
 		final String i1 = "x ∈ {0}";
 		final String g1 = "v = min({0})";
@@ -486,7 +486,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * An event with two guards that produce a well-definedness PO.
 	 */
-	public void testEvents_12() throws Exception {
+	public void testEvents_12_twoWDefPOs() throws Exception {
 		
 		final String i1 = "x ∈ {0,1}";
 		final String g1 = "x = min({0})";
@@ -533,7 +533,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * An event with three guards, the last two producing a well-definedness PO.
 	 */
-	public void testEvents_13() throws Exception {
+	public void testEvents_13_moreWDefPOs() throws Exception {
 		
 		final String i1 = "x ∈ {0,1}";
 		final String g1 = "x ∈ ℤ";
@@ -576,6 +576,38 @@ public class TestMachineEvents extends EventBPOTest {
 		sequentHasIdentifiers(sequent, "x'");
 		sequentHasHypotheses(sequent, typeEnvironment, i1, g1, g2, g3);
 		sequentHasGoal(sequent, typeEnvironment, "x+1 ∈ {0,1}");
+	}
+	
+	/**
+	 * feasibility of nondeterministic event
+	 */
+	public void testEvents_14_eventFeasibility() throws Exception {
+		IMachineFile mac = createMachine("mac");
+
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V1 :∣ V1' > 0"));
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", intType);
+		
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		IPOFile po = mac.getPOFile();
+		
+		containsIdentifiers(po, "V1");
+		
+		IPOSequent sequent = getSequent(po, "evt/A1/FIS");
+		
+		sequentHasIdentifiers(sequent, "V1'");
+		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4");
+		sequentHasGoal(sequent, typeEnvironment, "∃V1'·V1'>0");
+		
 	}
 
 }

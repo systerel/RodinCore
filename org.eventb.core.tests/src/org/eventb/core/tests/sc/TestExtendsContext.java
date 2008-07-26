@@ -16,7 +16,7 @@ import org.eventb.core.ISCInternalContext;
  * @author Stefan Hallerstede
  *
  */
-public class TestExtendsContext extends BasicSCTest {
+public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 
 	/**
 	 * a carrier set should be copied into internal contexts

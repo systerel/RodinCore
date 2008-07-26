@@ -203,6 +203,13 @@
             name="Test Version D"
             priority="normal">
       </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tve"
+            id="versionFileE"
+            name="Test Version E"
+            priority="normal">
+      </content-type>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -229,6 +236,12 @@
             content-type-id="org.rodinp.core.tests.versionFileD"
             id="versionFileD"
             name="Version File D">
+      </fileElementType>
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileE"
+            content-type-id="org.rodinp.core.tests.versionFileE"
+            id="versionFileE"
+            name="Version File E">
       </fileElementType>
    </extension>
    <extension
@@ -343,6 +356,17 @@
             </addAttribute>
          </element>
       </sorted>
+      <simple
+            type="org.rodinp.core.tests.versionFileE"
+            version="1">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileE">
+            <addAttribute
+                  newId="org.rodinp.core.tests.versionStrAttr"
+                  newValue="VALUE">
+            </addAttribute>
+         </element>
+      </simple>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">
@@ -361,6 +385,10 @@
       <fileElementVersion
             id="org.rodinp.core.tests.versionFileD"
             version="4">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileE"
+            version="1">
       </fileElementVersion>
    </extension>
 

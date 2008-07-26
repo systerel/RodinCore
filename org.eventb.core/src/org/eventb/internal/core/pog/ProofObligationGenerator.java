@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSequent;
@@ -27,6 +27,7 @@ import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.IModuleFactory;
+import org.eventb.internal.core.tool.POGModuleManager;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -47,8 +48,6 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_STATE = false;
 	public static boolean DEBUG_MODULECONF = false;
-	
-	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
 	
 	protected final IPOGStateRepository createRepository(
 			IPOFile target, 
@@ -273,15 +272,38 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		
 	}
 
-	protected void printModuleTree(IRodinFile file, IModuleFactory moduleFactory) {
+	protected void printModuleTree(String config, IRodinFile file, IModuleFactory moduleFactory) {
 		if (DEBUG_MODULECONF) {
 			System.out.println("+++ PROOF OBLIGATION GENERATOR MODULES +++");
 			System.out.println("INPUT " + file.getPath());
 			System.out.println("      " + file.getElementType());
-			System.out.println("CONFIG " + DEFAULT_CONFIG);
+			System.out.println("CONFIG " + config);
 			System.out.print(moduleFactory
 					.printModuleTree(file.getElementType()));
 			System.out.println("++++++++++++++++++++++++++++++++++++++");
+		}
+	}
+
+	protected IPOGProcessorModule getRootModule(IRodinFile rodinFile) throws CoreException {
+	
+		IConfigurationElement confElement = (IConfigurationElement) rodinFile;
+		
+		if (confElement.hasConfiguration()) {
+	
+			final String config = confElement.getConfiguration();
+	
+			IModuleFactory moduleFactory = POGModuleManager.getInstance()
+					.getModuleFactory(config);
+	
+			printModuleTree(config, rodinFile, moduleFactory);
+	
+			IPOGProcessorModule rootModule = (IPOGProcessorModule) moduleFactory
+					.getRootModule(rodinFile.getElementType());
+			return rootModule;
+	
+		} else {
+			throw Util
+					.newCoreException("Configuration missing from statically checked file");
 		}
 	}
 

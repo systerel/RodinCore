@@ -17,5 +17,36 @@
             name="Tracing Tactic">
       </autoTactic>
    </extension>
+   <extension
+         point="org.eventb.core.pogModuleTypes">
+      <filterType
+            class="org.eventb.core.tests.pog.modules.MachineEventActionFISFilterModule"
+            id="machineEventActionFISFilterModule"
+            name="Event Action FIS Filter Module"
+            parent="org.eventb.core.fwdMachineEventActionModule">
+      </filterType>
+      <filterType
+            class="org.eventb.core.tests.pog.modules.MachineTheoremFilterModule"
+            id="machineTheoremFilterModule"
+            name="Theorem Filter Module"
+            parent="org.eventb.core.fwdMachineTheoremModule">
+      </filterType>
+   </extension>
+   <extension
+         point="org.eventb.core.configurations">
+      <configuration
+            id="filter"
+            name="Filter Test Configuration">
+         <config
+               id="org.eventb.core.fwd">
+         </config>
+         <pogModule
+               id="org.eventb.core.tests.machineEventActionFISFilterModule">
+         </pogModule>
+         <pogModule
+               id="org.eventb.core.tests.machineTheoremFilterModule">
+         </pogModule>
+      </configuration>
+   </extension>
 
 </plugin>

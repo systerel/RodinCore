@@ -5,16 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc;
+package org.rodinp.core.tests.version.db;
+
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public interface ISCModuleManager {
+public interface IVersionFileE extends IRodinFile {
 
-	public abstract ISCFilterModule[] getFilterModules(String moduleType);
-	
-	public abstract ISCProcessorModule[] getProcessorModules(String moduleType);
+	public static final IFileElementType<IVersionFileA> ELEMENT_TYPE = 
+		RodinCore.getFileElementType("org.rodinp.core.tests.versionFileE");
 
 }

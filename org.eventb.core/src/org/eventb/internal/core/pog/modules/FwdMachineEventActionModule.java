@@ -161,7 +161,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			IPOGHint[] hints, 
 			String suffix,
 			String desc,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + action.getLabel() + "/" + suffix;
 		if (!goalIsTrivial(predicate)) {
 			createPO(

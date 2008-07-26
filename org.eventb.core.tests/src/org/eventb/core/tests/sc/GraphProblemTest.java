@@ -57,6 +57,7 @@ public class GraphProblemTest extends TestCase {
 	}
 	
 	private static Spec[] specs = new Spec[] {
+			spec(GraphProblem.ConfigurationMissingError, 1),
 			spec(GraphProblem.InvalidIdentifierError, 1),
 			spec(GraphProblem.PredicateUndefError, 0),
 			spec(GraphProblem.ExpressionUndefError, 0),

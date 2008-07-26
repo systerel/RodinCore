@@ -42,6 +42,7 @@ public final class Messages {
 	
     // error messages of the static checker addressed to the user
 	
+	public static String scuser_ConfigurationMissing;
 	public static String scuser_IdentifierUndef;
 	public static String scuser_PredicateUndef;
 	public static String scuser_ExpressionUndef;

@@ -21,7 +21,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class TypeEnvironmentTest extends BasicSCTest {
+public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 
 	private static Type BOOL = factory.makeBooleanType();
 	private static Type ty_S = factory.makeGivenType("S"); 

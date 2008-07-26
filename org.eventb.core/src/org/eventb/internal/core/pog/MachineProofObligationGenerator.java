@@ -15,8 +15,6 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.tool.IModuleFactory;
-import org.eventb.internal.core.tool.POGModuleManager;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -49,13 +47,7 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 
 			IPOGStateRepository repository = createRepository(poTmpFile, monitor);
 		
-			IModuleFactory moduleFactory = 
-				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
-			
-			printModuleTree(scMachineFile, moduleFactory);
-			
-			IPOGProcessorModule rootModule = 
-				(IPOGProcessorModule) moduleFactory.getRootModule(ISCMachineFile.ELEMENT_TYPE);
+			IPOGProcessorModule rootModule = getRootModule(scMachineFile);
 		
 			runModules(
 					rootModule,

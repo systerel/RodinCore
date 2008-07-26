@@ -68,6 +68,7 @@ public class BaseConfigGraphTest extends TestCase {
 			super(items);
 			this.sorted = sorted;
 		}
+		@Override
 		public void test() {
 			ConfigGraph graph = getAnalysedGraph();
 			assertEquals("sorting failed", "[" + sorted + "]", graph.getSorted().toString());

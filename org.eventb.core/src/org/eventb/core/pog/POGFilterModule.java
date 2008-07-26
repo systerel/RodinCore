@@ -11,10 +11,14 @@ import org.eventb.core.tool.IFilterModule;
 import org.eventb.core.tool.IProcessorModule;
 
 /**
+ * Default implementation of a proof obligation generator filter module. 
+ * 
+ * @see IPOGFilterModule
+ * @see POGModule
+ * 
  * @author Stefan Hallerstede
- *
+ * 
  */
-//TODO javadoc
 public abstract class POGFilterModule extends POGModule implements IPOGFilterModule {
 
 	@Override

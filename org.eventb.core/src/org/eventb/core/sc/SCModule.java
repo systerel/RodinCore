@@ -7,9 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eventb.core.IEventBFile;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.sc.StaticChecker;
 import org.eventb.internal.core.tool.Module;
@@ -33,25 +30,6 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class SCModule extends Module implements IModule, IMarkerDisplay {
 	
-	private void traceMarker(IRodinElement element, String message) {
-		
-		String name = element.getElementName();
-		
-		try {
-			if (element instanceof ILabeledElement)
-				name = ((ILabeledElement) element).getLabel();
-			else if (element instanceof IIdentifierElement)
-				name = ((IIdentifierElement) element).getIdentifierString();
-			else if (element instanceof IEventBFile)
-				name = ((IEventBFile) element).getBareName();
-		} catch (RodinDBException e) {
-			// ignore
-		} finally {
-		
-			System.out.println("SC MARKER: " + name + ": " + message);
-		}
-	}
-	
 	public static boolean DEBUG_MODULE = false;
 	
 	public void createProblemMarker(
@@ -59,17 +37,14 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 			IRodinProblem problem, 
 			Object... args)
 		throws RodinDBException {
-		if (StaticChecker.DEBUG_MARKERS)
-			traceMarker(element, problem.getLocalizedMessage(args));
-
-		element.createProblemMarker(problem, args);
+		StaticChecker.createProblemMarker(element, problem, args);
 	}
 	
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
 		if (StaticChecker.DEBUG_MARKERS)
-			traceMarker(element, problem.getLocalizedMessage(args));
+			StaticChecker.traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, problem, args);
 	}
@@ -78,7 +53,7 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 			IAttributeType.String attributeType, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException {
 		if (StaticChecker.DEBUG_MARKERS)
-			traceMarker(element, problem.getLocalizedMessage(args));
+			StaticChecker.traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, charStart, charEnd+1, problem,
 				args);

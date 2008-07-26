@@ -17,7 +17,7 @@ import org.eventb.core.ISCMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestConvergence extends BasicSCTest {
+public class TestConvergence extends BasicSCTestWithFwdConfig {
 	
 	/**
 	 * All kinds of convergence can be refined by the same kind.

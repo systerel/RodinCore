@@ -48,7 +48,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCMachineFile extends IEventBFile, IAccuracyElement {
+public interface ISCMachineFile extends IEventBFile, IAccuracyElement, IConfigurationElement {
 
 	IFileElementType<ISCMachineFile> ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".scMachineFile"); //$NON-NLS-1$

@@ -16,7 +16,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestVariant extends BasicSCTest {
+public class TestVariant extends BasicSCTestWithFwdConfig {
 	
 	/**
 	 * create an integer variant

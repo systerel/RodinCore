@@ -74,8 +74,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 * @param monitor
 	 *            if there was a problem during the initialisation of one of the
 	 *            modules
-	 * @throws RodinDBException
-	 *             if there was a problem creating the proof obligation
+	 * @throws CoreException if there has been any problem creating the proof obligation
 	 */
 	protected final void createPO(
 			IPOFile target, 
@@ -87,27 +86,44 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOGSource[] sources,
 			IPOGHint[] hints,
 			boolean accurate,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		
-		IPOSequent sequent = target.getSequent(name);
-		sequent.create(null, monitor);
-		
-		IPOPredicateSet hypothesis = sequent.getHypothesis(SEQ_HYP_NAME);
-		hypothesis.create(null, monitor);
-		hypothesis.setParentPredicateSet(globalHypothesis, monitor);
-		
-		putPOGPredicates(hypothesis, localHypothesis, monitor);
-		
-		IPOPredicate goalPredicate = sequent.getGoal(GOAL_NAME);
-		putPredicate(goalPredicate, goal, monitor);
-		
-		sequent.setDescription(desc, monitor);
-		
-		putPOGSources(sequent, sources, monitor);
-		
-		putPOGHints(sequent, hints, monitor);
-		
-		sequent.setAccuracy(accurate, monitor);
+		if (acceptPO(name, monitor)) {
+
+			IPOSequent sequent = target.getSequent(name);
+			sequent.create(null, monitor);
+
+			IPOPredicateSet hypothesis = sequent.getHypothesis(SEQ_HYP_NAME);
+			hypothesis.create(null, monitor);
+			hypothesis.setParentPredicateSet(globalHypothesis, monitor);
+
+			putPOGPredicates(hypothesis, localHypothesis, monitor);
+
+			IPOPredicate goalPredicate = sequent.getGoal(GOAL_NAME);
+			putPredicate(goalPredicate, goal, monitor);
+
+			sequent.setDescription(desc, monitor);
+
+			putPOGSources(sequent, sources, monitor);
+
+			putPOGHints(sequent, hints, monitor);
+
+			sequent.setAccuracy(accurate, monitor);
+
+		}
+	}
+
+	private boolean acceptPO(final String name, final IProgressMonitor monitor) throws CoreException {
+		for (IFilterModule module : getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, RUN, FILTER);
+			IPOGFilterModule pogModule = (IPOGFilterModule) module;
+			if (pogModule.accept(name, monitor))
+				continue;
+			else
+				return false;
+		}
+		return true;
 	}
 
 	private void putPredicate(
@@ -172,7 +188,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	}
 
 	private static final String PROCESSOR = "PROCESSOR";
-//	private static final String FILTER = "FILTER";
+	private static final String FILTER = "FILTER";
 	private static final String INI = "INI";
 	private static final String RUN = "RUN";
 	private static final String END = "END";
@@ -181,6 +197,43 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		System.out.println("POG MOD" + op + ": " + module.getModuleType() + " " + kind);
 	}
 
+	/**
+	 * Initialise filter modules in the order returned by
+	 * <code>getFilterModules()</code>.
+	 * 
+	 * @param repository
+	 *            the state repository to pass to all modules
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws CoreException
+	 *             if there was a problem during the initialisation of one of
+	 *             the modules
+	 */
+	private final void initFilterModules(
+			POGProcessorModule pogModule,
+			IPOGStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		for (IFilterModule module : pogModule.getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, INI, FILTER);
+			IPOGFilterModule pogFModule = (IPOGFilterModule) module;
+			pogFModule.initModule(repository, monitor);
+		}
+	}
+
+	private final void endFilterModules(
+			POGProcessorModule pogModule,
+			IPOGStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException {
+		for (IFilterModule module : pogModule.getFilterModules()) {
+			if (DEBUG_MODULE)
+				traceModule(module, END, FILTER);
+			IPOGFilterModule pogFModule = (IPOGFilterModule) module;
+			pogFModule.endModule(repository, monitor);
+		}
+	}
+	
 	/**
 	 * Initialise processor modules in the order returned by
 	 * <code>getProcessorModules()</code>.
@@ -227,8 +280,11 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		for (IProcessorModule module : getProcessorModules()) {
 			if (DEBUG_MODULE)
 				traceModule(module, RUN, PROCESSOR);
-			IPOGProcessorModule pogModule = (IPOGProcessorModule) module;
+			POGProcessorModule pogModule = (POGProcessorModule) module;
+			
+			initFilterModules(pogModule, repository, monitor);
 			pogModule.process(element, repository, monitor);
+			endFilterModules(pogModule, repository, monitor);
 		}
 	}
 	

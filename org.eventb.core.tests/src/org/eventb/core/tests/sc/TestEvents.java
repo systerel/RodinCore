@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestEvents extends BasicSCTest {
+public class TestEvents extends BasicSCTestWithFwdConfig {
 	
 	/*
 	 * create an event

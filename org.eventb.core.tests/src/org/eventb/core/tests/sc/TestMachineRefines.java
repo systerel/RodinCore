@@ -17,7 +17,7 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineRefines extends BasicSCTest {
+public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	
 	/*
 	 * abstract machine identifiers have precedence over 

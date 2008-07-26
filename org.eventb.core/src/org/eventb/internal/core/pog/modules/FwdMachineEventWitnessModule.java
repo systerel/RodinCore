@@ -33,7 +33,6 @@ import org.eventb.core.pog.state.IEventWitnessTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -126,7 +125,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			FreeIdentifier witnessIdentifier, 
 			String suffix,
 			String desc,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + witnessLabel + "/" + suffix;
 		
 		if (!goalIsTrivial(goal)) {

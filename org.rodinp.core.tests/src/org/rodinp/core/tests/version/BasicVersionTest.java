@@ -16,6 +16,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IConversionResult;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -296,6 +297,27 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 	}
 	
+	/**
+	 * Check whether a version number is created if there is none initially
+	 * and an attribute is added to the root node
+	 */
+	public void test_08_AddAttributeToRootNode() throws Exception {
+		
+		IRodinProject project = fetchProject("V05");
+		
+		try {
+			project.getRodinFile("ff.tve").getChildren();
+			fail("file should not have opened");
+		} catch(RodinDBException e) {
+			assertEquals("not a past version", IRodinDBStatusConstants.PAST_VERSION, e.getRodinDBStatus().getCode());
+		}
+		
+		convertProjectWithSuccess(project, 1);
+		
+		getElements(project, "ff.tve", IVersionEA.ELEMENT_TYPE, 0);
+
+	}
+
 }
 
 

@@ -14,8 +14,6 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.pog.IPOGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.internal.core.tool.IModuleFactory;
-import org.eventb.internal.core.tool.POGModuleManager;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -48,13 +46,7 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 		
 			IPOGStateRepository repository = createRepository(poTmpFile, monitor);
 			
-			IModuleFactory moduleFactory = 
-				POGModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
-			
-			printModuleTree(scContextFile, moduleFactory);
-			
-			IPOGProcessorModule rootModule = 
-				(IPOGProcessorModule) moduleFactory.getRootModule(ISCContextFile.ELEMENT_TYPE);
+			IPOGProcessorModule rootModule = getRootModule(scContextFile);
 		
 			runModules(
 					rootModule,

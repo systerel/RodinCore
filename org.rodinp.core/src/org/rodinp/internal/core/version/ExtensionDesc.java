@@ -20,10 +20,11 @@ public abstract class ExtensionDesc {
 	 * Creates a new executable extension description.
 	 * 
 	 * @param configElement
-	 *            description of this executable extension in the Eclipse registry
+	 *            description of this executable extension in the Eclipse registry,
+	 *            or null if none
 	 */
 	public ExtensionDesc(IConfigurationElement configElement) {
-		this.bundleName = configElement.getContributor().getName();
+		this.bundleName = configElement == null ? null : configElement.getContributor().getName();
 	}
 	public String getBundleName() {
 		return bundleName;

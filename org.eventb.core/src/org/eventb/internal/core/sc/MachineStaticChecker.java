@@ -18,8 +18,6 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.internal.core.tool.IModuleFactory;
-import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -55,21 +53,23 @@ public class MachineStaticChecker extends StaticChecker {
 			
 			machineFile.open(new SubProgressMonitor(monitor, 1));
 			scTmpFile.open(new SubProgressMonitor(monitor, 1));
+			
+			String config = getConfiguration(machineFile);
+			
+			if (config != null) {
+				
+				scTmpFile.setConfiguration(config, null);
 		
-			IModuleFactory moduleFactory = 
-				SCModuleManager.getInstance().getModuleFactory(DEFAULT_CONFIG);
+				ISCProcessorModule rootModule = getRootModule(machineFile, config);
 			
-			printModuleTree(machineFile, moduleFactory);
+				runProcessorModules(
+						rootModule,
+						machineFile, 
+						scTmpFile,
+						repository,
+						monitor);
 			
-			ISCProcessorModule rootModule = 
-				(ISCProcessorModule) moduleFactory.getRootModule(IMachineFile.ELEMENT_TYPE);
-			
-			runProcessorModules(
-					rootModule,
-					machineFile, 
-					scTmpFile,
-					repository,
-					monitor);
+			}
 		
 			return compareAndSave(scMachineFile, scTmpFile, monitor);
 

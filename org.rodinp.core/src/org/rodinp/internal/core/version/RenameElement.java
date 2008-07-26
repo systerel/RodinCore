@@ -15,6 +15,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class RenameElement extends Operation {
 	
+	public RenameElement(String id, String newId, SimpleConversionSheet sheet) {
+		super(null, sheet);
+		this.id = id;
+		this.newId = newId;
+	}
+
 	public RenameElement(
 			IConfigurationElement configElement,
 			String id,

@@ -15,7 +15,7 @@ import org.eventb.core.ISCInternalContext;
  * @author Stefan Hallerstede
  *
  */
-public class TestCarrierSets extends BasicSCTest {
+public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 	/**
 	 * creation of carrier sets

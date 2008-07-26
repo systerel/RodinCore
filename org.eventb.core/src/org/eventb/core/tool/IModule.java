@@ -37,7 +37,7 @@ import org.eventb.core.tool.state.IStateRepository;
  * <li><code>accept()</code> that evaluates a boolean condition.
  * </ul>
  * <p>
- * Aprocessor module has an additional method
+ * A processor module has an additional method
  * <ul>
  * <li><code>process()</code> that processes a list of elements
  * </ul>

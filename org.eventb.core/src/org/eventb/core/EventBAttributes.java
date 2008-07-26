@@ -18,6 +18,9 @@ import org.rodinp.core.RodinCore;
  */
 public final class EventBAttributes {
 
+	public static IAttributeType.String CONFIGURATION_ATTRIBUTE =
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".configuration");
+
 	public static IAttributeType.String LABEL_ATTRIBUTE = 
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".label");
 

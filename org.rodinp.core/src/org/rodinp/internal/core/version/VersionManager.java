@@ -31,6 +31,11 @@ public class VersionManager {
 	
 	public static class VersionDesc {
 		
+		@Override
+		public String toString() {
+			return type.getId() + ":" + version;
+		}
+		
 		protected final IFileElementType<IRodinFile> type;
 		protected final long version;
 		private String[] names;
@@ -116,7 +121,24 @@ public class VersionManager {
 						"Conversion contributed by plugin without file element version");
 			}
 		}
+		
+		addMissingConverters(fc, descs);
+		
 		return fc;
+	}
+
+	private void addMissingConverters(
+			HashMap<IFileElementType<IRodinFile>, Converter> fc,
+			List<VersionDesc> descs) {
+		// TODO this could be added to computeConverters()
+		// (but perhaps it would be nice to generate warnings)
+		for (VersionDesc desc : descs) {
+			if (fc.containsKey(desc.type))
+				continue;
+			else {
+				fc.put(desc.type, new Converter());
+			}
+		}
 	}
 
 	private void computeConverters() {
@@ -131,7 +153,7 @@ public class VersionManager {
 				registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, CONVERSIONS_ID);
 			
 			converters = computeConverters(versionDescs, elements);
-			
+						
 			if (VERBOSE) {
 				// TODO add debugging output
 			}

@@ -16,8 +16,6 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.internal.core.tool.IModuleFactory;
-import org.eventb.internal.core.tool.SCModuleManager;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -56,17 +54,19 @@ public class ContextStaticChecker extends StaticChecker {
 
 			contextFile.open(new SubProgressMonitor(monitor, 1));
 			scTmpFile.open(new SubProgressMonitor(monitor, 1));
+			
+			String config = getConfiguration(contextFile);
 
-			IModuleFactory moduleFactory = SCModuleManager.getInstance()
-					.getModuleFactory(DEFAULT_CONFIG);
-
-			printModuleTree(contextFile, moduleFactory);
-
-			final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory
-					.getRootModule(IContextFile.ELEMENT_TYPE);
-
-			runProcessorModules(rootModule, contextFile, scTmpFile,
-					repository, monitor);
+			if (config != null) {
+				
+				scTmpFile.setConfiguration(config, null);
+				
+				final ISCProcessorModule rootModule = getRootModule(contextFile, config);
+			
+				runProcessorModules(rootModule, contextFile, scTmpFile,
+						repository, monitor);
+				
+			}
 
 			return compareAndSave(scContextFile, scTmpFile, monitor);
 

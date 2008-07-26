@@ -14,7 +14,7 @@ import org.eventb.core.IMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestDependency extends BasicSCTest {
+public class TestDependency extends BasicSCTestWithFwdConfig {
 
 	/**
 	 * markers in dependent files should be deleted
