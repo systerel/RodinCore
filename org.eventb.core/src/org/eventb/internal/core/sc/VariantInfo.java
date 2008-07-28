@@ -10,7 +10,7 @@ package org.eventb.internal.core.sc;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.state.IVariantInfo;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

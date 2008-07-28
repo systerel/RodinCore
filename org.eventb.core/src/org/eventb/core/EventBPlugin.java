@@ -18,12 +18,12 @@ import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
-import org.eventb.internal.core.pog.ProofObligationGenerator;
+import org.eventb.internal.core.pog.POGUtil;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.eventb.internal.core.pom.POMTacticPreference;
-import org.eventb.internal.core.sc.StaticChecker;
+import org.eventb.internal.core.sc.SCUtil;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -212,42 +212,42 @@ public class EventBPlugin extends Plugin {
 			String option;
 			option = Platform.getDebugOption(SC_TRACE);
 			if (option != null)
-				StaticChecker.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				SCUtil.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_STATE);
 			if (option != null)
-				StaticChecker.DEBUG_STATE = 
-					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				SCUtil.DEBUG_STATE = 
+					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MODULECONF);
 			if (option != null)
-				StaticChecker.DEBUG_MODULECONF = 
-					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				SCUtil.DEBUG_MODULECONF = 
+					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MODULES);
 			if (option != null)
 				SCModule.DEBUG_MODULE = 
-					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(SC_TRACE_MARKERS);
 			if (option != null)
-				StaticChecker.DEBUG_MARKERS = 
-					StaticChecker.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				SCUtil.DEBUG_MARKERS = 
+					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE);
 			if (option != null)
-				ProofObligationGenerator.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				POGUtil.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_STATE);
 			if (option != null)
-				ProofObligationGenerator.DEBUG_STATE = 
-					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				POGUtil.DEBUG_STATE = 
+					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_MODULECONF);
 			if (option != null)
-				ProofObligationGenerator.DEBUG_MODULECONF = 
-					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				POGUtil.DEBUG_MODULECONF = 
+					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_MODULES);
 			if (option != null)
 				POGModule.DEBUG_MODULE = 
-					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POG_TRACE_TRIVIAL);
 			if (option != null)
 				UtilityModule.DEBUG_TRIVIAL = 
-					ProofObligationGenerator.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
+					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(POM_TRACE);
 			if (option != null)
 				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.sc;
 
-import org.eventb.core.tool.IModule;
-import org.eventb.internal.core.sc.StaticChecker;
+import org.eventb.internal.core.sc.SCUtil;
 import org.eventb.internal.core.tool.Module;
+import org.eventb.internal.core.tool.types.IModule;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -37,14 +37,14 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 			IRodinProblem problem, 
 			Object... args)
 		throws RodinDBException {
-		StaticChecker.createProblemMarker(element, problem, args);
+		SCUtil.createProblemMarker(element, problem, args);
 	}
 	
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
-		if (StaticChecker.DEBUG_MARKERS)
-			StaticChecker.traceMarker(element, problem.getLocalizedMessage(args));
+		if (SCUtil.DEBUG_MARKERS)
+			SCUtil.traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, problem, args);
 	}
@@ -52,8 +52,8 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType.String attributeType, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException {
-		if (StaticChecker.DEBUG_MARKERS)
-			StaticChecker.traceMarker(element, problem.getLocalizedMessage(args));
+		if (SCUtil.DEBUG_MARKERS)
+			SCUtil.traceMarker(element, problem.getLocalizedMessage(args));
 
 		element.createProblemMarker(attributeType, charStart, charEnd+1, problem,
 				args);

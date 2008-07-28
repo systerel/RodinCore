@@ -9,7 +9,7 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * @author Stefan Hallerstede

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
-import org.eventb.core.tool.state.IState;
+import org.eventb.internal.core.tool.types.IState;
 
 /**
  * All static checker state components must inherit from this interface.

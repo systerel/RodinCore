@@ -16,7 +16,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IInternalElement;
 

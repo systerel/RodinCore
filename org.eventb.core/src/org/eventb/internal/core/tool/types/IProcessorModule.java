@@ -5,10 +5,8 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool;
+package org.eventb.internal.core.tool.types;
 
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.sc.ISCProcessorModule;
 
 /**
  * Basic type for processor modules. A processor module is one of the two

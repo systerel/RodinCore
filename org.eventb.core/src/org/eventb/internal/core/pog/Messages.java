@@ -24,8 +24,7 @@ public final class Messages {
 	
 	// build
 	public static String build_cleaning;
-	public static String build_runningMPO;
-	public static String build_runningCPO;
+	public static String build_runningPO;
 	public static String build_extracting;
 	
 	// progress messages

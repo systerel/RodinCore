@@ -25,7 +25,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.state.IEventWitnessTable;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

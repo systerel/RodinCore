@@ -7,10 +7,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.tool.types.IFilterModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 

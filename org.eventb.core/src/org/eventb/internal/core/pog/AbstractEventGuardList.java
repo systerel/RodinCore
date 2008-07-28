@@ -13,7 +13,7 @@ import java.util.List;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

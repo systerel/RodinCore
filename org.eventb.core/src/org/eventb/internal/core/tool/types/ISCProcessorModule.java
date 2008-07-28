@@ -5,20 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc;
+package org.eventb.internal.core.tool.types;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.state.ISCState;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
- * The processor modules of the static checker are used to accept (or reject)
- * elements of a component. The use of the methods <code>initModule()</code>,
+ * The processor modules of the static checker generate 
+ * the statically checked output. The use of the methods <code>initModule()</code>,
  * <code>process()</code>, and <code>endModule()</code> are described 
  * in {@link IModule}.
  * <p>
@@ -34,49 +32,47 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public interface ISCFilterModule extends IFilterModule {
-
-	/**
-	 * Runs the static checker module. Returns whether the <code>element</code>
-	 * should be accepted. If an error marker was associated with the
-	 * <code>element</code> the returned value should usually be
-	 * <code>false</code>. Exceptions from this rule are possible, in
-	 * particular, if the <code>element</code> has been already marked with an error.
-	 * 
-	 * @param element
-	 *            the input "unchecked" element
-	 * @param repository
-	 *            the state repository to use
-	 * @param monitor
-	 *            a progress monitor
-	 * @return whether the element should be accepted
-	 * @throws CoreException
-	 *             if there was a problem running this module
-	 */
-	public abstract boolean accept(
-			IRodinElement element,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException;
+public interface ISCProcessorModule extends IProcessorModule {
 
 	/**
 	 * Initialisation code for the module
 	 * 
+	 * @param element the input "unchecked" element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem initialising this module
 	 */
 	public abstract void initModule(
+			IRodinElement element,
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
-
+	
+	/**
+	 * Runs the static checker module: process the element. 
+	 * The element itself has already been accepted.
+	 * @param element the input "unchecked" element
+	 * @param target the target element (this may be a file or any other internal element)
+	 * @param repository the state repository to use
+	 * @param monitor a progress monitor
+	 * @throws CoreException if there was a problem running this module
+	 */
+	public abstract void process(
+			IRodinElement element,
+			IInternalParent target,
+			ISCStateRepository repository, 
+			IProgressMonitor monitor) throws CoreException;
+	
 	/**
 	 * Termination code for the module
 	 * 
+	 * @param element the input "unchecked" element
 	 * @param repository the state repository to use
 	 * @param monitor a progress monitor
 	 * @throws CoreException if there was a problem terminating this module
 	 */
+	
 	public abstract void endModule(
+			IRodinElement element,
 			ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException;
 

@@ -10,12 +10,10 @@ package org.eventb.internal.core.sc;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
-import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.StaticChecker;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -24,57 +22,6 @@ import org.rodinp.core.builder.IGraph;
  * 
  */
 public class ContextStaticChecker extends StaticChecker {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
-			throws CoreException {
-
-		final ISCContextFile scContextFile = (ISCContextFile) RodinCore.valueOf(file);
-		final IContextFile contextFile = (IContextFile) scContextFile
-				.getContextFile().getSnapshot();
-		final ISCContextFile scTmpFile = (ISCContextFile) getTmpSCFile(scContextFile);
-		
-		final int totalWork = contextFile.getChildren().length + 5;
-
-		try {
-
-			monitor.beginTask(Messages.bind(Messages.build_runningMSC,
-					scContextFile.getComponentName()),
-					totalWork);
-
-			scTmpFile.create(true, new SubProgressMonitor(monitor, 1));
-
-			ISCStateRepository repository = createRepository(contextFile,
-					monitor);
-
-			contextFile.open(new SubProgressMonitor(monitor, 1));
-			scTmpFile.open(new SubProgressMonitor(monitor, 1));
-			
-			String config = getConfiguration(contextFile);
-
-			if (config != null) {
-				
-				scTmpFile.setConfiguration(config, null);
-				
-				final ISCProcessorModule rootModule = getRootModule(contextFile, config);
-			
-				runProcessorModules(rootModule, contextFile, scTmpFile,
-						repository, monitor);
-				
-			}
-
-			return compareAndSave(scContextFile, scTmpFile, monitor);
-
-		} finally {
-			monitor.done();
-			scContextFile.makeConsistent(null);
-		}
-	}
 
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
 			throws CoreException {

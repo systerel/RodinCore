@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.internal.core.tool.types.IStateRepository;
 
 /**
  * The state repository for the static checker.

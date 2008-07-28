@@ -10,8 +10,8 @@ package org.eventb.internal.core.tool;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;

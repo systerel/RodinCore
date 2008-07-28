@@ -9,7 +9,7 @@ package org.eventb.internal.core.sc;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.sc.state.IParsedFormula;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

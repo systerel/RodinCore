@@ -20,12 +20,12 @@ Export-Package: org.eventb.core,
  org.eventb.core.sc.state,
  org.eventb.core.sc.symbolTable,
  org.eventb.core.tool,
- org.eventb.core.tool.state,
  org.eventb.internal.core;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.pm;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.sc.modules;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.graph;x-friends:="org.eventb.core.tests",
- org.eventb.internal.core.tool.state;x-friends:="org.eventb.core.tests"
+ org.eventb.internal.core.tool.state;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.tool.types;x-friends:="org.eventb.core.tests"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

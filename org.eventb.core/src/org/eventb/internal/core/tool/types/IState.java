@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool.state;
+package org.eventb.internal.core.tool.types;
 
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.tool.IStateType;
 
 /**
  * Common protocol for states store in a state repository ({@link IStateRepository}).

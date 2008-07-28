@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * State component for the variant of the current machine being checked.

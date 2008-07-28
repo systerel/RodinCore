@@ -14,7 +14,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * State component for identifiers declared in a context or a machine, or in 

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * State component that contains the closure of all contexts, extended or seen.

@@ -12,7 +12,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.rodinp.core.IInternalElement;
 
 /**

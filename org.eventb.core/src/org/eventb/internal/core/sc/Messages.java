@@ -21,8 +21,7 @@ public final class Messages {
 
 	// build
 	public static String build_cleaning;
-	public static String build_runningMSC;
-	public static String build_runningCSC;
+	public static String build_runningSC;
 	public static String build_extracting;
 	
 	// progress messages

@@ -8,11 +8,11 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.pog.IPOGFilterModule;
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.sc.ISCFilterModule;
-import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.core.tool.IModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IPOGFilterModule;
+import org.eventb.internal.core.tool.types.IPOGProcessorModule;
+import org.eventb.internal.core.tool.types.ISCFilterModule;
+import org.eventb.internal.core.tool.types.ISCProcessorModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

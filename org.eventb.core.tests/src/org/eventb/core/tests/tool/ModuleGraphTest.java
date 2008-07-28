@@ -14,15 +14,15 @@ import java.util.Map;
 
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.sc.modules.ContextModule;
 import org.eventb.internal.core.sc.modules.MachineModule;
 import org.eventb.internal.core.tool.ModuleDesc;
 import org.eventb.internal.core.tool.ModuleFactory;
 import org.eventb.internal.core.tool.ModuleManager;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 

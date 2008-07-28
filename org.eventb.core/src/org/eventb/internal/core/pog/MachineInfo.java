@@ -9,7 +9,7 @@ package org.eventb.internal.core.pog;
 
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.pog.state.IMachineInfo;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

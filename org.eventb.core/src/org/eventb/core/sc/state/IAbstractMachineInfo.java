@@ -11,7 +11,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * State component providing information about an abstract machine of

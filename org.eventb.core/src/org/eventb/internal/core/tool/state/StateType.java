@@ -9,9 +9,9 @@ package org.eventb.internal.core.tool.state;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.tool.state.IState;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.BasicDescWithClass;
+import org.eventb.internal.core.tool.types.IState;
 import org.osgi.framework.Bundle;
 
 /**

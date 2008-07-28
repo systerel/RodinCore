@@ -13,10 +13,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.tool.IModule;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
+import org.eventb.internal.core.tool.types.IModule;
 import org.osgi.framework.Bundle;
 
 /**

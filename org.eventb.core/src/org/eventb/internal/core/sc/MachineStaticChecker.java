@@ -10,14 +10,12 @@ package org.eventb.internal.core.sc;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.sc.ISCProcessorModule;
-import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.core.sc.StaticChecker;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -26,58 +24,6 @@ import org.rodinp.core.builder.IGraph;
  *
  */
 public class MachineStaticChecker extends StaticChecker {
-
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public boolean run(IFile source, IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		
-		final ISCMachineFile scMachineFile = (ISCMachineFile) RodinCore.valueOf(file).getMutableCopy();
-		final IMachineFile machineFile = (IMachineFile) scMachineFile.getMachineFile().getSnapshot();
-		final ISCMachineFile scTmpFile = (ISCMachineFile) getTmpSCFile(scMachineFile);
-		
-		final int totalWork = machineFile.getChildren().length + 4;
-		
-		try {
-			
-			monitor.beginTask(
-					Messages.bind(
-							Messages.build_runningMSC, 
-							scMachineFile.getComponentName()), 
-					totalWork);
-
-			scTmpFile.create(true, null);
-			
-			ISCStateRepository repository = createRepository(machineFile, monitor);
-			
-			machineFile.open(new SubProgressMonitor(monitor, 1));
-			scTmpFile.open(new SubProgressMonitor(monitor, 1));
-			
-			String config = getConfiguration(machineFile);
-			
-			if (config != null) {
-				
-				scTmpFile.setConfiguration(config, null);
-		
-				ISCProcessorModule rootModule = getRootModule(machineFile, config);
-			
-				runProcessorModules(
-						rootModule,
-						machineFile, 
-						scTmpFile,
-						repository,
-						monitor);
-			
-			}
-		
-			return compareAndSave(scMachineFile, scTmpFile, monitor);
-
-		} finally {
-			monitor.done();
-			scMachineFile.makeConsistent(null);
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)

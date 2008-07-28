@@ -11,7 +11,7 @@ import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.state.IMachineTheoremTable;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.rodinp.core.RodinDBException;
 
 /**

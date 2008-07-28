@@ -11,11 +11,11 @@ package org.eventb.internal.core.tool;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.graph.FilterModuleNode;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
+import org.eventb.internal.core.tool.types.IFilterModule;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * Description of an extractor registered with the tool manager.

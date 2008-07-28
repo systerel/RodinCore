@@ -8,9 +8,9 @@
 package org.eventb.internal.core.tool.state;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.tool.state.IState;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.eventb.internal.core.tool.types.IState;
 
 /**
  * @author Stefan Hallerstede

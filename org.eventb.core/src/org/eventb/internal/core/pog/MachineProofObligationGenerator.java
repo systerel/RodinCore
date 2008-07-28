@@ -13,8 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOFile;
 import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCRefinesMachine;
-import org.eventb.core.pog.IPOGProcessorModule;
-import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.pog.ProofObligationGenerator;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -24,44 +23,6 @@ import org.rodinp.core.builder.IGraph;
  */
 public class MachineProofObligationGenerator extends ProofObligationGenerator {
 	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.builder.IAutomaticTool#run(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public boolean run(IFile source, IFile target, IProgressMonitor monitor)
-			throws CoreException {
-
-		IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
-		ISCMachineFile scMachineFile = (ISCMachineFile) poFile.getSCMachineFile().getSnapshot();
-		final IPOFile poTmpFile = getTmpPOFile(poFile);
-		
-		// TODO progress monitor
-		try {
-			
-			monitor.beginTask(
-					Messages.bind(
-							Messages.build_runningMPO, 
-							poFile.getComponentName()),
-					10);
-			
-			poTmpFile.create(true, null);
-
-			IPOGStateRepository repository = createRepository(poTmpFile, monitor);
-		
-			IPOGProcessorModule rootModule = getRootModule(scMachineFile);
-		
-			runModules(
-					rootModule,
-					scMachineFile, 
-					repository,
-					monitor);
-		
-			return compareAndSave(poFile, poTmpFile, monitor);
-		} finally {
-			monitor.done();
-			poFile.makeConsistent(null);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */

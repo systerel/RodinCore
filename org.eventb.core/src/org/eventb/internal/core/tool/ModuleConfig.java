@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IModule;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * @author Stefan Hallerstede

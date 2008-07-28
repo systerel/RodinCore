@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.ParentGraph;
+import org.eventb.internal.core.tool.types.IFilterModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede

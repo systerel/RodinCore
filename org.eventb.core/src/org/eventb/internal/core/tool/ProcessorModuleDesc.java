@@ -10,11 +10,11 @@ package org.eventb.internal.core.tool;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
 import org.eventb.internal.core.tool.graph.ProcessorModuleNode;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede

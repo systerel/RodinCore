@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.tool;
 
+import org.eventb.internal.core.tool.types.IModule;
+
 /**
  * @author Stefan Hallerstede
  *

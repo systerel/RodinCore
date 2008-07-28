@@ -5,7 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool.state;
+package org.eventb.core.tool;
+
+import org.eventb.internal.core.tool.types.IState;
 
 /**
  * @author Stefan Hallerstede

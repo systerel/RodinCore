@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool.graph;
 
-import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleDesc;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * @author Stefan Hallerstede

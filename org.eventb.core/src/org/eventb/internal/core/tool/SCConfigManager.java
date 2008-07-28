@@ -8,7 +8,7 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.tool.IModule;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * @author Stefan Hallerstede

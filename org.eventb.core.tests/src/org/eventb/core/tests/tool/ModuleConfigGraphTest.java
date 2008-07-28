@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleConfig;
 import org.eventb.internal.core.tool.ModuleDesc;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * @author Stefan Hallerstede

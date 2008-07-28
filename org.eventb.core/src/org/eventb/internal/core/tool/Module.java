@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.tool.types.IFilterModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 
 /**
  * @author Stefan Hallerstede

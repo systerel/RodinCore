@@ -6,27 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.internal.core.sc;
+package org.eventb.core.sc;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IEventBFile;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
-import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.ISCProcessorModule;
 import org.eventb.core.sc.state.ISCStateRepository;
+import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.sc.SCStateRepository;
+import org.eventb.internal.core.sc.SCUtil;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.SCModuleManager;
+import org.eventb.internal.core.tool.types.ISCProcessorModule;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -41,21 +39,13 @@ import org.rodinp.core.builder.IExtractor;
  */
 public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
-	public static boolean DEBUG = false;
-	public static boolean DEBUG_STATE = false;
-	public static boolean DEBUG_MARKERS = false;
-	public static boolean DEBUG_MODULECONF = false;
-	
-	@Deprecated
-	protected static final String DEFAULT_CONFIG = EventBPlugin.PLUGIN_ID + ".fwd";
-
-	protected final ISCStateRepository createRepository(
+	private ISCStateRepository createRepository(
 			IRodinFile file, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final SCStateRepository repository = new SCStateRepository();
 		
-		if (DEBUG_STATE)
+		if (SCUtil.DEBUG_STATE)
 			repository.debug();
 		
 		return repository;
@@ -84,7 +74,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 
 	}
 
-	protected void runProcessorModules(
+	private void runProcessorModules(
 			ISCProcessorModule rootModule,
 			IRodinFile file, 
 			IInternalParent target, 
@@ -104,19 +94,19 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 	}
 
-	protected void printModuleTree(IRodinFile file, IModuleFactory moduleFactory) {
-		if (DEBUG_MODULECONF) {
+	private void printModuleTree(String config, IRodinFile file, IModuleFactory moduleFactory) {
+		if (SCUtil.DEBUG_MODULECONF) {
 			System.out.println("+++ STATIC CHECKER MODULES +++");
 			System.out.println("INPUT " + file.getPath());
 			System.out.println("      " + file.getElementType());
-			System.out.println("CONFIG " + DEFAULT_CONFIG);
+			System.out.println("CONFIG " + config);
 			System.out.print(moduleFactory
 					.printModuleTree(file.getElementType()));
 			System.out.println("++++++++++++++++++++++++++++++++++++++");
 		}
 	}
 
-	protected IEventBFile getTmpSCFile(IEventBFile scFile) {
+	private IEventBFile getTmpSCFile(IRodinFile scFile) {
 		final IRodinProject project = (IRodinProject) scFile.getParent();
 		final String name = scFile.getElementName();
 		return (IEventBFile) project.getRodinFile(name + "_tmp");
@@ -128,7 +118,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	// return true.
 	//
 	// Consumes at most to ticks of the given monitor.
-	protected boolean compareAndSave(IEventBFile scFile, IEventBFile scTmpFile,
+	private boolean compareAndSave(IEventBFile scFile, IEventBFile scTmpFile,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (scTmpFile.hasSameAttributes(scFile)
 				&& scTmpFile.hasSameChildren(scFile)) {
@@ -143,60 +133,82 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		return true;
 	}
 	
-	protected String getConfiguration(final IConfigurationElement confElement) throws CoreException {
+	private String getConfiguration(final IRodinFile rodinFile) throws CoreException {
+		
+		IConfigurationElement confElement = (IConfigurationElement) rodinFile;
 		
 		if (confElement.hasConfiguration()) {
 	
 			return confElement.getConfiguration();
 	
 		} else {
-			createProblemMarker(confElement, 
+			SCUtil.createProblemMarker(confElement, 
 					GraphProblem.ConfigurationMissingError, 
 					((RodinFile) confElement).getBareName());
 			return null;
 		}
 	}
 
-	protected ISCProcessorModule getRootModule(final IRodinFile rodinFile, String config) throws CoreException {
+	private ISCProcessorModule getRootModule(final IRodinFile rodinFile, String config) throws CoreException {
 	
 		IModuleFactory moduleFactory = SCModuleManager.getInstance().getModuleFactory(config);
 	
-		printModuleTree(rodinFile, moduleFactory);
+		printModuleTree(config, rodinFile, moduleFactory);
 	
 		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory.getRootModule(rodinFile.getElementType());
 		
 		return rootModule;
 	}
 	
-	public static void createProblemMarker(
-			IRodinElement element, 
-			IRodinProblem problem, 
-			Object... args)
-	throws RodinDBException {
-		if (StaticChecker.DEBUG_MARKERS)
-			traceMarker(element, problem.getLocalizedMessage(args));
+	public final boolean run(IFile source, IFile file, IProgressMonitor monitor)
+			throws CoreException {
+			
+				final IEventBFile scFile = (IEventBFile) RodinCore.valueOf(file);
+				final IRodinFile sourceFile = RodinCore.valueOf(source).getSnapshot();
+				final IEventBFile scTmpFile = getTmpSCFile(scFile);
+				
+				final int totalWork = sourceFile.getChildren().length + 5;
+			
+				try {
+			
+					monitor.beginTask(Messages.bind(Messages.build_runningSC,
+							scFile.getComponentName()),
+							totalWork);
+			
+					scTmpFile.create(true, new SubProgressMonitor(monitor, 1));
+			
+					ISCStateRepository repository = createRepository(sourceFile,
+							monitor);
+			
+					sourceFile.open(new SubProgressMonitor(monitor, 1));
+					scTmpFile.open(new SubProgressMonitor(monitor, 1));
+					
+					String config = getConfiguration(sourceFile);
+			
+					if (config != null) {
+						
+						setSCTmpConfiguration(scTmpFile, config);
+						
+						final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
+					
+						runProcessorModules(rootModule, sourceFile, scTmpFile,
+								repository, monitor);
+						
+					}
+			
+					return compareAndSave(scFile, scTmpFile, monitor);
+			
+				} finally {
+					monitor.done();
+					scFile.makeConsistent(null);
+				}
+			}
 
-		element.createProblemMarker(problem, args);
-	}
-
-	public static void traceMarker(IRodinElement element, String message) {
-		
-		String name = element.getElementName();
-		
-		try {
-			if (element instanceof ILabeledElement)
-				name = ((ILabeledElement) element).getLabel();
-			else if (element instanceof IIdentifierElement)
-				name = ((IIdentifierElement) element).getIdentifierString();
-			else if (element instanceof IEventBFile)
-				name = ((IEventBFile) element).getBareName();
-		} catch (RodinDBException e) {
-			// ignore
-		} finally {
-		
-			System.out.println("SC MARKER: " + name + ": " + message);
-		}
-	}
-	
+	private void setSCTmpConfiguration(final IEventBFile scTmpFile, String config)
+			throws RodinDBException {
+				
+				IConfigurationElement confElement = (IConfigurationElement) scTmpFile;
+				confElement.setConfiguration(config, null);
+			}	
 
 }

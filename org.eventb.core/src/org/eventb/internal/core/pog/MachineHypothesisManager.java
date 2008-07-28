@@ -12,7 +12,7 @@ import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.rodinp.core.IRodinElement;
 
 /**

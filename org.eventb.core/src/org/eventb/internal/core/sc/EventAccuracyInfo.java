@@ -8,7 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import org.eventb.core.sc.state.IEventAccuracyInfo;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * @author Stefan Hallerstede

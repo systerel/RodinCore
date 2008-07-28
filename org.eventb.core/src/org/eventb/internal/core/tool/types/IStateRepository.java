@@ -5,10 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool.state;
+package org.eventb.internal.core.tool.types;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.tool.IStateType;
 
 /**
  *

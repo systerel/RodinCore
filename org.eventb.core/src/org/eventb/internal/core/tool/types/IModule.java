@@ -5,10 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool;
+package org.eventb.internal.core.tool.types;
 
-import org.eventb.core.tool.state.IState;
-import org.eventb.core.tool.state.IStateRepository;
+import org.eventb.core.tool.IModuleType;
+
 
 /**
  * The <i>core tools</i>, static checker (<code>org.eventb.core.sc</code>) and 

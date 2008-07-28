@@ -12,7 +12,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ISCContext;
 import org.eventb.core.sc.state.IContextTable;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**

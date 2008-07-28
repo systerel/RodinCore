@@ -5,10 +5,8 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.tool;
+package org.eventb.internal.core.tool.types;
 
-import org.eventb.core.pog.IPOGFilterModule;
-import org.eventb.core.sc.ISCFilterModule;
 
 /**
  * Basic type for filter modules. A filter module is one of the two

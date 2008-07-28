@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eventb.core.tool.IModule;
 import org.eventb.internal.core.tool.ModuleDesc;
+import org.eventb.internal.core.tool.types.IModule;
 
 /**
  * @author Stefan Hallerstede

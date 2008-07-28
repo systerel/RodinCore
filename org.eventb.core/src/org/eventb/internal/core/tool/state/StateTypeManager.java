@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.tool.state.IState;
 import org.eventb.internal.core.tool.SortingUtil;
+import org.eventb.internal.core.tool.types.IState;
 
 /**
  * @author Stefan Hallerstede
