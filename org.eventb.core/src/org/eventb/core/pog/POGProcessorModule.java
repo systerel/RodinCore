@@ -18,9 +18,11 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPOGStateRepository;
-import org.eventb.core.tool.IFilterModule;
-import org.eventb.core.tool.IModule;
-import org.eventb.core.tool.IProcessorModule;
+import org.eventb.internal.core.tool.types.IFilterModule;
+import org.eventb.internal.core.tool.types.IModule;
+import org.eventb.internal.core.tool.types.IPOGFilterModule;
+import org.eventb.internal.core.tool.types.IPOGProcessorModule;
+import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 

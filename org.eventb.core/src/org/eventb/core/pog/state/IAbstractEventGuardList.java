@@ -13,7 +13,7 @@ import java.util.List;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * This class provides information on the guards of all abstract event

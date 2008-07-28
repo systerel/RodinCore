@@ -14,7 +14,7 @@ import org.eventb.core.ISCAction;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * This class provides information on the actions of the abstract event

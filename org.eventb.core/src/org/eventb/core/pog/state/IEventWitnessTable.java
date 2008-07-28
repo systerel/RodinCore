@@ -15,7 +15,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * This state component provides information on witnesses associated with refined events.

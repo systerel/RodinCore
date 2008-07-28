@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import org.eventb.core.tool.state.IState;
+import org.eventb.internal.core.tool.types.IState;
 
 /**
  * This class is used to mark components of the proof obligation generator state.

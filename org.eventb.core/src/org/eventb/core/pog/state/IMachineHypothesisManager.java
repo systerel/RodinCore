@@ -11,7 +11,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.sc.state.IAccuracyInfo;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * This is the hypothesis manager associated with Event-B machines.

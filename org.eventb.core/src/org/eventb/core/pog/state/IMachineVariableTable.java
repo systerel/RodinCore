@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * Protocol for accessing all variables of a machine.

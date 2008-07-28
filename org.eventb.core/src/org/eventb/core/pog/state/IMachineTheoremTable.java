@@ -10,7 +10,7 @@ package org.eventb.core.pog.state;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.pog.POGCore;
-import org.eventb.core.tool.state.IStateType;
+import org.eventb.core.tool.IStateType;
 
 /**
  * Common protocol for accessing all theorems of a machine.
