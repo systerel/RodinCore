@@ -12,6 +12,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
@@ -32,6 +33,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  *
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public class Event extends EventBElement implements IEvent {
 	
@@ -51,8 +53,13 @@ public class Event extends EventBElement implements IEvent {
 		return getChildrenOfType(IRefinesEvent.ELEMENT_TYPE); 
 	}
 
+	@Deprecated
 	public IVariable[] getVariables() throws RodinDBException {
 		return getChildrenOfType(IVariable.ELEMENT_TYPE); 
+	}
+
+	public IParameter[] getParameters() throws RodinDBException {
+		return getChildrenOfType(IParameter.ELEMENT_TYPE); 
 	}
 
 	public IWitness[] getWitnesses() throws RodinDBException {
@@ -91,8 +98,13 @@ public class Event extends EventBElement implements IEvent {
 		return getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Deprecated
 	public IVariable getVariable(String elementName) {
 		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public IParameter getParameter(String elementName) {
+		return getInternalElement(IParameter.ELEMENT_TYPE, elementName);
 	}
 
 	public IWitness getWitness(String elementName) {

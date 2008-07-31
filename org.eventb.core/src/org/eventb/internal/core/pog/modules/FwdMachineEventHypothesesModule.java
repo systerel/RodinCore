@@ -20,7 +20,7 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
-import org.eventb.core.ISCVariable;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -110,7 +110,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		ISCEvent abstractEvent = abstractEventGuardList.getFirstAbstractEvent();
 		
 		if (abstractEvent != null)
-			fetchVariables(abstractEvent.getSCVariables());
+			fetchParameters(abstractEvent.getSCParameters());
 		
 		IAbstractEventActionTable abstractEventActionTable = 
 			new AbstractEventActionTable(
@@ -153,7 +153,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			ISCGuard[] concreteGuards, 
 			IPOGStateRepository repository) throws CoreException {
 		
-		fetchVariables(concreteEvent.getSCVariables());
+		fetchParameters(concreteEvent.getSCParameters());
 		
 		IConcreteEventGuardTable concreteEventGuardTable = 
 			fetchConcreteGuards(concreteGuards, repository);
@@ -163,7 +163,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		
 		for (ISCEvent abstractEvent : abstractEvents) {
 			
-			fetchVariables(abstractEvent.getSCVariables());
+			fetchParameters(abstractEvent.getSCParameters());
 		
 			IAbstractEventGuardTable abstractEventGuardTable = 
 				new AbstractEventGuardTable(
@@ -203,8 +203,8 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 		}
 	}
 
-	private void fetchVariables(ISCVariable[] variables) throws CoreException {
-		for (ISCVariable variable : variables) {
+	private void fetchParameters(ISCParameter[] parameters) throws CoreException {
+		for (ISCParameter variable : parameters) {
 			FreeIdentifier identifier = variable.getIdentifier(factory);
 			eventTypeEnvironment.add(identifier);
 			eventHypothesisManager.addIdentifier(identifier);

@@ -73,6 +73,7 @@ public enum GraphProblem implements IRodinProblem {
 	UntypedCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedCarrierSetError),
 	UntypedConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedConstantError),
 	UntypedVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedVariableError),
+	UntypedParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedParameterError),
 	UntypedIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedIdentifierError),
 	UndeclaredFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_UndeclaredFreeIdentifierError),
 	FreeIdentifierFaultyDeclError(IMarker.SEVERITY_ERROR, Messages.scuser_FreeIdentifierFaultyDeclError),
@@ -114,10 +115,10 @@ public enum GraphProblem implements IRodinProblem {
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),
 	VariableHasDisappearedError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableHasDisappearedError),
 	DisappearedVariableRedeclaredError(IMarker.SEVERITY_ERROR, Messages.scuser_DisappearedVariableRedeclaredError),
-	VariableIsLocalInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsLocalInAbstractMachine),
+	VariableIsParameterInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsParameterInAbstractMachine),
 	AssignedIdentifierNotVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignedIdentifierNotVariable),
-	LocalVariableChangedTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_LocalVariableChangedTypeError),
-	AssignmentToLocalVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToLocalVariable);
+	ParameterChangedTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterChangedTypeError),
+	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter);
 	
 	private final String errorCode;
 	

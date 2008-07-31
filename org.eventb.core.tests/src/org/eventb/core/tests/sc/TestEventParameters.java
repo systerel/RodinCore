@@ -14,7 +14,7 @@ import org.eventb.core.ISCEvent;
  * @author Stefan Hallerstede
  *
  */
-public class TestEventVariables extends GenericIdentTest<IEvent, ISCEvent> {
+public class TestEventParameters extends GenericIdentTest<IEvent, ISCEvent> {
 
 	@Override
 	protected IGenericSCTest<IEvent, ISCEvent> newGeneric() {

@@ -16,9 +16,9 @@ import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.VariableSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -52,7 +52,7 @@ public class MachineEventCommitIdentsModule extends SCProcessorModule {
 			
 			IIdentifierSymbolInfo identifierSymbolInfo = (IIdentifierSymbolInfo) symbolInfo;
 			
-			if (identifierSymbolInfo instanceof VariableSymbolInfo) {
+			if (identifierSymbolInfo instanceof IParameterSymbolInfo) {
 				
 				Type type = identifierSymbolInfo.getType();
 				

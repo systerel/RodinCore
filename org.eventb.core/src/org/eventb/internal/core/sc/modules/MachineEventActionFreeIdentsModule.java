@@ -18,6 +18,7 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.ICurrentEvent;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
@@ -71,7 +72,7 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 						GraphProblem.InitialisationActionRHSError,
 						freeIdentifier.getName());
 				return null;
-			} else if (!variableSymbolInfo.isLocal() && (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete())) {
+			} else if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
 				createProblemMarker(
 						element, 
 						getAttributeType(), 
@@ -113,21 +114,21 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			IIdentifierSymbolInfo symbolInfo = symbolTable.getSymbolInfo(name);
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (!variableSymbolInfo.isLocal() && (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete())) {
+				if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
 					createProblemMarker(
 							element, 
 							getAttributeType(), 
 							GraphProblem.VariableHasDisappearedError,
 							name);
 					return false;
-				} else if (variableSymbolInfo.isLocal()) {
-					createProblemMarker(
-							element, 
-							getAttributeType(), 
-							GraphProblem.AssignmentToLocalVariableError,
-							name);
-					return false;
 				}
+			} else if (symbolInfo instanceof IParameterSymbolInfo) {
+				createProblemMarker(
+						element, 
+						getAttributeType(), 
+						GraphProblem.AssignmentToParameterError,
+						name);
+				return false;
 			} else {
 				createProblemMarker(
 						element, 

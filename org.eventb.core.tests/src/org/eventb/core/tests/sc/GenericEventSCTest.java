@@ -59,7 +59,7 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public IRodinElement[] getIdents(IEvent element) throws RodinDBException {
-		return element.getVariables();
+		return element.getParameters();
 	}
 
 	public IRodinElement[] getNonTheorems(IEvent element) throws RodinDBException {

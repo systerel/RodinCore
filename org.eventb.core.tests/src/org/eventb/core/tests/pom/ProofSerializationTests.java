@@ -65,6 +65,7 @@ public class ProofSerializationTests extends TestCase {
 		return null;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -92,6 +93,7 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(0, prFile.getProofs().length);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		rodinProject.getProject().delete(true, true, null);
 		super.tearDown();

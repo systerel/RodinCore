@@ -280,13 +280,13 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(e().getVariables()[0], EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					hasMarker(e().getParameters()[0], EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(e().getVariables()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
-					e().getVariables()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
+					assertTrue(e().getParameters()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
+					e().getParameters()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
 			},

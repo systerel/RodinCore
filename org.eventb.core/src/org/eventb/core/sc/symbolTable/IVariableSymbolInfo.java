@@ -10,8 +10,7 @@ package org.eventb.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * <code>IVariableSymbolInfo</code> is an {@link org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo} that
- * corresponds to an Event-B variable.
+ * <code>IVariableSymbolInfo</code> represents an Event-B machine variable in the symbol table.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -46,12 +45,6 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	 * @return whether this is a variable of the current machine
 	 */
 	boolean isConcrete();
-	
-	/**
-	 * Returns whether the variable symbol is "local".
-	 * @return whether the variable symbol is "local"
-	 */
-	boolean isLocal();
 	
 	/**
 	 * Mark this the variable as "fresh", i.e. its name was not used before.

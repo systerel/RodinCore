@@ -110,6 +110,7 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.UntypedCarrierSetError, 1),
 			spec(GraphProblem.UntypedConstantError, 1),
 			spec(GraphProblem.UntypedVariableError, 1),
+			spec(GraphProblem.UntypedParameterError, 1),
 			spec(GraphProblem.UntypedIdentifierError, 1),
 			spec(GraphProblem.UndeclaredFreeIdentifierError, 1),
 			spec(GraphProblem.FreeIdentifierFaultyDeclError, 1),
@@ -151,10 +152,10 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.InconsistentEventLabelWarning, 1),
 			spec(GraphProblem.VariableHasDisappearedError, 1),
 			spec(GraphProblem.DisappearedVariableRedeclaredError, 1),
-			spec(GraphProblem.VariableIsLocalInAbstractMachineError, 2),
+			spec(GraphProblem.VariableIsParameterInAbstractMachineError, 2),
 			spec(GraphProblem.AssignedIdentifierNotVariableError, 1),
-			spec(GraphProblem.LocalVariableChangedTypeError, 3),
-			spec(GraphProblem.AssignmentToLocalVariableError, 1)
+			spec(GraphProblem.ParameterChangedTypeError, 3),
+			spec(GraphProblem.AssignmentToParameterError, 1)
 	};
 	
 	private static Map<GraphProblem, Spec> specMap = 

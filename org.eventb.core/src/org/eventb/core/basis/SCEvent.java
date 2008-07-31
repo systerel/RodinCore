@@ -11,6 +11,7 @@ package org.eventb.core.basis;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
@@ -74,8 +75,13 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCVariables()
 	 */
+	@Deprecated
 	public ISCVariable[] getSCVariables() throws RodinDBException {
 		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
+	}
+
+	public ISCParameter[] getSCParameters() throws RodinDBException {
+		return getChildrenOfType(ISCParameter.ELEMENT_TYPE); 
 	}
 
 	/* (non-Javadoc)
@@ -111,8 +117,13 @@ public class SCEvent extends EventBElement implements ISCEvent {
 		return getInternalElement(ISCRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Deprecated
 	public ISCVariable getSCVariable(String elementName) {
 		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+	}
+
+	public ISCParameter getSCParameter(String elementName) {
+		return getInternalElement(ISCParameter.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCWitness getSCWitness(String elementName) {
@@ -124,8 +135,8 @@ public class SCEvent extends EventBElement implements ISCEvent {
 
 		ITypeEnvironment typenv = factory.makeTypeEnvironment();
 		typenv.addAll(mchTypenv);
-		for (ISCVariable vrb : getSCVariables()) {
-			typenv.add(vrb.getIdentifier(factory));
+		for (ISCParameter par : getSCParameters()) {
+			typenv.add(par.getIdentifier(factory));
 		}
 		return typenv;
 	}

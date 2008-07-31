@@ -13,7 +13,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IVariable;
+import org.eventb.core.IParameter;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
@@ -23,7 +23,7 @@ import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.EventParameterSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -31,10 +31,10 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventVariableModule extends IdentifierModule {
+public class MachineEventParameterModule extends IdentifierModule {
 
-	public static final IModuleType<MachineEventVariableModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventVariableModule"); //$NON-NLS-1$
+	public static final IModuleType<MachineEventParameterModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventParameterModule"); //$NON-NLS-1$
 	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
@@ -52,11 +52,11 @@ public class MachineEventVariableModule extends IdentifierModule {
 
 		IEvent event = (IEvent) element;
 		
-		IVariable[] variables = event.getVariables();
+		IParameter[] parameters = event.getParameters();
 		
-		if(variables.length != 0)
+		if(parameters.length != 0)
 			fetchSymbols(
-					variables,
+					parameters,
 					target,
 					repository, 
 					monitor);
@@ -121,7 +121,7 @@ public class MachineEventVariableModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String name, IIdentifierElement element) {
-		return new EventVariableSymbolInfo(
+		return new EventParameterSymbolInfo(
 				name, element, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
 	}

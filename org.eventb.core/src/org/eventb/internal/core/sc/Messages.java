@@ -87,6 +87,7 @@ public final class Messages {
 	public static String scuser_UntypedCarrierSetError;
     public static String scuser_UntypedConstantError;
     public static String scuser_UntypedVariableError;
+    public static String scuser_UntypedParameterError;
     public static String scuser_UntypedIdentifierError;
     public static String scuser_UndeclaredFreeIdentifierError;
     public static String scuser_FreeIdentifierFaultyDeclError;
@@ -124,10 +125,10 @@ public final class Messages {
     public static String scuser_InconsistentEventLabelProblem;
     public static String scuser_VariableHasDisappearedError;
     public static String scuser_DisappearedVariableRedeclaredError;
-    public static String scuser_VariableIsLocalInAbstractMachine;
+    public static String scuser_VariableIsParameterInAbstractMachine;
     public static String scuser_AssignedIdentifierNotVariable;
-    public static String scuser_LocalVariableChangedTypeError;
-    public static String scuser_AssignmentToLocalVariable;
+    public static String scuser_ParameterChangedTypeError;
+    public static String scuser_AssignmentToParameter;
   
     public static String scuser_BoundIdentifierIsAlreadyBound;
     public static String scuser_Circularity;

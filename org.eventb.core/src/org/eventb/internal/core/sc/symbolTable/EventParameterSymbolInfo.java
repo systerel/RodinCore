@@ -11,21 +11,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCIdentifierElement;
-import org.eventb.core.ISCVariable;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class EventVariableSymbolInfo extends VariableSymbolInfo {
+public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IParameterSymbolInfo {
 
-	public EventVariableSymbolInfo(
+	public EventParameterSymbolInfo(
 			String symbol, 
 			IInternalElement element, 
 			IAttributeType.String attribute, 
@@ -40,15 +42,11 @@ public class EventVariableSymbolInfo extends VariableSymbolInfo {
 		if (parent == null)
 			return null;
 		
-		ISCVariable variable = ((ISCEvent) parent).getSCVariable(getSymbol());
-		variable.create(null, monitor);
-		variable.setType(getType(), null);
-		variable.setSource(getSourceElement(), monitor);
-		return variable;
-	}
-
-	public boolean isLocal() {
-		return true;
+		ISCParameter parameter = ((ISCEvent) parent).getSCParameter(getSymbol());
+		parameter.create(null, monitor);
+		parameter.setType(getType(), null);
+		parameter.setSource(getSourceElement(), monitor);
+		return parameter;
 	}
 
 	@Override
@@ -67,6 +65,11 @@ public class EventVariableSymbolInfo extends VariableSymbolInfo {
 				getSourceAttributeType(), 
 				GraphProblem.EventVariableNameConflictWarning, 
 				getSymbol());
+	}
+
+	@Override
+	public IRodinProblem getUntypedError() {
+		return GraphProblem.UntypedParameterError;
 	}
 
 }

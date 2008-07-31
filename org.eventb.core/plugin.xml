@@ -285,6 +285,16 @@
             class="org.eventb.core.basis.PSStatus"
             id="psStatus"
             name="%eventBpsStatus"/>
+      <internalElementType
+            class="org.eventb.core.basis.Parameter"
+            id="parameter"
+            name="%eventBParameter">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.core.basis.SCParameter"
+            id="scParameter"
+            name="%eventBscParameter">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -677,13 +687,13 @@
          <scModule id="org.eventb.core.machineTheoremFreeIdentsModule"/>
          <scModule id="org.eventb.core.machineVariantModule"/>
          <scModule id="org.eventb.core.machineVariantFreeIdentsModule"/>
-         <scModule id="org.eventb.core.machineVariableFromLocalModule"/>
+         <scModule id="org.eventb.core.machineVariableFromParameterModule"/>
          <scModule id="org.eventb.core.machineEventModule"/>
          <scModule id="org.eventb.core.machineEventRefinesModule"/>
          <scModule id="org.eventb.core.machineEventInheritedModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceDefModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceModule"/>
-         <scModule id="org.eventb.core.machineEventVariableModule"/>
+         <scModule id="org.eventb.core.machineEventParameterModule"/>
          <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
          <scModule id="org.eventb.core.machineEventGuardModule"/>
          <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
@@ -824,9 +834,9 @@
          <prereq id="org.eventb.core.machineSeesContextModule"/>
       </processorType>
       <filterType
-            class="org.eventb.internal.core.sc.modules.MachineVariableFromLocalModule"
-            id="machineVariableFromLocalModule"
-            name="%scMachineVariableFromLocalModule"
+            class="org.eventb.internal.core.sc.modules.MachineVariableFromParameterModule"
+            id="machineVariableFromParameterModule"
+            name="%scMachineVariableFromParameterModule"
             parent="org.eventb.core.machineVariableModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineInvariantModule"
@@ -912,9 +922,9 @@
          <prereq id="org.eventb.core.machineEventConvergenceDefModule"/>
       </processorType>
       <processorType
-            class="org.eventb.internal.core.sc.modules.MachineEventVariableModule"
-            id="machineEventVariableModule"
-            name="%scMachineEventVariableModule"
+            class="org.eventb.internal.core.sc.modules.MachineEventParameterModule"
+            id="machineEventParameterModule"
+            name="%scMachineEventParameterModule"
             parent="org.eventb.core.machineEventModule">
          <prereq id="org.eventb.core.machineEventRefinesModule"/>
       </processorType>
@@ -923,7 +933,7 @@
             id="machineEventGuardModule"
             name="%scMachineEventGuardModule"
             parent="org.eventb.core.machineEventModule">
-         <prereq id="org.eventb.core.machineEventVariableModule"/>
+         <prereq id="org.eventb.core.machineEventParameterModule"/>
       </processorType>
       <filterType
             class="org.eventb.internal.core.sc.modules.MachineEventGuardFreeIdentsModule"
@@ -1182,7 +1192,7 @@
       </fileElementVersion>
       <fileElementVersion
             id="org.eventb.core.machineFile"
-            version="1">
+            version="2">
       </fileElementVersion>
    </extension>
    <extension
@@ -1207,6 +1217,16 @@
                   newId="org.eventb.core.configuration"
                   newValue="org.eventb.core.fwd">
             </addAttribute>
+         </element>
+      </simple>
+      <simple
+            type="org.eventb.core.machineFile"
+            version="2">
+         <element
+               elementPath="/org.eventb.core.machineFile/org.eventb.core.event/org.eventb.core.variable">
+            <renameElement
+                  newId="org.eventb.core.parameter">
+            </renameElement>
          </element>
       </simple>
    </extension>

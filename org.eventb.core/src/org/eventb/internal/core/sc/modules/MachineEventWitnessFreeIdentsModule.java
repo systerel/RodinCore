@@ -22,7 +22,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.EventParameterSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
@@ -72,12 +72,12 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 		if (!primed) { // abstract local variables are not contained in the symbol table; fake them!
 			String label = ((IWitness) element).getLabel();
 			if (label.equals(freeIdentifier.getName()))
-				return new EventVariableSymbolInfo(label, null, null, null);
+				return new EventParameterSymbolInfo(label, null, null, null);
 		}
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, identifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isLocal() && !variableSymbolInfo.isConcrete()) {
+			if (!variableSymbolInfo.isConcrete()) {
 				String label = ((IWitness) element).getLabel();
 				if (primed && !label.equals(freeIdentifier.getName())) {
 					// error: only the primed abstract disappearing variable

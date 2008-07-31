@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2008 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,17 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
-
 /**
- * Marker interface for carrier set identifiers.
- * <code>CarrierSetSymbolInfo</code> represents an Event-B carrier set in the symbol table.
+ * <code>IParameterSymbolInfo</code> represents an Event-B event parameter in the symbol table.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * 
  * @author Stefan Hallerstede
  *
  */
-public interface ICarrierSetSymbolInfo extends IIdentifierSymbolInfo {
-	// marker interface for carrier set identifiers
+public interface IParameterSymbolInfo extends IIdentifierSymbolInfo {
+
+	// TODO
+	
 }

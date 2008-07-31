@@ -25,10 +25,10 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableFromLocalModule extends SCFilterModule {
+public class MachineVariableFromParameterModule extends SCFilterModule {
 
-	public static final IModuleType<MachineVariableFromLocalModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariableFromLocalModule"); //$NON-NLS-1$
+	public static final IModuleType<MachineVariableFromParameterModule> MODULE_TYPE = 
+		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariableFromParameterModule"); //$NON-NLS-1$
 	
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
@@ -69,7 +69,7 @@ public class MachineVariableFromLocalModule extends SCFilterModule {
 			createProblemMarker(
 					identifierElement, 
 					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-					GraphProblem.VariableIsLocalInAbstractMachineError, 
+					GraphProblem.VariableIsParameterInAbstractMachineError, 
 					variableName,
 					abstractName);
 			

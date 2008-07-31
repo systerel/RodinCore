@@ -236,7 +236,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsVariables(scEvents[0]);
 		containsGuards(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
-		hasMarker(e.getVariables()[0]);
+		hasMarker(e.getParameters()[0]);
 		hasMarker(e.getGuards()[0]);
 	}
 	
@@ -526,7 +526,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsVariables(scEvents[0]);
 		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
 		
-		hasMarker(e.getVariables()[0]);
+		hasMarker(e.getParameters()[0]);
 		hasMarker(e.getGuards()[0]);
 	}
 	

@@ -21,6 +21,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -158,9 +159,9 @@ public abstract class EventBTest extends BuilderTest {
 		event.setInherited(false, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		for(int i=0; i<vars.length; i++) {
-			IVariable variable = event.getVariable(getUniqueName());
-			variable.create(null, null);
-			variable.setIdentifierString(vars[i], null);
+			IParameter parameter = event.getParameter(getUniqueName());
+			parameter.create(null, null);
+			parameter.setIdentifierString(vars[i], null);
 			
 		}
 		for(int i=0; i<guards.length; i++) {

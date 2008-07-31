@@ -21,6 +21,7 @@ import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Assignment;
@@ -288,11 +289,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			ISCEvent event, 
 			ITypeEnvironment eventTypeEnvironment,
 			FormulaFactory factory) throws CoreException {
-		ISCVariable[] variables = event.getSCVariables();
-		FreeIdentifier[] identifiers = new FreeIdentifier[variables.length];
+		ISCParameter[] parameters = event.getSCParameters();
+		FreeIdentifier[] identifiers = new FreeIdentifier[parameters.length];
 		
-		for (int i=0; i<variables.length; i++) {
-			identifiers[i] = variables[i].getIdentifier(factory);
+		for (int i=0; i<parameters.length; i++) {
+			identifiers[i] = parameters[i].getIdentifier(factory);
 			eventTypeEnvironment.add(identifiers[i]);
 		}
 		

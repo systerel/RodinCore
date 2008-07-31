@@ -18,7 +18,7 @@ import org.eventb.core.ISCMachineFile;
  * 
  * @author Laurent Voisin
  */
-public class DeltaCheckingTests extends BasicSCTest {
+public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 
 	/**
 	 * Ensures that the statically-checked file of a context is modified only

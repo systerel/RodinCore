@@ -144,8 +144,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		refinesEvents(events[0], "evt");
 		containsVariables(events[0]);
 		
-		hasMarker(evt.getGuards()[0], null, GraphProblem.LocalVariableChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
-		hasMarker(evt.getVariables()[0], null, GraphProblem.UntypedVariableError, "L1");
+		hasMarker(evt.getGuards()[0], null, GraphProblem.ParameterChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
+		hasMarker(evt.getParameters()[0], null, GraphProblem.UntypedParameterError, "L1");
 		
 	}
 	

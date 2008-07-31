@@ -14,16 +14,22 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class MachineVariableSymbolInfo extends VariableSymbolInfo {
+public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements IVariableSymbolInfo {
+
+	private boolean forbidden;
+	private boolean concrete;
+	private boolean fresh;
 
 	private MachineVariableSymbolInfo(
 			String symbol, 
@@ -32,6 +38,12 @@ public class MachineVariableSymbolInfo extends VariableSymbolInfo {
 			IAttributeType.String attribute, 
 			String component) {
 		super(symbol, imported, element, attribute, component);
+		
+		forbidden = false;
+		
+		concrete = false;
+		
+		fresh = false;
 	}
 	
 	public static MachineVariableSymbolInfo makeAbstractVariableSymbolInfo(
@@ -100,6 +112,40 @@ public class MachineVariableSymbolInfo extends VariableSymbolInfo {
 					getSourceAttributeType(), 
 					GraphProblem.VariableNameConflictWarning, 
 					getSymbol());
+	}
+
+	public boolean isForbidden() {
+		return forbidden;
+	}
+
+	public void setForbidden() throws CoreException {
+		assertMutable();
+		this.forbidden = true;
+		this.concrete = false;
+	}
+
+	public boolean isConcrete() {
+		return concrete;
+	}
+
+	public void setConcrete() {
+		assert !forbidden;
+		
+		this.concrete = true;
+	}
+
+	@Override
+	public IRodinProblem getUntypedError() {
+		return GraphProblem.UntypedVariableError;
+	}
+
+	public void setFresh() throws CoreException {
+		assertMutable();
+		fresh = true;
+	}
+
+	public boolean isFresh() {
+		return fresh;
 	}
 
 }

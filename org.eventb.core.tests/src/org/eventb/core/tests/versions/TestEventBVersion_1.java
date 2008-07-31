@@ -7,71 +7,20 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCMachineFile;
-import org.eventb.core.tests.BuilderTest;
-import org.rodinp.core.IConversionResult;
-import org.rodinp.core.IRodinDBStatusConstants;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
-import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.core.IConversionResult.IEntry;
 
 /**
+ * Version 1 of the machine and context database introduces configurations
+ * 
  * @author Stefan Hallerstede
  *
  */
-public class TestEventBVersion_1 extends BuilderTest {
+public class TestEventBVersion_1 extends EventBVersionTest {
 
-	private static final String ORG_EVENTB_CORE_FWD = "org.eventb.core.fwd";
-
-	protected void createFile(String fileName, String contents) throws CoreException {
-		IProject project = rodinProject.getProject();
-		IFile file = project.getFile(fileName);
-		InputStream ios = new ByteArrayInputStream(contents.getBytes());
-		file.create(ios, true, null);
-	}
-		
-	protected void hasBuilderMarkers(String name) throws CoreException {
-		IRodinFile csc = rodinProject.getRodinFile(name);
-		IMarker[] markers = 
-			csc.getResource().findMarkers(
-					RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
-					false, 
-					IResource.DEPTH_ZERO);
-		assertNotSame("has markers", markers.length, 0);
-	}
-		
-	protected void hasNotBuilderMarkers(String name) throws CoreException {
-		IRodinFile csc = rodinProject.getRodinFile(name);
-		IMarker[] markers = 
-			csc.getResource().findMarkers(
-					RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER, 
-					false, 
-					IResource.DEPTH_ZERO);
-		assertSame("has markers", markers.length, 0);
-	}
-	
-	protected boolean convSuccess(IConversionResult result) {
-		for (IEntry entry : result.getEntries()) {
-			if (entry.success())
-				continue;
-			return false;
-		}
-		return true;
-	}
-	
 	/**
 	 * contexts of version 0 are updated to contexts of version 1
 	 */
@@ -124,23 +73,6 @@ public class TestEventBVersion_1 extends BuilderTest {
 		
 	}
 
-	private void convert(IRodinFile file) throws RodinDBException {
-		try {
-		
-			file.getChildren();
-			fail("opening the file should have failed");
-			
-		} catch(RodinDBException e) {
-			assertEquals("not a past version", IRodinDBStatusConstants.PAST_VERSION, e.getRodinDBStatus().getCode());
-		}
-		
-		IConversionResult result = RodinCore.convert(rodinProject, true, null);
-		
-		assertTrue("conversion not succeeded", convSuccess(result));
-		
-		result.accept(true, false, null);
-	}
-	
 	/**
 	 * SC contexts are updated to contexts of version 1;
 	 * the new attribute is added

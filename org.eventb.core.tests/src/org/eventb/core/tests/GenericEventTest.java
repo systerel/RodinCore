@@ -10,7 +10,7 @@ package org.eventb.core.tests;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IVariable;
+import org.eventb.core.IParameter;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -27,9 +27,9 @@ implements IGenericElementTest<IEvent> {
 
 	public void addIdents(IEvent element, String... names) throws RodinDBException {
 		for (String name : names) {
-			IVariable variable = element.getVariable(test.getUniqueName());
-			variable.create(null, null);
-			variable.setIdentifierString(name, null);
+			IParameter parameter = element.getParameter(test.getUniqueName());
+			parameter.create(null, null);
+			parameter.setIdentifierString(name, null);
 		}
 			
 	}

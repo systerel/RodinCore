@@ -147,6 +147,7 @@ public abstract class BuilderTest extends TestCase {
 		EventBPlugin.getAutoTacticPreference().setEnabled(false);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -174,6 +175,7 @@ public abstract class BuilderTest extends TestCase {
 		return result;
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		// Delete all Rodin projects
 		final IRodinDB rodinDB = RodinCore.getRodinDB();

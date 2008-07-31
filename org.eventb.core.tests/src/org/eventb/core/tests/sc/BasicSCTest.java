@@ -37,6 +37,7 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCSeesContext;
@@ -380,14 +381,14 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	public void containsVariables(ISCEvent event, String... strings) throws RodinDBException {
-		ISCVariable[] variables = event.getSCVariables();
+		ISCParameter[] parameters = event.getSCParameters();
 		
-		assertEquals("wrong number of variables", strings.length, variables.length);
+		assertEquals("wrong number of variables", strings.length, parameters.length);
 		
 		if (strings.length == 0)
 			return;
 		
-		Set<String> nameSet = getIdentifierNameSet(variables);
+		Set<String> nameSet = getIdentifierNameSet(parameters);
 	
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));

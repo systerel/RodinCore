@@ -32,8 +32,8 @@ import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
+import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.symbolTable.GuardSymbolInfo;
 import org.rodinp.core.IInternalElement;
@@ -156,7 +156,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 				createProblemMarker(
 						formulaElement, 
 						getFormulaAttributeType(), 
-						GraphProblem.LocalVariableChangedTypeError, 
+						GraphProblem.ParameterChangedTypeError, 
 						name, type.toString(), identifier.getType().toString());
 			}
 		}
@@ -212,10 +212,8 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			iterator.advance();
 			ISymbolInfo symbolInfo = 
 				identifierSymbolTable.getSymbolInfoFromTop(iterator.getName());
-			if (symbolInfo instanceof IVariableSymbolInfo) {
-				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (variableSymbolInfo.isLocal())
-					continue;
+			if (symbolInfo instanceof IParameterSymbolInfo) {
+				continue;
 			}
 			ok = false;
 			createProblemMarker(

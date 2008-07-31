@@ -162,6 +162,7 @@ public abstract class BasicTest extends TestCase {
 		EventBPlugin.getAutoTacticPreference().setEnabled(false);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -184,6 +185,7 @@ public abstract class BasicTest extends TestCase {
 		disableAutoProver();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		rodinProject.getProject().delete(true, true, null);
 		super.tearDown();

@@ -46,21 +46,21 @@ public abstract class IdentifierSymbolInfo
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#isAbstract()
 	 */
-	public boolean isImported() {
+	public final boolean isImported() {
 		return imported;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#getType()
 	 */
-	public Type getType() {
+	public final Type getType() {
 		return type;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#setType(org.eventb.core.ast.Type)
 	 */
-	public void setType(Type type) throws CoreException {
+	public final void setType(Type type) throws CoreException {
 		assertMutable();
 		this.type = type;
 	}
@@ -68,14 +68,14 @@ public abstract class IdentifierSymbolInfo
 	/**
 	 * @return whether the the identifier should be considered declared or not.
 	 */
-	public boolean isVisible() {
+	public final boolean isVisible() {
 		return visible;
 	}
 
 	/**
 	 * Set the visibility status of the identifier to true.
 	 */
-	public void makeVisible() throws CoreException {
+	public final void makeVisible() throws CoreException {
 		assertMutable();
 		this.visible = true;
 	}
@@ -83,7 +83,7 @@ public abstract class IdentifierSymbolInfo
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#issueUntypedErrorMarker(org.eventb.core.sc.IMarkerDisplay)
 	 */
-	public void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException {
+	public final void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException {
 		
 		markerDisplay.createProblemMarker(
 				getSourceElement(), 
