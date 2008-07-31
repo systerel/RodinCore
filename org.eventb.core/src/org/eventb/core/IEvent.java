@@ -40,6 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IEvent extends ICommentedElement, ILabeledElement, IConvergenceElement {
 
@@ -106,6 +107,27 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	IRefinesEvent[] getRefinesClauses() throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child parameter with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the parameter
+	 * @return a handle to a child parameter with the given element name
+	 */
+	IParameter getParameter(String elementName);
+
+	/**
+	 * Returns an array containing all parameters of this event.
+	 * @return an array of all parameters
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IParameter[] getParameters() throws RodinDBException;
+
+	/**
 	 * Returns a handle to a child variable with the given element name.
 	 * <p>
 	 * This is a handle-only method. The child element may or may not be
@@ -115,7 +137,9 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * @param elementName
 	 *            element name of the variable
 	 * @return a handle to a child variable with the given element name
+	 * @deprecated use <code>getParameter()</code> instead
 	 */
+	@Deprecated
 	IVariable getVariable(String elementName);
 
 	/**
@@ -123,7 +147,9 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * @return an array of all variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getParameters()</code> instead
 	 */
+	@Deprecated
 	IVariable[] getVariables() throws RodinDBException;
 
 	/**

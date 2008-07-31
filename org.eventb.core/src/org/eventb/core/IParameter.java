@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2008 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
-
 /**
- * Common protocol for Event-B machine variables.
+ * Common protocol for Event-B event parameters.
  * <p>
- * A variable has a name that is accessed and manipulated via
+ * A parameter has a name that is accessed and manipulated via
  * {@link IIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
@@ -26,13 +25,13 @@ import org.rodinp.core.RodinCore;
  * @see IIdentifierElement#getIdentifierString()
  * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
- * @author Laurent Voisin
  * @author Stefan Hallerstede
+ *
  */
-public interface IVariable extends ICommentedElement, IIdentifierElement {
+public interface IParameter extends ICommentedElement, IIdentifierElement {
 
-	IInternalElementType<IVariable> ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".variable"); //$NON-NLS-1$
+	IInternalElementType<IParameter> ELEMENT_TYPE =
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".parameter"); //$NON-NLS-1$
 
 	// No additional method
 

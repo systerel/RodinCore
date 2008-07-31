@@ -92,7 +92,9 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @param elementName
 	 *            element name of the SC variable
 	 * @return a handle to a child SC variable with the given element name
+	 * @deprecated use <code>getSCParameter()</code> instead
 	 */
+	@Deprecated
 	ISCVariable getSCVariable(String elementName);
 
 	/**
@@ -101,8 +103,32 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @return an array of all SC variables
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @deprecated use <code>getSCParameters()</code> instead
 	 */
+	@Deprecated
 	ISCVariable[] getSCVariables() throws RodinDBException;
+
+	/**
+	 * Returns a handle to a child SC parameter with the given element name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param elementName
+	 *            element name of the SC parameter
+	 * @return a handle to a child SC parameter with the given element name
+	 */
+	ISCParameter getSCParameter(String elementName);
+
+	/**
+	 * Returns an array containing all SC parameters of this SC event.
+	 * 
+	 * @return an array of all SC parameters
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCParameter[] getSCParameters() throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC witness with the given element name.
