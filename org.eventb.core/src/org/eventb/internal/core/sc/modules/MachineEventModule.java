@@ -332,7 +332,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 			if (symbolInfo.getSymbol().equals(abstractEventWrapper.getInfo().getEventLabel()))
 				found = true;
 			
-			checkForLocalVariableTypeErrors(
+			checkForParameterTypeErrors(
 					symbolInfo, 
 					typeErrors, 
 					types, 
@@ -400,7 +400,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 		return false;
 	}
 
-	private void checkForLocalVariableTypeErrors(
+	private void checkForParameterTypeErrors(
 			IEventSymbolInfo symbolInfo, 
 			HashSet<String> typeErrors, Hashtable<String, Type> types, 
 			AbstractEventWrapper abstractEventWrapper) throws RodinDBException, CoreException {
