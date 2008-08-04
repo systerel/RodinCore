@@ -282,14 +282,16 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 			
 			if (contextPointerArray.hasError(index)) {
 				for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
-					symbolInfo.makeImmutable();
+					if (symbolInfo.isMutable()) {
+						symbolInfo.setError();
+						symbolInfo.makeImmutable();
+					}
 				}
 				continue;
 			}
 			
 			for (IIdentifierSymbolInfo symbolInfo : declaredIdentifiers[index]) {
 				if (symbolInfo.isMutable()) {
-					symbolInfo.makeVisible();
 					symbolInfo.makeImmutable();
 					
 					typeEnvironment.addName(symbolInfo.getSymbol(), symbolInfo.getType());

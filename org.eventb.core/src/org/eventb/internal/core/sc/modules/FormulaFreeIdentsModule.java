@@ -87,7 +87,7 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 					freeIdentifier.getSourceLocation().getStart(), 
 					freeIdentifier.getSourceLocation().getEnd(), 
 					GraphProblem.UndeclaredFreeIdentifierError, freeIdentifier.getName());
-		} else if (symbolInfo.hasError() || !symbolInfo.isVisible()) {
+		} else if (symbolInfo.hasError()) {
 			createProblemMarker(
 					element, getAttributeType(), 
 					freeIdentifier.getSourceLocation().getStart(), 

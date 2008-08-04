@@ -94,7 +94,7 @@ public class MachineEventInheritedModule extends SCFilterModule {
 				boolean found = abstractEventInfo.getVariable(name) != null;
 				if (!found) {
 					IIdentifierSymbolInfo symbolInfo = identifierSymbolTable.getSymbolInfo(name);
-					if (symbolInfo == null || symbolInfo.hasError() || !symbolInfo.isVisible()) {
+					if (symbolInfo == null || symbolInfo.hasError()) {
 						createIdentProblem(event, name, seenFaultyIdents, GraphProblem.UndeclaredFreeIdentifierError);
 						ok = false;
 					}

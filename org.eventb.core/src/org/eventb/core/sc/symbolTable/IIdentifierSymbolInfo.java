@@ -49,23 +49,6 @@ public interface IIdentifierSymbolInfo extends ISymbolInfo {
 	boolean isImported();
 	
 	/**
-	 * Returns whether this symbol is visible, i.e. can be used in formulas.
-	 * If all pointers via which this identifier symbol is reachable are in an error
-	 * state, this identifier symbol is marked invisible.
-	 * <p>
-	 * Identifiers that are not imported are always visible.
-	 * </p>
-	 * @return whether this symbol is visible
-	 */
-	boolean isVisible();
-	
-	/**
-	 * Set this identifier symbol's visibility to <code>true</code>.
-	 * @throws CoreException if this symbol is not mutable
-	 */
-	void makeVisible() throws CoreException;
-	
-	/**
 	 * Create a statically checked identifier element for this symbol with the specified parent.
 	 * 
 	 * @param parent the parent of the element to create

@@ -251,8 +251,6 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		
 		symbolInfo.setType(type);
 		
-		symbolInfo.makeVisible();
-		
 		identifierSymbolTable.putSymbolInfo(symbolInfo);
 		
 		typeEnvironment.addName(name, type);

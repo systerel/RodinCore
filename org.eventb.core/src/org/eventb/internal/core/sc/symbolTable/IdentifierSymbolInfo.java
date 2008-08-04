@@ -33,15 +33,12 @@ public abstract class IdentifierSymbolInfo
 		
 		type = null;
 		this.imported = imported;
-		visible = !imported;
 	}
 	
 	// whether this symbol is contained in an abstraction, or is "seen"
 	private final boolean imported; 
 	
 	private Type type;
-	
-	private boolean visible;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#isAbstract()
@@ -63,21 +60,6 @@ public abstract class IdentifierSymbolInfo
 	public final void setType(Type type) throws CoreException {
 		assertMutable();
 		this.type = type;
-	}
-
-	/**
-	 * @return whether the the identifier should be considered declared or not.
-	 */
-	public final boolean isVisible() {
-		return visible;
-	}
-
-	/**
-	 * Set the visibility status of the identifier to true.
-	 */
-	public final void makeVisible() throws CoreException {
-		assertMutable();
-		this.visible = true;
 	}
 
 	/* (non-Javadoc)
