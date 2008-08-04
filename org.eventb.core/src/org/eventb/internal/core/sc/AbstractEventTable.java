@@ -59,7 +59,7 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		table.add(info);
 		labels.add(info.getEventLabel());
 			
-		for (FreeIdentifier identifier : info.getVariables()) {
+		for (FreeIdentifier identifier : info.getParameters()) {
 			localVariables.add(identifier.getName());
 		}
 		
@@ -78,7 +78,7 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		return index;
 	}
 
-	public boolean isLocalVariable(String name) throws CoreException {
+	public boolean isParameter(String name) throws CoreException {
 		assertImmutable();
 		return localVariables.contains(name);
 	}

@@ -58,7 +58,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
-	public FreeIdentifier getVariable(String name) throws CoreException {
+	public FreeIdentifier getParameter(String name) throws CoreException {
 		assertImmutable();
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
@@ -72,7 +72,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
-	public List<FreeIdentifier> getVariables() throws CoreException {
+	public List<FreeIdentifier> getParameters() throws CoreException {
 		assertImmutable();
 		return idents;
 	}

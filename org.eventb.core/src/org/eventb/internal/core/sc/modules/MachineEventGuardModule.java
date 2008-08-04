@@ -146,7 +146,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			
 			if (eventInfo != null) {
 			
-				FreeIdentifier identifier = eventInfo.getVariable(name);
+				FreeIdentifier identifier = eventInfo.getParameter(name);
 			
 				if (identifier == null || identifier.getType().equals(type))
 					continue;

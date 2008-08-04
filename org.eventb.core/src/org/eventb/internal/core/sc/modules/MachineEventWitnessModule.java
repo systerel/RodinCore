@@ -237,7 +237,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		
 		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
 			
-			List<FreeIdentifier> identifiers = abstractEventInfo.getVariables();
+			List<FreeIdentifier> identifiers = abstractEventInfo.getParameters();
 		
 			for (FreeIdentifier identifier : identifiers) {
 				// if a symbol with the same name is found it can only be

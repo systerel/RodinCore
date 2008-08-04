@@ -62,7 +62,7 @@ public class MachineVariableFromParameterModule extends SCFilterModule {
 		
 		String variableName = identifierElement.getIdentifierString();
 		
-		if (abstractEventTable.isLocalVariable(variableName)) {
+		if (abstractEventTable.isParameter(variableName)) {
 			
 			String abstractName = abstractMachineInfo.getAbstractMachine().getComponentName();
 			

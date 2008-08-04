@@ -48,12 +48,12 @@ public interface IAbstractEventTable extends ISCState {
 	IAbstractEventInfo getAbstractEventInfo(String label) throws CoreException;
 	
 	/**
-	 * Returns whether any of the abstract events has a local variable with the specified name.
+	 * Returns whether any of the abstract events has a parameter with the specified name.
 	 * 
 	 * @param name the name to check
-	 * @return whether any of the abstract events has a local variable with the specified name
+	 * @return whether any of the abstract events has a parameter with the specified name
 	 * @throws CoreException if state is not immutable
 	 */
-	boolean isLocalVariable(String name) throws CoreException;
+	boolean isParameter(String name) throws CoreException;
 	
 }

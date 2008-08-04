@@ -405,7 +405,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 			HashSet<String> typeErrors, Hashtable<String, Type> types, 
 			AbstractEventWrapper abstractEventWrapper) throws RodinDBException, CoreException {
 		if (types != null)
-			for (FreeIdentifier identifier : abstractEventWrapper.getInfo().getVariables()) {
+			for (FreeIdentifier identifier : abstractEventWrapper.getInfo().getParameters()) {
 				String name = identifier.getName();
 				Type newType = identifier.getType();
 				Type type = types.put(name, newType);

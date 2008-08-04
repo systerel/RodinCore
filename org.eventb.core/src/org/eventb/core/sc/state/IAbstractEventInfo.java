@@ -59,26 +59,26 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	String getEventLabel();
 	
 	/**
-	 * Returns a typed free variable with the specified name contained in this 
-	 * abstract event info, or <code>null</code> if no variable with this name
+	 * Returns a typed free parameter with the specified name contained in this 
+	 * abstract event info, or <code>null</code> if no parameter with this name
 	 * is contained in this abstract event info.
 	 * 
 	 * @param name the name of the free identifier to look up
 	 * @return the corresponding typed free identifier, or <code>null</code> if none
 	 * @throws CoreException if state is not immutable
 	 */
-	FreeIdentifier getVariable(String name) throws CoreException;
+	FreeIdentifier getParameter(String name) throws CoreException;
 	
 	/**
-	 * Returns the array of typed free variables contained in this abstract event info.
+	 * Returns the array of typed free parameters contained in this abstract event info.
 	 * <p>
-	 * The free identifiers correspond to event variables.
+	 * The free identifiers correspond to event parameters.
 	 * </p>
 	 * 
 	 * @return the array of typed free identifiers contained in this abstract event info
 	 * @throws CoreException if state is not immutable
 	 */
-	List<FreeIdentifier> getVariables() throws CoreException;
+	List<FreeIdentifier> getParameters() throws CoreException;
 	
 	/**
 	 * Returns the array of parsed and type-checked predicates corresponding to the guards

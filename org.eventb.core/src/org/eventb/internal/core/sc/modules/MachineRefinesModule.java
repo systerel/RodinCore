@@ -275,7 +275,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 					event,
 					label, 
 					event.getConvergence(),
-					fetchEventVariables(event, eventTypeEnvironment, factory),
+					fetchEventParameters(event, eventTypeEnvironment, factory),
 					fetchEventGuards(event, eventTypeEnvironment, factory),
 					fetchEventActions(event, eventTypeEnvironment, factory));
 		abstractEventInfo.makeImmutable();
@@ -283,7 +283,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		abstractEventTable.putAbstractEventInfo(abstractEventInfo);
 	}
 	
-	private FreeIdentifier[] fetchEventVariables(
+	private FreeIdentifier[] fetchEventParameters(
 			ISCEvent event, 
 			ITypeEnvironment eventTypeEnvironment,
 			FormulaFactory factory) throws CoreException {

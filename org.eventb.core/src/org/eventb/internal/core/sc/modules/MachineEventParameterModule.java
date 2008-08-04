@@ -72,7 +72,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 		if (eventRefinesInfo.currentEventIsNew())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
-		for (FreeIdentifier freeIdentifier : abstractEventInfo.getVariables()) {
+		for (FreeIdentifier freeIdentifier : abstractEventInfo.getParameters()) {
 			String name = freeIdentifier.getName();
 			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)
 				continue;
