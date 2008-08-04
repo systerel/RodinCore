@@ -80,7 +80,7 @@ public class MachineVariableModule extends IdentifierModule {
 				return false;
 			}
 			
-			if (symbolInfo.isImported()) {
+			if (variableSymbolInfo.isAbstract()) {
 				variableSymbolInfo.setConcrete();
 				variableSymbolInfo.setSourceElement(element, EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				return true;
