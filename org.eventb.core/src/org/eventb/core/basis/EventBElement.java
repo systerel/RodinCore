@@ -272,25 +272,4 @@ public abstract class EventBElement extends InternalElement {
 		return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
 	}
 
-	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.FORBIDDEN_ATTRIBUTE, value, monitor);
-	}
-
-	public boolean isForbidden() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.FORBIDDEN_ATTRIBUTE);
-	}
-
-	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.PRESERVED_ATTRIBUTE, value, monitor);
-	}
-
-	public boolean isPreserved() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.PRESERVED_ATTRIBUTE);
-	}
-
-	@Deprecated
-	public void setForbidden(boolean value) throws RodinDBException {
-		setForbidden(value, null);
-	}
-
 }

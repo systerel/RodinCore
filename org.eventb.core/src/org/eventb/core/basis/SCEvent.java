@@ -8,6 +8,7 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
@@ -139,6 +140,22 @@ public class SCEvent extends EventBElement implements ISCEvent {
 			typenv.add(par.getIdentifier(factory));
 		}
 		return typenv;
+	}
+
+	@Deprecated
+	public boolean isForbidden() throws RodinDBException {
+		return false;
+	}
+
+	@Deprecated
+	public void setForbidden(boolean value) throws RodinDBException {
+		// do nothing
+	}
+
+	@Deprecated
+	public void setForbidden(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+		// do nothing
 	}
 
 }

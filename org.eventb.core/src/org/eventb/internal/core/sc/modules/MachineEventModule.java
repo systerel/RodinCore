@@ -581,7 +581,7 @@ public class MachineEventModule extends AbstractEventWrapperModule {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isVisible() 
 						&& !variableSymbolInfo.hasError() 
-						&& !variableSymbolInfo.isForbidden()) {
+						&& (variableSymbolInfo.isConcrete() || variableSymbolInfo.isAbstract())) {
 					FreeIdentifier identifier = 
 						factory.makeFreeIdentifier(
 								variableSymbolInfo.getSymbol(), null, 

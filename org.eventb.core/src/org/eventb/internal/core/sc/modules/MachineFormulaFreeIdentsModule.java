@@ -32,7 +32,7 @@ public abstract class MachineFormulaFreeIdentsModule extends FormulaFreeIdentsMo
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (variableSymbolInfo.isForbidden()) {
+			if (!variableSymbolInfo.isAbstract() && !variableSymbolInfo.isConcrete()) {
 				createProblemMarker(
 						element, 
 						getAttributeType(), 

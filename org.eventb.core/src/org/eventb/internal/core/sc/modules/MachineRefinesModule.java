@@ -228,8 +228,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 						identifierSymbolTable, 
 						factory, 
 						abstractVariableCreator);
-			if (variable.isForbidden())
-				symbolInfo.setForbidden();
+			if (variable.isConcrete())
+				symbolInfo.setAbstract();
 			symbolInfo.makeImmutable();
 		}
 		

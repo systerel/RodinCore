@@ -146,9 +146,9 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 		for(ISCVariable variable : variables) {
 			FreeIdentifier identifier = fetchIdentifier(variable);
 			createIdentifier(predSet, identifier, monitor);
-			if (variable.isForbidden())
-				continue;
-			variableTable.add(identifier, variable.isPreserved());
+			if (variable.isConcrete()) {
+				variableTable.add(identifier, variable.isAbstract());
+			}
 		}
 		variableTable.makeImmutable();
 	}

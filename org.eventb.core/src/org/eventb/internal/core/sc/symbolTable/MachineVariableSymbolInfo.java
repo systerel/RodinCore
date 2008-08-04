@@ -28,6 +28,7 @@ import org.rodinp.core.RodinDBException;
 public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements IVariableSymbolInfo {
 
 	private boolean forbidden;
+	private boolean abstractVar;
 	private boolean concrete;
 	private boolean fresh;
 
@@ -40,6 +41,8 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 		super(symbol, imported, element, attribute, component);
 		
 		forbidden = false;
+		
+		abstractVar = false;
 		
 		concrete = false;
 		
@@ -72,8 +75,8 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 		ISCVariable variable = ((ISCMachineFile) parent).getSCVariable(getSymbol());
 		variable.create(null, monitor);
 		variable.setType(getType(), null);
-		variable.setForbidden(isForbidden() || !isConcrete(), monitor);
-		variable.setPreserved(isConcrete() && !isFresh(), monitor);
+		variable.setConcrete(isConcrete(), monitor);
+		variable.setAbstract(isAbstract(), monitor);
 		variable.setSource(getSourceElement(), monitor);
 		return variable;
 	}
@@ -114,10 +117,12 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 					getSymbol());
 	}
 
+	@Deprecated
 	public boolean isForbidden() {
 		return forbidden;
 	}
 
+	@Deprecated
 	public void setForbidden() throws CoreException {
 		assertMutable();
 		this.forbidden = true;
@@ -139,13 +144,23 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 		return GraphProblem.UntypedVariableError;
 	}
 
+	@Deprecated
 	public void setFresh() throws CoreException {
 		assertMutable();
 		fresh = true;
 	}
 
+	@Deprecated
 	public boolean isFresh() {
 		return fresh;
+	}
+
+	public boolean isAbstract() {
+		return abstractVar;
+	}
+
+	public void setAbstract() {
+		abstractVar = true;
 	}
 
 }

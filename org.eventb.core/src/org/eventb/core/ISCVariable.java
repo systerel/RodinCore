@@ -58,7 +58,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated instead of <code>setForbidden(b,pm)</code> use <code>setConcrete(!b,pm)</code>
 	 */
+	@Deprecated
 	void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
@@ -75,7 +77,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * @return whether the variable name is forbidden or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>!isConcrete()</code>
 	 */
+	@Deprecated
 	boolean isForbidden() throws RodinDBException;
 	
 	/**
@@ -93,7 +97,9 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 *            reporting is not desired
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated instead of <code>setPreserved(b,pm)</code> use <code>setAbstract(b,pm);setConcrete(b,pm)</code>
 	 */
+	@Deprecated
 	void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
@@ -109,7 +115,53 @@ public interface ISCVariable extends ITraceableElement, ISCIdentifierElement {
 	 * @return whether the variable name is preserved or not
 	 * 
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated use <code>isAbstract() && isConcrete()</code>
 	 */
+	@Deprecated
 	boolean isPreserved() throws RodinDBException;
+
+	/**
+	 * <p>
+	 * A variable that was declared in the (immediate) abstract machine is "abstract".
+	 * </p>
+	 * 
+	 * @param value whether the variable is abstract or not
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	void setAbstract(boolean value, IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns whether the variable name is abstract or not.
+	 * 
+	 * @return whether the variable name is forbidden or not
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean isAbstract() throws RodinDBException;
+	
+	/**
+	 * A variable that is declared in the concrete machine is "concrete".
+	 * 
+	 * @param value whether the variable is preserved or not
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	void setConcrete(boolean value, IProgressMonitor monitor) throws RodinDBException;
+	
+	/**
+	 * Returns whether the variable name is concrete or not.
+	 * 
+	 * @return whether the variable name is preserved or not
+	 * 
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean isConcrete() throws RodinDBException;
 
 }

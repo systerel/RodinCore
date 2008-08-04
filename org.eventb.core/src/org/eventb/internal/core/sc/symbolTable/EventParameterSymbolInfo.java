@@ -54,7 +54,7 @@ public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IP
 		markerDisplay.createProblemMarker(
 				getSourceElement(), 
 				getSourceAttributeType(), 
-				GraphProblem.EventVariableNameConflictError, 
+				GraphProblem.EventParameterNameConflictError, 
 				getSymbol());
 	}
 
@@ -63,7 +63,7 @@ public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IP
 		markerDisplay.createProblemMarker(
 				getSourceElement(), 
 				getSourceAttributeType(), 
-				GraphProblem.EventVariableNameConflictWarning, 
+				GraphProblem.EventParameterNameConflictWarning, 
 				getSymbol());
 	}
 

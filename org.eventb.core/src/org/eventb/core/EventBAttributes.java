@@ -33,11 +33,19 @@ public final class EventBAttributes {
 	public static IAttributeType.Boolean INHERITED_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".inherited");
 	
+	@Deprecated
 	public static IAttributeType.Boolean FORBIDDEN_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".forbidden");
 	
+	@Deprecated
 	public static IAttributeType.Boolean PRESERVED_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".preserved");
+	
+	public static IAttributeType.Boolean ABSTRACT_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".abstract");
+	
+	public static IAttributeType.Boolean CONCRETE_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".concrete");
 	
 	public static IAttributeType.Integer CONVERGENCE_ATTRIBUTE =
 		RodinCore.getIntegerAttrType(EventBPlugin.PLUGIN_ID + ".convergence");

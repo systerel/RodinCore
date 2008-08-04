@@ -8,9 +8,12 @@
 
 package org.eventb.core.basis;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCVariable;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B SC variable as an extension of the Rodin database.
@@ -36,6 +39,45 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	@Override
 	public IInternalElementType<ISCVariable> getElementType() {
 		return ISCVariable.ELEMENT_TYPE;
+	}
+
+	public boolean isAbstract() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.ABSTRACT_ATTRIBUTE);
+	}
+
+	public boolean isConcrete() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE);
+	}
+
+	public void setAbstract(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(EventBAttributes.ABSTRACT_ATTRIBUTE, value, monitor);
+	}
+
+	public void setConcrete(boolean value, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE, value, monitor);
+	}
+
+	@Deprecated
+	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
+		setConcrete(!value, monitor);
+	}
+
+	@Deprecated
+	public boolean isForbidden() throws RodinDBException {
+		return !isConcrete();
+	}
+
+	@Deprecated
+	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
+		setAbstract(value, monitor);
+		setConcrete(value, null);
+	}
+
+	@Deprecated
+	public boolean isPreserved() throws RodinDBException {
+		return isAbstract() && isConcrete();
 	}
 
 }

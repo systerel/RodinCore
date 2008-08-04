@@ -72,7 +72,7 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 						GraphProblem.InitialisationActionRHSError,
 						freeIdentifier.getName());
 				return null;
-			} else if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
+			} else if (!variableSymbolInfo.isConcrete()) {
 				createProblemMarker(
 						element, 
 						getAttributeType(), 
@@ -114,7 +114,7 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			IIdentifierSymbolInfo symbolInfo = symbolTable.getSymbolInfo(name);
 			if (symbolInfo instanceof IVariableSymbolInfo) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
+				if (!variableSymbolInfo.isConcrete()) {
 					createProblemMarker(
 							element, 
 							getAttributeType(), 

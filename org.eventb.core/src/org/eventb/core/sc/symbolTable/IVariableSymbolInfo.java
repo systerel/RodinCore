@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * <code>IVariableSymbolInfo</code> represents an Event-B machine variable in the symbol table.
@@ -18,21 +17,20 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
+	
+	/**
+	 * Marks the variable as concrete. This method can be called even
+	 * when the symbol info is immutable.
+	 */
+	public void setAbstract();
+	
+	/**
+	 * Returns whether this is a variable of the current machine.
+	 * 
+	 * @return whether this is a variable of the current machine
+	 */
+	boolean isAbstract();
 
-	/**
-	 * Marks the variable as "forbidden".
-	 * 
-	 * @throws CoreException if the symbol info is immutable
-	 */
-	public void setForbidden() throws CoreException;
-	
-	/**
-	 * Returns whether the variable is forbidden.
-	 * 
-	 * @return whether the variable is forbidden
-	 */
-	boolean isForbidden();
-	
 	/**
 	 * Marks the variable as concrete. This method can be called even
 	 * when the symbol info is immutable.
@@ -45,18 +43,5 @@ public interface IVariableSymbolInfo extends IIdentifierSymbolInfo {
 	 * @return whether this is a variable of the current machine
 	 */
 	boolean isConcrete();
-	
-	/**
-	 * Mark this the variable as "fresh", i.e. its name was not used before.
-	 * 
-	 * @throws CoreException if this symbol is not mutable
-	 */
-	void setFresh() throws CoreException;
-	
-	/**
-	 * Returns whether the variable symbol is "fresh".
-	 * @return whether the variable symbol is "fresh"
-	 */
-	boolean isFresh();
 	
 }

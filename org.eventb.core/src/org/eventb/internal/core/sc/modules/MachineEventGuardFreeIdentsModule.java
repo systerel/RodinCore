@@ -46,7 +46,7 @@ public class MachineEventGuardFreeIdentsModule extends MachineFormulaFreeIdentsM
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = 
 				(IVariableSymbolInfo) symbolInfo;
-			if (variableSymbolInfo.isForbidden() || !variableSymbolInfo.isConcrete()) {
+			if (variableSymbolInfo.isAbstract() && !variableSymbolInfo.isConcrete()) {
 				createProblemMarker(
 						element, getAttributeType(), 
 						freeIdentifier.getSourceLocation().getStart(), 

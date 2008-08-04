@@ -73,7 +73,7 @@ public class MachineVariableModule extends IdentifierModule {
 		if (symbolInfo instanceof MachineVariableSymbolInfo) {
 			MachineVariableSymbolInfo variableSymbolInfo = (MachineVariableSymbolInfo) symbolInfo;
 			
-			if (variableSymbolInfo.isForbidden()) {
+			if (!variableSymbolInfo.isAbstract() && !variableSymbolInfo.isConcrete()) {
 				createProblemMarker(
 						element, EventBAttributes.IDENTIFIER_ATTRIBUTE, 
 						GraphProblem.DisappearedVariableRedeclaredError, symbolInfo.getSymbol());
@@ -106,7 +106,6 @@ public class MachineVariableModule extends IdentifierModule {
 			return false;
 		}
 		((IVariableSymbolInfo) newSymbolInfo).setConcrete();
-		((IVariableSymbolInfo) newSymbolInfo).setFresh();
 		return true;
 	}
 

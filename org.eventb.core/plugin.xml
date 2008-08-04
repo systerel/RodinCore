@@ -488,6 +488,16 @@
             id="poStamp"
             kind="long"
             name="%eventBpoStamp"/>
+      <attributeType
+            id="abstract"
+            kind="boolean"
+            name="%eventBabstractVariableAttribute">
+      </attributeType>
+      <attributeType
+            id="concrete"
+            kind="boolean"
+            name="%eventBconcreteVariableAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
