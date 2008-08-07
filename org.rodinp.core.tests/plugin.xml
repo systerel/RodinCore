@@ -210,6 +210,13 @@
             name="Test Version E"
             priority="normal">
       </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvf"
+            id="versionFileF"
+            name="Test Version F"
+            priority="normal">
+      </content-type>
    </extension>
    <extension
          point="org.rodinp.core.fileElementTypes">
@@ -243,6 +250,12 @@
             id="versionFileE"
             name="Version File E">
       </fileElementType>
+      <fileElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionFileF"
+            content-type-id="org.rodinp.core.tests.versionFileF"
+            id="versionFileF"
+            name="Version File F">
+      </fileElementType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
@@ -268,6 +281,11 @@
             id="versionStrAttr"
             kind="string"
             name="Version String Attribute">
+      </attributeType>
+      <attributeType
+            id="versionStrAttrX"
+            kind="string"
+            name="Version String Attribute X">
       </attributeType>
    </extension>
    <extension
@@ -367,6 +385,11 @@
             </addAttribute>
          </element>
       </simple>
+      <source
+            source="&lt;xsl:template match=&quot;/org.rodinp.core.tests.versionFileF/org.rodinp.core.tests.versionEA&quot;&gt;&lt;xsl:element name=&quot;org.rodinp.core.tests.versionEA&quot;&gt;&lt;xsl:attribute name=&quot;org.rodinp.core.tests.versionStrAttr&quot;&gt;&lt;xsl:value-of select=&quot;/org.rodinp.core.tests.versionFileF/org.rodinp.core.tests.versionEA/@org.rodinp.core.tests.versionStrAttrX&quot;/&gt;&lt;/xsl:attribute&gt;&lt;xsl:apply-templates select=&quot;@*&quot;/&gt;&lt;xsl:element name=&quot;org.rodinp.core.tests.versionEC&quot;&gt;&lt;xsl:attribute name=&quot;org.rodinp.core.tests.versionStrAttr&quot;&gt;&lt;xsl:value-of select=&quot;/org.rodinp.core.tests.versionFileF/org.rodinp.core.tests.versionEA/@name&quot;/&gt;&lt;/xsl:attribute&gt;&lt;/xsl:element&gt;&lt;/xsl:element&gt;&lt;/xsl:template&gt;&lt;xsl:template match=&quot;/org.rodinp.core.tests.versionFileF/org.rodinp.core.tests.versionEA/@org.rodinp.core.tests.versionStrAttrX&quot;/&gt;"
+            type="org.rodinp.core.tests.versionFileF"
+            version="1">
+      </source>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">
@@ -388,6 +411,10 @@
       </fileElementVersion>
       <fileElementVersion
             id="org.rodinp.core.tests.versionFileE"
+            version="1">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileF"
             version="1">
       </fileElementVersion>
    </extension>

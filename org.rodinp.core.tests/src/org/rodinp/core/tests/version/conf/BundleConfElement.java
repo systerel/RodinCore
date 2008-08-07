@@ -25,6 +25,7 @@ public abstract class BundleConfElement extends ConfElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IConfigurationElement#getContributor()
 	 */
+	@Override
 	public IContributor getContributor() throws InvalidRegistryObjectException {
 		return contributor;
 	}

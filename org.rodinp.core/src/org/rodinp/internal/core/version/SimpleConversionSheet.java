@@ -7,38 +7,21 @@
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public class SimpleConversionSheet extends ConversionSheet {
+public class SimpleConversionSheet extends ConversionSheetWithTransformer {
 
 	private final Conversion[] conversions;
-	
-	private Transformer transformer;
-	
-	// TODO put this somewhere else!
-	static {
-		assert TransformerFactory.newInstance().getFeature(DOMSource.FEATURE);
-	}
-	
+		
 	public SimpleConversionSheet(IConfigurationElement configElement, IFileElementType<IRodinFile> type) {
 		super(configElement, type);
 		IConfigurationElement[] confElements = configElement.getChildren("element");
@@ -65,21 +48,6 @@ public class SimpleConversionSheet extends ConversionSheet {
 		}
 	}
 
-	@Override
-	public Transformer getTransformer() throws RodinDBException {
-		if (transformer == null) {
-			String convDoc = computeSheet();
-			final Source source = new StreamSource(new StringReader(convDoc));
-			TransformerFactory factory = TransformerFactory.newInstance();
-			try {
-				transformer = factory.newTransformer(source);
-			} catch (TransformerConfigurationException e) {
-				throw new RodinDBException(e, IRodinDBStatusConstants.CONVERSION_ERROR);
-			}
-		}
-		return transformer;
-	}
-	
 	private static String T7 = 
 		XSLConstants.XML + "\n<" + XSLConstants.XSL_TRANSFORM + " " +
 		XSLConstants.XSL_VERSION + "=\"" + XSLConstants.XSL_VERSION_VAL + "\" " +
@@ -88,7 +56,8 @@ public class SimpleConversionSheet extends ConversionSheet {
 		XSLConstants.XSL_INDENT + "=\"" + XSLConstants.XSL_YES + "\"/>\n";
 	private static String T8 = "</" + XSLConstants.XSL_TRANSFORM + ">";
 	
-	private String computeSheet() {
+	@Override
+	protected String computeSheet() {
 		
 		StringBuffer sheet = new StringBuffer();
 		

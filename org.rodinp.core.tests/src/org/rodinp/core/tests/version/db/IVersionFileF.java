@@ -7,20 +7,17 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version.db;
 
-import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public final class VersionAttributes {
-	
-	public final static String PLUGIN_ID = "org.rodinp.core.tests";
+public interface IVersionFileF extends IRodinFile {
 
-	public final static IAttributeType.String StringAttr = 
-		RodinCore.getStringAttrType(PLUGIN_ID + ".versionStrAttr");
+	public static final IFileElementType<IVersionFileA> ELEMENT_TYPE = 
+		RodinCore.getFileElementType("org.rodinp.core.tests.versionFileF");
 
-	public final static IAttributeType.String StringAttrX = 
-		RodinCore.getStringAttrType(PLUGIN_ID + ".versionStrAttrX");
 }

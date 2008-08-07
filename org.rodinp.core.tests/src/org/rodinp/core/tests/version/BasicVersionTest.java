@@ -24,7 +24,9 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.IConversionResult.IEntry;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.version.db.IVersionEA;
+import org.rodinp.core.tests.version.db.IVersionEB;
 import org.rodinp.core.tests.version.db.IVersionEC;
+import org.rodinp.core.tests.version.db.IVersionFileF;
 import org.rodinp.core.tests.version.db.VersionAttributes;
 
 /**
@@ -165,6 +167,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -172,6 +175,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
@@ -317,6 +321,41 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		getElements(project, "ff.tve", IVersionEA.ELEMENT_TYPE, 0);
 
 	}
+	
+	/**
+	 * Basic function test for a source conversion:
+	 * + creation of version number
+	 * + change of version number
+	 * + example of a conversion that is neither simple nor sorted
+	 */
+	public void test_09_SourceConversion() throws Exception {
+		
+		IRodinProject project = fetchProject("V06");
+		
+		convertProjectWithSuccess(project, 3);
+		
+		// proper version number "1" -changed or created
+		project.getRodinFile("ff.tvf").getChildren();
+		project.getRodinFile("gg.tvf").getChildren();
+		
+		// a more complicated conversion:
+		IVersionFileF file = (IVersionFileF) project.getRodinFile("hh.tvf");
+		IVersionEA[] eas = file.getChildrenOfType(IVersionEA.ELEMENT_TYPE);
+		assertEquals("one ea element", 1, eas.length);
+		assertEquals("attribute of ea ok","Hello", 
+				eas[0].getAttributeValue(VersionAttributes.StringAttr));
+		assertFalse("", eas[0].hasAttribute(VersionAttributes.StringAttrX));
+		IVersionEC[] ecs = eas[0].getChildrenOfType(IVersionEC.ELEMENT_TYPE);
+		assertEquals("one ec element", 1, ecs.length);
+		assertEquals("attribute of ec ok","x", 
+				ecs[0].getAttributeValue(VersionAttributes.StringAttr));
+		IVersionEB[] ebs = eas[0].getChildrenOfType(IVersionEB.ELEMENT_TYPE);
+		assertEquals("no eb element in ea", 0, ebs.length);
+		IVersionEB[] eds = file.getChildrenOfType(IVersionEB.ELEMENT_TYPE);
+		assertEquals("one eb element on root level", 1, eds.length);
+		assertEquals("eb has proper name", "a", eds[0].getElementName());
+	}
+
 
 }
 

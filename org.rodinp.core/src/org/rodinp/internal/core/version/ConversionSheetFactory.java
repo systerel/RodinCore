@@ -19,6 +19,7 @@ public final class ConversionSheetFactory {
 
 	private static final String SORTED_SHEET = "sorted";
 	private static final String SIMPLE_SHEET = "simple";
+	private static final String SOURCE_SHEET = "source";
 
 	public static ConversionSheet makeConversionSheet(
 			IConfigurationElement configElement, 
@@ -32,6 +33,8 @@ public final class ConversionSheetFactory {
 			sheet = new SimpleConversionSheet(configElement, type);
 		} else if (sheetType.equals(SORTED_SHEET)) {
 			sheet = new SortedConversionSheet(configElement, type);
+		} else if (sheetType.equals(SOURCE_SHEET)) {
+			sheet = new SourceConversionSheet(configElement, type);
 		} else {
 			throw new IllegalStateException("Unknown type of conversion: " + sheetType);
 		}
