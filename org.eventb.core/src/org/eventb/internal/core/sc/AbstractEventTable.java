@@ -33,8 +33,6 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 	public void makeImmutable() {
 		super.makeImmutable();
 		table = Collections.unmodifiableList(table);
-		for (AbstractEventInfo info : table)
-			info.makeImmutable();
 	}
 
 	private List<AbstractEventInfo> table;

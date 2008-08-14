@@ -99,5 +99,18 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * of the corresponding event
 	 */
 	List<Assignment> getActions() throws CoreException;
-
+	
+	/**
+	 * Returns the list events that are supposed to merge this abstract event with another.
+	 * 
+	 * @return the list events that are supposed to merge this abstract event with another
+	 */
+	List<IConcreteEventInfo> getMergers();
+	
+	/**
+	 * Returns the list events that are supposed to split this abstract event.
+	 *
+	 * @return the list events that are supposed to merge this abstract event
+	 */
+	List<IConcreteEventInfo> getSplitters();
 }

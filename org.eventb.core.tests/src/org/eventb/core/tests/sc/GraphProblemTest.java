@@ -8,7 +8,9 @@
 package org.eventb.core.tests.sc;
 
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -17,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinMarkerUtil;
 
 /**
@@ -63,31 +66,37 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.ExpressionUndefError, 0),
 			spec(GraphProblem.AssignmentUndefError, 0),
 			spec(GraphProblem.ConvergenceUndefError, 0),
-			spec(GraphProblem.InheritedUndefError, 0),
+			spec(GraphProblem.ExtendedUndefError, 0),
 			spec(GraphProblem.IdentifierUndefError, 0),
 			spec(GraphProblem.InvalidIdentifierSpacesError, 1),
 			spec(GraphProblem.LabelUndefError, 0),
 			spec(GraphProblem.AbstractContextNameUndefError, 0),
 			spec(GraphProblem.AbstractContextNotFoundError, 1),
 			spec(GraphProblem.AbstractContextRedundantWarning, 1),
+			spec(GraphProblem.AbstractContextWithoutConfigurationError, 1),
 			spec(GraphProblem.SeenContextRedundantWarning, 1),
 			spec(GraphProblem.SeenContextNameUndefError, 0),
 			spec(GraphProblem.SeenContextNotFoundError, 1),
 			spec(GraphProblem.AbstractMachineNameUndefError, 0),
 			spec(GraphProblem.TooManyAbstractMachinesError, 0),
+			spec(GraphProblem.AbstractMachineWithoutConfigurationError, 1),
+			spec(GraphProblem.SeenContextWithoutConfigurationError, 1),
 			spec(GraphProblem.AbstractMachineNotFoundError, 1),
 			spec(GraphProblem.AbstractEventLabelUndefError, 0),
 			spec(GraphProblem.AbstractEventNotFoundError, 1),
 			spec(GraphProblem.AbstractEventNotRefinedError, 1),
 			spec(GraphProblem.AbstractEventLabelConflictWarning, 1),
+			spec(GraphProblem.EventExtendedUnrefinedError, 1),
 			spec(GraphProblem.EventMergeSplitError, 1),
 			spec(GraphProblem.EventMergeMergeError, 1),
 			spec(GraphProblem.EventInheritedMergeSplitError, 1),
+			spec(GraphProblem.EventExtendedMergeError, 1),
 			spec(GraphProblem.EventMergeVariableTypeError, 1),
 			spec(GraphProblem.EventMergeActionError, 0),
 			spec(GraphProblem.EventMergeLabelError, 0),
 			spec(GraphProblem.EventRefinementError, 0),
 			spec(GraphProblem.MachineWithoutInitialisationWarning, 0),
+			spec(GraphProblem.InitialisationRefinesEventWarning, 0),
 			spec(GraphProblem.InitialisationRefinedError, 0),
 			spec(GraphProblem.InitialisationVariableError, 0),
 			spec(GraphProblem.InitialisationGuardError, 0),
@@ -121,6 +130,7 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.GuardFreeIdentifierError, 1),
 			spec(GraphProblem.ActionFreeIdentifierError, 1),
 			spec(GraphProblem.ActionDisjointLHSError, 0),
+			spec(GraphProblem.ActionDisjointLHSWarining, 0),
 			spec(GraphProblem.WitnessFreeIdentifierError, 1),
 			spec(GraphProblem.InvalidVariantTypeError, 1),
 			spec(GraphProblem.TooManyVariantsError, 0),
@@ -167,15 +177,29 @@ public class GraphProblemTest extends TestCase {
 	}
 	
 	/**
-	 * check whether the messages loaded from the properties file are complete
-	 * and take the correct number of parameters.
+	 * check whether the messages loaded from the properties take the correct number of parameters.
 	 */
-	public void testMessages() throws Exception {
-		assertEquals("wrong number of messages", specs.length, GraphProblem.values().length);
+	public void testArguments() throws Exception {
 		for (Spec spec : specs) {
 			assertEquals("wrong number of arguments", spec.arity, spec.problem.getArity());
 		}
 	}
+	
+	/**
+	 * check whether the messages loaded from the properties file are complete
+	 */
+	public void testMessages() throws Exception {
+		Set<IRodinProblem> problems = new HashSet<IRodinProblem>(specs.length * 4 / 3 + 1);
+		for (Spec spec : specs) {
+			problems.add(spec.problem);
+		}
+		for (IRodinProblem problem : GraphProblem.values()) {
+			boolean found = problems.contains(problem);
+			assertTrue("No spec for problem " + problem, found);
+		}
+		//assertEquals("wrong number of problems", specs.length, GraphProblem.values().length);
+	}
+
 	
 	public static boolean check(IRodinFile file) throws CoreException {
 		boolean ok = true;

@@ -26,9 +26,9 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
@@ -98,7 +98,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		if (target == null)
 			return;
 		
-		int index = 0;
+		int index = target.getSCGuards().length;
 		
 		for (int i=0; i<formulaElements.length; i++) {
 			if (formulas[i] == null)
@@ -111,7 +111,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		}
 	}
 
-	protected IEventRefinesInfo refinedEventTable;
+	protected IConcreteEventInfo refinedEventTable;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#typeCheckFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], org.eventb.core.ast.ITypeEnvironment)
@@ -174,7 +174,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		refinedEventTable = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
+		refinedEventTable = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 	/* (non-Javadoc)

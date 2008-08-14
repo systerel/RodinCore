@@ -296,8 +296,10 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
-		addInheritedEvent(con, "evt");
-		addInheritedEvent(con, "fvt");
+		IEvent evt = addExtendedEvent(con, "evt");
+		addEventRefines(evt, "evt");
+		IEvent fvt = addExtendedEvent(con, "fvt");
+		addEventRefines(fvt, "fvt");
 	
 		con.save(null, true);
 

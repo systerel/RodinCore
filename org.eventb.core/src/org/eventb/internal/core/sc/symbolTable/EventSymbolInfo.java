@@ -10,7 +10,7 @@ package org.eventb.internal.core.sc.symbolTable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -33,17 +33,20 @@ public class EventSymbolInfo extends LabelSymbolInfo implements IEventSymbolInfo
 	
 	private boolean inherited;
 	
-	private IEventRefinesInfo refinesInfo;
+	@Deprecated
+	private IConcreteEventInfo refinesInfo;
 	
-	public void setRefinesInfo(IEventRefinesInfo refinesInfo) {
+	@Deprecated
+	public void setRefinesInfo(IConcreteEventInfo refinesInfo) {
 		this.refinesInfo = refinesInfo;
 	}
 
-	public IEventRefinesInfo getRefinesInfo() {
+	@Deprecated
+	public IConcreteEventInfo getRefinesInfo() {
 		return refinesInfo;
 	}
 
-	public boolean isInherited() {
+	public boolean isExtended() {
 		return inherited;
 	}
 
@@ -54,7 +57,7 @@ public class EventSymbolInfo extends LabelSymbolInfo implements IEventSymbolInfo
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.EventLabelConflictError, 
 				getSymbol());
@@ -63,7 +66,7 @@ public class EventSymbolInfo extends LabelSymbolInfo implements IEventSymbolInfo
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.EventLabelConflictWarning, 
 				getSymbol());

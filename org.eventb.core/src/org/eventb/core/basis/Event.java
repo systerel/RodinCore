@@ -74,14 +74,17 @@ public class Event extends EventBElement implements IEvent {
 		return getChildrenOfType(IAction.ELEMENT_TYPE); 
 	}
 	
+	@Deprecated
 	public boolean hasInherited() throws RodinDBException {
 		return hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE);
 	}
 
+	@Deprecated
 	public boolean isInherited() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE);
 	}
 
+	@Deprecated
 	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
 	}
@@ -109,6 +112,19 @@ public class Event extends EventBElement implements IEvent {
 
 	public IWitness getWitness(String elementName) {
 		return getInternalElement(IWitness.ELEMENT_TYPE, elementName);
+	}
+
+	public boolean hasExtended() throws RodinDBException {
+		return hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE);
+	}
+
+	public boolean isExtended() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE);
+	}
+
+	public void setExtended(boolean extended, IProgressMonitor monitor)
+			throws RodinDBException {
+		setAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE, extended, monitor);
 	}
 
 }

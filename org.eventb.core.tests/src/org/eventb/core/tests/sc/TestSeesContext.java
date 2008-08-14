@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInternalContext;
@@ -245,6 +246,44 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		hasNotMarker(con.getSeesClauses()[1]);
 		hasMarker(con.getSeesClauses()[2]);
 		hasMarker(con.getSeesClauses()[3]);
+	}
+
+	/*
+	 * Seen context not saved!
+	 */
+	public void testSeesContext_08() throws Exception {
+		IContextFile con = createContext("con");
+
+		addCarrierSets(con, makeSList("S1"));
+		addConstants(con, "C1");
+		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
+				
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineSees(mac, "con");
+
+		addVariables(mac, makeSList("V1"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(con, true);
+		containsMarkers(mac, true);
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+		
+		seesContexts(file);
+		
+		containsVariables(file, "V1");
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", intType);
+		
+		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		hasMarker(mac.getSeesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 }

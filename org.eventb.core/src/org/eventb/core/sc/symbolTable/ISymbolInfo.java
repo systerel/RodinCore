@@ -8,10 +8,8 @@
 package org.eventb.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ITraceableElement;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 
@@ -21,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public interface ISymbolInfo extends Comparable<ISymbolInfo> {
+public interface ISymbolInfo extends Comparable<ISymbolInfo>, IAttributedSymbol {
 	
 	/**
 	 * Returns the symbol sting of this symbol info.
@@ -38,27 +36,23 @@ public interface ISymbolInfo extends Comparable<ISymbolInfo> {
 	String getComponentName();
 	
 	/**
-	 * Returns the source element. This is not necessarily <b>the</b> <i>source element</i>
-	 * of the identifier but only <b>a</b> source element -called <i>reference element</i>- 
-	 * which is in some way related to <b>the</b> source element.
+	 * Returns an element to which to attach problem markers. This is not
+	 * necessarily the source element from which the symbol was extracted.
 	 * <p>
-	 * In its function as reference element the source element serves mainly to have a
-	 * meaningful place to attach problems ({@link IRodinProblem}).
+	 * For example, a constant <code>IConstant</code> <i>c</i> of an Event-B
+	 * context <code>IContextFile</code> <i>C</i> will be represented by an
+	 * identifier symbol. In context <i>C</i> the element returned is the
+	 * element <code>IConstant</code> <i>c</i>. In a context <i>D</i> that sees
+	 * (<code>ISeesContext</code> <i>s</i>) context <i>C</i> the element
+	 * returned for the identifier symbol is <i>s</i>.
 	 * </p>
-	 * <p>
-	 * In its function as <b>the</b> source element it serves to provide traceability 
-	 * information ({@link ITraceableElement}) in statically checked files.
-	 * </p>
-	 * Which of the two applies is decided by implementing classes.
 	 * 
-	 * @see ITraceableElement
-	 * 
-	 * @return the source element of this symbol info
+	 * @return the element associated with this symbol info
 	 */
-	IInternalElement getSourceElement();
+	IInternalElement getElement();
 	
 	/**
-	 * Returns whether this symbol is errorneous.
+	 * Returns whether this symbol is erroneous.
 	 * 
 	 * @return <code>true</code> if the symbol is erroneous, <code>false</code> otherwise
 	 */
@@ -73,17 +67,38 @@ public interface ISymbolInfo extends Comparable<ISymbolInfo> {
 	
 	/**
 	 * Returns whether the symbol info is (still) mutable.
-	 * The static checker can mark symbol infos as immutable.
-	 * In particular, this removes the possibility to mark a symbol as erroneous.
+	 * The static checker can mark symbol infos as immutable:
+	 * this removes the possibility to mark a symbol as erroneous.
 	 * 
 	 * @return whether or not the symbol info is mutable.
 	 */
 	boolean isMutable();
 	
 	/**
-	 * Turns the symbol immutable
+	 * Makes the symbol immutable
 	 */
 	void makeImmutable();
+	
+	/**
+	 * Returns whether the symbol is persistent. That is whether it can be
+	 * serialized by means of
+	 * <code>ISCIdentifierElement createSCElement(IInternalParent,IProgressMonitor)</code>.
+	 * 
+	 * @return whether the symbol is persistent
+	 */
+// TODO	boolean isPersistent();
+	
+	/**
+	 * Create a statically checked element for this symbol with the specified parent.
+	 * 
+	 * @param parent the parent of the element to create
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @return the created statically checked identifier element
+	 * @throws CoreException if there was a problem creating the element
+	 */
+// TODO	ISCIdentifierElement createSCElement(IInternalParent parent, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Creates a suitable marker for collisions in the symbol table.

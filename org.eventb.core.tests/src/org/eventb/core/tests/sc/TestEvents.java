@@ -154,7 +154,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create local variable
 	 */
-	public void testEvents_06_localVariable() throws Exception {
+	public void testEvents_06_parameter() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -171,7 +171,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1");
 		
-		containsVariables(scEvents[1], "L1");
+		containsParameters(scEvents[1], "L1");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		
 		containsMarkers(mac, false);
@@ -180,7 +180,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create global and local variable
 	 */
-	public void testEvents_07_variableAndLocalVariable() throws Exception {
+	public void testEvents_07_variableAndParameter() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -201,7 +201,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1");
 		
-		containsVariables(scEvents[1], "L1");
+		containsParameters(scEvents[1], "L1");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈V1"));
 		
 		containsMarkers(mac, false);
@@ -210,7 +210,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create global and local variable with name conflict (local variable is filtered)
 	 */
-	public void testEvents_08_variableAndLocalVariableWithNameConflict() throws Exception {
+	public void testEvents_08_variableAndParameterWithNameConflict() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -233,7 +233,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, "evt1");
 		
-		containsVariables(scEvents[0]);
+		containsParameters(scEvents[0]);
 		containsGuards(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
 		hasMarker(e.getParameters()[0]);
@@ -241,9 +241,9 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * create local variables with same name but different types in different events
+	 * create parameters with same name but different types in different events
 	 */
-	public void testEvents_09_localVariablesOfDifferentEvents() throws Exception {
+	public void testEvents_09_parametersOfDifferentEvents() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -265,10 +265,10 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1", "evt2");
 		
-		containsVariables(scEvents[1], "L2");
+		containsParameters(scEvents[1], "L2");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L2∈ℕ"));
 		
-		containsVariables(scEvents[2], "L2");
+		containsParameters(scEvents[2], "L2");
 		containsGuards(scEvents[2], typeEnvironment, makeSList("G1"), makeSList("L2⊆ℕ"));	
 		
 		containsMarkers(mac, false);
@@ -394,7 +394,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1");
 		
-		containsVariables(scEvents[1], "L1");
+		containsParameters(scEvents[1], "L1");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		containsActions(scEvents[1], typeEnvironment, makeSList("A1"), makeSList("V1≔L1"));
 		
@@ -404,7 +404,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * error: cannot assign to local variable
 	 */
-	public void testEvents_14_assignmentToLocalVariableProblem() throws Exception {
+	public void testEvents_14_assignmentToParameterProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
@@ -428,7 +428,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, "evt1");
 		
-		containsVariables(scEvents[0], "L1");
+		containsParameters(scEvents[0], "L1");
 		containsGuards(scEvents[0], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		containsActions(scEvents[0], typeEnvironment, makeSList(), makeSList());
 		
@@ -464,7 +464,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1");
 		
-		containsVariables(scEvents[1]);
+		containsParameters(scEvents[1]);
 		containsGuards(scEvents[1], typeEnvironment, makeSList(), makeSList());
 		containsActions(scEvents[1], typeEnvironment, makeSList("A1"), makeSList("V1:∣V1'∈ℕ"));
 		
@@ -508,7 +508,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialisation must not have local variables
 	 */
-	public void testEvents_17_initialisationLocalVariableProblem() throws Exception {
+	public void testEvents_17_initialisationParameterProblem() throws Exception {
 		IMachineFile mac = createMachine("mac");
 
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList("x"), 
@@ -523,7 +523,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION);
 		
-		containsVariables(scEvents[0]);
+		containsParameters(scEvents[0]);
 		containsGuards(scEvents[0], emptyEnv, makeSList(), makeSList());
 		
 		hasMarker(e.getParameters()[0]);

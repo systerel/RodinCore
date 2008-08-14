@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.sc.symbolTable;
 
-import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 
 /**
  * Symbol info for (concrete) events.
@@ -18,14 +18,14 @@ import org.eventb.core.sc.state.IEventRefinesInfo;
  * @author Stefan Hallerstede
  *
  */
-public interface IEventSymbolInfo extends ISymbolInfo {
+public interface IEventSymbolInfo extends ILabelSymbolInfo {
 
 	/**
 	 * Returns whether the event is inherited (from an abstract machine).
 	 * 
 	 * @return whether the event is inherited
 	 */
-	boolean isInherited();
+	boolean isExtended();
 	
 	/**
 	 * Returns the refinement information associated with this event, 
@@ -34,6 +34,6 @@ public interface IEventSymbolInfo extends ISymbolInfo {
 	 * @return the refinement information associated with this event, 
 	 * or <code>null</code> if there is none
 	 */
-	IEventRefinesInfo getRefinesInfo();
+	IConcreteEventInfo getRefinesInfo();
 
 }

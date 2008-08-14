@@ -31,7 +31,7 @@ public class WitnessSymbolInfo extends LabelSymbolInfo implements IWitnessSymbol
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.WitnessLabelConflictError, 
 				getSymbol(), getComponentName());
@@ -40,7 +40,7 @@ public class WitnessSymbolInfo extends LabelSymbolInfo implements IWitnessSymbol
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.WitnessLabelConflictWarning, 
 				getSymbol(), getComponentName());

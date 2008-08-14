@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCInternalContext;
@@ -226,6 +227,43 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"));
 
 		containsMarkers(mac, false);
+	}
+	
+	/*
+	 * abstract machine not saved!
+	 */
+	public void testMachineRefines_5() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		
+		addVariables(abs, makeSList("V1"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+
+		IMachineFile mac = createMachine("mac");
+		
+		addMachineRefines(mac, "abs");
+
+		addVariables(mac, makeSList("V2"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
+
+		mac.save(null, true);
+		
+		runBuilder();
+		
+		ISCMachineFile file = mac.getSCMachineFile();
+				
+		containsVariables(file, "V2");
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V2", factory.makeIntegerType());
+		
+		containsMarkers(abs, true);
+		containsMarkers(mac, true);
+	
+		containsInvariants(file, typeEnvironment, 
+				makeSList("I2"), makeSList("V2∈ℕ"));
+		
+		hasMarker(mac.getRefinesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
+		
 	}
 
 }

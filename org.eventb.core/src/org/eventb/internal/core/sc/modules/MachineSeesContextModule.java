@@ -64,7 +64,14 @@ public class MachineSeesContextModule extends ContextPointerModule {
 							GraphProblem.SeenContextNotFoundError,
 							seesContexts[i].getSeenContextName());
 				contextFiles[i] = null;
-			}
+				} else if (!contextFiles[i].hasConfiguration()) {
+					createProblemMarker(
+							seesContexts[i], 
+							EventBAttributes.TARGET_ATTRIBUTE,
+							GraphProblem.SeenContextWithoutConfigurationError,
+							seesContexts[i].getSeenContextName());
+					contextFiles[i] = null;
+				}
 			} else {
 				createProblemMarker(
 						seesContexts[i], 

@@ -33,7 +33,7 @@ public class InvariantSymbolInfo
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.InvariantLabelConflictError, 
 				getSymbol());
@@ -42,7 +42,7 @@ public class InvariantSymbolInfo
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.InvariantLabelConflictWarning, 
 				getSymbol());

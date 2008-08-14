@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISCInternalContext;
@@ -21,7 +22,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * a carrier set should be copied into internal contexts
 	 */
-	public void testFetchCarrierSet_01_createCarrierSet() throws Exception {
+	public void testExtendsContext_01_createCarrierSet() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
 		
@@ -49,7 +50,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * two carrier sets should be copied into internal contexts
 	 */
-	public void testFetchCarrierSet_02_twoCarrierSets() throws Exception {
+	public void testExtendsContext_02_twoCarrierSets() throws Exception {
 		IContextFile abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1", "S2"));
 		
@@ -76,7 +77,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * internal contexts that would introduce name conflicts must be removed
 	 */
-	public void testFetchCarrierSet_03_extendsConflict() throws Exception {
+	public void testExtendsContext_03_extendsConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
@@ -111,7 +112,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * carrier sets from different contexts should be copied into corresponding internal contexts
 	 */
-	public void testFetchCarrierSet_04_extendsNoConflict() throws Exception {
+	public void testExtendsContext_04_extendsNoConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
@@ -152,7 +153,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * internal contexts that would introduce name conflicts must be removed
 	 * but contexts untouched should be kept.
 	 */
-	public void testFetchCarrierSet_05_extendsPartialConflict() throws Exception {
+	public void testExtendsContext_05_extendsPartialConflict() throws Exception {
 		IContextFile abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
@@ -260,6 +261,31 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		
 		hasMarker(con.getExtendsClauses()[1]);
+	}
+
+	/**
+	 * abstract context not saved!
+	 */
+	public void testExtendsContext_09_abstractContextNotSaved() throws Exception {
+		IContextFile abs = createContext("abs");
+		addCarrierSets(abs, makeSList("S"));
+		
+		IContextFile con = createContext("con");
+		addContextExtends(con, "abs");
+		addCarrierSets(con, makeSList("T"));
+		
+		con.save(null, true);
+		
+		runBuilder();
+		
+		ISCContextFile file = con.getSCContextFile();
+		
+		containsMarkers(abs, true);
+		containsMarkers(con, true);
+		
+		containsCarrierSets(file, "T");
+		
+		hasMarker(con.getExtendsClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
 }

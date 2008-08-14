@@ -33,7 +33,7 @@ public class AxiomSymbolInfo
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.AxiomLabelConflictError, 
 				getSymbol());
@@ -42,7 +42,7 @@ public class AxiomSymbolInfo
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.AxiomLabelConflictWarning, 
 				getSymbol());

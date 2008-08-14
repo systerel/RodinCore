@@ -67,6 +67,19 @@ public interface IConvergenceElement extends IInternalElement {
 			return code;
 		}
 		
+		private static final IConvergenceElement.Convergence[] convergences = 
+			new IConvergenceElement.Convergence[] {
+				IConvergenceElement.Convergence.ORDINARY,
+				IConvergenceElement.Convergence.CONVERGENT,
+				IConvergenceElement.Convergence.ANTICIPATED
+			};
+		
+		public static Convergence valueOf(int n) {
+			if (n<0 || n>2)
+				throw new IllegalArgumentException("Convergence value out of range");
+			return convergences[n];
+		}
+		
 	}
 	
 	/**

@@ -22,9 +22,8 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.tool.IModuleType;
@@ -47,8 +46,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 	}
 
 	private IVariantInfo variantInfo;
-	private IEventRefinesInfo eventRefinesInfo;
-	private ICurrentEvent currentEvent;
+	private IConcreteEventInfo concreteEventInfo;
 	private IEventAccuracyInfo accuracyInfo;
 	private String currentEventLabel;
 
@@ -59,9 +57,8 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = (IVariantInfo) repository.getState(IVariantInfo.STATE_TYPE);
-		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
-		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
-		currentEventLabel = currentEvent.getCurrentEvent().getLabel();
+		concreteEventInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
+		currentEventLabel = concreteEventInfo.getEventLabel();
 		accuracyInfo = (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 	
@@ -76,18 +73,18 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 		
 		IEvent event = (IEvent) element;
 		
-		if (!currentEvent.getCurrentEvent().hasConvergence()) {
+		if (!concreteEventInfo.getEvent().hasConvergence()) {
 			
 			assert target == null; // event should have been filtered
 			return;
 		}
 		
 		abstractConvergence = null;
-		concreteConvergence = currentEvent.getCurrentEvent().getConvergence();
+		concreteConvergence = concreteEventInfo.getEvent().getConvergence();
 		
 		assert concreteConvergence != null;
 		
-		if (currentEvent.isInitialisation()) {
+		if (concreteEventInfo.isInitialisation()) {
 			if (concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {
 				concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
 				createProblemMarker(
@@ -97,7 +94,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			}
 		} else {
 		
-			List<IAbstractEventInfo> abstractEventInfos = eventRefinesInfo.getAbstractEventInfos();
+			List<IAbstractEventInfo> abstractEventInfos = concreteEventInfo.getAbstractEventInfos();
 			
 			if (abstractEventInfos.size() != 0) { // not a new event
 				
@@ -107,7 +104,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			checkVariantConvergence(event);
 		}
 		
-		if (concreteConvergence != currentEvent.getCurrentEvent().getConvergence())
+		if (concreteConvergence != concreteEventInfo.getEvent().getConvergence())
 			accuracyInfo.setNotAccurate();
 		
 		saveConvergence((ISCEvent) target, null);
@@ -173,8 +170,7 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
-		eventRefinesInfo = null;
-		currentEvent = null;
+		concreteEventInfo = null;
 		currentEventLabel = null;
 		accuracyInfo = null;
 		super.endModule(element, repository, monitor);

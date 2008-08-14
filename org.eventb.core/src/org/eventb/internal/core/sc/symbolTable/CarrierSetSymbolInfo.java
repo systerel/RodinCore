@@ -48,7 +48,7 @@ public abstract class CarrierSetSymbolInfo
 		@Override
 		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.CarrierSetNameImportConflictError, 
 					getSymbol(), getComponentName());
@@ -57,7 +57,7 @@ public abstract class CarrierSetSymbolInfo
 		@Override
 		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.CarrierSetNameImportConflictWarning, 
 					getSymbol(), getComponentName());
@@ -81,14 +81,14 @@ public abstract class CarrierSetSymbolInfo
 			ISCCarrierSet set = ((ISCContextFile) parent).getSCCarrierSet(getSymbol());
 			set.create(null, monitor);
 			set.setType(getType(), null);
-			set.setSource(getSourceElement(), monitor);
+			set.setSource(getElement(), monitor);
 			return set;
 		}
 
 		@Override
 		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.CarrierSetNameConflictError, 
 					getSymbol());
@@ -97,7 +97,7 @@ public abstract class CarrierSetSymbolInfo
 		@Override
 		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.CarrierSetNameConflictWarning, 
 					getSymbol());

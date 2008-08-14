@@ -48,7 +48,7 @@ public abstract class ConstantSymbolInfo
 		@Override
 		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.ConstantNameImportConflictError, 
 					getSymbol(), getComponentName());
@@ -57,7 +57,7 @@ public abstract class ConstantSymbolInfo
 		@Override
 		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.ConstantNameImportConflictWarning, 
 					getSymbol(), getComponentName());
@@ -81,7 +81,7 @@ public abstract class ConstantSymbolInfo
 			ISCConstant constant = ((ISCContextFile) parent).getSCConstant(getSymbol());
 			constant.create(null, monitor);
 			constant.setType(getType(), null);
-			constant.setSource(getSourceElement(), monitor);
+			constant.setSource(getElement(), monitor);
 			return constant;
 		}
 
@@ -89,7 +89,7 @@ public abstract class ConstantSymbolInfo
 		@Override
 		protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.ConstantNameConflictError, 
 					getSymbol());
@@ -98,7 +98,7 @@ public abstract class ConstantSymbolInfo
 		@Override
 		protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.ConstantNameConflictWarning, 
 					getSymbol());

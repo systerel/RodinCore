@@ -19,7 +19,7 @@ import org.eventb.core.ISCMachineFile;
  * @author Stefan Hallerstede
  *
  */
-public class TestEventBVersion_1 extends EventBVersionTest {
+public class TestEventBVersion_001_CM extends EventBVersionTest {
 
 	/**
 	 * contexts of version 0 are updated to contexts of version 1

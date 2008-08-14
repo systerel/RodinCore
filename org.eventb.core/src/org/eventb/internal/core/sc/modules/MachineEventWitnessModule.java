@@ -30,10 +30,9 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
-import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
-import org.eventb.core.sc.state.IEventRefinesInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
@@ -60,9 +59,8 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		return MODULE_TYPE;
 	}
 
-	Predicate btrue;
-	FormulaFactory factory;
-	ICurrentEvent currentEvent;
+	private Predicate btrue;
+	private FormulaFactory factory;
 	
 	private static String WITNESS_NAME_PREFIX = "WIT";
 	
@@ -184,10 +182,10 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			Set<String> witnessNames,
 			ISCStateRepository repository) throws CoreException {
 		
-		IEventRefinesInfo eventRefinesInfo = (IEventRefinesInfo)
-			repository.getState(IEventRefinesInfo.STATE_TYPE);
+		IConcreteEventInfo eventRefinesInfo = (IConcreteEventInfo)
+			repository.getState(IConcreteEventInfo.STATE_TYPE);
 		
-		if (eventRefinesInfo.currentEventIsNew())
+		if (eventRefinesInfo.eventIsNew())
 			return;
 		
 		getLocalWitnessNames(eventRefinesInfo, witnessNames);
@@ -232,7 +230,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	}
 
 	private void getLocalWitnessNames(
-			IEventRefinesInfo eventRefinesInfo, 
+			IConcreteEventInfo eventRefinesInfo, 
 			Set<String> witnessNames) throws CoreException {
 		
 		for (IAbstractEventInfo abstractEventInfo : eventRefinesInfo.getAbstractEventInfos()) {
@@ -264,7 +262,6 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		super.initModule(element, repository, monitor);
 		factory = FormulaFactory.getDefault();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
 		accuracyInfo = (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
@@ -279,7 +276,6 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		super.endModule(element, repository, monitor);
 		btrue = null;
 		factory = null;
-		currentEvent = null;
 		accuracyInfo = null;
 	}
 

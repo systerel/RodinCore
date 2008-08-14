@@ -47,7 +47,7 @@ public final class Messages {
 	public static String scuser_ExpressionUndef;
 	public static String scuser_AssignmentUndef;
 	public static String scuser_ConvergenceUndef;
-	public static String scuser_InheritedUndef;
+	public static String scuser_ExtendedUndef;
 	public static String scuser_InvalidIdentifierName;
 	public static String scuser_InvalidIdentifierContainsSpaces;
 	public static String scuser_LabelUndef;
@@ -57,22 +57,32 @@ public final class Messages {
     public static String scuser_SeenContextRedundant;
     public static String scuser_SeenContextNameUndef;
     public static String scuser_SeenContextNotFound;
+    public static String scuser_SeenContextWithoutConfiguration;
     public static String scuser_AbstractMachineNameUndef;
     public static String scuser_OnlyOneAbstractMachine;
-    public static String scuser_AbstractMachineNotFound;
+	public static String scuser_AbstractMachineWithoutConfiguration;
+	public static String scuser_AbstractContextWithoutConfiguration;
+	public static String scuser_AbstractMachineNotFound;
     public static String scuser_AbstractEventLabelUndef;
     public static String scuser_AbstractEventNotFound;
+    @Deprecated
     public static String scuser_AbstractEventNotRefined;
     public static String scuser_AbstractEventLabelConflict;
+    @Deprecated
     public static String scuser_EventMergeSplitConflict;
+    @Deprecated
     public static String scuser_EventMergeMergeConflict;
+    @Deprecated
     public static String scuser_EventInheritedMergeSplitConflict;
-    public static String scuser_EventMergeVariableTypeConflict;
+	public static String scuser_EventExtendedUnrefined;
+	public static String scuser_EventExtendedMerge;
+    public static String scuser_EventMergeParameterTypeConflict;
     public static String scuser_EventMergeActionConflict;
     public static String scuser_EventMergeLabelConflict;
     public static String scuser_EventRefinementError;
-    public static String scuser_MachineWithoutInitialisationError;
-    public static String scuser_InitialisationRefinedError;
+    public static String scuser_MachineWithoutInitialisation;
+	public static String scuser_InitialisationRefinesEventError;
+	public static String scuser_InitialisationRefinedError;
     public static String scuser_InitialisationVariableError;
     public static String scuser_InitialisationGuardError;
     public static String scuser_InitialisationActionRHSError;
@@ -97,7 +107,7 @@ public final class Messages {
     public static String scuser_InvariantFreeIdentifierError;
     public static String scuser_GuardFreeIdentifierError;
     public static String scuser_ActionFreeIdentifierError;
-    public static String scuser_ActionDisjointLHSError;
+    public static String scuser_ActionDisjointLHSProblem;
     public static String scuser_WitnessFreeIdentifierError;
     public static String scuser_InvalidVariantTypeError;
     public static String scuser_TooManyVariants;
@@ -119,6 +129,7 @@ public final class Messages {
     public static String scuser_WitnessLabelMissing;
     public static String scuser_WitnessLabelNeedLess;
     public static String scuser_WitnessLabelNotPermissible;
+    @Deprecated
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
     public static String scuser_WasAbstractEventLabelProblem;
@@ -142,7 +153,6 @@ public final class Messages {
     public static String scuser_MinusAppliedToSet;
 	public static String scuser_MulAppliedToSet;
 
-    
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

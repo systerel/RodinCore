@@ -30,7 +30,7 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public void containsIdents(ISCEvent element, String... strings) throws RodinDBException {
-		test.containsVariables(element, strings);
+		test.containsParameters(element, strings);
 	}
 
 	public void containsMarkers(IEvent element, boolean yes) throws CoreException {

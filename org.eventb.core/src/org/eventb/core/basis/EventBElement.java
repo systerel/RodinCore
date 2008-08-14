@@ -228,13 +228,6 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier, null);
 	}
 	
-	private static final IConvergenceElement.Convergence[] convergences = 
-		new IConvergenceElement.Convergence[] {
-			IConvergenceElement.Convergence.ORDINARY,
-			IConvergenceElement.Convergence.CONVERGENT,
-			IConvergenceElement.Convergence.ANTICIPATED
-		};
-	
 	public boolean hasConvergence() throws RodinDBException {
 		return hasAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE);
 	}
@@ -256,11 +249,12 @@ public abstract class EventBElement extends InternalElement {
 	 */
 	public IConvergenceElement.Convergence getConvergence() throws RodinDBException {
 		int intValue = getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
-		if (intValue >= 0 && intValue <= 2)
-			return convergences[intValue];
-		else
+		try {
+			return IConvergenceElement.Convergence.valueOf(intValue);
+		} catch (IllegalArgumentException e) {
 			throw Util.newRodinDBException(
 					Messages.database_EventInvalidConvergenceFailure, this);
+		}
 	}
 
 	public void setSource(IRodinElement source, IProgressMonitor monitor) 

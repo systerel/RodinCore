@@ -19,7 +19,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IModuleType;
@@ -40,7 +40,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 		return MODULE_TYPE;
 	}
 
-	protected IEventRefinesInfo eventRefinesInfo;
+	protected IConcreteEventInfo eventRefinesInfo;
 	protected boolean isInitialisation;
 
 	public void process(
@@ -69,7 +69,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 	 * that are not also local variables of the refined event
 	 */
 	private void patchTypeEnvironment() throws CoreException {
-		if (eventRefinesInfo.currentEventIsNew())
+		if (eventRefinesInfo.eventIsNew())
 			return;
 		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
 		for (FreeIdentifier freeIdentifier : abstractEventInfo.getParameters()) {
@@ -105,7 +105,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
-		eventRefinesInfo = (IEventRefinesInfo) repository.getState(IEventRefinesInfo.STATE_TYPE);
+		eventRefinesInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = ((IEvent) element).getLabel().contains(IEvent.INITIALISATION);
 	}
 

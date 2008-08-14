@@ -246,7 +246,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				symbolInfo.setError();
 			
 			int pointerIndex = contextPointerArray.getPointerIndex(
-					symbolInfo.getSourceElement().getHandleIdentifier());
+					symbolInfo.getElement().getHandleIdentifier());
 			
 			if (pointerIndex != -1)
 				contextPointerArray.setError(pointerIndex);

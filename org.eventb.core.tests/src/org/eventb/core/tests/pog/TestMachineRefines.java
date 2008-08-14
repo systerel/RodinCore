@@ -352,7 +352,8 @@ public class TestMachineRefines extends EventBPOTest {
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		addInvariants(ref, makeSList("J"), makeSList("A=B"));
-		addInheritedEvent(ref, "evt");
+		IEvent evt = addExtendedEvent(ref, "evt");
+		addEventRefines(evt, "evt");
 		ref.save(null, true);
 		runBuilder();
 		
@@ -636,7 +637,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineFile ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
-		addInheritedEvent(ref, "evt");
+		addExtendedEvent(ref, "evt");
 		ref.save(null, true);
 		runBuilder();
 		
@@ -1144,8 +1145,8 @@ public class TestMachineRefines extends EventBPOTest {
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 	
-		addInheritedEvent(con, IEvent.INITIALISATION);
-		addInheritedEvent(con, "evt");
+		addExtendedEvent(con, IEvent.INITIALISATION);
+		addExtendedEvent(con, "evt");
 
 		con.save(null, true);
 		

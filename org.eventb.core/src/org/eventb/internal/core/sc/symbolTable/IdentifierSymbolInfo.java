@@ -27,7 +27,7 @@ public abstract class IdentifierSymbolInfo
 			String symbol, 
 			boolean imported,
 			IInternalElement element, 
-			IAttributeType.String attribute, 
+			IAttributeType attribute, 
 			String component) {
 		super(symbol, element, attribute, component);
 		
@@ -68,7 +68,7 @@ public abstract class IdentifierSymbolInfo
 	public final void createUntypedErrorMarker(IMarkerDisplay markerDisplay) throws CoreException {
 		
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				getUntypedError(), 
 				getSymbol());

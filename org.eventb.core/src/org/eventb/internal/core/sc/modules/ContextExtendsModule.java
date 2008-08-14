@@ -73,6 +73,13 @@ public class ContextExtendsModule extends ContextPointerModule {
 							GraphProblem.AbstractContextNotFoundError,
 							extendsContexts[i].getAbstractContextName());
 					contextFiles[i] = null;
+				} else if (!contextFiles[i].hasConfiguration()) {
+					createProblemMarker(
+							extendsContexts[i], 
+							EventBAttributes.TARGET_ATTRIBUTE,
+							GraphProblem.AbstractContextWithoutConfigurationError,
+							extendsContexts[i].getAbstractContextName());
+					contextFiles[i] = null;
 				}
 			} else {
 				createProblemMarker(

@@ -33,7 +33,7 @@ public class TheoremSymbolInfo
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.TheoremLabelConflictError, 
 				getSymbol());
@@ -42,7 +42,7 @@ public class TheoremSymbolInfo
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.TheoremLabelConflictWarning, 
 				getSymbol());

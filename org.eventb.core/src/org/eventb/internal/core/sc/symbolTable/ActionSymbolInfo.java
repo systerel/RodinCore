@@ -31,7 +31,7 @@ public class ActionSymbolInfo extends LabelSymbolInfo implements IActionSymbolIn
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.ActionLabelConflictError, 
 				getSymbol());
@@ -40,7 +40,7 @@ public class ActionSymbolInfo extends LabelSymbolInfo implements IActionSymbolIn
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.ActionLabelConflictWarning, 
 				getSymbol());

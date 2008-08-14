@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ISCEvent;
@@ -86,9 +87,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * identically named local variables of abstract and cocrete events do correspond
+	 * identically named parameters of abstract and concrete events do correspond
 	 */
-	public void testEvents_02_localTypesCorrespond() throws Exception {
+	public void testEvents_02_parameterTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addInitialisation(abs);
@@ -112,15 +113,15 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
-		containsVariables(events[1], "L1");
+		containsParameters(events[1], "L1");
 		
 		containsMarkers(mac, false);
 	}
 	
 	/*
-	 * error if identically named local variables of abstract and concrete events do NOT correspond
+	 * error if identically named parameters of abstract and concrete events do NOT correspond
 	 */
-	public void testEvents_03_localTypeConflict() throws Exception {
+	public void testEvents_03_parameterTypeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -142,7 +143,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCEvent[] events = getSCEvents(file, "evt");
 		refinesEvents(events[0], "evt");
-		containsVariables(events[0]);
+		containsParameters(events[0]);
 		
 		hasMarker(evt.getGuards()[0], null, GraphProblem.ParameterChangedTypeError, "L1", "ℙ(ℤ)", "ℤ");
 		hasMarker(evt.getParameters()[0], null, GraphProblem.UntypedParameterError, "L1");
@@ -150,9 +151,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * create default witness if local variable disappears
+	 * create default witness if parameter disappears
 	 */
-	public void testEvents_04_localDefaultWitness() throws Exception {
+	public void testEvents_04_parameterDefaultWitness() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1", "L3"), 
@@ -181,7 +182,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, "evt");
 		refinesEvents(events[0], "evt");
 		
-		containsVariables(events[0], "L2");
+		containsParameters(events[0], "L2");
 		containsWitnesses(events[0], typeEnvironment, makeSList("L1","L3"), makeSList("L1∈L2", "⊤"));
 		
 		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
@@ -189,9 +190,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * global witness refering to local variable of abstract event
+	 * global witness referring to parameter of concrete event
 	 */
-	public void testEvents_05_globalWitness() throws Exception {
+	public void testEvents_05_globalWitnessUseConcreteParameter() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
@@ -227,7 +228,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 		
-		containsVariables(events[1], "L2");
+		containsParameters(events[1], "L2");
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"), makeSList("V1'=L2"));
 		
 		containsMarkers(mac, false);
@@ -275,16 +276,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 		
-		containsVariables(events[1]);
+		containsParameters(events[1]);
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"), makeSList("V1'∈V2'"));
 		
 		containsMarkers(mac, false);
 	}
 	
 	/*
-	 * creation of local default witness
+	 * creation of parameter default witness
 	 */
-	public void testEvents_07_localTypesAndWitnesses() throws Exception {
+	public void testEvents_07_parameterTypesAndWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", makeSList("L1", "L3"), 
@@ -313,7 +314,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, "evt");
 		refinesEvents(events[0], "evt");
 		
-		containsVariables(events[0], "L1", "L2");
+		containsParameters(events[0], "L1", "L2");
 		containsWitnesses(events[0], typeEnvironment, makeSList("L3"), makeSList("⊤"));
 		
 		hasMarker(evt, null, GraphProblem.WitnessLabelMissingWarning, "L3");
@@ -389,9 +390,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * inherit event
+	 * correctly extended event with refines clause
 	 */
-	public void testEvents_10_inherited() throws Exception {
+	public void testEvents_10_extended() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addInitialisation(abs);
@@ -404,7 +405,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
-		addInheritedEvent(mac, "evt");
+		IEvent event = addExtendedEvent(mac, "evt");
+		addEventRefines(event, "evt");
 		mac.save(null, true);
 		
 		runBuilder();
@@ -418,9 +420,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * conflict: inherited AND refined event
+	 * faulty extended event without refines clause
 	 */
-	public void testEvents_11_InheritedRefinesConflict() throws Exception {
+	public void testEvents_11_extendedWithoutRefine() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -431,8 +433,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addInheritedEvent(mac, "evt");
-		IEvent fvt = addEvent(mac, "fvt");
+		IEvent evt = addExtendedEvent(mac, "evt");
+		IEvent fvt = addExtendedEvent(mac, "fvt");
 		addEventRefines(fvt, "evt");
 		
 		mac.save(null, true);
@@ -441,17 +443,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file);
+		getSCEvents(file, "fvt");
 		
 		hasMarker(evt);
-		hasMarker(fvt);
+		hasNotMarker(fvt);
 		
 	}
 
 	/*
-	 * conflict: inherited AND split event
+	 * conflict: an extended event must not merge events
 	 */
-	public void testEvents_12_inheritedSplitConflict() throws Exception {
+	public void testEvents_12_extendedMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -463,9 +465,10 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		IEvent evt = addInheritedEvent(mac, "evt");
+		IEvent evt = addExtendedEvent(mac, "evt");
+		addEventRefines(evt, "evt");
+		addEventRefines(evt, "fvt");
 		IEvent fvt = addEvent(mac, "fvt");
-		addEventRefines(fvt, "evt");
 		addEventRefines(fvt, "fvt");
 	
 		mac.save(null, true);
@@ -474,15 +477,15 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file);
+		getSCEvents(file, "fvt");
 		
 		hasMarker(evt);
-		hasMarker(fvt);
+		hasNotMarker(fvt);
 		
 	}	
 	
 	/*
-	 * conflict: event merge more than once
+	 * events may be merged more than once
 	 */
 	public void testEvents_13_mergeMergeConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -510,17 +513,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file);
+		getSCEvents(file, "evt", "fvt");
 		
-		hasMarker(evt);
-		hasMarker(fvt);
+		hasNotMarker(evt);
+		hasNotMarker(fvt);
 		
 	}	
 	
 	/*
 	 * interit / refines / merge used together correctly
 	 */
-	public void testEvents_14_inheritedRefinesMergeOK() throws Exception {
+	public void testEvents_14_extendedRefinesMergeOK() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addInitialisation(abs);
@@ -541,7 +544,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addEvent(mac, "fvt");
 		addEventRefines(fvt, "gvt");
 		addEventRefines(fvt, "fvt");
-		addInheritedEvent(mac, "hvt");
+		IEvent hvt = addExtendedEvent(mac, "hvt");
+		addEventRefines(hvt, "hvt");
 		addEvent(mac, "ivt");
 	
 		mac.save(null, true);
@@ -560,9 +564,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}	
 	
 	/*
-	 * inherit / refines / merge used together in-correctly
+	 * events may be split and merged at the same time
 	 */
-	public void testEvents_15_inheritedRefinesMergeConflict() throws Exception {
+	public void testEvents_15_splitAndMerge() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt");
@@ -581,8 +585,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addEvent(mac, "fvt");
 		addEventRefines(fvt, "hvt");
 		addEventRefines(fvt, "fvt");
-		IEvent hvt = addInheritedEvent(mac, "hvt");
-		addEvent(mac, "ivt");
+		IEvent hvt = addExtendedEvent(mac, "hvt");
+		addEventRefines(hvt, "hvt");
+		IEvent ivt = addEvent(mac, "ivt");
 	
 		mac.save(null, true);
 		
@@ -590,11 +595,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file, "ivt");
+		getSCEvents(file, "evt", "fvt", "hvt", "ivt");
 		
-		hasMarker(evt);
-		hasMarker(fvt);
-		hasMarker(hvt);
+		hasNotMarker(evt);
+		hasNotMarker(fvt);
+		hasNotMarker(hvt);
+		hasNotMarker(ivt);
 	}	
 	
 	/*
@@ -649,16 +655,16 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file);
+		getSCEvents(file, IEvent.INITIALISATION);
 		
-		hasMarker(init);
+		hasMarker(init.getRefinesClauses()[0]);
 		
 	}
 	
 	/*
-	 * initialisation can be inherited
+	 * initialisation can be extended
 	 */
-	public void testEvents_18_initialisationInherited() throws Exception {
+	public void testEvents_18_initialisationExtended() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, IEvent.INITIALISATION);
@@ -669,7 +675,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		addInheritedEvent(mac, IEvent.INITIALISATION);
+		addExtendedEvent(mac, IEvent.INITIALISATION);
 		
 		mac.save(null, true);
 		
@@ -730,15 +736,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineFile mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
+		IEvent ini = addEvent(mac, IEvent.INITIALISATION);
+		addEventRefines(ini, IEvent.INITIALISATION);
 		IEvent hvt = addEvent(mac, "hvt");
 		addEventRefines(hvt, "hvt");
 		addEventRefines(hvt, IEvent.INITIALISATION);
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
-		IEvent gvt = addEvent(mac, "gvt");
+		IEvent gvt = addExtendedEvent(mac, "gvt");
 		addEventRefines(gvt, "gvt");
 		addEventRefines(gvt, "evt");
-		addEvent(mac, "fvt");
+		IEvent fvt = addEvent(mac, "fvt");
 	
 		mac.save(null, true);
 		
@@ -746,18 +754,20 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineFile file = mac.getSCMachineFile();
 		
-		getSCEvents(file, "fvt");
+		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
 		
+		hasMarker(ini.getRefinesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 		hasMarker(hvt);
-		hasMarker(evt);
+		hasNotMarker(evt);
 		hasMarker(gvt);
+		hasNotMarker(fvt);
 		
 	}
 	
 	/*
-	 * identically named local variables of merged abstract events must have compatible types
+	 * identically named parameters of merged abstract events must have compatible types
 	 */
-	public void testEvents_21_mergeLocalAbstractTypesCorrespond() throws Exception {
+	public void testEvents_21_mergeParameterAbstractTypesCorrespond() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addInitialisation(abs);
@@ -803,9 +813,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 	/*
 	 * error:
-	 * identically named local variables of merged abstract events do not have compatible types
+	 * identically named parameter of merged abstract events do not have compatible types
 	 */
-	public void testEvents_22_mergeLocalAbstractTypesConflict() throws Exception {
+	public void testEvents_22_mergeParameterAbstractTypesConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", 
@@ -944,9 +954,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * local witness ok
+	 * parameter witness ok
 	 */
-	public void testEvents_25_localWitnessRefines() throws Exception {
+	public void testEvents_25_parameterWitnessRefines() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
@@ -989,9 +999,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * local witnesses in split ok
+	 * parameter witnesses in split ok
 	 */
-	public void testEvents_26_localWitnessSplit() throws Exception {
+	public void testEvents_26_parameterWitnessSplit() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
@@ -1083,9 +1093,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * Inherited events should not have witnesses for local variables
+	 * Extended events should not have witnesses for parameters
 	 */
-	public void testEvents_28_inheritedNoWitnesses() throws Exception {
+	public void testEvents_28_extendedNoParameterWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addInitialisation(abs);
 		addEvent(abs, "evt", 
@@ -1097,7 +1107,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineFile ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addInitialisation(ref);
-		addInheritedEvent(ref, "evt");
+		IEvent evt = addExtendedEvent(ref, "evt");
+		addEventRefines(evt, "evt");
 		ref.save(null, true);
 		runBuilder();
 		
@@ -1114,9 +1125,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * Inherited events should not refer to variables that exist no longer
+	 * Extended events should not refer to variables that exist no longer
 	 */
-	public void testEvents_29_inheritedAndDisappearingVariables() throws Exception {
+	public void testEvents_29_extendedAndDisappearingVariables() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "A");
 		addInvariants(abs, makeSList("I"), makeSList("A∈ℤ"));
@@ -1132,7 +1143,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addVariables(ref, "B");
 		addInvariants(ref, makeSList("J"), makeSList("A=B"));
 		addInitialisation(ref, "B");
-		IEvent evt = addInheritedEvent(ref, "evt");
+		IEvent evt = addExtendedEvent(ref, "evt");
 		ref.save(null, true);
 		runBuilder();
 		
@@ -1144,9 +1155,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * Inherited events should not refer to variables that exist no longer
+	 * Extended events should not refer to variables that exist no longer
 	 */
-	public void testEvents_30_inheritedCopyEvent() throws Exception {
+	public void testEvents_30_extendedCopyEvent() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I", "J"), makeSList("A∈ℤ", "B∈ℤ"));
@@ -1161,7 +1172,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		addInitialisation(ref, "A", "B");
-		addInheritedEvent(ref, "evt");
+		IEvent evt = addExtendedEvent(ref, "evt");
+		addEventRefines(evt, "evt");
 		ref.save(null, true);
 		runBuilder();
 		
@@ -1174,7 +1186,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineFile file = ref.getSCMachineFile();
 		
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
-		containsVariables(events[1], "x", "y");
+		containsParameters(events[1], "x", "y");
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList("x∈ℕ", "y∈ℕ"));
 		containsActions(events[1], environment, makeSList("S", "T"), makeSList("A≔A+1", "B≔B+1"));
 		
@@ -1224,7 +1236,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * create default witnesses for abstract global and local variables in merge
+	 * create default witnesses for abstract variables and parameters in merge
 	 */
 	public void testEvents_32_mergeAbstractActionCreateDefaultWitnesses() throws Exception {
 		IMachineFile abs = createMachine("abs");
@@ -1313,7 +1325,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * Witnesses must not reference post values of abstract disappearing global variables
 	 */
-	public void testEvents_34_localWitnessWithPostValues() throws Exception {
+	public void testEvents_34_parameterWitnessWithPostValues() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addVariables(abs, "p");
@@ -1356,9 +1368,10 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 	
 	/*
-	 * 
+	 * A concrete machine must not declare a variable that has the same name as a parameter
+	 * in the abstract machine.
 	 */
-	public void testEvents_35_localVarRefByGlobalVarConflict() throws Exception {
+	public void testEvents_35_parameterRefByVariableConflict() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		
 		addEvent(abs, "evt", 
@@ -1481,9 +1494,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * Check that there are no witnesses for an inherited event.
+	 * Check that there are no witnesses for an extended event.
 	 */
-	public void testEvents_38_removeWitnessesFromInherited() throws Exception {
+	public void testEvents_38_removeWitnessesFromExtended() throws Exception {
 		IMachineFile abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
@@ -1515,8 +1528,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 	
-		addInheritedEvent(con, IEvent.INITIALISATION);
-		addInheritedEvent(con, "evt");
+		addExtendedEvent(con, IEvent.INITIALISATION);
+		IEvent evt1 = addExtendedEvent(con, "evt");
+		addEventRefines(evt1, "evt");
 
 		con.save(null, true);
 		
@@ -1533,4 +1547,339 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		
 	}
 
+	/*
+	 * An extended event must (re-)declare a parameter that was already declared 
+	 * in an abstract event.
+	 */
+	public void testEvents_39_extendedParameterCollision() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a ∈ ℕ"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+	
+		addInitialisation(ref);
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("a", "b"), 
+				makeSList("H"), makeSList("b=1"), 
+				makeSList(), makeSList());
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsParameters(events[1], "a", "b");
+
+		hasMarker(evt.getParameters()[0]);
+	}
+
+	/*
+	 * An extended event must reuse a guard label
+	 */
+	public void testEvents_40_extendedGuardLabelCollision() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("G"), makeSList("1 ∈ ℕ"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		
+		addVariables(ref, "x", "y");
+		addInitialisation(ref, "x", "y");
+		addInvariant(ref, "I", "x∈ℕ");
+		addInvariant(ref, "J", "y∈ℕ");
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("G", "H"), makeSList("1<0", "5=1"), 
+				makeSList("G", "A"), makeSList("x≔x+1", "y≔y−1"));
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+
+		containsGuards(events[1], environment, makeSList("G", "H"), makeSList("1 ∈ ℕ", "5=1"));
+		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
+
+		containsActions(events[1], environment, makeSList("A"), makeSList("y≔y−1"));
+		hasMarker(evt.getActions()[0], EventBAttributes.LABEL_ATTRIBUTE);
+
+	}
+
+	/*
+	 * An extended event must reuse an action label
+	 */
+	public void testEvents_41_extendedActionLabelCollision() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariant(abs, "I", "x∈ℕ");
+		addInitialisation(abs, "x");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x:∈ℕ"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		
+		addVariables(ref, "x", "y");
+		addInitialisation(ref, "x", "y");
+		addInvariant(ref, "J", "y∈ℕ");
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("A", "H"), makeSList("1<0", "5=1"), 
+				makeSList("A", "B"), makeSList("x≔x+1", "y≔y−1"));
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+
+		containsGuards(events[1], environment, makeSList("H"), makeSList("5=1"));
+		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
+
+		containsActions(events[1], environment, makeSList("A", "B"), makeSList("x:∈ℕ", "y≔y−1"));
+		hasMarker(evt.getActions()[0], EventBAttributes.LABEL_ATTRIBUTE);
+
+	}
+	
+	/*
+	 * An extended event copies the abstract parameters and adds the concrete ones
+	 */
+	public void testEvents_42_extendedAddAndCopyParameters() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a ∈ ℕ"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+	
+		addInitialisation(ref);
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("b"), 
+				makeSList("H"), makeSList("b=1"), 
+				makeSList(), makeSList());
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsParameters(events[1], "a", "b");
+
+	}
+
+	/*
+	 * An extended event copies the abstract guards and adds the concrete ones
+	 */
+	public void testEvents_43_extendedAddAndCopyGuards() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a ∈ ℕ"), 
+				makeSList(), makeSList());
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+	
+		addInitialisation(ref);
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("b"), 
+				makeSList("H"), makeSList("b=1"), 
+				makeSList(), makeSList());
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("a", intType);
+		environment.addName("b", intType);
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsGuards(events[1], environment, makeSList("G", "H"), makeSList("a ∈ ℕ", "b=1"));
+
+	}
+
+	/*
+	 * An extended event copies the abstract actions and adds the concrete ones
+	 */
+	public void testEvents_44_extendedAddAndCopyActions() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariant(abs, "I", "x∈ℕ");
+		addInitialisation(abs, "x");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A"), makeSList("x≔x+1"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+	
+		addVariables(ref, "x", "y");
+		addInvariant(ref, "J", "y∈ℕ");
+		addInitialisation(ref, "x", "y");
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("B"), makeSList("y≔y+1"));
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+
+		ref.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		
+		ISCMachineFile file = ref.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsActions(events[1], environment, makeSList("A", "B"), makeSList("x≔x+1", "y≔y+1"));
+
+	}
+	
+	/*
+	 * An extended event copies elements transitively from its abstractions
+	 */
+	public void testEvents_45_extendedCopyTransitive() throws Exception {
+		IMachineFile abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariant(abs, "I", "x∈ℕ");
+		addInitialisation(abs, "x");
+		addEvent(abs, "evt", 
+				makeSList("a"), 
+				makeSList("G"), makeSList("a<x"), 
+				makeSList("A"), makeSList("x≔x+1"));
+
+		abs.save(null, true);
+		
+		IMachineFile ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+	
+		addVariables(ref, "x", "y");
+		addInvariant(ref, "J", "y∈ℕ");
+		addInitialisation(ref, "x", "y");
+		IEvent evt = addEvent(ref, "evt", 
+				makeSList("b"), 
+				makeSList("H"), makeSList("b<y"), 
+				makeSList("B"), makeSList("y≔y+1"));
+		setExtended(evt);
+		addEventRefines(evt, "evt");
+		
+		ref.save(null, true);
+		
+		IMachineFile con = createMachine("con");
+		addMachineRefines(con, "ref");
+	
+		addVariables(con, "x", "y", "z");
+		addInvariant(con, "K", "z∈ℕ");
+		addInitialisation(con, "x", "y", "z");
+		IEvent evt1 = addEvent(con, "evt", 
+				makeSList("c"), 
+				makeSList("D"), makeSList("c<z"), 
+				makeSList("C"), makeSList("z≔z+1"));
+		setExtended(evt1);
+		addEventRefines(evt1, "evt");
+
+		con.save(null, true);
+		
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		environment.addName("y", intType);
+		environment.addName("z", intType);
+		environment.addName("a", intType);
+		environment.addName("b", intType);
+		environment.addName("c", intType);
+		
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		containsMarkers(con, false);
+		
+		ISCMachineFile file = con.getSCMachineFile();
+		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
+
+		containsParameters(events[1], "a", "b", "c");
+		containsGuards(events[1], environment, 
+				makeSList("G", "H", "D"), makeSList("a<x", "b<y", "c<z"));
+		containsActions(events[1], environment, 
+				makeSList("A", "B", "C"), makeSList("x≔x+1", "y≔y+1", "z≔z+1"));
+
+	}
+  
 }

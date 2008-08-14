@@ -11,13 +11,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IEvent;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
@@ -28,23 +27,30 @@ import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdentsModule {
+public class MachineEventWitnessFreeIdentsModule extends
+		MachineFormulaFreeIdentsModule {
 
-	public static final IModuleType<MachineEventWitnessFreeIdentsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventWitnessFreeIdentsModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineEventWitnessFreeIdentsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineEventWitnessFreeIdentsModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	FormulaFactory factory;
-	
+
 	private boolean isInitialisation;
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#initModule
+	 * (org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void initModule(
@@ -52,29 +58,33 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		factory = FormulaFactory.getDefault();
-		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		IConcreteEventInfo concreteEventInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = 
-			currentEvent.getCurrentEvent().getLabel().equals(IEvent.INITIALISATION);
+			concreteEventInfo.isInitialisation();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo(org.eventb.core.ast.FreeIdentifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo
+	 * (org.eventb.core.ast.FreeIdentifier)
 	 */
 	@Override
-	protected IIdentifierSymbolInfo getSymbolInfo(
-			IInternalElement element, 
-			FreeIdentifier freeIdentifier,
-			IProgressMonitor monitor) throws CoreException {
+	protected IIdentifierSymbolInfo getSymbolInfo(IInternalElement element,
+			FreeIdentifier freeIdentifier, IProgressMonitor monitor)
+			throws CoreException {
 		boolean primed = freeIdentifier.isPrimed();
-		FreeIdentifier identifier = primed ? 
-				freeIdentifier.withoutPrime(factory) : 
-				freeIdentifier;
-		if (!primed) { // abstract local variables are not contained in the symbol table; fake them!
+		FreeIdentifier identifier = primed ? freeIdentifier
+				.withoutPrime(factory) : freeIdentifier;
+		if (!primed) { // abstract local variables are not contained in the
+						// symbol table; fake them!
 			String label = ((IWitness) element).getLabel();
 			if (label.equals(freeIdentifier.getName()))
 				return new EventParameterSymbolInfo(label, null, null, null);
 		}
-		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, identifier, monitor);
+		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element,
+				identifier, monitor);
 		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
 			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 			if (!variableSymbolInfo.isConcrete()) {
@@ -82,34 +92,38 @@ public class MachineEventWitnessFreeIdentsModule extends MachineFormulaFreeIdent
 				if (primed && !label.equals(freeIdentifier.getName())) {
 					// error: only the primed abstract disappearing variable
 					// of the label may appear in the witness predicate
-					createProblemMarker(
-							element, getAttributeType(), 
-							freeIdentifier.getSourceLocation().getStart(), 
-							freeIdentifier.getSourceLocation().getEnd(), 
-							GraphProblem.WitnessFreeIdentifierError, freeIdentifier.getName());
+					createProblemMarker(element, getAttributeType(),
+							freeIdentifier.getSourceLocation().getStart(),
+							freeIdentifier.getSourceLocation().getEnd(),
+							GraphProblem.WitnessFreeIdentifierError,
+							freeIdentifier.getName());
 					return null;
 				}
 			}
 			if (isInitialisation && !primed) {
-				// error: unprimed variables cannot occur in initialisation witness predicates
-				createProblemMarker(
-						element, getAttributeType(), 
-						freeIdentifier.getSourceLocation().getStart(), 
-						freeIdentifier.getSourceLocation().getEnd(), 
-						GraphProblem.InitialisationActionRHSError, freeIdentifier.getName());
+				// error: unprimed variables cannot occur in initialisation
+				// witness predicates
+				createProblemMarker(element, getAttributeType(), freeIdentifier
+						.getSourceLocation().getStart(), freeIdentifier
+						.getSourceLocation().getEnd(),
+						GraphProblem.InitialisationActionRHSError,
+						freeIdentifier.getName());
 				return null;
 			}
 		}
 		return symbolInfo;
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#endModule
+	 * (org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(
-			ISCStateRepository repository, 
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;

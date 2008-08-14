@@ -30,6 +30,7 @@ public final class EventBAttributes {
 	public static IAttributeType.String COMMENT_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".comment");
 	
+	@Deprecated
 	public static IAttributeType.Boolean INHERITED_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".inherited");
 	
@@ -40,6 +41,9 @@ public final class EventBAttributes {
 	@Deprecated
 	public static IAttributeType.Boolean PRESERVED_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".preserved");
+	
+	public static IAttributeType.Boolean EXTENDED_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".extended");
 	
 	public static IAttributeType.Boolean ABSTRACT_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".abstract");

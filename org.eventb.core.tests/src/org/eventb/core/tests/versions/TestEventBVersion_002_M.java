@@ -17,10 +17,10 @@ import org.eventb.core.IVariable;
  * @author Stefan Hallerstede
  *
  */
-public class TestEventBVersion_2 extends EventBVersionTest {
+public class TestEventBVersion_002_M extends EventBVersionTest {
 	
 	/**
-	 * machines of version 1 are updated to contexts of version 2;
+	 * machines of version 1 are updated to machines of version 2;
 	 * machine variables are untouched
 	 */
 	public void testVersion_00_machineVariables() throws Exception {
@@ -43,7 +43,7 @@ public class TestEventBVersion_2 extends EventBVersionTest {
 	}
 	
 	/**
-	 * machines of version 1 are updated to contexts of version 2;
+	 * machines of version 1 are updated to machines of version 2;
 	 * event variables are converted into event parameters
 	 */
 	public void testVersion_01_eventParameters() throws Exception {
@@ -70,7 +70,7 @@ public class TestEventBVersion_2 extends EventBVersionTest {
 	}
 	
 	/**
-	 * machines of version 1 are updated to contexts of version 2;
+	 * machines of version 1 are updated to machines of version 2;
 	 * machine variables are untouched and event variables are converted into event parameters
 	 */
 	public void testVersion_02_variablesAndParameters() throws Exception {

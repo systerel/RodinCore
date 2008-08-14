@@ -18,6 +18,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
@@ -28,7 +29,9 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
@@ -46,13 +49,13 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineEventActionModule extends AssignmentModule<IAction> {
 
-	public static final IModuleType<MachineEventActionModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineEventActionModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -60,63 +63,82 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	private static String ACTION_NAME_PREFIX = "ACT";
 	private static String ACTION_REPAIR_PREFIX = "GEN";
 	private static String ACTION_REPAIR_LABEL = "GEN";
-	
+
+	private IConcreteEventInfo concreteEventInfo;
 	private boolean isInitialisation;
 	private FormulaFactory factory;
-	
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository,
-			IProgressMonitor monitor)
+
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
 		if (formulaElements.length > 0)
-			checkAndType(
-					element.getParent().getElementName(),
-					repository,
+			checkAndType(element.getParent().getElementName(), repository,
 					monitor);
 
 		ISCEvent targetEvent = (ISCEvent) target;
-		
+
 		HashMap<String, Integer> assignedByAction = checkLHS(monitor);
 		commitActions(targetEvent, null);
 		if (isInitialisation)
-			repairInitialisation(targetEvent, element, assignedByAction, monitor);
+			repairInitialisation(targetEvent, element, assignedByAction,
+					monitor);
 
 	}
-	
-	private HashMap<String, Integer> checkLHS(IProgressMonitor monitor) throws CoreException {
-		HashMap<String, Integer> assignedByAction = new HashMap<String, Integer>(43);
+
+	private HashMap<String, Integer> checkLHS(IProgressMonitor monitor)
+			throws CoreException {
+		HashMap<String, Integer> assignedByAction = new HashMap<String, Integer>(
+				43);
 		boolean[] error = getAssignedByActionMap(assignedByAction);
 		issueLHSProblemMarkers(error, monitor);
 		return assignedByAction;
 	}
 
-	private void issueLHSProblemMarkers(boolean[] error, IProgressMonitor monitor) throws RodinDBException, CoreException {
-		for (int i=0; i<formulaElements.length; i++) {
+	private void issueLHSProblemMarkers(boolean[] error,
+			IProgressMonitor monitor) throws RodinDBException, CoreException {
+		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
-			IActionSymbolInfo actionSymbolInfo = 
-				(IActionSymbolInfo) labelSymbolTable.getSymbolInfo(formulaElements[i].getLabel());
+			IActionSymbolInfo actionSymbolInfo = (IActionSymbolInfo) labelSymbolTable
+					.getSymbolInfo(formulaElements[i].getLabel());
 			if (error[i]) {
 				formulas[i] = null;
-				createProblemMarker(
-						formulaElements[i], 
-						getFormulaAttributeType(), 
+				createProblemMarker(formulaElements[i],
+						getFormulaAttributeType(),
 						GraphProblem.ActionDisjointLHSError);
 				actionSymbolInfo.setError();
 			}
 			actionSymbolInfo.makeImmutable();
 		}
+		if (error[formulaElements.length]) {
+			IRefinesEvent refinesEvent = concreteEventInfo.getRefinesClauses().get(0);
+			createProblemMarker(refinesEvent, EventBAttributes.TARGET_ATTRIBUTE, GraphProblem.ActionDisjointLHSWarining);
+		}
 	}
 
-	private boolean[] getAssignedByActionMap(HashMap<String, Integer> assignedByAction) {
-		boolean[] error = new boolean[formulaElements.length];
-		for (int i=0; i< formulaElements.length; i++) {
+	private boolean[] getAssignedByActionMap(
+			HashMap<String, Integer> assignedByAction) throws CoreException {
+		int last = formulaElements.length;
+		boolean[] error = new boolean[last + 1];
+
+		if (concreteEventInfo.getSymbolInfo().isExtended()
+				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
+			IAbstractEventInfo info = concreteEventInfo.getAbstractEventInfos()
+					.get(0);
+			for (Assignment assignment : info.getActions()) {
+				for (FreeIdentifier identifier : assignment
+						.getAssignedIdentifiers()) {
+					assignedByAction.put(identifier.getName(), last);
+				}
+			}
+		}
+
+		for (int i = 0; i < last; i++) {
 			if (formulas[i] == null)
 				continue;
-			for (FreeIdentifier identifier : formulas[i].getAssignedIdentifiers()) {
+			for (FreeIdentifier identifier : formulas[i]
+					.getAssignedIdentifiers()) {
 				String name = identifier.getName();
 				Integer conflict = assignedByAction.get(name);
 				if (conflict == null)
@@ -133,34 +155,24 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		return error;
 	}
 
-	private void commitActions(
-			ISCEvent target, 
-			IProgressMonitor monitor) throws RodinDBException {
-		
+	private void commitActions(ISCEvent target, IProgressMonitor monitor)
+			throws RodinDBException {
+
 		if (target == null)
 			return;
-		
-		int index = 0;
-		
-		for (int i=0; i<formulaElements.length; i++) {
+
+		int index = target.getSCActions().length;
+
+		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
-			saveAction(
-					target, 
-					ACTION_NAME_PREFIX + index++, 
-					formulaElements[i].getLabel(), 
-					formulas[i], 
-					formulaElements[i], 
-					monitor);
+			saveAction(target, ACTION_NAME_PREFIX + index++, formulaElements[i]
+					.getLabel(), formulas[i], formulaElements[i], monitor);
 		}
 	}
-	
-	private void saveAction(
-			ISCEvent target, 
-			String dbName,
-			String label, 
-			Assignment assignment,
-			IRodinElement source,
+
+	private void saveAction(ISCEvent target, String dbName, String label,
+			Assignment assignment, IRodinElement source,
 			IProgressMonitor monitor) throws RodinDBException {
 		ISCAction scAction = target.getSCAction(dbName);
 		scAction.create(null, monitor);
@@ -168,43 +180,47 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		scAction.setAssignment(assignment, null);
 		scAction.setSource(source, monitor);
 	}
-	
-	private void repairInitialisation(
-			ISCEvent target, 
-			IRodinElement event, 
-			HashMap<String, Integer> assignedByAction,
-			IProgressMonitor monitor) throws RodinDBException {
+
+	private void repairInitialisation(ISCEvent target, IRodinElement event,
+			HashMap<String, Integer> assignedByAction, IProgressMonitor monitor)
+			throws RodinDBException {
 		List<FreeIdentifier> patchLHS = new LinkedList<FreeIdentifier>();
 		List<BoundIdentDecl> patchBound = new LinkedList<BoundIdentDecl>();
-		for (ISymbolInfo symbolInfo : identifierSymbolTable.getParentTable().getSymbolInfosFromTop()) {
-			if (symbolInfo instanceof IVariableSymbolInfo && !symbolInfo.hasError()) {
+		for (ISymbolInfo symbolInfo : identifierSymbolTable.getParentTable()
+				.getSymbolInfosFromTop()) {
+			if (symbolInfo instanceof IVariableSymbolInfo
+					&& !symbolInfo.hasError()) {
 				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
 				if (variableSymbolInfo.isConcrete()) {
 					String name = variableSymbolInfo.getSymbol();
 					Integer a = assignedByAction.get(name);
 					if (a == null || a == -1) {
-						createProblemMarker(event, GraphProblem.InitialisationIncompleteWarning, name);
-						FreeIdentifier identifier = 
-							factory.makeFreeIdentifier(name, null, variableSymbolInfo.getType());
+						createProblemMarker(event,
+								GraphProblem.InitialisationIncompleteWarning,
+								name);
+						FreeIdentifier identifier = factory.makeFreeIdentifier(
+								name, null, variableSymbolInfo.getType());
 						patchLHS.add(identifier);
 						patchBound.add(identifier.asPrimedDecl(factory));
 					}
 				}
 			}
 		}
-		
+
 		if (target == null)
 			return;
-		
+
 		if (patchLHS.size() > 0) {
 			accuracyInfo.setNotAccurate();
 			Predicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-			Assignment assignment = factory.makeBecomesSuchThat(patchLHS, patchBound, btrue, null);
+			Assignment assignment = factory.makeBecomesSuchThat(patchLHS,
+					patchBound, btrue, null);
 			String label = createFreshLabel();
-			saveAction(target, ACTION_REPAIR_PREFIX, label, assignment, event, monitor);
+			saveAction(target, ACTION_REPAIR_PREFIX, label, assignment, event,
+					monitor);
 		}
 	}
-	
+
 	private String createFreshLabel() {
 		String label = ACTION_REPAIR_LABEL;
 		int index = 1;
@@ -217,14 +233,18 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	protected void makeProgress(IProgressMonitor monitor) {
 		// no progress inside event
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eventb.internal.core.sc.modules.LabeledElementModule#
+	 * getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository.getState(IEventLabelSymbolTable.STATE_TYPE);
+		return (ILabelSymbolTable) repository
+				.getState(IEventLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -233,21 +253,21 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
-		isInitialisation = ((IEvent) element).getLabel().equals(IEvent.INITIALISATION);
+		concreteEventInfo = (IConcreteEventInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
+		isInitialisation = concreteEventInfo.isInitialisation();
 		factory = FormulaFactory.getDefault();
 	}
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
+		concreteEventInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -257,19 +277,24 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	@Override
-	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol, ILabeledElement element, String component) throws CoreException {
-		return new ActionSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
+			ILabeledElement element, String component) throws CoreException {
+		return new ActionSymbolInfo(symbol, element,
+				EventBAttributes.LABEL_ATTRIBUTE, component);
 	}
 
 	@Override
-	protected IAction[] getFormulaElements(IRodinElement element) throws CoreException {
+	protected IAction[] getFormulaElements(IRodinElement element)
+			throws CoreException {
 		IEvent event = (IEvent) element;
 		return event.getActions();
 	}
 
 	@Override
-	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
-		return (IEventAccuracyInfo) repository.getState(IEventAccuracyInfo.STATE_TYPE);
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
+			throws CoreException {
+		return (IEventAccuracyInfo) repository
+				.getState(IEventAccuracyInfo.STATE_TYPE);
 	}
 
 }

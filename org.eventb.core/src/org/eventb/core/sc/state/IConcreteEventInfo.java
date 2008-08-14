@@ -11,28 +11,32 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.IStateType;
 
 /**
  * State component for refinement information associated with events.
- * If <code>getRefinesClauses()</code> yields an empty list, but 
- * <code>currentEventIsRefined()</code> yields <code>true</code>, then
- * the current event is implicitly refined, e.g., it is inherited or
- * an initialisation in a refined machine. In that case <code>getAbstractEventInfos()</code>
- * returns a list with one element.
+ * <p>
+ * For the initialisation event <code>getRefinesClauses()</code> yields an empty
+ * list, but <code>getAbstractEventInfos()</code> returns a list with one
+ * element. For all other events, the list returned by
+ * <code>getAbstractEventInfos()</code> may be shorter than the list returned by
+ * <code>getRefinesClauses()</code>. This is because some refines clauses may
+ * refer to non-existing abstract events.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Stefan Hallerstede
- *
+ * 
  */
-public interface IEventRefinesInfo extends ISCState {
+public interface IConcreteEventInfo extends ISCState {
 	
-	final static IStateType<IEventRefinesInfo> STATE_TYPE = 
-		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".eventRefinesInfo");
+	final static IStateType<IConcreteEventInfo> STATE_TYPE = 
+		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventInfo");
 	
 	/**
 	 * Returns whether the current event is new (i.e. does not refine an abstract event) or not.
@@ -40,7 +44,7 @@ public interface IEventRefinesInfo extends ISCState {
 	 * @return whether the current event is new or not
 	 * @throws CoreException if this state component is mutable
 	 */
-	boolean currentEventIsNew() throws CoreException;
+	boolean eventIsNew() throws CoreException;
 	
 	/**
 	 * Returns the infos for the abstract events that are refined by the current event.
@@ -57,5 +61,33 @@ public interface IEventRefinesInfo extends ISCState {
 	 * @throws CoreException if this state component is mutable
 	 */
 	List<IRefinesEvent> getRefinesClauses() throws CoreException;
+	
+	/**
+	 * Returns the symbol info of the event to which this refine info belongs.
+	 * 
+	 * @return the symbol info of the event to which this refine info belongs
+	 */
+	IEventSymbolInfo getSymbolInfo();
+	
+	/**
+	 * Returns whether the event is the initialisation.
+	 * 
+	 * @return whether the event is the initialisation
+	 */
+	boolean isInitialisation();
+	
+	/**
+	 * Returns the event.
+	 * 
+	 * @return the event
+	 */
+	IEvent getEvent();
+	
+	/**
+	 * Returns the label of the event.
+	 * 
+	 * @return the label of the event
+	 */
+	String getEventLabel();
 	
 }

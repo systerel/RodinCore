@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -19,6 +20,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.state.IAbstractEventInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.tool.IStateType;
 import org.rodinp.core.RodinDBException;
 
@@ -36,9 +38,8 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	@Override
 	public void makeImmutable() {
 		super.makeImmutable();
-		idents = Collections.unmodifiableList(idents);
-		guards = Collections.unmodifiableList(guards);
-		actions = Collections.unmodifiableList(actions);
+		mergers = Collections.unmodifiableList(mergers);
+		splitters = Collections.unmodifiableList(splitters);
 	}
 
 	private final String label;
@@ -47,6 +48,9 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	private List<FreeIdentifier> idents;
 	private List<Predicate> guards;
 	private List<Assignment> actions;
+	
+	private List<IConcreteEventInfo> mergers;
+	private List<IConcreteEventInfo> splitters;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getEventLabel()
@@ -59,7 +63,6 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
 	public FreeIdentifier getParameter(String name) throws CoreException {
-		assertImmutable();
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
 			for (FreeIdentifier identifier : idents) {
@@ -73,7 +76,6 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
 	public List<FreeIdentifier> getParameters() throws CoreException {
-		assertImmutable();
 		return idents;
 	}
 
@@ -81,7 +83,6 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getGuards()
 	 */
 	public List<Predicate> getGuards() throws CoreException {
-		assertImmutable();
 		return guards;
 	}
 
@@ -89,7 +90,6 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getActions()
 	 */
 	public List<Assignment> getActions() throws CoreException {
-		assertImmutable();
 		return actions;
 	}
 
@@ -103,9 +103,11 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		super(convergence);
 		this.event = event;
 		this.label = label;
-		this.idents = Arrays.asList(idents);
-		this.guards = Arrays.asList(guards);
-		this.actions = Arrays.asList(actions);
+		this.idents = Collections.unmodifiableList(Arrays.asList(idents));
+		this.guards = Collections.unmodifiableList(Arrays.asList(guards));
+		this.actions = Collections.unmodifiableList(Arrays.asList(actions));
+		this.mergers = new ArrayList<IConcreteEventInfo>(2);
+		this.splitters = new ArrayList<IConcreteEventInfo>(3);
 	}
 
 	/* (non-Javadoc)
@@ -134,6 +136,14 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
+	}
+
+	public List<IConcreteEventInfo> getMergers() {
+		return mergers;
+	}
+
+	public List<IConcreteEventInfo> getSplitters() {
+		return splitters;
 	}
 
 }

@@ -30,7 +30,7 @@ public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IP
 	public EventParameterSymbolInfo(
 			String symbol, 
 			IInternalElement element, 
-			IAttributeType.String attribute, 
+			IAttributeType attribute, 
 			String component) {
 		super(symbol, false, element, attribute, component);
 	}
@@ -45,14 +45,14 @@ public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IP
 		ISCParameter parameter = ((ISCEvent) parent).getSCParameter(getSymbol());
 		parameter.create(null, monitor);
 		parameter.setType(getType(), null);
-		parameter.setSource(getSourceElement(), monitor);
+		parameter.setSource(getElement(), monitor);
 		return parameter;
 	}
 
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.EventParameterNameConflictError, 
 				getSymbol());
@@ -61,7 +61,7 @@ public class EventParameterSymbolInfo extends IdentifierSymbolInfo implements IP
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.EventParameterNameConflictWarning, 
 				getSymbol());

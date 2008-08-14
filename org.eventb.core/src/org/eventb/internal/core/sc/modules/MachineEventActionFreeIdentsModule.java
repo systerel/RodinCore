@@ -15,7 +15,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.state.ICurrentEvent;
+import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
@@ -45,9 +45,9 @@ public class MachineEventActionFreeIdentsModule extends MachineFormulaFreeIdents
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		ICurrentEvent currentEvent = (ICurrentEvent) repository.getState(ICurrentEvent.STATE_TYPE);
+		IConcreteEventInfo concreteEventInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = 
-			currentEvent.isInitialisation();
+			concreteEventInfo.isInitialisation();
 	}
 
 	@Override

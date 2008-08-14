@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2008 University of Southampton.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,27 +7,35 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCRefinesEvent;
+import org.eventb.core.ISCAction;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Type;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
-import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IAbstractMachineInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
+import org.eventb.core.sc.state.IConcreteEventTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.EventRefinesInfo;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,124 +43,308 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public class MachineEventRefinesModule extends SCProcessorModule {
+public class MachineEventRefinesModule extends SCFilterModule {
 
 	public static final IModuleType<MachineEventRefinesModule> MODULE_TYPE = 
 		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventRefinesModule"); //$NON-NLS-1$
+
+	private IAbstractMachineInfo abstractMachineInfo;
 	
+	private IAbstractEventTable abstractEventTable;
+	
+	private IConcreteEventTable concreteEventTable;
+	
+	private ILabelSymbolTable labelSymbolTable;
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.tool.types.ISCFilterModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.sc.state.ISCStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		IEvent event = (IEvent) element;
+		String eventLabel = event.getLabel();
+		IEventSymbolInfo symbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
+		IRefinesEvent[] refinesEvents = event.getRefinesClauses();
+		if (eventLabel.equals(IEvent.INITIALISATION)) {
+			return checkInitRefinement(event, symbolInfo, refinesEvents);
+		} else {
+			return fetchRefinement((IMachineFile) event.getParent(), event, symbolInfo);
+		}
+	}
+	
+	private boolean fetchRefinement(
+			IMachineFile machineFile,
+			IEvent event, 
+			IEventSymbolInfo symbolInfo) throws RodinDBException, CoreException {
+		
+			boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses());
+			if (!found) {
+				IAbstractEventInfo info = 
+					abstractEventTable.getAbstractEventInfo(symbolInfo.getSymbol());
+				if (info != null)
+					createProblemMarker(
+							machineFile,
+							GraphProblem.InconsistentEventLabelWarning,
+							symbolInfo.getSymbol());
+			}
+			
+			return true;
+	}
+	
+	private boolean fetchRefineData(
+			IEventSymbolInfo symbolInfo, 
+			IRefinesEvent[] refinesEvents) throws CoreException {
+		
+		IConcreteEventInfo concreteInfo = concreteEventTable.getConcreteEventInfo(symbolInfo.getSymbol());
+		
+		boolean found = false;
+		
+		ArrayList<String> abstractLabels = (refinesEvents.length > 1) ? 
+				new ArrayList<String>(refinesEvents.length) : 
+				null;
+		
+		HashSet<String> typeErrors = (refinesEvents.length > 1) ?
+				new HashSet<String>(37) :
+				null;
+		Hashtable<String, Type> types = (refinesEvents.length > 1) ?
+				new Hashtable<String, Type>(37) :
+				null;
+				
+		boolean firstAction = true;
+		boolean actionError = false;
+		Hashtable<String, String> actions = (refinesEvents.length > 1) ?
+				new Hashtable<String, String>(43) :
+				null;
+				
+		for (int i=0; i<refinesEvents.length; i++) {
+			
+			if (!refinesEvents[i].hasAbstractEventLabel()) {
+				createProblemMarker(
+						refinesEvents[i], 
+						EventBAttributes.TARGET_ATTRIBUTE, 
+						GraphProblem.AbstractEventLabelUndefError);
+				continue;
+			}
+			
+			String abstractLabel = refinesEvents[i].getAbstractEventLabel();
+			
+			// filter duplicates
+			if (abstractLabels != null)
+				if (abstractLabels.contains(abstractLabel)) {
+					createProblemMarker(
+							refinesEvents[i],
+							EventBAttributes.TARGET_ATTRIBUTE,
+							GraphProblem.AbstractEventLabelConflictWarning, 
+							abstractLabel);
+					continue;
+				} else
+					abstractLabels.add(abstractLabel);
+			
+			if (abstractLabel.equals(IEvent.INITIALISATION)) {
+				createProblemMarker(
+						refinesEvents[i],
+						EventBAttributes.TARGET_ATTRIBUTE,
+						GraphProblem.InitialisationRefinedError);
+				issueRefinementErrorMarker(symbolInfo);
+				continue;
+			}
+			
+			IAbstractEventInfo abstractInfo =
+				getAbstractEventInfoForLabel(
+						symbolInfo, 
+						abstractLabel,
+						refinesEvents[i], 
+						EventBAttributes.TARGET_ATTRIBUTE);
+			
+			if (abstractInfo == null)
+				continue;
+			
+			if (symbolInfo.getSymbol().equals(abstractInfo.getEventLabel()))
+				found = true;
+			
+			checkForParameterTypeErrors(
+					symbolInfo, 
+					typeErrors, 
+					types, 
+					abstractInfo);
+			
+			if (actions != null && !actionError)
+				if (firstAction) {
+					for (ISCAction action : abstractInfo.getEvent().getSCActions()) {
+						actions.put(action.getLabel(), action.getAssignmentString());
+					}
+					firstAction = false;
+				} else {
+					actionError = checkAbstractActionAccordance(
+							symbolInfo, 
+							actions, 
+							abstractInfo);
+				}
+			
+			concreteInfo.getAbstractEventInfos().add(abstractInfo);
+			concreteInfo.getRefinesClauses().add(refinesEvents[i]);
+			
+			// this is a pretty rough distinction. But it should be sufficient in practice.
+			if (refinesEvents.length == 1) {
+				abstractInfo.getSplitters().add(concreteInfo);
+			} else {
+				abstractInfo.getMergers().add(concreteInfo);
+			}
+		}
+		
+		concreteInfo.makeImmutable();
+		
+		return found;
+	}
+
+	private boolean checkAbstractActionAccordance(
+			IEventSymbolInfo symbolInfo, 
+			Hashtable<String, String> actions, 
+			IAbstractEventInfo abstractInfo) throws CoreException {
+		ISCAction[] scActions = abstractInfo.getEvent().getSCActions();
+		boolean ok = scActions.length == actions.size();
+		if (ok)
+			for (ISCAction action : scActions) {
+				String assignment = actions.get(action.getLabel());
+				String other = action.getAssignmentString();
+				if (assignment != null 
+						&& assignment.equals(other))
+					continue;
+				if (assignment == null || actions.containsValue(other)) {
+					createProblemMarker(
+							symbolInfo.getElement(),
+							GraphProblem.EventMergeLabelError);
+					symbolInfo.setError();
+					return true;
+				}
+				ok = false;
+				break;
+			}
+		if (!ok) {
+			createProblemMarker(
+					symbolInfo.getElement(),
+					GraphProblem.EventMergeActionError);
+			symbolInfo.setError();
+			return true;
+		}
+		return false;
+	}
+
+	private void checkForParameterTypeErrors(
+			IEventSymbolInfo symbolInfo, 
+			HashSet<String> typeErrors, Hashtable<String, Type> types, 
+			IAbstractEventInfo abstractInfo) throws RodinDBException, CoreException {
+		if (types != null)
+			for (FreeIdentifier identifier : abstractInfo.getParameters()) {
+				String name = identifier.getName();
+				Type newType = identifier.getType();
+				Type type = types.put(name, newType);
+				if (type == null || type.equals(newType))
+					continue;
+				if (typeErrors.add(name)) {
+					createProblemMarker(
+							symbolInfo.getElement(),
+							GraphProblem.EventMergeVariableTypeError,
+							name);
+					symbolInfo.setError();
+				}
+			}
+	}
+
+	private boolean checkInitRefinement(IEvent event,
+			IEventSymbolInfo symbolInfo, IRefinesEvent[] refinesEvents)
+			throws CoreException {
+		if (refinesEvents.length > 0) {
+			for (IRefinesEvent refinesEvent : refinesEvents) {
+				createProblemMarker(refinesEvent,
+						EventBAttributes.TARGET_ATTRIBUTE,
+						GraphProblem.InitialisationRefinesEventWarning);
+			}
+		}
+
+		if (abstractMachineInfo.getAbstractMachine() != null) {
+			IAbstractEventInfo abstractInfo = getAbstractEventInfoForLabel(
+					symbolInfo, symbolInfo.getSymbol(), event, null);
+
+			if (abstractInfo == null) {
+				symbolInfo.setError();
+				return false;
+			} else {
+				IConcreteEventInfo concreteInfo = concreteEventTable
+						.getConcreteEventInfo(symbolInfo.getSymbol());
+				abstractInfo.getSplitters().add(concreteInfo);
+				concreteInfo.getAbstractEventInfos().add(abstractInfo);
+				concreteInfo.makeImmutable();
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+	
+	private void issueRefinementErrorMarker(IEventSymbolInfo symbolInfo) throws CoreException {
+		if (!symbolInfo.hasError())
+			createProblemMarker(
+					symbolInfo.getElement(), 
+					GraphProblem.EventRefinementError);
+		symbolInfo.setError();
+	}
+	
+	private IAbstractEventInfo getAbstractEventInfoForLabel(
+			IEventSymbolInfo symbolInfo, 
+			String abstractLabel,
+			IInternalElement element,
+			IAttributeType attributeType) throws CoreException {
+		IAbstractEventInfo info = 
+			abstractEventTable.getAbstractEventInfo(abstractLabel);
+
+		if (info == null) {
+			if (attributeType == null)
+				createProblemMarker(
+						element,
+						GraphProblem.AbstractEventNotFoundError,
+						abstractLabel);
+			else
+				createProblemMarker(
+						element,
+						attributeType,
+						GraphProblem.AbstractEventNotFoundError,
+						abstractLabel);
+			info = null;
+			issueRefinementErrorMarker(symbolInfo);
+		}
+		return info;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eventb.internal.core.tool.types.IModule#getModuleType()
+	 */
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	private ILabelSymbolTable labelSymbolTable;
-	private IAbstractEventTable abstractEventTable;
-	private IEventRefinesInfo eventRefinesInfo;
-	private String eventLabel;
-	
-	private static String REFINES_NAME_PREFIX = "REF";
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor)
-			throws CoreException {
-
-		if (target == null)
-			return;
-		
-		IEventSymbolInfo symbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
-		
-		createRefinesClause((ISCEvent) target, symbolInfo, monitor);
-		
-	}
-	
-	private void createRefinesClause(
-			ISCEvent target, 
-			IEventSymbolInfo symbolInfo, 
-			IProgressMonitor monitor) throws CoreException {
-		
-		IEventRefinesInfo refinesInfo = symbolInfo.getRefinesInfo();
-		
-		List<IRefinesEvent> refines = refinesInfo.getRefinesClauses();
-		
-		if (refines.size() > 0) { // user specified refinements
-		
-			int index = 0;
-			
-			for (IRefinesEvent refinesEvent : refines) {
-				
-				String label = refinesEvent.getAbstractEventLabel();
-				
-				ISCEvent abstractEvent = abstractEventTable.getAbstractEventInfo(label).getEvent();
-		
-				index = createRefinesEvent(target, index, refinesEvent, abstractEvent, monitor);
-			}
-		} else if (refinesInfo.getAbstractEventInfos().size() > 0) { // implicit refinement
-			IAbstractEventInfo abstractEventInfo = refinesInfo.getAbstractEventInfos().get(0);
-			
-			createRefinesEvent(target, 0, 
-					symbolInfo.getSourceElement(), abstractEventInfo.getEvent(), monitor);
-		}
-	}
-
-	private int createRefinesEvent(
-			ISCEvent target, 
-			int index, 
-			IRodinElement element, 
-			ISCEvent abstractEvent, 
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesEvent scRefinesEvent = target.getSCRefinesClause(REFINES_NAME_PREFIX + index++);
-		scRefinesEvent.create(null, monitor);
-		scRefinesEvent.setAbstractSCEvent(abstractEvent, null);
-		scRefinesEvent.setSource(element, monitor);
-		return index;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		super.initModule(element, repository, monitor);
-		
-		IEvent event = (IEvent) element;
-		
-		eventLabel = event.getLabel();
-		
+		super.initModule(repository, monitor);
+		abstractEventTable =
+			(IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
+
+		concreteEventTable = 
+			(IConcreteEventTable) repository.getState(IConcreteEventTable.STATE_TYPE);
+				
+		abstractMachineInfo = (IAbstractMachineInfo) repository.getState(IAbstractMachineInfo.STATE_TYPE);
+
 		labelSymbolTable = (ILabelSymbolTable) repository.getState(IMachineLabelSymbolTable.STATE_TYPE);
-		
-		IEventSymbolInfo eventSymbolInfo = (IEventSymbolInfo) labelSymbolTable.getSymbolInfo(eventLabel);
-		
-		eventRefinesInfo = eventSymbolInfo.getRefinesInfo();
-		
-		if (eventRefinesInfo == null)
-			eventRefinesInfo = new EventRefinesInfo(0);
-		eventRefinesInfo.makeImmutable();
-		
-		repository.setState(eventRefinesInfo);
-		
-		abstractEventTable = (IAbstractEventTable) repository.getState(IAbstractEventTable.STATE_TYPE);
-		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		super.endModule(element, repository, monitor);
-		labelSymbolTable = null;
 		abstractEventTable = null;
+		concreteEventTable = null;
+		abstractMachineInfo = null;
+		super.endModule(repository, monitor);
 	}
-	
+
 }

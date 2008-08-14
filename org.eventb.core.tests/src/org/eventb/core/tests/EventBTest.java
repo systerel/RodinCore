@@ -156,7 +156,7 @@ public abstract class EventBTest extends BuilderTest {
 		IEvent event = rodinFile.getEvent(getUniqueName());
 		event.create(null, null);
 		event.setLabel(name, null);
-		event.setInherited(false, null);
+		event.setExtended(false, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		for(int i=0; i<vars.length; i++) {
 			IParameter parameter = event.getParameter(getUniqueName());
@@ -196,15 +196,19 @@ public abstract class EventBTest extends BuilderTest {
 		return addEvent(rodinFile, name, makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 	}
 	
-	public IEvent addInheritedEvent(IMachineFile rodinFile, 
+	public IEvent addExtendedEvent(IMachineFile rodinFile, 
 			String name) throws RodinDBException {
 		IEvent event = rodinFile.getEvent(getUniqueName());
 		event.create(null, null);
 		event.setLabel(name, null);
-		event.setInherited(true, null);
+		event.setExtended(true, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		return event;
 		
+	}
+	
+	public void setExtended(IEvent event) throws RodinDBException {
+		event.setExtended(true, null);
 	}
 	
 	public IEvent addInitialisation(IMachineFile mchFile, String[] actionNames,

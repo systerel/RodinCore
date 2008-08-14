@@ -380,7 +380,7 @@ public abstract class BasicSCTest extends EventBTest {
 		
 	}
 
-	public void containsVariables(ISCEvent event, String... strings) throws RodinDBException {
+	public void containsParameters(ISCEvent event, String... strings) throws RodinDBException {
 		ISCParameter[] parameters = event.getSCParameters();
 		
 		assertEquals("wrong number of variables", strings.length, parameters.length);
@@ -553,7 +553,7 @@ public abstract class BasicSCTest extends EventBTest {
 		ISCVariable[] variables = file.getSCVariables();
 		
 		for (int i=0; i<variables.length; i++) {
-			if (! variables[i].isForbidden())
+			if (variables[i].isConcrete())
 				variables[i] = null;
 		}
 		

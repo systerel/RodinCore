@@ -77,25 +77,21 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 		variable.setType(getType(), null);
 		variable.setConcrete(isConcrete(), monitor);
 		variable.setAbstract(isAbstract(), monitor);
-		variable.setSource(getSourceElement(), monitor);
+		variable.setSource(getElement(), monitor);
 		return variable;
-	}
-
-	public boolean isLocal() {
-		return false;
 	}
 
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		if (isImported())
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.VariableNameImportConflictError, 
 					getSymbol(), getComponentName());
 		else
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.VariableNameConflictError, 
 					getSymbol());
@@ -105,13 +101,13 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		if (isImported())
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.VariableNameImportConflictWarning, 
 					getSymbol(), getComponentName());
 		else
 			markerDisplay.createProblemMarker(
-					getSourceElement(), 
+					getElement(), 
 					getSourceAttributeType(), 
 					GraphProblem.VariableNameConflictWarning, 
 					getSymbol());
@@ -134,8 +130,6 @@ public class MachineVariableSymbolInfo extends IdentifierSymbolInfo implements I
 	}
 
 	public void setConcrete() {
-		assert !forbidden;
-		
 		this.concrete = true;
 	}
 

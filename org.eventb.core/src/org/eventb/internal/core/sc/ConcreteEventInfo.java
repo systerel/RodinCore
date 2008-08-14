@@ -7,14 +7,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
-import org.eventb.core.sc.state.IEventRefinesInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
+import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
@@ -22,7 +24,7 @@ import org.eventb.internal.core.tool.state.State;
  * @author Stefan Hallerstede
  *
  */
-public class EventRefinesInfo extends State implements IEventRefinesInfo {
+public class ConcreteEventInfo extends State implements IConcreteEventInfo {
 
 	@Override
 	public String toString() {
@@ -38,6 +40,10 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 
 	private List<IAbstractEventInfo> abstractInfos;
 	private List<IRefinesEvent> refEvents;
+	private final IEventSymbolInfo symbolInfo;
+	private final IEvent event;
+	private final String eventLabel;
+	private final boolean isInit;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
@@ -47,33 +53,52 @@ public class EventRefinesInfo extends State implements IEventRefinesInfo {
 	}
 
 	public List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException {
-		assertImmutable();
 		return abstractInfos;
 	}
 
-	public EventRefinesInfo(int size) {
-		abstractInfos = new ArrayList<IAbstractEventInfo>(size);
-		refEvents = new ArrayList<IRefinesEvent>(size);
+	public ConcreteEventInfo(IEvent event, IEventSymbolInfo symbolInfo) {
+		this.event = event;
+		this.eventLabel = symbolInfo.getSymbol();
+		this.symbolInfo = symbolInfo;
+		isInit = eventLabel.equals(IEvent.INITIALISATION);
+		abstractInfos = new LinkedList<IAbstractEventInfo>();
+		refEvents = new LinkedList<IRefinesEvent>();
 	}
 	
-	public boolean currentEventIsNew() throws CoreException {
-		assertImmutable();
+	public boolean eventIsNew() throws CoreException {
 		return abstractInfos.size() == 0 && refEvents.size() == 0;
 	}
 
+	@Deprecated
 	public void addAbstractEventInfo(IAbstractEventInfo info) throws CoreException {
 		assertMutable();
 		abstractInfos.add(info);
 	}
 
 	public List<IRefinesEvent> getRefinesClauses() throws CoreException {
-		assertImmutable();
 		return refEvents;
 	}
 
+	@Deprecated
 	public void addRefinesEvent(IRefinesEvent refinesEvent) throws CoreException {
 		assertMutable();
 		refEvents.add(refinesEvent);
+	}
+
+	public IEventSymbolInfo getSymbolInfo() {
+		return symbolInfo;
+	}
+
+	public IEvent getEvent() {
+		return event;
+	}
+
+	public String getEventLabel() {
+		return eventLabel;
+	}
+
+	public boolean isInitialisation() {
+		return isInit;
 	}
 
 }

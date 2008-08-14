@@ -498,6 +498,11 @@
             kind="boolean"
             name="%eventBconcreteVariableAttribute">
       </attributeType>
+      <attributeType
+            id="extended"
+            kind="boolean"
+            name="%eventBextendedEventAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -539,17 +544,18 @@
             id="contextTable"
             name="%contextTable"/>
       <stateType
-            class="org.eventb.core.sc.state.ICurrentEvent"
-            id="currentEvent"
-            name="%currentEvent"/>
-      <stateType
             class="org.eventb.core.sc.state.IEventLabelSymbolTable"
             id="eventLabelSymbolTable"
             name="%eventLabelSymbolTable"/>
       <stateType
-            class="org.eventb.core.sc.state.IEventRefinesInfo"
-            id="eventRefinesInfo"
-            name="%eventRefinesInfo"/>
+            class="org.eventb.core.sc.state.IConcreteEventInfo"
+            id="concreteEventInfo"
+            name="%concreteEventInfo"/>
+      <stateType
+            class="org.eventb.core.sc.state.IConcreteEventTable"
+            id="concreteEventTable"
+            name="%concreteEventTable">
+      </stateType>
       <stateType
             class="org.eventb.core.sc.state.IIdentifierSymbolTable"
             id="identifierSymbolTable"
@@ -699,17 +705,28 @@
          <scModule id="org.eventb.core.machineVariantFreeIdentsModule"/>
          <scModule id="org.eventb.core.machineVariableFromParameterModule"/>
          <scModule id="org.eventb.core.machineEventModule"/>
-         <scModule id="org.eventb.core.machineEventRefinesModule"/>
-         <scModule id="org.eventb.core.machineEventInheritedModule"/>
+         <scModule id="org.eventb.core.machineEventCommitRefinesModule"/>
+         <scModule id="org.eventb.core.machineEventExtendedModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceDefModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceModule"/>
          <scModule id="org.eventb.core.machineEventParameterModule"/>
          <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
          <scModule id="org.eventb.core.machineEventGuardModule"/>
          <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
-         <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
          <scModule id="org.eventb.core.machineEventActionModule"/>
          <scModule id="org.eventb.core.machineEventActionFreeIdentsModule"/>
+         <scModule
+               id="org.eventb.core.machineEventCopyGuardsModule">
+         </scModule>
+         <scModule
+               id="org.eventb.core.machineEventCopyActionsModule">
+         </scModule>
+         <scModule
+               id="org.eventb.core.machineEventCopyParametersModule">
+         </scModule>
+         <scModule
+               id="org.eventb.core.machineEventRefinesModule">
+         </scModule>
       </configuration>
       <configuration
             id="ctx"
@@ -904,11 +921,6 @@
          <prereq id="org.eventb.core.machineCommitIdentsModule"/>
       </processorType>
       <filterType
-            class="org.eventb.internal.core.sc.modules.MachineEventInheritedModule"
-            id="machineEventInheritedModule"
-            name="%scMachineEventInheritedModule"
-            parent="org.eventb.core.machineEventModule"/>
-      <filterType
             class="org.eventb.internal.core.sc.modules.MachineEventConvergenceDefModule"
             id="machineEventConvergenceDefModule"
             name="%machineEventConvergenceDefModule"
@@ -918,16 +930,20 @@
          name="%scEventModuleTypes"
          point="org.eventb.core.scModuleTypes">
       <processorType
-            class="org.eventb.internal.core.sc.modules.MachineEventRefinesModule"
-            id="machineEventRefinesModule"
-            name="%scMachineEventRefinesModule"
-            parent="org.eventb.core.machineEventModule"/>
+            class="org.eventb.internal.core.sc.modules.MachineEventCommitRefinesModule"
+            id="machineEventCommitRefinesModule"
+            name="%scMachineEventCommitRefinesModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq
+               id="org.eventb.core.machineEventRefinesModule">
+         </prereq>
+      </processorType>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineEventConvergenceModule"
             id="machineEventConvergenceModule"
             name="%scMachineEventConvergenceModule"
             parent="org.eventb.core.machineEventModule">
-         <prereq id="org.eventb.core.machineEventRefinesModule"/>
+         <prereq id="org.eventb.core.machineEventCommitRefinesModule"/>
          <prereq id="org.eventb.core.machineVariantModule"/>
          <prereq id="org.eventb.core.machineEventConvergenceDefModule"/>
       </processorType>
@@ -936,7 +952,16 @@
             id="machineEventParameterModule"
             name="%scMachineEventParameterModule"
             parent="org.eventb.core.machineEventModule">
-         <prereq id="org.eventb.core.machineEventRefinesModule"/>
+         <prereq id="org.eventb.core.machineEventCommitRefinesModule"/>
+         <prereq
+               id="org.eventb.core.machineEventCopyParametersModule">
+         </prereq>
+         <prereq
+               id="org.eventb.core.machineEventCopyGuardsModule">
+         </prereq>
+         <prereq
+               id="org.eventb.core.machineEventCopyActionsModule">
+         </prereq>
       </processorType>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineEventGuardModule"
@@ -981,7 +1006,40 @@
             id="machineEventActionFreeIdentsModule"
             name="%scMachineEventActionFreeIdentsModule"
             parent="org.eventb.core.machineEventActionModule"/>
-   </extension>
+
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventRefinesModule"
+            id="machineEventRefinesModule"
+            name="%scMachineEventRefinesModule"
+            parent="org.eventb.core.machineEventModule">
+      </filterType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventExtendedModule"
+            id="machineEventExtendedModule"
+            name="%scMachineEventExtendedModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq
+               id="org.eventb.core.machineEventRefinesModule">
+         </prereq>
+      </filterType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventCopyParametersModule"
+            id="machineEventCopyParametersModule"
+            name="%scMachineEventCopyParametersModule"
+            parent="org.eventb.core.machineEventModule">
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventCopyGuardsModule"
+            id="machineEventCopyGuardsModule"
+            name="%scMachineEventCopyGuardsModule"
+            parent="org.eventb.core.machineEventModule">
+      </processorType>
+      <processorType
+            class="org.eventb.internal.core.sc.modules.MachineEventCopyActionsModule"
+            id="machineEventCopyActionsModule"
+            name="%scMachineEventCopyActionsModule"
+            parent="org.eventb.core.machineEventModule">
+      </processorType>   </extension>
    <extension
          name="%pogContextModuleTypes"
          point="org.eventb.core.pogModuleTypes">
@@ -1202,7 +1260,7 @@
       </fileElementVersion>
       <fileElementVersion
             id="org.eventb.core.machineFile"
-            version="2">
+            version="3">
       </fileElementVersion>
    </extension>
    <extension
@@ -1239,6 +1297,11 @@
             </renameElement>
          </element>
       </simple>
+      <source
+            source="&lt;xsl:template match=&quot;/org.eventb.core.machineFile/org.eventb.core.event[@org.eventb.core.inherited=&apos;false&apos;]&quot;&gt;&lt;xsl:element name=&quot;org.eventb.core.event&quot;&gt;&lt;xsl:attribute name=&quot;org.eventb.core.extended&quot;&gt;false&lt;/xsl:attribute&gt;&lt;xsl:apply-templates select=&quot;* | @*&quot;/&gt;&lt;/xsl:element&gt;&lt;/xsl:template&gt;&lt;xsl:template match=&quot;/org.eventb.core.machineFile/org.eventb.core.event[@org.eventb.core.inherited=&apos;true&apos;]&quot;&gt;&lt;xsl:element name=&quot;org.eventb.core.event&quot;&gt;&lt;xsl:attribute name=&quot;org.eventb.core.extended&quot;&gt;true&lt;/xsl:attribute&gt;&lt;xsl:apply-templates select=&quot;@*&quot;/&gt;&lt;xsl:if test=&quot;@org.eventb.core.label!=&apos;INITIALISATION&apos;&quot;&gt;&lt;xsl:element name=&quot;org.eventb.core.refinesEvent&quot;&gt;&lt;xsl:attribute name=&quot;name&quot;&gt;ref&lt;/xsl:attribute&gt;&lt;xsl:attribute name=&quot;org.eventb.core.target&quot;&gt;&lt;xsl:value-of select=&quot;@org.eventb.core.label&quot;/&gt;&lt;/xsl:attribute&gt;&lt;/xsl:element&gt;&lt;/xsl:if&gt;&lt;/xsl:element&gt;&lt;/xsl:template&gt;&lt;xsl:template match=&quot;/org.eventb.core.machineFile/org.eventb.core.event/@org.eventb.core.inherited&quot;/&gt;"
+            type="org.eventb.core.machineFile"
+            version="3">
+      </source>
    </extension>
 
 </plugin>

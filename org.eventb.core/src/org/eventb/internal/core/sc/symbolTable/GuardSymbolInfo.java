@@ -30,7 +30,7 @@ public class GuardSymbolInfo extends LabelSymbolInfo {
 	@Override
 	protected void createConflictError(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.GuardLabelConflictError, 
 				getSymbol());
@@ -39,7 +39,7 @@ public class GuardSymbolInfo extends LabelSymbolInfo {
 	@Override
 	protected void createConflictWarning(IMarkerDisplay markerDisplay) throws RodinDBException {
 		markerDisplay.createProblemMarker(
-				getSourceElement(), 
+				getElement(), 
 				getSourceAttributeType(), 
 				GraphProblem.GuardLabelConflictWarning, 
 				getSymbol());

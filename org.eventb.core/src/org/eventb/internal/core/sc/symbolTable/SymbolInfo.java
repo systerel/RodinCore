@@ -20,7 +20,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  *
  */
-public abstract class SymbolInfo implements ISymbolInfo {
+public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo {
 
 	private final String symbol;
 	
@@ -28,7 +28,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	
 	private boolean mutable;
 	
-	private IAttributeType.String sourceAttributeType;
+	private IAttributeType sourceAttributeType;
 	
 	private IInternalElement sourceElement;
 
@@ -37,7 +37,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	public SymbolInfo(
 			String symbol, 
 			IInternalElement sourceElement, 
-			IAttributeType.String srcAttribute, 
+			IAttributeType srcAttribute, 
 			String component) {
 		this.sourceAttributeType = srcAttribute;
 		this.sourceElement = sourceElement;
@@ -123,7 +123,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
-	public final IInternalElement getSourceElement() {
+	public final IInternalElement getElement() {
 		return sourceElement;
 	}
 
@@ -152,7 +152,7 @@ public abstract class SymbolInfo implements ISymbolInfo {
 	protected abstract void createConflictWarning(IMarkerDisplay markerDisplay) 
 	throws RodinDBException;
 	
-	public final IAttributeType.String getSourceAttributeType() {
+	public final IAttributeType getSourceAttributeType() {
 		return sourceAttributeType;
 	}
 

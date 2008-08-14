@@ -57,7 +57,9 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * 
 	 * @return whether the inherited value is defined or not
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated superseded by <code>hasExtended()</code>
 	 */
+	@Deprecated
 	boolean hasInherited() throws RodinDBException;
 	
 	/**
@@ -66,7 +68,9 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * 
 	 * @return <code>true</code> if the event is inherited.
 	 * @throws RodinDBException if there was a problem accessing the database
+	 * @deprecated superseded by <code>isExtended()</code>
 	 */
+	@Deprecated
 	boolean isInherited() throws RodinDBException;
 	
 	/**
@@ -82,8 +86,44 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 *            reporting is not desired
 	 * @throws RodinDBException if there was a problem accessing the database, or
 	 * if the event has already children and it is attempted to specify it as inherited.
+	 * @deprecated superseded by <code>setExtended()</code>
 	 */
+	@Deprecated
 	void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Tests whether the extended attribute value is defined or not.
+	 * 
+	 * @return whether the extended attribute value is defined or not
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean hasExtended() throws RodinDBException;
+	
+	/**
+	 * Returns whether the event is extended, that is whether the abstract children
+	 * are copied (in particular, parameters, guards, and actions) except refines 
+	 * clauses and witnesses.
+	 * <p>
+	 * The concrete event has to set all attributes of the event and may add additional
+	 * children to an extended event.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the event is extended.
+	 * @throws RodinDBException if there was a problem accessing the database
+	 */
+	boolean isExtended() throws RodinDBException;
+	
+	/**
+	 * Marks the event as extended.
+	 * 
+	 * @param extended the new value specifying whether this event id
+	 * extended or not.
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @throws RodinDBException if there was a problem accessing the database.
+	 */
+	void setExtended(boolean extended, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child refines clause with the given element name.
