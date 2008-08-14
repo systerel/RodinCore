@@ -54,6 +54,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <ul>
  * <li>Simple conversion</li>
  * <li>Sorted conversion</li>
+ * <li>Source conversion</li>
  * </ul>
  * A sorted conversion is a simple conversion that sorts the elements of a file
  * by element types before carrying out the conversions on (internal) elements
@@ -70,7 +71,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * the plug-in must declare a version for that file element type.</li>
  * <li>For every version and file element type there can be at most one
  * contribute conversion.</li>
- * <li>In a conversion the operations are declared relative to file element
+ * <li>In a simple/sorted conversion the operations are declared relative to file element
  * paths.
  * <ul>
  * <li>These paths must be unique in each conversion.</li>
@@ -79,6 +80,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </ul>
  * </li>
  * </ul>
+ * </p>
+ * <p>
+ * A source conversion is based on a fragment on an XSL transform sheet. The fragment 
+ * is complemented with some XSL templates to handle versions properly and a template
+ * for copying nodes not matched by any template in the fragment.
+ * TODO add more information on source conversions (and XSL transforms maybe)
  * </p>
  * </p>
  * <p>
