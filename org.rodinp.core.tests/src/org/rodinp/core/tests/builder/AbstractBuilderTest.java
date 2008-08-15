@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - fixed use of pseudo-attribute "contents"
+ *     Systerel - fixed for Rodin DB API cleanup
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -73,11 +73,9 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	
 	@SuppressWarnings("deprecation")
 	protected IData createData(IRodinFile parent, String contents) throws RodinDBException {
-		IData data = (IData) parent.createInternalElement(
-				IData.ELEMENT_TYPE,
-				"foo" + index++,
-				null,
-				null);
+		IData data = (IData) parent.getInternalElement(IData.ELEMENT_TYPE,
+				"foo" + index++);
+		data.create(null, null);
 		data.setAttributeValue(fString, contents, null);
 		return data;
 	}

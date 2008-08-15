@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed deprecated method createInternalElement()
  *******************************************************************************/
-
 package org.rodinp.core;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Common protocol for elements that can contain internal elements.
@@ -30,52 +32,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Laurent Voisin
  */
 public interface IInternalParent extends IParent, IAttributedElement {
-
-	/**
-	 * Creates and returns a new child internal element with the given type and
-	 * name. This element must thus belong to a mutable copy of a Rodin file.
-	 * 
-	 * <p>
-	 * If there already exists a child element with the same type and name, no
-	 * new element is created and a database exception is thrown.
-	 * </p>
-	 * 
-	 * TODO explain better use of nextSibling
-	 * 
-	 * @param type
-	 *            type of the internal element to create
-	 * @param name
-	 *            name of the internal element to create
-	 * @param nextSibling
-	 *            succesor node of the internal element to create. Must be a
-	 *            child of this element or <code>null</code> (in that latter
-	 *            case, the new element will be the last child of this element).
-	 * @param monitor
-	 *            a progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be created. Reasons include:
-	 *                <ul>
-	 *                <li>This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li>This Rodin element is read-only (READ_ONLY)</li>
-	 *                <li>The given type is invalid
-	 *                (INVALID_INTERNAL_ELEMENT_TYPE)</li>
-	 *                <li>There already exists a child element with the given
-	 *                type and name (NAME_COLLISION)</li>
-	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
-	 *                </ul>
-	 * @return a new internal element in this element with the specified type
-	 *         and name
-	 * 
-	 * @deprecated Use directly the
-	 *             {@link IInternalElement#create(IInternalElement, IProgressMonitor)}
-	 *             method on the element to create.
-	 */
-	@Deprecated
-	<T extends IInternalElement> T createInternalElement(
-			IInternalElementType<T> type, String name,
-			IInternalElement nextSibling, IProgressMonitor monitor)
-			throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child internal element with the given type and

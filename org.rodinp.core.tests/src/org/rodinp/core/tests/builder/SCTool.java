@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - fixed use of pseudo-attribute "contents"
+ *     Systerel - fixed for Rodin DB API cleanup
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -43,8 +43,9 @@ public abstract class SCTool implements IExtractor, IAutomaticTool {
 		IRodinElement[] datas = ctx.getChildrenOfType(IData.ELEMENT_TYPE);
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
-			IData copy = (IData) target.createInternalElement(
-					IData.ELEMENT_TYPE, "foo" + index++, null, null);
+			IData copy = (IData) target.getInternalElement(IData.ELEMENT_TYPE,
+					"foo" + index++);
+			copy.create(null, null);
 			final String contents = data.getAttributeValue(fString);
 			copy.setAttributeValue(fString, contents, null);
 		}
