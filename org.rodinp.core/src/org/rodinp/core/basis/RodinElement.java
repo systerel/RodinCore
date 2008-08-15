@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.core.ICompilationUnit
  *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed deprecated methods
  *     Systerel - removed occurrence count and unnamed elements
  *******************************************************************************/
 package org.rodinp.core.basis;
@@ -245,29 +246,6 @@ public abstract class RodinElement extends PlatformObject implements
 			return NO_ELEMENTS;
 		}
 		return children.clone();
-	}
-
-	/**
-	 * Returns a collection of (immediate) children of this node of the
-	 * specified type.
-	 * 
-	 * @param type
-	 *            the given type
-	 * @deprecated Please use {@link #getChildrenOfType(IElementType)} instead.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public <T extends IRodinElement> ArrayList<T> getFilteredChildrenList(
-			IElementType<T> type) throws RodinDBException {
-
-		final RodinElement[] children = getElementInfo().getChildren();
-		final ArrayList<T> list = new ArrayList<T>(children.length);
-		for (RodinElement child : children) {
-			if (child.getElementType() == type) {
-				list.add((T) child);
-			}
-		}
-		return list;
 	}
 
 	/**
