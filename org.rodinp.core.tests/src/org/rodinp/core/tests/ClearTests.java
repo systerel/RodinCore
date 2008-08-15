@@ -62,7 +62,7 @@ public class ClearTests extends ModifyingResourceTests {
 			assertDeltas(
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
-					"	X.test[*]: {CHILDREN | CONTENT}\n" + 
+					"	X.test[*]: {CHILDREN | ATTRIBUTE}\n" + 
 					"		foo[org.rodinp.core.tests.namedElement][-]: {}"
 			);
 		} finally {
@@ -122,7 +122,7 @@ public class ClearTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
@@ -179,7 +179,7 @@ public class ClearTests extends ModifyingResourceTests {
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
 					"		foo[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" +
-					"			bar[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
+					"			bar[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
@@ -265,7 +265,7 @@ public class ClearTests extends ModifyingResourceTests {
 					"Unexpected delta",
 					"P[*]: {CHILDREN}\n" + 
 					"	X.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][*]: {CONTENT}"
+					"		foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
