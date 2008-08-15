@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed test on pseudo-attribute "contents"
+ *******************************************************************************/
 package org.rodinp.core.tests;
 
 import java.io.BufferedReader;
@@ -270,98 +281,6 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	}
 
 	
-	// Test creation of some internal elements with contents
-	@SuppressWarnings("deprecation")
-	public void testInternalElementWithContents() throws Exception {
-		// File exists and is empty
-		assertExists("File should exist", rodinFile);
-		checkEmptyChildren(rodinFile);
-		
-		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
-		checkEmptyChildren(rodinFile, e1);
-		assertEquals("", e1.getContents());
-		
-		assertContentsChanged(e1, "Hello");
-		checkEmptyChildren(rodinFile, e1);
-
-		rodinFile.save(null, true);
-		rodinFile.close();
-		
-		checkEmptyChildren(rodinFile, e1);
-		assertContents("Contents should not have changed", "Hello", e1);
-		
-		try {
-			e1.setContents(null);
-			fail("null contents should raise an error");
-		} catch (RodinDBException e) {
-			assertEquals("null contents should raise a NULL_STRING error",
-					IRodinDBStatusConstants.NULL_STRING, e.getStatus().getCode());
-		}
-		assertContents("Contents should not have changed", "Hello", e1);
-		
-		// showFile(rodinFile.getResource());
-
-		// Cleanup
-		rodinFile.getResource().delete(true, null);
-		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("x.test", true, null);
-		assertNotExists("Internal element should not exist", e1);
-		checkChildren(rodinFile);
-	}
-
-	// Test modification of some internal element with contents
-	@SuppressWarnings("deprecation")
-	public void testChangeContents() throws Exception {
-		// File exists and is empty
-		assertExists("File should exist", rodinFile);
-		checkEmptyChildren(rodinFile);
-		
-		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
-		assertEquals("", e1.getContents());
-		rodinFile.save(null, true);
-		assertEquals("", e1.getContents());
-		rodinFile.close();
-		assertEquals("", e1.getContents());
-		
-		assertContentsChanged(e1, "Hello");
-		rodinFile.save(null, true);
-		assertContents("Contents should not have changed", "Hello", e1);
-		rodinFile.close();
-		assertContents("Contents should not have changed", "Hello", e1);
-		
-		assertContentsChanged(e1, "Bye");
-		rodinFile.save(null, true);
-		assertContents("Contents should not have changed", "Bye", e1);
-		rodinFile.close();
-		assertContents("Contents should not have changed", "Bye", e1);
-		
-		// Cleanup
-		rodinFile.getResource().delete(true, null);
-		assertNotExists("File should not exist", rodinFile);
-		rodinFile = rodinProject.createRodinFile("x.test", true, null);
-		assertNotExists("Internal element should not exist", e1);
-		checkChildren(rodinFile);
-	}
-
-	// Test modification of some internal element with contents
-	public void testChangeContentsSnapshot() throws Exception {
-		// File exists and is empty
-		assertExists("File should exist", rodinFile);
-		checkEmptyChildren(rodinFile);
-		
-		IInternalElement e1 = createNEPositive(rodinFile, "e1", null);
-		rodinFile.save(null, false);
-		
-		IInternalElement snapshot = (IInternalElement) e1.getSnapshot();
-		assertContentsChanged(e1, "Hello");
-		assertContents("Snapshot contents should not have changed",
-				"", snapshot);
-		
-		rodinFile.save(null, false);
-		assertContents("Contents should not have changed", "Hello", e1);
-		assertContents("Contents should have changed", "Hello", snapshot);
-	}
-
 	@SuppressWarnings("unused")
 	private void showFile(IFile file) throws Exception {
 		InputStream contents = file.getContents();
