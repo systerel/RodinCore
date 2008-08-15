@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.tests.model.CopyMoveElementsTests.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ * 			org.eclipse.jdt.core.tests.model.CopyMoveElementsTests
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - fixed use of pseudo-attribute "contents"
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -1393,8 +1396,10 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	public void testRenameTopWithChildren() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		NamedElement neSource = createNEPositive(rfSource, "foo", null);
-		createNEPositive(neSource, "1", null).setContents("child1");
-		createNEPositive(neSource, "2", null).setContents("child2");
+		NamedElement ne1 = createNEPositive(neSource, "1", null);
+		ne1.setAttributeValue(fString, "child1", null);
+		NamedElement ne2 = createNEPositive(neSource, "2", null);
+		ne2.setAttributeValue(fString, "child2", null);
 
 		renamePositive(neSource, "baz", false);
 		NamedElement neDest = getNamedElement(rfSource, "baz");

@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - refactored getRodinDB()
  *     Systerel - added assertions for clearing
+ *     Systerel - fixed use of pseudo-attribute "contents"
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -43,6 +44,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IElementManipulation;
 import org.rodinp.core.IInternalElement;
@@ -63,6 +65,17 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.Util;
 
 public abstract class AbstractRodinDBTests extends TestCase {
+
+	public static final IAttributeType.Boolean fBool = RodinCore
+			.getBooleanAttrType("org.rodinp.core.tests.fBool");
+	public static final IAttributeType.Handle fHandle = RodinCore
+			.getHandleAttrType("org.rodinp.core.tests.fHandle");
+	public static final IAttributeType.Integer fInt = RodinCore
+			.getIntegerAttrType("org.rodinp.core.tests.fInt");
+	public static final IAttributeType.Long fLong = RodinCore
+			.getLongAttrType("org.rodinp.core.tests.fLong");
+	public static final IAttributeType.String fString = RodinCore
+			.getStringAttrType("org.rodinp.core.tests.fString");
 
 	// infos for invalid results
 	protected int tabs = 2;
@@ -358,7 +371,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			IInternalElement element) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
-		assertEquals(message, expectedContents, element.getContents());
+		assertEquals(message, expectedContents, element.getAttributeValue(fString));
 	}
 	
 	/**
@@ -369,7 +382,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			String newContents) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
-		element.setContents(newContents);
+		element.setAttributeValue(fString, newContents, null);
 		assertContents("Contents should have changed", newContents, element);
 	}
 	
@@ -382,11 +395,11 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		
 		assertExists("Element should exist", element);
 		assertTrue("Element should be read-only", element.isReadOnly());
-		String oldContents = element.getContents();
+		String oldContents = element.getAttributeValue(fString);
 		assertDiffers("Old and new contents should differ",
 				oldContents, newContents);
 		try {
-			element.setContents(newContents);
+			element.setAttributeValue(fString, newContents, null);
 			fail("Changed contents of a read-only element.");
 		} catch (RodinDBException e) {
 			assertReadOnlyErrorFor(e, element);
@@ -680,14 +693,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	protected boolean deltaChildrenChanged(IRodinElementDelta delta) {
 		return delta.getKind() == IRodinElementDelta.CHANGED &&
 			(delta.getFlags() & IRodinElementDelta.F_CHILDREN) != 0;
-	}
-	
-	/**
-	 * Returns true if this delta is flagged as having had a content change
-	 */
-	protected boolean deltaContentChanged(IRodinElementDelta delta) {
-		return delta.getKind() == IRodinElementDelta.CHANGED &&
-			(delta.getFlags() & IRodinElementDelta.F_CONTENT) != 0;
 	}
 	
 	/**

@@ -1,11 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed use of pseudo-attribute "contents"
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
+
+import static org.rodinp.core.tests.builder.AbstractBuilderTest.fString;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -39,7 +45,8 @@ public abstract class SCTool implements IExtractor, IAutomaticTool {
 			IData data = (IData) element;
 			IData copy = (IData) target.createInternalElement(
 					IData.ELEMENT_TYPE, "foo" + index++, null, null);
-			copy.setContents(data.getContents());
+			final String contents = data.getAttributeValue(fString);
+			copy.setAttributeValue(fString, contents, null);
 		}
 		if (DEBUG)
 			System.out.println("Copying " + ctx.getElementName() +
