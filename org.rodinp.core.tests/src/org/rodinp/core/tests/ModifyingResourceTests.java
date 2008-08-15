@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.tests.model.ModifyingResourceTests.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.tests.model.ModifyingResourceTests
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - moved attribute type declarations to super
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -34,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
@@ -55,11 +57,6 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	
 	static final String emptyContents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<org.rodinp.core.tests.test/>\n";
-	public static final IAttributeType.Boolean fBool = RodinCore.getBooleanAttrType("org.rodinp.core.tests.fBool");
-	public static final IAttributeType.Handle fHandle = RodinCore.getHandleAttrType("org.rodinp.core.tests.fHandle");
-	public static final IAttributeType.Integer fInt = RodinCore.getIntegerAttrType("org.rodinp.core.tests.fInt");
-	public static final IAttributeType.Long fLong = RodinCore.getLongAttrType("org.rodinp.core.tests.fLong");
-	public static final IAttributeType.String fString = RodinCore.getStringAttrType("org.rodinp.core.tests.fString");
 	public static final String PLUGIN_ID = "org.rodinp.core.tests";
 	static byte[] emptyBytes = emptyContents.getBytes();
 
