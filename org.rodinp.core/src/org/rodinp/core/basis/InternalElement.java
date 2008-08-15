@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added clear() method
+ *     Systerel - removed deprecated methods getContents() and setContents()
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -175,16 +176,6 @@ public abstract class InternalElement extends RodinElement implements
 	public String getAttributeValue(IAttributeType.String attrType) throws RodinDBException {
 		final String rawValue = getAttributeRawValue(attrType.getId());
 		return ((AttributeType) attrType).getStringValue(rawValue);
-	}
-
-	@Deprecated
-	public String getContents() throws RodinDBException {
-		return getContents(null);
-	}
-
-	@Deprecated
-	public String getContents(IProgressMonitor monitor) throws RodinDBException {
-		return getFileInfo(monitor).getDescendantContents(this);
 	}
 
 	public IResource getCorrespondingResource() {
@@ -417,18 +408,6 @@ public abstract class InternalElement extends RodinElement implements
 			IProgressMonitor monitor) throws RodinDBException {
 		final String newRawValue = ((AttributeType) attrType).toString(newValue);
 		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
-	}
-
-	@Deprecated
-	public void setContents(String contents) throws RodinDBException {
-		setContents(contents, null);
-	}
-
-	@Deprecated
-	public void setContents(String contents, IProgressMonitor monitor)
-			throws RodinDBException {
-		new org.rodinp.internal.core.ChangeElementContentsOperation(this,
-				contents).runOperation(monitor);
 	}
 
 	@Override

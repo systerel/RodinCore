@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed deprecated methods getContents() and setContents()
+ *******************************************************************************/
 package org.rodinp.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -122,89 +133,6 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 */
 	@Deprecated
 	int getOccurrenceCount();
-
-	/**
-	 * Returns the contents of this internal element. The file containing this
-	 * internal element is opened if it was not already.
-	 * 
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @return the contents of this element.
-	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
-	 *             regular attributes (see {@link IAttributedElement}.
-	 */
-	@Deprecated
-	String getContents() throws RodinDBException;
-
-	/**
-	 * Returns the contents of this internal element. The file containing this
-	 * internal element is opened if it was not already.
-	 * 
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @return the contents of this element.
-	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
-	 *             regular attributes (see {@link IAttributedElement}.
-	 */
-	@Deprecated
-	String getContents(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
-	 * Sets the contents of this internal element to the provided string. The
-	 * file containing this internal element is opened if it was not already.
-	 * 
-	 * @param contents
-	 *            the new contents to set
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
-	 *             regular attributes (see {@link IAttributedElement}.
-	 */
-	@Deprecated
-	void setContents(String contents) throws RodinDBException;
-
-	/**
-	 * Sets the contents of this internal element to the provided string. The
-	 * file containing this internal element is opened if it was not already.
-	 * 
-	 * @param contents
-	 *            the new contents to set
-	 * @param monitor
-	 *            the given progress monitor
-	 * @exception RodinDBException
-	 *                if the element could not be opened. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing its underlying resource
-	 *                </ul>
-	 * @deprecated The contents pseudo-attribute is now deprecated in favor of
-	 *             regular attributes (see {@link IAttributedElement}.
-	 */
-	@Deprecated
-	void setContents(String contents, IProgressMonitor monitor)
-			throws RodinDBException;
 
 	/**
 	 * Returns the Rodin file containing this internal element.
