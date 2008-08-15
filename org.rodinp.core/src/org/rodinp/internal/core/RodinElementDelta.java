@@ -1,12 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaElementDelta.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.JavaElementDelta
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - Removed unused method contentChanged()
+ *                fixed flag for attribute change
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -129,7 +133,8 @@ public class RodinElementDelta extends SimpleDelta implements
 				switch (child.getKind()) {
 				case ADDED: // child was removed then added -> it is changed
 					child.kind = CHANGED;
-					child.changeFlags |= F_CONTENT | F_CHILDREN | F_REORDERED | F_REPLACED;
+					child.changeFlags |= F_ATTRIBUTE | F_CONTENT | F_CHILDREN
+							| F_REORDERED | F_REPLACED;
 					fAffectedChildren[existingChildIndex] = child;
 					return;
 				case CHANGED: // child was removed then changed -> it is
@@ -239,13 +244,6 @@ public class RodinElementDelta extends SimpleDelta implements
 		changedDelta.changed(changeFlag);
 		insertDeltaTree(element, changedDelta);
 		return changedDelta;
-	}
-
-	/**
-	 * Mark this delta as a content changed delta.
-	 */
-	public void contentChanged() {
-		this.changeFlags |= F_CONTENT;
 	}
 
 	/**
@@ -651,6 +649,12 @@ public class RodinElementDelta extends SimpleDelta implements
 			if (prev)
 				buffer.append(" | "); //$NON-NLS-1$
 			buffer.append("CONTENT"); //$NON-NLS-1$
+			prev = true;
+		}
+		if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("ATTRIBUTE"); //$NON-NLS-1$
 			prev = true;
 		}
 		if ((flags & IRodinElementDelta.F_MOVED_FROM) != 0) {
