@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.MultiOperation.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.ICompilationUnit
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed unnamed internal elements
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -278,19 +281,11 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Verify that the new name specified for <code>element</code> is
 	 * valid for that type of Rodin element.
 	 */
-	@SuppressWarnings("deprecation")
 	protected void verifyRenaming(IRodinElement element) throws RodinDBException {
 		if (element instanceof RodinFile) {
 			String newName = getNewNameFor(element);
 			ElementTypeManager mgr = ElementTypeManager.getInstance();
 			if (! mgr.isValidFileName(newName)) {
-				throw new RodinDBException(new RodinDBStatus(
-						IRodinDBStatusConstants.INVALID_NAME, element, newName));
-			}
-		} else if (element instanceof org.rodinp.core.basis.UnnamedInternalElement) {
-			// Unnamed internal elements can not be renamed
-			String newName = getNewNameFor(element);
-			if (newName != null) {
 				throw new RodinDBException(new RodinDBStatus(
 						IRodinDBStatusConstants.INVALID_NAME, element, newName));
 			}

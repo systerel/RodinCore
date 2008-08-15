@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed unnamed internal elements
  *******************************************************************************/
-
 package org.rodinp.internal.core;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,13 +27,8 @@ import org.rodinp.core.basis.InternalElement;
 public class InternalElementType<T extends IInternalElement> extends
 		ContributedElementType<T> implements IInternalElementType<T> {
 
-	private final boolean named;
-	
 	public InternalElementType(IConfigurationElement configurationElement) {
 		super(configurationElement);
-		
-		String value = configurationElement.getAttribute("named"); 
-		this.named = value == null || value.equalsIgnoreCase(Boolean.TRUE.toString());
 	}
 
 	@Override
@@ -52,26 +50,18 @@ public class InternalElementType<T extends IInternalElement> extends
 			computeClass();
 		}
 		try {
-			if (this.named)
-				constructor = classObject.getConstructor(String.class, IRodinElement.class);
-			else
-				constructor = classObject.getConstructor(IRodinElement.class);
+			constructor = classObject.getConstructor(String.class, IRodinElement.class);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"Can't find constructor for element type " + getId(), e);
 		}
 	}
 
-	public boolean isNamed() {
-		return named;
-	}
-
 	/**
 	 * Creates a new internal element handle.
 	 * 
 	 * @param elementName
-	 *            the name of the element to create. Ignored for an unnamed
-	 *            element.
+	 *            the name of the element to create
 	 * @param parent
 	 *            the new element's parent
 	 * @return a handle on the internal element or <code>null</code> if the
@@ -85,11 +75,7 @@ public class InternalElementType<T extends IInternalElement> extends
 			return null;
 		}
 		try {
-			if (isNamed()) {
-				return constructor.newInstance(elementName, parent);
-			} else {
-				return constructor.newInstance(parent);
-			}
+			return constructor.newInstance(elementName, parent);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"Can't create an element of type " + getId(), e);

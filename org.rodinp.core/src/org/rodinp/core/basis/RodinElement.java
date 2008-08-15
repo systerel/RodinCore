@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.core.ICompilationUnit
  *     ETH Zurich - adaptation from JDT to Rodin
- *     Systerel - removed occurrence count
+ *     Systerel - removed occurrence count and unnamed elements
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -123,7 +123,7 @@ public abstract class RodinElement extends PlatformObject implements
 		}
 		final String childName;
 		final String lookahead;
-		if (childType.isNamed() && memento.hasMoreTokens()) {
+		if (memento.hasMoreTokens()) {
 			String token = memento.nextToken();
 			switch (token.charAt(0)) {
 			case REM_INTERNAL:
@@ -136,7 +136,7 @@ public abstract class RodinElement extends PlatformObject implements
 				break;
 			}
 		} else {
-			// Unnamed child or child with an empty name.
+			// Child with an empty name.
 			childName = "";
 			lookahead = null;
 		}

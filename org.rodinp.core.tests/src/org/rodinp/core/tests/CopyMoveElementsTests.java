@@ -1389,10 +1389,9 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
-	 * Ensures that renaming a top element with unnamed children does indeed
-	 * move the children.
+	 * Ensures that renaming a top element with children does indeed move the
+	 * children.
 	 */
-	@SuppressWarnings("deprecation")
 	public void testRenameTopWithChildren() throws CoreException {
 		IRodinFile rfSource = createRodinFile("P/X.test");
 		NamedElement neSource = createNEPositive(rfSource, "foo", null);
