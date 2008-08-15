@@ -23,58 +23,53 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineModule extends BaseModule {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
-	
+
 	private ISCMachineFile machineFile;
-	
+
 	private IMachineAccuracyInfo accuracyInfo;
 
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
 		accuracyInfo = new MachineAccuracyInfo();
-		
-		final IMachineLabelSymbolTable labelSymbolTable = 
-			new MachineLabelSymbolTable(LABEL_SYMTAB_SIZE);
-		
-		repository.setState(labelSymbolTable);		
+
+		final IMachineLabelSymbolTable labelSymbolTable = new MachineLabelSymbolTable(
+				LABEL_SYMTAB_SIZE);
+
+		repository.setState(labelSymbolTable);
 		repository.setState(accuracyInfo);
-		
+
 		super.initModule(element, repository, monitor);
 	}
 
-	public static final IModuleType<MachineModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
+
 	@Override
-	public void process(
-			IRodinElement element, 
-			IInternalParent target, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		machineFile = (ISCMachineFile) target;
 		super.process(element, target, repository, monitor);
 	}
-	
+
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 
 		machineFile.setAccuracy(accuracyInfo.isAccurate(), monitor);
-		
+
 		super.endModule(element, repository, monitor);
 	}
 

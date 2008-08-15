@@ -8,53 +8,61 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IStateType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class IdentifierSymbolTable extends SymbolTable<IIdentifierSymbolInfo> implements
-		IIdentifierSymbolTable {
-	
+public class IdentifierSymbolTable
+		extends
+		SymbolTable<ISCIdentifierElement, IInternalElementType<? extends ISCIdentifierElement>, IIdentifierSymbolInfo>
+		implements IIdentifierSymbolTable {
+
 	private final Set<FreeIdentifier> freeIdentifiers;
-	
-	private final FormulaFactory factory;
-	
-	public IdentifierSymbolTable(int identSize, FormulaFactory factory) {
+
+	public IdentifierSymbolTable(int identSize) {
 		super(identSize);
 		freeIdentifiers = new HashSet<FreeIdentifier>(identSize);
-		this.factory = factory;
 	}
 
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
-	}
-	
-	FormulaFactory getFormulaFactory() {
-		return factory;
 	}
 
 	public Collection<FreeIdentifier> getFreeIdentifiers() {
 		return freeIdentifiers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.symbolTable.SymbolTable#putSymbolInfo(org.eventb.core.sc.symbolTable.ISymbolInfo)
-	 */
+	public IIdentifierSymbolTable getParentTable() {
+		return null;
+	}
+
 	@Override
-	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo) throws CoreException {
+	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo)
+			throws CoreException {
 		super.putSymbolInfo(symbolInfo);
-		freeIdentifiers.add(
-				factory.makeFreeIdentifier(symbolInfo.getSymbol(), null));
+		freeIdentifiers.add(FormulaFactory.getDefault().makeFreeIdentifier(
+				symbolInfo.getSymbol(), null));
+	}
+
+	public IIdentifierSymbolInfo getSymbolInfoFromTop(String symbol) {
+		return getSymbolInfo(symbol);
+	}
+
+	public Collection<IIdentifierSymbolInfo> getSymbolInfosFromTop() {
+		return Collections.unmodifiableSet(tableValues);
 	}
 
 }

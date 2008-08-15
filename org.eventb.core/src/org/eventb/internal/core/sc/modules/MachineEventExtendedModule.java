@@ -16,6 +16,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
@@ -28,11 +29,9 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
@@ -81,7 +80,7 @@ public class MachineEventExtendedModule extends SCFilterModule {
 		IEvent event = (IEvent) element;
 		String eventLabel = event.getLabel();
 
-		IEventSymbolInfo eventSymbolInfo = (IEventSymbolInfo) labelSymbolTable
+		ILabelSymbolInfo eventSymbolInfo = labelSymbolTable
 				.getSymbolInfo(eventLabel);
 		IConcreteEventInfo eventInfo = concreteEventTable
 				.getConcreteEventInfo(eventLabel);
@@ -97,9 +96,10 @@ public class MachineEventExtendedModule extends SCFilterModule {
 			return false;
 		}
 
+		eventSymbolInfo.setAttributeValue(
+				EventBAttributes.EXTENDED_ATTRIBUTE, extended);
+		
 		if (extended) {
-			
-			((EventSymbolInfo) eventSymbolInfo).setInherited();
 
 			boolean ok = checkSplit(event, eventLabel, eventInfo);
 
@@ -146,7 +146,7 @@ public class MachineEventExtendedModule extends SCFilterModule {
 	}
 
 	private <T extends Formula<T>> boolean checkFormulas(IEvent event,
-			IEventSymbolInfo eventSymbolInfo,
+			ILabelSymbolInfo eventSymbolInfo,
 			IAbstractEventInfo abstractEventInfo, List<T> formulas)
 			throws CoreException {
 
@@ -165,9 +165,9 @@ public class MachineEventExtendedModule extends SCFilterModule {
 						createIdentProblem(event, name, seenFaultyIdents,
 								GraphProblem.UndeclaredFreeIdentifierError);
 						ok = false;
-					} else if (symbolInfo instanceof IVariableSymbolInfo) {
-						IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-						if (!variableSymbolInfo.isConcrete()) {
+					} else if (symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {
+						if (!symbolInfo
+								.getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE)) {
 							createIdentProblem(event, name, seenFaultyIdents,
 									GraphProblem.VariableHasDisappearedError);
 							ok = false;

@@ -17,44 +17,39 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class TheoremModule extends PredicateModule<ITheorem> {
 
 	private static String THEOREM_NAME_PREFIX = "THM";
-	
-	protected void checkAndSaveTheorems(
-			IInternalParent target, 
-			int offset,
-			ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		
-		checkAndType(
-				target.getElementName(),
-				repository,
-				monitor);
-		
+
+	protected void checkAndSaveTheorems(IInternalParent target, int offset,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
+		checkAndType(target.getElementName(), repository, monitor);
+
 		saveTheorems(target, offset, null);
 	}
-	
-	protected abstract ISCTheorem getSCTheorem(IInternalParent target, String elementName);
-	
-	private void saveTheorems(
-			IInternalParent parent, 
-			int offset,
+
+	protected abstract ISCTheorem getSCTheorem(IInternalParent target,
+			String elementName);
+
+	private void saveTheorems(IInternalParent parent, int offset,
 			IProgressMonitor monitor) throws RodinDBException {
-		
+
 		int index = offset;
-		
-		for (int i=0; i<formulaElements.length; i++) {
+
+		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
-			ISCTheorem scTheorem = getSCTheorem(parent, THEOREM_NAME_PREFIX + index++);
+			ISCTheorem scTheorem = getSCTheorem(parent, THEOREM_NAME_PREFIX
+					+ index++);
 			scTheorem.create(null, monitor);
 			scTheorem.setLabel(formulaElements[i].getLabel(), monitor);
 			scTheorem.setPredicate(formulas[i], null);
 			scTheorem.setSource(formulaElements[i], monitor);
 		}
 	}
-	
+
 }

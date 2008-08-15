@@ -74,8 +74,10 @@ public enum GraphProblem implements IRodinProblem {
 	VariableNameImportConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariableNameImportConflict),
 	VariableNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableNameConflict),
 	VariableNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_VariableNameConflict),
-	EventParameterNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_EventParameterNameConflict),
-	EventParameterNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventParameterNameConflict),
+	ParameterNameImportConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterNameImportConflift),
+	ParameterNameImportConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ParameterNameImportConflift),
+	ParameterNameConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterNameConflict),
+	ParameterNameConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ParameterNameConflict),
 	UntypedCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedCarrierSetError),
 	UntypedConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedConstantError),
 	UntypedVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_UntypedVariableError),
@@ -125,7 +127,9 @@ public enum GraphProblem implements IRodinProblem {
 	VariableIsParameterInAbstractMachineError(IMarker.SEVERITY_ERROR, Messages.scuser_VariableIsParameterInAbstractMachine),
 	AssignedIdentifierNotVariableError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignedIdentifierNotVariable),
 	ParameterChangedTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterChangedTypeError),
-	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter);
+	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter),
+	AssignmentToCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToCarrierSet),
+	AssignmentToConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToConstant);
 	
 	private final String errorCode;
 	

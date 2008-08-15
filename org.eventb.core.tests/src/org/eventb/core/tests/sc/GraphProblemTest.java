@@ -114,8 +114,10 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.VariableNameImportConflictWarning, 2),
 			spec(GraphProblem.VariableNameConflictError, 1),
 			spec(GraphProblem.VariableNameConflictWarning, 1),
-			spec(GraphProblem.EventParameterNameConflictError, 1),
-			spec(GraphProblem.EventParameterNameConflictWarning, 1),
+			spec(GraphProblem.ParameterNameConflictError, 1),
+			spec(GraphProblem.ParameterNameConflictWarning, 1),
+			spec(GraphProblem.ParameterNameImportConflictError, 2),
+			spec(GraphProblem.ParameterNameImportConflictWarning, 2),
 			spec(GraphProblem.UntypedCarrierSetError, 1),
 			spec(GraphProblem.UntypedConstantError, 1),
 			spec(GraphProblem.UntypedVariableError, 1),
@@ -165,7 +167,9 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.VariableIsParameterInAbstractMachineError, 2),
 			spec(GraphProblem.AssignedIdentifierNotVariableError, 1),
 			spec(GraphProblem.ParameterChangedTypeError, 3),
-			spec(GraphProblem.AssignmentToParameterError, 1)
+			spec(GraphProblem.AssignmentToParameterError, 1),
+			spec(GraphProblem.AssignmentToCarrierSetError, 1),
+			spec(GraphProblem.AssignmentToConstantError, 1)
 	};
 	
 	private static Map<GraphProblem, Spec> specMap = 

@@ -23,13 +23,14 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachinePreviousEventLabelModule extends SCFilterModule {
-	
-	public static final IModuleType<MachinePreviousEventLabelModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machinePreviousEventLabelModule"); //$NON-NLS-1$
-	
+
+	public static final IModuleType<MachinePreviousEventLabelModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machinePreviousEventLabelModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -37,41 +38,44 @@ public class MachinePreviousEventLabelModule extends SCFilterModule {
 	private IAbstractEventTable abstractEventTable;
 
 	@Override
-	public void initModule(
-			ISCStateRepository repository, 
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		abstractEventTable = (IAbstractEventTable)
-			repository.getState(IAbstractEventTable.STATE_TYPE);
+		abstractEventTable = (IAbstractEventTable) repository
+				.getState(IAbstractEventTable.STATE_TYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement,
+	 * org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean accept(
-			IRodinElement element,
-			ISCStateRepository repository,
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		ILabeledElement labeledElement = (ILabeledElement) element;
 		String label = labeledElement.getLabel();
-		IAbstractEventInfo abstractEventInfo = 
-			abstractEventTable.getAbstractEventInfo(label);
+		IAbstractEventInfo abstractEventInfo = abstractEventTable
+				.getAbstractEventInfo(label);
 		if (abstractEventInfo != null) {
-			createProblemMarker(
-					labeledElement,
+			createProblemMarker(labeledElement,
 					EventBAttributes.LABEL_ATTRIBUTE,
-					GraphProblem.WasAbstractEventLabelWarning,
-					label);
+					GraphProblem.WasAbstractEventLabelWarning, label);
 		}
-		
+
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(
-			ISCStateRepository repository, 
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
 	}

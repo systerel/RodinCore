@@ -13,70 +13,54 @@ import org.eventb.core.ISCContext;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.CarrierSetSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.ConstantSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.MachineVariableSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class IdentifierCreatorModule extends SCProcessorModule {
-	
+
 	protected interface IIdentifierSymbolInfoCreator {
-		public IIdentifierSymbolInfo createIdentifierSymbolInfo(
-				String symbol,
-				ISCIdentifierElement element, 
-				IInternalElement pointerElement);
+		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
+				ISCIdentifierElement element, IInternalElement pointerElement);
 	}
-	
-	protected IIdentifierSymbolInfoCreator abstractCarrierSetCreator = new IIdentifierSymbolInfoCreator() {
 
-		public IIdentifierSymbolInfo createIdentifierSymbolInfo(
-				String symbol, 
-				ISCIdentifierElement element, 
-				IInternalElement pointerElement) {
+	protected IIdentifierSymbolInfoCreator importedCarrierSetCreator = new IIdentifierSymbolInfoCreator() {
+
+		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
+				ISCIdentifierElement element, IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
-			return CarrierSetSymbolInfo.makeAbstractCarrierSetSymbolInfo(
-					symbol, 
-					pointerElement, 
-					EventBAttributes.TARGET_ATTRIBUTE, 
+			return SymbolFactory.getInstance().makeImportedCarrierSet(symbol,
+					false, pointerElement, EventBAttributes.TARGET_ATTRIBUTE,
 					context.getComponentName());
 		}
-		
+
 	};
 
-	protected IIdentifierSymbolInfoCreator abstractConstantCreator = new IIdentifierSymbolInfoCreator() {
+	protected IIdentifierSymbolInfoCreator importedConstantCreator = new IIdentifierSymbolInfoCreator() {
 
-		public IIdentifierSymbolInfo createIdentifierSymbolInfo(
-				String symbol, 
-				ISCIdentifierElement element, 
-				IInternalElement pointerElement) {
+		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
+				ISCIdentifierElement element, IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
-			return ConstantSymbolInfo.makeAbstractConstantSymbolInfo(
-					symbol, 
-					pointerElement, 
-					EventBAttributes.TARGET_ATTRIBUTE, 
+			return SymbolFactory.getInstance().makeImportedConstant(symbol,
+					false, pointerElement, EventBAttributes.TARGET_ATTRIBUTE,
 					context.getComponentName());
 		}
-		
+
 	};
 
-	protected IIdentifierSymbolInfoCreator abstractVariableCreator = new IIdentifierSymbolInfoCreator() {
+	protected IIdentifierSymbolInfoCreator importedVariableCreator = new IIdentifierSymbolInfoCreator() {
 
-		public IIdentifierSymbolInfo createIdentifierSymbolInfo(
-				String symbol, 
-				ISCIdentifierElement element, 
-				IInternalElement pointerElement) {
+		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
+				ISCIdentifierElement element, IInternalElement pointerElement) {
 			IEventBFile file = (IEventBFile) element.getParent();
-			return MachineVariableSymbolInfo.makeAbstractVariableSymbolInfo(
-					symbol, 
-					pointerElement, 
-					EventBAttributes.TARGET_ATTRIBUTE, 
+			return SymbolFactory.getInstance().makeImportedVariable(symbol,
+					true, pointerElement, EventBAttributes.TARGET_ATTRIBUTE,
 					file.getComponentName());
 		}
-		
+
 	};
 
 }

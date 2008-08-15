@@ -9,40 +9,46 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class MachineFormulaFreeIdentsModule extends FormulaFreeIdentsModule {
+public abstract class MachineFormulaFreeIdentsModule extends
+		FormulaFreeIdentsModule {
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo(org.eventb.core.ast.FreeIdentifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo
+	 * (org.eventb.core.ast.FreeIdentifier)
 	 */
 	@Override
-	protected IIdentifierSymbolInfo getSymbolInfo(
-			IInternalElement element, 
-			FreeIdentifier freeIdentifier,
-			IProgressMonitor monitor) throws CoreException {
-		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
-		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isAbstract() && !variableSymbolInfo.isConcrete()) {
-				createProblemMarker(
-						element, 
-						getAttributeType(), 
-						GraphProblem.VariableHasDisappearedError,
-						variableSymbolInfo.getSymbol());
+	protected IIdentifierSymbolInfo getSymbolInfo(IInternalElement element,
+			FreeIdentifier freeIdentifier, IProgressMonitor monitor)
+			throws CoreException {
+		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element,
+				freeIdentifier, monitor);
+		if (symbolInfo != null
+				&& symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {
+			if (!symbolInfo
+					.getAttributeValue(EventBAttributes.ABSTRACT_ATTRIBUTE)
+					&& !symbolInfo
+							.getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE)) {
+				createProblemMarker(element, getAttributeType(),
+						GraphProblem.VariableHasDisappearedError, symbolInfo
+								.getSymbol());
 				return null;
 			}
 		}
 		return symbolInfo;
 	}
 
-	
 }

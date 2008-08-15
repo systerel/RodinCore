@@ -13,47 +13,73 @@ import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
-
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo {
+public abstract class SymbolInfo<E extends IInternalElement, T extends IInternalElementType<? extends E>, P extends ISymbolProblem>
+		extends AttributedSymbol implements ISymbolInfo<E, T> {
 
 	private final String symbol;
-	
-	private boolean error;
-	
-	private boolean mutable;
-	
-	private IAttributeType sourceAttributeType;
-	
-	private IInternalElement sourceElement;
 
-	protected final String component; 
-	
-	public SymbolInfo(
-			String symbol, 
-			IInternalElement sourceElement, 
-			IAttributeType srcAttribute, 
-			String component) {
-		this.sourceAttributeType = srcAttribute;
-		this.sourceElement = sourceElement;
-		this.component = component;
-		mutable = true;
-		error = false;
+	private boolean error;
+
+	private boolean mutable;
+
+	private final boolean persistent;
+
+	private IAttributeType problemAttributeType;
+
+	private IInternalElement problemElement;
+
+	private T elementType;
+
+	protected final String component;
+
+	private final P conflictProblem;
+
+	public SymbolInfo(String symbol, T elementType, boolean persistent,
+			IInternalElement problemElement, IAttributeType problemAttributeType,
+			String component, P conflictProblem) {
 		this.symbol = symbol;
+		this.elementType = elementType;
+		this.persistent = persistent;
+		this.problemElement = problemElement;
+		this.problemAttributeType = problemAttributeType;
+		this.component = component;
+		this.conflictProblem = conflictProblem;
+		this.error = false;
+		this.mutable = true;
 	}
 
-	/* (non-Javadoc)
+	protected P getConflictProblem() {
+		return conflictProblem;
+	}
+
+	public IAttributeType getProblemAttributeType() {
+		return problemAttributeType;
+	}
+
+	public T getSymbolType() {
+		return elementType;
+	}
+
+	public boolean isPersistent() {
+		return persistent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#hasError()
 	 */
 	public final boolean hasError() {
 		return error;
 	}
-	
+
 	protected void assertMutable() throws CoreException {
 		if (mutable)
 			return;
@@ -61,7 +87,9 @@ public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo
 			throw Util.newCoreException("Attempt to modify immutable symbol");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#setError()
 	 */
 	public final void setError() throws CoreException {
@@ -69,7 +97,9 @@ public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo
 		error = true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#isMutable()
 	 */
 	public final boolean isMutable() {
@@ -77,30 +107,34 @@ public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo
 	}
 
 	/**
-	 * Make this symbol info immutable.
-	 * It cannot be made mutable again.
+	 * Make this symbol info immutable. It cannot be made mutable again.
 	 */
 	public final void makeImmutable() {
 		mutable = false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#getSymbol()
 	 */
 	public final String getSymbol() {
 		return symbol;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
-	public final int compareTo(ISymbolInfo that) {
+	public final int compareTo(ISymbolInfo<?, ?> that) {
 		return this.symbol.compareTo(that.getSymbol());
 	}
-	
+
 	@Override
 	public final boolean equals(Object obj) {
-		return obj instanceof SymbolInfo && symbol.equals(((SymbolInfo) obj).getSymbol());
+		return obj instanceof SymbolInfo
+				&& symbol.equals(((SymbolInfo<?, ?, ?>) obj).getSymbol());
 	}
 
 	@Override
@@ -112,7 +146,9 @@ public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo
 		return component;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -120,40 +156,32 @@ public abstract class SymbolInfo extends AttributedSymbol implements ISymbolInfo
 		return symbol;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
 	public final IInternalElement getElement() {
-		return sourceElement;
+		return problemElement;
 	}
 
-	/**
-	 * Sets the source element for this symbol.
-	 * 
-	 * @param sourceElement the source element
-	 * @param sourceAttributeType the attribute in the source element to which attach markers 
-	 */
-	public final void setSourceElement(
-			IInternalElement sourceElement, IAttributeType.String sourceAttributeType) {
-		this.sourceElement = sourceElement;
-		this.sourceAttributeType = sourceAttributeType;
-	}
-	
-	public final void createConflictMarker(IMarkerDisplay markerDisplay) throws RodinDBException {
+	public final void createConflictMarker(IMarkerDisplay markerDisplay)
+			throws RodinDBException {
 		if (isMutable())
-			createConflictError(markerDisplay);
+			conflictProblem.createConflictError(this, markerDisplay);
 		else
-			createConflictWarning(markerDisplay);
+			conflictProblem.createConflictWarning(this, markerDisplay);
+	}
+
+	public final IAttributeType getSourceAttributeType() {
+		return problemAttributeType;
 	}
 	
-	protected abstract void createConflictError(IMarkerDisplay markerDisplay) 
-	throws RodinDBException;
-	
-	protected abstract void createConflictWarning(IMarkerDisplay markerDisplay) 
-	throws RodinDBException;
-	
-	public final IAttributeType getSourceAttributeType() {
-		return sourceAttributeType;
+	protected void checkPersistence() throws CoreException {
+		if (persistent)
+			return;
+		else
+			throw Util.newCoreException("Attempt to create non-persistent symbol");
 	}
 
 }

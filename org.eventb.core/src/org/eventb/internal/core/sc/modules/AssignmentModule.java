@@ -23,58 +23,63 @@ import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class AssignmentModule<I extends IInternalElement> 
-extends LabeledFormulaModule<Assignment, I> {
+public abstract class AssignmentModule<I extends IInternalElement> extends
+		LabeledFormulaModule<Assignment, I> {
 
 	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula
+	 * (int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[],
+	 * java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected Assignment parseFormula(
-			I formulaElement, 
-			Collection<FreeIdentifier> freeIdentifierContext, 
+	protected Assignment parseFormula(I formulaElement,
+			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException {
-		
+
 		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElement;
-		
+
 		if (!assignmentElement.hasAssignmentString()) {
-			createProblemMarker(
-					assignmentElement, 
-					EventBAttributes.ASSIGNMENT_ATTRIBUTE, 
+			createProblemMarker(assignmentElement,
+					EventBAttributes.ASSIGNMENT_ATTRIBUTE,
 					GraphProblem.AssignmentUndefError);
 			return null;
 		}
-		
+
 		String assignmentString = assignmentElement.getAssignmentString();
-		
+
 		// parse the assignment
-		
+
 		IParseResult parseResult = factory.parseAssignment(assignmentString);
-		
+
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(assignmentElement, EventBAttributes.ASSIGNMENT_ATTRIBUTE, parseResult);
-			
+			issueASTProblemMarkers(assignmentElement,
+					EventBAttributes.ASSIGNMENT_ATTRIBUTE, parseResult);
+
 			return null;
 		}
-		
+
 		Assignment assignment = parseResult.getParsedAssignment();
-		
+
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
-		
+
 		IResult legibilityResult = assignment.isLegible(freeIdentifierContext);
-		
+
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(assignmentElement, EventBAttributes.ASSIGNMENT_ATTRIBUTE, legibilityResult);
+			issueASTProblemMarkers(assignmentElement,
+					EventBAttributes.ASSIGNMENT_ATTRIBUTE, legibilityResult);
 		}
-		
+
 		return assignment;
 	}
 

@@ -28,26 +28,23 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class IdentifierModule extends SCProcessorModule {
 
 	protected FormulaFactory factory;
-	
+
 	protected ITypeEnvironment typeEnvironment;
-	
+
 	protected IIdentifierSymbolTable identifierSymbolTable;
 
-	protected static FreeIdentifier parseIdentifier(
-			String name, 
-			IInternalElement element,
-			IAttributeType.String attrType,
-			FormulaFactory factory,
-			IMarkerDisplay display) throws RodinDBException {
-		
+	protected static FreeIdentifier parseIdentifier(String name,
+			IInternalElement element, IAttributeType.String attrType,
+			FormulaFactory factory, IMarkerDisplay display)
+			throws RodinDBException {
+
 		IParseResult pResult = factory.parseExpression(name);
 		if (pResult.isSuccess()) {
 			Expression expr = pResult.getParsedExpression();
@@ -56,153 +53,140 @@ public abstract class IdentifierModule extends SCProcessorModule {
 				if (name.equals(identifier.getName()))
 					return identifier;
 				else {
-					display.createProblemMarker(
-							element, 
-							attrType, 
-							GraphProblem.InvalidIdentifierSpacesError,
-							name);
-					
+					display.createProblemMarker(element, attrType,
+							GraphProblem.InvalidIdentifierSpacesError, name);
+
 					return null;
 				}
 			}
 		}
-		display.createProblemMarker(
-				element, 
-				attrType, 
-				GraphProblem.InvalidIdentifierError,
-				name);
-		
+		display.createProblemMarker(element, attrType,
+				GraphProblem.InvalidIdentifierError, name);
+
 		return null;
-		
+
 	}
-	
-	
+
 	/**
 	 * Parse the identifier element
 	 * 
-	 * @param element the element to be parsed
-	 * @return a <code>FreeIdentifier</code> in case of success, <code>null</code> otherwise
-	 * @throws RodinDBException if there was a problem accessing the database
+	 * @param element
+	 *            the element to be parsed
+	 * @return a <code>FreeIdentifier</code> in case of success,
+	 *         <code>null</code> otherwise
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
 	 */
-	protected FreeIdentifier parseIdentifier(
-			IIdentifierElement element,
+	protected FreeIdentifier parseIdentifier(IIdentifierElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		
+
 		if (element.hasIdentifierString()) {
-		
-			return parseIdentifier(
-					element.getIdentifierString(), 
-					element, 
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-					factory, 
-					this);
+
+			return parseIdentifier(element.getIdentifierString(), element,
+					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
 		} else {
-			
-			createProblemMarker(
-					element, 
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
+
+			createProblemMarker(element, EventBAttributes.IDENTIFIER_ATTRIBUTE,
 					GraphProblem.IdentifierUndefError);
 			return null;
 		}
 	}
 
 	/**
-	 * Fetch identifiers from component, parse them and add them to the symbol table.
+	 * Fetch identifiers from component, parse them and add them to the symbol
+	 * table.
 	 * 
-	 * @param elements the identifier elements to fetch
-	 * @param target the target static checked container
-	 * @param repository the state repository
-	 * @throws CoreException if there was a problem accessing the symbol table
+	 * @param elements
+	 *            the identifier elements to fetch
+	 * @param target
+	 *            the target static checked container
+	 * @param repository
+	 *            the state repository
+	 * @throws CoreException
+	 *             if there was a problem accessing the symbol table
 	 */
-	protected void fetchSymbols(
-			IIdentifierElement[] elements,
-			IInternalParent target,
-			ISCStateRepository repository,
+	protected void fetchSymbols(IIdentifierElement[] elements,
+			IInternalParent target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		
+
 		initFilterModules(repository, null);
-		
-		for(IIdentifierElement element : elements) {
+
+		for (IIdentifierElement element : elements) {
 			FreeIdentifier identifier = parseIdentifier(element, monitor);
-			
-			if(identifier == null)
+
+			if (identifier == null)
 				continue;
 			String name = identifier.getName();
-			
-			IIdentifierSymbolInfo newSymbolInfo = createIdentifierSymbolInfo(name, element);
-			
-			boolean ok = 
-				insertIdentifierSymbol(
-					element,
-					newSymbolInfo);
+
+			IIdentifierSymbolInfo newSymbolInfo = createIdentifierSymbolInfo(
+					name, element);
+			newSymbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
+					element);
+
+			boolean ok = insertIdentifierSymbol(element, newSymbolInfo);
 
 			if (!ok || !filterModules(element, repository, null))
 				continue;
-				
+
 			typeIdentifierSymbol(newSymbolInfo, typeEnvironment);
-			
+
 			monitor.worked(1);
-				
+
 		}
-		
+
 		endFilterModules(repository, null);
-	}
-	
-	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element);
-
-	protected void typeIdentifierSymbol(
-			IIdentifierSymbolInfo newSymbolInfo, 
-			final ITypeEnvironment environment) throws CoreException {
-		// by default no type information for the identifier is generated 	
-	}
-
-	protected boolean insertIdentifierSymbol(
-			IIdentifierElement element,
-			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		
+	}
+
+	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(
+			String name, IIdentifierElement element);
+
+	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
+			final ITypeEnvironment environment) throws CoreException {
+		// by default no type information for the identifier is generated
+	}
+
+	protected boolean insertIdentifierSymbol(IIdentifierElement element,
+			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
+
 		try {
-			
+
 			identifierSymbolTable.putSymbolInfo(newSymbolInfo);
-			
+
 		} catch (CoreException e) {
-			
-			IIdentifierSymbolInfo symbolInfo = 
-				identifierSymbolTable.getSymbolInfo(newSymbolInfo.getSymbol());
-			
+
+			IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
+					.getSymbolInfo(newSymbolInfo.getSymbol());
+
 			newSymbolInfo.createConflictMarker(this);
-			
-			if(symbolInfo.hasError())
+
+			if (symbolInfo.hasError())
 				return false; // do not produce too many error messages
-			
+
 			symbolInfo.createConflictMarker(this);
-			
+
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();
-			
+
 			return false;
 		}
 		return true;
 	}
 
-
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
 		factory = FormulaFactory.getDefault();
 		typeEnvironment = repository.getTypeEnvironment();
-		
-		identifierSymbolTable = (IIdentifierSymbolTable)
-			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
+
+		identifierSymbolTable = (IIdentifierSymbolTable) repository
+				.getState(IIdentifierSymbolTable.STATE_TYPE);
 	}
 
-
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		factory = null;
 		identifierSymbolTable = null;

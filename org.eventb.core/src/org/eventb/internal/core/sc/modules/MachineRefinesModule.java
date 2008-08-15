@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -24,6 +27,7 @@ import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCVariable;
+import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -37,12 +41,12 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.AbstractEventInfo;
 import org.eventb.internal.core.sc.AbstractEventTable;
 import org.eventb.internal.core.sc.AbstractMachineInfo;
 import org.eventb.internal.core.sc.Messages;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -63,7 +67,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 	private static int ABSEVT_SYMTAB_SIZE = 1013;
 
-	private ISCMachineFile scMachineFile;
+	private IMachineFile machineFile;
+	private ISCMachineFile scAbstractMachineFile;
 	private IRefinesMachine refinesMachine;
 	private AbstractEventTable abstractEventTable;
 	private ITypeEnvironment typeEnvironment;
@@ -75,7 +80,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		// now we can finish if there is no abstraction
 
-		if (scMachineFile == null) {
+		if (scAbstractMachineFile == null) {
 			abstractEventTable.makeImmutable();
 			return;
 		}
@@ -84,7 +89,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		saveRefinesMachine((ISCMachineFile) target, null);
 
-		if (!scMachineFile.isAccurate())
+		if (!scAbstractMachineFile.isAccurate())
 			accuracyInfo.setNotAccurate();
 
 		IIdentifierSymbolTable abstractIdentifierSymbolTable = (IIdentifierSymbolTable) repository
@@ -109,7 +114,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		ISCRefinesMachine scRefinesMachine = target
 				.getSCRefinesClause(REFINES_NAME);
 		scRefinesMachine.create(null, monitor);
-		scRefinesMachine.setAbstractSCMachine(scMachineFile, null);
+		scRefinesMachine.setAbstractSCMachine(scAbstractMachineFile, null);
 		scRefinesMachine.setSource(refinesMachine, null);
 	}
 
@@ -144,7 +149,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	protected void fetchSCEvents(FormulaFactory factory,
 			IProgressMonitor monitor) throws CoreException {
 
-		ISCEvent[] events = scMachineFile.getSCEvents();
+		ISCEvent[] events = scAbstractMachineFile.getSCEvents();
 
 		for (ISCEvent event : events) {
 
@@ -159,7 +164,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			IContextTable contextTable, FormulaFactory factory,
 			IProgressMonitor monitor) throws CoreException {
 
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts();
+		ISCInternalContext[] contexts = scAbstractMachineFile
+				.getSCSeenContexts();
 
 		for (ISCInternalContext context : contexts) {
 
@@ -170,18 +176,18 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			ISCCarrierSet[] sets = context.getSCCarrierSets();
 
 			for (ISCCarrierSet set : sets) {
-				IIdentifierSymbolInfo symbolInfo = fetchSymbol(set,
+				IIdentifierSymbolInfo symbolInfo = fetchImportedSymbol(set,
 						refinesMachine, identifierSymbolTable, factory,
-						abstractCarrierSetCreator);
+						importedCarrierSetCreator);
 				symbolInfo.makeImmutable();
 			}
 
 			ISCConstant[] constants = context.getSCConstants();
 
 			for (ISCConstant constant : constants) {
-				IIdentifierSymbolInfo symbolInfo = fetchSymbol(constant,
-						refinesMachine, identifierSymbolTable, factory,
-						abstractConstantCreator);
+				IIdentifierSymbolInfo symbolInfo = fetchImportedSymbol(
+						constant, refinesMachine, identifierSymbolTable,
+						factory, importedConstantCreator);
 				symbolInfo.makeImmutable();
 			}
 
@@ -194,42 +200,77 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			FormulaFactory factory, IProgressMonitor monitor)
 			throws CoreException {
 
-		ISCVariable[] variables = scMachineFile.getSCVariables();
+		ISCVariable[] variables = scAbstractMachineFile.getSCVariables();
 
 		if (variables.length == 0)
 			return;
 
+		// load concrete variables into table to check for reuse of abstract
+		// variables
+		// this is done to attach problem markers to concrete variables rather
+		// rather than to the refines clause (when possible)
+		IVariable[] concreteVariables = machineFile.getVariables();
+		Map<String, IVariable> varMap = new HashMap<String, IVariable>(
+				concreteVariables.length * 4 / 3 + 1);
+		for (IVariable variable : concreteVariables) {
+			varMap.put(variable.getIdentifierString(), variable);
+		}
+
 		for (ISCVariable variable : variables) {
-			IVariableSymbolInfo symbolInfo = (IVariableSymbolInfo) fetchSymbol(
-					variable, refinesMachine, identifierSymbolTable, factory,
-					abstractVariableCreator);
-			if (variable.isConcrete())
-				symbolInfo.setAbstract();
+			String name = variable.getIdentifierString();
+			Type type = variable.getType(factory);
+			IVariable concreteVariable = varMap.get(name);
+			IIdentifierSymbolInfo symbolInfo = null;
+			boolean concrete = variable.isConcrete();
+			if (concreteVariable == null || !concrete) {
+				symbolInfo = importedVariableCreator
+						.createIdentifierSymbolInfo(name, variable,
+								refinesMachine);
+				symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
+						variable.getSource());
+				symbolInfo.setAttributeValue(
+						EventBAttributes.ABSTRACT_ATTRIBUTE, concrete);
+			} else {
+				symbolInfo = SymbolFactory.getInstance().makeLocalVariable(
+						name, true, concreteVariable,
+						machineFile.getComponentName());
+				symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
+						concreteVariable);
+				symbolInfo.setAttributeValue(
+						EventBAttributes.ABSTRACT_ATTRIBUTE, true);
+
+			}
+			symbolInfo.setAttributeValue(
+					EventBAttributes.CONCRETE_ATTRIBUTE, false);
+			insertIdentifierSymbolInfo(symbolInfo, type, identifierSymbolTable);
 			symbolInfo.makeImmutable();
 		}
 
 	}
 
-	protected IIdentifierSymbolInfo fetchSymbol(
+	private IIdentifierSymbolInfo fetchImportedSymbol(
 			ISCIdentifierElement identifier, IInternalElement pointerElement,
 			IIdentifierSymbolTable identifierSymbolTable,
 			FormulaFactory factory, IIdentifierSymbolInfoCreator creator)
 			throws CoreException {
-
-		String name = identifier.getIdentifierString();
-
+		IIdentifierSymbolInfo identifierSymbolInfo = creator
+				.createIdentifierSymbolInfo(identifier.getIdentifierString(),
+						identifier, pointerElement);
 		Type type = identifier.getType(factory);
+		insertIdentifierSymbolInfo(identifierSymbolInfo, type,
+				identifierSymbolTable);
+		return identifierSymbolInfo;
+	}
 
-		IIdentifierSymbolInfo symbolInfo = creator.createIdentifierSymbolInfo(
-				name, identifier, pointerElement);
+	private void insertIdentifierSymbolInfo(IIdentifierSymbolInfo symbolInfo,
+			Type type, IIdentifierSymbolTable identifierSymbolTable)
+			throws CoreException {
 
 		symbolInfo.setType(type);
 
 		identifierSymbolTable.putSymbolInfo(symbolInfo);
 
-		typeEnvironment.addName(name, type);
-
-		return symbolInfo;
+		typeEnvironment.addName(symbolInfo.getSymbol(), type);
 
 	}
 
@@ -306,7 +347,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		typeEnvironment = repository.getTypeEnvironment();
 
-		IMachineFile machineFile = (IMachineFile) element;
+		machineFile = (IMachineFile) element;
 
 		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 
@@ -320,11 +361,11 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		refinesMachine = refinesMachines.length == 0 ? null
 				: refinesMachines[0];
-		scMachineFile = null;
+		scAbstractMachineFile = null;
 
 		if (refinesMachine != null) {
 			if (refinesMachine.hasAbstractMachineName()) {
-				scMachineFile = refinesMachine.getAbstractSCMachine();
+				scAbstractMachineFile = refinesMachine.getAbstractSCMachine();
 			} else {
 				createProblemMarker(refinesMachine,
 						EventBAttributes.TARGET_ATTRIBUTE,
@@ -332,25 +373,25 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 			}
 		}
 
-		if (scMachineFile != null) {
-			if (!scMachineFile.exists()) {
+		if (scAbstractMachineFile != null) {
+			if (!scAbstractMachineFile.exists()) {
 				createProblemMarker(refinesMachine,
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.AbstractMachineNotFoundError,
-						scMachineFile.getComponentName());
+						scAbstractMachineFile.getComponentName());
 
-				scMachineFile = null;
-			} else if (!scMachineFile.hasConfiguration()) {
+				scAbstractMachineFile = null;
+			} else if (!scAbstractMachineFile.hasConfiguration()) {
 				createProblemMarker(refinesMachine,
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.AbstractMachineWithoutConfigurationError,
-						scMachineFile.getComponentName());
+						scAbstractMachineFile.getComponentName());
 
-				scMachineFile = null;
+				scAbstractMachineFile = null;
 			}
 		}
 
-		repository.setState(new AbstractMachineInfo(scMachineFile,
+		repository.setState(new AbstractMachineInfo(scAbstractMachineFile,
 				refinesMachine));
 
 		abstractEventTable = new AbstractEventTable(ABSEVT_SYMTAB_SIZE);
@@ -374,7 +415,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		refinesMachine = null;
-		scMachineFile = null;
+		scAbstractMachineFile = null;
 		abstractEventTable = null;
 		accuracyInfo = null;
 	}

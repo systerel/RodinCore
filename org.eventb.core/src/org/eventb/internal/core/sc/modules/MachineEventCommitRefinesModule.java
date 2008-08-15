@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
@@ -26,7 +27,7 @@ import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -70,12 +71,12 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 		if (target == null)
 			return;
 
-		IEventSymbolInfo symbolInfo = (IEventSymbolInfo) labelSymbolTable
+		ILabelSymbolInfo symbolInfo = labelSymbolTable
 				.getSymbolInfo(eventLabel);
 
 		createRefinesClause((ISCEvent) target, symbolInfo, monitor);
 
-		if (symbolInfo.isExtended()
+		if (symbolInfo.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
 				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 			boolean accurate = concreteEventInfo.getAbstractEventInfos().get(0)
 					.getEvent().isAccurate();
@@ -87,7 +88,7 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 
 	// TODO replace symbol info parameter by IEvent
 	private void createRefinesClause(ISCEvent target,
-			IEventSymbolInfo symbolInfo, IProgressMonitor monitor)
+			ILabelSymbolInfo symbolInfo, IProgressMonitor monitor)
 			throws CoreException {
 
 		List<IRefinesEvent> refines = concreteEventInfo.getRefinesClauses();
@@ -107,7 +108,7 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 						abstractEvent, monitor);
 			}
 		} else if (concreteEventInfo.getAbstractEventInfos().size() > 0) { // implicit
-																			// refinement
+			// refinement
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
 

@@ -14,7 +14,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IStateType;
 
 /**
@@ -34,60 +34,66 @@ import org.eventb.core.tool.IStateType;
  * 
  */
 public interface IConcreteEventInfo extends ISCState {
-	
-	final static IStateType<IConcreteEventInfo> STATE_TYPE = 
-		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventInfo");
-	
+
+	final static IStateType<IConcreteEventInfo> STATE_TYPE = SCCore
+			.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventInfo");
+
 	/**
-	 * Returns whether the current event is new (i.e. does not refine an abstract event) or not.
+	 * Returns whether the current event is new (i.e. does not refine an
+	 * abstract event) or not.
 	 * 
 	 * @return whether the current event is new or not
-	 * @throws CoreException if this state component is mutable
+	 * @throws CoreException
+	 *             if this state component is mutable
 	 */
 	boolean eventIsNew() throws CoreException;
-	
+
 	/**
-	 * Returns the infos for the abstract events that are refined by the current event.
+	 * Returns the infos for the abstract events that are refined by the current
+	 * event.
 	 * 
-	 * @return the infos for the abstract events that are refined by the current event
-	 * @throws CoreException if this state component is mutable
+	 * @return the infos for the abstract events that are refined by the current
+	 *         event
+	 * @throws CoreException
+	 *             if this state component is mutable
 	 */
 	List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException;
-	
+
 	/**
 	 * Returns the refines clauses of the current event.
 	 * 
 	 * @return the refines clauses of the current event
-	 * @throws CoreException if this state component is mutable
+	 * @throws CoreException
+	 *             if this state component is mutable
 	 */
 	List<IRefinesEvent> getRefinesClauses() throws CoreException;
-	
+
 	/**
 	 * Returns the symbol info of the event to which this refine info belongs.
 	 * 
 	 * @return the symbol info of the event to which this refine info belongs
 	 */
-	IEventSymbolInfo getSymbolInfo();
-	
+	ILabelSymbolInfo getSymbolInfo();
+
 	/**
 	 * Returns whether the event is the initialisation.
 	 * 
 	 * @return whether the event is the initialisation
 	 */
 	boolean isInitialisation();
-	
+
 	/**
 	 * Returns the event.
 	 * 
 	 * @return the event
 	 */
 	IEvent getEvent();
-	
+
 	/**
 	 * Returns the label of the event.
 	 * 
 	 * @return the label of the event
 	 */
 	String getEventLabel();
-	
+
 }

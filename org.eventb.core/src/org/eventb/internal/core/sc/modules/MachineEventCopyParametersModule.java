@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
@@ -22,10 +23,10 @@ import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventParameterSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
@@ -51,19 +52,26 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 		if (concreteEventInfo.isInitialisation())
 			return;
 
-		IEventSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
-		
-		if (symbolInfo.isExtended() && concreteEventInfo.getAbstractEventInfos().size() > 0) {
+		ILabelSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
+
+		if (symbolInfo.hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE)
+				&& symbolInfo
+						.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
+				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
 			List<FreeIdentifier> parameters = abstractEventInfo.getParameters();
 			for (FreeIdentifier param : parameters) {
-				IIdentifierSymbolInfo paramSymbolInfo = new EventParameterSymbolInfo(
-						param.getName(), concreteEventInfo.getEvent(),
-						EventBAttributes.EXTENDED_ATTRIBUTE,
-						abstractMachineInfo.getAbstractMachine()
-								.getComponentName());
+				IIdentifierSymbolInfo paramSymbolInfo = SymbolFactory
+						.getInstance().makeImportedParameter(
+								param.getName(),
+								false,
+								concreteEventInfo.getEvent(),
+								EventBAttributes.EXTENDED_ATTRIBUTE,
+								abstractMachineInfo.getAbstractMachine()
+										.getComponentName());
+
 				paramSymbolInfo.setType(param.getType());
 				paramSymbolInfo.makeImmutable();
 				identifierSymbolTable.putSymbolInfo(paramSymbolInfo);
@@ -73,12 +81,11 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 			if (target == null)
 				return;
 
-			// TODO use this code to save abstract parameters:
-//			ISCParameter[] scParameters = abstractEventInfo.getEvent()
-//					.getSCParameters();
-//			for (ISCParameter scParam : scParameters) {
-//				scParam.copy(target, null, null, false, monitor);
-//			}
+			ISCParameter[] scParameters = abstractEventInfo.getEvent()
+					.getSCParameters();
+			for (ISCParameter scParam : scParameters) {
+				scParam.copy(target, null, null, false, monitor);
+			}
 		}
 	}
 

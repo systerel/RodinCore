@@ -19,8 +19,7 @@ import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
-import org.eventb.internal.core.sc.symbolTable.EventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -43,9 +42,11 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 		if (concreteEventInfo.isInitialisation())
 			return;
 
-		IEventSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
+		ILabelSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
 
-		if (symbolInfo.isExtended()
+		if (symbolInfo.hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE)
+				&& symbolInfo
+						.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
 				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
@@ -61,9 +62,8 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 
 			for (ILabeledElement scElement : scElements) {
 				String label = scElement.getLabel();
-				IEventSymbolInfo newSymbolInfo = new EventSymbolInfo(label,
-						refinesEvent, EventBAttributes.TARGET_ATTRIBUTE,
-						abstractMachineName);
+				ILabelSymbolInfo newSymbolInfo = makeLabelSymbolInfo(label,
+						refinesEvent, abstractMachineName);
 				labelSymbolTable.putSymbolInfo(newSymbolInfo);
 			}
 
@@ -75,6 +75,9 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 			}
 		}
 	}
+
+	protected abstract ILabelSymbolInfo makeLabelSymbolInfo(String label,
+			IRefinesEvent refinesEvent, String component);
 
 	protected abstract ILabeledElement[] getSCElements(ISCEvent scEvent)
 			throws RodinDBException;

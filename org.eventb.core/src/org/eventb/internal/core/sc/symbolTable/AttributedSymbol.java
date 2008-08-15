@@ -10,8 +10,12 @@ package org.eventb.internal.core.sc.symbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.symbolTable.IAttributedSymbol;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -28,6 +32,36 @@ public class AttributedSymbol implements IAttributedSymbol {
 	private final List<IAttributeType> types;
 	private final List<Object> values;
 
+	protected void createAttributes(IInternalElement element, IProgressMonitor monitor) throws CoreException {
+		for (int i=0; i<types.size(); i++) {
+			IAttributeType type = types.get(i);
+			Object value = values.get(i);
+			if (type instanceof IAttributeType.Boolean) {
+				IAttributeType.Boolean bType = (IAttributeType.Boolean) type;
+				Boolean bValue = (Boolean) value;
+				element.setAttributeValue(bType, bValue, monitor);
+			} else if (type instanceof IAttributeType.Handle) {
+				IAttributeType.Handle hType = (IAttributeType.Handle) type;
+				IRodinElement rValue = (IRodinElement) value;
+				element.setAttributeValue(hType, rValue, monitor);
+			} else if (type instanceof IAttributeType.Integer) {
+				IAttributeType.Integer iType = (IAttributeType.Integer) type;
+				Integer iValue = (Integer) value;
+				element.setAttributeValue(iType, iValue, monitor);
+			} else if (type instanceof IAttributeType.Long) {
+				IAttributeType.Long lType = (IAttributeType.Long) type;
+				Long lValue = (Long) value;
+				element.setAttributeValue(lType, lValue, monitor);
+			} else if (type instanceof IAttributeType.String) {
+				IAttributeType.String sType = (IAttributeType.String) type;
+				String sValue = (String) value;
+				element.setAttributeValue(sType, sValue, monitor);
+			} else {
+				throw Util.newCoreException("Unknown attribute type");
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeTypes()
 	 */

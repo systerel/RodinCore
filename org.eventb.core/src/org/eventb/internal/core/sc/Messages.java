@@ -93,7 +93,8 @@ public final class Messages {
     public static String scuser_ConstantNameConflict;
     public static String scuser_VariableNameImportConflict;
     public static String scuser_VariableNameConflict;
-    public static String scuser_EventParameterNameConflict;
+    public static String scuser_ParameterNameConflict;
+	public static String scuser_ParameterNameImportConflift;
 	public static String scuser_UntypedCarrierSetError;
     public static String scuser_UntypedConstantError;
     public static String scuser_UntypedVariableError;
@@ -140,7 +141,9 @@ public final class Messages {
     public static String scuser_AssignedIdentifierNotVariable;
     public static String scuser_ParameterChangedTypeError;
     public static String scuser_AssignmentToParameter;
-  
+    public static String scuser_AssignmentToCarrierSet;
+    public static String scuser_AssignmentToConstant;
+
     public static String scuser_BoundIdentifierIsAlreadyBound;
     public static String scuser_Circularity;
     public static String scuser_FreeIdentifierHasBoundOccurences;

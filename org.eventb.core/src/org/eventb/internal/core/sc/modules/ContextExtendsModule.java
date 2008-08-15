@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -33,119 +32,107 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextExtendsModule extends ContextPointerModule {
 
-	public static final IModuleType<ContextExtendsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextExtendsModule"); //$NON-NLS-1$
+	public static final IModuleType<ContextExtendsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextExtendsModule"); //$NON-NLS-1$
 
 	private static final String EXTENDS_NAME_PREFIX = "EXTENDS";
-	
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	protected ContextPointerArray contextPointerArray;
-	
+
 	private IContextAccuracyInfo accuracyInfo;
-	
+
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
-		
+
 		IContextFile contextFile = (IContextFile) element;
-		
+
 		IExtendsContext[] extendsContexts = contextFile.getExtendsClauses();
-		
+
 		ISCContextFile[] contextFiles = new ISCContextFile[extendsContexts.length];
-		
-		for(int i=0; i<extendsContexts.length; i++) {
+
+		for (int i = 0; i < extendsContexts.length; i++) {
 			if (extendsContexts[i].hasAbstractContextName()) {
 				contextFiles[i] = extendsContexts[i].getAbstractSCContext();
 				if (!contextFiles[i].exists()) {
-					createProblemMarker(
-							extendsContexts[i], 
+					createProblemMarker(extendsContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.AbstractContextNotFoundError,
 							extendsContexts[i].getAbstractContextName());
 					contextFiles[i] = null;
 				} else if (!contextFiles[i].hasConfiguration()) {
 					createProblemMarker(
-							extendsContexts[i], 
+							extendsContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.AbstractContextWithoutConfigurationError,
 							extendsContexts[i].getAbstractContextName());
 					contextFiles[i] = null;
 				}
 			} else {
-				createProblemMarker(
-						extendsContexts[i], 
+				createProblemMarker(extendsContexts[i],
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.AbstractContextNameUndefError);
 			}
 		}
-		
-		contextPointerArray = 
-			new ContextPointerArray(
-					IContextPointerArray.PointerType.EXTENDS_POINTER, 
-					extendsContexts, 
-					contextFiles);
+
+		contextPointerArray = new ContextPointerArray(
+				IContextPointerArray.PointerType.EXTENDS_POINTER,
+				extendsContexts, contextFiles);
 		repository.setState(contextPointerArray);
-		
-		accuracyInfo = (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
+
+		accuracyInfo = (IContextAccuracyInfo) repository
+				.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
 		accuracyInfo = null;
 	}
-	
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
+
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
 		// we need to do everything up to this point
 		// produce a define repository state
-		
+
 		if (contextPointerArray.size() == 0) {
 			contextPointerArray.makeImmutable();
 			return; // nothing to do
 		}
-		
+
 		monitor.subTask(Messages.bind(Messages.progress_ContextExtends));
-		
-		boolean accurate = fetchSCContexts(
-				contextPointerArray,
-				monitor);
-		
+
+		boolean accurate = fetchSCContexts(contextPointerArray, monitor);
+
 		contextPointerArray.makeImmutable();
-		
+
 		accurate &= createExtendsClauses((ISCContextFile) target);
-		
+
 		if (!accurate)
 			accuracyInfo.setNotAccurate();
-		
-		createInternalContexts(
-				target, 
-				contextPointerArray.getValidContexts(), 
-				repository, 
-				null);
-		
+
+		createInternalContexts(target, contextPointerArray.getValidContexts(),
+				repository, null);
+
 	}
 
 	@Override
-	protected ISCInternalContext getSCInternalContext(IInternalParent target, String elementName) {
+	protected ISCInternalContext getSCInternalContext(IInternalParent target,
+			String elementName) {
 		return ((ISCContextFile) target).getSCInternalContext(elementName);
 	}
 
@@ -153,11 +140,12 @@ public class ContextExtendsModule extends ContextPointerModule {
 			throws RodinDBException {
 
 		boolean accurate = true;
-		
+
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
-			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
+			final ISCContextFile scSeenContext = contextPointerArray
+					.getSCContextFile(i);
 			if (scSeenContext == null || contextPointerArray.hasError(i)) {
 				accurate = false;
 			} else {

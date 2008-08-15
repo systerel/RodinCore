@@ -29,20 +29,20 @@ import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.VariantInfo;
-import org.eventb.internal.core.sc.symbolTable.VariantSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineVariantModule extends ExpressionModule<IVariant> {
 
-	public static final IModuleType<MachineVariantModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineVariantModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -51,12 +51,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 	VariantInfo variantInfo;
 	FormulaFactory factory;
-	
+
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
 		factory = FormulaFactory.getDefault();
@@ -64,9 +63,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
 		factory = null;
@@ -74,65 +71,61 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	@Override
-	protected ILabelSymbolInfo fetchLabel(
-			IInternalElement internalElement, 
-			String component, 
-			IProgressMonitor monitor) throws CoreException {
-		return new VariantSymbolInfo(
-				"VARIANT", internalElement, EventBAttributes.LABEL_ATTRIBUTE, component);
+	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
+			String component, IProgressMonitor monitor) throws CoreException {
+		return SymbolFactory.getInstance().makeVariant("VARIANT", true,
+				internalElement, component);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement
+	 * , org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
 		if (formulaElements.length == 0) {
 			variantInfo.makeImmutable();
 			return;
 		}
-		
+
 		if (formulaElements.length > 1) {
-			for (int k=1; k<formulaElements.length; k++)
-				createProblemMarker(
-						formulaElements[k], 
-						EventBAttributes.EXPRESSION_ATTRIBUTE, 
+			for (int k = 1; k < formulaElements.length; k++)
+				createProblemMarker(formulaElements[k],
+						EventBAttributes.EXPRESSION_ATTRIBUTE,
 						GraphProblem.TooManyVariantsError);
 		}
-		
+
 		monitor.subTask(Messages.bind(Messages.progress_MachineVariant));
-		
-		checkAndType(
-				element.getElementName(),
-				repository,
-				monitor);
-		
-		saveVariant((ISCMachineFile) target, formulaElements[0], formulas[0], null);
+
+		checkAndType(element.getElementName(), repository, monitor);
+
+		saveVariant((ISCMachineFile) target, formulaElements[0], formulas[0],
+				null);
 
 	}
 
-	private void saveVariant(
-			ISCMachineFile target, 
-			IVariant variant, 
-			Expression expression,
-			IProgressMonitor monitor) throws CoreException {
-		
+	private void saveVariant(ISCMachineFile target, IVariant variant,
+			Expression expression, IProgressMonitor monitor)
+			throws CoreException {
+
 		variantInfo.setExpression(expression);
 		variantInfo.makeImmutable();
-		
+
 		if (expression == null)
 			return;
-		
+
 		ISCVariant scVariant = target.getSCVariant(VARIANT_NAME_PREFIX);
 		scVariant.create(null, monitor);
 		scVariant.setExpression(expression, null);
 		scVariant.setSource(variant, monitor);
 	}
-	
+
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
@@ -146,24 +139,21 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	@Override
-	protected ITypeEnvironment typeCheckFormula(
-			IVariant formulaElement, 
-			Expression formula, 
-			ITypeEnvironment typeEnvironment) throws CoreException {
-		ITypeEnvironment inferredEnvironment =
-			super.typeCheckFormula(formulaElement, formula, typeEnvironment);
+	protected ITypeEnvironment typeCheckFormula(IVariant formulaElement,
+			Expression formula, ITypeEnvironment typeEnvironment)
+			throws CoreException {
+		ITypeEnvironment inferredEnvironment = super.typeCheckFormula(
+				formulaElement, formula, typeEnvironment);
 		if (inferredEnvironment == null)
 			return null;
 		else {
 			Expression expression = formula;
 			Type type = expression.getType();
-			boolean ok = type.equals(factory.makeIntegerType()) || type.getBaseType() != null;
+			boolean ok = type.equals(factory.makeIntegerType())
+					|| type.getBaseType() != null;
 			if (!ok) {
-				createProblemMarker(
-						formulaElement, 
-						getFormulaAttributeType(), 
-						GraphProblem.InvalidVariantTypeError, 
-						type.toString());
+				createProblemMarker(formulaElement, getFormulaAttributeType(),
+						GraphProblem.InvalidVariantTypeError, type.toString());
 				return null;
 			} else
 				return inferredEnvironment;
@@ -171,19 +161,21 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	}
 
 	@Override
-	protected ILabelSymbolInfo createLabelSymbolInfo(
-			String symbol, ILabeledElement element, String component) throws CoreException {
-		return new VariantSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
+			ILabeledElement element, String component) throws CoreException {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected IVariant[] getFormulaElements(IRodinElement element) throws CoreException {
+	protected IVariant[] getFormulaElements(IRodinElement element)
+			throws CoreException {
 		IMachineFile machineFile = (IMachineFile) element;
 		return machineFile.getVariants();
 	}
 
 	@Override
-	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
+			throws CoreException {
 		return null;
 	}
 

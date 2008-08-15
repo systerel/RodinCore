@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
@@ -23,55 +22,50 @@ import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventParameterSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineEventParameterModule extends IdentifierModule {
 
-	public static final IModuleType<MachineEventParameterModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventParameterModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineEventParameterModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineEventParameterModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	protected IConcreteEventInfo eventRefinesInfo;
+	protected IConcreteEventInfo concreteEventInfo;
 	protected boolean isInitialisation;
 
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository,
-			IProgressMonitor monitor)
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
 		IEvent event = (IEvent) element;
-		
+
 		IParameter[] parameters = event.getParameters();
-		
-		if(parameters.length != 0)
-			fetchSymbols(
-					parameters,
-					target,
-					repository, 
-					monitor);
-		
+
+		if (parameters.length != 0)
+			fetchSymbols(parameters, target, repository, monitor);
+
 		patchTypeEnvironment();
 	}
 
 	/**
-	 * add abstract local variables to type environment
-	 * that are not also local variables of the refined event
+	 * add abstract local variables to type environment that are not also local
+	 * variables of the refined event
 	 */
 	private void patchTypeEnvironment() throws CoreException {
-		if (eventRefinesInfo.eventIsNew())
+		if (concreteEventInfo.eventIsNew())
 			return;
-		IAbstractEventInfo abstractEventInfo = eventRefinesInfo.getAbstractEventInfos().get(0);
+		IAbstractEventInfo abstractEventInfo = concreteEventInfo
+				.getAbstractEventInfos().get(0);
 		for (FreeIdentifier freeIdentifier : abstractEventInfo.getParameters()) {
 			String name = freeIdentifier.getName();
 			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)
@@ -80,17 +74,22 @@ public class MachineEventParameterModule extends IdentifierModule {
 			typeEnvironment.addName(name, type);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.IdentifierModule#insertIdentifierSymbol(org.eventb.core.sc.IIdentifierSymbolTable, org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.IdentifierModule#insertIdentifierSymbol
+	 * (org.eventb.core.sc.IIdentifierSymbolTable,
+	 * org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo)
 	 */
 	@Override
-	protected boolean insertIdentifierSymbol(
-			IIdentifierElement element,
+	protected boolean insertIdentifierSymbol(IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 		if (super.insertIdentifierSymbol(element, newSymbolInfo)) {
 			if (isInitialisation) {
-				createProblemMarker(element, GraphProblem.InitialisationVariableError);
+				createProblemMarker(element,
+						GraphProblem.InitialisationVariableError);
 				newSymbolInfo.setError();
 				return false;
 			} else
@@ -100,30 +99,28 @@ public class MachineEventParameterModule extends IdentifierModule {
 	}
 
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
-		eventRefinesInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
-		isInitialisation = ((IEvent) element).getLabel().contains(IEvent.INITIALISATION);
+		concreteEventInfo = (IConcreteEventInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
+		isInitialisation = ((IEvent) element).getLabel().contains(
+				IEvent.INITIALISATION);
 	}
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		eventRefinesInfo = null;
+		concreteEventInfo = null;
 		super.endModule(element, repository, monitor);
 	}
 
 	@Override
-	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(
-			String name, IIdentifierElement element) {
-		return new EventParameterSymbolInfo(
-				name, element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, element.getParent().getElementName());
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
+			IIdentifierElement element) {
+		return SymbolFactory.getInstance().makeLocalParameter(name, true,
+				element, concreteEventInfo.getEventLabel());
 	}
 
 }

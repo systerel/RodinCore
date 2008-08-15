@@ -121,15 +121,16 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 			IRodinElement element, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
+		boolean ok = true;
 		for (IFilterModule module : getFilterModules()) {
 			if (DEBUG_MODULE)
 				traceModule(module, RUN, FILTER);
 			ISCFilterModule scModule = (ISCFilterModule) module;
 			if (scModule.accept(element, repository, monitor))
 				continue;
-			return false;
+			ok = false;
 		}
-		return true;
+		return ok;
 	}
 	
 	/**

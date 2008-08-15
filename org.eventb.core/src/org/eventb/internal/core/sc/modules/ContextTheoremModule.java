@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ILabeledElement;
@@ -25,54 +24,52 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.TheoremSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextTheoremModule extends TheoremModule {
 
-	public static final IModuleType<ContextTheoremModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextTheoremModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<ContextTheoremModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextTheoremModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
 		monitor.subTask(Messages.bind(Messages.progress_ContextTheorems));
-		
+
 		if (formulaElements.length == 0)
 			return;
-		
-		checkAndSaveTheorems(
-				target, 
-				0,
-				repository,
-				monitor);
-		
+
+		checkAndSaveTheorems(target, 0, repository, monitor);
+
 	}
 
 	@Override
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eventb.internal.core.sc.modules.LabeledElementModule#
+	 * getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
+		return (ILabelSymbolTable) repository
+				.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
@@ -81,20 +78,24 @@ public class ContextTheoremModule extends TheoremModule {
 	}
 
 	@Override
-	protected ILabelSymbolInfo createLabelSymbolInfo(
-			String symbol, ILabeledElement element, String component) throws CoreException {
-		return new TheoremSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
+			ILabeledElement element, String component) throws CoreException {
+		return SymbolFactory.getInstance().makeTheorem(symbol, true, element,
+				component);
 	}
 
 	@Override
-	protected ITheorem[] getFormulaElements(IRodinElement element) throws CoreException {
+	protected ITheorem[] getFormulaElements(IRodinElement element)
+			throws CoreException {
 		IContextFile contextFile = (IContextFile) element;
 		return contextFile.getTheorems();
 	}
 
 	@Override
-	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
-		return (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
+			throws CoreException {
+		return (IContextAccuracyInfo) repository
+				.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 }

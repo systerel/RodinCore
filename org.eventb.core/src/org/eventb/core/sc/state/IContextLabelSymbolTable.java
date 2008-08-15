@@ -12,18 +12,19 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IStateType;
 
 /**
- * State components for keeping labeled elements of contexts,
- * i.e. axioms and theorems.
+ * State components for keeping labeled elements of contexts, i.e. axioms and
+ * theorems.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Stefan Hallerstede
- *
+ * 
  */
 public interface IContextLabelSymbolTable extends ILabelSymbolTable {
-	
-	final static IStateType<IContextLabelSymbolTable> STATE_TYPE = 
-		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".contextLabelSymbolTable");
+
+	final static IStateType<IContextLabelSymbolTable> STATE_TYPE = SCCore
+			.getToolStateType(EventBPlugin.PLUGIN_ID
+					+ ".contextLabelSymbolTable");
 
 }

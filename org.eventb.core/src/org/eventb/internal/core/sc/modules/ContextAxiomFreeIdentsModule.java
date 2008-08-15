@@ -15,13 +15,14 @@ import org.rodinp.core.IAttributeType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextAxiomFreeIdentsModule extends FormulaFreeIdentsModule {
 
-	public static final IModuleType<ContextAxiomFreeIdentsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomFreeIdentsModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<ContextAxiomFreeIdentsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".contextAxiomFreeIdentsModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

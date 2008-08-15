@@ -12,57 +12,85 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.tool.IStateType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class StackedIdentifierSymbolTable extends StackedSymbolTable<IIdentifierSymbolInfo> implements
-		IIdentifierSymbolTable {
-	
+public class StackedIdentifierSymbolTable extends IdentifierSymbolTable
+		implements IIdentifierSymbolTable {
+
 	private final Set<FreeIdentifier> freeIdentifiers;
-	
-	private final FormulaFactory factory;
-	
+
 	private final Collection<FreeIdentifier> allFreeIdentifiers;
-	
-	public StackedIdentifierSymbolTable(
-			IIdentifierSymbolTable parentTable, 
-			int size,
-			FormulaFactory factory) {
-		super(parentTable, size);
+
+	protected final IIdentifierSymbolTable parentTable;
+
+	public StackedIdentifierSymbolTable(IIdentifierSymbolTable parentTable,
+			int size) {
+		super(size);
+		this.parentTable = parentTable;
 		freeIdentifiers = new HashSet<FreeIdentifier>(size);
-		this.factory = factory;
-		allFreeIdentifiers = 
-			new StackedCollection<FreeIdentifier>(
-					parentTable.getFreeIdentifiers(), 
-					freeIdentifiers);
+		allFreeIdentifiers = new StackedCollection<FreeIdentifier>(parentTable
+				.getFreeIdentifiers(), freeIdentifiers);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IState#getStateType()
+	@Override
+	public IIdentifierSymbolTable getParentTable() {
+		return parentTable;
+	}
+
+	@Override
+	public boolean containsKey(String symbol) {
+		boolean r = super.containsKey(symbol);
+		if (r == false)
+			return parentTable.containsKey(symbol);
+		else
+			return r;
+	}
+
+	@Override
+	public IIdentifierSymbolInfo getSymbolInfo(String symbol) {
+		IIdentifierSymbolInfo s = super.getSymbolInfo(symbol);
+		if (s == null)
+			return parentTable.getSymbolInfo(symbol);
+		else
+			return s;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.internal.core.sc.symbolTable.SymbolTable#toString()
 	 */
-	public IStateType<?> getStateType() {
-		return IIdentifierSymbolTable.STATE_TYPE;
+	@Override
+	public String toString() {
+		return super.toString() + parentTable.toString();
 	}
 
+	@Override
+	public IIdentifierSymbolInfo getSymbolInfoFromTop(String symbol) {
+		return super.getSymbolInfoFromTop(symbol);
+	}
+
+	@Override
 	public Collection<FreeIdentifier> getFreeIdentifiers() {
 		return allFreeIdentifiers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.symbolTable.StackedSymbolTable#putSymbolInfo(org.eventb.core.sc.symbolTable.ISymbolInfo)
-	 */
 	@Override
-	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo) throws CoreException {
+	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo)
+			throws CoreException {
+		String symbol = symbolInfo.getSymbol();
+
+		if (parentTable.containsKey(symbol)) {
+			throwSymbolConflict();
+		}
+
 		super.putSymbolInfo(symbolInfo);
-		freeIdentifiers.add(
-				factory.makeFreeIdentifier(symbolInfo.getSymbol(), null));
 	}
 
 }

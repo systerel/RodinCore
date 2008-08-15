@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -20,7 +19,7 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class BaseModule extends SCProcessorModule {
 
@@ -29,35 +28,30 @@ public abstract class BaseModule extends SCProcessorModule {
 	private final static int CONTEXT_TABLE_SIZE = 137;
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		endProcessorModules(element, repository, monitor);
 	}
 
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
-		final IdentifierSymbolTable identifierSymbolTable = 
-			new IdentifierSymbolTable(IDENT_SYMTAB_SIZE, FormulaFactory.getDefault());
-		
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
+		final IdentifierSymbolTable identifierSymbolTable = new IdentifierSymbolTable(
+				IDENT_SYMTAB_SIZE);
+
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
-		
+
 		repository.setState(identifierSymbolTable);
 		repository.setState(contextTable);
 
 		initProcessorModules(element, repository, monitor);
 	}
 
-	public void process(
-			IRodinElement element, 
-			IInternalParent target, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		processModules(element, target, repository, monitor);
 	}
 

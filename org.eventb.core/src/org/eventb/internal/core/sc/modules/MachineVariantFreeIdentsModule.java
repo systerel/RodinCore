@@ -11,46 +11,52 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class MachineVariantFreeIdentsModule extends MachineFormulaFreeIdentsModule {
-	
-	public static final IModuleType<MachineVariantFreeIdentsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantFreeIdentsModule"); //$NON-NLS-1$
-	
+public class MachineVariantFreeIdentsModule extends
+		MachineFormulaFreeIdentsModule {
+
+	public static final IModuleType<MachineVariantFreeIdentsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineVariantFreeIdentsModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo(org.eventb.core.ast.FreeIdentifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.PredicateFreeIdentsModule#getSymbolInfo
+	 * (org.eventb.core.ast.FreeIdentifier)
 	 */
 	@Override
-	protected IIdentifierSymbolInfo getSymbolInfo(
-			IInternalElement element, 
-			FreeIdentifier freeIdentifier,
-			IProgressMonitor monitor) throws CoreException {
-		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element, freeIdentifier, monitor);
-		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			IVariableSymbolInfo variableSymbolInfo = 
-				(IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isConcrete()) {
-				createProblemMarker(
-						element, getAttributeType(), 
-						freeIdentifier.getSourceLocation().getStart(), 
-						freeIdentifier.getSourceLocation().getEnd(), 
-						GraphProblem.VariantFreeIdentifierError, freeIdentifier.getName());
+	protected IIdentifierSymbolInfo getSymbolInfo(IInternalElement element,
+			FreeIdentifier freeIdentifier, IProgressMonitor monitor)
+			throws CoreException {
+		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element,
+				freeIdentifier, monitor);
+		if (symbolInfo != null
+				&& symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {
+			if (!symbolInfo
+					.getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE)) {
+				createProblemMarker(element, getAttributeType(), freeIdentifier
+						.getSourceLocation().getStart(), freeIdentifier
+						.getSourceLocation().getEnd(),
+						GraphProblem.VariantFreeIdentifierError, freeIdentifier
+								.getName());
 				return null;
 			}
 		}

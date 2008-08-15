@@ -26,11 +26,11 @@ import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class PredicateModule<I extends IInternalElement> 
-extends LabeledFormulaModule<Predicate, I> {
-	
+public abstract class PredicateModule<I extends IInternalElement> extends
+		LabeledFormulaModule<Predicate, I> {
+
 	@Override
 	protected Predicate[] allocateFormulas(int size) {
 		return new Predicate[size];
@@ -41,56 +41,59 @@ extends LabeledFormulaModule<Predicate, I> {
 		return EventBAttributes.PREDICATE_ATTRIBUTE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula
+	 * (int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[],
+	 * java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected Predicate parseFormula(
-			I formulaElement, 
-			Collection<FreeIdentifier> freeIdentifierContext, 
+	protected Predicate parseFormula(I formulaElement,
+			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException {
-		
+
 		IPredicateElement predicateElement = (IPredicateElement) formulaElement;
 
 		if (!predicateElement.hasPredicateString()) {
-			createProblemMarker(
-					predicateElement, 
-					EventBAttributes.PREDICATE_ATTRIBUTE, 
+			createProblemMarker(predicateElement,
+					EventBAttributes.PREDICATE_ATTRIBUTE,
 					GraphProblem.PredicateUndefError);
 			return null;
 		}
 		String predicateString = predicateElement.getPredicateString();
-		
+
 		// parse the predicate
-		
+
 		IParseResult parseResult = factory.parsePredicate(predicateString);
-		
+
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(), parseResult);
-			
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(),
+					parseResult);
+
 			return null;
 		}
 		Predicate predicate = parseResult.getParsedPredicate();
-		
+
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
-		
+
 		IResult legibilityResult = predicate.isLegible(freeIdentifierContext);
-		
+
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(), legibilityResult);
+			issueASTProblemMarkers(predicateElement, getFormulaAttributeType(),
+					legibilityResult);
 		}
-		
+
 		return predicate;
 	}
-	
-	protected void copySCPredicates(
-			ISCPredicateElement[] predicateElements,
-			IInternalParent target, 
-			IProgressMonitor monitor) throws CoreException {
+
+	protected void copySCPredicates(ISCPredicateElement[] predicateElements,
+			IInternalParent target, IProgressMonitor monitor)
+			throws CoreException {
 		for (ISCPredicateElement predicate : predicateElements)
 			predicate.copy(target, null, null, false, monitor);
 	}
-	
 
 }

@@ -17,6 +17,7 @@ package org.eventb.core.sc.symbolTable;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public interface IInvariantSymbolInfo extends ILabelSymbolInfo {
 	// marker interface for invariant labels
 }

@@ -22,44 +22,51 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 
 	protected IParsedFormula parsedFormula;
 	protected IIdentifierSymbolTable symbolTable;
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(
-			ISCStateRepository repository, 
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		symbolTable = (IIdentifierSymbolTable)
-			repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		parsedFormula = (IParsedFormula)
-			repository.getState(IParsedFormula.STATE_TYPE);
+		symbolTable = (IIdentifierSymbolTable) repository
+				.getState(IIdentifierSymbolTable.STATE_TYPE);
+		parsedFormula = (IParsedFormula) repository
+				.getState(IParsedFormula.STATE_TYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement,
+	 * org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean accept(
-			IRodinElement element, 
-			ISCStateRepository repository,
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		
-		boolean ok = true;	
-		
+
+		boolean ok = true;
+
 		IInternalElement internalElement = (IInternalElement) element;
-		
+
 		FreeIdentifier[] freeIdentifiers = getFreeIdentifiers();
-		
+
 		for (FreeIdentifier freeIdentifier : freeIdentifiers) {
-			
-			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(internalElement, freeIdentifier, monitor);
-			
+
+			IIdentifierSymbolInfo symbolInfo = getSymbolInfo(internalElement,
+					freeIdentifier, monitor);
+
 			if (symbolInfo == null) {
 				ok = false;
 			}
@@ -68,42 +75,44 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 	}
 
 	protected FreeIdentifier[] getFreeIdentifiers() {
-		FreeIdentifier[] freeIdentifiers =
-			parsedFormula.getFormula().getFreeIdentifiers();
+		FreeIdentifier[] freeIdentifiers = parsedFormula.getFormula()
+				.getFreeIdentifiers();
 		return freeIdentifiers;
 	}
-	
+
 	protected abstract IAttributeType.String getAttributeType();
 
-	protected IIdentifierSymbolInfo getSymbolInfo(
-			IInternalElement element, 
-			FreeIdentifier freeIdentifier,
-			IProgressMonitor monitor) throws CoreException {
-		IIdentifierSymbolInfo symbolInfo = 
-			symbolTable.getSymbolInfo(freeIdentifier.getName());
+	protected IIdentifierSymbolInfo getSymbolInfo(IInternalElement element,
+			FreeIdentifier freeIdentifier, IProgressMonitor monitor)
+			throws CoreException {
+		IIdentifierSymbolInfo symbolInfo = symbolTable
+				.getSymbolInfo(freeIdentifier.getName());
 		if (symbolInfo == null) {
-			createProblemMarker(
-					element, getAttributeType(), 
-					freeIdentifier.getSourceLocation().getStart(), 
-					freeIdentifier.getSourceLocation().getEnd(), 
-					GraphProblem.UndeclaredFreeIdentifierError, freeIdentifier.getName());
+			createProblemMarker(element, getAttributeType(), freeIdentifier
+					.getSourceLocation().getStart(), freeIdentifier
+					.getSourceLocation().getEnd(),
+					GraphProblem.UndeclaredFreeIdentifierError, freeIdentifier
+							.getName());
 		} else if (symbolInfo.hasError()) {
-			createProblemMarker(
-					element, getAttributeType(), 
-					freeIdentifier.getSourceLocation().getStart(), 
-					freeIdentifier.getSourceLocation().getEnd(), 
-					GraphProblem.FreeIdentifierFaultyDeclError, freeIdentifier.getName());
+			createProblemMarker(element, getAttributeType(), freeIdentifier
+					.getSourceLocation().getStart(), freeIdentifier
+					.getSourceLocation().getEnd(),
+					GraphProblem.FreeIdentifierFaultyDeclError, freeIdentifier
+							.getName());
 			symbolInfo = null;
 		}
 		return symbolInfo;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(
-			ISCStateRepository repository, 
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		symbolTable = null;
 		parsedFormula = null;

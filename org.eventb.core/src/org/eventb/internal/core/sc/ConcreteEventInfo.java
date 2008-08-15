@@ -16,13 +16,13 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.symbolTable.IEventSymbolInfo;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ConcreteEventInfo extends State implements IConcreteEventInfo {
 
@@ -40,23 +40,26 @@ public class ConcreteEventInfo extends State implements IConcreteEventInfo {
 
 	private List<IAbstractEventInfo> abstractInfos;
 	private List<IRefinesEvent> refEvents;
-	private final IEventSymbolInfo symbolInfo;
+	private final ILabelSymbolInfo symbolInfo;
 	private final IEvent event;
 	private final String eventLabel;
 	private final boolean isInit;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
-	public List<IAbstractEventInfo> getAbstractEventInfos() throws CoreException {
+	public List<IAbstractEventInfo> getAbstractEventInfos()
+			throws CoreException {
 		return abstractInfos;
 	}
 
-	public ConcreteEventInfo(IEvent event, IEventSymbolInfo symbolInfo) {
+	public ConcreteEventInfo(IEvent event, ILabelSymbolInfo symbolInfo) {
 		this.event = event;
 		this.eventLabel = symbolInfo.getSymbol();
 		this.symbolInfo = symbolInfo;
@@ -64,13 +67,14 @@ public class ConcreteEventInfo extends State implements IConcreteEventInfo {
 		abstractInfos = new LinkedList<IAbstractEventInfo>();
 		refEvents = new LinkedList<IRefinesEvent>();
 	}
-	
+
 	public boolean eventIsNew() throws CoreException {
 		return abstractInfos.size() == 0 && refEvents.size() == 0;
 	}
 
 	@Deprecated
-	public void addAbstractEventInfo(IAbstractEventInfo info) throws CoreException {
+	public void addAbstractEventInfo(IAbstractEventInfo info)
+			throws CoreException {
 		assertMutable();
 		abstractInfos.add(info);
 	}
@@ -80,12 +84,13 @@ public class ConcreteEventInfo extends State implements IConcreteEventInfo {
 	}
 
 	@Deprecated
-	public void addRefinesEvent(IRefinesEvent refinesEvent) throws CoreException {
+	public void addRefinesEvent(IRefinesEvent refinesEvent)
+			throws CoreException {
 		assertMutable();
 		refEvents.add(refinesEvent);
 	}
 
-	public IEventSymbolInfo getSymbolInfo() {
+	public ILabelSymbolInfo getSymbolInfo() {
 		return symbolInfo;
 	}
 

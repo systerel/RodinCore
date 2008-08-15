@@ -33,132 +33,120 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineSeesContextModule extends ContextPointerModule {
 
 	private ContextPointerArray contextPointerArray;
-	
+
 	private IMachineAccuracyInfo accuracyInfo;
-	
+
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		super.initModule(element, repository, monitor);
-		
+
 		IMachineFile machineFile = (IMachineFile) element;
-		
+
 		ISeesContext[] seesContexts = machineFile.getSeesClauses();
-		
+
 		ISCContextFile[] contextFiles = new ISCContextFile[seesContexts.length];
-		
-		for(int i=0; i<seesContexts.length; i++) {
+
+		for (int i = 0; i < seesContexts.length; i++) {
 			if (seesContexts[i].hasSeenContextName()) {
 				contextFiles[i] = seesContexts[i].getSeenSCContext();
 				if (!contextFiles[i].exists()) {
-					createProblemMarker(
-							seesContexts[i], 
+					createProblemMarker(seesContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.SeenContextNotFoundError,
 							seesContexts[i].getSeenContextName());
-				contextFiles[i] = null;
+					contextFiles[i] = null;
 				} else if (!contextFiles[i].hasConfiguration()) {
-					createProblemMarker(
-							seesContexts[i], 
+					createProblemMarker(seesContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.SeenContextWithoutConfigurationError,
 							seesContexts[i].getSeenContextName());
 					contextFiles[i] = null;
 				}
 			} else {
-				createProblemMarker(
-						seesContexts[i], 
+				createProblemMarker(seesContexts[i],
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.SeenContextNameUndefError);
 			}
 		}
-		
-		contextPointerArray = 
-			new ContextPointerArray(
-					IContextPointerArray.PointerType.SEES_POINTER, 
-					seesContexts, 
-					contextFiles);
+
+		contextPointerArray = new ContextPointerArray(
+				IContextPointerArray.PointerType.SEES_POINTER, seesContexts,
+				contextFiles);
 		repository.setState(contextPointerArray);
-		
-		accuracyInfo = (IMachineAccuracyInfo) repository.getState(IMachineAccuracyInfo.STATE_TYPE);
-		
+
+		accuracyInfo = (IMachineAccuracyInfo) repository
+				.getState(IMachineAccuracyInfo.STATE_TYPE);
+
 	}
 
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(element, repository, monitor);
 		contextPointerArray = null;
 		accuracyInfo = null;
 	}
-	
-	public static final IModuleType<MachineSeesContextModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineSeesContextModule"); //$NON-NLS-1$
+
+	public static final IModuleType<MachineSeesContextModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineSeesContextModule"); //$NON-NLS-1$
 
 	public static final String SEES_NAME_PREFIX = "SEES";
-	
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 
 		// we need to do everything up to this point
 		// produce a define repository state
-		
+
 		if (contextPointerArray.size() == 0) {
 			contextPointerArray.makeImmutable();
 			return; // nothing to do
 		}
-		
+
 		monitor.subTask(Messages.bind(Messages.progress_MachineSees));
-		
-		boolean accurate = fetchSCContexts(
-				contextPointerArray,
-				monitor);
-		
+
+		boolean accurate = fetchSCContexts(contextPointerArray, monitor);
+
 		contextPointerArray.makeImmutable();
-		
+
 		accurate &= createSeesClauses((ISCMachineFile) target, null);
-		
+
 		if (!accurate)
 			accuracyInfo.setNotAccurate();
-		
-		createInternalContexts(
-				target, 
-				contextPointerArray.getValidContexts(), 
-				repository, 
-				null);
-		
+
+		createInternalContexts(target, contextPointerArray.getValidContexts(),
+				repository, null);
+
 	}
 
 	@Override
-	protected ISCInternalContext getSCInternalContext(IInternalParent target, String elementName) {
+	protected ISCInternalContext getSCInternalContext(IInternalParent target,
+			String elementName) {
 		return ((ISCMachineFile) target).getSCSeenContext(elementName);
 	}
-		
-	private boolean createSeesClauses(ISCMachineFile target, IProgressMonitor monitor)
-			throws RodinDBException {
+
+	private boolean createSeesClauses(ISCMachineFile target,
+			IProgressMonitor monitor) throws RodinDBException {
 
 		boolean accurate = true;
-		
+
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
-			final ISCContextFile scSeenContext = contextPointerArray.getSCContextFile(i);
+			final ISCContextFile scSeenContext = contextPointerArray
+					.getSCContextFile(i);
 			if (scSeenContext == null || contextPointerArray.hasError(i)) {
 				accurate = false;
 			} else {

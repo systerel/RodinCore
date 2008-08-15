@@ -9,16 +9,20 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  * 
  */
-public class MachineEventCopyGuardsModule extends MachineEventCopyLabeledElementsModule {
+public class MachineEventCopyGuardsModule extends
+		MachineEventCopyLabeledElementsModule {
 
 	public static final IModuleType<MachineEventCopyGuardsModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID
@@ -38,6 +42,13 @@ public class MachineEventCopyGuardsModule extends MachineEventCopyLabeledElement
 	 */
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
+	}
+
+	@Override
+	protected ILabelSymbolInfo makeLabelSymbolInfo(String label,
+			IRefinesEvent refinesEvent, String component) {
+		return SymbolFactory.getInstance().makeGuard(label, true, refinesEvent,
+				component);
 	}
 
 }

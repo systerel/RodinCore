@@ -21,35 +21,37 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineEventConvergenceDefModule extends SCFilterModule {
 
-	public static final IModuleType<MachineEventConvergenceDefModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventConvergenceDefModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineEventConvergenceDefModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineEventConvergenceDefModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.ISCFilterModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.sc.state.ISCStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.ISCFilterModule#accept(org.rodinp.core.IRodinElement,
+	 * org.eventb.core.sc.state.ISCStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean accept(
-			IRodinElement element, 
-			ISCStateRepository repository,
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IEvent event = (IEvent) element;
-		
+
 		boolean ok = event.hasConvergence();
-		
+
 		if (!ok) {
-			createProblemMarker(
-					event, 
-					EventBAttributes.CONVERGENCE_ATTRIBUTE, 
+			createProblemMarker(event, EventBAttributes.CONVERGENCE_ATTRIBUTE,
 					GraphProblem.ConvergenceUndefError);
 		}
-		
+
 		return ok;
 	}
 

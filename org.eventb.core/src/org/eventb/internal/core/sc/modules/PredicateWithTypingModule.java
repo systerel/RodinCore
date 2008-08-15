@@ -15,30 +15,31 @@ import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class PredicateWithTypingModule<I extends IInternalElement> extends PredicateModule<I> {
+public abstract class PredicateWithTypingModule<I extends IInternalElement>
+		extends PredicateModule<I> {
 
 	@Override
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
 			ITypeEnvironment inferredEnvironment,
 			ITypeEnvironment typeEnvironment) throws CoreException {
-		
+
 		ITypeEnvironment.IIterator iterator = inferredEnvironment.getIterator();
-		
+
 		while (iterator.hasNext()) {
 			iterator.advance();
 			String name = iterator.getName();
 			Type type = iterator.getType();
-			
-			IIdentifierSymbolInfo symbolInfo = 
-				identifierSymbolTable.getSymbolInfo(name);
-			
+
+			IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
+					.getSymbolInfo(name);
+
 			symbolInfo.setType(type);
-			
+
 		}
-		
+
 		typeEnvironment.addAll(inferredEnvironment);
 		return true;
 	}

@@ -23,56 +23,61 @@ import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public abstract class ExpressionModule<I extends IInternalElement> 
-extends LabeledFormulaModule<Expression, I> {
+public abstract class ExpressionModule<I extends IInternalElement> extends
+		LabeledFormulaModule<Expression, I> {
 
 	@Override
 	protected IAttributeType.String getFormulaAttributeType() {
 		return EventBAttributes.EXPRESSION_ATTRIBUTE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula(int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[], java.util.Collection, org.eventb.core.ast.FormulaFactory)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.internal.core.sc.modules.LabeledFormulaModule#parseFormula
+	 * (int, org.rodinp.core.IInternalElement[], org.eventb.core.ast.Formula[],
+	 * java.util.Collection, org.eventb.core.ast.FormulaFactory)
 	 */
 	@Override
-	protected Expression parseFormula(
-			I formulaElement,
+	protected Expression parseFormula(I formulaElement,
 			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException {
-		
+
 		IExpressionElement expressionElement = (IExpressionElement) formulaElement;
 
 		if (!expressionElement.hasExpressionString()) {
-			createProblemMarker(
-					expressionElement, 
-					EventBAttributes.EXPRESSION_ATTRIBUTE, 
+			createProblemMarker(expressionElement,
+					EventBAttributes.EXPRESSION_ATTRIBUTE,
 					GraphProblem.ExpressionUndefError);
 			return null;
 		}
 		String expressionString = expressionElement.getExpressionString();
-		
+
 		// parse the predicate
-		
+
 		IParseResult parseResult = factory.parseExpression(expressionString);
-		
+
 		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement, getFormulaAttributeType(), parseResult);
-			
+			issueASTProblemMarkers(expressionElement,
+					getFormulaAttributeType(), parseResult);
+
 			return null;
 		}
 		Expression expression = parseResult.getParsedExpression();
-		
+
 		// check legibility of the predicate
 		// (this will only produce a warning on failure)
-		
+
 		IResult legibilityResult = expression.isLegible(freeIdentifierContext);
-		
+
 		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement, getFormulaAttributeType(), legibilityResult);
+			issueASTProblemMarkers(expressionElement,
+					getFormulaAttributeType(), legibilityResult);
 		}
-		
+
 		return expression;
 	}
 

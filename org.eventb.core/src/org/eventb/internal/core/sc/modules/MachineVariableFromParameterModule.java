@@ -23,68 +23,77 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineVariableFromParameterModule extends SCFilterModule {
 
-	public static final IModuleType<MachineVariableFromParameterModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariableFromParameterModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineVariableFromParameterModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineVariableFromParameterModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	private IAbstractEventTable abstractEventTable;
 	private IAbstractMachineInfo abstractMachineInfo;
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.Module#initModule(org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(
-			ISCStateRepository repository, 
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		abstractEventTable = (IAbstractEventTable) 
-			repository.getState(IAbstractEventTable.STATE_TYPE);
-		abstractMachineInfo = (IAbstractMachineInfo)
-			repository.getState(IAbstractMachineInfo.STATE_TYPE);
+		abstractEventTable = (IAbstractEventTable) repository
+				.getState(IAbstractEventTable.STATE_TYPE);
+		abstractMachineInfo = (IAbstractMachineInfo) repository
+				.getState(IAbstractMachineInfo.STATE_TYPE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IAcceptorModule#accept(org.rodinp.core.IRodinElement,
+	 * org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean accept(
-			IRodinElement element, 
-			ISCStateRepository repository,
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		
+
 		IIdentifierElement identifierElement = (IIdentifierElement) element;
-		
+
 		String variableName = identifierElement.getIdentifierString();
-		
+
 		if (abstractEventTable.isParameter(variableName)) {
-			
-			String abstractName = abstractMachineInfo.getAbstractMachine().getComponentName();
-			
-			createProblemMarker(
-					identifierElement, 
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, 
-					GraphProblem.VariableIsParameterInAbstractMachineError, 
-					variableName,
-					abstractName);
-			
+
+			String abstractName = abstractMachineInfo.getAbstractMachine()
+					.getComponentName();
+
+			createProblemMarker(identifierElement,
+					EventBAttributes.IDENTIFIER_ATTRIBUTE,
+					GraphProblem.VariableIsParameterInAbstractMachineError,
+					variableName, abstractName);
+
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.Module#endModule(org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void endModule(
-			ISCStateRepository repository, 
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		abstractEventTable = null;
 		abstractMachineInfo = null;

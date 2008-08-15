@@ -23,59 +23,54 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextModule extends BaseModule {
-	
+
 	private final static int LABEL_SYMTAB_SIZE = 2047;
-	
+
 	private ISCContextFile contextFile;
-	
+
 	private IContextAccuracyInfo accuracyInfo;
-	
+
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
-		
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
+
 		accuracyInfo = new ContextAccuracyInfo();
 
-		final ContextLabelSymbolTable labelSymbolTable = 
-			new ContextLabelSymbolTable(LABEL_SYMTAB_SIZE);
-		
-		repository.setState(labelSymbolTable);	
+		final ContextLabelSymbolTable labelSymbolTable = new ContextLabelSymbolTable(
+				LABEL_SYMTAB_SIZE);
+
+		repository.setState(labelSymbolTable);
 		repository.setState(accuracyInfo);
-		
+
 		super.initModule(element, repository, monitor);
 	}
 
-	public static final IModuleType<ContextModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<ContextModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
-	
+
 	@Override
-	public void process(
-			IRodinElement element, 
-			IInternalParent target, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		contextFile = (ISCContextFile) target;
 		super.process(element, target, repository, monitor);
 	}
-	
+
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 
 		contextFile.setAccuracy(accuracyInfo.isAccurate(), monitor);
-		
+
 		super.endModule(element, repository, monitor);
 	}
-	
+
 }

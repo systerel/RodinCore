@@ -21,24 +21,21 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public abstract class LabeledElementModule extends SCProcessorModule {
 
 	ILabelSymbolTable labelSymbolTable;
-	
+
 	@Override
-	public void initModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void initModule(IRodinElement element,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 		labelSymbolTable = getLabelSymbolTableFromRepository(repository);
 	}
-	
+
 	@Override
-	public void endModule(
-			IRodinElement element, 
-			ISCStateRepository repository, 
+	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		labelSymbolTable = null;
 	}
@@ -47,62 +44,59 @@ public abstract class LabeledElementModule extends SCProcessorModule {
 			ISCStateRepository repository) throws CoreException;
 
 	/**
-	 * Adds a new label symbol to the label symbol table.
-	 * Returns the new symbol info created if the label is not already in use,
-	 * and <code>null</code> otherwise.
+	 * Adds a new label symbol to the label symbol table. Returns the new symbol
+	 * info created if the label is not already in use, and <code>null</code>
+	 * otherwise.
 	 * 
-	 * @param internalElement the labeled element
+	 * @param internalElement
+	 *            the labeled element
 	 * @return the new label symbol
-	 * @throws CoreException if there was a problem with the database or the symbol table
+	 * @throws CoreException
+	 *             if there was a problem with the database or the symbol table
 	 */
-	protected ILabelSymbolInfo fetchLabel(
-			IInternalElement internalElement, 
-			String component,
-			IProgressMonitor monitor) throws CoreException {
-		
+	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
+			String component, IProgressMonitor monitor) throws CoreException {
+
 		ILabeledElement labeledElement = (ILabeledElement) internalElement;
-		
+
 		if (!labeledElement.hasLabel()) {
-			createProblemMarker(
-					labeledElement, 
-					EventBAttributes.LABEL_ATTRIBUTE, 
+			createProblemMarker(labeledElement,
+					EventBAttributes.LABEL_ATTRIBUTE,
 					GraphProblem.LabelUndefError);
 			return null;
 		}
-			
+
 		String label = labeledElement.getLabel();
-		
-		ILabelSymbolInfo newSymbolInfo = createLabelSymbolInfo(label, labeledElement, component);
-		
+
+		ILabelSymbolInfo newSymbolInfo = createLabelSymbolInfo(label,
+				labeledElement, component);
+
 		try {
-			
+
 			labelSymbolTable.putSymbolInfo(newSymbolInfo);
-			
+
 		} catch (CoreException e) {
-			
-			ILabelSymbolInfo symbolInfo = 
-				labelSymbolTable.getSymbolInfo(label);
-			
+
+			ILabelSymbolInfo symbolInfo = labelSymbolTable.getSymbolInfo(label);
+
 			newSymbolInfo.createConflictMarker(this);
-			
-			if(symbolInfo.hasError())
+
+			if (symbolInfo.hasError())
 				return null; // do not produce too many error messages
-			
+
 			symbolInfo.createConflictMarker(this);
-			
+
 			if (symbolInfo.isMutable())
 				symbolInfo.setError();
-			
+
 			return null;
-	
+
 		}
-	
+
 		return newSymbolInfo;
 	}
-	
-	protected abstract ILabelSymbolInfo createLabelSymbolInfo(
-			String symbol, 
-			ILabeledElement element, 
-			String component) throws CoreException;
+
+	protected abstract ILabelSymbolInfo createLabelSymbolInfo(String symbol,
+			ILabeledElement element, String component) throws CoreException;
 
 }

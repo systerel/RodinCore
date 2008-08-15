@@ -15,14 +15,15 @@ import org.rodinp.core.IAttributeType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineTheoremFreeIdentsModule extends
 		MachineFormulaFreeIdentsModule {
 
-	public static final IModuleType<MachineTheoremFreeIdentsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineTheoremFreeIdentsModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineTheoremFreeIdentsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineTheoremFreeIdentsModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

@@ -21,7 +21,7 @@ import org.eventb.core.tool.IStateType;
  */
 public interface IMachineAccuracyInfo extends IAccuracyInfo {
 	
-	final static IStateType<IContextLabelSymbolTable> STATE_TYPE = 
+	final static IStateType<IMachineAccuracyInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".machineAccuracyInfo");
 
 }

@@ -21,6 +21,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
@@ -36,12 +37,10 @@ import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IActionSymbolInfo;
+import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.ActionSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -100,7 +99,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
-			IActionSymbolInfo actionSymbolInfo = (IActionSymbolInfo) labelSymbolTable
+			ILabelSymbolInfo actionSymbolInfo = labelSymbolTable
 					.getSymbolInfo(formulaElements[i].getLabel());
 			if (error[i]) {
 				formulas[i] = null;
@@ -112,8 +111,11 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			actionSymbolInfo.makeImmutable();
 		}
 		if (error[formulaElements.length]) {
-			IRefinesEvent refinesEvent = concreteEventInfo.getRefinesClauses().get(0);
-			createProblemMarker(refinesEvent, EventBAttributes.TARGET_ATTRIBUTE, GraphProblem.ActionDisjointLHSWarining);
+			IRefinesEvent refinesEvent = concreteEventInfo.getRefinesClauses()
+					.get(0);
+			createProblemMarker(refinesEvent,
+					EventBAttributes.TARGET_ATTRIBUTE,
+					GraphProblem.ActionDisjointLHSWarining);
 		}
 	}
 
@@ -122,7 +124,10 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		int last = formulaElements.length;
 		boolean[] error = new boolean[last + 1];
 
-		if (concreteEventInfo.getSymbolInfo().isExtended()
+		if (concreteEventInfo.getSymbolInfo().hasAttribute(
+				EventBAttributes.EXTENDED_ATTRIBUTE)
+				&& concreteEventInfo.getSymbolInfo().getAttributeValue(
+						EventBAttributes.EXTENDED_ATTRIBUTE)
 				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 			IAbstractEventInfo info = concreteEventInfo.getAbstractEventInfos()
 					.get(0);
@@ -186,20 +191,20 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			throws RodinDBException {
 		List<FreeIdentifier> patchLHS = new LinkedList<FreeIdentifier>();
 		List<BoundIdentDecl> patchBound = new LinkedList<BoundIdentDecl>();
-		for (ISymbolInfo symbolInfo : identifierSymbolTable.getParentTable()
-				.getSymbolInfosFromTop()) {
-			if (symbolInfo instanceof IVariableSymbolInfo
+		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
+				.getParentTable().getSymbolInfosFromTop()) {
+			if (symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE
 					&& !symbolInfo.hasError()) {
-				IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-				if (variableSymbolInfo.isConcrete()) {
-					String name = variableSymbolInfo.getSymbol();
+				if (symbolInfo
+						.getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE)) {
+					String name = symbolInfo.getSymbol();
 					Integer a = assignedByAction.get(name);
 					if (a == null || a == -1) {
 						createProblemMarker(event,
 								GraphProblem.InitialisationIncompleteWarning,
 								name);
 						FreeIdentifier identifier = factory.makeFreeIdentifier(
-								name, null, variableSymbolInfo.getType());
+								name, null, symbolInfo.getType());
 						patchLHS.add(identifier);
 						patchBound.add(identifier.asPrimedDecl(factory));
 					}
@@ -279,8 +284,8 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return new ActionSymbolInfo(symbol, element,
-				EventBAttributes.LABEL_ATTRIBUTE, component);
+		return SymbolFactory.getInstance().makeAction(symbol, true, element,
+				component);
 	}
 
 	@Override

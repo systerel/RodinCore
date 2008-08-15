@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
@@ -20,55 +19,54 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.ConstantSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextConstantModule extends IdentifierModule {
 
-	public static final IModuleType<ContextConstantModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextConstantModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<ContextConstantModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextConstantModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement
+	 * , org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor) throws CoreException {
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
+			throws CoreException {
 
 		IContextFile contextFile = (IContextFile) element;
-		
+
 		IConstant[] constants = contextFile.getConstants();
-		
-		if(constants.length == 0)
+
+		if (constants.length == 0)
 			return;
-		
+
 		monitor.subTask(Messages.bind(Messages.progress_ContextConstants));
-		
-		fetchSymbols(
-				constants,
-				target,
-				repository,
-				monitor);
-		
+
+		fetchSymbols(constants, target, repository, monitor);
+
 	}
 
 	@Override
-	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name, IIdentifierElement element) {
+	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
+			IIdentifierElement element) {
 		IEventBFile context = (IEventBFile) element.getParent();
-		return ConstantSymbolInfo.makeConcreteConstantSymbolInfo(
-				name, element, 
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, context.getComponentName());
+		return SymbolFactory.getInstance().makeLocalConstant(name, true,
+				element, context.getComponentName());
 	}
 
 }

@@ -10,64 +10,69 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IParameterSymbolInfo;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class MachineEventCommitIdentsModule extends SCProcessorModule {
 
-	public static final IModuleType<MachineEventCommitIdentsModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventCommitIdentsModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<MachineEventCommitIdentsModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID
+					+ ".machineEventCommitIdentsModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement
+	 * , org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository, 
-			IProgressMonitor monitor)
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		
-		IIdentifierSymbolTable identifierSymbolTable = 
-			(IIdentifierSymbolTable) repository.getState(IIdentifierSymbolTable.STATE_TYPE);
-		
-		for(ISymbolInfo symbolInfo : identifierSymbolTable.getSymbolInfosFromTop()) {
-			
-			IIdentifierSymbolInfo identifierSymbolInfo = (IIdentifierSymbolInfo) symbolInfo;
-			
-			if (identifierSymbolInfo instanceof IParameterSymbolInfo) {
-				
-				Type type = identifierSymbolInfo.getType();
-				
-				if(type == null) { // identifier could not be typed
-					
-					identifierSymbolInfo.createUntypedErrorMarker(this);
-					
-					identifierSymbolInfo.setError();
-					
-				} else if (!identifierSymbolInfo.hasError()) {
-					
-					identifierSymbolInfo.createSCElement(target, null);
+
+		IIdentifierSymbolTable identifierSymbolTable = (IIdentifierSymbolTable) repository
+				.getState(IIdentifierSymbolTable.STATE_TYPE);
+
+		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
+				.getSymbolInfosFromTop()) {
+
+			if (symbolInfo.getSymbolType() == ISCParameter.ELEMENT_TYPE
+					&& symbolInfo.isPersistent()) {
+
+				Type type = symbolInfo.getType();
+
+				if (type == null) { // identifier could not be typed
+
+					symbolInfo.createUntypedErrorMarker(this);
+
+					symbolInfo.setError();
+
+				} else if (!symbolInfo.hasError()) {
+
+					if (target != null) {
+
+						symbolInfo.createSCElement(target, null);
+					}
 				}
-				
-				identifierSymbolInfo.makeImmutable();
+
+				symbolInfo.makeImmutable();
 			}
 		}
 	}

@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
@@ -25,57 +24,55 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.Messages;
-import org.eventb.internal.core.sc.symbolTable.AxiomSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 
-	public static final IModuleType<ContextAxiomModule> MODULE_TYPE = 
-		SCCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomModule"); //$NON-NLS-1$
-	
+	public static final IModuleType<ContextAxiomModule> MODULE_TYPE = SCCore
+			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomModule"); //$NON-NLS-1$
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	private static String AXIOM_NAME_PREFIX = "AXM";
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement, org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.IProcessorModule#process(org.rodinp.core.IRodinElement
+	 * , org.rodinp.core.IInternalParent, org.eventb.core.sc.IStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void process(
-			IRodinElement element, 
-			IInternalParent target,
-			ISCStateRepository repository,
-			IProgressMonitor monitor)
+	public void process(IRodinElement element, IInternalParent target,
+			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		
+
 		monitor.subTask(Messages.bind(Messages.progress_ContextAxioms));
-		
+
 		if (formulaElements.length == 0)
 			return;
-		
-		checkAndType(
-				element.getElementName(),
-				repository,
-				monitor);
-		
+
+		checkAndType(element.getElementName(), repository, monitor);
+
 		saveAxioms((ISCContextFile) target, null);
-		
+
 	}
-	
-	private void saveAxioms(
-			ISCContextFile target, 
-			IProgressMonitor monitor) throws RodinDBException {
-		
+
+	private void saveAxioms(ISCContextFile target, IProgressMonitor monitor)
+			throws RodinDBException {
+
 		int index = 0;
-		
-		for (int i=0; i<formulaElements.length; i++) {
+
+		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
 			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
@@ -90,30 +87,39 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	protected void makeProgress(IProgressMonitor monitor) {
 		monitor.worked(1);
 	}
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.sc.modules.LabeledElementModule#getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eventb.internal.core.sc.modules.LabeledElementModule#
+	 * getLabelSymbolTableFromRepository(org.eventb.core.sc.IStateRepository)
 	 */
 	@Override
 	protected ILabelSymbolTable getLabelSymbolTableFromRepository(
 			ISCStateRepository repository) throws CoreException {
-		return (ILabelSymbolTable) repository.getState(IContextLabelSymbolTable.STATE_TYPE);
+		return (ILabelSymbolTable) repository
+				.getState(IContextLabelSymbolTable.STATE_TYPE);
 	}
 
 	@Override
-	protected ILabelSymbolInfo createLabelSymbolInfo(
-			String symbol, ILabeledElement element, String component) throws CoreException {
-		return new AxiomSymbolInfo(symbol, element, EventBAttributes.LABEL_ATTRIBUTE, component);
+	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
+			ILabeledElement element, String component) throws CoreException {
+		return SymbolFactory.getInstance().makeAxiom(symbol, true,
+				element, component);
 	}
 
 	@Override
-	protected IAxiom[] getFormulaElements(IRodinElement element) throws CoreException {
+	protected IAxiom[] getFormulaElements(IRodinElement element)
+			throws CoreException {
 		IContextFile contextFile = (IContextFile) element;
 		return contextFile.getAxioms();
 	}
 
 	@Override
-	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository) throws CoreException {
-		return (IContextAccuracyInfo) repository.getState(IContextAccuracyInfo.STATE_TYPE);
+	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
+			throws CoreException {
+		return (IContextAccuracyInfo) repository
+				.getState(IContextAccuracyInfo.STATE_TYPE);
 	}
 
 }

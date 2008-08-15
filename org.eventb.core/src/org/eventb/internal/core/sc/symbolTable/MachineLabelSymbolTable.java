@@ -7,15 +7,20 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IStateType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class MachineLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> implements IMachineLabelSymbolTable {
+public class MachineLabelSymbolTable
+		extends
+		SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
+		implements IMachineLabelSymbolTable {
 
 	public MachineLabelSymbolTable(int size) {
 		super(size);

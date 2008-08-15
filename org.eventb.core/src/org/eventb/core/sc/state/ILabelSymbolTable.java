@@ -7,8 +7,10 @@
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.sc.symbolTable.ISymbolTable;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * Common protocol for symbol tables of labeled elements.
@@ -21,10 +23,12 @@ import org.eventb.core.sc.symbolTable.ISymbolTable;
  * @see IEventLabelSymbolTable
  * 
  * @author Stefan Hallerstede
- *
+ * 
  */
-public interface ILabelSymbolTable extends ISymbolTable<ILabelSymbolInfo>, ISCState {
+public interface ILabelSymbolTable
+		extends
+		ISymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>,
+		ISCState {
 
-	// Common protocol for symbol tables of labeled elements
-	
+	// marker class for labeled element symbols
 }

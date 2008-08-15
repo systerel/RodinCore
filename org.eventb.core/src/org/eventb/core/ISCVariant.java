@@ -33,7 +33,7 @@ import org.rodinp.core.RodinCore;
  * @author Stefan Hallerstede
  * 
  */
-public interface ISCVariant extends ITraceableElement, ISCExpressionElement {
+public interface ISCVariant extends ILabeledElement, ITraceableElement, ISCExpressionElement {
 
 	IInternalElementType<ISCVariant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scVariant"); //$NON-NLS-1$

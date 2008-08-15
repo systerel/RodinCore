@@ -7,21 +7,28 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IStateType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
-public class EventLabelSymbolTable extends SymbolTable<ILabelSymbolInfo> implements IEventLabelSymbolTable {
+public class EventLabelSymbolTable
+		extends
+		SymbolTable<ILabeledElement, IInternalElementType<? extends ILabeledElement>, ILabelSymbolInfo>
+		implements IEventLabelSymbolTable {
 
 	public EventLabelSymbolTable(int size) {
 		super(size);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
 	public IStateType<?> getStateType() {

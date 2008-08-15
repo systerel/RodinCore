@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ISCVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -19,9 +20,8 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.IVariableSymbolInfo;
 import org.eventb.core.tool.IModuleType;
-import org.eventb.internal.core.sc.symbolTable.EventParameterSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 
@@ -43,6 +43,7 @@ public class MachineEventWitnessFreeIdentsModule extends
 	FormulaFactory factory;
 
 	private boolean isInitialisation;
+	IConcreteEventInfo concreteEventInfo;
 
 	/*
 	 * (non-Javadoc)
@@ -53,14 +54,13 @@ public class MachineEventWitnessFreeIdentsModule extends
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void initModule(
-			ISCStateRepository repository, 
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
 		factory = FormulaFactory.getDefault();
-		IConcreteEventInfo concreteEventInfo = (IConcreteEventInfo) repository.getState(IConcreteEventInfo.STATE_TYPE);
-		isInitialisation = 
-			concreteEventInfo.isInitialisation();
+		concreteEventInfo = (IConcreteEventInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
+		isInitialisation = concreteEventInfo.isInitialisation();
 	}
 
 	/*
@@ -78,16 +78,19 @@ public class MachineEventWitnessFreeIdentsModule extends
 		FreeIdentifier identifier = primed ? freeIdentifier
 				.withoutPrime(factory) : freeIdentifier;
 		if (!primed) { // abstract local variables are not contained in the
-						// symbol table; fake them!
+			// symbol table; fake them!
 			String label = ((IWitness) element).getLabel();
-			if (label.equals(freeIdentifier.getName()))
-				return new EventParameterSymbolInfo(label, null, null, null);
+			if (label.equals(freeIdentifier.getName())) {
+				return SymbolFactory.getInstance().makeLocalParameter(label,
+						false, null, concreteEventInfo.getEventLabel());
+			}
 		}
 		IIdentifierSymbolInfo symbolInfo = super.getSymbolInfo(element,
 				identifier, monitor);
-		if (symbolInfo != null && symbolInfo instanceof IVariableSymbolInfo) {
-			IVariableSymbolInfo variableSymbolInfo = (IVariableSymbolInfo) symbolInfo;
-			if (!variableSymbolInfo.isConcrete()) {
+		if (symbolInfo != null
+				&& symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {
+			if (!symbolInfo
+					.getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE)) {
 				String label = ((IWitness) element).getLabel();
 				if (primed && !label.equals(freeIdentifier.getName())) {
 					// error: only the primed abstract disappearing variable
@@ -127,6 +130,7 @@ public class MachineEventWitnessFreeIdentsModule extends
 			IProgressMonitor monitor) throws CoreException {
 		super.endModule(repository, monitor);
 		factory = null;
+		concreteEventInfo = null;
 	}
 
 	@Override
