@@ -187,9 +187,9 @@ public class ProofAttemptTests extends AbstractProofTests {
 			pa.commit(true, null);
 			dl.assertDeltas("Unexpected deltas for proof commit",
 					"P[*]: {CHILDREN}\n" + "	m.bpr[*]: {CHILDREN}\n"
-							+ "		PO1[org.eventb.core.prProof][*]: {}\n"
+							+ "		PO1[org.eventb.core.prProof][*]: {ATTRIBUTE}\n"
 							+ "	m.bps[*]: {CHILDREN}\n"
-							+ "		PO1[org.eventb.core.psStatus][*]: {}"
+							+ "		PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}"
 
 			);
 			assertEmptyProof(pc.getProofSkeleton(PO1, ff, null));
@@ -214,11 +214,11 @@ public class ProofAttemptTests extends AbstractProofTests {
 							"Unexpected deltas for proof commit",
 							"P[*]: {CHILDREN}\n"
 									+ "	m.bpr[*]: {CHILDREN}\n"
-									+ "		PO1[org.eventb.core.prProof][*]: {CHILDREN}\n"
+									+ "		PO1[org.eventb.core.prProof][*]: {CHILDREN | ATTRIBUTE}\n"
 									+ "			org.eventb.core.seqprover.trueGoal[org.eventb.core.prRule][+]: {}\n"
 									+ "			p0[org.eventb.core.prPred][+]: {}\n"
 									+ "	m.bps[*]: {CHILDREN}\n"
-									+ "		PO1[org.eventb.core.psStatus][*]: {}");
+									+ "		PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}");
 			assertNonEmptyProof(pc.getProofSkeleton(PO1, ff, null));
 			assertStatus(DISCHARGED_MAX, false, true, pc.getStatus(PO1));
 		} finally {
