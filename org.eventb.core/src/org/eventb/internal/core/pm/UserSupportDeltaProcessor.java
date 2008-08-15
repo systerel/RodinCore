@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import java.util.HashSet;
@@ -126,13 +136,13 @@ public class UserSupportDeltaProcessor {
 
 		// IPSStatus has been changed
 		if (element instanceof IPSStatus) {
+			final IPSStatus psStatus = (IPSStatus) element;
 			int kind = elementChangedDelta.getKind();
 
 			if (kind == IRodinElementDelta.ADDED) {
 				if (UserSupportUtils.DEBUG)
 					UserSupportUtils.debug("IPSStatus changed: "
 							+ element.getElementName() + " is added");
-				IPSStatus psStatus = (IPSStatus) element;
 				toBeAdded.add(psStatus);
 				needRefreshed = true;
 				return;
@@ -143,7 +153,6 @@ public class UserSupportDeltaProcessor {
 					UserSupportUtils.debug("IPSStatus changed: "
 							+ element.getElementName() + " is removed");
 				// Try to reuse
-				IPSStatus psStatus = (IPSStatus) element;
 				IProofState proofState = userSupport.getProofState(psStatus);
 				toBeDeleted.add(proofState);
 				toBeTrashed.add(proofState);
@@ -154,18 +163,15 @@ public class UserSupportDeltaProcessor {
 			if (kind == IRodinElementDelta.CHANGED) {
 
 				int flags = elementChangedDelta.getFlags();
-
 				if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
 					needRefreshed = true;
 				}
 
-				if (((flags & IRodinElementDelta.F_CONTENT) != 0)
-						|| ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0)) {
+				if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 					// Try to reuse
-					IPSStatus psStatus = (IPSStatus) element;
 					IProofState proofState = userSupport.getProofState(psStatus);
 
-					// Do nothing if the state is uninitialised
+					// Do nothing if the state is uninitialized
 					if (proofState.isUninitialised())
 						return;
 
@@ -176,7 +182,7 @@ public class UserSupportDeltaProcessor {
 						return;
 					}
 
-					// if the state is dischared automatically, trash the
+					// if the state is discharged automatically, trash the
 					// current proof and reload the proof from the DB
 					try {
 						if (proofState.isSequentDischarged()) {
