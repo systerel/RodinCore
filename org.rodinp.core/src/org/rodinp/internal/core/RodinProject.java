@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -162,74 +161,6 @@ public class RodinProject extends Openable implements IRodinProject {
 		RodinProject other = (RodinProject) o;
 		return this.project.equals(other.project);
 	}
-
-	@Deprecated
-	public IRodinElement findElement(IPath path) throws RodinDBException {
-		if (path == null || path.isAbsolute()) {
-			throw new RodinDBException(
-				new RodinDBStatus(IRodinDBStatusConstants.INVALID_PATH, path));
-		}
-		
-		// No folders in projects yet.
-		if (path.segmentCount() != 1) {
-			return null;
-		}
-		try {
-			String fileName = path.lastSegment();
-			for (IRodinElement child: getChildren()) {
-				if (child.getElementName().equals(fileName)) {
-					return child;
-				}
-			}
-			return null;
-		} catch (RodinDBException e) {
-			if (e.getStatus().getCode()
-				== IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST) {
-				return null;
-			} else {
-				throw e;
-			}
-		}
-	}
-
-//	/**
-//	 * Returns the project custom preference pool.
-//	 * Project preferences may include custom encoding.
-//	 * @return IEclipsePreferences
-//	 */
-//	public IEclipsePreferences getEclipsePreferences(){
-//		if (!RodinProject.hasRodinNature(this.project)) return null;
-//		// Get cached preferences if exist
-//		RodinDBManager.PerProjectInfo perProjectInfo = RodinDBManager.getRodinDBManager().getPerProjectInfo(this.project, true);
-//		if (perProjectInfo.preferences != null) return perProjectInfo.preferences;
-//		// Init project preferences
-//		IScopeContext context = new ProjectScope(getProject());
-//		final IEclipsePreferences eclipsePreferences = context.getNode(RodinCore.PLUGIN_ID);
-//		updatePreferences(eclipsePreferences);
-//		perProjectInfo.preferences = eclipsePreferences;
-//
-//		// Listen to node removal from parent in order to reset cache (see bug 68993)
-//		IEclipsePreferences.INodeChangeListener nodeListener = new IEclipsePreferences.INodeChangeListener() {
-//			public void added(IEclipsePreferences.NodeChangeEvent event) {
-//				// do nothing
-//			}
-//			public void removed(IEclipsePreferences.NodeChangeEvent event) {
-//				if (event.getChild() == eclipsePreferences) {
-//					RodinDBManager.getRodinDBManager().resetProjectPreferences(RodinProject.this);
-//				}
-//			}
-//		};
-//		((IEclipsePreferences) eclipsePreferences.parent()).addNodeChangeListener(nodeListener);
-//
-//		// Listen to preference changes
-//		IEclipsePreferences.IPreferenceChangeListener preferenceListener = new IEclipsePreferences.IPreferenceChangeListener() {
-//			public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
-//				RodinDBManager.getRodinDBManager().resetProjectOptions(RodinProject.this);
-//			}
-//		};
-//		eclipsePreferences.addPreferenceChangeListener(preferenceListener);
-//		return eclipsePreferences;
-//	}
 
 	@Override
 	public String getElementName() {

@@ -15,7 +15,6 @@ package org.rodinp.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.internal.core.ElementType;
 
@@ -47,24 +46,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 * The element type of all Rodin projects.
 	 */
 	IElementType<IRodinProject> ELEMENT_TYPE = ElementType.PROJECT_ELEMENT_TYPE;
-
-	/**
-	 * Returns the <code>IRodinElement</code> corresponding to the given
-	 * relative path, or <code>null</code> if no such
-	 * <code>IRodinElement</code> is found. The result is an
-	 * <code>RodinFile</code>.
-	 * 
-	 * @param path
-	 *            the given relative path
-	 * @exception RodinDBException
-	 *                if the given path is <code>null</code> or absolute
-	 * @return the <code>IRodinElement</code> corresponding to the given
-	 *         relative path, or <code>null</code> if no such
-	 *         <code>IRodinElement</code> is found
-	 * @deprecated There doesn't seem to be any use for it.
-	 */
-	@Deprecated
-	IRodinElement findElement(IPath path) throws RodinDBException;
 
 	/**
 	 * Returns an array of non-Rodin resources directly contained in this
