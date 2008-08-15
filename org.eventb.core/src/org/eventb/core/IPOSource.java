@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed deprecated method getSourceHandleIdentifier()
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,9 +49,9 @@ public interface IPOSource extends IInternalElement, ITraceableElement {
 	String getRole() throws RodinDBException;
 	
 	/**
-	 * Sets the role description of this soyrce element.
+	 * Sets the role description of this source element.
 	 * 
-	 * @param role the role description of this soyrce element
+	 * @param role the role description of this source element
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -56,6 +59,4 @@ public interface IPOSource extends IInternalElement, ITraceableElement {
 	 */
 	void setRole(String role, IProgressMonitor monitor) throws RodinDBException;
 	
-	@Deprecated
-	String getSourceHandleIdentifier() throws RodinDBException;
 }

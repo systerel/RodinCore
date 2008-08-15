@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed deprecated method getSourceHandleIdentifier()
  *******************************************************************************/
-
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,11 +39,6 @@ public class POSource extends EventBElement implements IPOSource {
 		return getAttributeValue(EventBAttributes.POROLE_ATTRIBUTE);
 	}
 	
-	@Deprecated
-	public String getSourceHandleIdentifier() throws RodinDBException {
-		return getContents();
-	}
-
 	public void setRole(String role, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.POROLE_ATTRIBUTE, role, monitor);
 	}
