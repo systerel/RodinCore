@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.internal.core.DeleteElementsOperation
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - adapted from delete to clear
+ *     Systerel - fixed flag for attribute change
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -139,7 +140,7 @@ public class ClearElementsOperation extends MultiOperation {
 			fileInfo.removeAttribute(e, attr);
 		}
 		if (attrs.length != 0) {
-			delta.changed(e, RodinElementDelta.F_CONTENT);
+			delta.changed(e, RodinElementDelta.F_ATTRIBUTE);
 		}
 	}
 
