@@ -82,8 +82,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a project explorer extension definition. This makes the static checked machine files inside a project visible using a customized contentprovider
-&lt;/p&gt;
+         &lt;p&gt;The following is an example of a project explorer extension definition. This makes the static checked machine files inside a project visible using a customized contentprovider&lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;org.eventb.ui.contentProvider&quot;&gt;
@@ -117,8 +116,8 @@ public class MyProvider extends AbstractRodinContentProvider {
   }
   ISCMachineFile mch = (ISCMachineFile) parentElement;
 
-  ArrayList&lt;TreeNode&lt;?&gt;&gt; list = new ArrayList&lt;TreeNode&lt;?&gt;&gt;();
-  list.add(new TreeNode&lt;ISCVariable&gt;(&quot;Variables&quot;, mch,
+  ArrayList&amp;lt;TreeNode&amp;lt;?&amp;gt;&amp;gt; list = new ArrayList&amp;lt;TreeNode&amp;lt;?&amp;gt;&amp;gt;();
+  list.add(new TreeNode&amp;lt;ISCVariable&amp;gt;(&quot;Variables&quot;, mch,
     ISCVariable.ELEMENT_TYPE));
 
   return list.toArray();
