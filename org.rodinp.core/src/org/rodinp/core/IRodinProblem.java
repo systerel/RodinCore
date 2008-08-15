@@ -15,7 +15,7 @@ package org.rodinp.core;
  * <li>an error code (for plug-ins)
  * <li>a localized error message (for the end-user)
  * </ul>
- * Instances of this class group all this information. By constrast, all
+ * Instances of this class group all this information. By contrast, all
  * information dependent on the place where a problem actually occurs, which is
  * stored in a Rodin problem marker, is not part of this interface.
  * <p>
