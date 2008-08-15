@@ -26,7 +26,7 @@ import org.rodinp.core.basis.RodinFile;
  * It is responsible for running each operation in turn, collecting
  * the errors and merging the corresponding <code>RodinElementDelta</code>s.
  * <p>
- * If several errors occured, they are collected in a multi-status
+ * If several errors occurred, they are collected in a multi-status
  * <code>RodinDBStatus</code>. Otherwise, a simple <code>RodinDBStatus</code>
  * is thrown.
  */
@@ -107,8 +107,8 @@ public abstract class MultiOperation extends RodinDBOperation {
 	/**
 	 * Executes the operation.
 	 *
-	 * @exception RodinDBException if one or several errors occured during the operation.
-	 * If multiple errors occured, the corresponding <code>RodinDBStatus</code> is a
+	 * @exception RodinDBException if one or several errors occurred during the operation.
+	 * If multiple errors occurred, the corresponding <code>RodinDBStatus</code> is a
 	 * multi-status. Otherwise, it is a simple one.
 	 */
 	@Override

@@ -39,7 +39,7 @@ public interface IAutomaticTool {
 	 * @param target The file to be updated
 	 * @param monitor The progress monitor
 	 * @return True if file has changed, false otherwise
-	 * @throws CoreException If some internal problem occured
+	 * @throws CoreException If some internal problem occurred
 	 */
 	public boolean run(IFile source, IFile target, IProgressMonitor monitor) throws CoreException;
 	
@@ -47,14 +47,14 @@ public interface IAutomaticTool {
 	 * A tool responsible for creating a file is also responsible for cleaning it.
 	 * Cleaning occurs on two occasions:
 	 * <ul>
-	 * <li> when a project is explicitly selected for cleaning (e.g. in the Eclpise project menu)</li>
+	 * <li> when a project is explicitly selected for cleaning (e.g. in the Eclipse project menu)</li>
 	 * <li> when a file was deleted all files that can be reached by tool dependencies are cleaned</li>
 	 * </ul>
 	 * @param source The source node from which the target node was created by an extractor,
 	 * 				or <code>null</code> if this is unknown
 	 * @param target to be cleaned
 	 * @param monitor The progress monitor
-	 * @throws CoreException If some internal problem occured
+	 * @throws CoreException If some internal problem occurred
 	 */
 	public void clean(IFile source, IFile target, IProgressMonitor monitor) throws CoreException;
 
