@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.util.MementoTokenizer.java which is
- * 
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.util.MementoTokenizer
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed occurrence count
  *******************************************************************************/
 package org.rodinp.internal.core.util;
 
@@ -15,7 +18,6 @@ import org.rodinp.core.basis.RodinElement;
 public class MementoTokenizer {
 	private static final String EXTERNAL = Character.toString(RodinElement.REM_EXTERNAL);
 	private static final String INTERNAL = Character.toString(RodinElement.REM_INTERNAL);
-	private static final String COUNT = Character.toString(RodinElement.REM_COUNT);
 	private static final String TYPE_SEP = Character.toString(RodinElement.REM_TYPE_SEP);
 
 	private final char[] memento;
@@ -44,8 +46,6 @@ public class MementoTokenizer {
 				return EXTERNAL;
 			case RodinElement.REM_INTERNAL:
 				return INTERNAL;
-			case RodinElement.REM_COUNT:
-				return COUNT;
 			case RodinElement.REM_TYPE_SEP:
 				return TYPE_SEP;
 		}
@@ -58,7 +58,6 @@ public class MementoTokenizer {
 					break;
 				case RodinElement.REM_EXTERNAL:
 				case RodinElement.REM_INTERNAL:
-				case RodinElement.REM_COUNT:
 				case RodinElement.REM_TYPE_SEP:
 					break loop;
 			}

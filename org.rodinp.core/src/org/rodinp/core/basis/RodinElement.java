@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaElement.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.ICompilationUnit
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed occurrence count
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -87,9 +90,6 @@ public abstract class RodinElement extends PlatformObject implements
 	// Start of an internal element name
 	public static final char REM_INTERNAL = '|';
 
-	// Start of an occurrence count 
-	public static final char REM_COUNT = '!';
-
 	// Character used to make a name from an element type
 	public static final char REM_TYPE_SEP = '#';
 	
@@ -126,7 +126,6 @@ public abstract class RodinElement extends PlatformObject implements
 		if (childType.isNamed() && memento.hasMoreTokens()) {
 			String token = memento.nextToken();
 			switch (token.charAt(0)) {
-			case REM_COUNT:
 			case REM_INTERNAL:
 				lookahead = token;
 				childName = "";
@@ -177,7 +176,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Returns true if this handle represents the same Rodin element as the
 	 * given handle. By default, two handles represent the same element if they
 	 * are identical or if they represent the same type of element, have equal
-	 * names, parents, and occurrence counts.
+	 * names and parents.
 	 * 
 	 * <p>
 	 * If a subclass has other requirements for equality, this method must be
@@ -212,7 +211,6 @@ public abstract class RodinElement extends PlatformObject implements
 				case REM_ESCAPE:
 				case REM_EXTERNAL:
 				case REM_INTERNAL:
-				case REM_COUNT:
 				case REM_TYPE_SEP:
 					buffer.append(REM_ESCAPE);
 			}

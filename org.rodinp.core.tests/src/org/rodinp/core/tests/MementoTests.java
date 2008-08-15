@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.tests.model.MementoTests.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.tests.model.MementoTests
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed occurrence count
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -79,13 +82,13 @@ public class MementoTests extends ModifyingResourceTests {
 	}
 
 	/**
-	 * Tests that a project with special chararcters in its name can be
+	 * Tests that a project with special chararacters in its name can be
 	 * persisted and restored using its memento. (regression test for JDT bug
 	 * 47815 Refactoring doesn't work with some project names [refactoring])
 	 */
 	public void testProjectMemento2() {
-		IRodinProject project = getRodinProject("P |!#");
-		assertMemento("/P \\|\\!\\#", project);
+		IRodinProject project = getRodinProject("P |#");
+		assertMemento("/P \\|\\#", project);
 	}
 
 	/**

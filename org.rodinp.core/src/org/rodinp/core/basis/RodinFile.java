@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.core.ICompilationUnit
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - added clear() method
+ *     Systerel - removed occurrence count
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -216,16 +217,6 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 			IInternalElementType<T> type, String name) {
 
 		return ((InternalElementType<T>) type).createInstance(name, this);
-	}
-
-	@Deprecated
-	public final <T extends IInternalElement> T getInternalElement(
-			IInternalElementType<T> type, String name, int occurrenceCount) {
-
-		if (occurrenceCount != 1) {
-			throw new IllegalArgumentException("Occurrence count must be 1");
-		}
-		return getInternalElement(type, name);
 	}
 
 	public final IRodinFile getMutableCopy() {

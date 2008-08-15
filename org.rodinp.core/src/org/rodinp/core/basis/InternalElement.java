@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added clear() method
- *     Systerel - removed deprecated methods getContents() and setContents()
+ *     Systerel - removed deprecated methods and occurrence count
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -211,11 +211,6 @@ public abstract class InternalElement extends RodinElement implements
 	protected IRodinElement getHandleFromMemento(String token,
 			MementoTokenizer memento) {
 		switch (token.charAt(0)) {
-		case REM_COUNT:
-			// just skip the unused count.
-			if (! memento.hasMoreTokens()) return this;
-			if (! memento.hasMoreTokens()) return this;
-			return getHandleFromMemento(memento.nextToken(), memento);
 		case REM_INTERNAL:
 			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
@@ -243,17 +238,6 @@ public abstract class InternalElement extends RodinElement implements
 		return ((InternalElementType<T>) childType).createInstance(childName, this);
 	}
 
-	@Deprecated
-	public <T extends IInternalElement> T getInternalElement(
-			IInternalElementType<T> childType,
-			String childName, int childOccurrenceCount) {
-
-		if (childOccurrenceCount != 1) {
-			throw new IllegalArgumentException("Occurrence count must be 1.");
-		}
-		return getInternalElement(childType, childName);
-	}
-	
 	public final InternalElement getMutableCopy() {
 		final RodinFile file = getRodinFile();
 		if (! file.isSnapshot()) {
@@ -263,11 +247,6 @@ public abstract class InternalElement extends RodinElement implements
 		// Recreate this handle in the mutable version of its file.
 		final IRodinFile newFile = file.getMutableCopy();
 		return (InternalElement) getSimilarElement(newFile);
-	}
-
-	@Deprecated
-	public int getOccurrenceCount() {
-		return 1;
 	}
 
 	@Override

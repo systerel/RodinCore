@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - removed deprecated method createInternalElement()
+ *     Systerel - removed deprecated methods (occurrence count)
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -50,35 +50,6 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	<T extends IInternalElement> T getInternalElement(
 			IInternalElementType<T> childType, String childName);
 
-	/**
-	 * Returns a handle to a child internal element with the given type and
-	 * name.
-	 * <p>
-	 * The given position must always be <code>1</code>.
-	 * </p>
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param childType
-	 *            type of the child element
-	 * @param childName
-	 *            name of the child element
-	 * @param occurrenceCount
-	 *            must be <code>1</code>
-	 * @return the child internal element with the given type and name
-	 * @throws IllegalArgumentException
-	 *             if the given position is not <code>1</code>.
-	 * @deprecated As there are no duplicate elements anymore, the occurrence
-	 *             count has become deprecated.
-	 */
-	@Deprecated
-	<T extends IInternalElement> T getInternalElement(
-			IInternalElementType<T> childType,
-			String childName, int occurrenceCount)
-			throws IllegalArgumentException;
-	
 	/**
 	 * Returns a handle to this element in the snapshot of its Rodin file.
 	 * 

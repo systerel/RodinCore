@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - removed deprecated methods getContents() and setContents()
+ *     Systerel - removed deprecated methods (contents and occurrence count)
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -124,16 +124,6 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 */
 	IInternalElementType<? extends IInternalElement> getElementType();
 	
-	/**
-	 * Returns the occurrence count of this internal element, which is always
-	 * <code>1</code>.
-	 * 
-	 * @return <code>1</code>
-	 * @deprecated Internal elements are now unique.
-	 */
-	@Deprecated
-	int getOccurrenceCount();
-
 	/**
 	 * Returns the Rodin file containing this internal element.
 	 * <p>
