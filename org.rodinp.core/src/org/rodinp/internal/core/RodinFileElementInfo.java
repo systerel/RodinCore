@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added clearChildren() method
+ *     Systerel - removed deprecated methods (contents)
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -91,14 +92,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			System.out.println("--- END OF CLEAR ---");
 		}
 		return children;
-	}
-
-	@Deprecated
-	public synchronized void changeDescendantContents(
-			InternalElement element, String newContents) throws RodinDBException {
-
-		Element domElement = getDOMElementCheckExists(element);
-		buffer.setElementContents(domElement, newContents);
 	}
 
 	private void checkDOMElementForCollision(IInternalParent element)
@@ -282,22 +275,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return super.getChildren();
 	}
 
-	/**
-	 * Returns the contents of an internal element in this file.
-	 * 
-	 * @param element
-	 *            the internal element to look up
-	 * @return the contents of this element (never <code>null</code>)
-	 * @throws RodinDBException 
-	 */
-	@Deprecated
-	public synchronized String getDescendantContents(InternalElement element)
-			throws RodinDBException {
-
-		Element domElement = getDOMElementCheckExists(element);
-		return buffer.getElementContents(domElement);
-	}
-	
 	/**
 	 * Returns the DOM element corresponding to the given Rodin element.
 	 * 

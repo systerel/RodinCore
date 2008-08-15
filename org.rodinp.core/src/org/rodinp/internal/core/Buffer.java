@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added deleteElementChildren() method
+ *     Systerel - removed deprecated methods (contents)
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -372,11 +373,6 @@ public class Buffer {
 		}
 	}
 
-	@Deprecated
-	public String getElementContents(Element domElement) {
-		return domElement.getAttributeNS(null, CONTENTS_ATTRIBUTE);
-	}
-
 	public String getElementName(Element domElement) {
 		return domElement.getAttributeNS(null, NAME_ATTRIBUTE);
 	}
@@ -548,12 +544,6 @@ public class Buffer {
 	public void setAttributeRawValue(Element domElement, String attrName,
 			String newRawValue) {
 		domElement.setAttributeNS(null, attrName, newRawValue);
-		changed = true;
-	}
-	
-	@Deprecated
-	public void setElementContents(Element domElement, String newContents) {
-		domElement.setAttributeNS(null, CONTENTS_ATTRIBUTE, newContents);
 		changed = true;
 	}
 
