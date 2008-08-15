@@ -95,17 +95,6 @@ public abstract class InternalElement extends RodinElement implements
 		return new InternalElementInfo();
 	}
 	
-	@Deprecated
-	public <T extends IInternalElement> T createInternalElement(
-			IInternalElementType<T> type,
-			String childName, IInternalElement nextSibling,
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		T result = getInternalElement(type, childName);
-		result.create(nextSibling, monitor);
-		return result;
-	}
-
 	public void createProblemMarker(IAttributeType.String attributeType,
 			int charStart, int charEnd, IRodinProblem problem, Object... args)
 			throws RodinDBException {

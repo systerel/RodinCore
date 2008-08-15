@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.IJavaProject.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.IJavaProject
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - removed deprecated methods
  *******************************************************************************/
-
 package org.rodinp.core;
 
 import org.eclipse.core.resources.IProject;
@@ -189,48 +191,6 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 //	 */
 //	void setOptions(Map newOptions);
 
-	
-	/**
-	 * Creates and returns a Rodin file in this project with the specified name.
-	 * As a side effect, this project is open if it was not already.
-	 * 
-	 * <p>
-	 * It is possible that a Rodin file with the same name already exists in
-	 * this project. The value of the <code>force</code> parameter effects the
-	 * resolution of such a conflict:
-	 * <ul>
-	 * <li><code>true</code> - in this case the file is created anew with
-	 * empty contents</li>
-	 * <li><code>false</code> - in this case a <code>RodinDBException</code>
-	 * is thrown</li>
-	 * </ul>
-	 * 
-	 * @param name
-	 *            the name of the file to create
-	 * @param force
-	 *            specifies how to handle conflict if a file with the same name
-	 *            already exists
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @exception RodinDBException
-	 *                if the element could not be created. Reasons include:
-	 *                <ul>
-	 *                <li> This Rodin element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                creating an underlying resource
-	 *                <li> The name is not a valid Rodin file name
-	 *                (INVALID_NAME)
-	 *                </ul>
-	 * @return a Rodin file in this project with the given name
-	 * @deprecated Use directly the
-	 *             {@link IRodinFile#create(boolean, IProgressMonitor)} method
-	 *             of the Rodin file.
-	 */
-	@Deprecated
-	IRodinFile createRodinFile(String name, boolean force,
-			IProgressMonitor monitor) throws RodinDBException;
 	
 	/**
 	 * Returns all the Rodin files in this project.

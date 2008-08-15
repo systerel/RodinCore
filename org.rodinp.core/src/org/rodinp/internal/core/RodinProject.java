@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.internal.core.JavaProject
  *     ETH Zurich - adaptation from JDT to Rodin
- *     Systerel - removed occurrence count
+ *     Systerel - removed deprecated methods and occurrence count
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -433,19 +433,6 @@ public class RodinProject extends Openable implements IRodinProject {
 		}
 		IFile file = project.getProject().getFile(fileName);
 		return type.createInstance(file, this);
-	}
-
-	@Deprecated
-	public IRodinFile createRodinFile(String name, boolean force,
-			IProgressMonitor monitor) throws RodinDBException {
-
-		final IRodinFile rodinFile = getRodinFile(name);
-		if (rodinFile == null) {
-			throw newRodinDBException(new RodinDBStatus(
-					IRodinDBStatusConstants.INVALID_NAME, name));
-		}
-		rodinFile.create(force, monitor);
-		return rodinFile;
 	}
 
 	public IRodinFile[] getRodinFiles() throws RodinDBException {

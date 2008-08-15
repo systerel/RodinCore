@@ -10,7 +10,7 @@
  *     		org.eclipse.jdt.core.ICompilationUnit
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - added clear() method
- *     Systerel - removed occurrence count
+ *     Systerel - removed deprecated methods and occurrence count
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -149,17 +149,6 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		return type.createInstance(file, (RodinProject) getParent());
 	}
 
-	@Deprecated
-	public final <T extends IInternalElement> T createInternalElement(
-			IInternalElementType<T> type, String name,
-			IInternalElement nextSibling, IProgressMonitor monitor)
-			throws RodinDBException {
-		
-		T result = getInternalElement(type, name);
-		result.create(nextSibling, monitor);
-		return result;
-	}
-	
 	public final void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteResourceElementsOperation(this, force).runOperation(monitor);
 	}
