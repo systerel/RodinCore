@@ -5,14 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc.symbolTable;
+package org.eventb.core.sc.state;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.state.IIdentifierSymbolTable;
+import org.eventb.internal.core.sc.symbolTable.ISymbolInfo;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 
@@ -48,15 +48,6 @@ public interface IIdentifierSymbolInfo
 	 *             if this symbol is not mutable
 	 */
 	void setType(Type type) throws CoreException;
-
-	/**
-	 * Returns whether this symbol was imported via a pointer to another Event-B
-	 * component.
-	 * 
-	 * @return whether this symbol was imported via a pointer
-	 */
-	@Deprecated
-	boolean isImported();
 
 	/**
 	 * Create a statically checked identifier element for this symbol with the

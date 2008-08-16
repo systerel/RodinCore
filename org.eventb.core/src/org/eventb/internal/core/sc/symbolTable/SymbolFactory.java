@@ -22,9 +22,8 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
-import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
@@ -58,7 +57,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.CarrierSetNameConflictError, symbolInfo
 							.getSymbol());
@@ -66,7 +65,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.CarrierSetNameConflictWarning, symbolInfo
 							.getSymbol());
@@ -83,7 +82,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.CarrierSetNameImportConflictError, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -91,7 +90,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.CarrierSetNameImportConflictWarning,
 					symbolInfo.getSymbol(), symbolInfo.getComponentName());
@@ -121,7 +120,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ConstantNameConflictError, symbolInfo
 							.getSymbol());
@@ -129,7 +128,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ConstantNameConflictWarning, symbolInfo
 							.getSymbol());
@@ -146,7 +145,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ConstantNameImportConflictError, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -154,7 +153,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ConstantNameImportConflictWarning, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -184,7 +183,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.VariableNameConflictError, symbolInfo
 							.getSymbol());
@@ -193,7 +192,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.VariableNameConflictWarning, symbolInfo
 							.getSymbol());
@@ -210,7 +209,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.VariableNameImportConflictError, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -218,7 +217,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.VariableNameImportConflictWarning, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -248,7 +247,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ParameterNameConflictError, symbolInfo
 							.getSymbol());
@@ -256,7 +255,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ParameterNameConflictWarning, symbolInfo
 							.getSymbol());
@@ -273,7 +272,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ParameterNameImportConflictError, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -281,7 +280,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ParameterNameImportConflictWarning, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -297,7 +296,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.AxiomLabelConflictError, symbolInfo
 							.getSymbol());
@@ -305,7 +304,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.AxiomLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -321,7 +320,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.TheoremLabelConflictError, symbolInfo
 							.getSymbol());
@@ -329,7 +328,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.TheoremLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -345,7 +344,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.InvariantLabelConflictError, symbolInfo
 							.getSymbol());
@@ -353,7 +352,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.InvariantLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -369,7 +368,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.EventLabelConflictError, symbolInfo
 							.getSymbol());
@@ -377,7 +376,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.EventLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -393,7 +392,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.GuardLabelConflictError, symbolInfo
 							.getSymbol());
@@ -402,7 +401,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.GuardLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -419,7 +418,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ActionLabelConflictError, symbolInfo
 							.getSymbol());
@@ -427,7 +426,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.ActionLabelConflictWarning, symbolInfo
 							.getSymbol());
@@ -462,7 +461,7 @@ public final class SymbolFactory {
 
 		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.WitnessLabelConflictError, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -470,7 +469,7 @@ public final class SymbolFactory {
 
 		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
 				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getElement(),
+			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
 					symbolInfo.getProblemAttributeType(),
 					GraphProblem.WitnessLabelConflictWarning, symbolInfo
 							.getSymbol(), symbolInfo.getComponentName());
@@ -509,8 +508,9 @@ public final class SymbolFactory {
 			boolean persistent, IInternalElement problemElement,
 			String component) {
 		return new IdentifierSymbolInfo(symbol, ISCCarrierSet.ELEMENT_TYPE,
-				persistent, problemElement, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-				component, localCarrierSetSymbolProblem);
+				persistent, problemElement,
+				EventBAttributes.IDENTIFIER_ATTRIBUTE, component,
+				localCarrierSetSymbolProblem);
 	}
 
 	public IIdentifierSymbolInfo makeImportedCarrierSet(String symbol,

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.eventb.core.sc.symbolTable;
+package org.eventb.internal.core.sc.symbolTable;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
@@ -47,7 +47,8 @@ public interface IAttributedSymbol {
 	 * @param type
 	 *            type of the attribute
 	 * @return the value of the attribute with the given type
-	 * @throws IllegalArgumentException if no attribute value is stored for the attribute type
+	 * @throws IllegalArgumentException
+	 *             if no attribute value is stored for the attribute type
 	 */
 	boolean getAttributeValue(IAttributeType.Boolean type);
 
@@ -61,7 +62,8 @@ public interface IAttributedSymbol {
 	 * @param type
 	 *            type of the attribute
 	 * @return the value of the attribute with the given type
-	 * @throws IllegalArgumentException if no attribute value is stored for the attribute type
+	 * @throws IllegalArgumentException
+	 *             if no attribute value is stored for the attribute type
 	 */
 	IRodinElement getAttributeValue(IAttributeType.Handle type);
 
@@ -75,7 +77,8 @@ public interface IAttributedSymbol {
 	 * @param type
 	 *            type of the attribute
 	 * @return the value of the attribute with the given type
-	 * @throws IllegalArgumentException if no attribute value is stored for the attribute type
+	 * @throws IllegalArgumentException
+	 *             if no attribute value is stored for the attribute type
 	 */
 	int getAttributeValue(IAttributeType.Integer type);
 
@@ -89,7 +92,8 @@ public interface IAttributedSymbol {
 	 * @param type
 	 *            type of the attribute
 	 * @return the value of the attribute with the given type
-	 * @throws IllegalArgumentException if no attribute value is stored for the attribute type
+	 * @throws IllegalArgumentException
+	 *             if no attribute value is stored for the attribute type
 	 */
 	long getAttributeValue(IAttributeType.Long type);
 
@@ -103,7 +107,8 @@ public interface IAttributedSymbol {
 	 * @param type
 	 *            type of the attribute
 	 * @return the value of the attribute with the given type
-	 * @throws IllegalArgumentException if no attribute value is stored for the attribute type
+	 * @throws IllegalArgumentException
+	 *             if no attribute value is stored for the attribute type
 	 */
 	String getAttributeValue(IAttributeType.String type);
 
@@ -115,8 +120,8 @@ public interface IAttributedSymbol {
 	 * 
 	 * @param type
 	 *            type of the attribute
-	 * @return <code>true</code> iff this element carries an attribute with
-	 *         the given type
+	 * @return <code>true</code> iff this element carries an attribute with the
+	 *         given type
 	 */
 	boolean hasAttribute(IAttributeType type);
 
@@ -131,7 +136,8 @@ public interface IAttributedSymbol {
 	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
-	 * @throws IllegalArgumentException if the attribute value for the attribute type cannot be set
+	 * @throws IllegalArgumentException
+	 *             if the attribute value for the attribute type cannot be set
 	 */
 	void setAttributeValue(IAttributeType.Boolean type, boolean newValue);
 
@@ -146,7 +152,8 @@ public interface IAttributedSymbol {
 	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
-	 * @throws IllegalArgumentException if the attribute value for the attribute type cannot be set
+	 * @throws IllegalArgumentException
+	 *             if the attribute value for the attribute type cannot be set
 	 */
 	void setAttributeValue(IAttributeType.Handle type, IRodinElement newValue);
 
@@ -161,7 +168,8 @@ public interface IAttributedSymbol {
 	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
-	 * @throws IllegalArgumentException if the attribute value for the attribute type cannot be set
+	 * @throws IllegalArgumentException
+	 *             if the attribute value for the attribute type cannot be set
 	 */
 	void setAttributeValue(IAttributeType.Integer type, int newValue);
 
@@ -176,7 +184,8 @@ public interface IAttributedSymbol {
 	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
-	 * @throws IllegalArgumentException if the attribute value for the attribute type cannot be set
+	 * @throws IllegalArgumentException
+	 *             if the attribute value for the attribute type cannot be set
 	 */
 	void setAttributeValue(IAttributeType.Long type, long newValue);
 
@@ -191,7 +200,8 @@ public interface IAttributedSymbol {
 	 *            type of the attribute
 	 * @param newValue
 	 *            value to set
-	 * @throws IllegalArgumentException if the attribute value for the attribute type cannot be set
+	 * @throws IllegalArgumentException
+	 *             if the attribute value for the attribute type cannot be set
 	 */
 	void setAttributeValue(IAttributeType.String type, String newValue);
 

@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.core.sc.symbolTable;
+package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -66,11 +66,4 @@ public interface ISymbolTable<E extends IInternalElement, T extends IInternalEle
 	 * Turns all symbols of the symbol table immutable
 	 */
 	void makeImmutable();
-
-	/**
-	 * Returns the number of symbols in this symbol table
-	 * 
-	 * @return the number of symbols in this symbol table
-	 */
-	int size();
 }

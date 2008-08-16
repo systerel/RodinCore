@@ -12,7 +12,7 @@ import org.eventb.core.IEventBFile;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.sc.SCProcessorModule;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 

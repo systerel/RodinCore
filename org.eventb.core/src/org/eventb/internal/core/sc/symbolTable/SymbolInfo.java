@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@ package org.eventb.internal.core.sc.symbolTable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -42,8 +41,9 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	private final P conflictProblem;
 
 	public SymbolInfo(String symbol, T elementType, boolean persistent,
-			IInternalElement problemElement, IAttributeType problemAttributeType,
-			String component, P conflictProblem) {
+			IInternalElement problemElement,
+			IAttributeType problemAttributeType, String component,
+			P conflictProblem) {
 		this.symbol = symbol;
 		this.elementType = elementType;
 		this.persistent = persistent;
@@ -57,10 +57,6 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 
 	protected P getConflictProblem() {
 		return conflictProblem;
-	}
-
-	public IAttributeType getProblemAttributeType() {
-		return problemAttributeType;
 	}
 
 	public T getSymbolType() {
@@ -161,7 +157,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
-	public final IInternalElement getElement() {
+	public final IInternalElement getProblemElement() {
 		return problemElement;
 	}
 
@@ -173,15 +169,16 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 			conflictProblem.createConflictWarning(this, markerDisplay);
 	}
 
-	public final IAttributeType getSourceAttributeType() {
+	public final IAttributeType getProblemAttributeType() {
 		return problemAttributeType;
 	}
-	
+
 	protected void checkPersistence() throws CoreException {
 		if (persistent)
 			return;
 		else
-			throw Util.newCoreException("Attempt to create non-persistent symbol");
+			throw Util
+					.newCoreException("Attempt to create non-persistent symbol");
 	}
 
 }

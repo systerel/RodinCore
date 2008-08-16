@@ -24,9 +24,9 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.state.IContextTable;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
@@ -235,7 +235,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				symbolInfo.setError();
 
 			int pointerIndex = contextPointerArray.getPointerIndex(symbolInfo
-					.getElement().getHandleIdentifier());
+					.getProblemElement().getHandleIdentifier());
 
 			if (pointerIndex != -1)
 				contextPointerArray.setError(pointerIndex);

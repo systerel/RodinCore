@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.sc.symbolTable.IAttributedSymbol;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -20,10 +19,10 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class AttributedSymbol implements IAttributedSymbol {
-	
+
 	public AttributedSymbol() {
 		types = new ArrayList<IAttributeType>(3);
 		values = new ArrayList<Object>(3);
@@ -32,8 +31,9 @@ public class AttributedSymbol implements IAttributedSymbol {
 	private final List<IAttributeType> types;
 	private final List<Object> values;
 
-	protected void createAttributes(IInternalElement element, IProgressMonitor monitor) throws CoreException {
-		for (int i=0; i<types.size(); i++) {
+	protected void createAttributes(IInternalElement element,
+			IProgressMonitor monitor) throws CoreException {
+		for (int i = 0; i < types.size(); i++) {
 			IAttributeType type = types.get(i);
 			Object value = values.get(i);
 			if (type instanceof IAttributeType.Boolean) {
@@ -61,14 +61,16 @@ public class AttributedSymbol implements IAttributedSymbol {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeTypes()
 	 */
 	public IAttributeType[] getAttributeTypes() {
 		return types.toArray(new IAttributeType[types.size()]);
 	}
-	
+
 	private int find(IAttributeType type) {
 		int k = types.indexOf(type);
 		if (k == -1) {
@@ -78,48 +80,72 @@ public class AttributedSymbol implements IAttributedSymbol {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org.rodinp.core.IAttributeType.Boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
+	 * .rodinp.core.IAttributeType.Boolean)
 	 */
 	public boolean getAttributeValue(IAttributeType.Boolean type) {
 		return (Boolean) values.get(find(type));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org.rodinp.core.IAttributeType.Handle)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
+	 * .rodinp.core.IAttributeType.Handle)
 	 */
 	public IRodinElement getAttributeValue(IAttributeType.Handle type) {
 		return (IRodinElement) values.get(find(type));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org.rodinp.core.IAttributeType.Integer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
+	 * .rodinp.core.IAttributeType.Integer)
 	 */
 	public int getAttributeValue(IAttributeType.Integer type) {
 		return (java.lang.Integer) values.get(find(type));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org.rodinp.core.IAttributeType.Long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
+	 * .rodinp.core.IAttributeType.Long)
 	 */
 	public long getAttributeValue(IAttributeType.Long type) {
 		return (java.lang.Long) values.get(find(type));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org.rodinp.core.IAttributeType.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
+	 * .rodinp.core.IAttributeType.String)
 	 */
 	public String getAttributeValue(IAttributeType.String type) {
 		return (String) values.get(find(type));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#hasAttribute(org.rodinp.core.IAttributeType)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#hasAttribute(org.rodinp
+	 * .core.IAttributeType)
 	 */
 	public boolean hasAttribute(IAttributeType type) {
 		return types.contains(type);
 	}
-	
+
 	protected void put(IAttributeType type, Object value) {
 		int k = types.indexOf(type);
 		if (k == -1) {
@@ -130,39 +156,59 @@ public class AttributedSymbol implements IAttributedSymbol {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org.rodinp.core.IAttributeType.Boolean, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
+	 * .rodinp.core.IAttributeType.Boolean, boolean)
 	 */
 	public void setAttributeValue(IAttributeType.Boolean type, boolean newValue) {
 		put(type, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org.rodinp.core.IAttributeType.Handle, org.rodinp.core.IRodinElement)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
+	 * .rodinp.core.IAttributeType.Handle, org.rodinp.core.IRodinElement)
 	 */
-	public void setAttributeValue(IAttributeType.Handle type, IRodinElement newValue) {
+	public void setAttributeValue(IAttributeType.Handle type,
+			IRodinElement newValue) {
 		put(type, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org.rodinp.core.IAttributeType.Integer, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
+	 * .rodinp.core.IAttributeType.Integer, int)
 	 */
 	public void setAttributeValue(IAttributeType.Integer type, int newValue) {
 		put(type, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org.rodinp.core.IAttributeType.Long, long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
+	 * .rodinp.core.IAttributeType.Long, long)
 	 */
 	public void setAttributeValue(IAttributeType.Long type, long newValue) {
 		put(type, newValue);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org.rodinp.core.IAttributeType.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
+	 * .rodinp.core.IAttributeType.String, java.lang.String)
 	 */
-	public void setAttributeValue(IAttributeType.String type,
-			String newValue) {
+	public void setAttributeValue(IAttributeType.String type, String newValue) {
 		put(type, newValue);
 	}
 

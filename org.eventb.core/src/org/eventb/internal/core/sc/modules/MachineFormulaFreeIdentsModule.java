@@ -13,7 +13,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.GraphProblem;
-import org.eventb.core.sc.symbolTable.IIdentifierSymbolInfo;
+import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.rodinp.core.IInternalElement;
 
 /**

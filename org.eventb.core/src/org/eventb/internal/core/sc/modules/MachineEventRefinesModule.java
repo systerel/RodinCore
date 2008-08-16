@@ -29,10 +29,10 @@ import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IAbstractMachineInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IConcreteEventTable;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -206,7 +206,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				if (assignment != null && assignment.equals(other))
 					continue;
 				if (assignment == null || actions.containsValue(other)) {
-					createProblemMarker(symbolInfo.getElement(),
+					createProblemMarker(symbolInfo.getProblemElement(),
 							GraphProblem.EventMergeLabelError);
 					symbolInfo.setError();
 					return true;
@@ -215,7 +215,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				break;
 			}
 		if (!ok) {
-			createProblemMarker(symbolInfo.getElement(),
+			createProblemMarker(symbolInfo.getProblemElement(),
 					GraphProblem.EventMergeActionError);
 			symbolInfo.setError();
 			return true;
@@ -235,7 +235,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				if (type == null || type.equals(newType))
 					continue;
 				if (typeErrors.add(name)) {
-					createProblemMarker(symbolInfo.getElement(),
+					createProblemMarker(symbolInfo.getProblemElement(),
 							GraphProblem.EventMergeVariableTypeError, name);
 					symbolInfo.setError();
 				}
@@ -276,7 +276,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	private void issueRefinementErrorMarker(ILabelSymbolInfo symbolInfo)
 			throws CoreException {
 		if (!symbolInfo.hasError())
-			createProblemMarker(symbolInfo.getElement(),
+			createProblemMarker(symbolInfo.getProblemElement(),
 					GraphProblem.EventRefinementError);
 		symbolInfo.setError();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.sc.symbolTable.ISymbolInfo;
-import org.eventb.core.sc.symbolTable.ISymbolTable;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IInternalElement;
@@ -69,10 +67,6 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 			info.makeImmutable();
 		}
 		super.makeImmutable();
-	}
-
-	public int size() {
-		return tableValues.size();
 	}
 
 	/*

@@ -24,10 +24,10 @@ import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IConcreteEventTable;
 import org.eventb.core.sc.state.IEventAccuracyInfo;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.eventb.core.sc.symbolTable.ILabelSymbolInfo;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
@@ -112,7 +112,7 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
 
-			createRefinesEvent(target, 0, symbolInfo.getElement(),
+			createRefinesEvent(target, 0, symbolInfo.getProblemElement(),
 					abstractEventInfo.getEvent(), monitor);
 		}
 	}
