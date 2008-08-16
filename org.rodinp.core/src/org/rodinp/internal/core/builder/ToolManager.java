@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed deprecated methods
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -16,8 +20,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.builder.IAutomaticTool;
-import org.rodinp.core.builder.IExtractor;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -41,8 +43,6 @@ public class ToolManager {
 	// Local id of the automatic tools extension point of this plugin
 	private static final String AUTO_TOOLS_ID = "autoTools";
 
-	private static final IExtractor[] NO_EXTRACTOR = new IExtractor[0];
-	
 	private static final ExtractorDescription[] NO_EXTRACTOR_DESC = new ExtractorDescription[0];
 	
 	public static ToolManager getToolManager() {
@@ -115,21 +115,6 @@ public class ToolManager {
 		}
 	}
 	
-	@Deprecated
-	public IExtractor[] getExtractors(String inputType) {
-		computeToolList();
-		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
-		if (extractorSet == null || extractorSet.size() == 0) {
-			return NO_EXTRACTOR;
-		}
-		IExtractor[] result = new IExtractor[extractorSet.size()];
-		int idx = 0;
-		for (ExtractorDescription extractorDescription : extractorSet) {
-			result[idx ++] = extractorDescription.getExtractor();
-		}
-		return result;
-	}
-
 	public ExtractorDescription[] getExtractorDescriptions(IFileElementType<?> inputType) {
 		computeToolList();
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
@@ -144,16 +129,6 @@ public class ToolManager {
 		return result;
 	}
 
-	@Deprecated
-	public IAutomaticTool getTool(String id) {
-		computeToolList();
-		ToolDescription toolDesc = tools.get(id);
-		if (toolDesc == null)
-			return null;
-		else	
-			return toolDesc.getTool();
-	}
-	
 	public ToolDescription getToolDescription(String id) {
 		computeToolList();
 		ToolDescription toolDesc = tools.get(id);
