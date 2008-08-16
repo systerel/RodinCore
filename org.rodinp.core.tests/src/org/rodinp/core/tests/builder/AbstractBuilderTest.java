@@ -41,7 +41,6 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 		project.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private String expandFile(IRodinFile file) throws RodinDBException {
 		StringBuilder builder = new StringBuilder(file.getElementName());
 		IRodinElement[] children = file.getChildren();
@@ -71,7 +70,6 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	
 	int index = 0;
 	
-	@SuppressWarnings("deprecation")
 	protected IData createData(IRodinFile parent, String contents) throws RodinDBException {
 		IData data = (IData) parent.getInternalElement(IData.ELEMENT_TYPE,
 				"foo" + index++);

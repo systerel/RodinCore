@@ -35,7 +35,6 @@ public abstract class SCTool implements IExtractor, IAutomaticTool {
 
 	private int index = 0;
 
-	@SuppressWarnings("deprecation")
 	protected void copyDataElements(IRodinFile ctx, IRodinFile target) throws RodinDBException {
 		if (DEBUG)
 			System.out.println("Copying " + ctx.getElementName() +

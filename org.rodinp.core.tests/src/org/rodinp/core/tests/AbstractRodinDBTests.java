@@ -366,7 +366,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that the given element has the given contents.
 	 */
-	@SuppressWarnings("deprecation")
 	public void assertContents(String message, String expectedContents,
 			IInternalElement element) throws RodinDBException {
 		
@@ -377,7 +376,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that changing the contents of the given element works properly.
 	 */
-	@SuppressWarnings("deprecation")
 	public void assertContentsChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
@@ -389,7 +387,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that changing the contents of the given element is rejected.
 	 */
-	@SuppressWarnings("deprecation")
 	public void assertContentsNotChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
