@@ -5,8 +5,8 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IPostTacticRegistry;
 import org.eventb.core.pm.IProvingMode;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 
 @Deprecated
