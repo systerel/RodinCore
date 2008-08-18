@@ -17,6 +17,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
+import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCFilterModule;
@@ -122,7 +124,8 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	private void checkAbstractConvergence(IConcreteEventInfo concreteEventInfo,
 			List<IAbstractEventInfo> abstractEventInfos) throws CoreException {
 
-		getAbstractConvergence(abstractEventInfos);
+		getAbstractConvergence(concreteEventInfo.getRefinesClauses(),
+				abstractEventInfos);
 
 		if (abstractCvg == IConvergenceElement.Convergence.ORDINARY
 				&& concreteCvg != IConvergenceElement.Convergence.ORDINARY) {
@@ -134,22 +137,45 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 		}
 	}
 
-	private void getAbstractConvergence(
+	private void getAbstractConvergence(List<IRefinesEvent> refinesClauses,
 			List<IAbstractEventInfo> abstractEventInfos)
 			throws RodinDBException {
 
 		List<IConvergenceElement.Convergence> convergences = new ArrayList<IConvergenceElement.Convergence>(
-				abstractEventInfos.size());
-		
-		// TODO check that all abstract convergences are equal; if not, warning
+				3);
 
 		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
 
+			if (convergences.contains(abstractEventInfo.getConvergence()))
+				continue;
 			convergences.add(abstractEventInfo.getConvergence());
 
 		}
 
 		abstractCvg = Collections.min(convergences);
+
+		if (convergences.size() > 1) {
+			for (IRefinesEvent refinesEvent : refinesClauses) {
+				String label = refinesEvent.getAbstractEventLabel();
+				for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
+					if (abstractEventInfo.getEventLabel().equals(label)) {
+						Convergence cvg = abstractEventInfo.getConvergence();
+						GraphProblem problem = GraphProblem.FaultyAbstractConvergenceUnchangedWarning;
+						if (abstractCvg != cvg) {
+							if (abstractCvg == Convergence.ANTICIPATED)
+								problem = GraphProblem.FaultyAbstractConvergenceAnticipatedWarning;
+							else if (abstractCvg == Convergence.ORDINARY)
+								problem = GraphProblem.FaultyAbstractConvergenceOrdinaryWarning;
+						}
+						createProblemMarker(
+								refinesEvent,
+								EventBAttributes.TARGET_ATTRIBUTE,
+								problem,
+								label);
+					}
+				}
+			}
+		}
 	}
 
 	private void checkVariantConvergence(IConcreteEventInfo concreteEventInfo)

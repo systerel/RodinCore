@@ -115,6 +115,9 @@ public final class Messages {
     public static String scuser_ConvergentFaultyConvergence;
     public static String scuser_OrdinaryFaultyConvergence;
     public static String scuser_AnticipatedFaultyConvergence;
+	public static String scuser_AbstractConvergenceUnchanged;
+	public static String scuser_AbstractConvergenceOrdinary;
+	public static String scuser_AbstractConvergenceAnticipated;
     public static String scuser_NoConvergentEventButVariant;
     public static String scuser_ConvergentEventNoVariant;
     public static String scuser_InitialisationNotOrdinary;
