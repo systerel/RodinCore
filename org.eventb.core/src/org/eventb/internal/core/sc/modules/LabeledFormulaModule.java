@@ -45,10 +45,11 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 	protected I[] formulaElements;
 	protected F[] formulas;
+	protected ILabelSymbolInfo[] symbolInfos;
 
 	private final static Object[] NO_OBJECT = new Object[0];
 
-	protected IAccuracyInfo accuracyInfo;
+	private IAccuracyInfo accuracyInfo;
 
 	/*
 	 * (non-Javadoc)
@@ -69,6 +70,8 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 		formulaElements = getFormulaElements(element);
 
 		formulas = allocateFormulas(formulaElements.length);
+		
+		symbolInfos = new ILabelSymbolInfo[formulaElements.length];
 	}
 
 	protected abstract IAccuracyInfo getAccuracyInfo(
@@ -91,6 +94,9 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 			IProgressMonitor monitor) throws CoreException {
 		identifierSymbolTable = null;
 		accuracyInfo = null;
+		formulaElements = null;
+		formulas = null;
+		symbolInfos = null;
 		super.endModule(element, repository, monitor);
 	}
 
@@ -344,6 +350,8 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				if (accuracyInfo != null)
 					accuracyInfo.setNotAccurate();
 			}
+			
+			symbolInfos[i] = symbolInfo;
 
 			setImmutable(symbolInfo);
 

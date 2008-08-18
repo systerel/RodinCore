@@ -32,7 +32,7 @@ import org.eventb.core.tool.IStateType;
  * @author Stefan Hallerstede
  * 
  */
-public interface IConcreteEventInfo extends ISCState {
+public interface IConcreteEventInfo extends IAccuracyInfo {
 
 	final static IStateType<IConcreteEventInfo> STATE_TYPE = SCCore
 			.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventInfo");

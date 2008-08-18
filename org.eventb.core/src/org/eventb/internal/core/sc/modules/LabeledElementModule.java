@@ -93,6 +93,8 @@ public abstract class LabeledElementModule extends SCProcessorModule {
 
 		}
 
+		newSymbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
+				labeledElement);
 		return newSymbolInfo;
 	}
 

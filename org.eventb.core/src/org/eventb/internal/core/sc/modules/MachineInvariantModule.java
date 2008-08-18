@@ -28,7 +28,6 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -70,25 +69,8 @@ public class MachineInvariantModule extends
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		saveInvariants((ISCMachineFile) target, offset, monitor);
+		createSCPredicates(target, INVARIANT_NAME_PREFIX, offset, monitor);
 
-	}
-
-	private void saveInvariants(ISCMachineFile target, int offset,
-			IProgressMonitor monitor) throws RodinDBException {
-
-		int index = offset;
-
-		for (int i = 0; i < formulaElements.length; i++) {
-			if (formulas[i] == null)
-				continue;
-			ISCInvariant scInvariant = target
-					.getSCInvariant(INVARIANT_NAME_PREFIX + index++);
-			scInvariant.create(null, monitor);
-			scInvariant.setLabel(formulaElements[i].getLabel(), monitor);
-			scInvariant.setPredicate(formulas[i], null);
-			scInvariant.setSource(formulaElements[i], monitor);
-		}
 	}
 
 	@Override

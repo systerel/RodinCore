@@ -54,18 +54,6 @@ public class MachineEventExtendedModule extends SCFilterModule {
 	private IIdentifierSymbolTable identifierSymbolTable;
 	private IConcreteEventTable concreteEventTable;
 
-	@Override
-	public void initModule(ISCStateRepository repository,
-			IProgressMonitor monitor) throws CoreException {
-		super.initModule(repository, monitor);
-		labelSymbolTable = (ILabelSymbolTable) repository
-				.getState(IMachineLabelSymbolTable.STATE_TYPE);
-		identifierSymbolTable = (IIdentifierSymbolTable) repository
-				.getState(IIdentifierSymbolTable.STATE_TYPE);
-		concreteEventTable = (IConcreteEventTable) repository
-				.getState(IConcreteEventTable.STATE_TYPE);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -188,6 +176,18 @@ public class MachineEventExtendedModule extends SCFilterModule {
 			createProblemMarker(event,
 					GraphProblem.UndeclaredFreeIdentifierError, name);
 		}
+	}
+
+	@Override
+	public void initModule(ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(repository, monitor);
+		labelSymbolTable = (ILabelSymbolTable) repository
+				.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		identifierSymbolTable = (IIdentifierSymbolTable) repository
+				.getState(IIdentifierSymbolTable.STATE_TYPE);
+		concreteEventTable = (IConcreteEventTable) repository
+				.getState(IConcreteEventTable.STATE_TYPE);
 	}
 
 	@Override

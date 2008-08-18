@@ -32,7 +32,6 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -61,6 +60,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private Predicate btrue;
 	private FormulaFactory factory;
+	private IConcreteEventInfo concreteEventInfo;
 
 	private static String WITNESS_NAME_PREFIX = "WIT";
 
@@ -92,16 +92,16 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		checkAndSaveWitnesses((ISCEvent) target, witnessNames, element, monitor);
 
 		if (witnessNames.size() != 0)
-			accuracyInfo.setNotAccurate();
+			concreteEventInfo.setNotAccurate();
 
 		repository.setState(savedLabelSymbolTable);
 
 	}
 
+	// TODO adapt to new symbol table architecture: use createSCPredicates(target, namePrefix, index, monitor)
 	private void checkAndSaveWitnesses(ISCEvent target,
 			Set<String> witnessNames, IRodinElement event,
 			IProgressMonitor monitor) throws RodinDBException {
-
 		Set<String> permissible = new HashSet<String>(witnessNames);
 
 		int index = 0;
@@ -144,6 +144,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		if (target == null)
 			return;
 
+		// TODO save witnesses by means of symbol infos
 		ISCWitness scWitness = target.getSCWitness(name);
 		scWitness.create(null, monitor);
 		scWitness.setLabel(label, monitor);
@@ -239,8 +240,8 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		super.initModule(element, repository, monitor);
 		factory = FormulaFactory.getDefault();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		accuracyInfo = (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
+		concreteEventInfo = (IConcreteEventInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 	/*
@@ -256,7 +257,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		super.endModule(element, repository, monitor);
 		btrue = null;
 		factory = null;
-		accuracyInfo = null;
+		concreteEventInfo = null;
 	}
 
 	@Override
@@ -300,8 +301,8 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
+		return (IAccuracyInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 }

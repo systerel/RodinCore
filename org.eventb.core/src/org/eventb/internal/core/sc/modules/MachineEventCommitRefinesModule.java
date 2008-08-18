@@ -23,7 +23,6 @@ import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAbstractEventTable;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IConcreteEventTable;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
@@ -52,7 +51,6 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 	private IConcreteEventInfo concreteEventInfo;
 	private IConcreteEventTable concreteEventTable;
 	private String eventLabel;
-	private IEventAccuracyInfo accuracyInfo;
 
 	private static String REFINES_NAME_PREFIX = "REF";
 
@@ -74,21 +72,19 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 		ILabelSymbolInfo symbolInfo = labelSymbolTable
 				.getSymbolInfo(eventLabel);
 
-		createRefinesClause((ISCEvent) target, symbolInfo, monitor);
+		createRefinesClause((ISCEvent) target, monitor);
 
 		if (symbolInfo.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
 				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 			boolean accurate = concreteEventInfo.getAbstractEventInfos().get(0)
 					.getEvent().isAccurate();
 			if (!accurate) {
-				accuracyInfo.setNotAccurate();
+				concreteEventInfo.setNotAccurate();
 			}
 		}
 	}
 
-	// TODO replace symbol info parameter by IEvent
-	private void createRefinesClause(ISCEvent target,
-			ILabelSymbolInfo symbolInfo, IProgressMonitor monitor)
+	private void createRefinesClause(ISCEvent target, IProgressMonitor monitor)
 			throws CoreException {
 
 		List<IRefinesEvent> refines = concreteEventInfo.getRefinesClauses();
@@ -112,7 +108,7 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
 
-			createRefinesEvent(target, 0, symbolInfo.getProblemElement(),
+			createRefinesEvent(target, 0, concreteEventInfo.getEvent(),
 					abstractEventInfo.getEvent(), monitor);
 		}
 	}
@@ -159,9 +155,6 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 		abstractEventTable = (IAbstractEventTable) repository
 				.getState(IAbstractEventTable.STATE_TYPE);
 
-		accuracyInfo = (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
-
 	}
 
 	/*
@@ -180,7 +173,6 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 		concreteEventTable = null;
 		concreteEventInfo = null;
 		abstractEventTable = null;
-		accuracyInfo = null;
 	}
 
 }

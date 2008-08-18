@@ -28,7 +28,6 @@ import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.IConcreteEventTable;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -38,14 +37,12 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ConcreteEventInfo;
 import org.eventb.internal.core.sc.ConcreteEventTable;
-import org.eventb.internal.core.sc.EventAccuracyInfo;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.EventLabelSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -115,12 +112,10 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private ISCEvent createSCEvent(ISCMachineFile target, int index,
 			ILabelSymbolInfo symbolInfo, IEvent event, IProgressMonitor monitor)
-			throws RodinDBException {
-		ISCEvent scEvent = target.getSCEvent(EVENT_NAME_PREFIX + index);
-		scEvent.create(null, monitor);
-		scEvent.setLabel(symbolInfo.getSymbol(), monitor);
-		scEvent.setSource(event, monitor);
-		return scEvent;
+			throws CoreException {
+		ILabeledElement scEvent = symbolInfo.createSCElement(target,
+				EVENT_NAME_PREFIX + index, monitor);
+		return (ISCEvent) scEvent;
 	}
 
 	private void processEvents(ISCEvent[] scEvents,
@@ -131,8 +126,9 @@ public class MachineEventModule extends LabeledElementModule {
 
 			if (symbolInfos[i] != null) {
 
-				repository.setState(concreteEventTable
-						.getConcreteEventInfo(symbolInfos[i].getSymbol()));
+				IConcreteEventInfo concreteEventInfo = concreteEventTable
+						.getConcreteEventInfo(symbolInfos[i].getSymbol());
+				repository.setState(concreteEventInfo);
 
 				repository.setState(new StackedIdentifierSymbolTable(
 						identifierSymbolTable, EVENT_IDENT_SYMTAB_SIZE));
@@ -146,9 +142,6 @@ public class MachineEventModule extends LabeledElementModule {
 				addPostValues(eventTypeEnvironment);
 				repository.setTypeEnvironment(eventTypeEnvironment);
 
-				final IEventAccuracyInfo accuracyInfo = new EventAccuracyInfo();
-				repository.setState(accuracyInfo);
-
 				initProcessorModules(events[i], repository, null);
 
 				processModules(events[i], scEvents[i], repository, monitor);
@@ -156,7 +149,8 @@ public class MachineEventModule extends LabeledElementModule {
 				endProcessorModules(events[i], repository, null);
 
 				if (scEvents[i] != null)
-					scEvents[i].setAccuracy(accuracyInfo.isAccurate(), null);
+					scEvents[i].setAccuracy(concreteEventInfo.isAccurate(),
+							null);
 			}
 
 			monitor.worked(1);

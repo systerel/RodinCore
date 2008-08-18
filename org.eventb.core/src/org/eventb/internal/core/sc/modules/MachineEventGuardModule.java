@@ -16,7 +16,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -27,7 +26,6 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -65,8 +63,11 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		if (checkInitialisation(element, monitor))
 			checkAndType(element.getElementName(), repository, monitor);
 
-		saveGuards((ISCEvent) target, monitor);
-
+		if (target != null) {
+			ISCEvent targetEvent = (ISCEvent) target;
+			createSCPredicates(targetEvent, GUARD_NAME_PREFIX, targetEvent
+					.getSCGuards().length, monitor);
+		}
 	}
 
 	private boolean checkInitialisation(IRodinElement event,
@@ -79,25 +80,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 				return false;
 			}
 		return true;
-	}
-
-	private void saveGuards(ISCEvent target, IProgressMonitor monitor)
-			throws RodinDBException {
-
-		if (target == null)
-			return;
-
-		int index = target.getSCGuards().length;
-
-		for (int i = 0; i < formulaElements.length; i++) {
-			if (formulas[i] == null)
-				continue;
-			ISCGuard scGuard = target.getSCGuard(GUARD_NAME_PREFIX + index++);
-			scGuard.create(null, monitor);
-			scGuard.setLabel(formulaElements[i].getLabel(), monitor);
-			scGuard.setPredicate(formulas[i], null);
-			scGuard.setSource(formulaElements[i], monitor);
-		}
 	}
 
 	protected IConcreteEventInfo refinedEventTable;
@@ -256,8 +238,8 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
+		return (IAccuracyInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 }

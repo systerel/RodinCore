@@ -18,13 +18,12 @@ import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.tool.IStateType;
-import org.eventb.internal.core.tool.state.State;
 
 /**
  * @author Stefan Hallerstede
  * 
  */
-public class ConcreteEventInfo extends State implements IConcreteEventInfo {
+public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInfo {
 
 	@Override
 	public String toString() {

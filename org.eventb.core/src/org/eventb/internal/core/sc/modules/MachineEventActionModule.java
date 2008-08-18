@@ -33,7 +33,6 @@ import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
 import org.eventb.core.sc.state.IEventLabelSymbolTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
@@ -78,7 +77,12 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		ISCEvent targetEvent = (ISCEvent) target;
 
 		HashMap<String, Integer> assignedByAction = checkLHS(monitor);
-		commitActions(targetEvent, null);
+
+		if (targetEvent != null) {
+			createSCAssignments(targetEvent, ACTION_NAME_PREFIX, targetEvent
+					.getSCActions().length, monitor);
+		}
+
 		if (isInitialisation)
 			repairInitialisation(targetEvent, element, assignedByAction,
 					monitor);
@@ -160,22 +164,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		return error;
 	}
 
-	private void commitActions(ISCEvent target, IProgressMonitor monitor)
-			throws RodinDBException {
-
-		if (target == null)
-			return;
-
-		int index = target.getSCActions().length;
-
-		for (int i = 0; i < formulaElements.length; i++) {
-			if (formulas[i] == null)
-				continue;
-			saveAction(target, ACTION_NAME_PREFIX + index++, formulaElements[i]
-					.getLabel(), formulas[i], formulaElements[i], monitor);
-		}
-	}
-
 	private void saveAction(ISCEvent target, String dbName, String label,
 			Assignment assignment, IRodinElement source,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -216,7 +204,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			return;
 
 		if (patchLHS.size() > 0) {
-			accuracyInfo.setNotAccurate();
+			concreteEventInfo.setNotAccurate();
 			Predicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS,
 					patchBound, btrue, null);
@@ -298,8 +286,8 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	protected IAccuracyInfo getAccuracyInfo(ISCStateRepository repository)
 			throws CoreException {
-		return (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
+		return (IAccuracyInfo) repository
+				.getState(IConcreteEventInfo.STATE_TYPE);
 	}
 
 }

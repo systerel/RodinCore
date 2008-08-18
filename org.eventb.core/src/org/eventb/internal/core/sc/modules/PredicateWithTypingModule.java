@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
@@ -17,7 +18,7 @@ import org.rodinp.core.IInternalElement;
  * @author Stefan Hallerstede
  * 
  */
-public abstract class PredicateWithTypingModule<I extends IInternalElement>
+public abstract class PredicateWithTypingModule<I extends IPredicateElement>
 		extends PredicateModule<I> {
 
 	@Override

@@ -10,8 +10,10 @@ package org.eventb.internal.core.sc.modules;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
+import org.eventb.core.ISCAssignmentElement;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -20,6 +22,7 @@ import org.eventb.core.ast.IResult;
 import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
@@ -86,6 +89,21 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 	@Override
 	protected Assignment[] allocateFormulas(int size) {
 		return new Assignment[size];
+	}
+
+	protected final int createSCAssignments(IInternalParent target,
+			String namePrefix, int index, IProgressMonitor monitor)
+			throws CoreException {
+		int k = index;
+
+		for (int i = 0; i < formulaElements.length; i++) {
+			if (formulas[i] == null)
+				continue;
+			ISCAssignmentElement scAssnElem = (ISCAssignmentElement) symbolInfos[i]
+					.createSCElement(target, namePrefix + k++, monitor);
+			scAssnElem.setAssignment(formulas[i], null);
+		}
+		return k;
 	}
 
 }

@@ -95,7 +95,6 @@ public class MachineContextClosureModule extends SCProcessorModule {
 						context.getComponentName());
 
 				// repair
-				// TODO delta checking
 				copySeesClause(scMachFile, abstractMachineInfo
 						.getAbstractMachine(), context, count++);
 				context.copy(scMachFile, null, null, false, null);

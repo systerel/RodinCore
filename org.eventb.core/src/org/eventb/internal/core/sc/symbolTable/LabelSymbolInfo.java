@@ -47,7 +47,9 @@ class LabelSymbolInfo
 		checkPersistence();
 		ILabeledElement element = parent.getInternalElement(getSymbolType(),
 				elementName);
+		element.create(null, monitor);
 		createAttributes(element, monitor);
+		element.setLabel(getSymbol(), monitor);
 		return element;
 	}
 

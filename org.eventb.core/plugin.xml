@@ -580,10 +580,6 @@
             class="org.eventb.core.sc.state.IMachineAccuracyInfo"
             id="machineAccuracyInfo"
             name="%machineAccuracyInfo"/>
-      <stateType
-            class="org.eventb.core.sc.state.IEventAccuracyInfo"
-            id="eventAccuracyInfo"
-            name="%eventAccuracyInfo"/>
    </extension>
    <extension
          point="org.eventb.core.pogStateTypes">
@@ -707,7 +703,6 @@
          <scModule id="org.eventb.core.machineEventModule"/>
          <scModule id="org.eventb.core.machineEventCommitRefinesModule"/>
          <scModule id="org.eventb.core.machineEventExtendedModule"/>
-         <scModule id="org.eventb.core.machineEventConvergenceDefModule"/>
          <scModule id="org.eventb.core.machineEventConvergenceModule"/>
          <scModule id="org.eventb.core.machineEventParameterModule"/>
          <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
@@ -921,10 +916,23 @@
          <prereq id="org.eventb.core.machineCommitIdentsModule"/>
       </processorType>
       <filterType
-            class="org.eventb.internal.core.sc.modules.MachineEventConvergenceDefModule"
-            id="machineEventConvergenceDefModule"
-            name="%machineEventConvergenceDefModule"
-            parent="org.eventb.core.machineEventModule"/>
+            class="org.eventb.internal.core.sc.modules.MachineEventRefinesModule"
+            id="machineEventRefinesModule"
+            name="%scMachineEventRefinesModule"
+            parent="org.eventb.core.machineEventModule">
+      </filterType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventConvergenceModule"
+            id="machineEventConvergenceModule"
+            name="%scMachineEventConvergenceModule"
+            parent="org.eventb.core.machineEventModule">
+         <prereq
+               id="org.eventb.core.machineVariantModule">
+         </prereq>
+         <prereq
+               id="org.eventb.core.machineEventRefinesModule">
+         </prereq>
+      </filterType>
    </extension>
    <extension
          name="%scEventModuleTypes"
@@ -937,15 +945,6 @@
          <prereq
                id="org.eventb.core.machineEventRefinesModule">
          </prereq>
-      </processorType>
-      <processorType
-            class="org.eventb.internal.core.sc.modules.MachineEventConvergenceModule"
-            id="machineEventConvergenceModule"
-            name="%scMachineEventConvergenceModule"
-            parent="org.eventb.core.machineEventModule">
-         <prereq id="org.eventb.core.machineEventCommitRefinesModule"/>
-         <prereq id="org.eventb.core.machineVariantModule"/>
-         <prereq id="org.eventb.core.machineEventConvergenceDefModule"/>
       </processorType>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineEventParameterModule"
@@ -1006,13 +1005,6 @@
             id="machineEventActionFreeIdentsModule"
             name="%scMachineEventActionFreeIdentsModule"
             parent="org.eventb.core.machineEventActionModule"/>
-
-      <filterType
-            class="org.eventb.internal.core.sc.modules.MachineEventRefinesModule"
-            id="machineEventRefinesModule"
-            name="%scMachineEventRefinesModule"
-            parent="org.eventb.core.machineEventModule">
-      </filterType>
       <filterType
             class="org.eventb.internal.core.sc.modules.MachineEventExtendedModule"
             id="machineEventExtendedModule"

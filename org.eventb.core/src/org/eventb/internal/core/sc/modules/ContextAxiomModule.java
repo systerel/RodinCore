@@ -13,8 +13,6 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.ISCAxiom;
-import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAccuracyInfo;
 import org.eventb.core.sc.state.IContextAccuracyInfo;
@@ -27,7 +25,6 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -63,24 +60,8 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		saveAxioms((ISCContextFile) target, null);
+		createSCPredicates(target, AXIOM_NAME_PREFIX, 0, monitor);
 
-	}
-
-	private void saveAxioms(ISCContextFile target, IProgressMonitor monitor)
-			throws RodinDBException {
-
-		int index = 0;
-
-		for (int i = 0; i < formulaElements.length; i++) {
-			if (formulas[i] == null)
-				continue;
-			ISCAxiom scAxiom = target.getSCAxiom(AXIOM_NAME_PREFIX + index++);
-			scAxiom.create(null, monitor);
-			scAxiom.setLabel(formulaElements[i].getLabel(), monitor);
-			scAxiom.setPredicate(formulas[i], null);
-			scAxiom.setSource(formulaElements[i], monitor);
-		}
 	}
 
 	@Override

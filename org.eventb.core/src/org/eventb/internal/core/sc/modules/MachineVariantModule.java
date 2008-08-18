@@ -13,8 +13,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.ISCMachineFile;
-import org.eventb.core.ISCVariant;
 import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -73,8 +71,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
 			String component, IProgressMonitor monitor) throws CoreException {
-		return SymbolFactory.getInstance().makeVariant("VARIANT", true,
-				internalElement, component);
+		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance().makeVariant(
+				"VARIANT", true, internalElement, component);
+		symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
+				internalElement);
+		return symbolInfo;
 	}
 
 	/*
@@ -105,25 +106,11 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		saveVariant((ISCMachineFile) target, formulaElements[0], formulas[0],
-				null);
-
-	}
-
-	private void saveVariant(ISCMachineFile target, IVariant variant,
-			Expression expression, IProgressMonitor monitor)
-			throws CoreException {
-
-		variantInfo.setExpression(expression);
+		variantInfo.setExpression(formulas[0]);
 		variantInfo.makeImmutable();
 
-		if (expression == null)
-			return;
+		createSCExpressions(target, VARIANT_NAME_PREFIX, 0, monitor);
 
-		ISCVariant scVariant = target.getSCVariant(VARIANT_NAME_PREFIX);
-		scVariant.create(null, monitor);
-		scVariant.setExpression(expression, null);
-		scVariant.setSource(variant, monitor);
 	}
 
 	@Override

@@ -17,18 +17,18 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
-import org.eventb.core.sc.SCProcessorModule;
+import org.eventb.core.sc.SCFilterModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IConcreteEventInfo;
-import org.eventb.core.sc.state.IEventAccuracyInfo;
+import org.eventb.core.sc.state.IConcreteEventTable;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
+import org.eventb.core.sc.state.IMachineLabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.sc.state.IVariantInfo;
 import org.eventb.core.tool.IModuleType;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -36,59 +36,65 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * 
  */
-public class MachineEventConvergenceModule extends SCProcessorModule {
+public class MachineEventConvergenceModule extends SCFilterModule {
 
 	public static final IModuleType<MachineEventConvergenceModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventConvergenceModule"); //$NON-NLS-1$
 
+	private IVariantInfo variantInfo;
+	private ILabelSymbolTable labelSymbolTable;
+	private IConcreteEventTable concreteEventTable;
+
+	private IConvergenceElement.Convergence concreteCvg;
+	private IConvergenceElement.Convergence abstractCvg;
+
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
-	private IVariantInfo variantInfo;
-	private IConcreteEventInfo concreteEventInfo;
-	private IEventAccuracyInfo accuracyInfo;
-	private String currentEventLabel;
-
-	@Override
-	public void initModule(IRodinElement element,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-		super.initModule(element, repository, monitor);
-		variantInfo = (IVariantInfo) repository
-				.getState(IVariantInfo.STATE_TYPE);
-		concreteEventInfo = (IConcreteEventInfo) repository
-				.getState(IConcreteEventInfo.STATE_TYPE);
-		currentEventLabel = concreteEventInfo.getEventLabel();
-		accuracyInfo = (IEventAccuracyInfo) repository
-				.getState(IEventAccuracyInfo.STATE_TYPE);
-	}
-
-	private IConvergenceElement.Convergence concreteConvergence;
-	private IConvergenceElement.Convergence abstractConvergence;
-
-	public void process(IRodinElement element, IInternalParent target,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.sc.ISCFilterModule#accept(org.rodinp.core.IRodinElement,
+	 * org.eventb.core.sc.state.ISCStateRepository,
+	 * org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
 		IEvent event = (IEvent) element;
 
-		if (!concreteEventInfo.getEvent().hasConvergence()) {
+		if (event.hasConvergence()) {
 
-			assert target == null; // event should have been filtered
-			return;
+			String eventLabel = event.getLabel();
+
+			ILabelSymbolInfo eventSymbolInfo = labelSymbolTable
+					.getSymbolInfo(eventLabel);
+			IConcreteEventInfo eventInfo = concreteEventTable
+					.getConcreteEventInfo(eventLabel);
+
+			checkConvergence(eventInfo, eventSymbolInfo);
+			return true;
+
+		} else {
+			createProblemMarker(event, EventBAttributes.CONVERGENCE_ATTRIBUTE,
+					GraphProblem.ConvergenceUndefError);
+			return false;
 		}
+	}
 
-		abstractConvergence = null;
-		concreteConvergence = concreteEventInfo.getEvent().getConvergence();
+	public void checkConvergence(IConcreteEventInfo concreteEventInfo,
+			ILabelSymbolInfo eventSymbolInfo) throws CoreException {
 
-		assert concreteConvergence != null;
+		abstractCvg = null;
+		concreteCvg = concreteEventInfo.getEvent().getConvergence();
+		IConvergenceElement.Convergence origConcreteCvg = concreteCvg;
 
 		if (concreteEventInfo.isInitialisation()) {
-			if (concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {
-				concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
-				createProblemMarker(event,
+			if (concreteCvg != IConvergenceElement.Convergence.ORDINARY) {
+				concreteCvg = IConvergenceElement.Convergence.ORDINARY;
+				createProblemMarker(concreteEventInfo.getEvent(),
 						EventBAttributes.CONVERGENCE_ATTRIBUTE,
 						GraphProblem.InitialisationNotOrdinaryWarning);
 			}
@@ -99,39 +105,32 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 
 			if (abstractEventInfos.size() != 0) { // not a new event
 
-				checkAbstractConvergence(event, abstractEventInfos, null);
+				checkAbstractConvergence(concreteEventInfo, abstractEventInfos);
 
 			}
-			checkVariantConvergence(event);
+			checkVariantConvergence(concreteEventInfo);
 		}
 
-		if (concreteConvergence != concreteEventInfo.getEvent()
-				.getConvergence())
-			accuracyInfo.setNotAccurate();
+		if (concreteCvg != origConcreteCvg)
+			concreteEventInfo.setNotAccurate();
 
-		saveConvergence((ISCEvent) target, null);
+		eventSymbolInfo.setAttributeValue(
+				EventBAttributes.CONVERGENCE_ATTRIBUTE, concreteCvg.getCode());
+
 	}
 
-	void saveConvergence(ISCEvent target, IProgressMonitor monitor)
-			throws RodinDBException {
-		if (target == null)
-			return;
-		target.setConvergence(concreteConvergence, monitor);
-	}
-
-	private void checkAbstractConvergence(IInternalElement element,
-			List<IAbstractEventInfo> abstractEventInfos,
-			IProgressMonitor monitor) throws CoreException {
+	private void checkAbstractConvergence(IConcreteEventInfo concreteEventInfo,
+			List<IAbstractEventInfo> abstractEventInfos) throws CoreException {
 
 		getAbstractConvergence(abstractEventInfos);
 
-		if (abstractConvergence == IConvergenceElement.Convergence.ORDINARY
-				&& concreteConvergence != IConvergenceElement.Convergence.ORDINARY) {
-			createProblemMarker(element,
+		if (abstractCvg == IConvergenceElement.Convergence.ORDINARY
+				&& concreteCvg != IConvergenceElement.Convergence.ORDINARY) {
+			createProblemMarker(concreteEventInfo.getEvent(),
 					EventBAttributes.CONVERGENCE_ATTRIBUTE,
 					GraphProblem.OrdinaryFaultyConvergenceWarning,
-					currentEventLabel);
-			concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
+					concreteEventInfo.getEventLabel());
+			concreteCvg = IConvergenceElement.Convergence.ORDINARY;
 		}
 	}
 
@@ -141,6 +140,8 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 
 		List<IConvergenceElement.Convergence> convergences = new ArrayList<IConvergenceElement.Convergence>(
 				abstractEventInfos.size());
+		
+		// TODO check that all abstract convergences are equal; if not, warning
 
 		for (IAbstractEventInfo abstractEventInfo : abstractEventInfos) {
 
@@ -148,31 +149,41 @@ public class MachineEventConvergenceModule extends SCProcessorModule {
 
 		}
 
-		abstractConvergence = Collections.min(convergences);
+		abstractCvg = Collections.min(convergences);
 	}
 
-	private void checkVariantConvergence(IInternalElement element)
+	private void checkVariantConvergence(IConcreteEventInfo concreteEventInfo)
 			throws CoreException {
 
 		if (variantInfo.getExpression() == null)
-			if (concreteConvergence == IConvergenceElement.Convergence.CONVERGENT
-					&& abstractConvergence != IConvergenceElement.Convergence.CONVERGENT) {
-				createProblemMarker(element,
+			if (concreteCvg == IConvergenceElement.Convergence.CONVERGENT
+					&& abstractCvg != IConvergenceElement.Convergence.CONVERGENT) {
+				createProblemMarker(concreteEventInfo.getEvent(),
 						EventBAttributes.CONVERGENCE_ATTRIBUTE,
 						GraphProblem.ConvergentEventNoVariantWarning,
-						currentEventLabel);
-				concreteConvergence = IConvergenceElement.Convergence.ORDINARY;
+						concreteEventInfo.getEventLabel());
+				concreteCvg = IConvergenceElement.Convergence.ORDINARY;
 			}
 	}
 
 	@Override
-	public void endModule(IRodinElement element, ISCStateRepository repository,
+	public void initModule(ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		super.initModule(repository, monitor);
+		variantInfo = (IVariantInfo) repository
+				.getState(IVariantInfo.STATE_TYPE);
+		labelSymbolTable = (ILabelSymbolTable) repository
+				.getState(IMachineLabelSymbolTable.STATE_TYPE);
+		concreteEventTable = (IConcreteEventTable) repository
+				.getState(IConcreteEventTable.STATE_TYPE);
+
+	}
+
+	@Override
+	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		variantInfo = null;
-		concreteEventInfo = null;
-		currentEventLabel = null;
-		accuracyInfo = null;
-		super.endModule(element, repository, monitor);
+		super.endModule(repository, monitor);
 	}
 
 }

@@ -10,8 +10,10 @@ package org.eventb.internal.core.sc.modules;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IExpressionElement;
+import org.eventb.core.ISCExpressionElement;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -20,6 +22,7 @@ import org.eventb.core.ast.IResult;
 import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
@@ -84,6 +87,21 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 	@Override
 	protected Expression[] allocateFormulas(int size) {
 		return new Expression[size];
+	}
+	
+	protected final int createSCExpressions(IInternalParent target,
+			String namePrefix, int index, IProgressMonitor monitor)
+			throws CoreException {
+		int k = index;
+
+		for (int i = 0; i < formulaElements.length; i++) {
+			if (formulas[i] == null)
+				continue;
+			ISCExpressionElement scExprElem = (ISCExpressionElement) symbolInfos[i]
+					.createSCElement(target, namePrefix + k++, monitor);
+			scExprElem.setExpression(formulas[i], null);
+		}
+		return k;
 	}
 
 }
