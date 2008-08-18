@@ -93,7 +93,7 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	
 	/**
 	 * Returns whether this element and the given element have the same children
-	 * in the Rodin database. Two elements have the same contents if and only
+	 * in the Rodin database. Two elements have the same children if and only
 	 * if:
 	 * <ul>
 	 * <li>they both don't exist or they both exist and
