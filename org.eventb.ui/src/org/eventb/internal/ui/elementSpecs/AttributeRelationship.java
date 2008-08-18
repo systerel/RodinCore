@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - optimized the equals() method
+ *******************************************************************************/
 package org.eventb.internal.ui.elementSpecs;
 
 import org.rodinp.core.IAttributeType;
@@ -38,8 +50,7 @@ public class AttributeRelationship implements IAttributeRelationship {
 			return false;
 		
 		AttributeRelationship rel = (AttributeRelationship) obj;
-		return id.equals(rel.getID())
-				&& elementType.equals(rel.getElementType());
+		return id.equals(rel.getID()) && elementType == rel.getElementType();
 	}
 
 	public IAttributeType getAttributeType() {
