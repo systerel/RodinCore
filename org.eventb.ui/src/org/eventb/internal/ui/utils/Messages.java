@@ -10,6 +10,7 @@
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - added new options
  *     Systerel - added messages for UIUtils
+ *     Systerel - replaced inherited by extended
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -100,8 +101,8 @@ public class Messages {
 	
 
 	// Attribute Factory
-	public static String attributeFactory_inherited_true;
-	public static String attributeFactory_inherited_false;
+	public static String attributeFactory_extended_true;
+	public static String attributeFactory_extended_false;
 
 	// UIUtils
 	public static String uiUtils_errorOpeningProvingEditor;

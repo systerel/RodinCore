@@ -50,10 +50,10 @@
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory"
             defaultValue="true"
             horizontalExpand="false"
-            id="org.eventb.core.eventInherited"
+            id="org.eventb.core.eventExtended"
             priority="2"
             widget="combo">
       </attributeRel>

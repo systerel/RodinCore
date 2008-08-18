@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added methods for creating elements
+ *     Systerel - replaced inherited by extended
  *******************************************************************************/
 
 package org.eventb.ui.tests.utils;
@@ -139,7 +140,7 @@ public abstract class EventBUITest extends TestCase {
 	
 	/**
 	 * Utility method to create a new event which belong to a machine with the
-	 * given label. The new event is non-inherited.
+	 * given label. The new event is non-extended.
 	 * 
 	 * @param machine
 	 *            a machine file.
@@ -159,7 +160,7 @@ public abstract class EventBUITest extends TestCase {
 	
 	/**
 	 * Utility method to create a new event which belong to a machine with the
-	 * given label. The new event is non-inherited. The internal name of the
+	 * given label. The new event is non-extended. The internal name of the
 	 * event is also specified.
 	 * 
 	 * @param machine
@@ -176,7 +177,7 @@ public abstract class EventBUITest extends TestCase {
 		IEvent event = machine.getEvent(internalName);
 		event.create(null, null);
 		event.setLabel(eventLabel, null);
-		event.setInherited(false, null);
+		event.setExtended(false, null);
 		return event;
 	}
 

@@ -9,8 +9,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used getFreeIndex to factorize several methods
+ *     Systerel - replaced inherited by extended
  *******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;
@@ -40,9 +40,9 @@ import org.rodinp.core.RodinDBException;
 public class EventBUtils {
 
 	/**
-	 * Gets the abstract file of a Rodin File. This is done by checking the
-	 * lists of refines machine clause of the input file. The input is assumed
-	 * to be not <code>null</code>.
+	 * Gets the abstract machine of an event-B machine. This is done by checking
+	 * the lists of refines machine clause of the input file. The input is
+	 * assumed to be not <code>null</code>.
 	 * 
 	 * @param concrete
 	 *            a Rodin File
@@ -101,7 +101,7 @@ public class EventBUtils {
 
 	/**
 	 * Gets the abstract event of an event. This is done by getting the abstract
-	 * component and reading the inherited/refines event attribute.
+	 * component and reading the refines event clause.
 	 * 
 	 * @param event
 	 *            an input event
@@ -112,17 +112,15 @@ public class EventBUtils {
 	 *         <li>If the abstract machine does not exist.
 	 *         <li>If there is no abstract machine corresponding to the file
 	 *         contains the machine containing the input event.
-	 *         <li>If the event is not inherited and there are no refines event
-	 *         attributes.
-	 *         <li>If the event is not inherited and there are more than one
-	 *         refines event attributes.
+	 *         <li>If there is no refines event child.
+	 *         <li>If there are more than one refines event child.
 	 *         <li>if there is no abstract event corresponding to the refines
 	 *         event clause.
 	 *         </ul>
 	 * @see #getAbstractMachine(IMachineFile)
 	 * @throws RodinDBException
 	 *             if some problems occur in getting the abstract file or
-	 *             reading the inherited/refines event attribute.
+	 *             reading the refines event child.
 	 */
 	public static IEvent getAbstractEvent(IEvent event) throws RodinDBException {
 		IRodinElement parent = event.getParent();
@@ -136,10 +134,10 @@ public class EventBUtils {
 		if (!machine.exists())
 			return null;
 
-		if (event.isInherited()) {
-			return getFirstChildOfTypeWithLabel(machine, IEvent.ELEMENT_TYPE,
-					event.getLabel());
-		}
+//		if (event.isExtended()) {
+//			return getFirstChildOfTypeWithLabel(machine, IEvent.ELEMENT_TYPE,
+//					event.getLabel());
+//		}
 
 		IRefinesEvent[] refinesClauses = event.getRefinesClauses();
 		if (refinesClauses.length == 1) {
@@ -150,21 +148,22 @@ public class EventBUtils {
 	}
 
 	/**
-	 * Get the first non inherited abstract event of an input event.
+	 * Get the first non extended abstract event of an input event.
 	 * 
 	 * @param event
 	 *            an event
-	 * @return the first non-inherited abstract event of the input event or
+	 * @return the first non-extended abstract event of the input event or
 	 *         <code>null</code>. Return <code>null</code> in the following
 	 *         cases:
 	 *         <ul>
-	 *         <li>if there is no non-inherited abstract event.
+	 *         <li>if there is no non-extended abstract event.
 	 *         <li>if there is a loop of abstract events.
 	 *         </ul>
 	 * @throws RodinDBException
 	 *             if some problems occur in getting the abstract events.
 	 */
-	public static IEvent getNonInheritedAbstractEvent(IEvent event)
+// TODO update this code for extended events
+	public static IEvent getNonExtendedAbstractEvent(IEvent event)
 			throws RodinDBException {
 		Collection<IEvent> events = new ArrayList<IEvent>();
 		events.add(event);
@@ -173,7 +172,7 @@ public class EventBUtils {
 			if (events.contains(abstractEvent))
 				return null;
 
-			if (!abstractEvent.isInherited())
+			if (!abstractEvent.isExtended())
 				return abstractEvent;
 			events.add(abstractEvent);
 			abstractEvent = getAbstractEvent(abstractEvent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -68,8 +69,8 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_THEOREM_PREDICATE = "</td>";
 		BEGIN_EVENT_LABEL = "<td class=\"eventLabel\" align=\"left\" valign=\"center\">";
 		END_EVENT_LABEL = "</td>";
-		BEGIN_INHERITED = "<td class=\"inherited\" align=\"left\" valign=\"center\">";
-		END_INHERITED = "</td>";
+		BEGIN_EXTENDED = "<td class=\"extended\" align=\"left\" valign=\"center\">";
+		END_EXTENDED = "</td>";
 		BEGIN_CONVERGENCE = "<td class=\"convergence\" align=\"left\" valign=\"center\">";
 		END_CONVERGENCE = "</td>";
 		BEGIN_ABSTRACT_EVENT_LABEL = "<td class=\"abstractEventLabel\" align=\"left\" valign=\"center\">";

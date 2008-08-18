@@ -226,7 +226,7 @@ The Event-B Editor provides a special editing page (Edit page).  This is used fo
          <attribute name="defaultValue" type="string">
             <annotation>
                <documentation>
-                  this specify the default value or prefix of the attribute. For example, default prefix for invariant is &quot;inv&quot; or the default value for inherited attribute is &quot;false&quot;.
+                  this specify the default value or prefix of the attribute. For example, default prefix for invariant is &quot;inv&quot; or the default value for the extended attribute is &quot;false&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -312,10 +312,10 @@ Secondly, the client declares how to display attributes for certain elements wit
             widget=&quot;text&quot;&gt;
       &lt;/attributeRel&gt;
       &lt;attributeRel
-            factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory&quot;
+            factory=&quot;org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory&quot;
             defaultValue=&quot;true&quot;
             horizontalExpand=&quot;false&quot;
-            id=&quot;org.eventb.core.eventInherited&quot;
+            id=&quot;org.eventb.core.eventExtended&quot;
             priority=&quot;2&quot;
             widget=&quot;combo&quot;&gt;
       &lt;/attributeRel&gt;
@@ -337,7 +337,7 @@ Secondly, the client declares how to display attributes for certain elements wit
       &lt;/attributeRel&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
-&lt;p&gt;These declares that event elements has the following attributes: Label, Inherited, Convergence and Comment. More information can be found in the documentation for &lt;samp&gt;attributeRel&lt;/samp&gt; attribute of the extension point.&lt;/p&gt;
+&lt;p&gt;These declares that event elements has the following attributes: Label, Extended, Convergence and Comment. More information can be found in the documentation for &lt;samp&gt;attributeRel&lt;/samp&gt; attribute of the extension point.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -361,7 +361,7 @@ The value of the &lt;samp&gt;factory&lt;/samp&gt; attribute of &lt;samp&gt;attri
 This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in provides a number of exensions for the Edit Page. In particular, clients are suggested to look at the extensions for Event Element&apos;s attributes and their implementations.
 &lt;ul&gt;
 &lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory&lt;/samp&gt;
-&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory&lt;/samp&gt;
+&lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory&lt;/samp&gt;
 &lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory&lt;/samp&gt;
 &lt;li&gt;&lt;samp&gt;org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory&lt;/samp&gt;
 &lt;/ul&gt;
@@ -380,7 +380,7 @@ are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
 &lt;br&gt;
-Contributors: ETH Zurich
+Contributors: ETH Zurich, Systerel
       </documentation>
    </annotation>
 

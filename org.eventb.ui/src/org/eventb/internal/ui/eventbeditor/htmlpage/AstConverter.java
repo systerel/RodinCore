@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -106,10 +107,10 @@ public abstract class AstConverter {
 	protected String END_ABSTRACT_EVENT_LABEL = "";
 	protected String BEGIN_ABSTRACT_EVENT_LABEL_SEPARATOR = null;
 	protected String END_ABSTRACT_EVENT_LABEL_SEPARATOR = null;
-	protected String BEGIN_INHERITED = "";
-	protected String END_INHERITED = "";
-	protected String BEGIN_INHERITED_SEPARATOR = null;
-	protected String END_INHERITED_SEPARATOR = null;
+	protected String BEGIN_EXTENDED = "";
+	protected String END_EXTENDED = "";
+	protected String BEGIN_EXTENDED_SEPARATOR = null;
+	protected String END_EXTENDED_SEPARATOR = null;
 	protected String BEGIN_CONVERGENCE = "";
 	protected String END_CONVERGENCE = "";
 	protected String BEGIN_CONVERGENCE_SEPARATOR = null;
@@ -578,9 +579,9 @@ public abstract class AstConverter {
 				}
 				
 				try {
-					if (evt.isInherited()) {
+					if (evt.isExtended()) {
 						beginLevel2();
-						appendInherited();
+						appendExtended();
 						endLevel2();
 						continue;
 					}
@@ -970,9 +971,9 @@ public abstract class AstConverter {
 				END_COMMENT_SEPARATOR);
 	}
 
-	private void appendInherited() {
-		append("inherited", BEGIN_INHERITED, END_INHERITED,
-				BEGIN_INHERITED_SEPARATOR, END_INHERITED_SEPARATOR);
+	private void appendExtended() {
+		append("extended", BEGIN_EXTENDED, END_EXTENDED,
+				BEGIN_EXTENDED_SEPARATOR, END_EXTENDED_SEPARATOR);
 	}
 
 	private void appendConvergence(Convergence convergence) {

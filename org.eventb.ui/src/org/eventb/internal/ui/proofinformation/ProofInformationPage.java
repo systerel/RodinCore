@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     Systerel - replaced variable by parameter
  ******************************************************************************/
 package org.eventb.internal.ui.proofinformation;
 
@@ -34,8 +35,8 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IParameter;
 import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
@@ -191,20 +192,20 @@ public class ProofInformationPage extends Page implements
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, evt.getLabel()));
 					formBuilder.append(":</li>");
-					IVariable[] lvars = evt.getVariables();
+					IParameter[] params = evt.getParameters();
 					IGuard[] guards = evt.getGuards();
 					IAction[] actions = evt.getActions();
 
-					if (lvars.length != 0) {
+					if (params.length != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>ANY</b> ");
 						String sep = "";
-						for (IVariable var : lvars) {
+						for (IParameter param : params) {
 							formBuilder.append(sep);
 							sep = ", ";
-							formBuilder.append(UIUtils.makeHyperlink(var
-									.getHandleIdentifier(), var
+							formBuilder.append(UIUtils.makeHyperlink(param
+									.getHandleIdentifier(), param
 									.getIdentifierString()));
 						}
 						formBuilder.append(" <b>WHERE</b></li>");

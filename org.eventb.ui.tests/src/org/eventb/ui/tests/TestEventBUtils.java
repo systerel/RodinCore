@@ -9,16 +9,18 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - modified expected results after getFreeIndex modification
+ *     Systerel - replaced inherited by extended
  *******************************************************************************/
-
 package org.eventb.ui.tests;
 
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -27,172 +29,211 @@ import org.junit.Test;
  */
 public class TestEventBUtils extends EventBUITest {
 
-	/**
-	 * Tests for {@link EventBUtils#getAbstractMachine(IMachineFile)}.
-	 */
-	@Test
-	public void testGetAbstractMachine() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
-
-		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
-		m1.save(null, true);
-		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
-
-		// Testing that m1 refines m0
-		IMachineFile abstractMachine = EventBUtils.getAbstractMachine(m1);
-		assertNull(
-				"There should not be any abstract machine at the moment for m1", //$NON-NLS-1$
-				abstractMachine);
-
-		IRefinesMachine refinesMachineClause = createRefinesMachineClause(m1,
-				"m0"); //$NON-NLS-1$
-		assertNotNull("The refines machine clause must not be null ", //$NON-NLS-1$
-				refinesMachineClause);
-
-		abstractMachine = EventBUtils.getAbstractMachine(m1);
-		assertNotNull("The abstract machine should not be null ", //$NON-NLS-1$
-				abstractMachine);
-		assertEquals("Incorrect name of the abstract machine ", "m0", //$NON-NLS-1$ //$NON-NLS-2$
-				abstractMachine.getBareName());
-
-		// Testing that m0 refines m0 (i.e. a machine set to refine itself :-D).
-		abstractMachine = EventBUtils.getAbstractMachine(m0);
-		assertNull(
-				"There should not be any abstract machine at the moment for m0", //$NON-NLS-1$
-				abstractMachine);
-
-		refinesMachineClause = createRefinesMachineClause(m0, "m0"); //$NON-NLS-1$
-		assertNotNull("The refines machine clause must not be null ", //$NON-NLS-1$
-				refinesMachineClause);
-
-		abstractMachine = EventBUtils.getAbstractMachine(m0);
-		assertNotNull("The abstract machine should not be null ", //$NON-NLS-1$
-				abstractMachine);
-		assertEquals("Incorrect name of the abstract machine ", "m0", //$NON-NLS-1$ //$NON-NLS-2$
-				abstractMachine.getBareName());
-
-		// Test if m0 refines m2 (m2 does not exist).
-		refinesMachineClause.setAbstractMachineName("m2", //$NON-NLS-1$
-				null);
-		abstractMachine = EventBUtils.getAbstractMachine(m0);
-		assertNotNull("The abstract machine should not be null ", //$NON-NLS-1$
-				abstractMachine);
-		assertEquals("Incorrect name of the abstract machine ", "m2", //$NON-NLS-1$ //$NON-NLS-2$
-				abstractMachine.getBareName());
-
-		// Test if there are more than one Refines Event clause
-		refinesMachineClause = createRefinesMachineClause(m0, "m1"); //$NON-NLS-1$
-		assertNotNull("The refines machine clause must not be null ", //$NON-NLS-1$
-				refinesMachineClause);
-
-		abstractMachine = EventBUtils.getAbstractMachine(m0);
-		assertNull("There should be no abstract machine ", abstractMachine); //$NON-NLS-1$
-
+	private void assertAbstractMachine(IMachineFile machine,
+			IMachineFile expected) throws RodinDBException {
+		final IMachineFile actual = EventBUtils.getAbstractMachine(machine);
+		assertEquals("Unexpected abstract machine", //$NON-NLS-1$
+				expected, actual);
 	}
 
 	/**
-	 * Tests for {@link EventBUtils#getAbstractEvent(IEvent)}.
+	 * Ensures that a machine without a refines clause has no abstract machine.
+	 * 
+	 * @see EventBUtils#getAbstractMachine(IMachineFile)
 	 */
 	@Test
-	public void testGetAbstractEvent() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+	public void testAbstractMachineNoRefinesClause() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
 		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
+		assertAbstractMachine(m0, null);
+	}
 
-		IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
-		assertNotNull(
-				"The event m0Event should have been created successfully", //$NON-NLS-1$
-				m0Event);
-
-		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+	/**
+	 * Ensures that a machine with a refines clause has an abstract machine.
+	 * 
+	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 */
+	@Test
+	public void testAbstractMachineWithRefinesClause() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		m1.save(null, true);
-		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
+		assertAbstractMachine(m1, m0);
+	}
 
-		IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
-		assertNotNull(
-				"The event m1Event should have been created successfully", //$NON-NLS-1$
-				m1Event);
+	/**
+	 * Ensures that a machine with a refines clause has an abstract machine,
+	 * even when the file doesn't exist.
+	 * 
+	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 */
+	@Test
+	public void testAbstractMachineWithRefinesClauseToInexistent()
+			throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		createRefinesMachineClause(m0, "inexistent"); //$NON-NLS-1$
+		m0.save(null, true);
+		final String expName = EventBPlugin.getMachineFileName("inexistent"); //$NON-NLS-1$
+		final IMachineFile expected = (IMachineFile) rodinProject
+				.getRodinFile(expName);
+		assertAbstractMachine(m0, expected);
+	}
 
-		// Test for having no abstract event for m1Event because m1 does not
-		// have refines machine clause.
-		IEvent abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNull(
-				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
+	/**
+	 * Ensures that a machine with a refines clause has an abstract machine that
+	 * can be itself.
+	 * 
+	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 */
+	@Test
+	public void testAbstractMachineWithRefinesClauseToItself() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		createRefinesMachineClause(m0, "m0"); //$NON-NLS-1$
+		m0.save(null, true);
+		assertAbstractMachine(m0, m0);
+	}
 
-		// Test for having no abstract event for m1Event because m1Event is
-		// non-inherited and having no refines event clause.
-		IRefinesMachine refinesMachine = createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
-		assertNotNull(
-				"The refines machine clause should be created successfully", //$NON-NLS-1$
-				refinesMachine);
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNull(
-				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
+	/**
+	 * Ensures that a machine with two refines clauses has no abstract machine.
+	 * 
+	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 */
+	@Test
+	public void testAbstractMachineTwoRefinesClause() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		m1.save(null, true);
+		final IMachineFile m2 = createMachine("m2"); //$NON-NLS-1$
+		createRefinesMachineClause(m2, "m0"); //$NON-NLS-1$
+		createRefinesMachineClause(m2, "m1"); //$NON-NLS-1$
+		m2.save(null, true);
+		assertAbstractMachine(m2, null);
+	}
 
-		// Test for having abstract event since m1Event is inherited and m0Event
-		// having the same label as m1Event.
-		m1Event.setInherited(true, null);
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNotNull(
-				"There should be an abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
-		assertEquals("Incorrect abstract machine ", m0, abstractEvent //$NON-NLS-1$
-				.getParent());
-		String label = abstractEvent.getLabel();
-		assertEquals("Incorrect abstract event label (inherited)", "event", //$NON-NLS-1$ //$NON-NLS-2$
-				label);
+	private void assertAbstractEvent(IEvent event, IEvent expected)
+			throws RodinDBException {
+		final IEvent actual = EventBUtils.getAbstractEvent(event);
+		assertEquals("Unexpected abstract event", //$NON-NLS-1$
+				expected, actual);
+	}
 
-		// Test for having no abstract event because m1Event is inherited and
-		// there is no corresponding event in the m0.
-		m0Event.setLabel("abstract_event", null); //$NON-NLS-1$
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNull(
-				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
+	/**
+	 * Ensures that an event has no abstraction when its machine has no refines
+	 * machine clause (even if the event has a refines event clause).
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventNoRefinesMachine() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
+		createRefinesEventClause(m0Event, "event"); //$NON-NLS-1$
+		m0.save(null, true);
+		assertAbstractEvent(m0Event, null);
+	}
 
-		// Test for having abstract event because m1Event is non-inherited and
-		// having refines event clause point to an existing event in m0.
-		m1Event.setInherited(false, null);
+	/**
+	 * Ensures that an event has no abstraction when its machine has a refines
+	 * machine clause, but pointing to an inexistent machine (even if the event
+	 * has a refines event clause).
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventNoAbstractMachine() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		createRefinesMachineClause(m0, "inexistent"); //$NON-NLS-1$
+		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
+		createRefinesEventClause(m0Event, "event"); //$NON-NLS-1$
+		m0.save(null, true);
+		assertAbstractEvent(m0Event, null);
+	}
+
+	/**
+	 * Ensures that an event has no abstraction when its machine has a refines
+	 * machine clause, but the event has no refines event clause.
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventNoRefinesEvent() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		createEvent(m0, "event"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
+		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
+		m1.save(null, true);
+		assertAbstractEvent(m1Event, null);
+	}
+
+	/**
+	 * Ensures that an event has no abstraction when its machine has a refines
+	 * machine clause and the event has a refines event clause to an event that
+	 * doesn't exist in the abstract machine.
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventInexistent() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
+		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
+		createRefinesEventClause(m1Event, "event"); //$NON-NLS-1$
+		m1.save(null, true);
+		assertAbstractEvent(m1Event, null);
+	}
+
+	/**
+	 * Ensures that an event has an abstraction when its machine has a refines
+	 * machine clause and the event has a refines event clause to an event of
+	 * the abstract machine with the same name.
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventSameName() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
+		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
+		createRefinesEventClause(m1Event, "event"); //$NON-NLS-1$
+		m1.save(null, true);
+		assertAbstractEvent(m1Event, m0Event);
+	}
+
+	/**
+	 * Ensures that an event has an abstraction when its machine has a refines
+	 * machine clause and the event has a refines event clause to an event of
+	 * the abstract machine with a different name.
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
+	 */
+	@Test
+	public void testAbstractEventDifferentName() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IEvent m0Event = createEvent(m0, "abstract_event"); //$NON-NLS-1$
+		m0.save(null, true);
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
+		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m1Event, "abstract_event"); //$NON-NLS-1$
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNotNull(
-				"There should be an abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
-		assertEquals("Incorrect abstract machine ", m0, abstractEvent //$NON-NLS-1$
-				.getParent());
-
-		label = abstractEvent.getLabel();
-		assertEquals("Incorrect abstract event label (non-inherited)", //$NON-NLS-1$
-				"abstract_event", label); //$NON-NLS-1$
-
-		// Test for having no abstract event because m1Event is non-inherited
-		// and
-		// having refines event clause point to an non-existing event in m0.
-		m0Event.setLabel("event", null); //$NON-NLS-1$
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNull(
-				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
-
-		// Test for having no abstract event because m1 refines a non-existing
-		// machine m2.
-		refinesMachine.setAbstractMachineName("m2", //$NON-NLS-1$
-				null);
-		abstractEvent = EventBUtils.getAbstractEvent(m1Event);
-		assertNull(
-				"There should be no abstract event corresponding to m1Event", //$NON-NLS-1$
-				abstractEvent);
+		m1.save(null, true);
+		assertAbstractEvent(m1Event, m0Event);
 	}
 
 	/**
-	 * Tests for {@link EventBUtils#getNonInheritedAbstractEvent(IEvent)}.
+	 * Tests for {@link EventBUtils#getNonExtendedAbstractEvent(IEvent)}.
 	 */
 	@Test
-	public void testGetNonInheritedAbstractEvent() throws Exception {
+	public void testGetNonExtendedAbstractEvent() throws Exception {
 		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
 		m0.save(null, true);
 		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
@@ -220,65 +261,65 @@ public class TestEventBUtils extends EventBUITest {
 				"The event m1Event should have been created successfully", //$NON-NLS-1$
 				m2Event);
 
-		// Test for having no non-inherited abstract event because m2Event does
+		// Test for having no non-extended abstract event because m2Event does
 		// not have any abstract event.
-		IEvent nonInheritedAbstractEvent = EventBUtils
-				.getNonInheritedAbstractEvent(m2Event);
+		IEvent nonExtendedAbstractEvent = EventBUtils
+				.getNonExtendedAbstractEvent(m2Event);
 		assertNull(
-				"There should be no non-inherited abstract event for m2Event", //$NON-NLS-1$
-				nonInheritedAbstractEvent);
+				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
+				nonExtendedAbstractEvent);
 
-		// Testing for having non-inherited abstract event because m2 refines m1
-		// and m2Event refines m1Event, and m1Event is non-inherited.
+		// Testing for having non-extended abstract event because m2 refines m1
+		// and m2Event refines m1Event, and m1Event is non-extended.
 		// Make m2 refines m1.
 		createRefinesMachineClause(m2, "m1"); //$NON-NLS-1$
 
-		// m2Event is inherited, i.e m2Event refines m1Event.
-		m2Event.setInherited(true, null);
-		nonInheritedAbstractEvent = EventBUtils
-				.getNonInheritedAbstractEvent(m2Event);
+		// m2Event is extended, i.e m2Event refines m1Event.
+		m2Event.setExtended(true, null);
+		nonExtendedAbstractEvent = EventBUtils
+				.getNonExtendedAbstractEvent(m2Event);
 		assertNotNull(
-				"There should be a non-inherited abstract event for m2Event", //$NON-NLS-1$
-				nonInheritedAbstractEvent);
-		assertEquals("Incorrect non-inherited abstract", m1Event, //$NON-NLS-1$
-				nonInheritedAbstractEvent);
+				"There should be a non-extended abstract event for m2Event", //$NON-NLS-1$
+				nonExtendedAbstractEvent);
+		assertEquals("Incorrect non-extended abstract", m1Event, //$NON-NLS-1$
+				nonExtendedAbstractEvent);
 
-		// Testing for having no non-inherited abstract event because m2 refines
+		// Testing for having no non-extended abstract event because m2 refines
 		// m1
-		// and m2Event refines m1Event, and m1Event is inherited but does not
+		// and m2Event refines m1Event, and m1Event is extended but does not
 		// correspond to any abstract event.
-		m1Event.setInherited(true, null);
-		nonInheritedAbstractEvent = EventBUtils
-				.getNonInheritedAbstractEvent(m2Event);
+		m1Event.setExtended(true, null);
+		nonExtendedAbstractEvent = EventBUtils
+				.getNonExtendedAbstractEvent(m2Event);
 		assertNull(
-				"There should be no non-inherited abstract event for m2Event", //$NON-NLS-1$
-				nonInheritedAbstractEvent);
+				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
+				nonExtendedAbstractEvent);
 
-		// Testing for having no non-inherited abstract event because m2 refines
+		// Testing for having no non-extended abstract event because m2 refines
 		// m1
-		// and m2Event refines m1Event, and m1Event is inherited, but m1 refines
+		// and m2Event refines m1Event, and m1Event is extended, but m1 refines
 		// m2 hence m1Event refines m2Event, hence looping.
 
 		// Make m1 refines m2.
 		IRefinesMachine m1RefinesMachine = createRefinesMachineClause(m1, "m2"); //$NON-NLS-1$
-		nonInheritedAbstractEvent = EventBUtils
-				.getNonInheritedAbstractEvent(m2Event);
+		nonExtendedAbstractEvent = EventBUtils
+				.getNonExtendedAbstractEvent(m2Event);
 		assertNull(
-				"There should be no non-inherited abstract event for m2Event", //$NON-NLS-1$
-				nonInheritedAbstractEvent);
+				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
+				nonExtendedAbstractEvent);
 
-		// Testing for having non-inherited abstract event because m2 refines m1
-		// and m2Event refines m1Event, and m1Event is inherited, and m1 refines
+		// Testing for having non-extended abstract event because m2 refines m1
+		// and m2Event refines m1Event, and m1Event is extended, and m1 refines
 		// m0 hence m1Event refines m0Event.
 		m1RefinesMachine.setAbstractMachineName("m0", //$NON-NLS-1$
 				null);
-		nonInheritedAbstractEvent = EventBUtils
-				.getNonInheritedAbstractEvent(m2Event);
+		nonExtendedAbstractEvent = EventBUtils
+				.getNonExtendedAbstractEvent(m2Event);
 		assertNotNull(
-				"There should be a non-inherited abstract event for m2Event", //$NON-NLS-1$
-				nonInheritedAbstractEvent);
-		assertEquals("Incorrect non-inherited abstract", m0Event, //$NON-NLS-1$
-				nonInheritedAbstractEvent);
+				"There should be a non-extended abstract event for m2Event", //$NON-NLS-1$
+				nonExtendedAbstractEvent);
+		assertEquals("Incorrect non-extended abstract", m0Event, //$NON-NLS-1$
+				nonExtendedAbstractEvent);
 	}
 
 	/**

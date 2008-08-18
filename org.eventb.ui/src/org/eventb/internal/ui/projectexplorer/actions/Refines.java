@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - removed test on inherited event
+ *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -122,10 +134,9 @@ public class Refines implements IObjectActionDelegate {
 								for (IRodinElement witness : witnesses)
 									((IWitness) witness).delete(true, monitor);
 
-								// INITILISATION does not have RefineEvents
+								// INITIALISATION does not have RefineEvents
 								// Element
-								if (!label.equals(IEvent.INITIALISATION)
-										&& !event.isInherited()) {
+								if (!label.equals(IEvent.INITIALISATION)) {
 									IRefinesEvent refinesEvent = newElement
 											.getInternalElement(
 													IRefinesEvent.ELEMENT_TYPE,

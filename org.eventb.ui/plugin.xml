@@ -1244,14 +1244,14 @@
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"
-               class="org.eventb.internal.ui.propertiesView.InheritanceSection"
+               class="org.eventb.internal.ui.propertiesView.ExtendsEventSection"
                enablesFor="1"
-               id="org.eventb.ui.inheritanceSection"
+               id="org.eventb.ui.extendsEventSection"
                tab="org.eventb.ui.basicTab">
             <input type="org.eventb.core.IEvent"/>
          </propertySection>
          <propertySection
-               afterSection="org.eventb.ui.inheritanceSection"
+               afterSection="org.eventb.ui.extendsEventSection"
                class="org.eventb.internal.ui.propertiesView.ConvergenceSection"
                enablesFor="1"
                id="org.eventb.ui.convergenceSection"
@@ -2351,10 +2351,10 @@
             widget="text">
       </attributeRel>
       <attributeRel
-            factory="org.eventb.internal.ui.eventbeditor.editpage.InheritedAttributeFactory"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory"
             defaultValue="true"
             horizontalExpand="false"
-            id="org.eventb.core.eventInherited"
+            id="org.eventb.core.eventExtended"
             priority="2"
             widget="combo">
       </attributeRel>

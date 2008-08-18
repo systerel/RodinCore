@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
+ *******************************************************************************/
 package org.eventb.internal.ui.elementSpecs;
 
 import org.eventb.core.EventBPlugin;
@@ -168,7 +180,7 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 			EventBPlugin.PLUGIN_ID + ".theoremPredicate",
 			EventBPlugin.PLUGIN_ID + ".theoremComment",
 			EventBPlugin.PLUGIN_ID + ".eventLabel",
-			EventBPlugin.PLUGIN_ID + ".eventInherited",
+			EventBPlugin.PLUGIN_ID + ".eventExtended",
 			EventBPlugin.PLUGIN_ID + ".eventConvergence",
 			EventBPlugin.PLUGIN_ID + ".eventComment",
 			EventBPlugin.PLUGIN_ID + ".refinesEventAbstractEventLabel",
@@ -214,7 +226,7 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 	AttributeRelationship theoremPredicate;
 	AttributeRelationship theoremComment;
 	AttributeRelationship eventLabel;
-	AttributeRelationship eventInherited;
+	AttributeRelationship eventExtended;
 	AttributeRelationship eventConvergence;
 	AttributeRelationship eventComment;
 	AttributeRelationship refinesEventAbstractEventLabel;
@@ -329,12 +341,12 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 			return eventLabel;
 		}
 
-		// Event's inherited
-		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventInherited")) {
-			if (eventInherited == null)
-				eventInherited = new AttributeRelationship(id,
-						IEvent.ELEMENT_TYPE, "org.eventb.core.inherited");
-			return eventInherited;
+		// Event's extended
+		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventExtended")) {
+			if (eventExtended == null)
+				eventExtended = new AttributeRelationship(id,
+						IEvent.ELEMENT_TYPE, "org.eventb.core.extended");
+			return eventExtended;
 		}
 
 		// Event's convergence

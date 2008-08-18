@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
+ *******************************************************************************/
 package org.eventb.ui.eventbeditor.editpage.tests;
 
 import org.eventb.core.EventBPlugin;
@@ -165,7 +177,7 @@ public class ElementSpecTestRegistry implements IElementSpecRegistry {
 			EventBPlugin.PLUGIN_ID + ".invariantLabel",
 			EventBPlugin.PLUGIN_ID + ".invariantPredicate",
 			EventBPlugin.PLUGIN_ID + ".eventLabel",
-			EventBPlugin.PLUGIN_ID + ".eventInherited",
+			EventBPlugin.PLUGIN_ID + ".eventExtended",
 			EventBPlugin.PLUGIN_ID + ".eventConvergence",
 			EventBPlugin.PLUGIN_ID + ".guardLabel",
 			EventBPlugin.PLUGIN_ID + ".actionLabel"
@@ -209,10 +221,10 @@ public class ElementSpecTestRegistry implements IElementSpecRegistry {
 					"org.eventb.core.label");
 		}
 
-		// Event's inherited
-		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventInherited")) {
+		// Event's extended
+		if (id.equals(EventBPlugin.PLUGIN_ID + ".eventExtended")) {
 			return new AttributeRelationship(id, IEvent.ELEMENT_TYPE,
-					"org.eventb.core.inherited");
+					"org.eventb.core.extended");
 		}
 
 		// Event's convergence

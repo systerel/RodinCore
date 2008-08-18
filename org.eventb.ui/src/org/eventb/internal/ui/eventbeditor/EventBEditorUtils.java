@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed axiom form for enumerated sets
+ *     Systerel - replaced inherited by extended, variable by parameter
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -36,6 +37,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -640,7 +642,7 @@ public class EventBEditorUtils {
 							newEvt.setConvergence(
 									IConvergenceElement.Convergence.ORDINARY,
 									monitor);
-							newEvt.setInherited(false, monitor);
+							newEvt.setExtended(false, monitor);
 
 							String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 									.getDefaultPrefix("org.eventb.core.variableIdentifier");
@@ -1427,19 +1429,18 @@ public class EventBEditorUtils {
 			throws RodinDBException {
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 				.getDefaultPrefix("org.eventb.core.variableIdentifier");
-		String varPrefix = UIUtils.getNamePrefix(editor,
-				IVariable.ELEMENT_TYPE,
-				defaultPrefix);
+		String paramPrefix = UIUtils.getNamePrefix(editor,
+				IParameter.ELEMENT_TYPE, defaultPrefix);
 
 		String varIndex = EventBUtils.getFreeChildNameIndex(evt,
-				IVariable.ELEMENT_TYPE, varPrefix);
-		for (String varName : identifiers) {
-			IVariable var = evt.getVariable(varPrefix + varIndex);
-			var.create(null, pm);
-			var.setIdentifierString(varName, pm);
-			editor.addNewElement(var);
+				IParameter.ELEMENT_TYPE, paramPrefix);
+		for (String name : identifiers) {
+			IParameter param = evt.getParameter(paramPrefix + varIndex);
+			param.create(null, pm);
+			param.setIdentifierString(name, pm);
+			editor.addNewElement(param);
 			varIndex = EventBUtils.getFreeChildNameIndex(evt,
-					IVariable.ELEMENT_TYPE, varPrefix);
+					IParameter.ELEMENT_TYPE, paramPrefix);
 		}
 	}
 
@@ -1746,7 +1747,7 @@ public class EventBEditorUtils {
 				newEvt.setLabel(label, pm);
 				newEvt.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 						pm);
-				newEvt.setInherited(false, pm);
+				newEvt.setExtended(false, pm);
 				editor.addNewElement(newEvt);
 			}
 

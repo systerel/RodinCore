@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
+ *******************************************************************************/
 package org.eventb.ui.eventbeditor.editpage.tests;
 
 import org.eventb.core.IAction;
@@ -99,12 +99,13 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	@Test
 	public void testCreateEvents() throws Exception {
 		final IEvent evt = createElement(m0, IEvent.ELEMENT_TYPE);
-		assertFalse("New event should has no label", evt.hasLabel());
-		assertFalse("New event should has no comment", evt.hasComment());
-		assertTrue("New event should has inherited attribute", evt
-				.hasInherited());
-		assertFalse("New event should not be inherited", evt.isInherited());
-		assertFalse("New event should has no convergence", evt.hasConvergence());
+		assertFalse("New event should have no label", evt.hasLabel());
+		assertFalse("New event should have no comment", evt.hasComment());
+		assertTrue("New event should have an extended attribute", evt
+				.hasExtended());
+		assertFalse("New event should not be extended", evt.isExtended());
+		assertFalse("New event should have no convergence", evt
+				.hasConvergence());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced inherited by extended
  ******************************************************************************/
 
 package org.eventb.internal.ui.wizards;
@@ -167,7 +168,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 					init.setLabel(IEvent.INITIALISATION, pMonitor);
 					init.setConvergence(
 							IConvergenceElement.Convergence.ORDINARY, pMonitor);
-					init.setInherited(false, pMonitor);
+					init.setExtended(false, pMonitor);
 				}
 				rodinFile.save(null, true);
 			}
