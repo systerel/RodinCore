@@ -316,7 +316,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		return axmLabels.toArray(new String[axmLabels.size()]);
 	}
 
-	public String[] getAxiomSubtitutions() {
+	public String[] getAxiomPredicates() {
 		return axmSubs.toArray(new String[axmSubs.size()]);
 	}
 
