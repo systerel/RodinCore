@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added tests for asRodinElement()
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -21,6 +25,7 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 /**
  * Tests for the adapter factories provided by the Rodin Database.
@@ -36,10 +41,20 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 	private static void assertAdapterPositive(Object adaptable,
 			Class<?> adapterType, Object expected) {
 
-		IAdapterManager adapterManager = Platform.getAdapterManager();
-		Object actual = adapterManager.getAdapter(adaptable, adapterType);
+		final IAdapterManager adapterManager = Platform.getAdapterManager();
+		final Object actual = adapterManager.getAdapter(adaptable, adapterType);
 		assertTrue("Wrong type for adapter", adapterType.isInstance(actual));
 		assertEquals("Wrong adapter", expected, actual);
+
+		// In addition check the asRodinElement() method
+		final IRodinElement elem = RodinCore.asRodinElement(adaptable);
+		if (expected instanceof IRodinElement) {
+			assertEquals("Wrong Rodin element", expected, elem);
+		} else if (adaptable instanceof IRodinElement){
+			assertSame("Wrong Rodin element", adaptable, elem);
+		} else {
+			assertNull("Wrong Rodin element", elem);
+		}
 	}
 	
 	private static void assertAdapterNegative(Object adaptable,
@@ -47,7 +62,15 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 
 		IAdapterManager adapterManager = Platform.getAdapterManager();
 		Object actual = adapterManager.getAdapter(adaptable, adapterType);
-		assertNull("Adaptatation should have failed", actual);
+		assertNull("Adaptation should have failed", actual);
+
+		// In addition check the asRodinElement() method
+		final IRodinElement elem = RodinCore.asRodinElement(adaptable);
+		if (adaptable instanceof IRodinElement){
+			assertSame("Wrong Rodin element", adaptable, elem);
+		} else {
+			assertNull("Wrong Rodin element", elem);
+		}
 	}
 	
 	/**
@@ -75,7 +98,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 		file = project.getFile("foo");
 		assertAdapterNegative(file, IRodinElement.class);
 		
-		// Not a valid Rodin file element (lays inside a folder) 
+		// Not a valid Rodin file element (lies inside a folder) 
 		file = folder.getFile("x.test");
 		assertAdapterNegative(file, IRodinElement.class);
 	}
@@ -114,5 +137,17 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 		IProject project = rodinProject.getProject();
 		assertAdapterPositive(rodinProject, IProject.class, project);
 	}
-	
+
+	/**
+	 * Checks cases where no adaptation is possible. 
+	 */
+	public void testNoAdaptation() throws Exception {
+		final Integer i = 0;
+		assertAdapterNegative(i, IRodinFile.class);
+		
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final IResource foo = ws.getRoot().getProject("P").getFolder("foo");
+		assertAdapterPositive(foo, IResource.class, foo);
+	}
+
 }
