@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed axiom form for enumerated sets
- *     Systerel - replaced inherited by extended, variable by parameter
+ *     Systerel - replaced inherited by extended, local variable by parameter
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -77,6 +77,8 @@ public class EventBEditorUtils {
 	static IAction newAct;
 
 	static IGuard newGrd;
+
+	static IParameter newParam;
 
 	static IVariable newVar;
 
@@ -408,7 +410,7 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Add a new local variable.
+	 * Add a new event parameter.
 	 * <p>
 	 * 
 	 * @param editor
@@ -416,7 +418,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addLocalVariable(final IEventBEditor<IMachineFile> editor,
+	public static void addParameter(final IEventBEditor<IMachineFile> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
@@ -435,27 +437,27 @@ public class EventBEditorUtils {
 								String defaultPrefix = AttributeRelUISpecRegistry
 										.getDefault()
 										.getDefaultPrefix(
-												"org.eventb.core.variableIdentifier");
+												"org.eventb.core.parameterIdentifier");
 								String identifier = UIUtils
 										.getFreeElementIdentifier(editor,
-												event, IVariable.ELEMENT_TYPE,
+												event, IParameter.ELEMENT_TYPE,
 												defaultPrefix);
 								String name = UIUtils.getFreeElementName(
-										editor, event, IVariable.ELEMENT_TYPE,
+										editor, event, IParameter.ELEMENT_TYPE,
 										defaultPrefix);
-								newVar = event.getInternalElement(
-										IVariable.ELEMENT_TYPE, name);
-								assert !newVar.exists();
-								newVar.create(null, monitor);
-								newVar.setIdentifierString(identifier,
+								newParam = event.getInternalElement(
+										IParameter.ELEMENT_TYPE, name);
+								assert !newParam.exists();
+								newParam.create(null, monitor);
+								newParam.setIdentifierString(identifier,
 										new NullProgressMonitor());
-								editor.addNewElement(newVar);
+								editor.addNewElement(newParam);
 							}
 
 						}, null);
 						viewer.setExpandedState(TreeSupports.findItem(
 								viewer.getTree(), event).getData(), true);
-						select((EventBEditableTreeViewer) viewer, newVar, 0);
+						select((EventBEditableTreeViewer) viewer, newParam, 0);
 					}
 				} catch (RodinDBException e) {
 					e.printStackTrace();
@@ -645,38 +647,38 @@ public class EventBEditorUtils {
 							newEvt.setExtended(false, monitor);
 
 							String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-									.getDefaultPrefix("org.eventb.core.variableIdentifier");
+									.getDefaultPrefix("org.eventb.core.parameterIdentifier");
 							String namePrefix = UIUtils.getNamePrefix(editor,
-									IVariable.ELEMENT_TYPE,
+									IParameter.ELEMENT_TYPE,
 									defaultPrefix);
 							String nameIndex =EventBUtils.getFreeChildNameIndex(
-									newEvt, IVariable.ELEMENT_TYPE,
+									newEvt, IParameter.ELEMENT_TYPE,
 									namePrefix);
 
 							String prefix = UIUtils.getFreeElementIdentifier(
-									editor, newEvt, IVariable.ELEMENT_TYPE,
+									editor, newEvt, IParameter.ELEMENT_TYPE,
 									defaultPrefix);
 
 							String index = UIUtils.getFreeElementIdentifierIndex(
-									newEvt, IVariable.ELEMENT_TYPE,
+									newEvt, IParameter.ELEMENT_TYPE,
 									prefix);
 
 							for (int i = 0; i < 3; i++) {
-								newVar = newEvt.getInternalElement(
-										IVariable.ELEMENT_TYPE, namePrefix
+								newParam = newEvt.getInternalElement(
+										IParameter.ELEMENT_TYPE, namePrefix
 												+ nameIndex);
-								assert !newVar.exists();
-								newVar.create(null, monitor);
+								assert !newParam.exists();
+								newParam.create(null, monitor);
 								nameIndex = EventBUtils.getFreeChildNameIndex(
-										newEvt, IVariable.ELEMENT_TYPE,
+										newEvt, IParameter.ELEMENT_TYPE,
 										namePrefix);
 
-								newVar.setIdentifierString(prefix + index,
+								newParam.setIdentifierString(prefix + index,
 										new NullProgressMonitor());
 								index = UIUtils.getFreeElementIdentifierIndex(
-										newEvt, IVariable.ELEMENT_TYPE,
+										newEvt, IParameter.ELEMENT_TYPE,
 										prefix);
-								editor.addNewElement(newVar);
+								editor.addNewElement(newParam);
 							}
 
 							defaultPrefix = AttributeRelUISpecRegistry.getDefault()
@@ -1075,15 +1077,15 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Utility method to create a variable with its type invariant and
-	 * initialization using a modal dialog.
+	 * Utility method to create a constant with its type axiom using a modal
+	 * dialog.
 	 * <p>
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
 	 * @param rodinFile
-	 *            the Rodin file that the variable and its invariant,
-	 *            initialization will be created in
+	 *            the Rodin file that the constant and its axiom will be created
+	 *            in
 	 */
 	public static void intelligentNewConstant(final IEventBEditor<IContextFile> editor,
 			final IRodinFile rodinFile) {
@@ -1105,7 +1107,7 @@ public class EventBEditorUtils {
 					createNewConstant(editor, identifier, monitor);
 
 					String [] axmNames = dialog.getAxiomNames();
-					String [] axmSubs = dialog.getAxiomSubtitutions();
+					String [] axmSubs = dialog.getAxiomPredicates();
 					createNewAxioms(editor, axmNames, axmSubs, monitor);
 				}
 
@@ -1340,7 +1342,7 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Utility method to create a event with its local variables, guards and
+	 * Utility method to create an event with its parameters, guards and
 	 * actions using a modal dialog.
 	 * <p>
 	 * 
@@ -1364,8 +1366,8 @@ public class EventBEditorUtils {
 					String name = dialog.getLabel();
 					IEvent evt = createNewEvent(editor, name, pm);
 
-					String[] varNames = dialog.getParameters();
-					createNewParameters(editor, evt, varNames, pm);
+					String[] paramNames = dialog.getParameters();
+					createNewParameters(editor, evt, paramNames, pm);
 
 					String[] grdNames = dialog.getGrdLabels();
 					String[] grdPredicates = dialog.getGrdPredicates();
@@ -1427,20 +1429,17 @@ public class EventBEditorUtils {
 	protected static void createNewParameters(IEventBEditor<IMachineFile> editor,
 			IEvent evt, String[] identifiers, IProgressMonitor pm)
 			throws RodinDBException {
-		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-				.getDefaultPrefix("org.eventb.core.variableIdentifier");
-		String paramPrefix = UIUtils.getNamePrefix(editor,
+		final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.parameterIdentifier");
+		final String paramPrefix = UIUtils.getNamePrefix(editor,
 				IParameter.ELEMENT_TYPE, defaultPrefix);
-
-		String varIndex = EventBUtils.getFreeChildNameIndex(evt,
-				IParameter.ELEMENT_TYPE, paramPrefix);
 		for (String name : identifiers) {
-			IParameter param = evt.getParameter(paramPrefix + varIndex);
+			final String paramIndex = EventBUtils.getFreeChildNameIndex(evt,
+					IParameter.ELEMENT_TYPE, paramPrefix);
+			final IParameter param = evt.getParameter(paramPrefix + paramIndex);
 			param.create(null, pm);
 			param.setIdentifierString(name, pm);
 			editor.addNewElement(param);
-			varIndex = EventBUtils.getFreeChildNameIndex(evt,
-					IParameter.ELEMENT_TYPE, paramPrefix);
 		}
 	}
 

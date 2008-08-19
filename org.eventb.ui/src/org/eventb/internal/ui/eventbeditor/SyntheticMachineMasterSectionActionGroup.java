@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced local variable by parameter
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
@@ -26,8 +25,8 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesMachine;
-import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
@@ -54,7 +53,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 	protected Action addEvent;
 
-	protected Action addLocalVariable;
+	protected Action addParameter;
 
 	protected Action addGuard;
 
@@ -132,15 +131,15 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Add a local variable.
-		addLocalVariable = new Action() {
+		addParameter = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.addLocalVariable(editor, viewer);
+				EventBEditorUtils.addParameter(editor, viewer);
 			}
 		};
-		addLocalVariable.setText("New &Local Variable");
-		addLocalVariable.setToolTipText("Create a new (local) variable");
-		addLocalVariable
+		addParameter.setText("New &Parameter");
+		addParameter.setToolTipText("Create a new parameter");
+		addParameter
 				.setImageDescriptor(EventBImage
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
@@ -306,7 +305,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				Object obj = ssel.getFirstElement();
 
 				if (obj instanceof IEvent) {
-					menu.add(addLocalVariable);
+					menu.add(addParameter);
 					menu.add(addGuard);
 					menu.add(addAction);
 				}
@@ -321,8 +320,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				Object obj = ssel.getFirstElement();
 				if ((obj instanceof IEvent) || (obj instanceof IGuard)
 						|| (obj instanceof IAction)
-						|| (obj instanceof IVariable)
-						&& ((IVariable) obj).getParent() instanceof IEvent) {
+						|| (obj instanceof IParameter)) {
 
 					IRodinElement[] refines;
 					IMachineFile file = editor.getRodinInput();

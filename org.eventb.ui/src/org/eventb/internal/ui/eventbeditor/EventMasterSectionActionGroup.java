@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced local variable by parameter
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
@@ -43,7 +42,7 @@ public class EventMasterSectionActionGroup extends
 	// Some actions
 	protected Action addEvent;
 
-	protected Action addLocalVariable;
+	protected Action addParameter;
 
 	protected Action addGuard;
 
@@ -84,16 +83,40 @@ public class EventMasterSectionActionGroup extends
 		addEvent.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
-		// Add a local variable.
-		addLocalVariable = new Action() {
+		// Add a refines event.
+		addRefinesEvent = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.addLocalVariable(editor, viewer);
+				EventBEditorUtils.addRefinesEvent(editor, viewer);
 			}
 		};
-		addLocalVariable.setText("New &Local Variable");
-		addLocalVariable.setToolTipText("Create a new (local) variable");
-		addLocalVariable.setImageDescriptor(EventBImage
+		addRefinesEvent.setText("New &Refine Event");
+		addRefinesEvent.setToolTipText("Create a new refines event");
+		addRefinesEvent.setImageDescriptor(EventBImage
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
+		
+		// Add a witness.
+		addWitness = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addWitness(editor, viewer);
+			}
+		};
+		addWitness.setText("New &Witness");
+		addWitness.setToolTipText("Create a new witness");
+		addWitness.setImageDescriptor(EventBImage
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
+
+		// Add a parameter.
+		addParameter = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addParameter(editor, viewer);
+			}
+		};
+		addParameter.setText("New &Parameter");
+		addParameter.setToolTipText("Create a new parameter");
+		addParameter.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add a guard.
@@ -119,30 +142,6 @@ public class EventMasterSectionActionGroup extends
 		addAction.setToolTipText("Create a new action");
 		addAction.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_ACTION_PATH));
-
-		// Add a refines event.
-		addRefinesEvent = new Action() {
-			@Override
-			public void run() {
-				EventBEditorUtils.addRefinesEvent(editor, viewer);
-			}
-		};
-		addRefinesEvent.setText("New &Refine Event");
-		addRefinesEvent.setToolTipText("Create a new refines event");
-		addRefinesEvent.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
-		
-		// Add a refines event.
-		addWitness = new Action() {
-			@Override
-			public void run() {
-				EventBEditorUtils.addWitness(editor, viewer);
-			}
-		};
-		addWitness.setText("New &Witness");
-		addWitness.setToolTipText("Create a new witness");
-		addWitness.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Delete the current selected element in the tree viewer.
 		delete = new Action() {
@@ -201,16 +200,11 @@ public class EventMasterSectionActionGroup extends
 				Object obj = ssel.getFirstElement();
 
 				if (obj instanceof IEvent) {
-					menu.add(addLocalVariable);
-					menu.add(addGuard);
-					menu.add(addAction);
 					menu.add(addRefinesEvent);
+					menu.add(addParameter);
+					menu.add(addGuard);
 					menu.add(addWitness);
-					// MenuManager newMenu = new MenuManager("&New");
-					// newMenu.add(addLocalVariable);
-					// newMenu.add(addGuard);
-					// newMenu.add(addAction);
-					// menu.add(newMenu);
+					menu.add(addAction);
 				}
 			}
 

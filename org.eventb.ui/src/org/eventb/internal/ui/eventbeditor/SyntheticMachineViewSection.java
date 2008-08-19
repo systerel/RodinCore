@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced local variable by parameter
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
@@ -30,12 +29,12 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -105,7 +104,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			}
 		};
 		filterVarAction.setChecked(false);
-		filterVarAction.setToolTipText("Filter global variable elements");
+		filterVarAction.setToolTipText("Filter variable elements");
 
 		final Action filterGrdAction = new Action("grd", Action.AS_CHECK_BOX) {
 			@Override
@@ -129,7 +128,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		filterInvAction.setChecked(false);
 		filterInvAction.setToolTipText("Filter invariant elements");
 
-		final Action filterLVarAction = new Action("lvar", Action.AS_CHECK_BOX) {
+		final Action filterParamAction = new Action("prm", Action.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) SyntheticMachineViewSection.this
@@ -137,8 +136,8 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 				viewer.refresh();
 			}
 		};
-		filterLVarAction.setChecked(false);
-		filterLVarAction.setToolTipText("Filter local variable elements");
+		filterParamAction.setChecked(false);
+		filterParamAction.setToolTipText("Filter parameter elements");
 
 		ViewerFilter elementFilter = new ViewerFilter() {
 
@@ -152,25 +151,16 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				if (element instanceof IVariable) {
-					IVariable var = (IVariable) element;
-					if (var.getParent() instanceof IRodinFile
-							&& filterVarAction.isChecked())
-						return false;
-					else if (var.getParent() instanceof IEvent
-							&& filterLVarAction.isChecked())
-						return false;
-					else
-						return true;
-				} else if (element instanceof IGuard) {
-					if (filterGrdAction.isChecked())
-						return false;
-					else
-						return true;
-				} else if (element instanceof IInvariant) {
-					if (filterInvAction.isChecked())
-						return false;
-					else
-						return true;
+					return !filterVarAction.isChecked();
+				}
+				if (element instanceof IParameter) {
+					return !filterParamAction.isChecked();
+				}
+				if (element instanceof IGuard) {
+					return !filterGrdAction.isChecked();
+				}
+				if (element instanceof IInvariant) {
+					return !filterInvAction.isChecked();
 				}
 				return true;
 			}
@@ -180,7 +170,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		form.getToolBarManager().add(filterVarAction);
 		form.getToolBarManager().add(filterGrdAction);
 		form.getToolBarManager().add(filterInvAction);
-		form.getToolBarManager().add(filterLVarAction);
+		form.getToolBarManager().add(filterParamAction);
 
 		final SyntheticMachineMasterSectionActionGroup actionSet = (SyntheticMachineMasterSectionActionGroup) this
 				.getActionGroup();
@@ -347,6 +337,8 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
 		if (element instanceof IVariable)
+			selectItem(item, 0);
+		else if (element instanceof IParameter)
 			selectItem(item, 0);
 		else if (element instanceof IEvent)
 			selectItem(item, 0);

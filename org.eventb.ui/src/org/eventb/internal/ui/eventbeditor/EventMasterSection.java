@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - replaced local variable by parameter
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.action.Action;
@@ -28,7 +27,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IVariable;
+import org.eventb.core.IParameter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
@@ -46,7 +45,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	// The indexes for different buttons.
 	private static final int ADD_EVT_INDEX = 0;
 
-	private static final int ADD_VAR_INDEX = 1;
+	private static final int ADD_PARAM_INDEX = 1;
 
 	private static final int ADD_GRD_INDEX = 2;
 
@@ -57,7 +56,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	private static final int DOWN_INDEX = 5;
 
 	// The labels correspond to the above buttons.
-	private static final String[] buttonLabels = { "Add Event", "Add Var.",
+	private static final String[] buttonLabels = { "Add Event", "Add Param",
 			"Add Guard", "Add Action", "Up", "Down" };
 
 	// Title and description of the section.
@@ -96,7 +95,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 	 *            The managed form contains the Toolbar.
 	 */
 	protected void createToolBarActions(IManagedForm managedForm) {
-		final Action filterVarAction = new Action("var", Action.AS_CHECK_BOX) {
+		final Action filterParamAction = new Action("prm", Action.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
@@ -104,10 +103,10 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 				viewer.refresh();
 			}
 		};
-		filterVarAction.setChecked(false);
-		filterVarAction.setToolTipText("Filter variable elements");
+		filterParamAction.setChecked(false);
+		filterParamAction.setToolTipText("Filter parameter elements");
 
-		final Action filterGrdAtion = new Action("grd", Action.AS_CHECK_BOX) {
+		final Action filterGrdAction = new Action("grd", Action.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				TreeViewer viewer = ((TreeViewer) EventMasterSection.this
@@ -115,8 +114,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 				viewer.refresh();
 			}
 		};
-		filterGrdAtion.setChecked(false);
-		filterGrdAtion.setToolTipText("Filter invariant elements");
+		filterGrdAction.setChecked(false);
+		filterGrdAction.setToolTipText("Filter guard elements");
 
 		ViewerFilter elementFilter = new ViewerFilter() {
 
@@ -129,13 +128,13 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
-				if (element instanceof IVariable) {
-					if (filterVarAction.isChecked())
+				if (element instanceof IParameter) {
+					if (filterParamAction.isChecked())
 						return false;
 					else
 						return true;
 				} else if (element instanceof IGuard) {
-					if (filterGrdAtion.isChecked())
+					if (filterGrdAction.isChecked())
 						return false;
 					else
 						return true;
@@ -147,8 +146,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		((TreeViewer) this.getViewer()).addFilter(elementFilter);
 		ScrolledForm form = managedForm.getForm();
 
-		form.getToolBarManager().add(filterVarAction);
-		form.getToolBarManager().add(filterGrdAtion);
+		form.getToolBarManager().add(filterParamAction);
+		form.getToolBarManager().add(filterGrdAction);
 
 		form.updateToolBar();
 	}
@@ -211,7 +210,7 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		setButtonEnabled(DOWN_INDEX, hasOneSelection && canMoveDown);
 
 		setButtonEnabled(ADD_EVT_INDEX, true);
-		setButtonEnabled(ADD_VAR_INDEX, hasOneSelection && !initSelected);
+		setButtonEnabled(ADD_PARAM_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_GRD_INDEX, hasOneSelection && !initSelected);
 		setButtonEnabled(ADD_ACT_INDEX, hasOneSelection);
 	}
@@ -229,8 +228,8 @@ public class EventMasterSection extends EventBTreePartWithButtons {
 		case ADD_EVT_INDEX:
 			actionSet.addEvent.run();
 			break;
-		case ADD_VAR_INDEX:
-			actionSet.addLocalVariable.run();
+		case ADD_PARAM_INDEX:
+			actionSet.addParameter.run();
 			break;
 		case ADD_GRD_INDEX:
 			actionSet.addGuard.run();
