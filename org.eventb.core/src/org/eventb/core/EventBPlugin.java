@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005,2008 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added as***File()
  *******************************************************************************/
 package org.eventb.core;
 
@@ -25,6 +29,8 @@ import org.eventb.internal.core.pom.POLoader;
 import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.sc.SCUtil;
 import org.osgi.framework.BundleContext;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 
 /**
  * The Event-B core plugin class.
@@ -345,5 +351,200 @@ public class EventBPlugin extends Plugin {
 	public static IProofManager getProofManager() {
 		return ProofManager.getDefault();
 	}
-	
+
+	/**
+	 * Returns the given object as an event-B file if possible, <code>null</code>
+	 * otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is an
+	 * event-B file or adaptable to an event-B file.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to an event-B file
+	 * @return the given object as an event-B file or <code>null</code>
+	 */
+	public static IEventBFile asEventBFile(Object object) {
+		final IRodinElement elem = RodinCore.asRodinElement(object);
+		if (elem instanceof IEventBFile) {
+			return (IEventBFile) elem;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the given object as a context file if possible, <code>null</code>
+	 * otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * context file or adaptable to an event-B file. In the latter case, the
+	 * corresponding context file is returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a context file
+	 * @return the given object as a context file or <code>null</code>
+	 */
+	public static IContextFile asContextFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getContextFile();
+	}
+
+	/**
+	 * Returns the given object as a machine file if possible, <code>null</code>
+	 * otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * machine file or adaptable to an event-B file. In the latter case, the
+	 * corresponding machine file is returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a machine file
+	 * @return the given object as a machine file or <code>null</code>
+	 */
+	public static IMachineFile asMachineFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getMachineFile();
+	}
+
+	/**
+	 * Returns the given object as a statically checked context file if
+	 * possible, <code>null</code> otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * statically checked context file or adaptable to an event-B file. In the
+	 * latter case, the corresponding statically checked context file is
+	 * returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a statically checked context file
+	 * @return the given object as a statically checked context file or
+	 *         <code>null</code>
+	 */
+	public static ISCContextFile asSCContextFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getSCContextFile();
+	}
+
+	/**
+	 * Returns the given object as a statically checked machine file if
+	 * possible, <code>null</code> otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * statically checked machine file or adaptable to an event-B file. In the
+	 * latter case, the corresponding statically checked machine file is
+	 * returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a statically checked machine file
+	 * @return the given object as a statically checked machine file or
+	 *         <code>null</code>
+	 */
+	public static ISCMachineFile asSCMachineFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getSCMachineFile();
+	}
+
+	/**
+	 * Returns the given object as a proof obligation file if possible,
+	 * <code>null</code> otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * proof obligation file or adaptable to an event-B file. In the latter
+	 * case, the corresponding proof obligation file is returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a proof obligation file
+	 * @return the given object as a proof obligation file or <code>null</code>
+	 */
+	public static IPOFile asPOFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getPOFile();
+	}
+
+	/**
+	 * Returns the given object as a proof file if possible, <code>null</code>
+	 * otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * proof file or adaptable to an event-B file. In the latter case, the
+	 * corresponding proof file is returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a proof file
+	 * @return the given object as a proof file or <code>null</code>
+	 */
+	public static IPRFile asPRFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getPRFile();
+	}
+
+	/**
+	 * Returns the given object as a proof status file if possible,
+	 * <code>null</code> otherwise.
+	 * <p>
+	 * A non-<code>null</code> value is returned iff the given object is a
+	 * proof status file or adaptable to an event-B file. In the latter case,
+	 * the corresponding proof status file is returned.
+	 * </p>
+	 * <p>
+	 * This is a handle-only method. The returned file may or may not exist.
+	 * </p>
+	 * 
+	 * @param object
+	 *            the object to adapt to a proof status file
+	 * @return the given object as a proof status file or <code>null</code>
+	 */
+	public static IPSFile asPSFile(Object object) {
+		final IEventBFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return elem.getPSFile();
+	}
+
 }

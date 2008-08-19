@@ -1,16 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added test for as***File()
  *******************************************************************************/
 package org.eventb.core.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBFile;
 import org.eventb.core.IEventBProject;
@@ -132,6 +138,43 @@ public class EventBFileTest extends TestCase {
 		IPSFile file = evbProject.getPSFile("foo");
 		assertFileName("foo.bps", file);
 		checkFileConversions(file);
+	}
+
+	private <T> void assertSimilar(T input, T expected, T actual) {
+		if (expected.getClass() == input.getClass()) {
+			assertSame(expected, actual);
+		} else {
+			assertEquals(expected, actual);
+		}
+	}
+	
+	/**
+	 * Ensures that adaptation to event-B files works appropriately on all
+	 * event-B files.
+	 */
+	public void testFileAdaptation() throws Exception {
+		final IContextFile buc = evbProject.getContextFile("foo");
+		final IMachineFile bum = evbProject.getMachineFile("foo");
+		final ISCContextFile bcc = evbProject.getSCContextFile("foo");
+		final ISCMachineFile bcm = evbProject.getSCMachineFile("foo");
+		final IPOFile bpo = evbProject.getPOFile("foo");
+		final IPRFile bpr = evbProject.getPRFile("foo");
+		final IPSFile bps = evbProject.getPSFile("foo");
+		final IRodinFile[] files = new IRodinFile[] { buc, bum, bcc, bcm, bpo,
+				bpr, bps };
+
+		for (IRodinFile file : files) {
+			final IFile res = file.getResource();
+			assertSimilar(res, file, EventBPlugin.asEventBFile(res));
+			assertSimilar(file, file, EventBPlugin.asEventBFile(file));
+			assertSimilar(file, buc, EventBPlugin.asContextFile(file));
+			assertSimilar(file, bum, EventBPlugin.asMachineFile(file));
+			assertEquals(bcc, EventBPlugin.asSCContextFile(file));
+			assertEquals(bcm, EventBPlugin.asSCMachineFile(file));
+			assertEquals(bpo, EventBPlugin.asPOFile(file));
+			assertSimilar(file, bpr, EventBPlugin.asPRFile(file));
+			assertSimilar(file, bps, EventBPlugin.asPSFile(file));
+		}
 	}
 
 }
