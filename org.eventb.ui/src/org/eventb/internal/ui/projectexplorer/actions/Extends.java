@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fully rewritten the run() method
+ *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -6,102 +18,116 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class Extends implements IObjectActionDelegate {
 
-	private ISelection selection;
+	private static final class CreateRefinement implements IWorkspaceRunnable {
 
+		private final IContextFile abs;
+		private final IContextFile con;
+
+		public CreateRefinement(IContextFile abs, IContextFile con) {
+			this.abs = abs;
+			this.con = con;
+		}
+
+		public void run(IProgressMonitor monitor) throws RodinDBException {
+			con.create(false, monitor);
+			con.setConfiguration(abs.getConfiguration(), null);
+			createExtendsContextClause(monitor);
+			con.save(null, false);
+		}
+
+		private void createExtendsContextClause(IProgressMonitor monitor)
+				throws RodinDBException {
+			final IExtendsContext refines = con
+					.getExtendsClause("internal_extendsContext1");
+			refines.create(null, monitor);
+			refines.setAbstractContextName(abs.getComponentName(), monitor);
+		}
+
+	}
+	
 	private IWorkbenchPart part;
 
-	IRodinFile newFile;
-
-	/**
-	 * Constructor for Action1.
-	 */
-	public Extends() {
-		super();
+	private ISelection selection;
+	
+	public void run(IAction action) {
+		final IContextFile abs = getSelectedContext();
+		if (abs == null) {
+			return;
+		}
+		final IContextFile con = askRefinementContextFor(abs);
+		if (con == null) {
+			return;
+		}
+		final CreateRefinement op = new CreateRefinement(abs, con);
+		try {
+			RodinCore.run(op, null);
+		} catch (RodinDBException e) {
+			// TODO report error to end user
+			e.printStackTrace();
+			return;
+		}
+		UIUtils.linkToEventBEditor(con);
 	}
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
+	public void selectionChanged(IAction action, ISelection sel) {
+		this.selection = sel;
+	}
+
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		part = targetPart;
 	}
 
 	/**
-	 * @see IActionDelegate#run(IAction)
+	 * Returns the selected machine if the selection is structured and contains
+	 * exactly one element which is adaptable to a machine file. Otherwise,
+	 * returns <code>null</code>.
+	 * 
+	 * @return the selected machine or <code>null</code>
 	 */
-	public void run(IAction action) {
+	private IContextFile getSelectedContext() {
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				if (!(obj instanceof IContextFile))
-					return;
-				final IContextFile context = (IContextFile) obj;
-				final IRodinProject prj = context.getRodinProject();
-
-				InputDialog dialog = new InputDialog(part.getSite().getShell(),
-						"New EXTENDS Clause",
-						"Please enter the name of the new context", "c0",
-						new RodinFileInputValidator(prj));
-
-				dialog.open();
-
-				final String abstractContextName = context.getComponentName();
-				final String bareName = dialog.getValue();
-				if (bareName == null)
-					return;
-				try {
-					RodinCore.run(new IWorkspaceRunnable() {
-
-						public void run(IProgressMonitor monitor)
-								throws RodinDBException {
-							newFile = prj.getRodinFile(EventBPlugin
-									.getContextFileName(bareName));
-							newFile.create(true, monitor);
-
-							IExtendsContext extended = newFile
-									.getInternalElement(
-											IExtendsContext.ELEMENT_TYPE,
-											"internal_extendsContext1");
-							extended.create(null, monitor);
-							extended.setAbstractContextName(
-									abstractContextName, monitor);
-							newFile.save(monitor, true);
-						}
-
-					}, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					newFile = null;
-				}
-				if (newFile != null)
-					UIUtils.linkToEventBEditor(newFile);
-
+				return EventBPlugin.asContextFile(ssel.getFirstElement());
 			}
 		}
-
+		return null;
 	}
 
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * Asks the user the name of the concrete machine to create and returns it.
+	 * 
+	 * @param abs
+	 *            the abstract machine to refine
+	 * @return the concrete machine entered by the user or <code>null</code>
+	 *         if canceled.
 	 */
-	public void selectionChanged(IAction action, ISelection sel) {
-		this.selection = sel;
+	private IContextFile askRefinementContextFor(IContextFile abs) {
+		final IRodinProject prj = abs.getRodinProject();
+		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
+				"New EXTENDS Clause",
+				"Please enter the name of the new context", "c0",
+				new RodinFileInputValidator(prj));
+		dialog.open();
+
+		final String name = dialog.getValue();
+		if (name == null) {
+			return null;
+		}
+		final String fileName = EventBPlugin.getContextFileName(name);
+		return (IContextFile) prj.getRodinFile(fileName);
 	}
 
 }

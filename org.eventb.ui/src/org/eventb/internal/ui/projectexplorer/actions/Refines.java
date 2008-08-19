@@ -8,9 +8,12 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - removed test on inherited event
+ *     Systerel - fully rewritten the run() method
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
+
+import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,7 +21,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
@@ -28,12 +30,11 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDB;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -41,11 +42,103 @@ import org.rodinp.core.RodinDBException;
 
 public class Refines implements IObjectActionDelegate {
 
-	private ISelection selection;
+	private static final class CreateRefinement implements IWorkspaceRunnable {
+
+		private final IMachineFile abs;
+		private final IMachineFile con;
+
+		public CreateRefinement(IMachineFile abs, IMachineFile con) {
+			this.abs = abs;
+			this.con = con;
+		}
+
+		public void run(IProgressMonitor monitor) throws RodinDBException {
+			con.create(false, monitor);
+			con.setConfiguration(abs.getConfiguration(), null);
+			createRefinesMachineClause(monitor);
+			copyChildrenOfType(con, abs, ISeesContext.ELEMENT_TYPE, monitor);
+			copyChildrenOfType(con, abs, IVariable.ELEMENT_TYPE, monitor);
+			createEvents(monitor);
+			con.save(null, false);
+		}
+
+		private void createRefinesMachineClause(IProgressMonitor monitor)
+				throws RodinDBException {
+			final IRefinesMachine refines = con
+					.getRefinesClause("internal_refinesMachine1");
+			refines.create(null, monitor);
+			refines.setAbstractMachineName(abs.getComponentName(), monitor);
+		}
+
+		private <T extends IInternalElement> void copyChildrenOfType(
+				IRodinFile destination, IRodinFile original,
+				IInternalElementType<T> type, IProgressMonitor monitor)
+				throws RodinDBException {
+
+			final T[] elements = original.getChildrenOfType(type);
+			if (elements.length == 0)
+				return;
+			final IRodinFile[] containers = new IRodinFile[] { destination };
+			final IRodinDB rodinDB = destination.getRodinDB();
+			rodinDB.copy(elements, containers, null, null, false, monitor);
+		}
+
+		private void createEvents(IProgressMonitor monitor)
+				throws RodinDBException {
+			final IEvent[] absEvts = abs.getChildrenOfType(IEvent.ELEMENT_TYPE);
+			for (IEvent absEvt : absEvts) {
+				createEvent(absEvt, monitor);
+			}
+		}
+
+		private void createEvent(IEvent absEvt, IProgressMonitor monitor)
+				throws RodinDBException {
+			final String name = absEvt.getElementName();
+			final String label = absEvt.getLabel();
+			final IEvent conEvt = con.getEvent(name);
+			conEvt.create(null, monitor);
+			conEvt.setLabel(label, monitor);
+			conEvt.setExtended(true, monitor);
+			createRefinesEventClause(conEvt, label, monitor);
+			if (absEvt.hasComment()) {
+				conEvt.setComment(absEvt.getComment(), monitor);
+			}
+			setConvergence(conEvt, absEvt, monitor);
+		}
+
+		private void createRefinesEventClause(IEvent conEvt, String label,
+				IProgressMonitor monitor) throws RodinDBException {
+			if (!label.equals(IEvent.INITIALISATION)) {
+				final IRefinesEvent refines = conEvt
+						.getRefinesClause("internal_refinesEvent1");
+				refines.create(null, monitor);
+				refines.setAbstractEventLabel(label, monitor);
+			}
+		}
+
+		private void setConvergence(IEvent conEvt, IEvent absEvt,
+				IProgressMonitor monitor) throws RodinDBException {
+			final Convergence absCvg = absEvt.getConvergence();
+			final Convergence conCvg = computeRefinementConvergence(absCvg);
+			conEvt.setConvergence(conCvg, monitor);
+		}
+
+		private Convergence computeRefinementConvergence(Convergence absCvg) {
+			switch (absCvg) {
+			case ANTICIPATED:
+				return ANTICIPATED;
+			case CONVERGENT:
+			case ORDINARY:
+				return ORDINARY;
+			}
+			return ORDINARY;
+		}
+
+	}
 
 	private IWorkbenchPart part;
 
-	IRodinFile newFile;
+	private ISelection selection;
 
 	/**
 	 * Constructor for Action1.
@@ -54,133 +147,73 @@ public class Refines implements IObjectActionDelegate {
 		super();
 	}
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		part = targetPart;
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
 	public void run(IAction action) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() == 1) {
-				Object obj = ssel.getFirstElement();
-				if (!(obj instanceof IMachineFile))
-					return;
-				final IMachineFile machine = (IMachineFile) obj;
-				final IRodinProject prj = machine.getRodinProject();
-
-				InputDialog dialog = new InputDialog(part.getSite().getShell(),
-						"New REFINES Clause",
-						"Please enter the name of the new machine", "m0",
-						new RodinFileInputValidator(prj));
-
-				dialog.open();
-
-				final String abstractMachineName = machine.getComponentName();
-				final String bareName = dialog.getValue();
-				if (bareName == null)
-					return;
-
-				try {
-					RodinCore.run(new IWorkspaceRunnable() {
-
-						public void run(IProgressMonitor monitor)
-								throws RodinDBException {
-							newFile = prj.getRodinFile(EventBPlugin
-									.getMachineFileName(bareName));
-							newFile.create(false, monitor);
-
-							IRefinesMachine refined = newFile
-									.getInternalElement(
-											IRefinesMachine.ELEMENT_TYPE,
-											"internal_refinesMachine1");
-							refined.create(null, monitor);
-							refined.setAbstractMachineName(abstractMachineName,
-									null);
-
-							copyChildrenOfType(newFile, machine,
-									ISeesContext.ELEMENT_TYPE, monitor);
-							copyChildrenOfType(newFile, machine,
-									IVariable.ELEMENT_TYPE, monitor);
-							copyChildrenOfType(newFile, machine,
-									IEvent.ELEMENT_TYPE, monitor);
-
-							IEvent[] events = machine
-									.getChildrenOfType(IEvent.ELEMENT_TYPE);
-
-							for (IEvent event : events) {
-								String name = event.getElementName();
-								String label = event.getLabel();
-								IInternalElement newElement = newFile
-										.getInternalElement(
-												IEvent.ELEMENT_TYPE, name);
-
-								// Need to remove the existing IRefinesEvent
-								// elements
-								IRodinElement[] refinesEvents = newElement
-										.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-								for (IRodinElement refinesEvent : refinesEvents)
-									((IRefinesEvent) refinesEvent).delete(true,
-											monitor);
-
-								// Need to remove the existing Witness elements
-								IRodinElement[] witnesses = newElement
-										.getChildrenOfType(IWitness.ELEMENT_TYPE);
-								for (IRodinElement witness : witnesses)
-									((IWitness) witness).delete(true, monitor);
-
-								// INITIALISATION does not have RefineEvents
-								// Element
-								if (!label.equals(IEvent.INITIALISATION)) {
-									IRefinesEvent refinesEvent = newElement
-											.getInternalElement(
-													IRefinesEvent.ELEMENT_TYPE,
-													"internal_refinesEvent1");
-									refinesEvent.create(null, monitor);
-									refinesEvent.setAbstractEventLabel(label,
-											null);
-								}
-							}
-							newFile.save(null, true);
-						}
-
-					}, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					newFile = null;
-				}
-				if (newFile != null)
-					UIUtils.linkToEventBEditor(newFile);
-
-			}
+		final IMachineFile abs = getSelectedMachine();
+		if (abs == null) {
+			return;
 		}
-
+		final IMachineFile con = askRefinementMachineFor(abs);
+		if (con == null) {
+			return;
+		}
+		final CreateRefinement op = new CreateRefinement(abs, con);
+		try {
+			RodinCore.run(op, null);
+		} catch (RodinDBException e) {
+			// TODO report error to end user
+			e.printStackTrace();
+			return;
+		}
+		UIUtils.linkToEventBEditor(con);
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}
 
-	<T extends IInternalElement> void copyChildrenOfType(
-			IRodinFile destination, IRodinFile original,
-			IInternalElementType<T> type, IProgressMonitor monitor)
-			throws RodinDBException {
+	/**
+	 * Returns the selected machine if the selection is structured and contains
+	 * exactly one element which is adaptable to a machine file. Otherwise,
+	 * returns <code>null</code>.
+	 * 
+	 * @return the selected machine or <code>null</code>
+	 */
+	private IMachineFile getSelectedMachine() {
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (ssel.size() == 1) {
+				return EventBPlugin.asMachineFile(ssel.getFirstElement());
+			}
+		}
+		return null;
+	}
 
-		final T[] elements = original.getChildrenOfType(type);
-		if (elements.length == 0)
-			return;
-		final IRodinFile[] containers = new IRodinFile[] {destination};
-		final IRodinDB rodinDB = destination.getRodinDB();
-		rodinDB.copy(elements, containers, null, null, false, monitor);
+	/**
+	 * Asks the user the name of the concrete machine to create and returns it.
+	 * 
+	 * @param abs
+	 *            the abstract machine to refine
+	 * @return the concrete machine entered by the user or <code>null</code>
+	 *         if canceled.
+	 */
+	private IMachineFile askRefinementMachineFor(IMachineFile abs) {
+		final IRodinProject prj = abs.getRodinProject();
+		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
+				"New REFINES Clause",
+				"Please enter the name of the new machine", "m0",
+				new RodinFileInputValidator(prj));
+		dialog.open();
+
+		final String name = dialog.getValue();
+		if (name == null) {
+			return null;
+		}
+		final String fileName = EventBPlugin.getMachineFileName(name);
+		return (IMachineFile) prj.getRodinFile(fileName);
 	}
 
 }
