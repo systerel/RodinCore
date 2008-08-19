@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - replaced inherited by extended
+ *     Systerel - replaced inherited by extended, added parameters
  *******************************************************************************/
 package org.eventb.internal.ui.elementSpecs;
 
@@ -23,6 +23,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -150,7 +151,7 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".parameter")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".parameter", IEvent.ELEMENT_TYPE, IVariable.ELEMENT_TYPE);
+					+ ".parameter", IEvent.ELEMENT_TYPE, IParameter.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".guard")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID + ".guard",
@@ -184,6 +185,8 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 			EventBPlugin.PLUGIN_ID + ".eventConvergence",
 			EventBPlugin.PLUGIN_ID + ".eventComment",
 			EventBPlugin.PLUGIN_ID + ".refinesEventAbstractEventLabel",
+			EventBPlugin.PLUGIN_ID + ".parameterIdentifier",
+			EventBPlugin.PLUGIN_ID + ".parameterComment",
 			EventBPlugin.PLUGIN_ID + ".guardLabel",
 			EventBPlugin.PLUGIN_ID + ".guardPredicate",
 			EventBPlugin.PLUGIN_ID + ".guardComment",
@@ -230,6 +233,8 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 	AttributeRelationship eventConvergence;
 	AttributeRelationship eventComment;
 	AttributeRelationship refinesEventAbstractEventLabel;
+	AttributeRelationship parameterIdentifier;
+	AttributeRelationship parameterComment;
 	AttributeRelationship guardLabel;
 	AttributeRelationship guardPredicate;
 	AttributeRelationship guardComment;
@@ -372,6 +377,22 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 				refinesEventAbstractEventLabel = new AttributeRelationship(id,
 						IRefinesEvent.ELEMENT_TYPE, "org.eventb.core.target");
 			return refinesEventAbstractEventLabel;
+		}
+
+		// Parameter's identifier
+		if (id.equals(EventBPlugin.PLUGIN_ID + ".parameterIdentifier")) {
+			if (parameterIdentifier == null)
+				parameterIdentifier = new AttributeRelationship(id,
+						IParameter.ELEMENT_TYPE, "org.eventb.core.identifier");
+			return parameterIdentifier;
+		}
+
+		// Parameter's comment
+		if (id.equals(EventBPlugin.PLUGIN_ID + ".parameterComment")) {
+			if (parameterComment == null)
+				parameterComment = new AttributeRelationship(id,
+						IParameter.ELEMENT_TYPE, "org.eventb.core.comment");
+			return parameterComment;
 		}
 
 		// Guard's label

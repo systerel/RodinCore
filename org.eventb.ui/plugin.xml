@@ -647,6 +647,17 @@
                modifier="org.eventb.internal.ui.RefinesEventModifier"/>
       </element>
       <element
+            defaultColumn="name"
+            icon="icons/full/obj16/var_obj.gif"
+            priority="4"
+            type="org.eventb.core.parameter">
+         <column
+               id="name"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               math="false"
+               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+      </element>
+      <element
             defaultColumn="content"
             icon="icons/full/obj16/grd_obj.gif"
             priority="5"
@@ -2381,6 +2392,26 @@
             id="org.eventb.core.refinesEventAbstractEventLabel"
             priority="1"
             widget="combo">
+      </attributeRel>
+      <attributeRel
+            defaultValue="prm"
+            factory="org.eventb.internal.ui.eventbeditor.editpage.ParameterIdentifierAttributeFactory"
+            horizontalExpand="false"
+            id="org.eventb.core.parameterIdentifier"
+            math="false"
+            priority="1"
+            style="single"
+            widget="text">
+      </attributeRel>
+      <attributeRel
+            factory="org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory"
+            horizontalExpand="true"
+            id="org.eventb.core.parameterComment"
+            math="false"
+            prefix="//"
+            priority="9"
+            style="multi"
+            widget="text">
       </attributeRel>
       <attributeRel
             defaultValue="grd"

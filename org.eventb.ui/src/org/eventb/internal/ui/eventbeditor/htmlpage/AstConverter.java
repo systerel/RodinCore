@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - replaced inherited by extended
+ *     Systerel - replaced inherited by extended, event variable by parameter
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -27,6 +27,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -583,13 +584,11 @@ public abstract class AstConverter {
 						beginLevel2();
 						appendExtended();
 						endLevel2();
-						continue;
 					}
 				} catch (RodinDBException e) {
 					EventBUIExceptionHandler.handleGetAttributeException(e);
-					continue;
 				}
-				IVariable[] params;
+				IParameter[] params;
 				IGuard[] guards;
 				IAction[] actions;
 				IRefinesEvent[] refinesEvents;
@@ -597,7 +596,7 @@ public abstract class AstConverter {
 				try {
 					refinesEvents = evt
 							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-					params = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					params = evt.getChildrenOfType(IParameter.ELEMENT_TYPE);
 					guards = evt.getChildrenOfType(IGuard.ELEMENT_TYPE);
 					witnesses = evt.getChildrenOfType(IWitness.ELEMENT_TYPE);
 					actions = evt.getChildrenOfType(IAction.ELEMENT_TYPE);
@@ -639,7 +638,7 @@ public abstract class AstConverter {
 
 				if (params.length != 0) {
 					keyword("ANY", 1);
-					for (IVariable param: params) {
+					for (IParameter param: params) {
 						beginLevel3();
 						try {
 							appendParameterIdentifier(makeHyperlink(param
@@ -647,7 +646,7 @@ public abstract class AstConverter {
 									.getIdentifierString())));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
-									"Cannot get the identifier string for local variable "
+									"Cannot get the identifier string for parameter "
 											+ param.getElementName());
 						}
 						addComment(param);
