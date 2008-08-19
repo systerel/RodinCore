@@ -8,10 +8,12 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - replaced inherited by extended
+ *     Systerel - replaced inherited by extended, added tool configuration
  ******************************************************************************/
 
 package org.eventb.internal.ui.wizards;
+
+import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,6 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
@@ -160,6 +163,8 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 				final IRodinFile rodinFile = rodinProject
 						.getRodinFile(fileName);
 				rodinFile.create(false, pMonitor);
+				((IConfigurationElement) rodinFile).setConfiguration(
+						DEFAULT_CONFIGURATION, pMonitor);
 				if (rodinFile instanceof IMachineFile) {
 					IEvent init = rodinFile.getInternalElement(
 							IEvent.ELEMENT_TYPE, "internal_"
