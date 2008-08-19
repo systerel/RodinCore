@@ -587,6 +587,7 @@ public abstract class AstConverter {
 					}
 				} catch (RodinDBException e) {
 					EventBUIExceptionHandler.handleGetAttributeException(e);
+					continue;
 				}
 				IParameter[] params;
 				IGuard[] guards;
