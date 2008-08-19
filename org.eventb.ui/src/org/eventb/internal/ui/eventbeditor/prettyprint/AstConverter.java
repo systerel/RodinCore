@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - replaced inherited by extended
+ *     Systerel - replaced inherited by extended, local variable by parameter
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.prettyprint;
 
@@ -25,6 +25,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -493,13 +494,12 @@ public abstract class AstConverter {
 						beginLevel2();
 						italic("extended");
 						endLevel();
-						continue;
 					}
 				} catch (RodinDBException e) {
 					EventBUIExceptionHandler.handleGetAttributeException(e);
 					continue;
 				}
-				IVariable[] lvars;
+				IParameter[] params;
 				IGuard[] guards;
 				IAction[] actions;
 				IRefinesEvent[] refinesEvents;
@@ -507,7 +507,7 @@ public abstract class AstConverter {
 				try {
 					refinesEvents = evt
 							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-					lvars = evt.getChildrenOfType(IVariable.ELEMENT_TYPE);
+					params = evt.getChildrenOfType(IParameter.ELEMENT_TYPE);
 					guards = evt.getChildrenOfType(IGuard.ELEMENT_TYPE);
 					witnesses = evt.getChildrenOfType(IWitness.ELEMENT_TYPE);
 					actions = evt.getChildrenOfType(IAction.ELEMENT_TYPE);
@@ -538,22 +538,22 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (lvars.length != 0) {
+				if (params.length != 0) {
 					beginLevel2();
 					bold("ANY");
 					endLevel();
-					for (IVariable var: lvars) {
+					for (IParameter param: params) {
 						beginLevel3();
 						try {
-							append(makeHyperlink(var
-									.getHandleIdentifier(), var
+							append(makeHyperlink(param
+									.getHandleIdentifier(), param
 									.getIdentifierString()));
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
-									"Cannot get the identifier string for local variable "
-											+ var.getElementName());
+									"Cannot get the identifier string for parameter "
+											+ param.getElementName());
 						}
-						addComment(var);
+						addComment(param);
 						endLevel();
 					}
 					beginLevel2();
