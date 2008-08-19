@@ -9,10 +9,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added methods for creating elements
- *     Systerel - replaced inherited by extended
+ *     Systerel - replaced inherited by extended, added tool configuration
  *******************************************************************************/
 
 package org.eventb.ui.tests.utils;
+
+import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 
 import junit.framework.TestCase;
 
@@ -96,6 +98,7 @@ public abstract class EventBUITest extends TestCase {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
 		IContextFile result = (IContextFile) rodinProject.getRodinFile(fileName);
 		result.create(true, null);
+		result.setConfiguration(DEFAULT_CONFIGURATION, null);
 		return result;
 	}
 
@@ -113,6 +116,7 @@ public abstract class EventBUITest extends TestCase {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
 		IMachineFile result = (IMachineFile) rodinProject.getRodinFile(fileName);
 		result.create(true, null);
+		result.setConfiguration(DEFAULT_CONFIGURATION, null);
 		return result;
 	}
 	
