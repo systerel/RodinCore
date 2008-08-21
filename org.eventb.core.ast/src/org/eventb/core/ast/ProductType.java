@@ -18,10 +18,10 @@ import java.util.Set;
 public class ProductType extends Type {
 	
 	// First component of this type
-	private Type left;
+	private final Type left;
 
 	// Second component of this type
-	private Type right;
+	private final Type right;
 
 	/**
 	 * Creates a new instance of this type.
