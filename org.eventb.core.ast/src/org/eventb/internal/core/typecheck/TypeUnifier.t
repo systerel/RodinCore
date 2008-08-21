@@ -144,11 +144,12 @@ public class TypeUnifier {
 	public final Type solve(Type intype) {
 		assert intype != null;
 		%match (Type intype) {
-			tv@TypeVar() -> {
-				Type type = `tv.getValue();		
+			TypeVar() -> {
+				TypeVariable typeVar = (TypeVariable) intype;
+				Type type = typeVar.getValue();		
 				if (type != null) {
 					type = solve(type);
-					`tv.setValue(type);
+					typeVar.setValue(type);
 					return type;
 				}
 				else {
