@@ -18,7 +18,7 @@ public class AttributeRelUISpecRegistry extends
 	public static IAttributeRelUISpecRegistry instance = null;
 
 	private AttributeRelUISpecRegistry() {
-		// Singleton: private to hide contructor
+		// Singleton: private to hide constructor
 	}
 
 	public static IAttributeRelUISpecRegistry getDefault() {
