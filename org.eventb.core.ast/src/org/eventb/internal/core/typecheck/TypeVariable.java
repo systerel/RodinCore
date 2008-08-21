@@ -24,10 +24,10 @@ import org.eventb.core.ast.Type;
 public class TypeVariable extends Type {
 	
 	// Index of this type variable
-	private int index;
+	private final int index;
 	
 	// Location for which this type variable was created
-	private SourceLocation location;
+	private final SourceLocation location;
 
 	// Value associated to this type variable
 	private Type value;
