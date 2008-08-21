@@ -72,7 +72,7 @@ for element types within the extension namespace). The token cannot contain dot
                   the fully-qualified name of a subclass of &lt;code&gt;org.rodinp.core.RodinFile&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.rodinp.core.RodinFile"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.basis.RodinFile"/>
                </appInfo>
             </annotation>
          </attribute>

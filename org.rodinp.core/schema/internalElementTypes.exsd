@@ -77,7 +77,7 @@ for element types within the extension namespace). The token cannot contain dot
                   the fully-qualified name of a subclass of &lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.rodinp.core.InternalElement"/>
+                  <meta.attribute kind="java" basedOn="org.rodinp.core.basis.InternalElement"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -107,7 +107,7 @@ for element types within the extension namespace). The token cannot contain dot
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;The specified class must subclass &lt;code&gt;org.rodinp.core.InternalElement&lt;/code&gt; and provide a constructor looking like the following:
+         &lt;p&gt;The specified class must subclass &lt;code&gt;org.rodinp.core.basis.InternalElement&lt;/code&gt; and provide a constructor looking like the following:
 &lt;pre&gt;
     public ClassName(String name, org.rodinp.core.IRodinElement parent) {
         super(name, parent);
