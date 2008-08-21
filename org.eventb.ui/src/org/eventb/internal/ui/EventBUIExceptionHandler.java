@@ -226,7 +226,7 @@ public class EventBUIExceptionHandler {
 	 * @param e
 	 *            the exception in consideration.
 	 */
-	public static void handleRemoveAttribteException(Exception e) {
+	public static void handleRemoveAttributeException(Exception e) {
 		handleException(e, "Exception throws when removing element attribute",
 				EventBUIExceptionHandler.UserAwareness.INFORM);
 	}

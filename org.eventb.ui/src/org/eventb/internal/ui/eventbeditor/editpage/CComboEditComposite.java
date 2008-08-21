@@ -120,7 +120,7 @@ public class CComboEditComposite extends AbstractEditComposite {
 							uiSpec.getAttributeFactory().removeAttribute(element,
 									new NullProgressMonitor());
 						} catch (RodinDBException e1) {
-							EventBUIExceptionHandler.handleRemoveAttribteException(e1);
+							EventBUIExceptionHandler.handleRemoveAttributeException(e1);
 						}
 					} else {
 						try {
