@@ -10,19 +10,24 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used getFreeIndex to factorize several methods
  *     Systerel - replaced inherited by extended
+ *     Systerel - added getImplicitChildren(), refactored getAbstractEvent()
  *******************************************************************************/
 package org.eventb.internal.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBProject;
+import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
@@ -38,6 +43,8 @@ import org.rodinp.core.RodinDBException;
  *         </p>
  */
 public class EventBUtils {
+
+	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
 
 	/**
 	 * Gets the abstract machine of an event-B machine. This is done by checking
@@ -112,7 +119,7 @@ public class EventBUtils {
 	 *         <li>If the abstract machine does not exist.
 	 *         <li>If there is no abstract machine corresponding to the file
 	 *         contains the machine containing the input event.
-	 *         <li>If there is no refines event child.
+	 *         <li>If there is no refines event child (except for INITIALISATION).
 	 *         <li>If there are more than one refines event child.
 	 *         <li>if there is no abstract event corresponding to the refines
 	 *         event clause.
@@ -123,62 +130,83 @@ public class EventBUtils {
 	 *             reading the refines event child.
 	 */
 	public static IEvent getAbstractEvent(IEvent event) throws RodinDBException {
-		IRodinElement parent = event.getParent();
+		final IRodinElement parent = event.getParent();
 		assert parent instanceof IMachineFile;
 
-		IMachineFile machine = getAbstractMachine((IMachineFile) parent);
-
-		if (machine == null)
+		final IMachineFile abs = getAbstractMachine((IMachineFile) parent);
+		if (abs == null || !abs.exists()) {
 			return null;
+		}
 
-		if (!machine.exists())
+		final IInternalElementType<IEvent> type = IEvent.ELEMENT_TYPE;
+		final String label = getAbstractEventLabel(event);
+		if (label == null) {
 			return null;
+		}
+		return getFirstChildOfTypeWithLabel(abs, type, label);
+	}
 
-//		if (event.isExtended()) {
-//			return getFirstChildOfTypeWithLabel(machine, IEvent.ELEMENT_TYPE,
-//					event.getLabel());
-//		}
-
-		IRefinesEvent[] refinesClauses = event.getRefinesClauses();
+	private static String getAbstractEventLabel(IEvent event)
+			throws RodinDBException {
+		if (event.getLabel().equals(IEvent.INITIALISATION)) {
+			return IEvent.INITIALISATION;
+		}
+		final IRefinesEvent[] refinesClauses = event.getRefinesClauses();
 		if (refinesClauses.length == 1) {
-			return getFirstChildOfTypeWithLabel(machine, IEvent.ELEMENT_TYPE,
-					refinesClauses[0].getAbstractEventLabel());
+			return refinesClauses[0].getAbstractEventLabel();
 		}
 		return null;
 	}
 
 	/**
-	 * Get the first non extended abstract event of an input event.
+	 * Returns the children of the abstractions of the given event that are
+	 * implicitly inherited through extension.
+	 * <p>
+	 * The children returned are sorted with the children of the most abstract
+	 * event first. The order of children in each event is preserved.
+	 * </p>
 	 * 
 	 * @param event
 	 *            an event
-	 * @return the first non-extended abstract event of the input event or
-	 *         <code>null</code>. Return <code>null</code> in the following
-	 *         cases:
-	 *         <ul>
-	 *         <li>if there is no non-extended abstract event.
-	 *         <li>if there is a loop of abstract events.
-	 *         </ul>
+	 * @return an array of all children that are implicitly inherited by the
+	 *         given event through extension
 	 * @throws RodinDBException
-	 *             if some problems occur in getting the abstract events.
+	 *             if some problems occurs
 	 */
-// TODO update this code for extended events
-	public static IEvent getNonExtendedAbstractEvent(IEvent event)
+	public static IInternalElement[] getImplicitChildren(IEvent event)
 			throws RodinDBException {
-		Collection<IEvent> events = new ArrayList<IEvent>();
-		events.add(event);
-		IEvent abstractEvent = getAbstractEvent(event);
-		while (abstractEvent != null) {
-			if (events.contains(abstractEvent))
-				return null;
-
-			if (!abstractEvent.isExtended())
-				return abstractEvent;
-			events.add(abstractEvent);
-			abstractEvent = getAbstractEvent(abstractEvent);
+		final LinkedList<IRodinElement> result = new LinkedList<IRodinElement>();
+		while (event.hasExtended() && event.isExtended()) {
+			event = getAbstractEvent(event);
+			if (event == null) {
+				// No abstraction!
+				break;
+			}
+			prependInheritedChildren(result, event);
 		}
+		final int size = result.size();
+		if (size == 0) {
+			return NO_ELEMENTS;
+		}
+		return result.toArray(new IInternalElement[size]);
+	}
 
-		return null;
+	private static void prependInheritedChildren(List<IRodinElement> result,
+			IEvent event) throws RodinDBException {
+		final IRodinElement[] children = event.getChildren();
+		final int length = children.length;
+		for (int i = length - 1; 0 <= i; --i) {
+			final IRodinElement child = children[i];
+			if (isInherited(child)) {
+				result.add(0, child);
+			}
+		}
+	}
+
+	private static boolean isInherited(IRodinElement child) {
+		IElementType<?> type = child.getElementType();
+		return type == IParameter.ELEMENT_TYPE || type == IGuard.ELEMENT_TYPE
+				|| type == IAction.ELEMENT_TYPE;
 	}
 
 	/**

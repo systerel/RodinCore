@@ -15,7 +15,7 @@
 package org.eventb.ui.tests.utils;
 
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
-
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
@@ -27,12 +27,16 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
@@ -182,6 +186,7 @@ public abstract class EventBUITest extends TestCase {
 		event.create(null, null);
 		event.setLabel(eventLabel, null);
 		event.setExtended(false, null);
+		event.setConvergence(ORDINARY, null);
 		return event;
 	}
 
@@ -205,6 +210,99 @@ public abstract class EventBUITest extends TestCase {
 		refinesClause.create(null, null);
 		refinesClause.setAbstractEventLabel(abstractEventLabel, null);
 		return refinesClause;
+	}
+	
+	/**
+	 * Creates a parameter of an event.
+	 * 
+	 * @param event
+	 *            an event
+	 * @param ident
+	 *            the parameter identifier
+	 * @return the newly created parameter
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IParameter createParameter(IEvent event, String ident)
+			throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(event,
+				IParameter.ELEMENT_TYPE, "i_prm"); //$NON-NLS-1$
+		IParameter parameter = event.getParameter(childName);
+		parameter.create(null, null);
+		parameter.setIdentifierString(ident, null);
+		return parameter;
+	}
+
+	/**
+	 * Creates a guard of an event.
+	 * 
+	 * @param event
+	 *            an event.
+	 * @param label
+	 *            the label of the guard
+	 * @param pred
+	 *            the predicate of the guard
+	 * @return the newly created guard
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IGuard createGuard(IEvent event, String label, String pred)
+			throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(event,
+				IGuard.ELEMENT_TYPE, "i_grd"); //$NON-NLS-1$
+		IGuard guard = event.getGuard(childName);
+		guard.create(null, null);
+		guard.setLabel(label, null);
+		guard.setPredicateString(pred, null);
+		return guard;
+	}
+
+	/**
+	 * Creates a witness of an event.
+	 * 
+	 * @param event
+	 *            an event.
+	 * @param label
+	 *            the label of the witness
+	 * @param pred
+	 *            the predicate of the witness
+	 * @return the newly created witness
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IWitness createWitness(IEvent event, String label, String pred)
+			throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(event,
+				IWitness.ELEMENT_TYPE, "i_wit"); //$NON-NLS-1$
+		IWitness witness = event.getWitness(childName);
+		witness.create(null, null);
+		witness.setLabel(label, null);
+		witness.setPredicateString(pred, null);
+		return witness;
+	}
+
+	/**
+	 * Utility method for creating an action of an event.
+	 * 
+	 * @param event
+	 *            an event
+	 * @param label
+	 *            the label of the action
+	 * @param assign
+	 *            the assignment of the action
+	 * @return the newly created action
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IAction createAction(IEvent event, String label, String assign)
+			throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(event,
+				IAction.ELEMENT_TYPE, "i_act"); //$NON-NLS-1$
+		IAction action = event.getAction(childName);
+		action.create(null, null);
+		action.setLabel(label, null);
+		action.setAssignmentString(assign, null);
+		return action;
 	}
 	
 	@Before

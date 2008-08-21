@@ -9,23 +9,26 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended
+ *     Systerel - fully refactored the setValue() method
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.EventBUtils.getFreeChildName;
+import static org.eventb.internal.ui.EventBUtils.getImplicitChildren;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
-import org.eventb.core.IParameter;
-import org.eventb.core.IWitness;
-import org.eventb.internal.ui.EventBUtils;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -37,15 +40,101 @@ import org.rodinp.core.RodinDBException;
  */
 public class ExtendedAttributeFactory implements IAttributeFactory {
 
+	private static final class SetExtended implements IWorkspaceRunnable {
+
+		private final IEvent event;
+
+		public SetExtended(IEvent event) {
+			this.event = event;
+		}
+
+		public void run(IProgressMonitor pMonitor) throws CoreException {
+			event.setExtended(true, pMonitor);
+			final IInternalElement[] implicitChildren = getImplicitChildren(event);
+			if (implicitChildren.length == 0) {
+				return;
+			}
+			removeImplicitChildren(implicitChildren);
+		}
+
+		private void removeImplicitChildren(IInternalElement[] implicitChildren)
+				throws RodinDBException {
+			final IRodinElement[] children = event.getChildren();
+			for (IRodinElement child : children) {
+				removeIfDuplicate((IInternalElement) child, implicitChildren);
+			}
+		}
+
+		private void removeIfDuplicate(IInternalElement child,
+				IInternalElement[] implicitChildren) throws RodinDBException {
+			for (IInternalElement implicit : implicitChildren) {
+				if (child.getElementType() == implicit.getElementType()
+						&& child.hasSameAttributes(implicit)
+						&& child.hasSameChildren(implicit)) {
+					child.delete(false, null);
+				}
+			}
+		}
+
+	}
+
+	private static final class UnsetExtended implements IWorkspaceRunnable {
+
+		private final IEvent event;
+
+		public UnsetExtended(IEvent event) {
+			this.event = event;
+		}
+
+		public void run(IProgressMonitor pMonitor) throws CoreException {
+			final IInternalElement[] implicitChildren = getImplicitChildren(event);
+			event.setExtended(false, pMonitor);
+			if (implicitChildren.length == 0) {
+				return;
+			}
+			insertImplicitChildren(implicitChildren);
+		}
+
+		private void insertImplicitChildren(
+				final IInternalElement[] implicitChildren)
+				throws RodinDBException {
+			final IRodinElement firstChild = getFirstChild();
+			for (IInternalElement implicit : implicitChildren) {
+				final String name = getFreshName(implicit);
+				implicit.copy(event, firstChild, name, false, null);
+			}
+		}
+
+		private IRodinElement getFirstChild() throws RodinDBException {
+			for (IRodinElement child : event.getChildren()) {
+				if (child.getElementType() != IRefinesEvent.ELEMENT_TYPE) {
+					return child;
+				}
+			}
+			return null;
+		}
+
+		private String getFreshName(IInternalElement implicit)
+				throws RodinDBException {
+			final IInternalElementType<?> type = implicit.getElementType();
+			final String name = implicit.getElementName();
+			if (event.getInternalElement(type, name).exists()) {
+				return getFreeChildName(event, type, "internal"); //$NON-NLS-1$
+			}
+			return name;
+		}
+
+	}
+
 	/**
 	 * Constant string for TRUE (i.e. extended).
 	 */
-	private final String TRUE = Messages.attributeFactory_extended_true;
+	private static final String TRUE = Messages.attributeFactory_extended_true;
 
 	/**
 	 * Constant string for FALSE (i.e. non-extended).
 	 */
-	private final String FALSE = Messages.attributeFactory_extended_false;
+	private static final String FALSE = Messages.attributeFactory_extended_false;
 
 	/**
 	 * Gets the string representation of the value of the extended attribute,
@@ -56,7 +145,7 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	 */
 	public String getValue(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		IEvent event = (IEvent) element;
+		final IEvent event = (IEvent) element;
 		return event.isExtended() ? TRUE : FALSE;
 	}
 
@@ -70,80 +159,38 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	 * <ul>
 	 * <li>If the new value is <code>true</code>, i.e. the event becomes
 	 * extended, then the parameters, guards and actions of the abstraction are
-	 * removed from the extending event.
+	 * removed from the extending event.</li>
 	 * <li>If the new value is <code>false</code>, i.e. the event becomes
-	 * non-extended, then the contents of the latest non-extended abstract event
-	 * corresponding to the event (if any) will be copied to this event,
-	 * together with all extensions along the path down from that event.
+	 * non-extended, then the children of the abstract event(s) that are
+	 * extended and which were implicitly there are copied within the given
+	 * event.</li>
 	 * </ul>
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setValue(org.rodinp.core.IAttributedElement,
-	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IEvent;
-
 		final IEvent event = (IEvent) element;
-		String value;
 		try {
-			value = getValue(element, monitor);
+			final String oldValue = getValue(event, monitor);
+			if (newValue.equals(oldValue)) {
+				return;
+			}
 		} catch (RodinDBException e) {
-			value = null;
+			// TODO show exception ?
+			return;
 		}
-		if (value == null || !value.equals(newValue)) {
-			final boolean extended = newValue.equalsIgnoreCase(TRUE);
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor pMonitor) throws CoreException {
-					event.setExtended(extended, pMonitor);
-					if (extended) {
-						// TODO Removed duplicate parameters, guards and actions.
-						
-					} else {
-						// Find the latest non-extended abstract event.
-						IEvent abstractEvent = EventBUtils
-								.getNonExtendedAbstractEvent(event);
-						// Copy the body of the abstract event, this includes
-						// PARAMETERS, GUARDS, WITNESS, ACTIONS.
-						if (abstractEvent != null) {
-							final IParameter[] parameters = abstractEvent
-									.getParameters();
-							for (IParameter parameter : parameters) {
-								parameter.copy(event, null, null, false, pMonitor);
-							}
-							final IGuard[] guards = abstractEvent.getGuards();
-							for (IGuard guard : guards) {
-								guard.copy(event, null, null, false, pMonitor);
-							}
-							final IWitness[] witnesses = abstractEvent.getWitnesses();
-							for (IWitness witness : witnesses) {
-								witness.copy(event, null, null, false, pMonitor);
-							}
-							final IAction[] actions = abstractEvent.getActions();
-							for (IAction action : actions) {
-								action.copy(event, null, null, false, pMonitor);
-							}
-						}
-					}
-				}
-				
-			}, monitor);
-			
+		final boolean extended = newValue.equals(TRUE);
+		if (extended) {
+			RodinCore.run(new SetExtended(event), monitor);
+		} else {
+			RodinCore.run(new UnsetExtended(event), monitor);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getPossibleValues(org.rodinp.core.IAttributedElement, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public String[] getPossibleValues(IAttributedElement element,
 			IProgressMonitor monitor) {
-		return new String[] { TRUE, FALSE };
+		return new String[] { FALSE, TRUE };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#removeAttribute(org.rodinp.core.IAttributedElement, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void removeAttribute(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.EXTENDED_ATTRIBUTE, monitor);
@@ -152,10 +199,6 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	/**
 	 * Default value for extended attribute is <code>false</code>, i.e.
 	 * non-extended.
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setDefaultValue(org.eventb.ui.eventbeditor.IEventBEditor,
-	 *      org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setDefaultValue(IEventBEditor<?> editor,
 			IAttributedElement element, IProgressMonitor monitor)

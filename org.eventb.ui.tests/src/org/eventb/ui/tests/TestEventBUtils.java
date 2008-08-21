@@ -10,22 +10,32 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - modified expected results after getFreeIndex modification
  *     Systerel - replaced inherited by extended
+ *     Systerel - refactored all tests to make them unit tests
+ *     Systerel - added tests for getImplicitChildren()
  *******************************************************************************/
 package org.eventb.ui.tests;
 
+import java.util.Arrays;
+
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IRefinesMachine;
+import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Unit tests for static methods of class {@link EventBUtils}.
+ * 
  * @author htson
- *         <p>
- *         jUnit tests for {@link EventBUtils}.
+ * @author Laurent Voisin
  */
 public class TestEventBUtils extends EventBUITest {
 
@@ -230,223 +240,216 @@ public class TestEventBUtils extends EventBUITest {
 	}
 
 	/**
-	 * Tests for {@link EventBUtils#getNonExtendedAbstractEvent(IEvent)}.
+	 * Ensures that the abstraction of the INITIALISATION event is correctly returned.
+	 * 
+	 * @see EventBUtils#getAbstractEvent(IEvent)
 	 */
 	@Test
-	public void testGetNonExtendedAbstractEvent() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+	public void testAbstractEventINITIALISATION() throws Exception {
+		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IEvent m0Event = createEvent(m0, "foo", IEvent.INITIALISATION);
 		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
-
-		IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
-		assertNotNull(
-				"The event m0Event should have been created successfully", //$NON-NLS-1$
-				m0Event);
-
-		IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
+		final IEvent m1Event = createEvent(m1, "bar", IEvent.INITIALISATION);
 		m1.save(null, true);
-		assertNotNull("m1 should be created successfully ", m1); //$NON-NLS-1$
+		assertAbstractEvent(m1Event, m0Event);
+	}
 
-		IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
-		assertNotNull(
-				"The event m1Event should have been created successfully", //$NON-NLS-1$
-				m1Event);
+	private void assertFreeChildName(final int expected,
+			final IInternalParent parent, final IInternalElementType<?> type,
+			final String prefix) throws RodinDBException {
+		final String actual = EventBUtils.getFreeChildNameIndex(parent, type,
+				prefix);
+		assertEquals("" + expected, actual);
+		final String childName = EventBUtils.getFreeChildName(parent, type,
+				prefix);
+		assertEquals("Incorrect child name", prefix + expected, childName);
+	}
 
-		IMachineFile m2 = createMachine("m2"); //$NON-NLS-1$
-		m2.save(null, true);
-		assertNotNull("m2 should be created successfully ", m2); //$NON-NLS-1$
+	/**
+	 * Ensures that the first free child name is numbered "1".
+	 * 
+	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 *      String)
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 *      IInternalElementType, String)
+	 */
+	@Test
+	public void testGetFreeChildNameNone() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		m0.save(null, true);
+		assertFreeChildName(1, m0, IEvent.ELEMENT_TYPE, "event");
+	}
 
-		IEvent m2Event = createEvent(m2, "event"); //$NON-NLS-1$
-		assertNotNull(
-				"The event m1Event should have been created successfully", //$NON-NLS-1$
-				m2Event);
+	/**
+	 * Ensures that the second free child name is numbered "2".
+	 * 
+	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 *      String)
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 *      IInternalElementType, String)
+	 */
+	@Test
+	public void testGetFreeChildNameOne() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		createEvent(m0, "event1", "label1");
+		m0.save(null, true);
+		assertFreeChildName(2, m0, IEvent.ELEMENT_TYPE, "event");
+	}
 
-		// Test for having no non-extended abstract event because m2Event does
-		// not have any abstract event.
-		IEvent nonExtendedAbstractEvent = EventBUtils
-				.getNonExtendedAbstractEvent(m2Event);
-		assertNull(
-				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
-				nonExtendedAbstractEvent);
+	/**
+	 * Ensures that the nth free child name is numbered 1 greater than the
+	 * greatest children.
+	 * 
+	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 *      String)
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 *      IInternalElementType, String)
+	 */
+	@Test
+	public void testGetFreeChildNameNth() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		createEvent(m0, "event1", "label1");
+		createEvent(m0, "event3", "label2");
+		m0.save(null, true);
+		assertFreeChildName(4, m0, IEvent.ELEMENT_TYPE, "event");
+	}
 
-		// Testing for having non-extended abstract event because m2 refines m1
-		// and m2Event refines m1Event, and m1Event is non-extended.
-		// Make m2 refines m1.
-		createRefinesMachineClause(m2, "m1"); //$NON-NLS-1$
+	private <T> void assertEquals(T[] expected, T[] actual) {
+		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
+	}
 
-		// m2Event is extended, i.e m2Event refines m1Event.
-		m2Event.setExtended(true, null);
-		nonExtendedAbstractEvent = EventBUtils
-				.getNonExtendedAbstractEvent(m2Event);
-		assertNotNull(
-				"There should be a non-extended abstract event for m2Event", //$NON-NLS-1$
-				nonExtendedAbstractEvent);
-		assertEquals("Incorrect non-extended abstract", m1Event, //$NON-NLS-1$
-				nonExtendedAbstractEvent);
+	private void assertImplicitChildren(IEvent event, IRodinElement... expected)
+			throws Exception {
+		final IRodinElement[] actual = EventBUtils.getImplicitChildren(event);
+		assertEquals(expected, actual);
+	}
 
-		// Testing for having no non-extended abstract event because m2 refines
-		// m1
-		// and m2Event refines m1Event, and m1Event is extended but does not
-		// correspond to any abstract event.
+	/**
+	 * Ensures that no children is returned for an event of a top-level machine.
+	 * 
+	 * @see EventBUtils#getImplicitChildren(IEvent)
+	 */
+	@Test
+	public void testImplicitChildrenTop() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		final IEvent m0Event = createEvent(m0, "event");
+		m0.save(null, true);
+		assertImplicitChildren(m0Event);
+	}
+
+	/**
+	 * Ensures that no children is returned for an event that is not extended.
+	 * 
+	 * @see EventBUtils#getImplicitChildren(IEvent)
+	 */
+	@Test
+	public void testImplicitChildrenNotExtended() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		final IEvent m0Event = createEvent(m0, "event");
+		createParameter(m0Event, "p");
+		createGuard(m0Event, "grd1", "foo");
+		createWitness(m0Event, "wit1", "bar");
+		createAction(m0Event, "act1", "baz");
+		m0.save(null, true);
+
+		final IMachineFile m1 = createMachine("m1");
+		createRefinesMachineClause(m1, "m0");
+		final IEvent m1Event = createEvent(m1, "event");
+		createRefinesEventClause(m1Event, "event");
+		m1.save(null, true);
+
+		assertImplicitChildren(m1Event);
+	}
+
+	/**
+	 * Ensures that no children is returned for an event that has no
+	 * abstraction.
+	 * 
+	 * @see EventBUtils#getImplicitChildren(IEvent)
+	 */
+	@Test
+	public void testImplicitChildrenNoAbstraction() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		final IEvent m0Event = createEvent(m0, "event");
+		createParameter(m0Event, "p");
+		createGuard(m0Event, "grd1", "foo");
+		createWitness(m0Event, "wit1", "bar");
+		createAction(m0Event, "act1", "baz");
+		m0.save(null, true);
+
+		final IMachineFile m1 = createMachine("m1");
+		createRefinesMachineClause(m1, "m0");
+		final IEvent m1Event = createEvent(m1, "event");
 		m1Event.setExtended(true, null);
-		nonExtendedAbstractEvent = EventBUtils
-				.getNonExtendedAbstractEvent(m2Event);
-		assertNull(
-				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
-				nonExtendedAbstractEvent);
+		m1.save(null, true);
 
-		// Testing for having no non-extended abstract event because m2 refines
-		// m1
-		// and m2Event refines m1Event, and m1Event is extended, but m1 refines
-		// m2 hence m1Event refines m2Event, hence looping.
-
-		// Make m1 refines m2.
-		IRefinesMachine m1RefinesMachine = createRefinesMachineClause(m1, "m2"); //$NON-NLS-1$
-		nonExtendedAbstractEvent = EventBUtils
-				.getNonExtendedAbstractEvent(m2Event);
-		assertNull(
-				"There should be no non-extended abstract event for m2Event", //$NON-NLS-1$
-				nonExtendedAbstractEvent);
-
-		// Testing for having non-extended abstract event because m2 refines m1
-		// and m2Event refines m1Event, and m1Event is extended, and m1 refines
-		// m0 hence m1Event refines m0Event.
-		m1RefinesMachine.setAbstractMachineName("m0", //$NON-NLS-1$
-				null);
-		nonExtendedAbstractEvent = EventBUtils
-				.getNonExtendedAbstractEvent(m2Event);
-		assertNotNull(
-				"There should be a non-extended abstract event for m2Event", //$NON-NLS-1$
-				nonExtendedAbstractEvent);
-		assertEquals("Incorrect non-extended abstract", m0Event, //$NON-NLS-1$
-				nonExtendedAbstractEvent);
+		assertAbstractEvent(m1Event, null);
+		assertImplicitChildren(m1Event);
 	}
 
 	/**
-	 * Tests for
-	 * {@link EventBUtils#getFreeChildName(org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, String)}.
+	 * Ensures that the children of the abstraction of an extended event are
+	 * properly returned, when the abstract event is not itself extended.
+	 * 
+	 * @see EventBUtils#getImplicitChildren(IEvent)
 	 */
 	@Test
-	public void testGetFreeChildName() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+	public void testImplicitChildrenSimple() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		final IEvent m0Event = createEvent(m0, "event");
+		final IParameter p = createParameter(m0Event, "p");
+		final IGuard grd1 = createGuard(m0Event, "grd1", "foo");
+		createWitness(m0Event, "wit1", "bar");
+		final IAction act1 = createAction(m0Event, "act1", "baz");
 		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
-		// Currently, there are no events so the free child name should be
-		// "event1".
-		String childName = EventBUtils.getFreeChildName(m0,
-				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event1", childName); //$NON-NLS-1$ //$NON-NLS-2$
+		final IMachineFile m1 = createMachine("m1");
+		createRefinesMachineClause(m1, "m0");
+		final IEvent m1Event = createEvent(m1, "event");
+		createRefinesEventClause(m1Event, "event");
+		m1Event.setExtended(true, null);
+		m1.save(null, true);
 
-		// Gets the free child name again and it should return event1 still.
-		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event1", childName); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Creates "event1".
-		createEvent(m0, "event1", "event1Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There is "event1" so the free child name now should be "event2".
-		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event2", childName); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Creates "event3".
-		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There are "event1", "event3" so the free child name now should be
-		// "event4"
-		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event4", childName); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Gets the free child name again and it should be "event4".
-		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event4", childName); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Create "event2"
-		createEvent(m0, "event2", "event2Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// Gets the free child name and it should be "event4".
-		childName = EventBUtils.getFreeChildName(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "event4", childName); //$NON-NLS-1$ //$NON-NLS-2$
+		assertImplicitChildren(m1Event, p, grd1, act1);
 	}
 
 	/**
-	 * Test for
-	 * {@link EventBUtils#getFreeChildNameIndex(org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, String)}.
+	 * Ensures that the children of several abstractions of an extended event
+	 * are properly returned, when some abstract event are themselves extended.
+	 * 
+	 * @see EventBUtils#getImplicitChildren(IEvent)
 	 */
 	@Test
-	public void testGetFreeChildNameIndex() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+	public void testImplicitChildrenMultiple() throws Exception {
+		final IMachineFile m0 = createMachine("m0");
+		final IEvent m0Event = createEvent(m0, "event");
+		final IParameter p = createParameter(m0Event, "p");
+		final IGuard grd1 = createGuard(m0Event, "grd1", "foo");
+		createWitness(m0Event, "wit1", "bar");
+		final IAction act1 = createAction(m0Event, "act1", "baz");
 		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
 
-		// There are no events, so the free index now should be 1.
-		String freeIndex = EventBUtils.getFreeChildNameIndex(m0,
-				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
+		final IMachineFile m1 = createMachine("m1");
+		createRefinesMachineClause(m1, "m0");
+		final IEvent m1Event = createEvent(m1, "event");
+		m1Event.setExtended(true, null);
+		createRefinesEventClause(m1Event, "event");
+		final IParameter q = createParameter(m1Event, "q");
+		final IGuard grd2 = createGuard(m1Event, "grd2", "foo");
+		createWitness(m1Event, "wit2", "bar");
+		final IAction act2 = createAction(m1Event, "act2", "baz");
+		m1.save(null, true);
 
-		// Do it again and should be 1 still.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
+		final IMachineFile m2 = createMachine("m2");
+		createRefinesMachineClause(m2, "m1");
+		final IEvent m2Event = createEvent(m2, "event");
+		createRefinesEventClause(m2Event, "event");
+		m2Event.setExtended(true, null);
+		m2.save(null, true);
 
-		// Create "event1"
-		createEvent(m0, "event1", "event1Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There is "event1" so the free index now should be 2.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
-
-		// Gets the free index again and it should be 2 still.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
-
-		// Create "event3"
-		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There are now "event1", "event3" so the free index should be 4.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect child name", "4", freeIndex); //$NON-NLS-1$
-	}
-
-	/**
-	 * Tests for
-	 * {@link EventBUtils#getFreeChildNameIndex(org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, String)}.
-	 */
-	@Test
-	public void testGetFreeChildNameIndexWithBeginIndex() throws Exception {
-		IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
-		assertNotNull("m0 should be created successfully ", m0); //$NON-NLS-1$
-
-		// There are no events so the free index is 1.
-		String freeIndex = EventBUtils.getFreeChildNameIndex(m0,
-				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "1", freeIndex); //$NON-NLS-1$
-
-		// Create "event1".
-		createEvent(m0, "event1", "event1Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There is "event1" so the free index is 2.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "2", freeIndex); //$NON-NLS-1$
-
-		// Create "event3"
-		createEvent(m0, "event3", "event3Label"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		// There are "event1" and "event3" so the free index is 4.
-		freeIndex = EventBUtils.getFreeChildNameIndex(m0, IEvent.ELEMENT_TYPE,
-				"event"); //$NON-NLS-1$
-		assertEquals("Incorrect free child name index ", "4", freeIndex); //$NON-NLS-1$
-
+		assertImplicitChildren(m2Event, p, grd1, act1, q, grd2, act2);
 	}
 
 }
