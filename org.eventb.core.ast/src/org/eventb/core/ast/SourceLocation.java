@@ -30,7 +30,7 @@ public class SourceLocation {
 	// from which this formula was parsed
 	private final int start;
 	private final int end;
-	private Object origin;
+	private final Object origin;
 
 	/**
 	 * Creates a new source location.
@@ -38,9 +38,7 @@ public class SourceLocation {
 	 * @param end
 	 */
 	public SourceLocation(final int start, final int end) {
-		this.start = start;
-		this.end = end;
-		this.origin = null;
+		this(start, end, null);
 	}
 
 	/**
@@ -50,7 +48,8 @@ public class SourceLocation {
 	 * @param origin
 	 */
 	public SourceLocation(final int start, final int end, final Object origin) {
-		this(start, end);
+		this.start = start;
+		this.end = end;
 		this.origin = origin;
 	}
 
