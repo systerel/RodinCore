@@ -271,7 +271,7 @@ public class ProjectExplorerContentProvider implements
 			}
 		} catch (RodinDBException e) {
 			// If the resource is out of date then prompt the user to refresh
-			if (((IRodinElement) parent).getCorrespondingResource()
+			if (!((IRodinElement) parent).getCorrespondingResource()
 					.isSynchronized(IResource.DEPTH_INFINITE)) {
 				MessageDialog
 						.openWarning(
