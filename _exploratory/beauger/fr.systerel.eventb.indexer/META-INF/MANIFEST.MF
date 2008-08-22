@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Indexer Plug-in
+Bundle-SymbolicName: fr.systerel.eventb.indexer
+Bundle-Version: 0.0.1
+Bundle-Vendor: Systerel
+Export-Package: org.eventb.core.indexer
+Require-Bundle: org.eclipse.core.runtime,
+ fr.systerel.indexer,
+ org.rodinp.core,
+ org.eventb.core
