@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name.f0
+Bundle-SymbolicName: fr.systerel.indexer.tests;singleton:=true
+Bundle-Version: 0.0.1
+Fragment-Host: org.rodinp.core;bundle-version="0.8.1"
+Require-Bundle: org.junit,
+ org.rodinp.core.tests,
+ fr.systerel.indexer
+Bundle-Localization: plugin
