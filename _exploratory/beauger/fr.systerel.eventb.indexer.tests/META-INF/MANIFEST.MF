@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests Plug-in
+Bundle-SymbolicName: fr.systerel.eventb.indexer.tests
+Bundle-Version: 0.0.1
+Bundle-Vendor: Systerel
+Require-Bundle: org.rodinp.core,
+ org.eventb.core,
+ org.rodinp.core.tests,
+ org.eclipse.core.runtime,
+ org.junit,
+ fr.systerel.eventb.indexer,
+ fr.systerel.indexer
