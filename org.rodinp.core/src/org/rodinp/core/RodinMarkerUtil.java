@@ -101,7 +101,7 @@ public final class RodinMarkerUtil {
 	 * <p>
 	 * This attribute is optional, however it must be set if {@link #CHAR_END}
 	 * is set. Moreover, its value must be strictly less than that of
-	 * <code>CHAR_START</code>.
+	 * <code>CHAR_END</code>.
 	 * </p>
 	 */
 	public static final String CHAR_START = "charStart"; //$NON-NLS-1$
