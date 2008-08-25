@@ -38,6 +38,8 @@ public class ExplorerUtilities {
 
 		if (!(obj instanceof IRodinProject)) {
 			component = (IRodinFile) UIUtils.getOpenable(obj);
+			if (component == null)
+				return;
 			try {
 				IEditorInput fileInput = new FileEditorInput(component
 						.getResource());
