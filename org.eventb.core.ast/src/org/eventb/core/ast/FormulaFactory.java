@@ -89,7 +89,7 @@ public class FormulaFactory {
 	/**
 	 * Returns a new associative predicate
 	 * <p>
-	 * {LAND, LOR, LEQV}
+	 * {LAND, LOR}
 	 * </p>
 	 * @param tag
 	 *            the tag of the associative predicate
@@ -108,7 +108,7 @@ public class FormulaFactory {
 	/**
 	 * Returns a new associative predicate
 	 * <p>
-	 * {LAND, LOR, LEQV}
+	 * {LAND, LOR}
 	 * </p>
 	 * @param tag
 	 *            the tag of the associative predicate
@@ -307,7 +307,7 @@ public class FormulaFactory {
 	/**
 	 * Returns a new binary predicate
 	 * <p>
-	 * {LIMP}
+	 * {LIMP, LEQV}
 	 * @param tag
 	 *            the tag of the binary predicate
 	 * @param left
@@ -515,7 +515,7 @@ public class FormulaFactory {
 	/**
 	 * Returns a new quantified expression
 	 * <p>
-	 * {LAMBDA, QUNION, QINTER, CSET}
+	 * {QUNION, QINTER, CSET}
 	 * </p>
 	 * @param tag
 	 *            the tag of the quantified expression
@@ -542,7 +542,7 @@ public class FormulaFactory {
 	/**
 	 * Returns a new quantified expression
 	 * <p>
-	 * {LAMBDA, QUNION, QINTER, CSET}
+	 * {QUNION, QINTER, CSET}
 	 * </p>
 	 * @param tag
 	 *            the tag of the quantified expression
