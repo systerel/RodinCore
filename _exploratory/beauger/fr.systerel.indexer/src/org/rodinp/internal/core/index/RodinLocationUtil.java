@@ -8,7 +8,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -21,8 +20,7 @@ public class RodinLocationUtil {
 		if (!element.exists()) {
 			return new RodinDBStatus(ELEMENT_DOES_NOT_EXIST, element);
 		}
-		IAttributeType attrType = RodinCore.getAttributeType(location
-				.getAttributeId());
+		IAttributeType attrType = location.getAttributeType();
 		if (attrType != null) {
 			return verifyLocation(location);
 		}
@@ -52,8 +50,7 @@ public class RodinLocationUtil {
 		final IRodinElement element = location.getElement();
 		if (element instanceof IAttributedElement) {
 			IAttributedElement ie = (IAttributedElement) element;
-			IAttributeType attrType = RodinCore.getAttributeType(location
-					.getAttributeId());
+			IAttributeType attrType = location.getAttributeType();
 			// Check that attribute exists
 			try {
 				if (withCharPos && !ie.hasAttribute(attrType)) {

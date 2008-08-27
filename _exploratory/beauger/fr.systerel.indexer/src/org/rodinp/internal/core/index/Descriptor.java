@@ -32,20 +32,20 @@ public final class Descriptor implements IDescriptor {
 		return references.toArray(new Occurrence[references.size()]);
 	}
 
-	public boolean hasOccurrence(Occurrence ref) {
-		return references.contains(ref);
+	public boolean hasOccurrence(Occurrence occurrence) {
+		return references.contains(occurrence);
 	}
 
-	public void addOccurrence(Occurrence newRef) {
-		references.add(newRef);
+	public void addOccurrence(Occurrence occurrence) {
+		references.add(occurrence);
 	}
 
-	public void addOccurrences(Occurrence[] newRefs) {
-		references.addAll(Arrays.asList(newRefs));
+	public void addOccurrences(Occurrence[] occurrences) {
+		references.addAll(Arrays.asList(occurrences));
 	}
 
-	public void removeOccurrence(Occurrence ref) {
-		references.remove(ref);
+	public void removeOccurrence(Occurrence occurrence) {
+		references.remove(occurrence);
 	}
 
 	public void removeOccurrences(Occurrence[] refs) {
@@ -67,7 +67,7 @@ public final class Descriptor implements IDescriptor {
 	//DEBUG
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("descriptor: ");
+		StringBuilder sb = new StringBuilder("*** descriptor: ");
 		sb.append(element.getElementName() + "\n");
 		
 		for (Occurrence ref: references) {

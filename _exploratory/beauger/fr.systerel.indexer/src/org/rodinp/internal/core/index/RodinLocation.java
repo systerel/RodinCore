@@ -1,19 +1,25 @@
 package org.rodinp.internal.core.index;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IRodinLocation;
 
 public class RodinLocation implements IRodinLocation {
 
 	private final IRodinElement element;
-	private final String attributeId;
+	private final IAttributeType attributeType;
 	private final int charStart;
 	private final int charEnd;
 
-	public RodinLocation(IRodinElement element, String attributeId, int charStart,
+	public RodinLocation(IRodinElement element, IAttributeType attributeType, int charStart,
 			int charEnd) {
+		if (element == null) {
+			throw new NullPointerException("null element");
+		}
+		
+		// TODO verify other preconditions specified in JavaDoc, see IRodinMarkerUtils
 		this.element = element;
-		this.attributeId = attributeId;
+		this.attributeType = attributeType;
 		this.charStart = charStart;
 		this.charEnd = charEnd;
 	}
@@ -24,8 +30,8 @@ public class RodinLocation implements IRodinLocation {
 	}
 
 
-	public String getAttributeId() {
-		return attributeId;
+	public IAttributeType getAttributeType() {
+		return attributeType;
 	}
 
 
@@ -51,7 +57,7 @@ public class RodinLocation implements IRodinLocation {
 //public static final String ELEMENT = "element"; //$NON-NLS-1$
 //
 ///**
-//* Attribute id marker attribute (value <code>"attributeId"</code>). This
+//* Attribute id marker attribute (value <code>"attributeType"</code>). This
 //* attribute contains the identifier of the Rodin attribute where the
 //* problem is located.
 //* <p>
@@ -59,7 +65,7 @@ public class RodinLocation implements IRodinLocation {
 //* {@link #CHAR_START} or {@link #CHAR_END} is specified.
 //* </p>
 //*/
-//public static final String ATTRIBUTE_ID = "attributeId"; //$NON-NLS-1$
+//public static final String ATTRIBUTE_ID = "attributeType"; //$NON-NLS-1$
 //
 ///**
 //* Character start marker attribute (value <code>"charStart"</code>).

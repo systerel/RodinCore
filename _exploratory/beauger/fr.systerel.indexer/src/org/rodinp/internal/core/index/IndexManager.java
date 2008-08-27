@@ -9,16 +9,19 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IRodinIndex;
 
 public final class IndexManager {
 
+	// TODO should automatically remove projects when they get deleted.
+	
 	private static IndexManager instance;
 	private Map<IRodinProject, RodinIndex> indexes;
 	private Set<IIndexer> indexers;
 
 	// protected IElementChangedListener listener = new
 	// IElementChangedListener() {
-	//
+	//rETURNS
 	// public void elementChanged(ElementChangedEvent event) {
 	// IndexManager.this.elementChanged(event);
 	// }
@@ -81,7 +84,8 @@ public final class IndexManager {
 
 		if (indexer == null) {
 			// TODO: throw an exception or return an error code
-			// or try to decompose a possibly complex element (RodinDB, RodinProject)
+			// or try to decompose a possibly complex element (RodinDB,
+			// RodinProject)
 			// into more simple ones and retry to find an indexer.
 			return;
 		}
@@ -92,22 +96,21 @@ public final class IndexManager {
 			return;
 		}
 
-		// create an index only if it does not already exist.
-		createIndex(project, false);
-
-		indexer.index(file, indexes.get(project));
+		indexer.index(file, getIndex(project));
 	}
 
 	private void indexProject(IRodinProject project) {
 		// TODO
 	}
-	
+
 	/**
 	 * Creates a new index associated to the given project. Does nothing if an
 	 * index already exists for the project.
 	 * 
 	 * @param project
 	 *            the project for which to create an index.
+	 * @param overwrite
+	 *            overwrites any existing mapping to that project.
 	 */
 	private void createIndex(IRodinProject project, boolean overwrite) {
 		if (overwrite || !indexes.containsKey(project)) {
@@ -115,7 +118,15 @@ public final class IndexManager {
 		}
 	}
 
-	public RodinIndex getIndex(IRodinProject project)	 {
+	/**
+	 * Returns an IRodinIndex corresponding to the given project.
+	 * If no index already exists, a new empty one is created.
+	 * 
+	 * @param project
+	 * @return a non null IRodinIndex.
+	 */
+	public IRodinIndex getIndex(IRodinProject project) {
+		createIndex(project, false); // creates only if not already present
 		return indexes.get(project);
 	}
 
