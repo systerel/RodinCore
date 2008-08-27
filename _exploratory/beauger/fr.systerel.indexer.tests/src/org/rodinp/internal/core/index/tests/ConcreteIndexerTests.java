@@ -1,7 +1,6 @@
 package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -16,12 +15,14 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 	private IIndexer indexer = new ConcreteIndexer();
 	private IRodinFile file;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		IndexTestsUtil.createRodinProject("P");
 		file = IndexTestsUtil.createRodinFile("P/concInd.test");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -43,18 +44,7 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 		RodinIndex index = new RodinIndex();
 		indexer.index(file, index);
 
-		final String id = IndexTestsUtil.elementUniqueId(element);
-
-		assertDescriptor(index, id, 6);
-	}
-
-	private void assertDescriptor(RodinIndex index, final String id,
-			final int expectedLength) {
-		final IDescriptor descriptor = index.getDescriptor(id);
-		assertNotNull("expected descriptor not found", descriptor);
-
-		final int refsLength = descriptor.getOccurrences().length;
-		assertEquals("Did not index correctly", expectedLength, refsLength);
+		IndexTestsUtil.assertDescriptor(index, element, 6);
 	}
 
 }

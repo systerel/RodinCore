@@ -1,6 +1,5 @@
 package org.rodinp.internal.core.index.tests;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
@@ -30,6 +29,7 @@ public class ReferenceTests extends ModifyingResourceTests {
 		assertEquals("Occurrence construction was not correct", expected, actual);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -42,6 +42,7 @@ public class ReferenceTests extends ModifyingResourceTests {
 		ref = new Occurrence(defaultKind, location, indexer);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		super.tearDown();
@@ -50,22 +51,6 @@ public class ReferenceTests extends ModifyingResourceTests {
 	public void testConstructor() throws Exception {
 		assertKind(defaultKind, ref.getKind());
 		assertLocation(location, ref.getLocation());
-	}
-
-	public void testSetKind() throws Exception {
-		OccurrenceKind kind = IndexTestsUtil.TestReferenceKind.TEST_KIND;
-		ref.setKind(kind);
-
-		assertKind(kind, ref.getKind());
-	}
-
-	public void testSetLocation() throws Exception {
-		IRodinFile rf = createRodinFile("P/setloc.test");
-		IInternalElement ie = createNEPositive(rf, "elem", null);
-		IRodinLocation loc = new RodinLocation(ie, "attr id", 12, 15);
-		ref.setLocation(loc);
-
-		assertLocation(loc, ref.getLocation());
 	}
 
 }

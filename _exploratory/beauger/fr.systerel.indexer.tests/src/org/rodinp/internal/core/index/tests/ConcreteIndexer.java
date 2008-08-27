@@ -10,6 +10,7 @@ import org.rodinp.core.tests.basis.NamedElement;
 public class ConcreteIndexer implements IIndexer {
 
 	public ConcreteIndexer() {
+		// Nothing to do
 	}
 
 	public boolean canIndex(IRodinFile file) {
@@ -33,8 +34,7 @@ public class ConcreteIndexer implements IIndexer {
 			}
 
 			IDescriptor descriptor = index.makeDescriptor(
-					IndexTestsUtil.defaultNamedElementName, element,
-					IndexTestsUtil.elementUniqueId(element));
+					IndexTestsUtil.defaultNamedElementName, element);
 
 			descriptor.addOccurrences(IndexTestsUtil.generateReferencesTestSet(
 					element, 3));

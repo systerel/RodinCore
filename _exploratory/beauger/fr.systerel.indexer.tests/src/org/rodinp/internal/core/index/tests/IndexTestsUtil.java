@@ -2,11 +2,15 @@ package org.rodinp.internal.core.index.tests;
 
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDescriptor;
+import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.OccurrenceKind;
@@ -151,9 +155,19 @@ public class IndexTestsUtil {
 		return mrt.createRP(projectName);
 	}
 	
-	public static String elementUniqueId(NamedElement element) {
-		return element.getHandleIdentifier(); // element.getElementType().getName() + element.getElementName() + 
+	public static void assertDescriptor(IRodinIndex index, final IInternalElement element,
+			final int expectedLength) {
+		final IDescriptor descriptor = index.getDescriptor(element);
+		TestCase.assertNotNull("expected descriptor not found", descriptor);
+
+		final int refsLength = descriptor.getOccurrences().length;
+		TestCase.assertEquals("Did not index correctly", expectedLength, refsLength);
 	}
+
+
+//	public static String elementUniqueId(NamedElement element) {
+//		return element.getHandleIdentifier(); // element.getElementType().getName() + element.getElementName() + 
+//	}
 
 
 }

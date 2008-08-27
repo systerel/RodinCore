@@ -61,6 +61,7 @@ public class DescriptorTests extends ModifyingResourceTests {
 
 	private Occurrence[] referencesTestSet;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
@@ -72,6 +73,7 @@ public class DescriptorTests extends ModifyingResourceTests {
 		testReference = IndexTestsUtil.createDefaultReference(testElt);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		testDesc.clearOccurrences();
