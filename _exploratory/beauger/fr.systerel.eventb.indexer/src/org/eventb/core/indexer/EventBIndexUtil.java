@@ -3,7 +3,9 @@ package org.eventb.core.indexer;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
 
@@ -20,13 +22,13 @@ public class EventBIndexUtil {
 //	}
 	
 	public static Object getUniqueKey(IInternalElement e) {
-		return e.getHandleIdentifier();
+		return e;
 	}
 	
-	public static Occurrence makeDeclaration(IRodinElement file, IIndexer indexer) {
-		Occurrence ref = new Occurrence(EventBOccurrenceKind.DECLARATION, indexer);
-		ref.setDefaultLocation(file);
-		return ref;
+	public static Occurrence makeDeclaration(IRodinElement file,
+			IIndexer indexer) {
+		final IRodinLocation loc = RodinIndexer.getRodinLocation(file);
+		return new Occurrence(EventBOccurrenceKind.DECLARATION, loc, indexer);
 	}
 
 

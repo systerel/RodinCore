@@ -21,7 +21,9 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
+import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.RodinIndexer;
 
 public class ContextIndexer implements IIndexer {
 
@@ -52,8 +54,7 @@ public class ContextIndexer implements IIndexer {
 
 	private IDescriptor makeConstantDescriptor(IConstant constant,
 			IRodinIndex index) {
-		return index.makeDescriptor(constant.getElementName(), constant,
-				EventBIndexUtil.getUniqueKey(constant));
+		return index.makeDescriptor(constant.getElementName(), constant);
 	}
 
 	private Map<FreeIdentifier, IIdentifierElement> filterFreeIdentifiers(
@@ -127,10 +128,12 @@ public class ContextIndexer implements IIndexer {
 				for (IPosition pos : positions) {
 					final SourceLocation srcLoc = pred.getSubFormula(pos)
 							.getSourceLocation();
-					Occurrence occ = new Occurrence(
-							EventBOccurrenceKind.REFERENCE, this);
-					occ.setLocation(axiom, EventBAttributes.PREDICATE_ATTRIBUTE
-							.getId(), srcLoc.getStart(), srcLoc.getEnd());
+					final IRodinLocation loc = RodinIndexer.getRodinLocation(
+							axiom,
+							EventBAttributes.PREDICATE_ATTRIBUTE,
+							srcLoc.getStart(), srcLoc.getEnd());
+					final Occurrence occ = new Occurrence(
+							EventBOccurrenceKind.REFERENCE, loc, this);
 					descriptor.addOccurrence(occ);
 				}
 			}
