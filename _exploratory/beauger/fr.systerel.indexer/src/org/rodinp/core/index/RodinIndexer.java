@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.RodinLocation;
 
 /**
  * <em>Temporary class</em>
@@ -36,6 +39,21 @@ public class RodinIndexer {
 	/** To be moved to {@link RodinCore} */
 	public static final void deregister(IIndexer indexer) {
 		IndexManager.getDefault().removeIndexer(indexer);
+	}
+
+	public static IRodinLocation getRodinLocation(IRodinElement element) {
+		return getRodinLocation(element, null);
+	}
+
+	public static IRodinLocation getRodinLocation(IRodinElement element,
+			IAttributeType attributeType) {
+		return getRodinLocation(element, attributeType,
+				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);
+	}
+
+	public static IRodinLocation getRodinLocation(IRodinElement element,
+			IAttributeType attributeType, int start, int end) {
+		return new RodinLocation(element, attributeType, start, end);
 	}
 
 }

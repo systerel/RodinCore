@@ -13,15 +13,15 @@ public interface IDescriptor {
 	 */
 	public Occurrence[] getOccurrences();
 	
-	public boolean hasOccurrence(Occurrence ref);
+	public boolean hasOccurrence(Occurrence occurrence);
 
-	public void addOccurrence(Occurrence newRef);
+	public void addOccurrence(Occurrence occurrence);
 
-	public void addOccurrences(Occurrence[] newRefs);
+	public void addOccurrences(Occurrence[] occurrences);
 
-	public void removeOccurrence(Occurrence ref);
+	public void removeOccurrence(Occurrence occurrence);
 
-	public void removeOccurrences(Occurrence[] refs);
+	public void removeOccurrences(Occurrence[] occurrences);
 
 	public void clearOccurrences();
 
