@@ -1,6 +1,7 @@
 package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.OccurrenceKind;
@@ -33,8 +34,9 @@ public class ReferenceTests extends ModifyingResourceTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		createRodinProject("P");
-		IRodinFile file = IndexTestsUtil.createRodinFile("P/ref.test");
+		final IRodinProject rodinProject = createRodinProject("P");
+		IRodinFile file = rodinProject.getRodinFile("ref.test");
+		file.create(false, null);
 		NamedElement elem = IndexTestsUtil.createNamedElement(file, "elem");
 
 		location = new RodinLocation(elem, null,

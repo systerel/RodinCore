@@ -32,7 +32,7 @@ public class IndexManagerTests extends ModifyingResourceTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = IndexTestsUtil.createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile("P/indMan.test");
+		file = project.getRodinFile("indMan.test");
 	}
 
 	@Override

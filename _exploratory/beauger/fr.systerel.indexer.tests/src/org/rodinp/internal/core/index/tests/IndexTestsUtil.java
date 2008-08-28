@@ -83,11 +83,6 @@ public class IndexTestsUtil {
 				indexer);
 	}
 
-	public static Occurrence createDefaultReference(String fileName,
-			String elementName) throws Exception {
-		IRodinFile file = createRodinFile(fileName);
-		return createDefaultReference(createNamedElement(file, elementName));
-	}
 
 	// public static Occurrence[] generateFaultyReferencesTestSet()
 	// throws CoreException { // TODO use next method
@@ -135,11 +130,6 @@ public class IndexTestsUtil {
 	public static NamedElement getNamedElement(IInternalParent parent,
 			String elementName) {
 		return mrt.getNamedElement(parent, elementName);
-	}
-
-	public static IRodinFile createRodinFile(String fileName)
-			throws CoreException {
-		return mrt.createRF(fileName);
 	}
 
 	public static IRodinProject createRodinProject(String projectName)

@@ -1,6 +1,7 @@
 package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -18,8 +19,9 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		IndexTestsUtil.createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile("P/concInd.test");
+		final IRodinProject rodinProject = IndexTestsUtil.createRodinProject("P");
+		file = rodinProject.getRodinFile("concInd.test");
+		file.create(false, null);
 	}
 
 	@Override
