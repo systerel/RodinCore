@@ -100,8 +100,7 @@ public class ContextIndexer implements IIndexer {
 						idents, constantNames);
 
 				indexMatchingIdents(matchingIdents, index, axiom, pred);
-			} // TODO: try to index something even if parsing fails … ? seems
-				// quite difficult
+			}
 		}
 
 	}
@@ -128,10 +127,10 @@ public class ContextIndexer implements IIndexer {
 				for (IPosition pos : positions) {
 					final SourceLocation srcLoc = pred.getSubFormula(pos)
 							.getSourceLocation();
-					final IRodinLocation loc = RodinIndexer.getRodinLocation(
+					final IRodinLocation loc = EventBIndexUtil.getRodinLocation(
 							axiom,
 							EventBAttributes.PREDICATE_ATTRIBUTE,
-							srcLoc.getStart(), srcLoc.getEnd());
+							srcLoc);
 					final Occurrence occ = new Occurrence(
 							EventBOccurrenceKind.REFERENCE, loc, this);
 					descriptor.addOccurrence(occ);
@@ -181,7 +180,7 @@ public class ContextIndexer implements IIndexer {
 	// Predicate pred = result.getParsedPredicate();
 	// FreeIdentifier[] idents = pred.getFreeIdentifiers();
 	//
-	// // FIXME: algo particulièrement inefficace, faire l'inverse
+	// // algo particulièrement inefficace, faire l'inverse
 	// // lister les freeIdents une fois pour toutes puis chercher
 	// // si on peut indexer des constantes à partir de ça
 	// if (containsIdentifier(idents, cstId)) {
@@ -211,7 +210,7 @@ public class ContextIndexer implements IIndexer {
 	// }
 	// }
 	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
+	// // Auto-generated catch block
 	// e.printStackTrace();
 	// }
 	//
