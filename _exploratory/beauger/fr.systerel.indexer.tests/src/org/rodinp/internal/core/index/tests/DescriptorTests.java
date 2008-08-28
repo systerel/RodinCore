@@ -2,6 +2,7 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.tests.ModifyingResourceTests;
@@ -64,8 +65,9 @@ public class DescriptorTests extends ModifyingResourceTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		createRodinProject("P");
-		IRodinFile file = IndexTestsUtil.createRodinFile("P/desc.test");
+		final IRodinProject rodinProject = createRodinProject("P");
+		IRodinFile file = rodinProject.getRodinFile("desc.test");
+		file.create(false, null);
 		final String testEltName = "testElt";
 		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
 		testDesc = new Descriptor(testEltName, testElt);

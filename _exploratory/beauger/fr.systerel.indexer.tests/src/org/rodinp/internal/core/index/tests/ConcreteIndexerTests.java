@@ -39,7 +39,6 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 		file.create(true, null);
 		NamedElement element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultNamedElementName);
-		element.create(null, null);
 
 		RodinIndex index = new RodinIndex();
 		indexer.index(file, index);

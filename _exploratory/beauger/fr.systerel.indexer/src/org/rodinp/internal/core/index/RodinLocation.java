@@ -1,102 +1,90 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.internal.core.RodinDBStatus;
 
 public class RodinLocation implements IRodinLocation {
 
+	/**
+	 * This field contains the handle of the Rodin element where the concerned
+	 * element is located.
+	 * <p>
+	 * This field cannot be <code>null</code>.
+	 */
 	private final IRodinElement element;
+
+	/**
+	 * This field contains the attribute type of the Rodin element where the
+	 * concerned element is located.
+	 * <p>
+	 * This field is optional and can thus be <code>null</code>. However it
+	 * must be set if either {@link #charStart} or {@link #charEnd} is
+	 * specified.
+	 */
 	private final IAttributeType attributeType;
+
+	/**
+	 * An integer value indicating where the concerned element is located inside
+	 * the attribute of type {@link #attributeType}. This field is
+	 * zero-relative and inclusive.
+	 * <p>
+	 * This field is optional and can thus be set to
+	 * {@link IRodinLocation#NULL_CHAR_POS}. However it must be set if
+	 * {@link #charEnd} is set. Moreover, its value must be strictly less than
+	 * that of {@link #charEnd}.
+	 * 
+	 */
 	private final int charStart;
+
+	/**
+	 * An integer value indicating where the concerned element ends inside the
+	 * attribute of type attributeType. This field is zero-relative and
+	 * exclusive.
+	 * <p>
+	 * This attribute is optional and can thus be set to
+	 * {@link IRodinLocation#NULL_CHAR_POS}. However it must be set if
+	 * {@link #charStart} is set. Moreover, its value must be strictly greater
+	 * than that of {@link #charStart}.
+	 */
 	private final int charEnd;
 
-	public RodinLocation(IRodinElement element, IAttributeType attributeType, int charStart,
-			int charEnd) {
+	public RodinLocation(IRodinElement element, IAttributeType attributeType,
+			int charStart, int charEnd) {
+
 		if (element == null) {
 			throw new NullPointerException("null element");
 		}
-		
-		// TODO verify other preconditions specified in JavaDoc, see IRodinMarkerUtils
+
+		IRodinDBStatus status = RodinLocationUtil.verifyRodinLocation(element,
+				attributeType, charStart, charEnd);
+
+		if (status != RodinDBStatus.VERIFIED_OK) {
+			throw new IllegalArgumentException(status.getMessage());
+		}
+
 		this.element = element;
 		this.attributeType = attributeType;
 		this.charStart = charStart;
 		this.charEnd = charEnd;
 	}
 
-
 	public IRodinElement getElement() {
 		return element;
 	}
-
 
 	public IAttributeType getAttributeType() {
 		return attributeType;
 	}
 
-
 	public int getCharStart() {
 		return charStart;
 	}
-
 
 	public int getCharEnd() {
 		return charEnd;
 	}
 
 }
-///**
-//* Element marker attribute (value <code>"element"</code>). This
-//* attribute contains the handle identifier of the Rodin internal element
-//* where the problem is located.
-//* <p>
-//* This attribute is optional, however it must be set if
-//* {@link #ATTRIBUTE_ID} is specified.
-//* </p>
-//*/
-//public static final String ELEMENT = "element"; //$NON-NLS-1$
-//
-///**
-//* Attribute id marker attribute (value <code>"attributeType"</code>). This
-//* attribute contains the identifier of the Rodin attribute where the
-//* problem is located.
-//* <p>
-//* This marker attribute is optional, however it must be set if either
-//* {@link #CHAR_START} or {@link #CHAR_END} is specified.
-//* </p>
-//*/
-//public static final String ATTRIBUTE_ID = "attributeType"; //$NON-NLS-1$
-//
-///**
-//* Character start marker attribute (value <code>"charStart"</code>).
-//* <p>
-//* An integer value indicating where a text marker starts. This attribute is
-//* zero-relative and inclusive. The position stored in this attribute is
-//* relative to the String representation of the Rodin attribute where the
-//* error is located (see {@link #ATTRIBUTE_ID}). That latter attribute must
-//* thus be of kind <code>String</code>.
-//* </p>
-//* <p>
-//* This attribute is optional, however it must be set if {@link #CHAR_END}
-//* is set. Moreover, its value must be strictly less than that of
-//* <code>CHAR_END</code>.
-//* </p>
-//*/
-//public static final String CHAR_START = "charStart"; //$NON-NLS-1$
-//
-///**
-//* Character end marker attribute (value <code>"charEnd"</code>).
-//* <p>
-//* An integer value indicating where a text marker ends. This attribute is
-//* zero-relative and exclusive. The position stored in this attribute is
-//* relative to the String representation of the Rodin attribute where the
-//* error is located (see {@link #ATTRIBUTE_ID}). That latter attribute must
-//* thus be of kind <code>String</code>.
-//* </p>
-//* <p>
-//* This attribute is optional, however it must be set if {@link #CHAR_START}
-//* is set. Moreover, its value must be strictly greater than that of
-//* <code>CHAR_START</code>.
-//* </p>
-//*/
-//public static final String CHAR_END = "charEnd"; //$NON-NLS-1$

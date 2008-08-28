@@ -1,5 +1,6 @@
 package org.rodinp.core.index;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 
 // TODO: consider providing only an interface when the Constructor problem is solved.
@@ -9,7 +10,8 @@ public class Occurrence {
 	private IRodinLocation location;
 	private final IIndexer indexer;
 
-	public Occurrence(OccurrenceKind kind, IRodinLocation location, IIndexer indexer) {
+	public Occurrence(OccurrenceKind kind, IRodinLocation location,
+			IIndexer indexer) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
@@ -43,10 +45,13 @@ public class Occurrence {
 		StringBuilder sb = new StringBuilder("occurrence\n");
 		sb.append("kind: " + kind.toString() + "\n");
 		final IRodinElement element = location.getElement();
-		sb.append("location: " + element.getElementName() + "("
+		sb.append("location: " + element.getElementName() + " ("
 				+ element.getElementType().getName() + ")\n");
-		sb.append("attribute id: " + location.getAttributeType() + "\n");
-		sb.append("(" + location.getCharStart() + ".." + location.getCharEnd()
+		final IAttributeType attributeType = location.getAttributeType();
+		sb.append("attribute id: "
+				+ (attributeType == null ? "null" : attributeType.getName())
+				+ "\n");
+		sb.append("(" + location.getCharStart() + "; " + location.getCharEnd()
 				+ ")\n");
 		return sb.toString();
 	}

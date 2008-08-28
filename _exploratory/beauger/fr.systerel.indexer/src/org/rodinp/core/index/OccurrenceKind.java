@@ -4,9 +4,6 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 public class OccurrenceKind implements Serializable {
-	// TODO: make the class abstract (or at least don't define constants here)
-	// and extensible via an extension point
-	// (the constructor may become protected)
 	
 	/**
 	 * 

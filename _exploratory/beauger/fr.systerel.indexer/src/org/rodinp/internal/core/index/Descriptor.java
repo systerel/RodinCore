@@ -77,19 +77,3 @@ public final class Descriptor implements IDescriptor {
 	}
 
 }
-
-// /**
-// * Find references matching the given arguments. Every argument can be
-// * <code>null</code>, thus broadening the result.
-// *
-// * @param file
-// * file to search in, on <code>null</code> to search in every
-// * file.
-// * @param kind
-// * kind of researched reference, or <code>null</code> to get
-// * all found kinds.
-// * @return matching references that were found.
-// */
-// public Occurrence[] findReferences(IRodinFile file, OccurrenceKind kind) {
-// return null;
-// }

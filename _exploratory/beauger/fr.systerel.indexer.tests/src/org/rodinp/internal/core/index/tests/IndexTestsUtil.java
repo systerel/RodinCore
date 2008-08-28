@@ -11,12 +11,11 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IRodinIndex;
-import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.OccurrenceKind;
+import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.RodinLocation;
 
 public class IndexTestsUtil {
 
@@ -79,14 +78,8 @@ public class IndexTestsUtil {
 	public static final String defaultNamedElementName = "banzai";
 	private static final ConcreteIndexer indexer = new ConcreteIndexer();
 	
-	public static IRodinLocation createDefaultLocation(IInternalElement element) {
-		// FIXME: should not use that internal Constructor
-		return new RodinLocation(element, null, IRodinLocation.NULL_CHAR_POS,
-				IRodinLocation.NULL_CHAR_POS);
-	}
-
 	public static Occurrence createDefaultReference(IInternalElement element) {
-		return new Occurrence(OccurrenceKind.NULL, createDefaultLocation(element),
+		return new Occurrence(OccurrenceKind.NULL, RodinIndexer.getRodinLocation(element),
 				indexer);
 	}
 
@@ -126,8 +119,7 @@ public class IndexTestsUtil {
 
 		for (OccurrenceKind k : kinds) {
 			for (int i = 0; i < numEachKind; i++) {
-				result.add(new Occurrence(k, IndexTestsUtil
-						.createDefaultLocation(ie), indexer));
+				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie), indexer));
 			}
 		}
 		return result.toArray(new Occurrence[result.size()]);
@@ -135,8 +127,8 @@ public class IndexTestsUtil {
 
 	public static NamedElement createNamedElement(IRodinFile file,
 			String elementName) throws CoreException {
-
 		NamedElement el = new NamedElement(elementName, file);
+		el.create(null, null);
 		return el;
 	}
 

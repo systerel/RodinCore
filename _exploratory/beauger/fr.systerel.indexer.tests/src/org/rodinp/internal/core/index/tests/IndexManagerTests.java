@@ -45,7 +45,6 @@ public class IndexManagerTests extends ModifyingResourceTests {
 		file.create(true, null);
 		final NamedElement element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultNamedElementName);
-		element.create(null, null);
 		
 		RodinIndexer.register(indexer);
 		IndexManager.getDefault().scheduleIndexing(file);
