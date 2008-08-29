@@ -114,7 +114,7 @@ public interface IConversionResult {
 	 * An entry describes the status of each file.
 	 *
 	 */
-	public static interface IEntry {
+	interface IEntry {
 		
 		/**
 		 * Returns the file described by this entry.
