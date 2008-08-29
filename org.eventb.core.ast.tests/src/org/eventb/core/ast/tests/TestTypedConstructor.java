@@ -108,6 +108,7 @@ import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -131,6 +132,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 
@@ -148,7 +150,7 @@ import org.eventb.core.ast.QuantifiedExpression.Form;
  */
 public class TestTypedConstructor extends TestCase {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	// Types used in these tests
 	private static final Type B = ff.makeBooleanType();
@@ -190,6 +192,12 @@ public class TestTypedConstructor extends TestCase {
 
 	private static final Type[] l_ = new Type[] { null };
 
+	private static int index = 1;
+
+	private static int getFreshIndex() {
+		return index++;
+	}
+
 	private static void assertAssociativeExpressionType(int tag, Type expected,
 			Type... types) {
 		final Expression[] exprs = mExpressions(types);
@@ -217,8 +225,8 @@ public class TestTypedConstructor extends TestCase {
 
 	private static void assertBecomesMemberOf(boolean expected, Type left,
 			Type right) {
-		final FreeIdentifier lhs = mIdentifier(left, 1);
-		final Expression rhs = mExpression(right, 2);
+		final FreeIdentifier lhs = mIdentifier(left);
+		final Expression rhs = mExpression(right);
 		assertFormulaTypeChecked(mBecomesMemberOf(lhs, rhs), expected);
 	}
 
@@ -232,8 +240,8 @@ public class TestTypedConstructor extends TestCase {
 
 	private static void assertBinaryExpressionType(int tag, Type expected,
 			Type leftType, Type rightType) {
-		final Expression left = mExpression(leftType, 1);
-		final Expression right = mExpression(rightType, 2);
+		final Expression left = mExpression(leftType);
+		final Expression right = mExpression(rightType);
 		assertExpressionType(mBinaryExpression(tag, left, right), expected);
 	}
 
@@ -285,7 +293,7 @@ public class TestTypedConstructor extends TestCase {
 	private static void assertQuantifiedExpressionType(int tag, Form form,
 			Type expected, Type[] types, boolean typed, Type type) {
 		final BoundIdentDecl[] bids = mDeclarations(types);
-		Expression expr = mExpression(type, 1);
+		Expression expr = mMapletExpression(type);
 		final Expression qexpr = mQuantifiedExpression(tag, form, bids,
 				mPredicate(typed), expr);
 		assertExpressionType(qexpr, expected);
@@ -301,8 +309,8 @@ public class TestTypedConstructor extends TestCase {
 
 	private static void assertRelationalPredicate(int tag, boolean expected,
 			Type left, Type right) {
-		final Expression lhs = mExpression(left, 1);
-		final Expression rhs = mExpression(right, 2);
+		final Expression lhs = mExpression(left);
+		final Expression rhs = mExpression(right);
 		final Predicate pred = mRelationalPredicate(tag, lhs, rhs);
 		assertFormulaTypeChecked(pred, expected);
 	}
@@ -322,14 +330,14 @@ public class TestTypedConstructor extends TestCase {
 	}
 
 	private static void assertSimplePredicate(boolean expected, Type type) {
-		final Expression expr = mExpression(type, 1);
+		final Expression expr = mExpression(type);
 		final Predicate pred = mSimplePredicate(expr);
 		assertFormulaTypeChecked(pred, expected);
 	}
 
 	private static void assertUnaryExpressionType(int tag, Type expected,
 			Type type) {
-		final Expression child = mExpression(type, 1);
+		final Expression child = mExpression(type);
 		assertExpressionType(mUnaryExpression(tag, child), expected);
 	}
 
@@ -352,36 +360,49 @@ public class TestTypedConstructor extends TestCase {
 		final int len = types.length;
 		final BoundIdentDecl[] result = new BoundIdentDecl[len];
 		for (int i = 0; i < len; i++) {
-			result[i] = mBoundIdentDecl("b" + i, types[i]);
+			result[i] = mBoundIdentDecl("b" + getFreshIndex(), types[i]);
 		}
 		return result;
 	}
 
-	private static Expression mExpression(Type type, int idx) {
+	private static Expression mExpression(Type type) {
 		if (type == null) {
 			return mEmptySet(null);
 		}
-		return mFreeIdentifier("v" + idx, type);
+		return mFreeIdentifier("v" + getFreshIndex(), type);
+	}
+
+	private static Expression mMapletExpression(Type type) {
+		if (type == null) {
+			return mMaplet(mEmptySet(null), mEmptySet(null));
+		}
+		if (type instanceof ProductType) {
+			final ProductType pType = (ProductType) type;
+			final Expression left = mMapletExpression(pType.getLeft());
+			final Expression right = mExpression(pType.getRight());
+			return mMaplet(left, right);
+		}
+		return mExpression(type);
 	}
 
 	private static Expression[] mExpressions(Type[] types) {
 		final int len = types.length;
 		final Expression[] result = new Expression[len];
 		for (int i = 0; i < len; i++) {
-			result[i] = mExpression(types[i], i);
+			result[i] = mExpression(types[i]);
 		}
 		return result;
 	}
 
-	private static FreeIdentifier mIdentifier(Type type, int idx) {
-		return mFreeIdentifier("x" + idx, type);
+	private static FreeIdentifier mIdentifier(Type type) {
+		return mFreeIdentifier("x" + getFreshIndex(), type);
 	}
 
 	private static FreeIdentifier[] mIdentifiers(Type[] types) {
 		final int len = types.length;
 		final FreeIdentifier[] result = new FreeIdentifier[len];
 		for (int i = 0; i < len; i++) {
-			result[i] = mIdentifier(types[i], i);
+			result[i] = mIdentifier(types[i]);
 		}
 		return result;
 	}
