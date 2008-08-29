@@ -17,11 +17,11 @@ public interface IDescriptor {
 
 	public void addOccurrence(Occurrence occurrence);
 
-	public void addOccurrences(Occurrence[] occurrences);
+//	public void addOccurrences(Occurrence[] occurrences);
 
 	public void removeOccurrence(Occurrence occurrence);
 
-	public void removeOccurrences(Occurrence[] occurrences);
+//	public void removeOccurrences(Occurrence[] occurrences);
 
 	public void clearOccurrences();
 

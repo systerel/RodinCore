@@ -5,12 +5,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.Occurrence;
 
 public final class Descriptor implements IDescriptor {
 
-	private String name; // intended use: public name, user-known
+	/**
+	 * Name of the described element. It is intended to be used as a public
+	 * name, known by the user, as opposed to the name returned by
+	 * {@link IRodinElement#getElementName()}, which is of a rather internal
+	 * scope.
+	 */
+	private String name;
 	private IInternalElement element;
 	private Set<Occurrence> references;
 
@@ -19,11 +27,11 @@ public final class Descriptor implements IDescriptor {
 		this.element = element;
 		this.references = new HashSet<Occurrence>();
 	}
-	
-	public String getName()	 {
+
+	public String getName() {
 		return name;
 	}
-	
+
 	public IInternalElement getElement() {
 		return element;
 	}
@@ -37,40 +45,42 @@ public final class Descriptor implements IDescriptor {
 	}
 
 	public void addOccurrence(Occurrence occurrence) {
-		references.add(occurrence);
-	}
-
-	public void addOccurrences(Occurrence[] occurrences) {
-		references.addAll(Arrays.asList(occurrences));
+		if (verifyOccurrence(occurrence)) {
+			references.add(occurrence);
+		} else {
+			throw new IllegalArgumentException(
+					"trying to add an alien occurrence:\n"
+							+ occurrence.toString() + "to element: " + name);
+		}
 	}
 
 	public void removeOccurrence(Occurrence occurrence) {
 		references.remove(occurrence);
 	}
 
-	public void removeOccurrences(Occurrence[] refs) {
-		references.removeAll(Arrays.asList(refs));
-	}
-
-//	public void replaceReference(Occurrence oldRef, Occurrence newRef) {
-//		if (!references.contains(newRef)) {
-//			if (references.remove(oldRef)) {
-//				references.add(newRef);
-//			}
-//		}
-//	}
-
 	public void clearOccurrences() {
 		references.clear();
 	}
 
-	//DEBUG
+	private boolean verifyOccurrence(Occurrence occ) {
+		final IRodinElement locElem = occ.getLocation().getElement();
+		final IRodinFile rodinFile = element.getRodinFile();
+		if (locElem instanceof IRodinFile) {
+			return locElem == rodinFile;
+		}
+		if (locElem instanceof IInternalElement) {
+			return ((IInternalElement) locElem).getRodinFile() == rodinFile;
+		}
+		return false;
+	}
+
+	// DEBUG
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("*** descriptor: ");
 		sb.append(element.getElementName() + "\n");
-		
-		for (Occurrence ref: references) {
+
+		for (Occurrence ref : references) {
 			sb.append(ref.toString() + "\n");
 		}
 		return sb.toString();
