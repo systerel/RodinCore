@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - fixed bug in synthesizeType()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -59,8 +60,13 @@ public class SimplePredicate extends Predicate {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
 		
-		if (! child.isTypeChecked())
+		if (! child.isTypeChecked()) {
 			return;
+		}
+		final Type type = child.getType();
+		if (type == null || type.getBaseType() == null) {
+			return;
+		}
 		typeChecked = true;
 	}
 	

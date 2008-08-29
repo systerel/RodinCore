@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - fixed bug in synthesizeType()
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -130,6 +131,9 @@ public class AssociativeExpression extends Expression {
 			}
 			for (int i = 1; i <= last; i++) {
 				final Type childType = children[i].getType();
+				if (childType == null) {
+					return;
+				}
 				if (! partType.equals(childType.getTarget())) {
 					return;
 				}
@@ -146,6 +150,9 @@ public class AssociativeExpression extends Expression {
 			}
 			for (int i = 1; i <= last; i++) {
 				final Type childType = children[i].getType();
+				if (childType == null) {
+					return;
+				}
 				if (! partType.equals(childType.getSource())) {
 					return;
 				}
