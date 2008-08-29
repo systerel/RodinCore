@@ -109,10 +109,6 @@ public class Result implements IConversionResult {
 					} else {
 						Converter converter = vManager.getConverter(type);
 						byte[] contents = getBytes(entry, force);
-						String s = new String();
-						for (byte b : contents) {
-							s += (char) b;
-						}
 						entry.buffer = converter.convert(contents, entry.version, entry.reqVersion);
 					}
 				} catch (Exception e) {
