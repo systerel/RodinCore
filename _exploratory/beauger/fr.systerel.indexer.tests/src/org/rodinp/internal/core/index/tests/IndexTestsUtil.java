@@ -147,6 +147,12 @@ public class IndexTestsUtil {
 	}
 
 
+	public static void addOccurrences(Occurrence[] occurrences, IDescriptor descriptor) {
+		for (Occurrence occ : occurrences) {
+			descriptor.addOccurrence(occ);
+		}
+	}
+	
 //	public static String elementUniqueId(NamedElement element) {
 //		return element.getHandleIdentifier(); // element.getElementType().getName() + element.getElementName() + 
 //	}

@@ -19,15 +19,6 @@ public class IndexManagerTests extends ModifyingResourceTests {
 		super(name);
 	}
 
-//	private void assertDescriptor(RodinIndex index, final IInternalElement element,
-//			final int expectedLength) {
-//		final IDescriptor descriptor = index.getDescriptor(element);
-//		assertNotNull("expected descriptor not found", descriptor);
-//
-//		final int refsLength = descriptor.getOccurrences().length;
-//		assertEquals("Did not index correctly", expectedLength, refsLength);
-//	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

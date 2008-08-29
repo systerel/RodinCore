@@ -36,8 +36,8 @@ public class ConcreteIndexer implements IIndexer {
 			IDescriptor descriptor = index.makeDescriptor(
 					IndexTestsUtil.defaultNamedElementName, element);
 
-			descriptor.addOccurrences(IndexTestsUtil.generateReferencesTestSet(
-					element, 3));
+			IndexTestsUtil.addOccurrences(IndexTestsUtil.generateReferencesTestSet(
+					element, 3), descriptor);
 
 		} catch (CoreException e) {
 			e.printStackTrace();
