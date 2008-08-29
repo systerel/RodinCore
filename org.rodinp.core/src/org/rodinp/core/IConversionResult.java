@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </p>
  * <p>
  * Version management is almost completely hidden inside the Rodin core plug-in.
- * Conversions, i.e. transformations between versions are declared exlusively in
+ * Conversions, i.e. transformations between versions are declared exclusively in
  * extensions. There is no need to implement any line of code in Java.
  * </p>
  * <p>
@@ -70,7 +70,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <li>If a plug-in contributes a conversion for some file element type, then
  * the plug-in must declare a version for that file element type.</li>
  * <li>For every version and file element type there can be at most one
- * contribute conversion.</li>
+ * contributed conversion.</li>
  * <li>In a simple/sorted conversion the operations are declared relative to file element
  * paths.
  * <ul>
