@@ -230,7 +230,7 @@ public abstract class BasicSCTest extends EventBTest {
 		
 		for (int k=0; k<labels.length; k++) {
 			String predicate = table.get(labels[k]);
-			assertNotNull("should contain" + type + " " + labels[k], predicate);
+			assertNotNull("should contain " + type + " " + labels[k], predicate);
 			assertEquals("wrong " + type, 
 					getNormalizedPredicate(strings[k], environment), 
 					predicate);
@@ -244,7 +244,7 @@ public abstract class BasicSCTest extends EventBTest {
 		Hashtable<String, String> table = getAssignmentTable(assignmentElements);
 		for (int k=0; k<labels.length; k++) {
 			String assignment = table.get(labels[k]);
-			assertNotNull("should contain" + type + " " + labels[k], assignment);
+			assertNotNull("should contain " + type + " " + labels[k], assignment);
 			assertEquals("wrong " + type, 
 					getNormalizedAssignment(strings[k], environment), 
 					assignment);
