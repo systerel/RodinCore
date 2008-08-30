@@ -94,7 +94,7 @@ public class MachineInvariantModule extends
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeInvariant(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalInvariant(symbol, true, element,
 				component);
 	}
 

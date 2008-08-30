@@ -572,56 +572,73 @@ public final class SymbolFactory {
 				importedParameterSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeAxiom(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeLocalAxiom(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCAxiom.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				axiomSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeTheorem(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeLocalTheorem(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCTheorem.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				theoremSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeInvariant(String symbol, boolean persistent,
-			IInternalElement problemElement, String component) {
+	public ILabelSymbolInfo makeLocalInvariant(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			String component) {
 		return new LabelSymbolInfo(symbol, ISCInvariant.ELEMENT_TYPE,
 				persistent, problemElement, EventBAttributes.LABEL_ATTRIBUTE,
 				component, invariantSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeEvent(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeLocalEvent(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCEvent.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				eventSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeGuard(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeLocalGuard(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCGuard.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				guardSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeAction(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeImportedGuard(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			IAttributeType problemAttributeType, String component) {
+		return new LabelSymbolInfo(symbol, ISCGuard.ELEMENT_TYPE, persistent,
+				problemElement, problemAttributeType, component,
+				guardSymbolProblem);
+	}
+
+	public ILabelSymbolInfo makeLocalAction(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCAction.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				actionSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeVariant(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeImportedAction(String symbol,
+			boolean persistent, IInternalElement problemElement,
+			IAttributeType problemAttributeType, String component) {
+		return new LabelSymbolInfo(symbol, ISCAction.ELEMENT_TYPE, persistent,
+				problemElement, problemAttributeType, component,
+				actionSymbolProblem);
+	}
+
+	public ILabelSymbolInfo makeLocalVariant(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCVariant.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				variantSymbolProblem);
 	}
 
-	public ILabelSymbolInfo makeWitness(String symbol, boolean persistent,
+	public ILabelSymbolInfo makeLocalWitness(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCWitness.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,

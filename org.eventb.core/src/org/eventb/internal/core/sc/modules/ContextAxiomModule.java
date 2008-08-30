@@ -85,7 +85,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeAxiom(symbol, true,
+		return SymbolFactory.getInstance().makeLocalAxiom(symbol, true,
 				element, component);
 	}
 

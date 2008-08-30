@@ -71,7 +71,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
 			String component, IProgressMonitor monitor) throws CoreException {
-		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance().makeVariant(
+		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance().makeLocalVariant(
 				"VARIANT", true, internalElement, component);
 		symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
 				internalElement);

@@ -147,7 +147,7 @@ public abstract class EventBTest extends BuilderTest {
 
 	public IEvent addEvent(IMachineFile rodinFile, 
 				String name,
-				String[] vars,
+				String[] params,
 				String[] guardNames,
 				String[] guards,
 				String[] actionNames,
@@ -158,10 +158,10 @@ public abstract class EventBTest extends BuilderTest {
 		event.setLabel(name, null);
 		event.setExtended(false, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
-		for(int i=0; i<vars.length; i++) {
+		for(int i=0; i<params.length; i++) {
 			IParameter parameter = event.getParameter(getUniqueName());
 			parameter.create(null, null);
-			parameter.setIdentifierString(vars[i], null);
+			parameter.setIdentifierString(params[i], null);
 			
 		}
 		for(int i=0; i<guards.length; i++) {

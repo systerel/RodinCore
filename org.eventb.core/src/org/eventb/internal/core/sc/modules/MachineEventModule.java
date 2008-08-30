@@ -291,7 +291,7 @@ public class MachineEventModule extends LabeledElementModule {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeEvent(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalEvent(symbol, true, element,
 				component);
 	}
 

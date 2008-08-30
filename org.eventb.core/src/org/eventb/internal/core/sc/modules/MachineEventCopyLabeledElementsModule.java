@@ -32,49 +32,52 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 		SCProcessorModule {
 
 	private IAbstractMachineInfo abstractMachineInfo;
-	private IConcreteEventInfo concreteEventInfo;
+	protected IConcreteEventInfo concreteEventInfo;
 	private IEventLabelSymbolTable labelSymbolTable;
 
 	public void process(IRodinElement element, IInternalParent target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		if (concreteEventInfo.isInitialisation())
-			return;
+		if (copyNeeded()) {
 
-		ILabelSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
+			ILabelSymbolInfo symbolInfo = concreteEventInfo.getSymbolInfo();
 
-		if (symbolInfo.hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE)
-				&& symbolInfo
-						.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
-				&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
+			if (symbolInfo.hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE)
+					&& symbolInfo
+							.getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE)
+					&& concreteEventInfo.getAbstractEventInfos().size() > 0) {
 
-			IAbstractEventInfo abstractEventInfo = concreteEventInfo
-					.getAbstractEventInfos().get(0);
-			ISCEvent scEvent = abstractEventInfo.getEvent();
+				IAbstractEventInfo abstractEventInfo = concreteEventInfo
+						.getAbstractEventInfos().get(0);
+				ISCEvent scEvent = abstractEventInfo.getEvent();
 
-			ILabeledElement[] scElements = getSCElements(scEvent);
+				ILabeledElement[] scElements = getSCElements(scEvent);
 
-			IRefinesEvent refinesEvent = concreteEventInfo.getRefinesClauses()
-					.get(0);
-			String abstractMachineName = abstractMachineInfo
-					.getAbstractMachine().getComponentName();
+				IRefinesEvent refinesEvent = null;
+				if (!concreteEventInfo.isInitialisation())
+					concreteEventInfo.getRefinesClauses().get(0);
+				String abstractMachineName = abstractMachineInfo
+						.getAbstractMachine().getComponentName();
 
-			for (ILabeledElement scElement : scElements) {
-				String label = scElement.getLabel();
-				ILabelSymbolInfo newSymbolInfo = makeLabelSymbolInfo(label,
-						refinesEvent, abstractMachineName);
-				labelSymbolTable.putSymbolInfo(newSymbolInfo);
-			}
+				for (ILabeledElement scElement : scElements) {
+					String label = scElement.getLabel();
+					ILabelSymbolInfo newSymbolInfo = makeLabelSymbolInfo(label,
+							refinesEvent, abstractMachineName);
+					labelSymbolTable.putSymbolInfo(newSymbolInfo);
+				}
 
-			if (target == null)
-				return;
+				if (target == null)
+					return;
 
-			for (ILabeledElement scElement : scElements) {
-				scElement.copy(target, null, null, false, monitor);
+				for (ILabeledElement scElement : scElements) {
+					scElement.copy(target, null, null, false, monitor);
+				}
 			}
 		}
 	}
+
+	protected abstract boolean copyNeeded();
 
 	protected abstract ILabelSymbolInfo makeLabelSymbolInfo(String label,
 			IRefinesEvent refinesEvent, String component);

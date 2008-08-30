@@ -287,7 +287,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		// invalid anyway!)
 		IdentifierModule.parseIdentifier(symbol, element,
 				EventBAttributes.LABEL_ATTRIBUTE, factory, this);
-		return SymbolFactory.getInstance().makeWitness(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalWitness(symbol, true, element,
 				component);
 	}
 

@@ -115,11 +115,17 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			actionSymbolInfo.makeImmutable();
 		}
 		if (error[formulaElements.length]) {
-			IRefinesEvent refinesEvent = concreteEventInfo.getRefinesClauses()
-					.get(0);
-			createProblemMarker(refinesEvent,
-					EventBAttributes.TARGET_ATTRIBUTE,
-					GraphProblem.ActionDisjointLHSWarining);
+			if (isInitialisation) {
+				createProblemMarker(concreteEventInfo.getEvent(),
+						EventBAttributes.EXTENDED_ATTRIBUTE,
+						GraphProblem.ActionDisjointLHSWarining);
+			} else {
+				IRefinesEvent refinesEvent = concreteEventInfo
+						.getRefinesClauses().get(0);
+				createProblemMarker(refinesEvent,
+						EventBAttributes.TARGET_ATTRIBUTE,
+						GraphProblem.ActionDisjointLHSWarining);
+			}
 		}
 	}
 
@@ -272,7 +278,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeAction(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalAction(symbol, true, element,
 				component);
 	}
 

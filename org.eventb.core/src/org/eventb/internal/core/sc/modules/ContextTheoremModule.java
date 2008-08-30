@@ -80,7 +80,7 @@ public class ContextTheoremModule extends TheoremModule {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeTheorem(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalTheorem(symbol, true, element,
 				component);
 	}
 

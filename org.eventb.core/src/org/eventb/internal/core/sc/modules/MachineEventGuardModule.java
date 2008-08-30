@@ -224,7 +224,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeGuard(symbol, true, element,
+		return SymbolFactory.getInstance().makeLocalGuard(symbol, true, element,
 				component);
 	}
 

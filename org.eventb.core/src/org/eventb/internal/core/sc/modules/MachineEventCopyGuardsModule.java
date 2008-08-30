@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IRefinesEvent;
@@ -45,10 +46,21 @@ public class MachineEventCopyGuardsModule extends
 	}
 
 	@Override
+	protected boolean copyNeeded() {
+		return !concreteEventInfo.isInitialisation();
+	}
+
+	@Override
 	protected ILabelSymbolInfo makeLabelSymbolInfo(String label,
 			IRefinesEvent refinesEvent, String component) {
-		return SymbolFactory.getInstance().makeGuard(label, true, refinesEvent,
-				component);
+		if (refinesEvent == null) {
+			return SymbolFactory.getInstance().makeImportedGuard(label, true,
+					concreteEventInfo.getEvent(),
+					EventBAttributes.EXTENDED_ATTRIBUTE, component);
+		} else {
+			return SymbolFactory.getInstance().makeImportedGuard(label, true,
+					refinesEvent, EventBAttributes.TARGET_ATTRIBUTE, component);
+		}
 	}
 
 }
