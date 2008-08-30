@@ -1,14 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - changed input parameter of convert() to InputStream
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -23,54 +29,74 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
- *
+ * 
  */
 public class Converter {
-	
-	private ConversionSheet[] sheets = new ConversionSheet[0];
-	
-	public byte[] convert(byte[] source, long currentVersion, long targetVersion) throws RodinDBException {
+
+	private static final ConversionSheet[] NO_SHEETS = new ConversionSheet[0];
+
+	private static final int MIN_BUFFER_SIZE = 4096;
+
+	private ConversionSheet[] sheets = NO_SHEETS;
+
+	public byte[] convert(InputStream inputStream, long currentVersion,
+			long targetVersion) throws RodinDBException {
 		final int start = find(currentVersion);
-		final int end = find(targetVersion) - 1;
-		byte[] result = source;
-		if (start <= end) {
-			for (int i=start; i<= end; i++) {
-				result = computeConversion(result, i);
+		final int end = find(targetVersion);
+		byte[] bytes = null;
+		if (start < end) {
+			bytes = computeConversion(inputStream, start);
+			for (int i = start + 1; i < end; i++) {
+				final InputStream is = new ByteArrayInputStream(bytes);
+				bytes = computeConversion(is, i);
 			}
 		}
-		return result;
+		return bytes;
 	}
-	
+
 	private int find(long currentVersion) {
-		for (int i=0; i<sheets.length; i++) {
+		for (int i = 0; i < sheets.length; i++) {
 			if (sheets[i].getVersion() > currentVersion)
 				return i;
 		}
 		return sheets.length;
 	}
 
-	private byte[] computeConversion(byte[] source, int index) throws RodinDBException {
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(source);
-		StreamSource s = new StreamSource(inputStream);
-		
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(source.length);
-		StreamResult r = new StreamResult(outputStream);
-		Transformer transformer = sheets[index].getTransformer();
+	private byte[] computeConversion(InputStream inputStream, int index)
+			throws RodinDBException {
+		final StreamSource s = new StreamSource(inputStream);
+		final int sz = getOutputBufferSize(inputStream);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream(sz);
+		final StreamResult r = new StreamResult(outputStream);
+		final Transformer transformer = sheets[index].getTransformer();
 		try {
-			transformer.transform(s , r);
+			transformer.transform(s, r);
 		} catch (TransformerException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.CONVERSION_ERROR);
+			throw new RodinDBException(e,
+					IRodinDBStatusConstants.CONVERSION_ERROR);
 		}
 		return outputStream.toByteArray();
 	}
-	
-	ConversionSheet addConversionSheet(
-			IConfigurationElement configElement, 
+
+	private int getOutputBufferSize(InputStream inputStream) {
+		try {
+			final int result = inputStream.available();
+			if (result >= MIN_BUFFER_SIZE) {
+				return result;
+			}
+		} catch (IOException e) {
+			// Ignore, will return default
+		}
+		return MIN_BUFFER_SIZE;
+	}
+
+	ConversionSheet addConversionSheet(IConfigurationElement configElement,
 			IFileElementType<IRodinFile> type) {
 		int length = sheets.length;
-		ConversionSheet sheet = ConversionSheetFactory.makeConversionSheet(configElement, type);
+		ConversionSheet sheet = ConversionSheetFactory.makeConversionSheet(
+				configElement, type);
 		int newPos = length;
-		for (int i=0; i<length; i++) {
+		for (int i = 0; i < length; i++) {
 			if (sheets[i].getVersion() < sheet.getVersion())
 				continue;
 			else if (sheets[i].getVersion() > sheet.getVersion()) {
@@ -78,22 +104,23 @@ public class Converter {
 				break;
 			} else {
 				throw new IllegalStateException(
-						"Conversion sheet not unique (version " + 
-						sheet.getVersion() + ", rootType: " + type + ")");
+						"Conversion sheet not unique (version "
+								+ sheet.getVersion() + ", rootType: " + type
+								+ ")");
 			}
-			
+
 		}
-		ConversionSheet[] ns = new ConversionSheet[length+1];
+		ConversionSheet[] ns = new ConversionSheet[length + 1];
 		System.arraycopy(sheets, 0, ns, 0, newPos);
-		System.arraycopy(sheets, newPos, ns, newPos+1, length-newPos);
+		System.arraycopy(sheets, newPos, ns, newPos + 1, length - newPos);
 		sheets = ns;
 		sheets[newPos] = sheet;
-		
+
 		return sheet;
 	}
 
 	public ConversionSheet[] getConversionSheets() {
 		return sheets.clone();
 	}
-		
+
 }
