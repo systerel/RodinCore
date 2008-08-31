@@ -1550,6 +1550,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		containsParameters(events[1], "a", "b");
 
+		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		hasMarker(evt.getParameters()[0]);
 	}
 
@@ -1591,6 +1592,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
+		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList(
 				"1 ∈ ℕ", "5=1"));
 		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
@@ -1640,6 +1642,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
+		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("H"), makeSList("5=1"));
 		hasMarker(evt.getGuards()[0], EventBAttributes.LABEL_ATTRIBUTE);
 
