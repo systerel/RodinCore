@@ -10,8 +10,8 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
@@ -54,16 +54,14 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 
 				ILabeledElement[] scElements = getSCElements(scEvent);
 
-				IRefinesEvent refinesEvent = null;
-				if (!concreteEventInfo.isInitialisation())
-					concreteEventInfo.getRefinesClauses().get(0);
 				String abstractMachineName = abstractMachineInfo
 						.getAbstractMachine().getComponentName();
+				IEvent concreteEvent = concreteEventInfo.getEvent();
 
 				for (ILabeledElement scElement : scElements) {
 					String label = scElement.getLabel();
 					ILabelSymbolInfo newSymbolInfo = makeLabelSymbolInfo(label,
-							refinesEvent, abstractMachineName);
+							concreteEvent, abstractMachineName);
 					labelSymbolTable.putSymbolInfo(newSymbolInfo);
 				}
 
@@ -80,7 +78,7 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 	protected abstract boolean copyNeeded();
 
 	protected abstract ILabelSymbolInfo makeLabelSymbolInfo(String label,
-			IRefinesEvent refinesEvent, String component);
+			IEvent event, String component);
 
 	protected abstract ILabeledElement[] getSCElements(ISCEvent scEvent)
 			throws RodinDBException;

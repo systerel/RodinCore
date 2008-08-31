@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEvent;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -61,16 +62,17 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
+			String abstractComponentName = abstractMachineInfo
+					.getAbstractMachine().getComponentName();
+			IEvent concreteEvent = concreteEventInfo.getEvent();
+			
 			List<FreeIdentifier> parameters = abstractEventInfo.getParameters();
 			for (FreeIdentifier param : parameters) {
 				IIdentifierSymbolInfo paramSymbolInfo = SymbolFactory
-						.getInstance().makeImportedParameter(
-								param.getName(),
-								false,
-								concreteEventInfo.getEvent(),
+						.getInstance().makeImportedParameter(param.getName(),
+								false, concreteEvent,
 								EventBAttributes.EXTENDED_ATTRIBUTE,
-								abstractMachineInfo.getAbstractMachine()
-										.getComponentName());
+								abstractComponentName);
 
 				paramSymbolInfo.setType(param.getType());
 				paramSymbolInfo.makeImmutable();
