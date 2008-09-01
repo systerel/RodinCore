@@ -12,7 +12,7 @@
 package org.rodinp.internal.core.version;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.core.IConversionResult;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -40,17 +40,16 @@ public class ConversionResult implements IConversionResult {
 
 	public void convert(boolean force, IProgressMonitor monitor) {
 		final VersionManager vManager = VersionManager.getInstance();
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-
 		try {
-			monitor.beginTask(Messages.converter_convertingFiles,
-					2 * entries.length);
+			final SubMonitor spm = SubMonitor.convert(monitor,
+					Messages.converter_convertingFiles, entries.length);
 			for (ConversionEntry entry : entries) {
-				entry.upgrade(vManager, force, monitor);
+				entry.upgrade(vManager, force, spm.newChild(1));
 			}
 		} finally {
-			monitor.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 
@@ -64,17 +63,17 @@ public class ConversionResult implements IConversionResult {
 
 	public void accept(boolean force, boolean keepHistory,
 			IProgressMonitor monitor) throws RodinDBException {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-
 		try {
-			monitor.beginTask(Messages.converter_savingFiles, entries.length);
+			final SubMonitor spm = SubMonitor.convert(monitor,
+					Messages.converter_savingFiles, entries.length);
 			for (ConversionEntry entry : entries) {
-				entry.accept(force, keepHistory, monitor);
+				entry.accept(force, keepHistory, spm.newChild(1));
 			}
 
 		} finally {
-			monitor.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 

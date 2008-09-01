@@ -16,7 +16,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
@@ -40,20 +40,19 @@ class ConversionEntry implements IEntry {
 		this.file = (RodinFile) file;
 	}
 
-	// Consumes one tick of given monitor
 	public void accept(boolean force, boolean keepHistory,
 			IProgressMonitor monitor) throws RodinDBException {
+		final SubMonitor sm = SubMonitor.convert(monitor, 100);
 		if (success() && buffer != null) {
 			file.revert();
+			sm.worked(10);
 			final ByteArrayInputStream s = new ByteArrayInputStream(buffer);
-			final SubProgressMonitor spm = new SubProgressMonitor(monitor, 1);
+			final SubMonitor ssm = sm.newChild(90);
 			try {
-				file.getResource().setContents(s, force, keepHistory, spm);
+				file.getResource().setContents(s, force, keepHistory, ssm);
 			} catch (CoreException e) {
 				throw new RodinDBException(e);
 			}
-		} else {
-			monitor.worked(1);
 		}
 	}
 
@@ -97,12 +96,12 @@ class ConversionEntry implements IEntry {
 		return new String(buffer);
 	}
 
-	// Consumes two ticks of given monitor
 	public void upgrade(VersionManager vManager, boolean force,
 			IProgressMonitor pm) {
 		final IFileElementType<?> type = file.getElementType();
+		final SubMonitor sm = SubMonitor.convert(pm, 100);
 		try {
-			version = getFileVersion(new SubProgressMonitor(pm, 1));
+			version = getFileVersion(sm.newChild(10));
 			reqVersion = vManager.getVersion(type);
 			if (version == reqVersion) {
 				message = Messages.converter_fileUnchanged;
@@ -117,11 +116,10 @@ class ConversionEntry implements IEntry {
 			final Converter converter = vManager.getConverter(type);
 			final InputStream contents = file.getResource().getContents(force);
 			buffer = converter.convert(contents, version, reqVersion);
+			sm.worked(90);
 		} catch (Exception e) {
 			error = e;
 			message = Messages.converter_failedConversion;
-		} finally {
-			pm.worked(1);
 		}
 	}
 
