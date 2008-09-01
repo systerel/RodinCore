@@ -10,7 +10,7 @@ public interface IRodinIndex {
 
 	public Collection<IDescriptor> getDescriptors();
 
-	public IDescriptor makeDescriptor(String elementName, IInternalElement element);
+	public IDescriptor makeDescriptor(IInternalElement element, String name);
 	
 	public void removeDescriptor(Object key);
 }

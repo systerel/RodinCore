@@ -1,6 +1,5 @@
 package org.rodinp.internal.core.index;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,7 +49,7 @@ public final class Descriptor implements IDescriptor {
 		} else {
 			throw new IllegalArgumentException(
 					"trying to add an alien occurrence:\n"
-							+ occurrence.toString() + "to element: " + name);
+							+ occurrence.toString() + "for element: " + name);
 		}
 	}
 
@@ -79,7 +78,8 @@ public final class Descriptor implements IDescriptor {
 	public String toString() {
 		StringBuilder sb = new StringBuilder("*** descriptor: ");
 		sb.append(element.getElementName() + "\n");
-
+		sb.append("Name: " + name + "\n");
+		
 		for (Occurrence ref : references) {
 			sb.append(ref.toString() + "\n");
 		}

@@ -6,41 +6,16 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IRodinIndex;
+import org.rodinp.core.index.IndexingFacade;
 import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.basis.NamedElement;
 
 public class IndexTestsUtil {
-
-	// FIXME: ugly !!!
-	private static class MRT extends ModifyingResourceTests {
-		public MRT(String name) {
-			super(name);
-		}
-
-		public IRodinFile createRF(String fileName) throws CoreException {
-			return createRodinFile(fileName);
-		}
-
-		public IRodinProject createRP(String projectName) throws CoreException {
-			return createRodinProject(projectName);
-		}
-
-		@Override
-		public NamedElement getNamedElement(IInternalParent parent,
-				String elementName) {
-			return super.getNamedElement(parent, elementName);
-		}
-	}
-
-	private static final MRT mrt = new MRT("IndexTestsUtil");
 
 	public static class TestReferenceKind extends OccurrenceKind {
 		private static final long serialVersionUID = 9174271655290648041L;
@@ -75,14 +50,13 @@ public class IndexTestsUtil {
 		public static final RefKind2 TEST_KIND_2 = new RefKind2("Test Kind 2");
 	}
 
-	public static final String defaultNamedElementName = "banzai";
+	public static final String defaultName = "banzai";
 	private static final ConcreteIndexer indexer = new ConcreteIndexer();
-	
-	public static Occurrence createDefaultReference(IInternalElement element) {
-		return new Occurrence(OccurrenceKind.NULL, RodinIndexer.getRodinLocation(element),
-				indexer);
-	}
 
+	public static Occurrence createDefaultReference(IInternalElement element) {
+		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
+				.getRodinLocation(element), indexer);
+	}
 
 	// public static Occurrence[] generateFaultyReferencesTestSet()
 	// throws CoreException { // TODO use next method
@@ -105,7 +79,7 @@ public class IndexTestsUtil {
 	// return result.toArray(new Occurrence[result.size()]);
 	// }
 
-	public static Occurrence[] generateReferencesTestSet(IInternalElement ie,
+	public static Occurrence[] generateOccurrencesTestSet(IInternalElement ie,
 			int numEachKind) throws CoreException {
 
 		OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
@@ -114,7 +88,8 @@ public class IndexTestsUtil {
 
 		for (OccurrenceKind k : kinds) {
 			for (int i = 0; i < numEachKind; i++) {
-				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie), indexer));
+				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie),
+						indexer));
 			}
 		}
 		return result.toArray(new Occurrence[result.size()]);
@@ -127,35 +102,34 @@ public class IndexTestsUtil {
 		return el;
 	}
 
-	public static NamedElement getNamedElement(IInternalParent parent,
-			String elementName) {
-		return mrt.getNamedElement(parent, elementName);
-	}
-
-	public static IRodinProject createRodinProject(String projectName)
-			throws CoreException {
-		return mrt.createRP(projectName);
-	}
-	
-	public static void assertDescriptor(IRodinIndex index, final IInternalElement element,
-			final int expectedLength) {
+	public static void assertDescriptor(IRodinIndex index,
+			IInternalElement element, String name, int expectedLength) {
+		// FIXME very incomplete assertion, make more intrusive tests
 		final IDescriptor descriptor = index.getDescriptor(element);
-		TestCase.assertNotNull("expected descriptor not found", descriptor);
+		TestCase.assertNotNull("expected descriptor not found for "
+				+ element.getElementName(), descriptor);
 
-		final int refsLength = descriptor.getOccurrences().length;
-		TestCase.assertEquals("Did not index correctly", expectedLength, refsLength);
+//		TestCase.assertEquals("incorrect name for element "
+//				+ element.getElementName() + " in descriptor" + descriptor,
+//				name, descriptor.getName());
+		
+		final int occsLength = descriptor.getOccurrences().length;
+		TestCase.assertEquals("Did not index correctly", expectedLength,
+				occsLength);
 	}
 
-
-	public static void addOccurrences(Occurrence[] occurrences, IDescriptor descriptor) {
+	public static void addOccurrences(Occurrence[] occurrences,
+			IDescriptor descriptor) {
 		for (Occurrence occ : occurrences) {
 			descriptor.addOccurrence(occ);
 		}
 	}
-	
-//	public static String elementUniqueId(NamedElement element) {
-//		return element.getHandleIdentifier(); // element.getElementType().getName() + element.getElementName() + 
-//	}
 
+	public static void addOccurrences(IInternalElement element, String name,
+			Occurrence[] occurrences, IndexingFacade index) {
+		for (Occurrence occ : occurrences) {
+			index.addOccurrence(element, name, occ);
+		}
+	}
 
 }

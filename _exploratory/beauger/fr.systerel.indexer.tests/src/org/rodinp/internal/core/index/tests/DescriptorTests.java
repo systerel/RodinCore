@@ -5,11 +5,11 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.Occurrence;
-import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 
-public class DescriptorTests extends ModifyingResourceTests {
+public class DescriptorTests extends AbstractRodinDBTests {
 
 	public DescriptorTests(String name) {
 		super(name);
@@ -48,16 +48,17 @@ public class DescriptorTests extends ModifyingResourceTests {
 
 	private Occurrence[] referencesTestSet;
 
+	private static final String testEltName = "testElt";
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		IRodinFile file = rodinProject.getRodinFile("desc.test");
 		file.create(false, null);
-		final String testEltName = "testElt";
 		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
 		testDesc = new Descriptor(testEltName, testElt);
-		referencesTestSet = IndexTestsUtil.generateReferencesTestSet(testElt, 3);
+		referencesTestSet = IndexTestsUtil.generateOccurrencesTestSet(testElt, 3);
 		testReference = IndexTestsUtil.createDefaultReference(testElt);
 	}
 

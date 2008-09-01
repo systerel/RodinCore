@@ -6,6 +6,6 @@ public interface IIndexer {
 
 	public boolean canIndex(IRodinFile file);
 
-	public void index(IRodinFile file, IRodinIndex index);
+	public void index(IRodinFile file, IndexingFacade index);
 
 }

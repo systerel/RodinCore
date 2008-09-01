@@ -14,6 +14,9 @@ public class Occurrence {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
+		if (location == null) {
+			throw new NullPointerException("null location");
+		}
 		if (indexer == null) {
 			throw new NullPointerException("null indexer");
 		}

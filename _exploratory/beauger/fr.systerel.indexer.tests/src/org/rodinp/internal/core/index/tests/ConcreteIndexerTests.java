@@ -3,11 +3,13 @@ package org.rodinp.internal.core.index.tests;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.FileIndexTable;
 
-public class ConcreteIndexerTests extends ModifyingResourceTests {
+public class ConcreteIndexerTests extends AbstractRodinDBTests {
 
 	public ConcreteIndexerTests(String name) {
 		super(name);
@@ -19,7 +21,7 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		final IRodinProject rodinProject = IndexTestsUtil.createRodinProject("P");
+		final IRodinProject rodinProject = createRodinProject("P");
 		file = rodinProject.getRodinFile("concInd.test");
 		file.create(false, null);
 	}
@@ -37,15 +39,18 @@ public class ConcreteIndexerTests extends ModifyingResourceTests {
 		assertTrue("Should be able to index an IRodinFile", result);
 	}
 
+	// TODO add more specialized tests
 	public void testIndex() throws Exception {
-		file.create(true, null);
 		NamedElement element = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultNamedElementName);
+				IndexTestsUtil.defaultName);
 
-		RodinIndex index = new RodinIndex();
+		final RodinIndex rodinIndex = new RodinIndex();
+		IndexingFacade index = new IndexingFacade(rodinIndex,
+				new FileIndexTable());
 		indexer.index(file, index);
 
-		IndexTestsUtil.assertDescriptor(index, element, 6);
+		IndexTestsUtil.assertDescriptor(rodinIndex, element,
+				IndexTestsUtil.defaultName, 6);
 	}
 
 }

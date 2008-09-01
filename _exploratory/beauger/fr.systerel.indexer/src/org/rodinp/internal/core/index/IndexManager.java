@@ -10,18 +10,21 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
+import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.internal.core.index.tables.FileIndexTable;
 
 public final class IndexManager {
 
 	// TODO should automatically remove projects when they get deleted.
-	
+
 	private static IndexManager instance;
 	private Map<IRodinProject, RodinIndex> indexes;
+	private Map<IRodinProject, FileIndexTable> fileTables;
 	private Set<IIndexer> indexers;
 
 	// protected IElementChangedListener listener = new
 	// IElementChangedListener() {
-	//rETURNS
+	// rETURNS
 	// public void elementChanged(ElementChangedEvent event) {
 	// IndexManager.this.elementChanged(event);
 	// }
@@ -31,6 +34,7 @@ public final class IndexManager {
 	private IndexManager() {
 		indexes = new HashMap<IRodinProject, RodinIndex>();
 		indexers = new HashSet<IIndexer>();
+		fileTables = new HashMap<IRodinProject, FileIndexTable>();
 		// TODO: register listener
 	}
 
@@ -95,8 +99,8 @@ public final class IndexManager {
 			// TODO: throw an exception or return an error code
 			return;
 		}
-
-		indexer.index(file, getIndex(project));
+		indexer.index(file, new IndexingFacade(getIndex(project),
+				getFileTable(project)));
 	}
 
 	private void indexProject(IRodinProject project) {
@@ -119,8 +123,8 @@ public final class IndexManager {
 	}
 
 	/**
-	 * Returns an IRodinIndex corresponding to the given project.
-	 * If no index already exists, a new empty one is created.
+	 * Returns an IRodinIndex corresponding to the given project. If no index
+	 * already exists, a new empty one is created.
 	 * 
 	 * @param project
 	 * @return a non null IRodinIndex.
@@ -128,6 +132,18 @@ public final class IndexManager {
 	public IRodinIndex getIndex(IRodinProject project) {
 		createIndex(project, false); // creates only if not already present
 		return indexes.get(project);
+	}
+
+	private void createFileTable(IRodinProject project, boolean overwrite) {
+		if (overwrite || !fileTables.containsKey(project)) {
+			fileTables.put(project, new FileIndexTable());
+		}
+	}
+
+	public FileIndexTable getFileTable(IRodinProject project) {
+		createFileTable(project, false); // creates only if not already
+											// present
+		return fileTables.get(project);
 	}
 
 	public void saveAll() {

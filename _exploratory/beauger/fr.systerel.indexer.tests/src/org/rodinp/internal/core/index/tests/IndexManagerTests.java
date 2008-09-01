@@ -5,11 +5,11 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 
-public class IndexManagerTests extends ModifyingResourceTests {
+public class IndexManagerTests extends AbstractRodinDBTests {
 
 	private IIndexer indexer = new ConcreteIndexer();
 	private IRodinProject project;
@@ -22,7 +22,7 @@ public class IndexManagerTests extends ModifyingResourceTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		project = IndexTestsUtil.createRodinProject("P");
+		project = createRodinProject("P");
 		file = project.getRodinFile("indMan.test");
 	}
 
@@ -35,7 +35,7 @@ public class IndexManagerTests extends ModifyingResourceTests {
 	public void testScheduleIndexing() throws Exception {
 		file.create(true, null);
 		final NamedElement element = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultNamedElementName);
+				IndexTestsUtil.defaultName);
 		
 		RodinIndexer.register(indexer);
 		IndexManager.getDefault().scheduleIndexing(file);
@@ -43,6 +43,6 @@ public class IndexManagerTests extends ModifyingResourceTests {
 
 		final IRodinIndex index = IndexManager.getDefault().getIndex(project);
 
-		IndexTestsUtil.assertDescriptor(index, element, 6);
+		IndexTestsUtil.assertDescriptor(index, element, IndexTestsUtil.defaultName, 6);
 	}
 }
