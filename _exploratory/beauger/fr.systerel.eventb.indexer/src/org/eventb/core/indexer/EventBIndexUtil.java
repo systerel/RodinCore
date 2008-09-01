@@ -2,7 +2,6 @@ package org.eventb.core.indexer;
 
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinLocation;
@@ -17,10 +16,6 @@ public class EventBIndexUtil {
 		if (alloc == Integer.MAX_VALUE)
 			throw new IndexOutOfBoundsException();
 		return "n" + alloc++ + "_" + identifierString;
-	}
-
-	public static Object getUniqueKey(IInternalElement e) {
-		return e;
 	}
 
 	public static Occurrence makeDeclaration(IRodinElement file,

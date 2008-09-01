@@ -18,24 +18,26 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IndexingFacade;
 import org.rodinp.core.index.Occurrence;
-import org.rodinp.core.index.RodinIndexer;
 
 public class ContextIndexer implements IIndexer {
 
 	private FormulaFactory ff = FormulaFactory.getDefault();
 
 	public boolean canIndex(IRodinFile file) {
-		return (file instanceof IContextFile);
+		return isContextFile(file);
 	}
 
-	public void index(IRodinFile file, IRodinIndex index) {
+	private boolean isContextFile(IRodinFile file) {
+		return file instanceof IContextFile;
+	}
 
-		if (!canIndex(file)) {
+	public void index(IRodinFile file, IndexingFacade index) {
+
+		if (!isContextFile(file)) {
 			return;
 		}
 		IContextFile ctxFile = (IContextFile) file;
@@ -50,12 +52,6 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
-	// ------------------------------------------------- //
-
-	private IDescriptor makeConstantDescriptor(IConstant constant,
-			IRodinIndex index) {
-		return index.makeDescriptor(constant.getElementName(), constant);
-	}
 
 	private Map<FreeIdentifier, IIdentifierElement> filterFreeIdentifiers(
 			FreeIdentifier[] idents, Map<String, IIdentifierElement> names)
@@ -79,15 +75,16 @@ public class ContextIndexer implements IIndexer {
 		return result;
 	}
 
-	private void indexConstants(IContextFile file, IRodinIndex index)
+	private void indexConstants(IContextFile file, IndexingFacade index)
 			throws RodinDBException {
 		IConstant[] constants = file.getConstants();
 
 		// index declaration for each constant
 		for (IConstant constant : constants) {
-			indexConstantDeclaration(file, makeConstantDescriptor(constant,
-					index));
+			indexConstantDeclaration(constant, constant.getIdentifierString(),
+					index);
 		}
+
 		Map<String, IIdentifierElement> constantNames = extractIdentifiers(constants);
 
 		// index references for each axiom
@@ -101,13 +98,14 @@ public class ContextIndexer implements IIndexer {
 
 				indexMatchingIdents(matchingIdents, index, axiom, pred);
 			}
+			// TODO Can we index anything when parsing does not succeed ?
 		}
 
 	}
 
 	private void indexMatchingIdents(
 			final Map<FreeIdentifier, IIdentifierElement> matchingIdents,
-			IRodinIndex index, IAxiom axiom, final Predicate pred) {
+			IndexingFacade index, IAxiom axiom, Predicate pred) {
 
 		for (FreeIdentifier ident : matchingIdents.keySet()) {
 
@@ -115,41 +113,46 @@ public class ContextIndexer implements IIndexer {
 			List<IPosition> positions = pred.getPositions(new DefaultFilter() {
 				@Override
 				public boolean select(FreeIdentifier identifier) {
-					if (identifier.getName().equals(identName)) {
-						return true;
-					}
-					return false;
+					return identifier.getName().equals(identName);
 				}
 			});
 			if (positions.size() > 0) {
-				IDescriptor descriptor = index.getDescriptor(EventBIndexUtil
-						.getUniqueKey((IConstant) matchingIdents.get(ident)));
+				final IConstant constant = (IConstant) matchingIdents
+						.get(ident);
 				for (IPosition pos : positions) {
 					final SourceLocation srcLoc = pred.getSubFormula(pos)
 							.getSourceLocation();
-					final IRodinLocation loc = EventBIndexUtil.getRodinLocation(
-							axiom,
-							EventBAttributes.PREDICATE_ATTRIBUTE,
-							srcLoc);
-					final Occurrence occ = new Occurrence(
-							EventBOccurrenceKind.REFERENCE, loc, this);
-					descriptor.addOccurrence(occ);
+					final IRodinLocation loc = EventBIndexUtil
+							.getRodinLocation(axiom,
+									EventBAttributes.PREDICATE_ATTRIBUTE,
+									srcLoc);
+					indexConstantReference(constant, identName, loc, index);
 				}
 			}
 		}
 	}
 
-	// private Object getKey(IConstant c) {
-	// return c.getHandleIdentifier();
-	// }
+	private void indexConstantDeclaration(IConstant constant,
+			String constantName, IndexingFacade index) {
+		Occurrence occ = EventBIndexUtil.makeDeclaration(constant
+				.getRodinFile(), this);
+		index.addOccurrence(constant, constantName, occ);
+	}
 
-	private void indexConstantDeclaration(IContextFile file,
-			IDescriptor descriptor) {
-		Occurrence ref = EventBIndexUtil.makeDeclaration(file, this);
-		descriptor.addOccurrence(ref);
+	private void indexConstantReference(IConstant constant, String name,
+			IRodinLocation loc, IndexingFacade index) {
+		final Occurrence occ = new Occurrence(EventBOccurrenceKind.REFERENCE,
+				loc, this);
+		index.addOccurrence(constant, name, occ);
 	}
 
 	// ------------------------------------------------- //
+
+	// private IDescriptor makeConstantDescriptor(IConstant constant,
+	// IndexingFacade index) {
+	// return index.makeDescriptor(constant.getElementName(), constant);
+	// }
+	//
 	// private void indexConstant(IContextFile file, IConstant constant,
 	// IRodinIndex index) throws RodinDBException {
 	// Object id = elementUniqueId(constant);

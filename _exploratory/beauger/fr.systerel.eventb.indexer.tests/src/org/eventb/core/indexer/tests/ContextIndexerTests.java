@@ -38,6 +38,24 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	// }
 	// };
 
+	private static IRodinProject project;
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	private static final IndexManager manager = IndexManager.getDefault();
+	private static final IIndexer contextIndexer = new ContextIndexer();
+
+	private static final String S1 = "S1";
+	private static final TestConstant C1 = new TestConstant("C");
+	private static final TestConstant C2 = new TestConstant("C2");
+
+	private static final TestAxiom A1 = new TestAxiom("A1", "C ∈ ℕ ∪ S1");
+	private static final TestAxiom A2 = new TestAxiom("A2", "  C2 ∈ S1");
+	private static IContextFile evbFile;
+
+	private static IDescriptor C1Descriptor;
+	private static IDescriptor C2Descriptor;
+
+	private static IDescriptor[] expectedDescriptors;
+
 	private static void addCarrierSets(IContextFile rodinFile, String... names)
 			throws RodinDBException {
 		for (String name : names) {
@@ -106,24 +124,6 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		}
 	}
 
-	private static IRodinProject project;
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-	private static final IndexManager manager = IndexManager.getDefault();
-	private static final IIndexer contextIndexer = new ContextIndexer();
-
-	private static final String S1 = "S1";
-	private static final TestConstant C1 = new TestConstant("C");
-	private static final TestConstant C2 = new TestConstant("C2");
-
-	private static final TestAxiom A1 = new TestAxiom("A1", "C ∈ ℕ ∪ S1");
-	private static final TestAxiom A2 = new TestAxiom("A2", "  C2 ∈ S1");
-	private static IContextFile evbFile;
-
-	private static IDescriptor C1Descriptor;
-	private static IDescriptor C2Descriptor;
-
-	private static IDescriptor[] expectedDescriptors;
-
 	/**
 	 * The given constant is assumed to be declared in the given file and to
 	 * have exactly one reference in the given axiom at the given position.
@@ -137,8 +137,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		IAxiom tmpAxm = file.getAxiom(axm.name);
 
 		IRodinIndex tmpIndex = manager.getIndex(tmpProject);
-		IDescriptor descriptor = tmpIndex.makeDescriptor(tmpCst
-				.getElementName(), tmpCst);
+		IDescriptor descriptor = tmpIndex.makeDescriptor(tmpCst, cst.identifierString);
 
 		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
 		addOccurrence(locDecl, EventBOccurrenceKind.DECLARATION,
