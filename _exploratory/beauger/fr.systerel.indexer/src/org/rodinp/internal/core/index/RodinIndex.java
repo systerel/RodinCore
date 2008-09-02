@@ -19,8 +19,9 @@ public final class RodinIndex implements IRodinIndex {
 		return map.get(key);
 	}
 
-	public Collection<IDescriptor> getDescriptors() {
-		return map.values();
+	public IDescriptor[] getDescriptors() {
+		final Collection<IDescriptor> descriptors = map.values();
+		return descriptors.toArray(new IDescriptor[descriptors.size()]);
 	}
 
 	public IDescriptor makeDescriptor(IInternalElement element,
@@ -42,6 +43,10 @@ public final class RodinIndex implements IRodinIndex {
 
 	public void removeDescriptor(Object key) {
 		map.remove(key);
+	}
+	
+	public void clear() {
+		map.clear();		
 	}
 
 	// DEBUG
