@@ -28,7 +28,7 @@ public abstract class HypothesisReasoner implements IReasoner {
 	
 	public static final class Input implements IReasonerInput {
 
-		Predicate pred;
+		private Predicate pred;
 
 		public Input(Predicate pred) {
 			this.pred = pred;
@@ -46,6 +46,10 @@ public abstract class HypothesisReasoner implements IReasoner {
 
 		public boolean hasError() {
 			return false;
+		}
+
+		public Predicate getPred() {
+			return pred;
 		}
 
 	}
