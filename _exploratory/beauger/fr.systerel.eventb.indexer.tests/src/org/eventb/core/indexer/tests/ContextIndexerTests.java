@@ -1,6 +1,8 @@
 package org.eventb.core.indexer.tests;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
@@ -28,33 +30,30 @@ import org.rodinp.internal.core.index.IndexManager;
 
 public class ContextIndexerTests extends ModifyingResourceTests {
 
-	// static IIndexer fakeIndexer = new IIndexer() {
-	//
-	// public boolean canIndex(IRodinFile file) {
-	// return false;
-	// }
-	//
-	// public void index(IRodinFile file, IRodinIndex index) {
-	// }
-	// };
+	private static class TestConstant {
+		public final String elementName;
+		public final String identifierString;
+
+		public TestConstant(String identifierString) {
+			this.elementName = EventBIndexUtil.getUniqueName(identifierString);
+			this.identifierString = identifierString;
+		}
+	}
+
+	private static class TestAxiom {
+		public final String name;
+		public final String pred;
+
+		public TestAxiom(String name, String pred) {
+			this.name = name;
+			this.pred = pred;
+		}
+	}
 
 	private static IRodinProject project;
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 	private static final IndexManager manager = IndexManager.getDefault();
 	private static final IIndexer contextIndexer = new ContextIndexer();
-
-	private static final String S1 = "S1";
-	private static final TestConstant C1 = new TestConstant("C");
-	private static final TestConstant C2 = new TestConstant("C2");
-
-	private static final TestAxiom A1 = new TestAxiom("A1", "C ∈ ℕ ∪ S1");
-	private static final TestAxiom A2 = new TestAxiom("A2", "  C2 ∈ S1");
-	private static IContextFile evbFile;
-
-	private static IDescriptor C1Descriptor;
-	private static IDescriptor C2Descriptor;
-
-	private static IDescriptor[] expectedDescriptors;
 
 	private static void addCarrierSets(IContextFile rodinFile, String... names)
 			throws RodinDBException {
@@ -95,56 +94,39 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	}
 
 	protected void setUp() throws Exception {
-		evbFile = constructTestFile();
-		C1Descriptor = makeConstantDescriptor(C1, A1, evbFile, 0, 1);
-		C2Descriptor = makeConstantDescriptor(C2, A2, evbFile, 2, 4);
-		expectedDescriptors = new IDescriptor[] { C1Descriptor, C2Descriptor };
+		project = createRodinProject("P");
+		RodinIndexer.register(contextIndexer);
 	}
 
 	protected void tearDown() throws Exception {
-	}
-
-	private static class TestConstant {
-		public final String elementName;
-		public final String identifierString;
-
-		public TestConstant(String identifierString) {
-			this.elementName = EventBIndexUtil.getUniqueName(identifierString);
-			this.identifierString = identifierString;
-		}
-	}
-
-	private static class TestAxiom {
-		public final String name;
-		public final String pred;
-
-		public TestAxiom(String name, String pred) {
-			this.name = name;
-			this.pred = pred;
-		}
+		RodinIndexer.deregister(contextIndexer);
+		manager.getIndex(project).clear();
+		deleteProject("P");
 	}
 
 	/**
 	 * The given constant is assumed to be declared in the given file and to
 	 * have exactly one reference in the given axiom at the given position.
-	 * @throws CoreException 
+	 * 
+	 * @throws CoreException
 	 */
-	private IDescriptor makeConstantDescriptor(TestConstant cst, TestAxiom axm,
-			IContextFile file, int refStart, int refEnd) throws CoreException {
-		IRodinProject tmpProject;
-		tmpProject = createRodinProject("tmpProject");
-		IConstant tmpCst = file.getConstant(cst.elementName);
-		IAxiom tmpAxm = file.getAxiom(axm.name);
+	private IDescriptor makeConstantDescriptor(TestConstant constant,
+			TestAxiom axiom, IContextFile file, int start, int end)
+			throws CoreException {
+		IRodinProject tmpProject = createRodinProject("tmpPrj");
+		IConstant tmpCst = file.getConstant(constant.elementName);
+		IAxiom tmpAxm = file.getAxiom(axiom.name);
 
 		IRodinIndex tmpIndex = manager.getIndex(tmpProject);
-		IDescriptor descriptor = tmpIndex.makeDescriptor(tmpCst, cst.identifierString);
+		IDescriptor descriptor = tmpIndex.makeDescriptor(tmpCst,
+				constant.identifierString);
 
 		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
-		addOccurrence(locDecl, EventBOccurrenceKind.DECLARATION,
-				descriptor, contextIndexer);
+		addOccurrence(locDecl, EventBOccurrenceKind.DECLARATION, descriptor,
+				contextIndexer);
 
 		final IRodinLocation locRef = RodinIndexer.getRodinLocation(tmpAxm,
-				EventBAttributes.PREDICATE_ATTRIBUTE, refStart, refEnd);
+				EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
 		addOccurrence(locRef, EventBOccurrenceKind.REFERENCE, descriptor,
 				contextIndexer);
 
@@ -154,16 +136,19 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	}
 
-	private void addOccurrence(IRodinLocation loc, EventBOccurrenceKind kind,
-			IDescriptor descriptor, IIndexer indexer) {
+	private static void addOccurrence(IRodinLocation loc,
+			EventBOccurrenceKind kind, IDescriptor descriptor, IIndexer indexer) {
 
 		final Occurrence declaration = new Occurrence(kind, loc, indexer);
 		descriptor.addOccurrence(declaration);
 	}
 
 	private static void assertIndex(IDescriptor[] expectedDescriptors,
-			IRodinIndex actual) {
-		final Collection<IDescriptor> actDescs = actual.getDescriptors();
+			IRodinIndex index) {
+		final IDescriptor[] actDescs = index.getDescriptors();
+
+		assertEquals("bad number of descriptors", expectedDescriptors.length,
+				actDescs.length);
 
 		for (IDescriptor exp : expectedDescriptors) {
 			IDescriptor actSameElem = null;
@@ -229,27 +214,71 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		assertEquals("bad end location", end, loc.getCharEnd());
 	}
 
-	private IContextFile constructTestFile() throws CoreException {
-		project = createRodinProject("P");
+	private void fillTestFile(IContextFile file, List<IDescriptor> descriptors)
+			throws CoreException {
 
-		final IRodinFile file = project.getRodinFile("constants.buc");
-		file.create(false, null);
-		IContextFile resultFile = (IContextFile) file.getAdapter(IContextFile.class);
+		final String S1 = "S1";
+		final TestConstant C1 = new TestConstant("C");
+		final TestConstant C2 = new TestConstant("C2");
+
+		final TestAxiom A1 = new TestAxiom("A1", "C ∈ ℕ ∪ S1");
+		final TestAxiom A2 = new TestAxiom("A2", "  C2 ∈ S1");
+
+		addCarrierSets(file, S1);
+		addConstants(file, C1, C2);
+		addAxioms(file, A1, A2);
+
+		final IDescriptor C1Descriptor = makeConstantDescriptor(C1, A1, file,
+				0, 1);
+		final IDescriptor C2Descriptor = makeConstantDescriptor(C2, A2, file,
+				2, 4);
+
+		descriptors.add(C1Descriptor);
+		descriptors.add(C2Descriptor);
+	}
+
+	private static IContextFile createContextFile(final String fileName)
+			throws CoreException {
+		assertNotNull("project was not initialized", project);
+		assertTrue("project does not exist", project.exists());
+
+		final IRodinFile file = project.getRodinFile(fileName);
+		file.create(true, null);
+		IContextFile resultFile = (IContextFile) file
+				.getAdapter(IContextFile.class);
 		assertNotNull("could not get adapter to ContextFile", resultFile);
 
-		addCarrierSets(resultFile, S1);
-		addConstants(resultFile, C1, C2);
-		addAxioms(resultFile, A1, A2);
-
-		// resultFile.save(null, true);
 		return resultFile;
 	}
 
 	public void testCtxIndBasicCase() throws Exception {
-		RodinIndexer.register(contextIndexer);
-		manager.scheduleIndexing(evbFile);
-		IRodinIndex index = manager.getIndex(evbFile.getRodinProject());
+		IContextFile file = createContextFile("basicCtx.buc");
+		List<IDescriptor> descList = new ArrayList<IDescriptor>();
+
+		fillTestFile(file, descList);
+
+		IDescriptor[] expectedResult = descList
+				.toArray(new IDescriptor[descList.size()]);
+
+		manager.scheduleIndexing(file);
+
+		IRodinIndex index = manager.getIndex(file.getRodinProject());
+		System.out.println("Basic Case");
 		System.out.println(index.toString());
-		assertIndex(expectedDescriptors, index);
+		assertIndex(expectedResult, index);
 	}
+
+	public void testCtxIndEmptyFile() throws Exception {
+		final IContextFile emptyFile = createContextFile("empty.buc");
+		final IDescriptor[] expectedResult = new IDescriptor[] {};
+
+		manager.scheduleIndexing(emptyFile);
+
+		IRodinIndex index = manager.getIndex(emptyFile.getRodinProject());
+		System.out.println("Empty File");
+		System.out.println(index.toString());
+		assertIndex(expectedResult, index);
+	}
+
+	// TODO add tests
 }
