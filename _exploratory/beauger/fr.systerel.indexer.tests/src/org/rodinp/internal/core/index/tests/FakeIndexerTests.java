@@ -9,14 +9,14 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.FileIndexTable;
 
-public class ConcreteIndexerTests extends AbstractRodinDBTests {
+public class FakeIndexerTests extends AbstractRodinDBTests {
 
-	public ConcreteIndexerTests(String name) {
+	public FakeIndexerTests(String name) {
 		super(name);
 	}
 
-	private IIndexer indexer = new ConcreteIndexer();
-	private IRodinFile file;
+	private static IIndexer indexer = new FakeIndexer();
+	private static IRodinFile file;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -36,10 +36,9 @@ public class ConcreteIndexerTests extends AbstractRodinDBTests {
 		boolean result;
 
 		result = indexer.canIndex(file);
-		assertTrue("Should be able to index an IRodinFile", result);
+		assertTrue("FakeIndexer Should be able to index an IRodinFile", result);
 	}
 
-	// TODO add more specialized tests
 	public void testIndex() throws Exception {
 		NamedElement element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultName);
@@ -49,8 +48,8 @@ public class ConcreteIndexerTests extends AbstractRodinDBTests {
 				new FileIndexTable());
 		indexer.index(file, index);
 
-		IndexTestsUtil.assertDescriptor(rodinIndex, element,
-				IndexTestsUtil.defaultName, 6);
+		IndexTestsUtil.assertDescriptor(rodinIndex.getDescriptor(element),
+				element, IndexTestsUtil.defaultName, 6);
 	}
 
 }

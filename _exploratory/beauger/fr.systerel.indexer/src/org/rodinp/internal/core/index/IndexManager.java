@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -99,8 +100,19 @@ public final class IndexManager {
 			// TODO: throw an exception or return an error code
 			return;
 		}
+		cleanIndex(file);
 		indexer.index(file, new IndexingFacade(getIndex(project),
 				getFileTable(project)));
+	}
+
+	private void cleanIndex(IRodinFile file) {
+		final IRodinProject project = file.getRodinProject();
+		final IRodinIndex index = getIndex(project);
+		final FileIndexTable fileTable = getFileTable(project);
+	
+		for (IInternalElement element : fileTable.getElements(file)) {
+			index.removeDescriptor(element);
+		}
 	}
 
 	private void indexProject(IRodinProject project) {

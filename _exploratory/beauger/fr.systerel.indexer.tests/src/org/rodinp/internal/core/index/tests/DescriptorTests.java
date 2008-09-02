@@ -1,6 +1,5 @@
 package org.rodinp.internal.core.index.tests;
 
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
@@ -15,51 +14,33 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	private void assertElement(IRodinElement expected, IRodinElement actual) {
-		assertEquals("unexpected element", expected, actual);
-	}
+	// private void assertElement(IRodinElement expected, IRodinElement actual)
+	// {
+	// assertEquals("unexpected element", expected, actual);
+	// }
 
-	private void assertIsReferenced(IDescriptor desc, Occurrence ref) {
-		assertTrue("reference not found: " + ref.getLocation().getElement(),
-				desc.hasOccurrence(ref));
-	}
-
-	private void assertAreReferenced(IDescriptor desc, Occurrence[] refs) {
-		for (Occurrence ref : refs) {
-			assertIsReferenced(desc, ref);
-		}
-	}
-
-	private void assertIsNotReferenced(IDescriptor desc, Occurrence ref) {
-		assertFalse("reference should not be found: "
-				+ ref.getLocation().getElement(), desc.hasOccurrence(ref));
-	}
-
-	private void assertAreNotReferenced(IDescriptor desc, Occurrence[] refs) {
-		for (Occurrence ref : refs) {
-			assertIsNotReferenced(desc, ref);
-		}
-	}
-
+	private IRodinProject rodinProject;
+	private IRodinFile file;
 	private IDescriptor testDesc;
 	private NamedElement testElt;
 
-	private Occurrence testReference;
+	private Occurrence testOccurrence;
 
-	private Occurrence[] referencesTestSet;
+	private Occurrence[] occurrencesTestSet;
 
 	private static final String testEltName = "testElt";
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		final IRodinProject rodinProject = createRodinProject("P");
-		IRodinFile file = rodinProject.getRodinFile("desc.test");
+		rodinProject = createRodinProject("P");
+		file = rodinProject.getRodinFile("desc.test");
 		file.create(false, null);
 		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
 		testDesc = new Descriptor(testEltName, testElt);
-		referencesTestSet = IndexTestsUtil.generateOccurrencesTestSet(testElt, 3);
-		testReference = IndexTestsUtil.createDefaultReference(testElt);
+		occurrencesTestSet = IndexTestsUtil.generateOccurrencesTestSet(testElt,
+				3);
+		testOccurrence = IndexTestsUtil.createDefaultOccurrence(testElt);
 	}
 
 	@Override
@@ -71,40 +52,50 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	}
 
 	public void testConstructor() throws Exception {
-		assertElement(testElt, testDesc.getElement());
-		assertNotNull("references should not be null", testDesc.getOccurrences());
+		IndexTestsUtil.assertElement(testDesc, testElt);
+		IndexTestsUtil.assertName(testDesc, testEltName);
+		assertNotNull("occurrences should not be null", testDesc
+				.getOccurrences());
 	}
 
-	public void testAddReference() throws Exception {
-		Occurrence ref = IndexTestsUtil.createDefaultReference(testElt);
+	public void testAddOccurrence() throws Exception {
+		Occurrence occ = IndexTestsUtil.createDefaultOccurrence(testElt);
 
-		testDesc.addOccurrence(ref);
+		testDesc.addOccurrence(occ);
 
-		assertIsReferenced(testDesc, ref);
+		IndexTestsUtil.assertContains(testDesc, occ);
 	}
 
-	public void testAddReferences() throws Exception {
-		IndexTestsUtil.addOccurrences(referencesTestSet, testDesc);
+	public void testAddAlienOccurrence() throws Exception {
+		IRodinFile alien = rodinProject.getRodinFile("alienFile.test");
+		alien.create(true, null);
+		Occurrence alienOccurrence = IndexTestsUtil
+				.createDefaultOccurrence(alien);
 
-		assertAreReferenced(testDesc, referencesTestSet);
+		try {
+			testDesc.addOccurrence(alienOccurrence);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+		fail("IllegalArgumentException should have been raised when "
+				+ "adding an alien occurrence");
 	}
 
-	public void testRemoveReference() throws Exception {
-		IndexTestsUtil.addOccurrences(referencesTestSet, testDesc);
-		testDesc.addOccurrence(testReference);
+	public void testRemoveOccurrence() throws Exception {
+		IndexTestsUtil.addOccurrences(occurrencesTestSet, testDesc);
+		testDesc.addOccurrence(testOccurrence);
 
-		testDesc.removeOccurrence(testReference);
+		testDesc.removeOccurrence(testOccurrence);
 
-		assertIsNotReferenced(testDesc, testReference);
+		IndexTestsUtil.assertContainsNot(testDesc, testOccurrence);
 	}
 
-
-	public void testClearReferences() throws Exception {
-		IndexTestsUtil.addOccurrences(referencesTestSet, testDesc);
+	public void testClearOccurrences() throws Exception {
+		IndexTestsUtil.addOccurrences(occurrencesTestSet, testDesc);
 
 		testDesc.clearOccurrences();
 
-		assertAreNotReferenced(testDesc, referencesTestSet);
+		IndexTestsUtil.assertContainsNone(testDesc, occurrencesTestSet);
 	}
 
 }

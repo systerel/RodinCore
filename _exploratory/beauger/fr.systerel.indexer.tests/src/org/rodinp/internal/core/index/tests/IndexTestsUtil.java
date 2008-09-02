@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IRodinIndex;
@@ -51,9 +52,9 @@ public class IndexTestsUtil {
 	}
 
 	public static final String defaultName = "banzai";
-	private static final ConcreteIndexer indexer = new ConcreteIndexer();
+	private static final FakeIndexer indexer = new FakeIndexer();
 
-	public static Occurrence createDefaultReference(IInternalElement element) {
+	public static Occurrence createDefaultOccurrence(IRodinElement element) {
 		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
 				.getRodinLocation(element), indexer);
 	}
@@ -88,8 +89,8 @@ public class IndexTestsUtil {
 
 		for (OccurrenceKind k : kinds) {
 			for (int i = 0; i < numEachKind; i++) {
-				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie),
-						indexer));
+				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie
+						.getRodinFile()), indexer));
 			}
 		}
 		return result.toArray(new Occurrence[result.size()]);
@@ -102,20 +103,30 @@ public class IndexTestsUtil {
 		return el;
 	}
 
-	public static void assertDescriptor(IRodinIndex index,
+	public static void assertNoSuchDescriptor(IRodinIndex index,
+			IInternalElement element) {
+		IDescriptor desc = index.getDescriptor(element);
+		TestCase.assertNull("there should not be any descriptor for element "
+				+ element.getElementName(), desc);
+	}
+
+	public static void assertDescriptor(IDescriptor descriptor,
 			IInternalElement element, String name, int expectedLength) {
 		// FIXME very incomplete assertion, make more intrusive tests
-		final IDescriptor descriptor = index.getDescriptor(element);
-		TestCase.assertNotNull("expected descriptor not found for "
-				+ element.getElementName(), descriptor);
+		// final IDescriptor descriptor = index.getDescriptor(element);
+		// TestCase.assertNotNull("expected descriptor not found for " + name,
+		// descriptor);
 
-//		TestCase.assertEquals("incorrect name for element "
-//				+ element.getElementName() + " in descriptor" + descriptor,
-//				name, descriptor.getName());
-		
-		final int occsLength = descriptor.getOccurrences().length;
-		TestCase.assertEquals("Did not index correctly", expectedLength,
-				occsLength);
+		// TestCase.assertEquals("incorrect name for element "
+		// + element.getElementName() + " in descriptor" + descriptor,
+		// name, descriptor.getName());
+
+		assertElement(descriptor, element);
+		assertName(descriptor, name);
+		assertSize(descriptor, expectedLength);
+		// final int occsLength = descriptor.getOccurrences().length;
+		// TestCase.assertEquals("Did not index correctly", expectedLength,
+		// occsLength);
 	}
 
 	public static void addOccurrences(Occurrence[] occurrences,
@@ -130,6 +141,49 @@ public class IndexTestsUtil {
 		for (Occurrence occ : occurrences) {
 			index.addOccurrence(element, name, occ);
 		}
+	}
+
+	public static void assertContains(IDescriptor desc, Occurrence occ) {
+		TestCase.assertTrue("occurrence not found: "
+				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
+	}
+
+	public static void assertContainsNot(IDescriptor desc, Occurrence occ) {
+		TestCase.assertFalse("occurrence should not be found: "
+				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
+	}
+
+	public static void assertContainsAll(IDescriptor desc, Occurrence[] occs) {
+		for (Occurrence occ : occs) {
+			assertContains(desc, occ);
+		}
+	}
+
+	public static void assertContainsNone(IDescriptor desc, Occurrence[] occs) {
+		for (Occurrence occ : occs) {
+			assertContainsNot(desc, occ);
+		}
+	}
+
+	public static void assertSameOccurrences(IDescriptor desc, Occurrence[] occs) {
+		assertContainsAll(desc, occs);
+
+		assertSize(desc, occs.length);
+	}
+
+	public static void assertSize(IDescriptor desc, int expectedLength) {
+		TestCase.assertEquals("bad number of occurrences", expectedLength, desc
+				.getOccurrences().length);
+	}
+
+	public static void assertElement(IDescriptor desc, IInternalElement element) {
+		TestCase.assertEquals("bad element for descriptor " + desc, element,
+				desc.getElement());
+	}
+
+	public static void assertName(IDescriptor desc, String name) {
+		TestCase.assertEquals("bad element for descriptor " + desc, name, desc
+				.getName());
 	}
 
 }

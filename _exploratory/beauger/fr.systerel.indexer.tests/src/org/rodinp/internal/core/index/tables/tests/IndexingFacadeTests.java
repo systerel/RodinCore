@@ -12,21 +12,20 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.FileIndexTable;
-import org.rodinp.internal.core.index.tests.ConcreteIndexer;
+import org.rodinp.internal.core.index.tests.FakeIndexer;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public IndexingFacadeTests(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
-	private static final IIndexer indexer = new ConcreteIndexer();
+	private static final IIndexer indexer = new FakeIndexer();
 	private static IRodinFile file;
 	private static NamedElement namedElement;
 	private static NamedElement namedElement2;
-	private static IInternalElement[] expectedElements; 
+	private static IInternalElement[] expectedElements;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -34,11 +33,9 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = rodinProject.getRodinFile("concInd.test");
 		file.create(false, null);
-		namedElement = IndexTestsUtil.createNamedElement(file,
-				"elt1");
-		namedElement2 = IndexTestsUtil.createNamedElement(file,
-				"elt2");
-		expectedElements = new NamedElement[] {namedElement, namedElement2};
+		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
+		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
+		expectedElements = new NamedElement[] { namedElement, namedElement2 };
 	}
 
 	@Override
@@ -47,9 +44,8 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		super.tearDown();
 	}
 
-	private static void assertFileTable(FileIndexTable fileIndexTable,
-			IRodinFile f, IInternalElement[] expectedElts) {
-		final IInternalElement[] actualElts = fileIndexTable.getElements(f);
+	private static void assertFileTable(IInternalElement[] expectedElts,
+			IInternalElement[] actualElts) {
 
 		assertEquals("bad number of elements", expectedElts.length,
 				actualElts.length);
@@ -64,9 +60,11 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		final RodinIndex rodinIndex = new RodinIndex();
 		final FileIndexTable fileIndexTable = new FileIndexTable();
 		IndexingFacade index = new IndexingFacade(rodinIndex, fileIndexTable);
+		
 		indexer.index(file, index);
-
-		assertFileTable(fileIndexTable, file, expectedElements);
+		IInternalElement[] actualElts = fileIndexTable.getElements(file);
+		
+		assertFileTable(expectedElements, actualElts);
 	}
 
 	// TODO add more tests
