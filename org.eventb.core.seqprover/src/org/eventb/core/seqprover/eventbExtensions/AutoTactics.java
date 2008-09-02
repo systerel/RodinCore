@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - added FunOvrGoalTac tactic
+ *     Systerel - added FunOvrGoalTac and FunOvrHypTac tactics
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -475,6 +475,48 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return loopOnAllPending(new FunOvrGoalOnceTac());
+		}
+
+	}
+	
+	/**
+	 * Applies automatically the <code>funOvrHyp</code> tactic to the first
+	 * applicable position in the selected hypotheses.
+	 * 
+	 * @author Laurent Voisin
+	 */
+	private static class FunOvrHypOnceTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				final List<IPosition> pos = Tactics.funOvrGetPositions(shyp);
+				if (pm != null && pm.isCanceled()) {
+					return "Canceled";
+				}
+				if (pos.size() != 0) {
+					return Tactics.funOvrHyp(shyp, pos.get(0)).apply(ptNode, pm);
+				}
+			}
+			return "Tactic unapplicable";
+		}
+
+	}
+
+	/**
+	 * Applies automatically, repeatedly and recursively the
+	 * <code>FunOvrHypOnceTac</code> to the proof subtree rooted at the given
+	 * node.
+	 * 
+	 * @author Laurent Voisin
+	 */
+	public static class FunOvrHypTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new FunOvrHypOnceTac());
 		}
 
 	}

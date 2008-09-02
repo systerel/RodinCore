@@ -15,12 +15,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
+import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 
 /**
@@ -60,6 +63,27 @@ public abstract class TreeShape {
 		}
 	}
 
+	private static class DisjEShape extends TreeShape {
+
+		private final Predicate predicate;
+		
+		public DisjEShape(Predicate predicate, TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			HypothesisReasoner.Input i = (HypothesisReasoner.Input) input;
+			assertEquals(predicate, i.getPred());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return DisjE.REASONER_ID;
+		}
+	}
+
 	private static class EmptyShape extends TreeShape {
 
 		public EmptyShape() {
@@ -84,17 +108,27 @@ public abstract class TreeShape {
 
 	private static class FunOvrShape extends TreeShape {
 
+		protected final Predicate predicate;
+
 		protected final String position;
 
 		public FunOvrShape(String position, TreeShape[] expChildren) {
 			super(expChildren);
+			this.predicate = null;
+			this.position = position;
+		}
+
+		public FunOvrShape(Predicate predicate, String position,
+				TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
 			this.position = position;
 		}
 
 		@Override
 		protected void checkInput(IReasonerInput input) {
 			AbstractManualInference.Input i = (AbstractManualInference.Input) input;
-			assertNull(i.getPred());
+			assertEquals(predicate, i.getPred());
 			assertEquals(position, i.getPosition().toString());
 		}
 
@@ -124,8 +158,17 @@ public abstract class TreeShape {
 		return new ConjIShape(children);
 	}
 
+	public static TreeShape disjE(Predicate pred, TreeShape... children) {
+		return new DisjEShape(pred, children);
+	}
+
 	public static TreeShape funOvr(String position, TreeShape... children) {
-		return new FunOvrShape(position, children);
+		return new FunOvrShape(null, position, children);
+	}
+
+	public static TreeShape funOvr(Predicate predicate, String position,
+			TreeShape... children) {
+		return new FunOvrShape(predicate, position, children);
 	}
 
 	protected final TreeShape[] expChildren;

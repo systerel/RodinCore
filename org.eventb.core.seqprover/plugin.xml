@@ -441,6 +441,12 @@
             id="funOvrGoalTac"
             name="%funOvrGoalTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunOvrHypTac"
+            description="%funOvrHypTacDesc"
+            id="funOvrHypTac"
+            name="%funOvrHypTacName">
+      </autoTactic>
 
    </extension>
 
