@@ -8,13 +8,13 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
-public class FileIndexTable {
+public class FileTable {
 	
 	private Map<IRodinFile, Set<IInternalElement>> table;
 	
 	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
 	
-	public FileIndexTable() {
+	public FileTable() {
 		table = new HashMap<IRodinFile, Set<IInternalElement>>();
 	}
 
@@ -43,4 +43,17 @@ public class FileIndexTable {
 		elements.add(element);
 	}
 	
+	// DEBUG
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("File Table\n");
+		for (IRodinFile file : table.keySet()) {
+			sb.append(file.getBareName() + ": ");
+			for (IInternalElement elem : table.get(file)) {
+				sb.append(elem.getElementName() + "; ");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

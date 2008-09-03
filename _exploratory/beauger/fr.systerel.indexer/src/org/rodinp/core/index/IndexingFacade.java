@@ -1,16 +1,20 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.internal.core.index.tables.FileIndexTable;
+import org.rodinp.internal.core.index.tables.FileTable;
+import org.rodinp.internal.core.index.tables.NameTable;
 
 public class IndexingFacade {
 
 	final IRodinIndex index;
-	final FileIndexTable fileTable;
+	final FileTable fileTable;
+	final NameTable nameTable;
 
-	public IndexingFacade(IRodinIndex rodinIndex, FileIndexTable fileTable) {
+	public IndexingFacade(IRodinIndex rodinIndex, FileTable fileTable,
+			NameTable nameTable) {
 		this.index = rodinIndex;
 		this.fileTable = fileTable;
+		this.nameTable = nameTable;
 	}
 
 	public void addOccurrence(IInternalElement element, String name,
@@ -32,6 +36,7 @@ public class IndexingFacade {
 		}
 		descriptor.addOccurrence(occurrence);
 		fileTable.addElement(element, element.getRodinFile());
+		nameTable.put(name, element);
 	}
 
 }

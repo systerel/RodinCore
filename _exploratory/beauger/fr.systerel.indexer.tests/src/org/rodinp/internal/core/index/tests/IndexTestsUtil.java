@@ -1,6 +1,8 @@
 package org.rodinp.internal.core.index.tests;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -9,6 +11,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDescriptor;
+import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.IndexingFacade;
 import org.rodinp.core.index.Occurrence;
@@ -57,6 +60,12 @@ public class IndexTestsUtil {
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
 		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
 				.getRodinLocation(element), indexer);
+	}
+
+	public static Occurrence createDefaultOccurrence(IRodinElement element,
+			IIndexer ind) {
+		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
+				.getRodinLocation(element), ind);
 	}
 
 	// public static Occurrence[] generateFaultyReferencesTestSet()
@@ -184,6 +193,40 @@ public class IndexTestsUtil {
 	public static void assertName(IDescriptor desc, String name) {
 		TestCase.assertEquals("bad element for descriptor " + desc, name, desc
 				.getName());
+	}
+
+	public static void assertSize(IInternalElement[] elements, int size) {
+		TestCase.assertEquals("incorrect number of elements", size,
+				elements.length);
+	}
+
+	public static void assertIsEmpty(IInternalElement[] elements) {
+		assertSize(elements, 0);
+	}
+
+	public static void assertContainsAll(IInternalElement[] expectedElements,
+			IInternalElement[] actualElements) {
+
+		for (IInternalElement elem : expectedElements) {
+			assertContains(elem, actualElements);
+		}
+	}
+
+	public static void assertSameElements(IInternalElement[] expectedElements,
+			IInternalElement[] actualElements) {
+
+		assertContainsAll(expectedElements, actualElements);
+
+		assertSize(actualElements, expectedElements.length);
+	}
+
+	public static void assertContains(IInternalElement elem,
+			IInternalElement[] actualElements) {
+
+		List<IInternalElement> actList = Arrays.asList(actualElements);
+
+		TestCase.assertTrue("element " + elem.getElementName()
+				+ " is not present", actList.contains(elem));
 	}
 
 }

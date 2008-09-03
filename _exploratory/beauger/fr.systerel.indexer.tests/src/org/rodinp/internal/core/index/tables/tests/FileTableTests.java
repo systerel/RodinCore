@@ -1,60 +1,25 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.tables.FileIndexTable;
+import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
-public class FileIndexTableTests extends AbstractRodinDBTests {
+public class FileTableTests extends AbstractRodinDBTests {
 
-	private static final FileIndexTable table = new FileIndexTable();
+	private static final FileTable table = new FileTable();
 	private static NamedElement element;
 	private static NamedElement element2;
 	private static IRodinFile file;
 	private static IRodinFile file2;
 
-	public FileIndexTableTests(String name) {
+	public FileTableTests(String name) {
 		super(name);
 	}
 
-	private void assertSize(IInternalElement[] elements, int size) {
-		assertEquals("incorrect number of elements", size, elements.length);
-	}
-
-	private void assertIsEmpty(IInternalElement[] elements) {
-		assertSize(elements, 0);
-	}
-
-	private void assertContainsAll(IInternalElement[] expectedElements,
-			IInternalElement[] actualElements) {
-
-		for (IInternalElement elem : expectedElements) {
-			assertContains(elem, actualElements);
-		}
-	}
-
-	private void assertSameElements(IInternalElement[] expectedElements,
-			IInternalElement[] actualElements) {
-
-		assertContainsAll(expectedElements, actualElements);
-
-		assertSize(actualElements, expectedElements.length);
-	}
-
-	private void assertContains(IInternalElement elem,
-			IInternalElement[] actualElements) {
-
-		List<IInternalElement> actList = Arrays.asList(actualElements);
-
-		assertTrue("element " + elem.getElementName() + " is not present",
-				actList.contains(elem));
-	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -81,7 +46,7 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 
 		final IInternalElement[] elements = table.getElements(file);
 
-		assertSameElements(expectedResult, elements);
+		IndexTestsUtil.assertSameElements(expectedResult, elements);
 	}
 
 	public void testGetElementsFileAbsent() throws Exception {
@@ -89,7 +54,7 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 
 		final IInternalElement[] elements = table.getElements(file2);
 
-		assertIsEmpty(elements);
+		IndexTestsUtil.assertIsEmpty(elements);
 	}
 
 	public void testAddElement() throws Exception {
@@ -98,7 +63,7 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] expectedResult = new IInternalElement[] { element };
 		final IInternalElement[] elements = table.getElements(file);
 
-		assertSameElements(expectedResult, elements);
+		IndexTestsUtil.assertSameElements(expectedResult, elements);
 	}
 
 	public void testRemoveElements() throws Exception {
@@ -110,8 +75,8 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] expectedResult2 = new IInternalElement[] { element2 };
 		final IInternalElement[] elements2 = table.getElements(file2);
 	
-		assertIsEmpty(elements);
-		assertSameElements(expectedResult2, elements2);
+		IndexTestsUtil.assertIsEmpty(elements);
+		IndexTestsUtil.assertSameElements(expectedResult2, elements2);
 	}
 
 	public void testRemoveElementsFileAbsent() throws Exception {
@@ -122,8 +87,8 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] elements = table.getElements(file);
 		final IInternalElement[] elements2 = table.getElements(file2);
 
-		assertSameElements(expectedResult, elements);
-		assertIsEmpty(elements2);
+		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		IndexTestsUtil.assertIsEmpty(elements2);
 	}
 
 	public void testClear() throws Exception {
@@ -134,8 +99,8 @@ public class FileIndexTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] elements = table.getElements(file);
 		final IInternalElement[] elements2 = table.getElements(file2);
 		
-		assertIsEmpty(elements);
-		assertIsEmpty(elements2);
+		IndexTestsUtil.assertIsEmpty(elements);
+		IndexTestsUtil.assertIsEmpty(elements2);
 	}
 
 }

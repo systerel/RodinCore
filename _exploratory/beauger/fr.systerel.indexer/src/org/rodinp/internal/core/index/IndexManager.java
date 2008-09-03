@@ -12,15 +12,17 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.IndexingFacade;
-import org.rodinp.internal.core.index.tables.FileIndexTable;
+import org.rodinp.internal.core.index.tables.FileTable;
+import org.rodinp.internal.core.index.tables.NameTable;
 
 public final class IndexManager {
 
-	// TODO should automatically remove projects when they get deleted.
+	// TODO should automatically remove projects mappings when they get deleted.
 
 	private static IndexManager instance;
 	private Map<IRodinProject, RodinIndex> indexes;
-	private Map<IRodinProject, FileIndexTable> fileTables;
+	private Map<IRodinProject, FileTable> fileTables;
+	private Map<IRodinProject, NameTable> nameTables;
 	private Set<IIndexer> indexers;
 
 	// protected IElementChangedListener listener = new
@@ -35,7 +37,8 @@ public final class IndexManager {
 	private IndexManager() {
 		indexes = new HashMap<IRodinProject, RodinIndex>();
 		indexers = new HashSet<IIndexer>();
-		fileTables = new HashMap<IRodinProject, FileIndexTable>();
+		fileTables = new HashMap<IRodinProject, FileTable>();
+		nameTables = new HashMap<IRodinProject, NameTable>();
 		// TODO: register listener
 	}
 
@@ -82,6 +85,11 @@ public final class IndexManager {
 			IRodinProject project = (IRodinProject) rodinElement;
 			indexProject(project);
 		}
+		// TODO: else throw an exception or return an error code
+		// or try to decompose a possibly complex element (RodinDB,
+		// RodinProject)
+		// into more simple ones and retry to find an indexer.
+
 	}
 
 	private void indexFile(IRodinFile file) {
@@ -89,9 +97,6 @@ public final class IndexManager {
 
 		if (indexer == null) {
 			// TODO: throw an exception or return an error code
-			// or try to decompose a possibly complex element (RodinDB,
-			// RodinProject)
-			// into more simple ones and retry to find an indexer.
 			return;
 		}
 
@@ -100,19 +105,23 @@ public final class IndexManager {
 			// TODO: throw an exception or return an error code
 			return;
 		}
-		cleanIndex(file);
+		clean(file);
 		indexer.index(file, new IndexingFacade(getIndex(project),
-				getFileTable(project)));
+				getFileTable(project), getNameTable(project)));
 	}
 
-	private void cleanIndex(IRodinFile file) {
+	private void clean(IRodinFile file) {
 		final IRodinProject project = file.getRodinProject();
 		final IRodinIndex index = getIndex(project);
-		final FileIndexTable fileTable = getFileTable(project);
-	
+		final FileTable fileTable = getFileTable(project);
+		final NameTable nameTable = getNameTable(project);
+
 		for (IInternalElement element : fileTable.getElements(file)) {
+			final String name = index.getDescriptor(element).getName();
+			nameTable.remove(name, element);
 			index.removeDescriptor(element);
 		}
+		fileTable.removeElements(file);
 	}
 
 	private void indexProject(IRodinProject project) {
@@ -134,6 +143,9 @@ public final class IndexManager {
 		}
 	}
 
+	// TODO: find out whether there is a way to factorize the various create and
+	// get methods
+
 	/**
 	 * Returns an IRodinIndex corresponding to the given project. If no index
 	 * already exists, a new empty one is created.
@@ -148,14 +160,24 @@ public final class IndexManager {
 
 	private void createFileTable(IRodinProject project, boolean overwrite) {
 		if (overwrite || !fileTables.containsKey(project)) {
-			fileTables.put(project, new FileIndexTable());
+			fileTables.put(project, new FileTable());
 		}
 	}
 
-	public FileIndexTable getFileTable(IRodinProject project) {
-		createFileTable(project, false); // creates only if not already
-											// present
+	public FileTable getFileTable(IRodinProject project) {
+		createFileTable(project, false);
 		return fileTables.get(project);
+	}
+
+	private void createNameTable(IRodinProject project, boolean overwrite) {
+		if (overwrite || !nameTables.containsKey(project)) {
+			nameTables.put(project, new NameTable());
+		}
+	}
+
+	public NameTable getNameTable(IRodinProject project) {
+		createNameTable(project, false);
+		return nameTables.get(project);
 	}
 
 	public void saveAll() {
