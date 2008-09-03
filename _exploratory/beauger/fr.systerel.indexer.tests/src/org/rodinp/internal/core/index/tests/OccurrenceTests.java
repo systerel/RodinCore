@@ -19,7 +19,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 	private final FakeIndexer indexer = new FakeIndexer();
 	private final OccurrenceKind defaultKind = OccurrenceKind.NULL;
 	private IRodinLocation location;
-	private Occurrence ref;
+	private Occurrence occ;
 
 
 	private static void assertLocation(IRodinLocation expected,
@@ -40,13 +40,13 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super.setUp();
 
 		final IRodinProject rodinProject = createRodinProject("P");
-		IRodinFile file = rodinProject.getRodinFile("ref.test");
+		IRodinFile file = rodinProject.getRodinFile("occ.test");
 		file.create(false, null);
 		NamedElement elem = IndexTestsUtil.createNamedElement(file, "elem");
 
 		location = new RodinLocation(elem, null,
 				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);
-		ref = new Occurrence(defaultKind, location, indexer);
+		occ = new Occurrence(defaultKind, location, indexer);
 	}
 
 	@Override
@@ -56,9 +56,9 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 	}
 
 	public void testConstructor() throws Exception {
-		assertKind(defaultKind, ref.getKind());
-		assertLocation(location, ref.getLocation());
-		assertIndexer(indexer, ref.getIndexer());
+		assertKind(defaultKind, occ.getKind());
+		assertLocation(location, occ.getLocation());
+		assertIndexer(indexer, occ.getIndexer());
 	}
 
 }

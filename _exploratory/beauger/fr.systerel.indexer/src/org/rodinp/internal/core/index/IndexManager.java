@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
@@ -17,7 +16,8 @@ import org.rodinp.internal.core.index.tables.NameTable;
 
 public final class IndexManager {
 
-	// TODO should automatically remove projects mappings when they get deleted.
+	// TODO should automatically remove projects mappings when a project gets
+	// deleted.
 
 	private static IndexManager instance;
 	private Map<IRodinProject, RodinIndex> indexes;
@@ -63,9 +63,14 @@ public final class IndexManager {
 		indexers.remove(indexer);
 	}
 
-	public void scheduleIndexing(IRodinElement rodinElement) {
+	public void scheduleIndexing(IRodinFile file) {
 		// TODO don't launch indexing immediately (define scheduling options)
-		index(rodinElement);
+
+		if (!file.exists()) {
+			throw new IllegalArgumentException(
+					"trying to index an inexistent file: " + file.getBareName());
+		}
+		indexFile(file);
 	}
 
 	private IIndexer findIndexerFor(IRodinFile file) {
@@ -77,44 +82,28 @@ public final class IndexManager {
 		return null;
 	}
 
-	private void index(IRodinElement rodinElement) {
-		if (rodinElement instanceof IRodinFile) {
-			IRodinFile file = (IRodinFile) rodinElement;
-			indexFile(file);
-		} else if (rodinElement instanceof IRodinProject) {
-			IRodinProject project = (IRodinProject) rodinElement;
-			indexProject(project);
-		}
-		// TODO: else throw an exception or return an error code
-		// or try to decompose a possibly complex element (RodinDB,
-		// RodinProject)
-		// into more simple ones and retry to find an indexer.
-
-	}
-
 	private void indexFile(IRodinFile file) {
+
 		IIndexer indexer = findIndexerFor(file);
 
 		if (indexer == null) {
-			// TODO: throw an exception or return an error code
-			return;
+			throw new IllegalStateException("unable to find an indexer for "
+					+ file.getElementName());
 		}
 
 		final IRodinProject project = file.getRodinProject();
-		if (project == null || !project.exists()) {
-			// TODO: throw an exception or return an error code
-			return;
-		}
-		clean(file);
-		indexer.index(file, new IndexingFacade(getIndex(project),
-				getFileTable(project), getNameTable(project)));
-	}
 
-	private void clean(IRodinFile file) {
-		final IRodinProject project = file.getRodinProject();
 		final IRodinIndex index = getIndex(project);
 		final FileTable fileTable = getFileTable(project);
 		final NameTable nameTable = getNameTable(project);
+
+		clean(file, index, fileTable, nameTable);
+
+		indexer.index(file, new IndexingFacade(index, fileTable, nameTable));
+	}
+
+	private void clean(IRodinFile file, final IRodinIndex index,
+			final FileTable fileTable, final NameTable nameTable) {
 
 		for (IInternalElement element : fileTable.getElements(file)) {
 			final String name = index.getDescriptor(element).getName();
@@ -124,27 +113,14 @@ public final class IndexManager {
 		fileTable.removeElements(file);
 	}
 
-	private void indexProject(IRodinProject project) {
-		// TODO
-	}
+	// TODO: find out whether there is a way to factorize the various create and
+	// get methods
 
-	/**
-	 * Creates a new index associated to the given project. Does nothing if an
-	 * index already exists for the project.
-	 * 
-	 * @param project
-	 *            the project for which to create an index.
-	 * @param overwrite
-	 *            overwrites any existing mapping to that project.
-	 */
 	private void createIndex(IRodinProject project, boolean overwrite) {
 		if (overwrite || !indexes.containsKey(project)) {
 			indexes.put(project, new RodinIndex());
 		}
 	}
-
-	// TODO: find out whether there is a way to factorize the various create and
-	// get methods
 
 	/**
 	 * Returns an IRodinIndex corresponding to the given project. If no index

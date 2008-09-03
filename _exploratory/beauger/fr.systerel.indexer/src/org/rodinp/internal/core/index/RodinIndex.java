@@ -15,6 +15,7 @@ public final class RodinIndex implements IRodinIndex {
 		map = new HashMap<Object, IDescriptor>();
 	}
 
+	// FIXME perhaps we do not really want to have null returned
 	public IDescriptor getDescriptor(Object key) {
 		return map.get(key);
 	}
@@ -24,8 +25,7 @@ public final class RodinIndex implements IRodinIndex {
 		return descriptors.toArray(new IDescriptor[descriptors.size()]);
 	}
 
-	public IDescriptor makeDescriptor(IInternalElement element,
-			String name) {
+	public IDescriptor makeDescriptor(IInternalElement element, String name) {
 		IDescriptor descriptor = map.get(element);
 		if (descriptor == null) {
 			descriptor = new Descriptor(name, element);
@@ -33,7 +33,9 @@ public final class RodinIndex implements IRodinIndex {
 		} else { // requesting to make an already existing descriptor
 			if (descriptor.getElement() != element
 					|| !descriptor.getName().equals(name)) {
-				// TODO: throw an exception
+				throw new IllegalArgumentException("Descriptor for "
+						+ element.getElementName()
+						+ " already exists with a different name");
 			}
 			// else return the already existing one
 			// as it is coherent with the requested one
@@ -44,9 +46,9 @@ public final class RodinIndex implements IRodinIndex {
 	public void removeDescriptor(Object key) {
 		map.remove(key);
 	}
-	
+
 	public void clear() {
-		map.clear();		
+		map.clear();
 	}
 
 	// DEBUG

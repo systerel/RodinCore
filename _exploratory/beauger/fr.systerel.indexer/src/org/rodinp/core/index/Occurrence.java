@@ -3,7 +3,6 @@ package org.rodinp.core.index;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 
-// TODO: consider declaring final
 public class Occurrence {
 	private final OccurrenceKind kind;
 	private final IRodinLocation location;

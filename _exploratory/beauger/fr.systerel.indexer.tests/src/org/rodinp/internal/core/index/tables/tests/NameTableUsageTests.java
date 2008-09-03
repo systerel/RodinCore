@@ -16,7 +16,8 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 	private static IRodinFile file;
 	private static final String name1 = "NTUT_name1";
 	private static final String name2 = "NTUT_name2";
-	private static FakeNameIndexer indexer = new FakeNameIndexer(2, name1, name2);
+	private static FakeNameIndexer indexer = new FakeNameIndexer(2, name1,
+			name2);
 	private static final IndexManager manager = IndexManager.getDefault();
 
 	public NameTableUsageTests(String name) {
@@ -57,31 +58,31 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 		IInternalElement[] expectedName1 = indexer.getIndexedElements(name1);
 		IInternalElement[] expectedName2 = indexer.getIndexedElements(name2);
-		
+
 		assertNameTable(file, name1, expectedName1, "");
 		assertNameTable(file, name2, expectedName2, null);
 	}
 
 	public void testNametableUpdating() throws Exception {
-		
+
 		// first indexing with 2 elements for both name1 and name2
 		manager.scheduleIndexing(file);
 		IInternalElement[] expectedName1 = indexer.getIndexedElements(name1);
 		IInternalElement[] expectedName2 = indexer.getIndexedElements(name2);
-		
+
 		assertNameTable(file, name1, expectedName1, "Before");
 		assertNameTable(file, name2, expectedName2, null);
-		
-		file.clear(true, null);
+
+		// changing the indexer
 		RodinIndexer.deregister(indexer);
 		indexer = new FakeNameIndexer(1, name1);
 		RodinIndexer.register(indexer);
-		
+
 		// second indexing with 1 element for name1 only
 		manager.scheduleIndexing(file);
 		IInternalElement[] expectedName1Bis = indexer.getIndexedElements(name1);
 		IInternalElement[] expectedName2Bis = indexer.getIndexedElements(name2);
-		
+
 		assertNameTable(file, name1, expectedName1Bis, "After");
 		assertNameTable(file, name2, expectedName2Bis, null);
 	}

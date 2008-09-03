@@ -6,37 +6,40 @@ import org.rodinp.internal.core.index.tables.NameTable;
 
 public class IndexingFacade {
 
-	final IRodinIndex index;
-	final FileTable fileTable;
-	final NameTable nameTable;
+	private final IRodinIndex index;
+	private final FileTable fileTable;
+	private final NameTable nameTable;
+	private IDescriptor currentDescriptor;
 
 	public IndexingFacade(IRodinIndex rodinIndex, FileTable fileTable,
 			NameTable nameTable) {
 		this.index = rodinIndex;
 		this.fileTable = fileTable;
 		this.nameTable = nameTable;
+		this.currentDescriptor = null;
 	}
 
 	public void addOccurrence(IInternalElement element, String name,
 			Occurrence occurrence) {
-		// FIXME problem : the name needs not be given each time
-		// we could perhaps allow a null name provided that the
-		// name has already been given (existing descriptor)
-		// alternatively, we could provide a method that omits the name argument
-		IDescriptor descriptor = index.getDescriptor(element);
 
-		if (descriptor == null) {
-			descriptor = index.makeDescriptor(element, name);
-		} else {
-			if (!descriptor.getName().equals(name)) {
-				throw new IllegalArgumentException(
-						"given name differs from the one previously"
-								+ " given for the same element");
-			}
+		if (currentDescriptor == null
+				|| (currentDescriptor.getElement() != element)) {
+			currentDescriptor = getNotNullDescriptor(element, name);
 		}
-		descriptor.addOccurrence(occurrence);
+
+		currentDescriptor.addOccurrence(occurrence);
 		fileTable.addElement(element, element.getRodinFile());
 		nameTable.put(name, element);
+	}
+
+	// FIXME could as well be defined as the behavior of getDescriptor
+	private IDescriptor getNotNullDescriptor(IInternalElement element,
+			String name) {
+		IDescriptor descriptor = index.getDescriptor(element);
+		if (descriptor == null) {
+			descriptor = index.makeDescriptor(element, name);
+		}
+		return descriptor;
 	}
 
 }

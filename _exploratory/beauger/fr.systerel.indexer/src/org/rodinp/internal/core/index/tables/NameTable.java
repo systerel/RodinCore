@@ -11,33 +11,33 @@ public class NameTable {
 
 	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
 
-	private Map<String, Set<IInternalElement>> map;
+	private Map<String, Set<IInternalElement>> table;
 	
 	public NameTable() {
-		map = new HashMap<String, Set<IInternalElement>>();
+		table = new HashMap<String, Set<IInternalElement>>();
 	}
 	
 	public void put(String name, IInternalElement element) {
-		Set<IInternalElement> elements = map.get(name);
+		Set<IInternalElement> elements = table.get(name);
 		if (elements == null) {
 			elements = new HashSet<IInternalElement>();
-			map.put(name, elements);
+			table.put(name, elements);
 		}
 		elements.add(element);
 	}
 	
 	public void remove(String name, IInternalElement element) {
-		Set<IInternalElement> elements = map.get(name);
+		Set<IInternalElement> elements = table.get(name);
 		if (elements != null) {
 			elements.remove(element);
 			if (elements.size() == 0) {
-				map.remove(name);
+				table.remove(name);
 			}
 		}
 	}
 	
 	public IInternalElement[] getElements(String name) {
-		final Set<IInternalElement> elements = map.get(name);
+		final Set<IInternalElement> elements = table.get(name);
 		if (elements == null || elements.size() == 0) {
 			return NO_ELEMENTS;
 		}
@@ -45,16 +45,16 @@ public class NameTable {
 	}
 	
 	public void clear() {
-		map.clear();
+		table.clear();
 	}
 	
 	// DEBUG
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("NameTable\n");
-		for (String name : map.keySet()) {
+		for (String name : table.keySet()) {
 			sb.append(name + ": ");
-			for (IInternalElement elem : map.get(name)) {
+			for (IInternalElement elem : table.get(name)) {
 				sb.append(elem.getElementName()+"; ");
 			}
 			sb.append("\n");

@@ -19,12 +19,12 @@ public final class Descriptor implements IDescriptor {
 	 */
 	private String name;
 	private IInternalElement element;
-	private Set<Occurrence> references;
+	private Set<Occurrence> occurrences;
 
 	public Descriptor(String name, IInternalElement element) {
 		this.name = name;
 		this.element = element;
-		this.references = new HashSet<Occurrence>();
+		this.occurrences = new HashSet<Occurrence>();
 	}
 
 	public String getName() {
@@ -36,16 +36,16 @@ public final class Descriptor implements IDescriptor {
 	}
 
 	public Occurrence[] getOccurrences() {
-		return references.toArray(new Occurrence[references.size()]);
+		return occurrences.toArray(new Occurrence[occurrences.size()]);
 	}
 
 	public boolean hasOccurrence(Occurrence occurrence) {
-		return references.contains(occurrence);
+		return occurrences.contains(occurrence);
 	}
 
 	public void addOccurrence(Occurrence occurrence) {
 		if (verifyOccurrence(occurrence)) {
-			references.add(occurrence);
+			occurrences.add(occurrence);
 		} else {
 			throw new IllegalArgumentException(
 					"trying to add an alien occurrence:\n"
@@ -54,11 +54,11 @@ public final class Descriptor implements IDescriptor {
 	}
 
 	public void removeOccurrence(Occurrence occurrence) {
-		references.remove(occurrence);
+		occurrences.remove(occurrence);
 	}
 
 	public void clearOccurrences() {
-		references.clear();
+		occurrences.clear();
 	}
 
 	private boolean verifyOccurrence(Occurrence occ) {
@@ -80,7 +80,7 @@ public final class Descriptor implements IDescriptor {
 		sb.append(element.getElementName() + "\n");
 		sb.append("Name: " + name + "\n");
 		
-		for (Occurrence ref : references) {
+		for (Occurrence ref : occurrences) {
 			sb.append(ref.toString() + "\n");
 		}
 		return sb.toString();

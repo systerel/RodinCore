@@ -68,27 +68,6 @@ public class IndexTestsUtil {
 				.getRodinLocation(element), ind);
 	}
 
-	// public static Occurrence[] generateFaultyReferencesTestSet()
-	// throws CoreException { // TODO use next method
-	// IInternalElement ie1 = IndexTestsUtil.createNamedElement("P/f1.test",
-	// "ie1");
-	// IInternalElement ie2 = IndexTestsUtil.createNamedElement("P/f2.test",
-	// "ie2");
-	//
-	// IInternalElement[] elems = { ie1, ie2 };
-	// OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
-	// IndexTestsUtil.RefKind2.TEST_KIND_2 };
-	// ArrayList<Occurrence> result = new ArrayList<Occurrence>();
-	//
-	// for (IInternalElement el : elems) {
-	// final IRodinLocation loc = IndexTestsUtil.createDefaultLocation(el);
-	// for (OccurrenceKind k : kinds) {
-	// result.add(new Occurrence(k, loc));
-	// }
-	// }
-	// return result.toArray(new Occurrence[result.size()]);
-	// }
-
 	public static Occurrence[] generateOccurrencesTestSet(IInternalElement ie,
 			int numEachKind) throws CoreException {
 
@@ -121,21 +100,10 @@ public class IndexTestsUtil {
 
 	public static void assertDescriptor(IDescriptor descriptor,
 			IInternalElement element, String name, int expectedLength) {
-		// FIXME very incomplete assertion, make more intrusive tests
-		// final IDescriptor descriptor = index.getDescriptor(element);
-		// TestCase.assertNotNull("expected descriptor not found for " + name,
-		// descriptor);
-
-		// TestCase.assertEquals("incorrect name for element "
-		// + element.getElementName() + " in descriptor" + descriptor,
-		// name, descriptor.getName());
 
 		assertElement(descriptor, element);
 		assertName(descriptor, name);
 		assertSize(descriptor, expectedLength);
-		// final int occsLength = descriptor.getOccurrences().length;
-		// TestCase.assertEquals("Did not index correctly", expectedLength,
-		// occsLength);
 	}
 
 	public static void addOccurrences(Occurrence[] occurrences,

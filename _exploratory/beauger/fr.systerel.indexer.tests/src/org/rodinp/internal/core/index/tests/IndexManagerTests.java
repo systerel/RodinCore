@@ -27,11 +27,13 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		project = createRodinProject("P");
 		file = project.getRodinFile("indMan.test");
 		file.create(true, null);
+		RodinIndexer.register(indexer);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
+		RodinIndexer.deregister(indexer);
 		super.tearDown();
 	}
 
@@ -39,9 +41,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final NamedElement element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultName);
 
-		RodinIndexer.register(indexer);
 		manager.scheduleIndexing(file);
-		RodinIndexer.deregister(indexer);
 
 		final IRodinIndex index = manager.getIndex(project);
 		final IDescriptor desc = index.getDescriptor(element);
@@ -62,8 +62,6 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 
 		IRodinIndex index;
 
-		RodinIndexer.register(indexer);
-
 		// first indexing with element, without element2
 		manager.scheduleIndexing(file);
 
@@ -76,16 +74,34 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		element.delete(true, null);
 		element2.create(null, null);
 
-		// second indexing with element2, without element		
+		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
 		index = manager.getIndex(project);
 		final IDescriptor descElement2 = index.getDescriptor(element2);
 
 		IndexTestsUtil.assertNoSuchDescriptor(index, element);
-		IndexTestsUtil.assertDescriptor(descElement2, element2, element2Name, 6);
+		IndexTestsUtil
+				.assertDescriptor(descElement2, element2, element2Name, 6);
+	}
 
+	public void testIndexFileDoesNotExist() throws Exception {
+		IRodinFile inexistentFile = project.getRodinFile("inexistentFile.test");
+		try {
+			manager.scheduleIndexing(inexistentFile);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+		fail("trying to index a inexistent file should raise IllegalArgumentException");
+	}
+
+	public void testIndexNoIndexer() throws Exception {
 		RodinIndexer.deregister(indexer);
-
+		try {
+			manager.scheduleIndexing(file);
+		} catch (IllegalStateException e) {
+			return;
+		}
+		fail("trying to index with no indexer registered should raise IllegalStateException");
 	}
 }
