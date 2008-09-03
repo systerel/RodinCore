@@ -1,7 +1,6 @@
 package org.eventb.core.indexer.tests;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +28,8 @@ import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.internal.core.index.IndexManager;
 
 public class ContextIndexerTests extends ModifyingResourceTests {
+
+	private static final boolean DEBUG = false;
 
 	private static class TestConstant {
 		public final String elementName;
@@ -263,8 +264,10 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		manager.scheduleIndexing(file);
 
 		IRodinIndex index = manager.getIndex(file.getRodinProject());
-		System.out.println("Basic Case");
-		System.out.println(index.toString());
+		if (DEBUG) {
+			System.out.println("Basic Case");
+			System.out.println(index.toString());
+		}
 		assertIndex(expectedResult, index);
 	}
 
@@ -275,8 +278,10 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		manager.scheduleIndexing(emptyFile);
 
 		IRodinIndex index = manager.getIndex(emptyFile.getRodinProject());
-		System.out.println("Empty File");
-		System.out.println(index.toString());
+		if (DEBUG) {
+			System.out.println("Empty File");
+			System.out.println(index.toString());
+		}
 		assertIndex(expectedResult, index);
 	}
 
