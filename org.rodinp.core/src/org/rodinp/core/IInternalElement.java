@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods (contents and occurrence count)
+ *     Systerel - added method getNextSibling()
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -133,5 +134,24 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 * @return the Rodin file containing this element
 	 */
 	IRodinFile getRodinFile();
-	
+
+	/**
+	 * Returns the internal element that follows this element in the children
+	 * list of its parent or <code>null</code> if this element is the last
+	 * sibling.
+	 * <p>
+	 * This method is useful when one needs to create an element just after
+	 * another. It allows to get the parameter to be passed to the
+	 * <code>create()</code> for properly ordering the created element.
+	 * </p>
+	 * 
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 * 
+	 * @return the next sibling of this internal element or <code>null</code>
+	 *         if this element is the last child of its parent
+	 */
+	IInternalElement getNextSibling() throws RodinDBException;
+
 }

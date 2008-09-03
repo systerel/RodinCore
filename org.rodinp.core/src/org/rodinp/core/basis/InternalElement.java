@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added clear() method
  *     Systerel - removed deprecated methods and occurrence count
+ *     Systerel - added method getNextSibling()
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -236,6 +237,20 @@ public abstract class InternalElement extends RodinElement implements
 		// Recreate this handle in the mutable version of its file.
 		final IRodinFile newFile = file.getMutableCopy();
 		return (InternalElement) getSimilarElement(newFile);
+	}
+
+	public final IInternalElement getNextSibling() throws RodinDBException {
+		final RodinElement[] siblings = getParent().getChildren();
+		final int len = siblings.length;
+		for (int i = 0; i < len; ++i) {
+			if (siblings[i].equals(this)) {
+				if (i + 1 < len) {
+					return (IInternalElement) siblings[i + 1];
+				}
+				return null;
+			}
+		}
+		throw newNotPresentException();
 	}
 
 	@Override

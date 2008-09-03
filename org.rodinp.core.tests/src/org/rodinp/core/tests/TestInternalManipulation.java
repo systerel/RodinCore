@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed test on pseudo-attribute "contents"
+ *     Systerel - added tests for method getNextSibling()
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -386,5 +389,54 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertEquals(ie11, ie11.getSimilarElement(rf1));
 		assertEquals(ie21, ie11.getSimilarElement(rf2));
 	}
-	
+
+	/**
+	 * Ensures that trying to access to the next sibling of an inexistent
+	 * element throws the appropriate exception.
+	 */
+	public void testNextSiblingInexistent() throws Exception {
+		final NamedElement ne = getNamedElement(rodinFile, "foo");
+		try {
+			ne.getNextSibling();
+			fail("should have raised an exception");
+		} catch (RodinDBException e) {
+			IRodinDBStatus st = e.getRodinDBStatus();
+			assertTrue(st.isDoesNotExist());
+			assertEquals(Arrays.asList(ne), Arrays.asList(st.getElements()));
+		}
+	}
+
+	/**
+	 * Ensures that the next sibling of an internal element is computed
+	 * appropriately, when there is no other sibling.
+	 */
+	public void testNextSibling_1() throws Exception {
+		final NamedElement ne = createNEPositive(rodinFile, "ne", null);
+		assertEquals(null, ne.getNextSibling());
+	}
+
+	/**
+	 * Ensures that the next sibling of an internal element is computed
+	 * appropriately, when there is one other sibling.
+	 */
+	public void testNextSibling_2() throws Exception {
+		final NamedElement ne1 = createNEPositive(rodinFile, "ne1", null);
+		final NamedElement ne2 = createNEPositive(rodinFile, "ne2", null);
+		assertEquals(ne2, ne1.getNextSibling());
+		assertEquals(null, ne2.getNextSibling());
+	}
+
+	/**
+	 * Ensures that the next sibling of an internal element is computed
+	 * appropriately, when there are two other siblings.
+	 */
+	public void testNextSibling_3() throws Exception {
+		final NamedElement ne1 = createNEPositive(rodinFile, "ne1", null);
+		final NamedElement ne2 = createNEPositive(rodinFile, "ne2", null);
+		final NamedElement ne3 = createNEPositive(rodinFile, "ne3", null);
+		assertEquals(ne2, ne1.getNextSibling());
+		assertEquals(ne3, ne2.getNextSibling());
+		assertEquals(null, ne3.getNextSibling());
+	}
+
 }
