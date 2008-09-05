@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.IJavaModelStatusConstants.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.JavaCore
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - cleaned-up unused codes
  *******************************************************************************/
-
 package org.rodinp.core;
 
 /**
@@ -190,9 +192,9 @@ public interface IRodinDBStatusConstants {
 	int NO_LOCAL_CONTENTS = 986;
 
 	/**
-	 * Status indicating that a project is involved in a build path cycle.
+	 * Unused status code.
 	 */
-	int BUILD_CYCLE = 987;
+	int UNUSED_2 = 987;
 
 	/**
 	 * Status indicating that an XML error was encountered while parsing a Rodin file.
@@ -200,11 +202,9 @@ public interface IRodinDBStatusConstants {
 	int XML_PARSE_ERROR = 988;
 
 	/**
-	 * Status indicating that a Rodin file, although conforming to the XML
-	 * standard, doesn't abide by the constraints of the XML subset used by the
-	 * Rodin database.
+	 * Unused status code.
 	 */
-	int MALFORMED_FILE_ERROR = 989;
+	int UNUSED_3 = 989;
 
 	/**
 	 * Unused status code.
@@ -229,11 +229,9 @@ public interface IRodinDBStatusConstants {
 	int XML_CONFIG_ERROR = 993;
 
 	/**
-	 * Status indicating that an attribute name specified by a client is not
-	 * known to the Rodin database. The name can be retrieved from
-	 * <code>getString</code>.
+	 * Unused status code.
 	 */
-	int UNKNOWN_ATTRIBUTE = 994;
+	int UNUSED_4 = 994;
 	
 	/**
 	 * Status indicating that an attribute name doesn't match the Java type used
