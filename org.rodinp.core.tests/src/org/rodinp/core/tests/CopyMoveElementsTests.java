@@ -596,7 +596,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 				null, 
 				new String[] {"bar", "baz"}, 
 				false, 
-				IRodinDBStatusConstants.INDEX_OUT_OF_BOUNDS);
+				IRodinDBStatusConstants.INVALID_RENAMING);
 	}
 	
 	/**
@@ -1153,7 +1153,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 				null, 
 				new String[] {"bar", "baz"}, 
 				false, 
-				IRodinDBStatusConstants.INDEX_OUT_OF_BOUNDS);
+				IRodinDBStatusConstants.INVALID_RENAMING);
 	}
 	
 	/**
@@ -1383,7 +1383,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 				new IRodinElement[] {neSource}, 
 				new String[] {"bar", "baz"}, 
 				false, 
-				IRodinDBStatusConstants.INDEX_OUT_OF_BOUNDS);
+				IRodinDBStatusConstants.INVALID_RENAMING);
 	}
 
 	/**

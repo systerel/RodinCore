@@ -331,8 +331,8 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 			case CONVERSION_ERROR:
 				assert false; // always has an exception attached.
 
-			case INDEX_OUT_OF_BOUNDS:
-				return Messages.status_indexOutOfBound;
+			case INVALID_RENAMING:
+				return Messages.status_invalidRenaming;
 
 			case INVALID_ATTRIBUTE_KIND:
 				return Messages.bind(Messages.status_invalidAttributeKind,

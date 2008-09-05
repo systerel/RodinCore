@@ -75,7 +75,6 @@ public final class Messages {
 	public static String status_cannotUseDeviceOnPath;
 	public static String status_coreException;
 	public static String status_futureVersionNumber;
-	public static String status_indexOutOfBound;
 	public static String status_invalidAttributeKind;
 	public static String status_invalidAttributeValue;
 	public static String status_invalidContents;
@@ -83,6 +82,7 @@ public final class Messages {
 	public static String status_invalidName;
 	public static String status_invalidPath;
 	public static String status_invalidProject;
+	public static String status_invalidRenaming;
 	public static String status_invalidResource;
 	public static String status_invalidResourceType;
 	public static String status_invalidSibling;

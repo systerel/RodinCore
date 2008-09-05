@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.IJavaModel.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.IJavaModel
+ *     ETH Zurich - adaptation from JDT to Rodin
  *******************************************************************************/
-
 package org.rodinp.core;
 
 import org.eclipse.core.resources.IResource;
@@ -120,6 +121,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                <li> A child in its associated container already exists
 	 *                with the same name and <code>replace</code> has been
 	 *                specified as <code>false</code> (<code>NAME_COLLISION</code>)</li>
+	 *                <li>The number of renamings does not match the number of
+	 *                elements (<code>INVALID_RENAMING</code>)</li>
 	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)</li>
 	 *                </ul>
 	 */
@@ -262,6 +265,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                <li> A child in its associated container already exists
 	 *                with the same name and <code>replace</code> has been
 	 *                specified as <code>false</code> (<code>NAME_COLLISION</code>)</li>
+	 *                <li>The number of renamings does not match the number of
+	 *                elements (<code>INVALID_RENAMING</code>)</li>
 	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)
 	 *                </li>
 	 *                </ul>
@@ -299,6 +304,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                <li> A child already exists with the same name and
 	 *                <code>replace</code> has been specified as
 	 *                <code>false</code> (<code>NAME_COLLISION</code>)
+	 *                <li>The number of renamings does not match the number of
+	 *                elements (<code>INVALID_RENAMING</code>)</li>
 	 *                <li> An element is read-only (<code>READ_ONLY</code>)
 	 *                </ul>
 	 */

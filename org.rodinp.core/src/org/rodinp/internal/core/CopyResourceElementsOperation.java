@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.CopyResourceElementsOperation.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.CopyResourceElementsOperation
+ *     ETH Zurich - adaptation from JDT to Rodin
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -249,7 +251,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 	 * Possible failures:
 	 * <ul>
 	 *  <li>NO_ELEMENTS_TO_PROCESS - no elements supplied to the operation
-	 *	<li>INDEX_OUT_OF_BOUNDS - the number of renamings supplied to the operation
+	 *	<li>INVALID_RENAMING - the number of renamings supplied to the operation
 	 *		does not match the number of elements that were supplied.
 	 * </ul>
 	 */
@@ -261,7 +263,7 @@ public class CopyResourceElementsOperation extends MultiOperation  {
 		}
 	
 		if (this.renamingsList != null && this.renamingsList.length != elementsToProcess.length) {
-			return new RodinDBStatus(IRodinDBStatusConstants.INDEX_OUT_OF_BOUNDS);
+			return new RodinDBStatus(IRodinDBStatusConstants.INVALID_RENAMING);
 		}
 		return RodinDBStatus.VERIFIED_OK;
 	}

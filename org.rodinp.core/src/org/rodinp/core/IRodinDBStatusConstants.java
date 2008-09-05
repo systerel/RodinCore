@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation as
- *     		org.eclipse.jdt.core.JavaCore
+ *     		org.eclipse.jdt.core.IJavaModelStatusConstants
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - cleaned-up unused codes
  *******************************************************************************/
@@ -24,6 +24,16 @@ package org.rodinp.core;
  * @see org.eclipse.core.runtime.IStatus#getCode()
  */
 public interface IRodinDBStatusConstants {
+	
+	//////////////////////////////////////////////////////////////////////////
+	//																		//
+	//						  IMPORTANT NOTICE								//
+	//																		//
+	//	When adding a new constant here, do not forget to also update the	//
+	//	RodinDBStatus#getMessage() method which formats the corresponding	//
+	//	human-readable message.												//
+	//																		//
+	//////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Status constant indicating a core exception occurred. Use
@@ -215,7 +225,7 @@ public interface IRodinDBStatusConstants {
 	 * Status indicating that the number of renamings supplied to a copy or move
 	 * operation does not match the number of elements that were supplied.
 	 */
-	int INDEX_OUT_OF_BOUNDS = 991;
+	int INVALID_RENAMING = 991;
 
 	/**
 	 * Status indicating that an XML error was encountered while saving a Rodin file.
