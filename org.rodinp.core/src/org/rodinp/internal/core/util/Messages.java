@@ -74,6 +74,10 @@ public final class Messages {
 	public static String status_attribute_doesNotExist;
 	public static String status_cannotUseDeviceOnPath;
 	public static String status_coreException;
+	public static String status_futureVersionNumber;
+	public static String status_indexOutOfBound;
+	public static String status_invalidAttributeKind;
+	public static String status_invalidAttributeValue;
 	public static String status_invalidContents;
 	public static String status_invalidDestination;
 	public static String status_invalidName;
@@ -82,12 +86,15 @@ public final class Messages {
 	public static String status_invalidResource;
 	public static String status_invalidResourceType;
 	public static String status_invalidSibling;
+	public static String status_invalidVersionNumber;
 	public static String status_IOException;
 	public static String status_nameCollision;
 	public static String status_noLocalContents;
 	public static String status_OK;
+	public static String status_pastVersionNumber;
 	public static String status_readOnly;
 	public static String status_updateConflict;
+	public static String status_upgradedFile;
 
 	public static String type_database;
 	public static String type_project;
@@ -97,7 +104,7 @@ public final class Messages {
 	public static String converter_failedConversion;
 	public static String converter_convertingFiles;
 	public static String converter_savingFiles;
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
