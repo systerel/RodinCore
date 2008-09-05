@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaModelStatus.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.JavaModelStatus
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added more messages
  *******************************************************************************/
-
 package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResourceStatus;
@@ -90,6 +92,18 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 	 */
 	public RodinDBStatus(int code, String string) {
 		this(ERROR, code, string);
+	}
+
+	/**
+	 * Constructs a Rodin model status with the given corresponding element and
+	 * string.
+	 */
+	public RodinDBStatus(int severity, int code, IRodinElement element,
+			String string) {
+		super(severity, RodinCore.PLUGIN_ID, code, "RodinDBStatus", null); //$NON-NLS-1$
+		this.elements = new IRodinElement[] { element };
+		this.path = null;
+		this.string = string;
 	}
 
 	/**
@@ -309,6 +323,36 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 				return Messages.bind(Messages.status_attribute_doesNotExist,
 						((RodinElement) elements[0]).toStringWithAncestors(),
 						string);
+
+			case XML_PARSE_ERROR:
+			case XML_SAVE_ERROR:
+			case XML_CONFIG_ERROR:
+			case INVALID_MARKER_LOCATION:
+			case CONVERSION_ERROR:
+				assert false; // always has an exception attached.
+
+			case INDEX_OUT_OF_BOUNDS:
+				return Messages.status_indexOutOfBound;
+
+			case INVALID_ATTRIBUTE_KIND:
+				return Messages.bind(Messages.status_invalidAttributeKind,
+						string);
+
+			case INVALID_ATTRIBUTE_VALUE:
+				return Messages.bind(Messages.status_invalidAttributeKind,
+						string);
+
+			case INVALID_VERSION_NUMBER:
+				return Messages.bind(Messages.status_invalidVersionNumber,
+						elements[0].getPath(), string);
+
+			case FUTURE_VERSION:
+				return Messages.bind(Messages.status_futureVersionNumber,
+						elements[0].getPath(), string);
+
+			case PAST_VERSION:
+				return Messages.bind(Messages.status_pastVersionNumber,
+						elements[0].getPath(), string);
 
 			}
 			if (string != null) {
