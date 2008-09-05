@@ -20,7 +20,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.util.Util;
@@ -98,16 +97,8 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 		return fileName.substring(0, length);
 	}
 
-	protected IFile getFile(String path) {
+	protected static IFile getFile(String path) {
 		return getWorkspaceRoot().getFile(new Path(path));
-	}
-
-	@Override
-	protected IRodinFile createRodinFile(String path) throws CoreException {
-		IFile file = getFile(path);
-		IRodinFile rodinFile = RodinCore.valueOf(file);
-		rodinFile.create(true, null);
-		return rodinFile;
 	}
 
 }

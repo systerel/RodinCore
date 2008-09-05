@@ -40,12 +40,11 @@ public class MementoTests extends ModifyingResourceTests {
 
 	public void setUp() throws Exception {
 		super.setUp();
-
-		this.createRodinProject("P");
+		createRodinProject("P");
 	}
 
 	public void tearDown() throws Exception {
-		this.deleteProject("P");
+		deleteProject("P");
 		super.tearDown();
 	}
 

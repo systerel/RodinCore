@@ -78,9 +78,9 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			.getStringAttrType("org.rodinp.core.tests.fString");
 
 	// infos for invalid results
-	protected int tabs = 2;
+	protected static final int tabs = 2;
 	protected boolean displayName = false;
-	protected String endChar = ",";
+	protected static final String endChar = ",";
 	
 //	public static class ProblemRequestor implements IProblemRequestor {
 //		public StringBuffer problems;
@@ -251,11 +251,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		super(name);
 	}
 
-	public AbstractRodinDBTests(String name, int tabs) {
-		super(name);
-		this.tabs = tabs;
-	}
-
 //	public static Test buildTestSuite(Class evaluationTestClass) {
 //		return buildTestSuite(evaluationTestClass, null); //$NON-NLS-1$
 //	}
@@ -269,7 +264,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 //		return suite;
 //	}
 
-	protected void addRodinNature(String projectName) throws CoreException {
+	protected static void addRodinNature(String projectName) throws CoreException {
 		IProject project = getWorkspaceRoot().getProject(projectName);
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
@@ -284,7 +279,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		String actual = collector.toString();
 		if (!expected.equals(actual)) {
 			if (this.displayName) System.out.println(getName()+" actual result is:");
-			System.out.print(displayString(actual, this.tabs));
+			System.out.print(displayString(actual, tabs));
 			System.out.println(",");
 		}
 		assertEquals(
@@ -301,7 +296,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	
 	
 	protected void assertResourcesEqual(String message, String expected, IResource[] resources) {
-		this.sortResources(resources);
+		sortResources(resources);
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, length = resources.length; i < length; i++){
 			IResource resource = (IResource)resources[i];
@@ -310,7 +305,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		}
 		if (!expected.equals(buffer.toString())) {
 			System.out.print(Util.displayString(buffer.toString(), 2));
-			System.out.println(this.endChar);
+			System.out.println(endChar);
 		}
 		assertEquals(
 			message,
@@ -323,7 +318,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		String actual = element == null ? "<null>" : ((RodinElement) element).toStringWithAncestors();
 		if (!expected.equals(actual)) {
 			if (this.displayName) System.out.println(getName()+" actual result is:");
-			System.out.println(displayString(actual, this.tabs) + this.endChar);
+			System.out.println(displayString(actual, tabs) + endChar);
 		}
 		assertEquals(message, expected, actual);
 	}
@@ -346,7 +341,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		String actual = buffer.toString();
 		if (!expected.equals(actual)) {
 			if (this.displayName) System.out.println(getName()+" actual result is:");
-			System.out.println(displayString(actual, this.tabs) + this.endChar);
+			System.out.println(displayString(actual, tabs) + endChar);
 		}
 		assertEquals(message, expected, actual);
 	}
@@ -366,7 +361,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that the given element has the given contents.
 	 */
-	public void assertContents(String message, String expectedContents,
+	public static void assertContents(String message, String expectedContents,
 			IInternalElement element) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -376,7 +371,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that changing the contents of the given element works properly.
 	 */
-	public void assertContentsChanged(IInternalElement element,
+	public static void assertContentsChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -387,7 +382,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures that changing the contents of the given element is rejected.
 	 */
-	public void assertContentsNotChanged(IInternalElement element,
+	public static void assertContentsNotChanged(IInternalElement element,
 			String newContents) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -407,7 +402,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures the elements are present after creation.
 	 */
-	public void assertCreation(IRodinElement[] newElements) {
+	public static void assertCreation(IRodinElement[] newElements) {
 		for (int i = 0; i < newElements.length; i++) {
 			IRodinElement newElement = newElements[i];
 			assertExists("Element should be present after creation", newElement);
@@ -417,7 +412,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensures the element is present after creation.
 	 */
-	public void assertCreation(IRodinElement newElement) {
+	public static void assertCreation(IRodinElement newElement) {
 		assertCreation(new IRodinElement[] {newElement});
 	}
 	
@@ -426,7 +421,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * the operation is successful, and ensures the elements are no
 	 * longer present in the database.
 	 */
-	public void assertDeletion(IRodinElement[] elementsToDelete) throws RodinDBException {
+	public static void assertDeletion(IRodinElement[] elementsToDelete) throws RodinDBException {
 		for (IRodinElement element: elementsToDelete) {
 			assertExists("Element must be present to be deleted", element);
 		}
@@ -453,19 +448,19 @@ public abstract class AbstractRodinDBTests extends TestCase {
 				actual);
 	}
 	
-	protected void assertStringsEqual(String message, String expected, String[] strings) {
+	protected static void assertStringsEqual(String message, String expected, String[] strings) {
 		String actual = toString(strings, true/*add extra new lines*/);
 		if (!expected.equals(actual)) {
-			System.out.println(displayString(actual, 3) + this.endChar);
+			System.out.println(displayString(actual, 3) + endChar);
 		}
 		assertEquals(message, expected, actual);
 	}
 
-	protected void assertStringsEqual(String message, String[] expectedStrings, String[] actualStrings) {
+	protected static void assertStringsEqual(String message, String[] expectedStrings, String[] actualStrings) {
 		String expected = toString(expectedStrings, false/*don't add extra new lines*/);
 		String actual = toString(actualStrings, false/*don't add extra new lines*/);
 		if (!expected.equals(actual)) {
-			System.out.println(displayString(actual, 3) + this.endChar);
+			System.out.println(displayString(actual, 3) + endChar);
 		}
 		assertEquals(message, expected, actual);
 	}
@@ -475,7 +470,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * the operation is successful, and ensures the element is no
 	 * longer present in the database.
 	 */
-	public void assertDeletion(IRodinElement elementToDelete) throws RodinDBException {
+	public static void assertDeletion(IRodinElement elementToDelete) throws RodinDBException {
 		assertDeletion(new IRodinElement[] {elementToDelete});
 	}
 
@@ -484,7 +479,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * successful, and ensures the element has no longer any attribute nor child
 	 * present in the database.
 	 */
-	public void assertClearing(IInternalParent elementToClear)
+	public static void assertClearing(IInternalParent elementToClear)
 			throws RodinDBException {
 		assertExists("Element must be present to be cleared", elementToClear);
 		((IElementManipulation) elementToClear).clear(false, null);
@@ -503,9 +498,9 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Copy file from src (path to the original file) to dest (path to the destination file).
 	 */
-	public void copy(File src, File dest) throws IOException {
+	public static void copy(File src, File dest) throws IOException {
 		// read source bytes
-		byte[] srcBytes = this.read(src);
+		byte[] srcBytes = read(src);
 		
 //		if (convertToIndependantLineDelimiter(src)) {
 //			String contents = new String(srcBytes);
@@ -526,7 +521,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Copy the given source directory (and all its contents) to the given target directory.
 	 */
-	protected void copyDirectory(File source, File target) throws IOException {
+	protected static void copyDirectory(File source, File target) throws IOException {
 		if (!target.exists()) {
 			target.mkdirs();
 		}
@@ -545,7 +540,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		}
 	}
 
-	protected IFolder createFolder(IPath path) throws CoreException {
+	protected static IFolder createFolder(IPath path) throws CoreException {
 		final IFolder folder = getWorkspaceRoot().getFolder(path);
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -561,7 +556,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return folder;
 	}
 	
-	protected IRodinProject createRodinProject(final String projectName) throws CoreException {
+	protected static IRodinProject createRodinProject(final String projectName) throws CoreException {
 		IWorkspaceRunnable create = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create project
@@ -578,7 +573,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/*
 	 * Create simple project.
 	 */
-	protected IProject createProject(final String projectName) throws CoreException {
+	protected static IProject createProject(final String projectName) throws CoreException {
 		final IProject project = getProject(projectName);
 		IWorkspaceRunnable create = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -590,7 +585,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return project;
 	}
 	
-	public void deleteFile(File file) {
+	public static void deleteFile(File file) {
 		file = file.getAbsoluteFile();
 		if (!file.exists())
 			return;
@@ -616,12 +611,12 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		System.err.println("Failed to delete " + file.getPath());
 	}
 	
-	protected void deleteFolder(IPath folderPath) throws CoreException {
+	protected static void deleteFolder(IPath folderPath) throws CoreException {
 		deleteResource(getFolder(folderPath));
 	}
 	
-	protected void deleteProject(String projectName) throws CoreException {
-		IProject project = this.getProject(projectName);
+	protected static void deleteProject(String projectName) throws CoreException {
+		IProject project = getProject(projectName);
 		if (project.exists() && !project.isOpen()) { // force opening so that project can be deleted without logging (see bug 23629)
 			project.open(null);
 		}
@@ -631,7 +626,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Batch deletion of projects
 	 */
-	protected void deleteProjects(final String[] projectNames) throws CoreException {
+	protected static void deleteProjects(final String[] projectNames) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (projectNames != null){
@@ -648,7 +643,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Delete this resource.
 	 */
-	public void deleteResource(IResource resource) throws CoreException {
+	public static void deleteResource(IResource resource) throws CoreException {
 		CoreException lastException = null;
 		try {
 			resource.delete(true, null);
@@ -687,7 +682,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns true if this delta is flagged as having changed children.
 	 */
-	protected boolean deltaChildrenChanged(IRodinElementDelta delta) {
+	protected static boolean deltaChildrenChanged(IRodinElementDelta delta) {
 		return delta.getKind() == IRodinElementDelta.CHANGED &&
 			(delta.getFlags() & IRodinElementDelta.F_CHILDREN) != 0;
 	}
@@ -695,7 +690,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns true if this delta is flagged as having moved from a location
 	 */
-	protected boolean deltaMovedFrom(IRodinElementDelta delta) {
+	protected static boolean deltaMovedFrom(IRodinElementDelta delta) {
 		return delta.getKind() == IRodinElementDelta.ADDED &&
 			(delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0;
 	}
@@ -703,7 +698,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns true if this delta is flagged as having moved to a location
 	 */
-	protected boolean deltaMovedTo(IRodinElementDelta delta) {
+	protected static boolean deltaMovedTo(IRodinElementDelta delta) {
 		return delta.getKind() == IRodinElementDelta.REMOVED &&
 			(delta.getFlags() & IRodinElementDelta.F_MOVED_TO) != 0;
 	}
@@ -711,7 +706,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Ensure that the positioned element is in the correct position within the parent.
 	 */
-	public void ensureCorrectPositioning(IParent container, IRodinElement sibling, IRodinElement positioned) throws RodinDBException {
+	public static void ensureCorrectPositioning(IParent container, IRodinElement sibling, IRodinElement positioned) throws RodinDBException {
 		IRodinElement[] children = container.getChildren();
 		if (sibling != null) {
 			// find the sibling
@@ -727,14 +722,14 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		}
 	}
 	
-	protected IRodinFile getRodinFile(String path) {
+	protected static IRodinFile getRodinFile(String path) {
 		return RodinCore.valueOf(getFile(path));
 	}
 	
 	/**
 	 * Returns the specified Rodin file in the given project.
 	 */
-	public IRodinFile getRodinFile(IRodinProject project, String fileName)
+	public static IRodinFile getRodinFile(IRodinProject project, String fileName)
 			throws RodinDBException {
 		return project.getRodinFile(fileName);
 	}
@@ -742,18 +737,18 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns the specified Rodin file in the given project.
 	 */
-	public IRodinFile getRodinFile(String projectName, String fileName) throws RodinDBException {
+	public static IRodinFile getRodinFile(String projectName, String fileName) throws RodinDBException {
 		return getRodinProject(projectName).getRodinFile(fileName);
 	}
 	
 	/**
 	 * Returns the Rodin files in the given project.
 	 */
-	public IRodinFile[] getRodinFiles(String projectName) throws RodinDBException {
+	public static IRodinFile[] getRodinFiles(String projectName) throws RodinDBException {
 		return getRodinProject(projectName).getRodinFiles();
 	}
 	
-	protected IRodinFile getRodinFileFor(IRodinElement element) {
+	protected static IRodinFile getRodinFileFor(IRodinElement element) {
 		return (IRodinFile) element.getOpenable();
 	}
 
@@ -784,22 +779,22 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return result;
 	}
 
-	protected IFile getFile(String path) {
+	protected static IFile getFile(String path) {
 		return getWorkspaceRoot().getFile(new Path(path));
 	}
 
-	protected IFolder getFolder(IPath path) {
+	protected static IFolder getFolder(IPath path) {
 		return getWorkspaceRoot().getFolder(path);
 	}
 	
-	protected NamedElement getNamedElement(IInternalParent parent, String name) {
+	protected static NamedElement getNamedElement(IInternalParent parent, String name) {
 		return (NamedElement) parent.getInternalElement(NamedElement.ELEMENT_TYPE, name);
 	}
 
 	/**
 	 * Returns the Rodin Model this test suite is running on.
 	 */
-	public IRodinDB getRodinDB() {
+	public static IRodinDB getRodinDB() {
 		return RodinCore.getRodinDB();
 	}
 	
@@ -807,12 +802,12 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * Returns the Rodin Project with the given name in this test
 	 * suite's database. This is a convenience method.
 	 */
-	public IRodinProject getRodinProject(String name) {
+	public static IRodinProject getRodinProject(String name) {
 		IProject project = getProject(name);
 		return RodinCore.valueOf(project);
 	}
 	
-	protected IProject getProject(String project) {
+	protected static IProject getProject(String project) {
 		return getWorkspaceRoot().getProject(project);
 	}
 
@@ -848,11 +843,11 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns the IWorkspace this test suite is running on.
 	 */
-	public IWorkspace getWorkspace() {
+	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 	
-	public IWorkspaceRoot getWorkspaceRoot() {
+	public static IWorkspaceRoot getWorkspaceRoot() {
 		return getWorkspace().getRoot();
 	}
 	
@@ -863,11 +858,11 @@ public abstract class AbstractRodinDBTests extends TestCase {
 //				units[i].discardWorkingCopy();
 //	}
 	
-	protected String displayString(String toPrint, int indent) {
+	protected static String displayString(String toPrint, int indent) {
     	return org.rodinp.core.tests.util.Util.displayString(toPrint, indent);
     }
 
-	public byte[] read(java.io.File file) throws java.io.IOException {
+	public static byte[] read(java.io.File file) throws java.io.IOException {
 		int fileLength;
 		byte[] fileBytes = new byte[fileLength = (int) file.length()];
 		java.io.FileInputStream stream = new java.io.FileInputStream(file);
@@ -881,8 +876,8 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return fileBytes;
 	}
 	
-	protected void removeRodinNature(String projectName) throws CoreException {
-		IProject project = this.getProject(projectName);
+	protected static void removeRodinNature(String projectName) throws CoreException {
+		IProject project = getProject(projectName);
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] {});
 		project.setDescription(description, null);
@@ -891,7 +886,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	/**
 	 * Returns a delta for the given element in the delta tree
 	 */
-	protected IRodinElementDelta searchForDelta(IRodinElement element, IRodinElementDelta delta) {
+	protected static IRodinElementDelta searchForDelta(IRodinElement element, IRodinElementDelta delta) {
 	
 		if (delta == null) {
 			return null;
@@ -957,7 +952,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		}
 	}
 
-	protected void sortElements(IRodinElement[] elements) {
+	protected static void sortElements(IRodinElement[] elements) {
 		Comparator<IRodinElement> comparer = new Comparator<IRodinElement>() {
 			public int compare(IRodinElement a, IRodinElement b) {
 	    		String idA = ((RodinElement) a).toStringWithAncestors();
@@ -968,7 +963,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		Arrays.sort(elements, comparer);
 	}
 	
-	protected void sortResources(IResource[] resources) {
+	protected static void sortResources(IResource[] resources) {
 		Comparator<IResource> comparer = new Comparator<IResource>() {
 			public int compare(IResource a, IResource b) {
 				return a.getName().compareTo(b.getName());
@@ -1018,7 +1013,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		clearDeltas();
 	}
 	
-	protected IPath[] toIPathArray(String[] paths) {
+	protected static IPath[] toIPathArray(String[] paths) {
 		if (paths == null) return null;
 		int length = paths.length;
 		IPath[] result = new IPath[length];
@@ -1032,7 +1027,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return toString(strings, false/*don't add extra new line*/);
 	}
 	
-	protected String toString(String[] strings, boolean addExtraNewLine) {
+	protected static String toString(String[] strings, boolean addExtraNewLine) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, length = strings.length; i < length; i++){
 			buffer.append(strings[i]);
@@ -1042,7 +1037,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return buffer.toString();
 	}
 	
-	protected void assertErrorFor(RodinDBException exception, int expectedCode,
+	protected static void assertErrorFor(RodinDBException exception, int expectedCode,
 			IRodinElement element) {
 
 		final IRodinDBStatus status = exception.getRodinDBStatus();
@@ -1061,7 +1056,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 				elements[0]);
 	}
 
-	protected void assertNameCollisionErrorFor(RodinDBException exception,
+	protected static void assertNameCollisionErrorFor(RodinDBException exception,
 			IRodinElement element) {
 		assertErrorFor(exception,  
 				IRodinDBStatusConstants.NAME_COLLISION, 
@@ -1069,7 +1064,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		);
 	}
 
-	protected void assertReadOnlyErrorFor(RodinDBException exception,
+	protected static void assertReadOnlyErrorFor(RodinDBException exception,
 			IRodinElement element) {
 		assertErrorFor(exception,  
 				IRodinDBStatusConstants.READ_ONLY, 

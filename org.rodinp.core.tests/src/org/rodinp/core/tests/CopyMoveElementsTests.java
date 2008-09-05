@@ -34,14 +34,12 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		
 		createRodinProject("P");
 	}
 
 	@Override
 	public void tearDown() throws Exception {
-		this.deleteProject("P");
-		
+		deleteProject("P");
 		super.tearDown();
 	}
 
@@ -368,7 +366,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 
 			copyPositive(neSource, rfDest, null, "bar", true);
 		} finally {
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 	
@@ -386,7 +384,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 
 			copyPositive(neSource, rfDest, null, "bar", false);
 		} finally {
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 	
@@ -492,7 +490,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			assertExists("Copy should exist", copy);
 		} finally {
 			stopDeltas();
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 
@@ -920,7 +918,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 
 			movePositive(neSource, rfDest, null, "bar", true);
 		} finally {
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 	
@@ -938,7 +936,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 
 			movePositive(neSource, rfDest, null, "bar", false);
 		} finally {
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 	
@@ -1049,7 +1047,7 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			assertExists("Move should exist", move);
 		} finally {
 			stopDeltas();
-			this.deleteProject("P2");
+			deleteProject("P2");
 		}
 	}
 

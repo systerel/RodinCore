@@ -64,7 +64,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		super(name);
 	}
 	
-	protected void assertElementDescendants(String message,  String expected, IRodinElement element) throws CoreException {
+	protected static void assertElementDescendants(String message,  String expected, IRodinElement element) throws CoreException {
 		String actual = expandAll(element);
 		if (!expected.equals(actual)){
 			System.out.println(Util.displayString(actual, 4));
@@ -75,34 +75,36 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 				actual);
 	}
 	
-	protected IRodinFile createRodinFile(String path) throws CoreException {
-		createFile(path, emptyContents);
-		return getRodinFile(path);
+	protected static IRodinFile createRodinFile(String path) throws CoreException {
+		IFile file = getFile(path);
+		IRodinFile rodinFile = RodinCore.valueOf(file);
+		rodinFile.create(true, null);
+		return rodinFile;
 	}
-	
-	protected IFile createFile(String path, InputStream content) throws CoreException {
+
+	protected static IFile createFile(String path, InputStream content) throws CoreException {
 		IFile file = getFile(path);
 		file.create(content, true, null);
 		return file;
 	}
 	
-	protected IFile createFile(String path, byte[] content) throws CoreException {
+	protected static IFile createFile(String path, byte[] content) throws CoreException {
 		return createFile(path, new ByteArrayInputStream(content));
 	}
 	
-	protected IFile createFile(String path, String content) throws CoreException {
+	protected static IFile createFile(String path, String content) throws CoreException {
 		return createFile(path, content.getBytes());
 	}
 
-	protected IFile createFile(String path, String content, String charsetName) throws CoreException, UnsupportedEncodingException {
+	protected static IFile createFile(String path, String content, String charsetName) throws CoreException, UnsupportedEncodingException {
 		return createFile(path, content.getBytes(charsetName));
 	}
 	
-	protected IFolder createFolder(String path) throws CoreException {
+	protected static IFolder createFolder(String path) throws CoreException {
 		return createFolder(new Path(path));
 	}
 	
-	protected NamedElement createNEPositive(IInternalParent parent, String name,
+	protected static NamedElement createNEPositive(IInternalParent parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
 		NamedElement element = getNamedElement(parent, name);
@@ -113,7 +115,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return (NamedElement) element;
 	}
 
-	protected void createNENegative(IInternalParent parent, String name,
+	protected static void createNENegative(IInternalParent parent, String name,
 			IInternalElement nextSibling, int failureCode) throws RodinDBException {
 		
 		NamedElement element = getNamedElement(parent, name);
@@ -143,16 +145,16 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		fail("Unexpected failure of createNENegative");
 	}
 
-	protected void deleteFile(String filePath) throws CoreException {
-		deleteResource(this.getFile(filePath));
+	protected static void deleteFile(String filePath) throws CoreException {
+		deleteResource(getFile(filePath));
 	}
 	
-	protected void deleteFolder(String folderPath) throws CoreException {
+	protected static void deleteFolder(String folderPath) throws CoreException {
 		deleteFolder(new Path(folderPath));
 	}
 	
-	protected IFile editFile(String path, String content) throws CoreException {
-		IFile file = this.getFile(path);
+	protected static IFile editFile(String path, String content) throws CoreException {
+		IFile file = getFile(path);
 		InputStream input = new ByteArrayInputStream(content.getBytes());
 		file.setContents(input, IResource.FORCE, null);
 		return file;
@@ -162,13 +164,13 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	 * Expands (i.e. open) the given element and returns a toString() representation
 	 * of the tree.
 	 */
-	protected String expandAll(IRodinElement element) throws CoreException {
+	protected static String expandAll(IRodinElement element) throws CoreException {
 		StringBuilder buffer = new StringBuilder();
-		this.expandAll(element, 0, buffer);
+		expandAll(element, 0, buffer);
 		return buffer.toString();
 	}
 	
-	private void expandAll(IRodinElement element, int tab, StringBuilder buffer) throws CoreException {
+	private static void expandAll(IRodinElement element, int tab, StringBuilder buffer) throws CoreException {
 		IRodinElement[] children = null;
 		// force opening of element by getting its children
 		if (element instanceof IParent) {
@@ -179,16 +181,16 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		if (children != null) {
 			for (int i = 0, length = children.length; i < length; i++) {
 				buffer.append("\n");
-				this.expandAll(children[i], tab+1, buffer);
+				expandAll(children[i], tab+1, buffer);
 			}
 		}
 	}
 	
-	protected void renameProject(String project, String newName) throws CoreException {
-		this.getProject(project).move(new Path(newName), true, null);
+	protected static void renameProject(String project, String newName) throws CoreException {
+		getProject(project).move(new Path(newName), true, null);
 	}
 
-	protected IFolder getFolder(String path) {
+	protected static IFolder getFolder(String path) {
 		return getFolder(new Path(path));
 	}
 	
@@ -222,17 +224,17 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return buffer.toString();
 	}
 	
-	protected void moveFile(String sourcePath, String destPath) throws CoreException {
-		this.getFile(sourcePath).move(this.getFile(destPath).getFullPath(), false, null);
+	protected static void moveFile(String sourcePath, String destPath) throws CoreException {
+		getFile(sourcePath).move(getFile(destPath).getFullPath(), false, null);
 	}
 	
-	protected void moveFolder(String sourcePath, String destPath) throws CoreException {
-		this.getFolder(sourcePath).move(this.getFolder(destPath).getFullPath(), false, null);
+	protected static void moveFolder(String sourcePath, String destPath) throws CoreException {
+		getFolder(sourcePath).move(getFolder(destPath).getFullPath(), false, null);
 	}
 	
-	protected void swapFiles(String firstPath, String secondPath) throws CoreException {
-		final IFile first = this.getFile(firstPath);
-		final IFile second = this.getFile(secondPath);
+	protected static void swapFiles(String firstPath, String secondPath) throws CoreException {
+		final IFile first = getFile(firstPath);
+		final IFile second = getFile(secondPath);
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable(	) {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IPath tempPath = first.getParent().getFullPath().append("swappingFile.temp");
@@ -244,7 +246,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		getWorkspace().run(runnable, null);
 	}
 
-	public void setReadOnly(IResource resource, boolean readOnly) throws CoreException {
+	public static void setReadOnly(IResource resource, boolean readOnly) throws CoreException {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
 		if (resourceAttributes != null) {
 			resourceAttributes.setReadOnly(readOnly);
@@ -252,7 +254,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		}		
 	}
 	
-	public boolean isReadOnly(IResource resource) throws CoreException {
+	public static boolean isReadOnly(IResource resource) throws CoreException {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
 		if (resourceAttributes != null) {
 			return resourceAttributes.isReadOnly();
@@ -260,7 +262,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return false;
 	}
 
-	protected void importProject(String projectName) throws Exception {
+	protected static void importProject(String projectName) throws Exception {
 		Bundle plugin = Platform.getBundle(PLUGIN_ID);
 		URL projectsURL = plugin.getEntry("projects");
 		projectsURL = FileLocator.toFileURL(projectsURL);
@@ -271,7 +273,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		}
 	}
 
-	private void importProject(File projectDir) throws Exception {
+	private static void importProject(File projectDir) throws Exception {
 		final String projectName = projectDir.getName();
 		IProject project = getWorkspaceRoot().getProject(projectName);
 		IProjectDescription desc = getWorkspace().newProjectDescription(projectName); 
