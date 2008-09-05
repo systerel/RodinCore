@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added clearChildren() method
  *     Systerel - removed deprecated methods (contents)
+ *     Systerel - added auto-upgrade of file with past version
  *******************************************************************************/
 package org.rodinp.internal.core;
+
+import static org.rodinp.core.IRodinDBStatusConstants.PAST_VERSION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +32,8 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
+import org.rodinp.internal.core.version.ConversionEntry;
+import org.rodinp.internal.core.version.VersionManager;
 import org.w3c.dom.Element;
 
 public class RodinFileElementInfo extends OpenableElementInfo {
@@ -128,10 +133,6 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		return buffer.getVersion();
 	}
 
-	public synchronized void setVersion(long version) throws RodinDBException {
-		buffer.setVersion(version);
-	}
-	
 	public synchronized boolean containsDescendant(InternalElement element) {
 		return getDOMElement(element) != null;
 	}
@@ -346,8 +347,30 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		
 		final RodinDBManager rodinDBManager = RodinDBManager.getRodinDBManager();
 		buffer = rodinDBManager.getBuffer(rodinFile);
-		buffer.load(pm);
+		try {
+			buffer.load(pm);
+		} catch (RodinDBException e) {
+			final int code = e.getStatus().getCode();
+			if (code != PAST_VERSION) {
+				throw e;
+			}
+			if (!attemptUpgrade(rodinFile)) {
+				throw e;
+			}				
+			buffer.load(pm);
+		}
 		return true;
+	}
+
+	private boolean attemptUpgrade(RodinFile rodinFile) throws RodinDBException {
+		final ConversionEntry cv = new ConversionEntry(rodinFile);
+		final VersionManager vManager = VersionManager.getInstance();
+		cv.upgrade(vManager, false, null);
+		final boolean success = cv.success();
+		if (success) {
+			cv.accept(false, true, null);
+		}
+		return success;
 	}
 	
 	private void printCaches() {
