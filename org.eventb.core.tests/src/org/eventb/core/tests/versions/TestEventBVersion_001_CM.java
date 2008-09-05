@@ -39,8 +39,6 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 		
 		IContextFile file = (IContextFile) rodinProject.getRodinFile(name);
 		
-		convert(file);
-		
 		String config = file.getConfiguration();
 		
 		assertEquals("wrong configuration", ORG_EVENTB_CORE_FWD, config);
@@ -64,8 +62,6 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 		createFile(name, contents);
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		convert(file);
 		
 		String config = file.getConfiguration();
 		

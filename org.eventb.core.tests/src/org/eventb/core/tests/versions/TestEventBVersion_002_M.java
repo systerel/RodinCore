@@ -34,8 +34,6 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
 		
-		convert(file);
-		
 		IVariable[] variables = file.getVariables();
 		
 		assertEquals("machine variables modified", 1, variables.length);
@@ -60,8 +58,6 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		createFile(name, contents);
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		convert(file);
 		
 		IParameter[] parameters = file.getEvents()[1].getParameters();
 		
@@ -88,8 +84,6 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		createFile(name, contents);
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		convert(file);
 		
 		IVariable[] variables = file.getVariables();
 		

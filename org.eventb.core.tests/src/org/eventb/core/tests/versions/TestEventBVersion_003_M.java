@@ -41,8 +41,6 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
 		
-		convert(file);
-		
 		IEvent[] events = file.getEvents();
 		assertEquals("4 events expected", 4, events.length);
 		
@@ -85,8 +83,6 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 		createFile(name, contents);
 		
 		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		convert(file);
 		
 		IEvent[] events = file.getEvents();
 		assertEquals("1 event expected", 1, events.length);

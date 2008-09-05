@@ -17,10 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IConversionResult;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.IConversionResult.IEntry;
 
@@ -66,23 +63,6 @@ public abstract class EventBVersionTest extends BuilderTest {
 			return false;
 		}
 		return true;
-	}
-
-	protected void convert(IRodinFile file) throws RodinDBException {
-		try {
-		
-			file.getChildren();
-			fail("opening the file should have failed");
-			
-		} catch(RodinDBException e) {
-			assertEquals("not a past version", IRodinDBStatusConstants.PAST_VERSION, e.getRodinDBStatus().getCode());
-		}
-		
-		IConversionResult result = RodinCore.convert(rodinProject, true, null);
-		
-		assertTrue("conversion not succeeded", convSuccess(result));
-		
-		result.accept(true, false, null);
 	}
 
 }
