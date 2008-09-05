@@ -1,13 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added test for invalid version
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
 import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.rodinp.core.IRodinDBStatusConstants.FUTURE_VERSION;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_VERSION_NUMBER;
 
 import java.io.ByteArrayInputStream;
@@ -330,9 +334,9 @@ public class BasicVersionTest extends ModifyingResourceTests {
 	public void test_07_CannotConvertFromFutureVersion() throws Exception {
 		
 		IRodinProject project = fetchProject("V02a");
-		
-		convertProjectFailsFor(project, 1, "ff.tvb");
-		
+		IRodinFile rf = project.getRodinFile("ff.tvb");
+		assertRodinDBExceptionRaised(rf, ERROR, FUTURE_VERSION);
+		convertProjectFailsFor(project, 1, rf.getElementName());
 	}
 	
 	/**
