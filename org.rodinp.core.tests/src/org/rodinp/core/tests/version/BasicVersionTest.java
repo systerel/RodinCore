@@ -7,16 +7,22 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
+import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_VERSION_NUMBER;
+
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IConversionResult;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinDBStatusConstants;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -39,8 +45,10 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		super(name);
 	}
 	
-	private IInternalElement[] getElements(IRodinProject project, String fileName,
-			IInternalElementType<? extends IInternalElement> type, int size) throws RodinDBException {
+	private static IInternalElement[] getElements(IRodinProject project,
+			String fileName,
+			IInternalElementType<? extends IInternalElement> type, int size)
+			throws RodinDBException {
 		
 		IRodinFile f = project.getRodinFile(fileName);
 		
@@ -51,7 +59,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		return elements;
 	}
 	
-	private String getAttribute(
+	private static String getAttribute(
 			IInternalElement element, 
 			IAttributeType.String attr, 
 			String string) throws Exception {
@@ -61,7 +69,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		return value;
 	}
 
-	private void convertProjectWithSuccess(IRodinProject project, int size)
+	private static void convertProjectWithSuccess(IRodinProject project, int size)
 	throws RodinDBException {
 		IConversionResult result = RodinCore.convert(project, true, null);
 		
@@ -74,14 +82,14 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		result.accept(true, false, null);
 	}
 
-	private IEntry[] getEntries(IConversionResult result, int size) {
+	private static IEntry[] getEntries(IConversionResult result, int size) {
 		IEntry[] entries = result.getEntries();
 		
 		assertEquals("wrong number of entries in result", size, entries.length);
 		return entries;
 	}
 	
-	private byte[] getContents(IRodinFile file) throws Exception {
+	private static byte[] getContents(IRodinFile file) throws Exception {
 		InputStream s = file.getResource().getContents();
 		int size = s.available();
 		byte[] contents = new byte[size];
@@ -131,7 +139,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 	}
 
-	private void convertProjectFailsFor(IRodinProject project, int size,
+	private static void convertProjectFailsFor(IRodinProject project, int size,
 			String... files) throws Exception {
 		IConversionResult result = RodinCore.convert(project, true, null);
 		
@@ -157,13 +165,39 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 	}
 
-	private IRodinProject fetchProject(String name) throws Exception {
+	private static IRodinProject fetchProject(String name) throws Exception {
 		importProject(name);
 		
 		IRodinProject qProject = getRodinProject(name);
 		return qProject;
 	}
 	
+	private static void assertRodinDBExceptionRaised(IRodinFile rf,
+			int severity, int code) {
+		try {
+			rf.getChildren();
+			fail("Should have raised an exception");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = (IRodinDBStatus) e.getStatus();
+			assertEquals(severity, status.getSeverity());
+			assertEquals(code, status.getCode());
+			if (rf != null) {
+				final IRodinElement[] elements = status.getElements();
+				assertEquals(1, elements.length);
+				assertEquals(rf, elements[0]);
+			}
+		}
+	}
+
+	private static void setFileContents(final IRodinFile rodinFile,
+			final String contents) throws Exception {
+		rodinFile.create(false, null);
+		final IFile file = rodinFile.getResource();
+		final byte[] bytes = contents.getBytes("UTF-8");
+		final ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+		file.setContents(is, false, false, null);
+	}
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -309,13 +343,6 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		IRodinProject project = fetchProject("V05");
 		
-		try {
-			project.getRodinFile("ff.tve").getChildren();
-			fail("file should not have opened");
-		} catch(RodinDBException e) {
-			assertEquals("not a past version", IRodinDBStatusConstants.PAST_VERSION, e.getRodinDBStatus().getCode());
-		}
-		
 		convertProjectWithSuccess(project, 1);
 		
 		getElements(project, "ff.tve", IVersionEA.ELEMENT_TYPE, 0);
@@ -356,7 +383,20 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		assertEquals("eb has proper name", "a", eds[0].getElementName());
 	}
 
+	/**
+	 * Test for a file containing an invalid version number.
+	 */
+	public void test_10_InvalidVersion() throws Exception {
+		final String contents = //
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.rodinp.core.tests.versionFileF "
+				+ "    version=\"not a number\">"
+				+ "</org.rodinp.core.tests.versionFileF>";
+
+		final IRodinFile rf = createRodinProject("P").getRodinFile("ff.tvf");
+		setFileContents(rf, contents);
+		assertRodinDBExceptionRaised(rf, ERROR, INVALID_VERSION_NUMBER);
+	}
 
 }
-
 
