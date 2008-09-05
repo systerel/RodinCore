@@ -11,33 +11,47 @@
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
+import static org.eclipse.core.runtime.IStatus.INFO;
+import static org.rodinp.core.IRodinDBStatusConstants.CONVERSION_ERROR;
+import static org.rodinp.core.IRodinDBStatusConstants.FUTURE_VERSION;
+import static org.rodinp.core.RodinCore.PLUGIN_ID;
+import static org.rodinp.core.RodinCore.getPlugin;
+import static org.rodinp.internal.core.RodinDBStatus.VERIFIED_OK;
+import static org.rodinp.internal.core.util.Messages.bind;
+import static org.rodinp.internal.core.util.Messages.converter_failedConversion;
+import static org.rodinp.internal.core.util.Messages.converter_fileUnchanged;
+import static org.rodinp.internal.core.util.Messages.converter_successfulConversion;
+import static org.rodinp.internal.core.util.Messages.status_upgradedFile;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.IConversionResult.IEntry;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.Buffer;
-import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.RodinDBStatus;
 
-class ConversionEntry implements IEntry {
+public class ConversionEntry implements IEntry {
 
-	protected final RodinFile file;
+	private final RodinFile file;
 
-	protected long version;
-	protected long reqVersion;
-	protected Exception error;
-	protected String message;
-	protected byte[] buffer;
+	private long version;
+	private long reqVersion;
+	private IStatus status;
+	private String message;
+	private byte[] buffer;
 
 	public ConversionEntry(IRodinFile file) {
 		this.file = (RodinFile) file;
+		this.status = VERIFIED_OK;
 	}
 
 	public void accept(boolean force, boolean keepHistory,
@@ -53,6 +67,9 @@ class ConversionEntry implements IEntry {
 			} catch (CoreException e) {
 				throw new RodinDBException(e);
 			}
+			final IStatus st = new Status(INFO, PLUGIN_ID, bind(
+					status_upgradedFile, file.getPath(), reqVersion));
+			log(st);
 		}
 	}
 
@@ -88,7 +105,7 @@ class ConversionEntry implements IEntry {
 	}
 
 	public boolean success() {
-		return error == null;
+		return status.isOK();
 	}
 
 	@Override
@@ -104,23 +121,34 @@ class ConversionEntry implements IEntry {
 			version = getFileVersion(sm.newChild(10));
 			reqVersion = vManager.getVersion(type);
 			if (version == reqVersion) {
-				message = Messages.converter_fileUnchanged;
+				message = converter_fileUnchanged;
 				return;
 			}
 			if (version > reqVersion) {
-				error = new RodinDBException(null,
-						IRodinDBStatusConstants.FUTURE_VERSION);
-				message = Messages.converter_failedConversion;
+				status = new RodinDBStatus(FUTURE_VERSION, file, "" + version);
+				message = converter_failedConversion;
 				return;
 			}
 			final Converter converter = vManager.getConverter(type);
 			final InputStream contents = file.getResource().getContents(force);
 			buffer = converter.convert(contents, version, reqVersion);
+			message = converter_successfulConversion;
 			sm.worked(90);
+		} catch (CoreException e) {
+			status = e.getStatus();
+			message = converter_failedConversion;
 		} catch (Exception e) {
-			error = e;
-			message = Messages.converter_failedConversion;
+			status = new RodinDBStatus(CONVERSION_ERROR, e);
+			message = converter_failedConversion;
+		} finally {
+			if (! status.isOK()) {
+				log(status);
+			}
 		}
+	}
+
+	private void log(IStatus st) {
+		getPlugin().getLog().log(st);
 	}
 
 }
