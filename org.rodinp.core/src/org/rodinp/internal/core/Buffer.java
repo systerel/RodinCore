@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static org.rodinp.core.IRodinDBStatusConstants.FUTURE_VERSION;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_VERSION_NUMBER;
+import static org.rodinp.core.IRodinDBStatusConstants.IO_EXCEPTION;
+import static org.rodinp.core.IRodinDBStatusConstants.PAST_VERSION;
+import static org.rodinp.core.IRodinDBStatusConstants.XML_PARSE_ERROR;
+import static org.rodinp.core.IRodinDBStatusConstants.XML_SAVE_ERROR;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +41,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -144,10 +150,9 @@ public class Buffer {
 			st = file.getModificationStamp();
 			doc = builder.parse(file.getContents());
 		} catch (SAXException e) {
-			throw new RodinDBException(e,
-					IRodinDBStatusConstants.XML_PARSE_ERROR);
+			throw new RodinDBException(e, XML_PARSE_ERROR);
 		} catch (IOException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.IO_EXCEPTION);
+			throw new RodinDBException(e, IO_EXCEPTION);
 		} catch (RodinDBException e) {
 			throw e;
 		} catch (CoreException e) {
@@ -160,9 +165,9 @@ public class Buffer {
 		long reqVersion = VersionManager.getInstance().getVersion(owner.getElementType());
 
 		if (version > reqVersion) {
-			throw new RodinDBException(null, IRodinDBStatusConstants.FUTURE_VERSION);
+			throw versionProblem(FUTURE_VERSION, "" + version);
 		} else if (version < reqVersion) {
-			throw new RodinDBException(null, IRodinDBStatusConstants.PAST_VERSION);
+			throw versionProblem(PAST_VERSION, "" + version);
 		}
 
 		stamp = st;
@@ -170,7 +175,12 @@ public class Buffer {
 		
 		normalize(domDocument.getDocumentElement());
 		this.changed = false;
-}
+	}
+
+	private RodinDBException versionProblem(int code, String versionStr) {
+		final RodinDBStatus status = new RodinDBStatus(code, owner, versionStr);
+		return new RodinDBException(status);
+	}
 
 	public Element getDocumentElement() {
 		return domDocument.getDocumentElement();
@@ -203,10 +213,10 @@ public class Buffer {
 			try {
 				v = Long.parseLong(rawVersion);
 			} catch (NumberFormatException e) {
-				throw new RodinDBException(e, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
+				throw versionProblem(INVALID_VERSION_NUMBER, rawVersion);
 			}
 			if (v < 0) {
-				throw new RodinDBException(null, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
+				throw versionProblem(INVALID_VERSION_NUMBER, rawVersion);
 			}
 		} else {
 			v = 0;
@@ -214,23 +224,6 @@ public class Buffer {
 		return v;
 	}
 
-	/**
-	 * Sets the version number of the Rodin file element of this buffer
-	 * 
-	 * @param version the version number of the Rodin file element of this buffer
-	 * @throws RodinDBException if the version number is smaller than <code>0</code>
-	 */
-	public void setVersion(long version) throws RodinDBException {
-		if (version < 0) {
-			throw new RodinDBException(null, IRodinDBStatusConstants.INVALID_VERSION_NUMBER);
-		} else {
-			Element documentElement = domDocument.getDocumentElement();
-			String rawVersion = Long.toString(version);
-			documentElement.setAttributeNS(null, VERSION_ATTRIBUTE, rawVersion);
-		}
-			
-	}
-	
 	public Element createElement(IInternalElementType<?> type, String name, Element domParent,
 			Element domNextSibling) {
 		
@@ -530,7 +523,7 @@ public class Buffer {
 			};
 			file.getWorkspace().run(action, rule, 0, pm);
 		} catch (TransformerException e) {
-			throw new RodinDBException(e, IRodinDBStatusConstants.XML_SAVE_ERROR);
+			throw new RodinDBException(e, XML_SAVE_ERROR);
 		} catch (RodinDBException e) {
 			throw e;
 		} catch (CoreException e) {
