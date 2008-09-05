@@ -1160,4 +1160,26 @@ public class RodinTests extends AbstractRodinTest {
 	// test.testAll();
 	// }
 
+    // Test from Son's model of dynamic stable LSR
+    // Used to cause an internal error in the loader
+    @Test
+	public void testLSR() throws Exception {
+		doTest( //
+				mList( //
+						"NODES", "ℙ(NODES)", //
+						"DLinks", "ℙ(NODES×NODES)", //
+						"RLinks", "ℙ(NODES×NODES)", //
+						"link", "NODES×NODES", //
+						"rlinks", "ℙ(NODES×ℙ(NODES×NODES))", //
+						"n", "NODES", //
+						"x", "NODES", //
+						"x0", "NODES" //
+				), mSet( //
+						"∀n·rlinks(n) ⊆ RLinks ∪ DLinks", //
+						"¬link∈RLinks", //
+						"x ↦ x0∈rlinks(n)" //
+				), "x ↦ x0 ∈ RLinks ∪ {link} ∪ (DLinks ∖ {link})", //
+				false);
+	}
+
 }
