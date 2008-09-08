@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Required Properties:
+
+  Set by the calling script
+  =========================
+  eclipse-home        The location of the target Eclipse Install
+  buildFolder
+  projectName
+  data-dir            The workspace to be used
+  junit-report-output The directory where the test output should be stored.
+
+  Typically set in this ant script
+  ================================
+  plugin-name         The name of the plugin to be tested
+  test-suite-class    The fully qualified path to the test class
+
+  Example
+  =======
+-->
+
+<project name="testsuite" default="run" basedir=".">
+
+<!-- Available from CC -->
+<!--
+<property name="buildFolder" value="/home/cruisecontrol/build" />
+<property name="projectName" value="cruisecontrol.example.plugin.feature"/>
+<property name="baseLocation" value="/home/cruisecontrol/lib/eclipse_base" />
+<property name="pluginPath" value="" />
+-->
+<!-- Derived Properties -->
+<property name="junit-report-output" value="${buildFolder}/${projectName}/junit-reports" />
+
+    <!-- Plug-In must be installed in the target installation -->
+    <property name="library-file"
+            value="${baseLocation}/plugins/org.eclipse.test_3.2.0/library.xml"/>
+
+    <target name="clean-reports">
+      <delete dir="${junit-report-output}" />
+    </target>
+
+    <target name="clean-eclipse">
+      <delete dir="${buildFolder}/${projectName}/eclipse" />
+    </target>
+
+    <target name="init">
+      <copy todir="${buildFolder}/${projectName}/eclipse">
+        <fileset dir="${baseLocation}"/>
+      </copy>
+
+    </target>
+
+    <!-- This target defines the tests that need to be run. -->
+    <target name="suite">
+        <ant target="core-test" antfile="${library-file}" dir="${buildFolder}/${projectName}/eclipse">
+            <property name="data-dir" value="${buildFolder}/${projectName}/workspace"/>
+            <property name="plugin-name" value="org.rodinp.core.tests"/>
+            <property name="classname" value="org.rodinp.core.tests.AllTests"/>
+            <property name="os" value="linux"/>
+            <property name="arch" value="x86"/>
+            <property name="ws" value="gtk"/>
+            <property name="eclipse-home" value="${buildFolder}/${projectName}/eclipse"/>
+            <property name="junit-report-output" value="${junit-report-output}"/>
+        </ant>
+    </target>
+    
+    <!-- This target runs the test suite. Any actions that need to happen -->
+    <!-- after all the tests have been run should go here. -->
+    <target name="run" depends="clean-reports,clean-eclipse,init,suite">
+      <antcall target="clean-eclipse" />
+    </target>
+    </project>
