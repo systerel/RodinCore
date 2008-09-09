@@ -174,4 +174,17 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_SHOW_GOAL_PATH = "icons/full/ctool16/showgoal.gif";
 
+	public static final String IMG_INVARIANT_PATH = "icons/full/obj16/inv_obj.gif";
+	
+	public static final String IMG_THEOREM_PATH = "icons/full/obj16/thm_obj.gif";
+	
+	public static final String IMG_VARIABLE_PATH = "icons/full/obj16/var_obj.gif";
+	
+	public static final String IMG_EVENT_PATH = "icons/full/obj16/evt_obj.gif";
+	
+	public static final String IMG_AXIOM_PATH = "icons/full/obj16/axm_obj.gif";
+	
+	public static final String IMG_CONSTANT_PATH = "icons/full/obj16/cst_obj.gif";
+	
+	public static final String IMG_CARRIER_SET_PATH = "icons/full/obj16/set_obj.gif";
 }
