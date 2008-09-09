@@ -1,27 +1,19 @@
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.ui.IElementModifier;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class RefinesEventModifier implements IElementModifier {
+public class RefinesEventModifier extends AbstractModifier {
 
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
 		if (element instanceof IRefinesEvent) {
-			IRefinesEvent refinesEvent = (IRefinesEvent) element;
-			String abstractEventLabel = null;
-			try {
-				abstractEventLabel = refinesEvent.getAbstractEventLabel();
-			}
-			catch (RodinDBException e) {
-				// Do nothing
-			}
-			if (abstractEventLabel == null || !abstractEventLabel.equals(text))
-				refinesEvent.setAbstractEventLabel(text,
-						new NullProgressMonitor());
+			IRefinesEvent aElement = (IRefinesEvent) element;
+			IAttributeFactory factory = new RefinesEventAbstractEventLabelAttributeFactory();
+			doModify(factory, aElement, text);
 		}
 		return;
 	}

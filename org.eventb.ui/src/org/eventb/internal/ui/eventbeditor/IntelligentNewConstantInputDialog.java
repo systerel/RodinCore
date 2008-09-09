@@ -142,7 +142,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 				.getDefaultPrefix("org.eventb.core.axiomLabel");
-		String axmPrefix = UIUtils.getPrefix(editor,
+		String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(),
 				IAxiom.ELEMENT_TYPE, defaultPrefix);
 		try {
 			axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor.getRodinInput(),
@@ -206,7 +206,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			label.setLayoutData(gd);
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.axiomLabel");
-			String axmPrefix = UIUtils.getPrefix(editor, IAxiom.ELEMENT_TYPE,
+			String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(), IAxiom.ELEMENT_TYPE,
 					defaultPrefix);
 
 			try {

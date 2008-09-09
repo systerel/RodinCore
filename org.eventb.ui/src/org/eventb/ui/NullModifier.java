@@ -12,7 +12,13 @@
 
 package org.eventb.ui;
 
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.internal.ui.AbstractModifier;
+import org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -21,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  *         This class implements <code>org.eventb.ui.IElementModifier</code>
  *         as a dummy element modifier which doing nothing.
  */
-public class NullModifier implements IElementModifier {
+public class NullModifier extends AbstractModifier {
 
 	/*
 	 * (non-Javadoc)
@@ -34,4 +40,15 @@ public class NullModifier implements IElementModifier {
 		// Do nothing
 	}
 
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.ui.IElementModifier#modify(org.rodinp.core.IRodinFile,
+	 *      org.rodinp.core.IRodinElement, java.lang.String)
+	 */
+	public void modify(IRodinFile file, IRodinElement element, String text)
+			throws RodinDBException {
+		// Do nothing
+		}
 }

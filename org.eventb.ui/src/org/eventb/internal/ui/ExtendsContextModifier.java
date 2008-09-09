@@ -11,9 +11,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IExtendsContext;
-import org.eventb.ui.IElementModifier;
+import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -23,32 +23,23 @@ import org.rodinp.core.RodinDBException;
  *         A modifier class for extends context elements.
  *         </p>
  */
-public class ExtendsContextModifier implements IElementModifier {
+public class ExtendsContextModifier extends AbstractModifier {
 
-	/* (non-Javadoc)
-	 * @see org.eventb.ui.IElementModifier#modify(org.rodinp.core.IRodinElement, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.ui.IElementModifier#modify(org.rodinp.core.IRodinElement,
+	 *      java.lang.String)
 	 */
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
-		// Try to set the abstract context name if the element is an extends
-		// context element.
+		// Try to set the name string if element is a IExtendsContext element.
 		if (element instanceof IExtendsContext) {
-			IExtendsContext extendsContext = (IExtendsContext) element;
-			String abstractContextName = null;
-			try {
-				abstractContextName = extendsContext.getAbstractContextName();
-			}
-			catch (RodinDBException e) {
-				// Do nothing
-			}
-			// Try to set the abstract context name if it does not exists
-			// or not equal to the input text.
-			if (abstractContextName == null
-					|| !abstractContextName.equals(text))
-				extendsContext.setAbstractContextName(text,
-						new NullProgressMonitor());
+			IExtendsContext aElement = (IExtendsContext) element;
+			IAttributeFactory factory = new ExtendsContextAbstractContextNameAttributeFactory();
+			doModify(factory, aElement, text);
 		}
-		// Do nothing if the element is not an extends context element.
+		// Do nothing if the element is not a IExtendsContext element.
 		return;
 	}
 

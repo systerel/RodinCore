@@ -409,14 +409,13 @@ public class UIUtils {
 		}
 	}
 
-	public static String getNamePrefix(IEventBEditor<?> editor,
+	public static String getNamePrefix(IRodinFile rodinFile,
 			IInternalElementType<?> type, String defaultPrefix) {
-		return "internal_" + getPrefix(editor, type, defaultPrefix); //$NON-NLS-1$
+		return "internal_" + getPrefix(rodinFile, type, defaultPrefix); //$NON-NLS-1$
 	}
 
-	public static String getPrefix(IEventBEditor<?> editor,
+	public static String getPrefix(IRodinFile inputFile,
 			IInternalElementType<?> type, String defaultPrefix) {
-		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(
@@ -435,7 +434,7 @@ public class UIUtils {
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type, String defaultPrefix)
 			throws RodinDBException {
-		String prefix = getNamePrefix(editor, type, defaultPrefix);
+		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
@@ -443,7 +442,7 @@ public class UIUtils {
 			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, type, defaultPrefix);
+		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
@@ -477,7 +476,7 @@ public class UIUtils {
 			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, type, defaultPrefix);
+		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 
@@ -538,7 +537,7 @@ public class UIUtils {
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
-		String prefix = getNamePrefix(editor, type, defaultPrefix);
+		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
@@ -647,14 +646,16 @@ public class UIUtils {
 	 * @param message The dialog message.
 	 */
 	public static void showInfo(final String message) {
+		final String pluginName = getPluginName();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
 						.getActiveWorkbenchWindow();
 				MessageDialog.openInformation(activeWorkbenchWindow.getShell(),
-						getPluginName(), message);
+						pluginName, message);
 			}
 		});
+
 	}
 
 	/**
@@ -663,19 +664,21 @@ public class UIUtils {
 	 * @param e The unexpected error.
 	 */
 	public static void showUnexpectedError(final CoreException e) {
+		final String pluginName = getPluginName();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				final IStatus status = new Status(IStatus.ERROR,
 						EventBUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getStatus()
 								.getMessage(), null);
 				ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
-						.getShell(), getPluginName(),
+						.getShell(), pluginName,
 						Messages.uiUtils_unexpectedError, status);
 			}
 		});
-	}
 
-	static String getPluginName() {
+	}
+	
+	static private String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}

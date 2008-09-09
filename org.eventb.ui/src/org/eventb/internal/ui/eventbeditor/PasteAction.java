@@ -15,9 +15,7 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
@@ -29,26 +27,15 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
-import org.eventb.core.IEvent;
-import org.eventb.core.IInvariant;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariant;
-import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * @author htson
@@ -154,88 +141,8 @@ public class PasteAction extends SelectionListenerAction {
 		// parent element
 		final IRodinElement parent = getTarget(getStructuredSelection());
 
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
+		History.getInstance().addOperation(OperationFactory.copyElements(file, parent, handleData));
 
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					for (IRodinElement element : handleData) {
-						IRodinFile pasteInto;
-						if (parent != null)
-							pasteInto = (IRodinFile) parent.getOpenable();
-						else
-							pasteInto = file;
-						if (element instanceof IEvent)
-							((IInternalElement) element).copy(
-									pasteInto, null, "evt"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													IEvent.ELEMENT_TYPE,
-													"evt"), false,
-									null);
-						else if (element instanceof IInvariant)
-							((IInternalElement) element).copy(
-									pasteInto, null, "inv"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													IInvariant.ELEMENT_TYPE,
-													"inv"), false,
-									null);
-						else if (element instanceof ITheorem)
-							((IInternalElement) element).copy(
-									pasteInto, null, "thm"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													ITheorem.ELEMENT_TYPE,
-													"thm"), false,
-									null);
-						else if (element instanceof IVariant)
-							((IInternalElement) element).copy(
-									pasteInto, null, "variant"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													IVariant.ELEMENT_TYPE,
-													"variant"), false,
-									null);
-						else if (element instanceof IAxiom)
-							((IInternalElement) element).copy(
-									pasteInto, null, "axm"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													IAxiom.ELEMENT_TYPE,
-													"axm"), false,
-									null);
-						else if (element instanceof IConstant)
-							((IInternalElement) element).copy(
-									pasteInto, null, "cst"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													IConstant.ELEMENT_TYPE,
-													"cst"), false,
-									null);
-						else if (element instanceof ICarrierSet)
-							((IInternalElement) element).copy(
-									pasteInto, null, "set"
-											+ EventBUtils.getFreeChildNameIndex(
-													pasteInto,
-													ICarrierSet.ELEMENT_TYPE,
-													"set"), false,
-									null);
-						else
-							((IInternalElement) element).copy(parent, null,
-									"element"
-											+ EventBUtils.getFreeChildNameIndex(
-													(IInternalParent) parent,
-													((InternalElement) element).getElementType(),
-													"element"), false,
-									null);
-					}
-				}
-
-			}, null);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private boolean isSupportedType(Transfer transfer, TransferData[] types) {

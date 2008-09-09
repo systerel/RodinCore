@@ -11,9 +11,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IExpressionElement;
-import org.eventb.ui.IElementModifier;
+import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -23,31 +23,20 @@ import org.rodinp.core.RodinDBException;
  *         An modifier class for expression elements.
  *         </p>
  */
-public class ExpressionModifier implements IElementModifier {
+public class ExpressionModifier extends AbstractModifier {
 
 	/* (non-Javadoc)
 	 * @see org.eventb.ui.IElementModifier#modify(org.rodinp.core.IRodinElement, java.lang.String)
 	 */
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
-		// Try to set the expression string if the element is an expression
-		// element.
+		// Try to set the assignment string if element is an assignment element.
 		if (element instanceof IExpressionElement) {
-			IExpressionElement eElement = (IExpressionElement) element;
-			String expressionString = null;
-			try {
-				expressionString = eElement.getExpressionString();
-			}
-			catch (RodinDBException e) {
-				// Do nothing
-			}
-			
-			// Set the expression string if the expression string is
-			// <code>null</code> or is not equal the input text.
-			if (expressionString == null || !expressionString.equals(text))
-				eElement.setExpressionString(text, new NullProgressMonitor());
+			IExpressionElement aElement = (IExpressionElement) element;
+			IAttributeFactory factory = new ExpressionAttributeFactory();
+			doModify(factory, aElement, text);
 		}
-		// Do nothing if the element is not an expression element
+		// Do nothing if the element is not an assignment element.
 		return;
 	}
 

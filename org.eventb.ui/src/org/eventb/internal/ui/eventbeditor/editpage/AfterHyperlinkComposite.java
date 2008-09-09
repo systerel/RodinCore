@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -21,13 +20,13 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.RodinDBException;
 
 public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
@@ -55,19 +54,9 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				IEventBEditor<?> editor = (IEventBEditor<?>) page.getEditor();
-				try {
-					IInternalElement element = AttributeRelUISpecRegistry
-							.getDefault().createElement(editor, parent, type,
-									null);
-					page.recursiveExpand(element);
-				} catch (RodinDBException exception) {
-					EventBUIExceptionHandler
-							.handleCreateElementException(exception);
-				} catch (CoreException exception) {
-					EventBUIExceptionHandler
-						.handleCreateElementException(exception);
-				}
+				AtomicOperation operation = OperationFactory.createElementGeneric(
+						page.getEventBEditor(), parent, type, null);
+				History.getInstance().addOperation(operation);
 			}
 
 		});

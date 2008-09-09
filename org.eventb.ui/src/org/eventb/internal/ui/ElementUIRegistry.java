@@ -250,11 +250,11 @@ public class ElementUIRegistry implements IElementUIRegistry {
 		public void modify(IRodinElement element, String columnID, String text)
 				throws RodinDBException {
 			IElementModifier modifier = modifiers.get(columnID);
+			if (modifier instanceof NullModifier)
+				return;
 			if (modifier != null) {
-				if (modifier instanceof NullModifier)
-					return;
-				else
-					modifier.modify(element, text);
+				modifier.modify(element, text);
+				return;
 			}
 
 			IConfigurationElement[] columns = configuration.getChildren();

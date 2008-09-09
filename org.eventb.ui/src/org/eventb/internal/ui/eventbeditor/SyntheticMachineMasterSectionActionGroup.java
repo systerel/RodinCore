@@ -27,8 +27,11 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -84,7 +87,11 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		addVariable = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.addVariable(editor, viewer);
+				History.getInstance().addOperation(
+						OperationFactory.createElementGeneric(
+								editor, editor.getRodinInput(),
+								IVariable.ELEMENT_TYPE, null));
+//				EventBEditorUtils.addVariable(editor, viewer);
 			}
 		};
 		addVariable.setText("New &Variable");
