@@ -28,7 +28,7 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("concInd.test");
+		file = rodinProject.getRodinFile("nameInd.test");
 		file.create(false, null);
 		RodinIndexer.register(indexer);
 	}
@@ -63,7 +63,7 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 		assertNameTable(file, name2, expectedName2, null);
 	}
 
-	public void testNametableUpdating() throws Exception {
+	public void testNameTableUpdating() throws Exception {
 
 		// first indexing with 2 elements for both name1 and name2
 		manager.scheduleIndexing(file);

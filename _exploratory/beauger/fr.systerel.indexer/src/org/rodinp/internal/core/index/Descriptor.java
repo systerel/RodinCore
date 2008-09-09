@@ -62,6 +62,11 @@ public final class Descriptor implements IDescriptor {
 	}
 
 	private boolean verifyOccurrence(Occurrence occ) {
+		// TODO: change constraint
+		// accept an alien IRodinFile
+		// when it is referenced in the dependency table
+		// therefore, the verification has to be
+		// moved to the IndexingFacade
 		final IRodinElement locElem = occ.getLocation().getElement();
 		final IRodinFile rodinFile = element.getRodinFile();
 		if (locElem instanceof IRodinFile) {

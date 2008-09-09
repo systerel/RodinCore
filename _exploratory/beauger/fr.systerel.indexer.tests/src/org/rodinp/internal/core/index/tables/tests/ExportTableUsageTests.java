@@ -1,0 +1,141 @@
+package org.rodinp.internal.core.index.tables.tests;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.tests.AbstractRodinDBTests;
+import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.tests.IndexTestsUtil;
+
+public class ExportTableUsageTests extends AbstractRodinDBTests {
+
+	private static IIndexer indexer;
+	private static final Map<IInternalElement, String> elements = new HashMap<IInternalElement, String>();
+	private static IRodinProject rodinProject;
+	private static IRodinFile file;
+	private static NamedElement namedElement;
+	private static NamedElement namedElement2;
+	private static final IndexManager manager = IndexManager.getDefault();
+
+	public ExportTableUsageTests(String name) {
+		super(name);
+	}
+
+	private void assertExports(Map<IInternalElement, String> expected,
+			Map<IInternalElement, String> actual) {
+		final Set<IInternalElement> expKeySet = expected.keySet();
+		final Set<IInternalElement> actKeySet = actual.keySet();
+	
+		assertTrue("missing exports", actKeySet.containsAll(expKeySet));
+		assertEquals("unexpected exports", expKeySet.size(), actKeySet.size());
+	
+		for (IInternalElement elem : actKeySet) {
+			assertEquals("bad name for element " + elem.getElementName(),
+					actual.get(elem), expected.get(elem));
+		}
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		rodinProject = createRodinProject("P");
+		file = rodinProject.getRodinFile("expInd.test");
+		file.create(false, null);
+		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
+		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
+		elements.put(namedElement, "namedElementName");
+		elements.put(namedElement2, "namedElement2Name");
+		indexer = new FakeExportIndexer(elements);
+		RodinIndexer.register(indexer);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		deleteProject("P");
+		RodinIndexer.deregister(indexer);
+		elements.clear();
+		super.tearDown();
+	}
+
+	public void testExportTableUpdatingFilling() throws Exception {
+		manager.scheduleIndexing(file);
+		
+		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> actual = manager.getExportTable(
+				rodinProject).get(file);
+		
+		assertExports(expected, actual);
+	}
+
+	public void testExportTableRenaming() throws Exception {
+		// index file
+		manager.scheduleIndexing(file);
+		
+		// change exports
+		elements.put(namedElement, "expRenName1");
+		RodinIndexer.deregister(indexer);
+		indexer = new FakeExportIndexer(elements);
+		RodinIndexer.register(indexer);
+		
+		// then index again file
+		manager.scheduleIndexing(file);
+		
+		// verify renaming
+		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> actual = manager.getExportTable(
+				rodinProject).get(file);
+
+		assertExports(expected, actual);
+	}
+
+	public void testExportTableRemoving() throws Exception {
+		// index file
+		manager.scheduleIndexing(file);
+		
+		// change exports
+		elements.remove(namedElement2);
+		RodinIndexer.deregister(indexer);
+		indexer = new FakeExportIndexer(elements);
+		RodinIndexer.register(indexer);
+		
+		// then index again file
+		manager.scheduleIndexing(file);
+		
+		// verify removing
+		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> actual = manager.getExportTable(
+				rodinProject).get(file);
+
+		assertExports(expected, actual);
+	}
+
+	public void testExportTableAdding() throws Exception {
+		// index file
+		manager.scheduleIndexing(file);
+		
+		// change exports
+		NamedElement eltAdd = IndexTestsUtil.createNamedElement(file, "eltAdd");
+		elements.put(eltAdd, "expAddName1");
+		RodinIndexer.deregister(indexer);
+		indexer = new FakeExportIndexer(elements);
+		RodinIndexer.register(indexer);
+		
+		// then index again file
+		manager.scheduleIndexing(file);
+		
+		// verify adding
+		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> actual = manager.getExportTable(
+				rodinProject).get(file);
+
+		assertExports(expected, actual);
+	}
+
+}

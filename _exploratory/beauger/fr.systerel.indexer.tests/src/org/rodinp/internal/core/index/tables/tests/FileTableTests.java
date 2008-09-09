@@ -20,17 +20,16 @@ public class FileTableTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("ref.test");
+		file = rodinProject.getRodinFile("filetable.test");
 		file.create(false, null);
-		file2 = rodinProject.getRodinFile("ref2.test");
+		file2 = rodinProject.getRodinFile("filetable2.test");
 		file2.create(false, null);
 		element = IndexTestsUtil.createNamedElement(file, "elem");
-		element2 = IndexTestsUtil.createNamedElement(file, "elem2");
+		element2 = IndexTestsUtil.createNamedElement(file2, "elem2");
 	}
 
 	@Override
@@ -66,6 +65,15 @@ public class FileTableTests extends AbstractRodinDBTests {
 		IndexTestsUtil.assertSameElements(expectedResult, elements);
 	}
 
+	public void testAlienElement() throws Exception {
+		try {
+			table.addElement(element, file2);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+		fail("adding an alien element to a FileTable should raise IllegalArgumentException");
+	}
+
 	public void testRemoveElements() throws Exception {
 		table.addElement(element, file);
 		table.addElement(element2, file2);
@@ -74,7 +82,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] elements = table.getElements(file);
 		final IInternalElement[] expectedResult2 = new IInternalElement[] { element2 };
 		final IInternalElement[] elements2 = table.getElements(file2);
-	
+
 		IndexTestsUtil.assertIsEmpty(elements);
 		IndexTestsUtil.assertSameElements(expectedResult2, elements2);
 	}
@@ -95,10 +103,10 @@ public class FileTableTests extends AbstractRodinDBTests {
 		table.addElement(element, file);
 		table.addElement(element2, file2);
 		table.clear();
-		
+
 		final IInternalElement[] elements = table.getElements(file);
 		final IInternalElement[] elements2 = table.getElements(file2);
-		
+
 		IndexTestsUtil.assertIsEmpty(elements);
 		IndexTestsUtil.assertIsEmpty(elements2);
 	}

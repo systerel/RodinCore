@@ -9,11 +9,11 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
 public class FileTable {
-	
+
 	private Map<IRodinFile, Set<IInternalElement>> table;
-	
+
 	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
-	
+
 	public FileTable() {
 		table = new HashMap<IRodinFile, Set<IInternalElement>>();
 	}
@@ -25,16 +25,22 @@ public class FileTable {
 		}
 		return elements.toArray(new IInternalElement[elements.size()]);
 	}
-	
+
 	public void removeElements(IRodinFile file) {
 		table.remove(file);
 	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
+
 	public void addElement(IInternalElement element, IRodinFile file) {
+		// TODO move that verification to the IndexingFacade ? best here ?
+		// could also simply remove the file argument …
+		if (element.getRodinFile() != file) {
+			throw new IllegalArgumentException(
+					"trying to add an element from an alien file");
+		}
 		Set<IInternalElement> elements = table.get(file);
 		if (elements == null) {
 			elements = new HashSet<IInternalElement>();
@@ -42,7 +48,7 @@ public class FileTable {
 		}
 		elements.add(element);
 	}
-	
+
 	// DEBUG
 	@Override
 	public String toString() {

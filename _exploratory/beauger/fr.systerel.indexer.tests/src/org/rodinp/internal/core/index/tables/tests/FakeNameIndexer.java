@@ -70,4 +70,13 @@ public class FakeNameIndexer implements IIndexer {
 		}
 		return elements.toArray(new IInternalElement[elements.size()]);
 	}
+
+	public IRodinFile[] getDependencies(IRodinFile file) {
+		return new IRodinFile[0];
+	}
+
+	public Map<IInternalElement, String> getExports(IRodinFile file) {
+		return new HashMap<IInternalElement, String>();
+	}
+	
 }

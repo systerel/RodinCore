@@ -11,6 +11,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
@@ -20,9 +21,15 @@ public final class IndexManager {
 	// deleted.
 
 	private static IndexManager instance;
-	private Map<IRodinProject, RodinIndex> indexes;
-	private Map<IRodinProject, FileTable> fileTables;
-	private Map<IRodinProject, NameTable> nameTables;
+
+	private final ProjectMapping<RodinIndex> indexes;
+
+	private final ProjectMapping<FileTable> fileTables;
+
+	private final ProjectMapping<NameTable> nameTables;
+
+	private final ProjectMapping<ExportTable> exportTables;
+
 	private Set<IIndexer> indexers;
 
 	// protected IElementChangedListener listener = new
@@ -35,10 +42,35 @@ public final class IndexManager {
 	// };
 
 	private IndexManager() {
-		indexes = new HashMap<IRodinProject, RodinIndex>();
+		indexes = new ProjectMapping<RodinIndex>() {
+			@Override
+			protected RodinIndex createT() {
+				return new RodinIndex();
+			}
+		};
+
 		indexers = new HashSet<IIndexer>();
-		fileTables = new HashMap<IRodinProject, FileTable>();
-		nameTables = new HashMap<IRodinProject, NameTable>();
+
+		fileTables = new ProjectMapping<FileTable>() {
+			@Override
+			protected FileTable createT() {
+				return new FileTable();
+			}
+		};
+
+		nameTables = new ProjectMapping<NameTable>() {
+			@Override
+			protected NameTable createT() {
+				return new NameTable();
+			}
+		};
+
+		exportTables = new ProjectMapping<ExportTable>() {
+			@Override
+			protected ExportTable createT() {
+				return new ExportTable();
+			}
+		};
 		// TODO: register listener
 	}
 
@@ -65,41 +97,44 @@ public final class IndexManager {
 
 	public void scheduleIndexing(IRodinFile file) {
 		// TODO don't launch indexing immediately (define scheduling options)
+		assertFileExists(file);
+		
+		IIndexer indexer = getIndexerFor(file);
 
-		if (!file.exists()) {
-			throw new IllegalArgumentException(
-					"trying to index an inexistent file: " + file.getBareName());
-		}
-		indexFile(file);
+		final IRodinProject project = file.getRodinProject();
+
+		final IRodinIndex index = indexes.getMapping(project);
+		final FileTable fileTable = fileTables.getMapping(project);
+		final NameTable nameTable = nameTables.getMapping(project);
+		final ExportTable exportTable = exportTables.getMapping(project);
+
+		clean(file, index, fileTable, nameTable);
+
+		final Map<IInternalElement, String> newExports = indexer.getExports(file);
+		// TODO treat export tables differences
+		exportTable.put(file, newExports);
+		
+		final IndexingFacade indexingFacade = new IndexingFacade(file, index,
+				fileTable, nameTable, exportTable);
+		indexer.index(file, indexingFacade);
+
 	}
 
-	private IIndexer findIndexerFor(IRodinFile file) {
+	private void assertFileExists(IRodinFile file) {
+		if (!file.exists()) {
+			throw new IllegalArgumentException("cannot perform index: file "
+					+ file.getBareName() + " does not exist");
+		}
+	}
+
+	private IIndexer getIndexerFor(IRodinFile file) {
 		for (IIndexer indexer : indexers) {
 			if (indexer.canIndex(file)) {
 				return indexer;
 			}
 		}
-		return null;
-	}
-
-	private void indexFile(IRodinFile file) {
-
-		IIndexer indexer = findIndexerFor(file);
-
-		if (indexer == null) {
-			throw new IllegalStateException("unable to find an indexer for "
-					+ file.getElementName());
-		}
-
-		final IRodinProject project = file.getRodinProject();
-
-		final IRodinIndex index = getIndex(project);
-		final FileTable fileTable = getFileTable(project);
-		final NameTable nameTable = getNameTable(project);
-
-		clean(file, index, fileTable, nameTable);
-
-		indexer.index(file, new IndexingFacade(index, fileTable, nameTable));
+		throw new IllegalStateException("unable to find an indexer for "
+				+ file.getElementName());
 	}
 
 	private void clean(IRodinFile file, final IRodinIndex index,
@@ -108,52 +143,52 @@ public final class IndexManager {
 		for (IInternalElement element : fileTable.getElements(file)) {
 			final String name = index.getDescriptor(element).getName();
 			nameTable.remove(name, element);
-			index.removeDescriptor(element);
+			index.removeDescriptor(element); // FIXME new implementation => keep external occurrences
 		}
 		fileTable.removeElements(file);
 	}
 
-	// TODO: find out whether there is a way to factorize the various create and
-	// get methods
+	private abstract class ProjectMapping<T> {
 
-	private void createIndex(IRodinProject project, boolean overwrite) {
-		if (overwrite || !indexes.containsKey(project)) {
-			indexes.put(project, new RodinIndex());
+		private final Map<IRodinProject, T> map;
+
+		public ProjectMapping() {
+			map = new HashMap<IRodinProject, T>();
+		}
+
+		abstract protected T createT();
+
+		/**
+		 * Gets the existing mapping to given project, otherwise creates a new
+		 * one and returns it.
+		 * 
+		 * @param project
+		 * @return the non null T object mapped to the given project.
+		 */
+		public T getMapping(IRodinProject project) {
+			T result = map.get(project);
+			if (result == null) {
+				result = createT();
+				map.put(project, result);
+			}
+			return result;
 		}
 	}
 
-	/**
-	 * Returns an IRodinIndex corresponding to the given project. If no index
-	 * already exists, a new empty one is created.
-	 * 
-	 * @param project
-	 * @return a non null IRodinIndex.
-	 */
 	public IRodinIndex getIndex(IRodinProject project) {
-		createIndex(project, false); // creates only if not already present
-		return indexes.get(project);
-	}
-
-	private void createFileTable(IRodinProject project, boolean overwrite) {
-		if (overwrite || !fileTables.containsKey(project)) {
-			fileTables.put(project, new FileTable());
-		}
+		return indexes.getMapping(project);
 	}
 
 	public FileTable getFileTable(IRodinProject project) {
-		createFileTable(project, false);
-		return fileTables.get(project);
-	}
-
-	private void createNameTable(IRodinProject project, boolean overwrite) {
-		if (overwrite || !nameTables.containsKey(project)) {
-			nameTables.put(project, new NameTable());
-		}
+		return fileTables.getMapping(project);
 	}
 
 	public NameTable getNameTable(IRodinProject project) {
-		createNameTable(project, false);
-		return nameTables.get(project);
+		return nameTables.getMapping(project);
+	}
+
+	public ExportTable getExportTable(IRodinProject project) {
+		return exportTables.getMapping(project);
 	}
 
 	public void saveAll() {

@@ -7,6 +7,7 @@ import org.rodinp.core.index.IndexingFacade;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
@@ -45,8 +46,8 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 				IndexTestsUtil.defaultName);
 
 		final RodinIndex rodinIndex = new RodinIndex();
-		IndexingFacade index = new IndexingFacade(rodinIndex,
-				new FileTable(), new NameTable());
+		IndexingFacade index = new IndexingFacade(file, rodinIndex,
+				new FileTable(), new NameTable(), new ExportTable());
 		indexer.index(file, index);
 
 		IndexTestsUtil.assertDescriptor(rodinIndex.getDescriptor(element),
