@@ -16,6 +16,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
@@ -71,6 +72,15 @@ public class ContextIndexer implements IIndexer {
 		Map<String, IIdentifierElement> result = new HashMap<String, IIdentifierElement>();
 		for (IIdentifierElement element : elements) {
 			result.put(element.getIdentifierString(), element);
+		}
+		return result;
+	}
+
+	private Map<IInternalElement, String> mapToIdentifiers(
+			IIdentifierElement[] elements) throws RodinDBException {
+		Map<IInternalElement, String> result = new HashMap<IInternalElement, String>();
+		for (IIdentifierElement element : elements) {
+			result.put(element, element.getIdentifierString());
 		}
 		return result;
 	}
@@ -146,91 +156,27 @@ public class ContextIndexer implements IIndexer {
 		index.addOccurrence(constant, name, occ);
 	}
 
-	// ------------------------------------------------- //
+	public IRodinFile[] getDependencies(IRodinFile file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	// private IDescriptor makeConstantDescriptor(IConstant constant,
-	// IndexingFacade index) {
-	// return index.makeDescriptor(constant.getElementName(), constant);
-	// }
-	//
-	// private void indexConstant(IContextFile file, IConstant constant,
-	// IRodinIndex index) throws RodinDBException {
-	// Object id = elementUniqueId(constant);
-	//
-	// IDescriptor descriptor = index.makeDescriptor(constant
-	// .getIdentifierString(), constant, id);
-	//
-	// indexConstantDeclaration(file, constant, descriptor);
-	//
-	// indexConstantReferences(file, constant, descriptor);
-	//
-	// }
-	//
-	// private void indexConstantReferences(IContextFile file, IConstant
-	// constant,
-	// IDescriptor descriptor) {
-	//
-	// // find references
-	// IAxiom[] axioms;
-	// try {
-	// final String cstId = constant.getIdentifierString();
-	// axioms = file.getAxioms();
-	// for (IAxiom axm : axioms) {
-	// IParseResult result = ff.parsePredicate(axm
-	// .getPredicateString());
-	// if (result.isSuccess()) { // TODO: try to index something even
-	// // if parsing fails …
-	// Predicate pred = result.getParsedPredicate();
-	// FreeIdentifier[] idents = pred.getFreeIdentifiers();
-	//
-	// // algo particulièrement inefficace, faire l'inverse
-	// // lister les freeIdents une fois pour toutes puis chercher
-	// // si on peut indexer des constantes à partir de ça
-	// if (containsIdentifier(idents, cstId)) {
-	// List<IPosition> positions = pred
-	// .getPositions(new DefaultFilter() {
-	// @Override
-	// public boolean select(
-	// FreeIdentifier identifier) {
-	// if (identifier.getName().equals(cstId)) {
-	// return true;
-	// }
-	// return super.select(identifier);
-	// }
-	// });
-	// for (IPosition pos : positions) {
-	// final SourceLocation srcLoc = pred.getSubFormula(
-	// pos).getSourceLocation();
-	// Occurrence occ = new Occurrence(
-	// EventBOccurrenceKind.REFERENCE, this);
-	// occ.setLocation(axm,
-	// EventBAttributes.PREDICATE_ATTRIBUTE
-	// .getId(), srcLoc.getStart(), srcLoc
-	// .getEnd());
-	// descriptor.addReference(occ);
-	// }
-	// }
-	// }
-	// }
-	// } catch (RodinDBException e) {
-	// // Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// // Occurrence ref = new Occurrence(EventBOccurrenceKind.REFERENCE);
-	// // ref.setLocation(constant.getRodinFile());
-	// // descriptor.addReference(ref);
-	//
-	// }
-	//
-	// private boolean containsIdentifier(FreeIdentifier[] freeIdents,
-	// String identifier) {
-	// for (FreeIdentifier id : freeIdents) {
-	// if (id.getName().equals(identifier)) {
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
+	public Map<IInternalElement, String> getExports(IRodinFile file) {
+		if (!(file instanceof IContextFile)) {
+			return null;
+		}
+		final IContextFile ctxFile = (IContextFile) file;
+		Map<IInternalElement, String> result = null; 
+		try {
+			final IConstant[] constants = ctxFile.getConstants();
+			
+			result = mapToIdentifiers(constants);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 
 }
