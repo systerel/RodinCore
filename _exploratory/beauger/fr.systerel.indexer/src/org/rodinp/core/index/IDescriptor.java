@@ -1,6 +1,7 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 
 public interface IDescriptor {
 
@@ -19,6 +20,8 @@ public interface IDescriptor {
 
 	public void removeOccurrence(Occurrence occurrence);
 
+	public void removeOccurrences(IRodinFile file);
+	
 	public void clearOccurrences();
 
 	//DEBUG
