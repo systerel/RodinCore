@@ -4,7 +4,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.internal.core.RodinDBStatus;
 
 public class RodinLocation implements IRodinLocation {
 
@@ -61,7 +60,7 @@ public class RodinLocation implements IRodinLocation {
 		IRodinDBStatus status = RodinLocationUtil.verifyRodinLocation(element,
 				attributeType, charStart, charEnd);
 
-		if (status != RodinDBStatus.VERIFIED_OK) {
+		if (!status.isOK()) {
 			throw new IllegalArgumentException(status.getMessage());
 		}
 
