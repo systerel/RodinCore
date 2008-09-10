@@ -31,7 +31,7 @@ class CommitProofOperation implements IWorkspaceRunnable {
 
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
-			pm.beginTask("Committing proof", 2 + 3);
+			pm.beginTask("Committing proof", 3 + 3);
 			commitProof(pm);
 			commitStatus(pm);
 		} finally {
@@ -39,9 +39,14 @@ class CommitProofOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	// Consumes two ticks of the given progress monitor
+	// Consumes three ticks of the given progress monitor
 	private void commitProof(IProgressMonitor pm) throws RodinDBException {
 		final IPRProof proof = pa.getProof();
+		if (!proof.exists()) {
+			proof.create(null, new SubProgressMonitor(pm, 1));
+		} else {
+			pm.worked(1);
+		}
 		final IProofTree proofTree = pa.getProofTree();
 		proof.setProofTree(proofTree, new SubProgressMonitor(pm, 1));
 		proof.setHasManualProof(manual, new SubProgressMonitor(pm, 1));
