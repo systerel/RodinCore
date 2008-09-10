@@ -157,8 +157,7 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IRodinFile[0];
 	}
 
 	public Map<IInternalElement, String> getExports(IRodinFile file) {
