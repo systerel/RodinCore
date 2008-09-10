@@ -12,18 +12,25 @@
 package fr.systerel.explorer.navigator;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.*;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.poModel.Machine;
+import fr.systerel.explorer.poModel.POContainer;
+import fr.systerel.explorer.poModel.ProofObligation;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
@@ -40,6 +47,7 @@ public class RodinLabelProvider implements
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
+		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		if (element instanceof IRodinElement) {
 			return EventBImage.getRodinImage((IRodinElement) element);
 			
@@ -47,28 +55,36 @@ public class RodinLabelProvider implements
 			TreeNode<?> node = (TreeNode<?>) element;
 			
 			if (node.getType().equals(IInvariant.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_INVARIANT_PATH).createImage();
+				
+				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
 			}
 			if (node.getType().equals(ITheorem.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_THEOREM_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_THEOREM);
 			}
 			if (node.getType().equals(IEvent.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_EVENT_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);
 			}
 			if (node.getType().equals(IVariable.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_VARIABLE_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_VARIABLE);
 			}
 			if (node.getType().equals(IAxiom.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_AXIOM_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_AXIOM);
 			}
 			if (node.getType().equals(ICarrierSet.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_CARRIER_SET_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_CARRIER_SET);
 			}
 			if (node.getType().equals(IConstant.ELEMENT_TYPE)) {
-				return EventBImage.getImageDescriptor(IEventBSharedImages.IMG_CONSTANT_PATH).createImage();
+				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
 			}
 			
 			return null;
+		} else if (element instanceof ProofObligation) {
+			IPSStatus status = ((ProofObligation) element).getIPSStatus();
+			if (status != null) {
+				return EventBImage.getPRSequentImage(status);
+			}
+		} else if (element instanceof POContainer) {
+			return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
 		} else if (element instanceof IContainer) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 		}
@@ -108,6 +124,13 @@ public class RodinLabelProvider implements
 			return ((IRodinElement) obj).getElementName();
 		
 	
+		} else if (obj instanceof ProofObligation) {
+			return ((ProofObligation) obj).getName();
+		
+	
+		} else if (obj instanceof POContainer) {
+			return POContainer.DISPLAY_NAME;
+			
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();
 		}

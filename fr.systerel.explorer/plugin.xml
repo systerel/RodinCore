@@ -60,6 +60,9 @@
             <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.carrierSet">
             </contentExtension>
+            <contentExtension
+                  pattern="fr.systerel.explorer.pofiles">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
    </extension>
@@ -219,6 +222,45 @@
             id="fr.systerel.explorer.navigator.content.carrierSet"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.carrierSets">
+         <triggerPoints>
+            <instanceof
+                  value="org.eventb.ui.projectexplorer.TreeNode">
+            </instanceof>
+         </triggerPoints>
+      </navigatorContent>
+      <navigatorContent
+            contentProvider="fr.systerel.explorer.navigator.contentProviders.POContentProvider"
+            id="fr.systerel.explorer.pofiles"
+            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            name="%navigatorContent.poFiles">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IInvariant">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IAxiom">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.ITheorem">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IEvent">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.poModel.Machine">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.poModel.Context">
+               </instanceof>
+            </or>
+         </triggerPoints>
+      </navigatorContent>
+      <navigatorContent
+            contentProvider="fr.systerel.explorer.navigator.contentProviders.VariantContentProvider"
+            id="fr.systerel.explorer.navigator.content.variant"
+            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            name="%navigatorContent.variants">
          <triggerPoints>
             <instanceof
                   value="org.eventb.ui.projectexplorer.TreeNode">

@@ -17,9 +17,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IVariant;
 import org.eventb.ui.projectexplorer.TreeNode;
+
+import fr.systerel.explorer.poModel.ModelFactory;
 
 /**
  * The content provider for Machines.
@@ -45,7 +49,10 @@ public class MachineContentProvider implements ITreeContentProvider {
 						ITheorem.ELEMENT_TYPE));
 		list.add(new TreeNode<IEvent>("Events", mch, IEvent.ELEMENT_TYPE));
 
-		return list.toArray();
+		Object[] children = new Object[list.size() +1];
+		list.toArray(children);
+		children[list.size()] = ModelFactory.getMachine(mch);
+		return children;
 
 	}
 

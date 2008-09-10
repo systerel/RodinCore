@@ -17,9 +17,13 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPSFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.poModel.ModelFactory;
 
 /**
  * The content provider for Machine and Context elements.
@@ -73,6 +77,7 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 	
 	/**
 	 * This filter lets pass only elements that are of type <code>IMachineFile</code> or <code>IContextFile</code>.
+	 * Process IPOFile (build the model)
 	 * @param children	The children to filter
 	 * @return			The filtered objects
 	 */
@@ -85,6 +90,12 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 				}
 				else if (children[i] instanceof IContextFile) {
 					list.add(children[i]);
+				}
+				else if (children[i] instanceof IPOFile) {
+					ModelFactory.processPOFile((IPOFile)children[i]);
+				}
+				else if (children[i] instanceof IPSFile) {
+					ModelFactory.processPSFile((IPSFile)children[i]);
 				}
 			}
 			return list.toArray();

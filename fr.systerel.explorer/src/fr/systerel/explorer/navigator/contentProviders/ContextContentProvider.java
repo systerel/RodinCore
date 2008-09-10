@@ -21,6 +21,8 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ITheorem;
 import org.eventb.ui.projectexplorer.TreeNode;
 
+import fr.systerel.explorer.poModel.ModelFactory;
+
 /**
  * The content provider for Contexts.
  * Shows the content of a Context.
@@ -44,7 +46,10 @@ public class ContextContentProvider implements ITreeContentProvider {
 				.add(new TreeNode<ITheorem>("Theorems", ctx,
 						ITheorem.ELEMENT_TYPE));
 
-		return list.toArray();
+		Object[] children = new Object[list.size() +1];
+		list.toArray(children);
+		children[list.size()] = ModelFactory.getContext(ctx);
+		return children;
 	}
 
 	public Object getParent(Object element) {
