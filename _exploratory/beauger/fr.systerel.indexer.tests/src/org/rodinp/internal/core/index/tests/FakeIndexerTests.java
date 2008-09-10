@@ -24,8 +24,7 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("concInd.test");
-		file.create(false, null);
+		file = IndexTestsUtil.createRodinFile(rodinProject, "concInd.test");
 	}
 
 	@Override

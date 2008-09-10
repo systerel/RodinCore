@@ -25,8 +25,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file = project.getRodinFile("indMan.test");
-		file.create(true, null);
+		file = IndexTestsUtil.createRodinFile(project, "indMan.test");
 		RodinIndexer.register(indexer);
 	}
 
@@ -34,6 +33,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		RodinIndexer.deregister(indexer);
+		manager.clear();
 		super.tearDown();
 	}
 
@@ -103,5 +103,32 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 			return;
 		}
 		fail("trying to index with no indexer registered should raise IllegalStateException");
+	}
+
+	public void testIndexSeveralProjects() throws Exception {
+		final String el1Name = "elementF1Name";
+		final String el2Name = "elementF2Name";
+
+		final NamedElement elementF1 = IndexTestsUtil.createNamedElement(file,
+				el1Name);
+		final IRodinProject project2 = createRodinProject("P2");
+		IRodinFile file2 = IndexTestsUtil.createRodinFile(project2, "file2P2.test");
+		final NamedElement elementF2 = IndexTestsUtil.createNamedElement(file2,
+				el2Name);
+
+		IRodinFile[] toIndex = new IRodinFile[] { file, file2 };
+		manager.scheduleIndexing(toIndex);
+
+		final IRodinIndex index1 = manager.getIndex(project);
+		final IDescriptor desc1 = index1.getDescriptor(elementF1);
+		final IRodinIndex index2 = manager.getIndex(project2);
+		final IDescriptor desc2 = index2.getDescriptor(elementF2);
+
+		IndexTestsUtil.assertDescriptor(desc1, elementF1,
+				el1Name, 6);
+
+		IndexTestsUtil.assertDescriptor(desc2, elementF2,
+				el2Name, 6);
+
 	}
 }

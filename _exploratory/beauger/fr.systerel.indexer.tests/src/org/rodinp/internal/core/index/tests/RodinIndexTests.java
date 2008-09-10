@@ -27,8 +27,7 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file = project.getRodinFile("rodinIndex.test");
-		file.create(true, null);
+		file = IndexTestsUtil.createRodinFile(project, "rodinIndex.test");
 		element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultName);
 		element2 = IndexTestsUtil.createNamedElement(file,

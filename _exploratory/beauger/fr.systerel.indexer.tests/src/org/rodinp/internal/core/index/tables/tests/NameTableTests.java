@@ -25,8 +25,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 	@Override
 	protected void setUp() throws Exception {
 		project = createRodinProject("P");
-		file = project.getRodinFile("nameTable.test");
-		file.create(true, null);
+		file = IndexTestsUtil.createRodinFile(project, "nameTable.test");
 		element1 = IndexTestsUtil.createNamedElement(file, "elt1");
 		element2 = IndexTestsUtil.createNamedElement(file, "elt2");
 

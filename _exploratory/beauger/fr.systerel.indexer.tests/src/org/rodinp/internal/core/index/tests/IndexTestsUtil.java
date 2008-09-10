@@ -10,6 +10,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinIndex;
@@ -57,6 +59,13 @@ public class IndexTestsUtil {
 	public static final String defaultName = "banzai";
 	private static final FakeIndexer indexer = new FakeIndexer();
 
+	public static IRodinFile createRodinFile(IRodinProject project,
+			String fileName) throws RodinDBException {
+		IRodinFile file = project.getRodinFile(fileName);
+		file.create(true, null);
+		return file;
+	}
+
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
 		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
 				.getRodinLocation(element), indexer);
@@ -98,12 +107,9 @@ public class IndexTestsUtil {
 				+ element.getElementName(), desc);
 	}
 
-	public static void assertDescriptor(IDescriptor descriptor,
-			IInternalElement element, String name, int expectedLength) {
-
-		assertElement(descriptor, element);
-		assertName(descriptor, name);
-		assertSize(descriptor, expectedLength);
+	public static void assertNotNull(IDescriptor desc) {
+		TestCase.assertNotNull("Descriptor " + desc + " should not be null",
+				desc);
 	}
 
 	public static void addOccurrences(Occurrence[] occurrences,
@@ -120,56 +126,72 @@ public class IndexTestsUtil {
 		}
 	}
 
+	public static void assertDescriptor(IDescriptor desc,
+			IInternalElement element, String name, int expectedLength) {
+		assertNotNull(desc);
+		assertElement(desc, element);
+		assertName(desc, name);
+		assertLength(desc, expectedLength);
+	}
+
 	public static void assertContains(IDescriptor desc, Occurrence occ) {
+		assertNotNull(desc);
 		TestCase.assertTrue("occurrence not found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
 	public static void assertContainsNot(IDescriptor desc, Occurrence occ) {
+		assertNotNull(desc);
 		TestCase.assertFalse("occurrence should not be found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
 	public static void assertContainsAll(IDescriptor desc, Occurrence[] occs) {
+		assertNotNull(desc);
 		for (Occurrence occ : occs) {
 			assertContains(desc, occ);
 		}
 	}
 
 	public static void assertContainsNone(IDescriptor desc, Occurrence[] occs) {
+		assertNotNull(desc);
 		for (Occurrence occ : occs) {
 			assertContainsNot(desc, occ);
 		}
 	}
 
 	public static void assertSameOccurrences(IDescriptor desc, Occurrence[] occs) {
+		assertNotNull(desc);
 		assertContainsAll(desc, occs);
 
-		assertSize(desc, occs.length);
+		assertLength(desc, occs.length);
 	}
 
-	public static void assertSize(IDescriptor desc, int expectedLength) {
+	public static void assertLength(IDescriptor desc, int expectedLength) {
+		assertNotNull(desc);
 		TestCase.assertEquals("bad number of occurrences", expectedLength, desc
 				.getOccurrences().length);
 	}
 
 	public static void assertElement(IDescriptor desc, IInternalElement element) {
+		assertNotNull(desc);
 		TestCase.assertEquals("bad element for descriptor " + desc, element,
 				desc.getElement());
 	}
 
 	public static void assertName(IDescriptor desc, String name) {
+		assertNotNull(desc);
 		TestCase.assertEquals("bad element for descriptor " + desc, name, desc
 				.getName());
 	}
 
-	public static void assertSize(IInternalElement[] elements, int size) {
+	public static void assertLength(IRodinElement[] elements, int size) {
 		TestCase.assertEquals("incorrect number of elements", size,
 				elements.length);
 	}
 
 	public static void assertIsEmpty(IInternalElement[] elements) {
-		assertSize(elements, 0);
+		assertLength(elements, 0);
 	}
 
 	public static void assertContainsAll(IInternalElement[] expectedElements,
@@ -185,7 +207,7 @@ public class IndexTestsUtil {
 
 		assertContainsAll(expectedElements, actualElements);
 
-		assertSize(actualElements, expectedElements.length);
+		assertLength(actualElements, expectedElements.length);
 	}
 
 	public static void assertContains(IInternalElement elem,

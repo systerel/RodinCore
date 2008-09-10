@@ -14,12 +14,19 @@ import org.rodinp.core.tests.basis.NamedElement;
 
 public class FakeIndexer implements IIndexer {
 
+	// TODO better pass the wanted index to the constructor and index with it.
+	// private final IRodinIndex index;
+
 	public FakeIndexer() {
-		// Nothing to do
+		// nothing to do
 	}
 
+	// public FakeIndexer(RodinIndex index) {
+	// this.index = index;
+	// }
+
 	public boolean canIndex(IRodinFile file) {
-		return true; // TODO make our own test file type
+		return true;
 	}
 
 	/**

@@ -34,8 +34,7 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("desc.test");
-		file.create(false, null);
+		file = IndexTestsUtil.createRodinFile(rodinProject, "desc.test");
 		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
 		testDesc = new Descriptor(testEltName, testElt);
 		occurrencesTestSet = IndexTestsUtil.generateOccurrencesTestSet(testElt,
@@ -67,18 +66,16 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	}
 
 	public void testAddAlienOccurrence() throws Exception {
-		IRodinFile alien = rodinProject.getRodinFile("alienFile.test");
-		alien.create(true, null);
+		IRodinFile alien = IndexTestsUtil.createRodinFile(rodinProject,
+				"alienFile.test");
 		Occurrence alienOccurrence = IndexTestsUtil
 				.createDefaultOccurrence(alien);
 
 		try {
 			testDesc.addOccurrence(alienOccurrence);
-		} catch (IllegalArgumentException e) {
-			return;
+		} catch (Exception e) {
+			fail("No exception should be raised when adding an alien occurrence");
 		}
-		fail("IllegalArgumentException should have been raised when "
-				+ "adding an alien occurrence");
 	}
 
 	public void testRemoveOccurrence() throws Exception {
@@ -88,6 +85,20 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		testDesc.removeOccurrence(testOccurrence);
 
 		IndexTestsUtil.assertContainsNot(testDesc, testOccurrence);
+	}
+
+	public void testRemoveOccurrences() throws Exception {
+		Occurrence friendOcc = IndexTestsUtil.createDefaultOccurrence(testElt);
+		IRodinFile alien = IndexTestsUtil.createRodinFile(rodinProject, "alienFile.test");
+		Occurrence alienOcc = IndexTestsUtil.createDefaultOccurrence(alien);
+
+		testDesc.addOccurrence(friendOcc);
+		testDesc.addOccurrence(alienOcc);
+
+		testDesc.removeOccurrences(testElt.getRodinFile());
+
+		IndexTestsUtil.assertContainsNot(testDesc, friendOcc);
+		IndexTestsUtil.assertContains(testDesc, alienOcc);
 	}
 
 	public void testClearOccurrences() throws Exception {

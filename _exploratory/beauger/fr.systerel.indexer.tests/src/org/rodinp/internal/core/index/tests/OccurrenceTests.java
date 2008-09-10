@@ -40,8 +40,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super.setUp();
 
 		final IRodinProject rodinProject = createRodinProject("P");
-		IRodinFile file = rodinProject.getRodinFile("occ.test");
-		file.create(false, null);
+		IRodinFile file = IndexTestsUtil.createRodinFile(rodinProject, "occ.test");
 		NamedElement elem = IndexTestsUtil.createNamedElement(file, "elem");
 
 		location = new RodinLocation(elem, null,

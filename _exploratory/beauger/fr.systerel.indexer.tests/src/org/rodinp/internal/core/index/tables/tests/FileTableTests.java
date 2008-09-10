@@ -24,10 +24,8 @@ public class FileTableTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("filetable.test");
-		file.create(false, null);
-		file2 = rodinProject.getRodinFile("filetable2.test");
-		file2.create(false, null);
+		file = IndexTestsUtil.createRodinFile(rodinProject, "filetable.test");
+		file2 = IndexTestsUtil.createRodinFile(rodinProject, "filetable2.test");
 		element = IndexTestsUtil.createNamedElement(file, "elem");
 		element2 = IndexTestsUtil.createNamedElement(file2, "elem2");
 	}

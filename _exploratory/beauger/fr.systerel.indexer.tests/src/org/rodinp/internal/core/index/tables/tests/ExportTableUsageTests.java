@@ -46,8 +46,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
-		file = rodinProject.getRodinFile("expInd.test");
-		file.create(false, null);
+		file = IndexTestsUtil.createRodinFile(rodinProject, "expInd.test");
 		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
 		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
 		elements.put(namedElement, "namedElementName");
@@ -61,6 +60,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		deleteProject("P");
 		RodinIndexer.deregister(indexer);
 		elements.clear();
+		manager.clear();
 		super.tearDown();
 	}
 

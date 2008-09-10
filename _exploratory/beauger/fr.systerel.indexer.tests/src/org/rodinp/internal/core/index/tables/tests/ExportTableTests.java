@@ -49,10 +49,8 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file1 = rodinProject.getRodinFile("ref.test");
-		file1.create(false, null);
-		file2 = rodinProject.getRodinFile("ref2.test");
-		file2.create(false, null);
+		file1 = IndexTestsUtil.createRodinFile(rodinProject, "exp1.test");
+		file2 = IndexTestsUtil.createRodinFile(rodinProject, "exp2.test");
 		element1F1 = IndexTestsUtil.createNamedElement(file1, "elem1F1");
 		element2F1 = IndexTestsUtil.createNamedElement(file1, "elem2F1");
 		element1F2 = IndexTestsUtil.createNamedElement(file2, "elem1F2");
