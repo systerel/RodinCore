@@ -92,6 +92,20 @@ public interface IEventBSharedImages {
 	public static final String IMG_UP = "Up";
 
 	public static final String IMG_DOWN = "Down";
+
+	public static final String IMG_INVARIANT = "Invariant";
+	
+	public static final String IMG_THEOREM = "Theorem";
+	
+	public static final String IMG_VARIABLE = "Variable";
+	
+	public static final String IMG_EVENT = "Event";
+	
+	public static final String IMG_AXIOM = "Axiom";
+	
+	public static final String IMG_CONSTANT = "Constant";
+	
+	public static final String IMG_CARRIER_SET = "Carrier Set";
 	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
