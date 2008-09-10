@@ -26,6 +26,8 @@ import org.rodinp.core.index.Occurrence;
 
 public class ContextIndexer implements IIndexer {
 
+	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
+
 	private FormulaFactory ff = FormulaFactory.getDefault();
 
 	public boolean canIndex(IRodinFile file) {
@@ -157,7 +159,7 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		return new IRodinFile[0];
+		return NO_DEPENDENCIES;
 	}
 
 	public Map<IInternalElement, String> getExports(IRodinFile file) {
