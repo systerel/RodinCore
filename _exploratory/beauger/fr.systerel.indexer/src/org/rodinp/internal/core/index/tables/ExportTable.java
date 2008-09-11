@@ -14,6 +14,7 @@ public class ExportTable {
 		table = new HashMap<IRodinFile, Map<IInternalElement, String>>();
 	}
 
+	// TODO consider providing a type that hides the map
 	public Map<IInternalElement, String> get(IRodinFile file) {
 		final Map<IInternalElement, String> map = table.get(file);
 		if (map == null) {

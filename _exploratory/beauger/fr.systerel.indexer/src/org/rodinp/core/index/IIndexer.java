@@ -14,9 +14,11 @@ public interface IIndexer {
 	 * @param file
 	 * @return a boolean indicating its capabilities at indexing the given file.
 	 */
+	
+	// TODO suppress this method and change register
 	public boolean canIndex(IRodinFile file);
 
-	public void index(IRodinFile file, IndexingFacade index);
+	public void index(IRodinFile file, IIndexingFacade index);
 
 	/**
 	 * Computes and returns the dependencies of the given file.
@@ -33,6 +35,9 @@ public interface IIndexer {
 	 * @return the exported elements associated to their used-defined name.
 	 * FIXME accept null return ?
 	 */
+
+	// TODO remove: should be done one by one through IndexingFacade
+	
 	public Map<IInternalElement, String> getExports(IRodinFile file);
 
 }

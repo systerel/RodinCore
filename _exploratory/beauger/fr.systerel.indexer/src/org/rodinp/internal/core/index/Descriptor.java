@@ -7,8 +7,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDescriptor;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.Occurrence;
 
 public final class Descriptor implements IDescriptor {
 
@@ -20,12 +20,12 @@ public final class Descriptor implements IDescriptor {
 	 */
 	private String name;
 	private IInternalElement element;
-	private Set<Occurrence> occurrences;
+	private Set<IOccurrence> occurrences;
 
 	public Descriptor(String name, IInternalElement element) {
 		this.name = name;
 		this.element = element;
-		this.occurrences = new HashSet<Occurrence>();
+		this.occurrences = new HashSet<IOccurrence>();
 	}
 
 	public String getName() {
@@ -36,25 +36,25 @@ public final class Descriptor implements IDescriptor {
 		return element;
 	}
 
-	public Occurrence[] getOccurrences() {
+	public IOccurrence[] getOccurrences() {
 		return occurrences.toArray(new Occurrence[occurrences.size()]);
 	}
 
-	public boolean hasOccurrence(Occurrence occurrence) {
+	public boolean hasOccurrence(IOccurrence occurrence) {
 		return occurrences.contains(occurrence);
 	}
 
-	public void addOccurrence(Occurrence occurrence) {
+	public void addOccurrence(IOccurrence occurrence) {
 		occurrences.add(occurrence);
 	}
 
-	public void removeOccurrence(Occurrence occurrence) {
+	public void removeOccurrence(IOccurrence occurrence) {
 		occurrences.remove(occurrence);
 	}
 
 	public void removeOccurrences(IRodinFile file) {
-		Set<Occurrence> toRemove = new HashSet<Occurrence>();
-		for (Occurrence occ : occurrences) {
+		final Set<IOccurrence> toRemove = new HashSet<IOccurrence>();
+		for (IOccurrence occ : occurrences) {
 			if (isInSameFile(occ.getLocation(), file)) {
 				toRemove.add(occ);
 			}
@@ -100,7 +100,7 @@ public final class Descriptor implements IDescriptor {
 		sb.append(element.getElementName() + "\n");
 		sb.append("Name: " + name + "\n");
 		
-		for (Occurrence ref : occurrences) {
+		for (IOccurrence ref : occurrences) {
 			sb.append(ref.toString() + "\n");
 		}
 		return sb.toString();

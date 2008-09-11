@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDescriptor;
-import org.rodinp.core.index.IRodinIndex;
 
 public final class RodinIndex implements IRodinIndex {
 
@@ -59,6 +58,10 @@ public final class RodinIndex implements IRodinIndex {
 			sb.append(map.get(o).toString() + "\n");
 		}
 		return sb.toString();
+	}
+
+	public boolean isDeclared(IInternalElement element) {
+		return map.containsKey(element);
 	}
 
 }

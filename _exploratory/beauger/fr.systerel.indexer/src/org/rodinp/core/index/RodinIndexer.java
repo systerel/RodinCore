@@ -32,6 +32,7 @@ public class RodinIndexer {
 	public static final int INVALID_LOCATION = 999;
 
 	/** To be moved to {@link RodinCore} */
+	//TODO add IRodinFileElementType argument
 	public static final void register(IIndexer indexer) {
 		IndexManager.getDefault().addIndexer(indexer);
 	}

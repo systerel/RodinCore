@@ -1,10 +1,13 @@
-package org.rodinp.core.index;
+package org.rodinp.internal.core.index;
 
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.index.IDescriptor;
 
 public interface IRodinIndex {
 
+	boolean isDeclared(IInternalElement element);
+	
 	public IDescriptor getDescriptor(Object key);
 	// FIXME why not directly getDescriptor(IInternalElement), just like everywhere else ?
 

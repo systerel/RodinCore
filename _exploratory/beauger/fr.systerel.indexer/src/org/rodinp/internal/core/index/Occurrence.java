@@ -1,9 +1,13 @@
-package org.rodinp.core.index;
+package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IOccurrence;
+import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.OccurrenceKind;
 
-public class Occurrence {
+public class Occurrence implements IOccurrence {
 	private final OccurrenceKind kind;
 	private final IRodinLocation location;
 	private final IIndexer indexer;
