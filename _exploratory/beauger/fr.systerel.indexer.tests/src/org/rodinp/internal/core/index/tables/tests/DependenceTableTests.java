@@ -64,64 +64,86 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		assertSameFiles(expected, actual);
 	}
 
+	public void testGetNone() throws Exception {
+		final IRodinFile[] actual = table.get(file1);
+
+		assertIsEmpty(actual);
+	}
+
 	public void testPutGetSeveral() throws Exception {
 		final IRodinFile[] expected2 = new IRodinFile[] { file2 };
 		final IRodinFile[] expected4 = new IRodinFile[] { file4 };
-		
+
 		table.put(file1, expected2);
 		table.put(file3, expected4);
 
 		final IRodinFile[] actual1 = table.get(file1);
 		final IRodinFile[] actual3 = table.get(file3);
-		
+
 		assertSameFiles(expected2, actual1);
 		assertSameFiles(expected4, actual3);
 	}
-	
-	public void testRemove() throws Exception {
-		final IRodinFile[] expected2 = new IRodinFile[] { file2 };
-		final IRodinFile[] expected4 = new IRodinFile[] { file4 };
-		
-		table.put(file1, expected2);
-		table.put(file3, expected4);
 
-		table.remove(file1);
-		
-		final IRodinFile[] actual1 = table.get(file1);
-		final IRodinFile[] actual3 = table.get(file3);
-		
-		assertIsEmpty(actual1);
-		assertSameFiles(expected4, actual3);
+	public void testPutRedundancy() throws Exception {
+		final IRodinFile[] redundant = new IRodinFile[] { file1, file4, file1 };
+
+		try {
+			table.put(file2, redundant);
+		} catch (IllegalArgumentException e) {
+			assertTrue("bad exception message", e.getMessage().contains(
+					"Redundancy"));
+			return;
+		}
+		fail("Adding redundant dependencies should raise IllegalArgumentException");
 	}
-	
+
+	public void testPutSelfDependent() throws Exception {
+		final IRodinFile[] selfDep = new IRodinFile[] { file4, file1 };
+
+		try {
+			table.put(file1, selfDep);
+		} catch (IllegalArgumentException e) {
+			assertTrue("bad exception message", e.getMessage().contains(
+					"self"));
+			return;
+		}
+		fail("Adding redundant dependencies should raise IllegalArgumentException");
+	}
+
 	public void testClear() throws Exception {
 		final IRodinFile[] expected2 = new IRodinFile[] { file2 };
 		final IRodinFile[] expected4 = new IRodinFile[] { file4 };
-		
+
 		table.put(file1, expected2);
 		table.put(file3, expected4);
 
 		table.clear();
-		
+
 		final IRodinFile[] actual1 = table.get(file1);
 		final IRodinFile[] actual3 = table.get(file3);
-		
+
 		assertIsEmpty(actual1);
 		assertIsEmpty(actual3);
 	}
-	
+
 	public void testGetDependents() throws Exception {
 		final IRodinFile[] top = new IRodinFile[] { file1 };
 		final IRodinFile[] expected = new IRodinFile[] { file2, file3, file4 };
-		
+
 		table.put(file2, top);
 		table.put(file3, top);
 		table.put(file4, top);
-		
+
 		final IRodinFile[] actual = table.getDependents(file1);
-		
+
 		assertSameFiles(expected, actual);
 	}
-	
-	
+
+	public void testGetDependentsNone() throws Exception {
+
+		final IRodinFile[] actual = table.getDependents(file1);
+
+		assertIsEmpty(actual);
+	}
+
 }

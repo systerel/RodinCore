@@ -14,29 +14,30 @@ public class DependenceTable {
 
 	private static final IRodinFile[] NO_ELEMENTS = new IRodinFile[0];
 
-	private Map<IRodinFile, Set<IRodinFile>> table;
+	private Map<IRodinFile, IRodinFile[]> table;
 
 	public DependenceTable() {
-		table = new HashMap<IRodinFile, Set<IRodinFile>>();
+		table = new HashMap<IRodinFile, IRodinFile[]>();
 	}
 
 	/**
-	 * Adds a dependence between depends and file arguments, so that 
-	 * depends dependsOn file.
+	 * Adds a dependence between depends and file arguments, so that
+	 * <code>depends</code> dependsOn <code>files</code>.
 	 * 
-	 * @param depends the file that depends on the other ones.
-	 * @param files the files that the other one depends on.
+	 * @param depends
+	 *            the file that depends on <code>files</code>.
+	 * @param files
+	 *            the files that <code>depends</code> depends on.
+	 * @throws IllegalArgumentException
+	 *             when redundancy is detected in <code>files</code> as well
+	 *             as when making a file self-dependent.
 	 */
 	public void put(IRodinFile depends, IRodinFile[] files) {
-		Set<IRodinFile> set = table.get(depends);
-		if (set == null) {
-			set = new HashSet<IRodinFile>();
-			table.put(depends, set);
-		}
-		set.clear();
-		set.addAll(Arrays.asList(files));
+		assertDependencies(depends, files);
+
+		table.put(depends, files);
 	}
-	
+
 	/**
 	 * Returns the files that the given file depends on.
 	 * 
@@ -44,31 +45,47 @@ public class DependenceTable {
 	 * @return the files from which it depends.
 	 */
 	public IRodinFile[] get(IRodinFile depends) {
-		final Set<IRodinFile> set = table.get(depends);
-		if (set == null || set.isEmpty()) {
+		final IRodinFile[] dependencies = table.get(depends);
+		if (dependencies == null || dependencies.length == 0) {
 			return NO_ELEMENTS;
 		}
-		return set.toArray(new IRodinFile[set.size()]);
+
+		return dependencies.clone();
 	}
 
+	/**
+	 * Returns the files that depend on the given one.
+	 * 
+	 * @param file
+	 *            the file from which to get dependents.
+	 * @return the dependent files.
+	 */
 	public IRodinFile[] getDependents(IRodinFile file) {
-		// TODO costly: consider caching a reverse table.
 		List<IRodinFile> result = new ArrayList<IRodinFile>();
-		
+
 		for (IRodinFile f : table.keySet()) {
-			if (table.get(f).contains(file)) {
+			if (Arrays.asList(table.get(f)).contains(file)) {
 				result.add(f);
 			}
 		}
 		return result.toArray(new IRodinFile[result.size()]);
 	}
-	
-	public void remove(IRodinFile depends) {
-		table.remove(depends);
-	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
+
+	private void assertDependencies(IRodinFile depends, IRodinFile[] files) {
+		Set<IRodinFile> filesSet = new HashSet<IRodinFile>(Arrays.asList(files));
+
+		if (filesSet.size() != files.length) {
+			throw new IllegalArgumentException(
+					"Redundancy in dependence files: " + files);
+		}
+		if (filesSet.contains(depends)) {
+			throw new IllegalArgumentException(
+					"Trying to add a self-dependence to file: " + depends);
+		}
+	}
+
 }
