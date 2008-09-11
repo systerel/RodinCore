@@ -4,10 +4,10 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IRodinIndex;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.IndexManager;
 
 public class IndexManagerTests extends AbstractRodinDBTests {

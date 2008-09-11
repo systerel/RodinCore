@@ -95,8 +95,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		cycle.put(file1, new IRodinFile[] { file2 });
 		cycle.put(file2, new IRodinFile[] { file1 });
 
-		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				cycle, f2ExportsElt2);
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(cycle,
+				f2ExportsElt2);
 
 		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
 
@@ -146,7 +146,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		RodinIndexer.register(indexer);
 
 		// file1 must already be known by the manager to be taken into account
-		// when resolving dependencies
+		// when resolving dependencies and export changes
 		manager.scheduleIndexing(file1);
 		indexer.clearOrder();
 
@@ -164,35 +164,58 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	}
 
 	public void testExportsUnchanged() throws Exception {
-//		// FIXME not implemented yet (only copy paste)
-//		ExportTable emptyExports = new ExportTable();
-//
-//		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-//				f1DepsOnf2, emptyExports);
-//		RodinIndexer.register(indexer);
-//
-//		// file1 must already be known by the manager to be taken into account
-//		// when resolving dependencies
-//		manager.scheduleIndexing(file1);
-//		indexer.clearOrder();
-//
-//		// file2 is requested to index, but file1 should not be indexed
-//		// again, as it depends on file2 but file2 has no exports
-//		IRodinFile[] toIndex = new IRodinFile[] { file2 };
-//		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
-//
-//		manager.scheduleIndexing(toIndex);
-//		RodinIndexer.deregister(indexer);
-//
-//		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
-//
-//		assertSameOrder(expectedOrder, actualOrder);
-//	
+
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				f1DepsOnf2, f2ExportsElt2);
+		RodinIndexer.register(indexer);
+
+		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+
+		// file1 and file2 must already be known by the manager to be taken into
+		// account when resolving dependencies and export changes
+		manager.scheduleIndexing(toIndex);
+		indexer.clearOrder();
+
+		// file2 is requested to index, but file1 should not be indexed
+		// again, even if it depends on file2, because file2 exports are
+		// unchanged
+		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+
+		manager.scheduleIndexing(file2);
+		RodinIndexer.deregister(indexer);
+
+		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
+
+		assertSameOrder(expectedOrder, actualOrder);
+
 	}
-	
+
 	public void testNameChangesOnly() throws Exception {
-		
+
+		// final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+		// f1DepsOnf2, f2ExportsElt2);
+		// RodinIndexer.register(indexer);
+		//
+		// IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+		//
+		// // file1 and file2 must already be known by the manager to be taken
+		// into
+		// // account when resolving dependencies and export changes
+		// manager.scheduleIndexing(toIndex);
+		// indexer.clearOrder();
+		//
+		// TODO modify elt2Name
+		// // file2 is requested to index, but file1 should not be indexed
+		// // again, even if it depends on file2, because file2 exports are
+		// // unchanged
+		// IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+		//
+		// manager.scheduleIndexing(file2);
+		// RodinIndexer.deregister(indexer);
+		//
+		// final IRodinFile[] actualOrder = indexer.getIndexingOrder();
+		//
+		// assertSameOrder(expectedOrder, actualOrder);
 	}
-	
-	
+
 }

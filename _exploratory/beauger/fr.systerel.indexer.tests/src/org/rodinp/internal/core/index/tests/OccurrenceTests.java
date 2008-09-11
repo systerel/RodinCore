@@ -4,10 +4,10 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinLocation;
 
 public class OccurrenceTests extends AbstractRodinDBTests {

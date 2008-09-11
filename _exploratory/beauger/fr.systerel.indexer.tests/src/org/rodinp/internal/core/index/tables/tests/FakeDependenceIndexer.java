@@ -7,7 +7,7 @@ import java.util.Map;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 
@@ -36,7 +36,7 @@ public class FakeDependenceIndexer implements IIndexer {
 		return exports.get(file);
 	}
 
-	public void index(IRodinFile file, IndexingFacade index) {
+	public void index(IRodinFile file, IIndexingFacade index) {
 		indexingOrder.add(file);
 	}
 

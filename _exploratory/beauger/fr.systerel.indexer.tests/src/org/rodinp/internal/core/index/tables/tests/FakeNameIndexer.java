@@ -11,8 +11,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IndexingFacade;
-import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.OccurrenceKind;
+import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
@@ -36,20 +38,23 @@ public class FakeNameIndexer implements IIndexer {
 		return true;
 	}
 
-	public void index(IRodinFile rodinFile, IndexingFacade index) {
+	public void index(IRodinFile rodinFile, IIndexingFacade index) {
 		indexedElements.clear();
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
+				final NamedElement decl = IndexTestsUtil.createNamedElement(
+						rodinFile, name);
+				index.addDeclaration(decl, name);
 				final HashSet<IInternalElement> set = new HashSet<IInternalElement>();
 				indexedElements.put(name, set);
+				set.add(decl);
 				for (int i = 0; i < numberEach; i++) {
 					final NamedElement element = IndexTestsUtil
 							.createNamedElement(rodinFile, name + "_DB" + i);
-					final Occurrence occurrence = IndexTestsUtil
-							.createDefaultOccurrence(rodinFile, this);
-					index.addOccurrence(element, name, occurrence);
-					set.add(element);
+					final IRodinLocation loc = RodinIndexer
+							.getRodinLocation(element);
+					index.addOccurrence(decl, OccurrenceKind.NULL, loc);
 					if (DEBUG) {
 						System.out.println(name + ": "
 								+ element.getElementName());

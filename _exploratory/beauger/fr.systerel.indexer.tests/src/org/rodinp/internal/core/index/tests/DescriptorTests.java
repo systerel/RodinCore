@@ -2,11 +2,11 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDescriptor;
-import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.Occurrence;
 
 public class DescriptorTests extends AbstractRodinDBTests {
 
@@ -21,12 +21,12 @@ public class DescriptorTests extends AbstractRodinDBTests {
 
 	private IRodinProject rodinProject;
 	private IRodinFile file;
-	private IDescriptor testDesc;
+	private Descriptor testDesc;
 	private NamedElement testElt;
 
 	private Occurrence testOccurrence;
 
-	private Occurrence[] occurrencesTestSet;
+	private IOccurrence[] occurrencesTestSet;
 
 	private static final String testEltName = "testElt";
 
@@ -63,19 +63,6 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		testDesc.addOccurrence(occ);
 
 		IndexTestsUtil.assertContains(testDesc, occ);
-	}
-
-	public void testAddAlienOccurrence() throws Exception {
-		IRodinFile alien = IndexTestsUtil.createRodinFile(rodinProject,
-				"alienFile.test");
-		Occurrence alienOccurrence = IndexTestsUtil
-				.createDefaultOccurrence(alien);
-
-		try {
-			testDesc.addOccurrence(alienOccurrence);
-		} catch (Exception e) {
-			fail("No exception should be raised when adding an alien occurrence");
-		}
 	}
 
 	public void testRemoveOccurrence() throws Exception {

@@ -13,13 +13,15 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDescriptor;
-import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IRodinIndex;
-import org.rodinp.core.index.IndexingFacade;
-import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IOccurrence;
+import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.IRodinIndex;
+import org.rodinp.internal.core.index.Occurrence;
 
 public class IndexTestsUtil {
 
@@ -71,13 +73,7 @@ public class IndexTestsUtil {
 				.getRodinLocation(element), indexer);
 	}
 
-	public static Occurrence createDefaultOccurrence(IRodinElement element,
-			IIndexer ind) {
-		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
-				.getRodinLocation(element), ind);
-	}
-
-	public static Occurrence[] generateOccurrencesTestSet(IInternalElement ie,
+	public static IOccurrence[] generateOccurrencesTestSet(IInternalElement ie,
 			int numEachKind) throws CoreException {
 
 		OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
@@ -91,6 +87,20 @@ public class IndexTestsUtil {
 			}
 		}
 		return result.toArray(new Occurrence[result.size()]);
+	}
+
+	public static void addOccurrencesTestSet(IInternalElement ie,
+			int numEachKind, IIndexingFacade index) throws CoreException {
+
+		OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
+				IndexTestsUtil.RefKind2.TEST_KIND_2 };
+		for (OccurrenceKind k : kinds) {
+			for (int i = 0; i < numEachKind; i++) {
+				final IRodinLocation loc = RodinIndexer.getRodinLocation(ie
+						.getRodinFile());
+				index.addOccurrence(ie, k, loc);
+			}
+		}
 	}
 
 	public static NamedElement createNamedElement(IRodinFile file,
@@ -112,17 +122,10 @@ public class IndexTestsUtil {
 				desc);
 	}
 
-	public static void addOccurrences(Occurrence[] occurrences,
-			IDescriptor descriptor) {
-		for (Occurrence occ : occurrences) {
+	public static void addOccurrences(IOccurrence[] occurrences,
+			Descriptor descriptor) {
+		for (IOccurrence occ : occurrences) {
 			descriptor.addOccurrence(occ);
-		}
-	}
-
-	public static void addOccurrences(IInternalElement element, String name,
-			Occurrence[] occurrences, IndexingFacade index) {
-		for (Occurrence occ : occurrences) {
-			index.addOccurrence(element, name, occ);
 		}
 	}
 
@@ -134,33 +137,33 @@ public class IndexTestsUtil {
 		assertLength(desc, expectedLength);
 	}
 
-	public static void assertContains(IDescriptor desc, Occurrence occ) {
+	public static void assertContains(IDescriptor desc, IOccurrence occ) {
 		assertNotNull(desc);
 		TestCase.assertTrue("occurrence not found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
-	public static void assertContainsNot(IDescriptor desc, Occurrence occ) {
+	public static void assertContainsNot(IDescriptor desc, IOccurrence occ) {
 		assertNotNull(desc);
 		TestCase.assertFalse("occurrence should not be found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
-	public static void assertContainsAll(IDescriptor desc, Occurrence[] occs) {
+	public static void assertContainsAll(IDescriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
-		for (Occurrence occ : occs) {
+		for (IOccurrence occ : occs) {
 			assertContains(desc, occ);
 		}
 	}
 
-	public static void assertContainsNone(IDescriptor desc, Occurrence[] occs) {
+	public static void assertContainsNone(IDescriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
-		for (Occurrence occ : occs) {
+		for (IOccurrence occ : occs) {
 			assertContainsNot(desc, occ);
 		}
 	}
 
-	public static void assertSameOccurrences(IDescriptor desc, Occurrence[] occs) {
+	public static void assertSameOccurrences(IDescriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
 		assertContainsAll(desc, occs);
 

@@ -3,9 +3,10 @@ package org.rodinp.internal.core.index.tests;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.IndexingFacade;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -45,7 +46,7 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 				IndexTestsUtil.defaultName);
 
 		final RodinIndex rodinIndex = new RodinIndex();
-		IndexingFacade index = new IndexingFacade(file, rodinIndex,
+		IIndexingFacade index = new IndexingFacade(file, indexer, rodinIndex,
 				new FileTable(), new NameTable(), new ExportTable());
 		indexer.index(file, index);
 

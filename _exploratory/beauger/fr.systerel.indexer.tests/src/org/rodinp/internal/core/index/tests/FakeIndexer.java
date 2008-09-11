@@ -8,8 +8,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IndexingFacade;
-import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.tests.basis.NamedElement;
 
 public class FakeIndexer implements IIndexer {
@@ -31,11 +30,11 @@ public class FakeIndexer implements IIndexer {
 
 	/**
 	 * Calls
-	 * {@link IndexTestsUtil#generateOccurrencesTestSet(org.rodinp.core.IInternalElement, int)}
+	 * {@link IndexTestsUtil#addOccurrencesTestSet(IInternalElement, int, IIndexingFacade)}
 	 * for every children of type {@link NamedElement#ELEMENT_TYPE} generating 3
 	 * occurrences of each kind.
 	 */
-	public void index(IRodinFile file, IndexingFacade index) {
+	public void index(IRodinFile file, IIndexingFacade index) {
 		try {
 
 			final IRodinElement[] fileElems = file
@@ -44,11 +43,9 @@ public class FakeIndexer implements IIndexer {
 			for (IRodinElement element : fileElems) {
 				NamedElement namedElt = (NamedElement) element;
 				final String name = namedElt.getElementName();
-				final Occurrence[] occurrences = IndexTestsUtil
-						.generateOccurrencesTestSet(namedElt, 3);
-
-				IndexTestsUtil.addOccurrences(namedElt, name, occurrences,
-						index);
+				index.addDeclaration(namedElt, name);
+				IndexTestsUtil
+						.addOccurrencesTestSet(namedElt, 3, index);
 			}
 
 		} catch (CoreException e) {

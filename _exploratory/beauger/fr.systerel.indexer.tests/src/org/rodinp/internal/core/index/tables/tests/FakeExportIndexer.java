@@ -5,7 +5,7 @@ import java.util.Map;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IndexingFacade;
+import org.rodinp.core.index.IIndexingFacade;
 
 public class FakeExportIndexer implements IIndexer {
 
@@ -19,7 +19,7 @@ public class FakeExportIndexer implements IIndexer {
 		return true;
 	}
 
-	public void index(IRodinFile file, IndexingFacade index) {
+	public void index(IRodinFile file, IIndexingFacade index) {
 		// do nothing
 	}
 
