@@ -1,6 +1,7 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
@@ -34,7 +35,8 @@ public class IndexingFacade implements IIndexingFacade {
 
 		if (!element.getRodinFile().equals(file)) {
 			throw new IllegalArgumentException(
-					"Element must be in indexed file: " + element);
+					"Element must be in indexed file: "
+							+ element.getRodinFile());
 		}
 
 		currentDescriptor = index.makeDescriptor(element, name);
@@ -47,7 +49,10 @@ public class IndexingFacade implements IIndexingFacade {
 	public void addOccurrence(IInternalElement element, OccurrenceKind kind,
 			IRodinLocation location) {
 
-		// TODO check constraints on arguments
+		if (!verifyOccurrence(element, kind, location)) {
+			throw new IllegalArgumentException(
+					"Incorrect occurrence for element: " + element);
+		}
 
 		fetchCurrentDescriptor(element);
 		final Occurrence occurrence = new Occurrence(kind, location);
@@ -60,10 +65,29 @@ public class IndexingFacade implements IIndexingFacade {
 			return;
 		}
 		currentDescriptor = index.getDescriptor(element);
+		// FIXME could be not null from previous indexing (must not (?)
+		// be declared during this pass). The indexer can not know that.
+		// Verify that getting descriptors of alien elements (declared outside)
+		// is allowed.
 		if (currentDescriptor == null) {
 			throw new IllegalArgumentException("Element not declared: "
 					+ element);
 		}
+	}
+
+	private boolean verifyOccurrence(IInternalElement element,
+			OccurrenceKind kind, IRodinLocation location) {
+		// TODO: change constraint
+		// accept an alien IRodinFile only when it is referenced in the
+		// dependence table and there is a concomitant reference in export table.
+		final IRodinElement locElem = location.getElement();
+		if (locElem instanceof IRodinFile) {
+			return locElem.equals(file);
+		}
+		if (locElem instanceof IInternalElement) {
+			return ((IInternalElement) locElem).getRodinFile().equals(file);
+		}
+		return false;
 	}
 
 }

@@ -14,6 +14,7 @@ public final class RodinIndex {
 	}
 
 	// FIXME perhaps we do not really want to have null returned
+	// in this case remove from all test units assertNotNull(desc) 
 	public Descriptor getDescriptor(Object key) {
 		return map.get(key);
 	}
@@ -29,6 +30,7 @@ public final class RodinIndex {
 			descriptor = new Descriptor(name, element);
 			map.put(element, descriptor);
 		} else { // requesting to make an already existing descriptor
+			// TODO dangerous: always throw an exception
 			if (descriptor.getElement() != element
 					|| !descriptor.getName().equals(name)) {
 				throw new IllegalArgumentException("Descriptor for "

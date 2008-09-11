@@ -46,10 +46,6 @@ public final class Descriptor {
 		occurrences.add(occurrence);
 	}
 
-	public void removeOccurrence(Occurrence occurrence) {
-		occurrences.remove(occurrence);
-	}
-
 	public void removeOccurrences(IRodinFile file) {
 		final Set<Occurrence> toRemove = new HashSet<Occurrence>();
 		for (Occurrence occ : occurrences) {
@@ -58,10 +54,6 @@ public final class Descriptor {
 			}
 		}
 		occurrences.removeAll(toRemove);
-	}
-	
-	public void clearOccurrences() {
-		occurrences.clear();
 	}
 
 	private boolean isInSameFile(IRodinLocation location, IRodinFile file) {
@@ -73,23 +65,6 @@ public final class Descriptor {
 		}
 		return false;
 	}
-
-//	private boolean verifyOccurrence(Occurrence occ) {
-//		// TODO: change constraint
-//		// accept an alien IRodinFile
-//		// when it is referenced in the dependency table
-//		// therefore, the verification has to be
-//		// moved to the IndexingFacade
-//		final IRodinElement locElem = occ.getLocation().getElement();
-//		final IRodinFile rodinFile = element.getRodinFile();
-//		if (locElem instanceof IRodinFile) {
-//			return locElem == rodinFile;
-//		}
-//		if (locElem instanceof IInternalElement) {
-//			return ((IInternalElement) locElem).getRodinFile() == rodinFile;
-//		}
-//		return false;
-//	}
 
 	// DEBUG
 	@Override

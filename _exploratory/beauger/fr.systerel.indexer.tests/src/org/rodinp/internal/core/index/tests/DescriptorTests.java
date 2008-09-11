@@ -23,10 +23,6 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	private Descriptor testDesc;
 	private NamedElement testElt;
 
-	private Occurrence testOccurrence;
-
-	private Occurrence[] occurrencesTestSet;
-
 	private static final String testEltName = "testElt";
 
 	@Override
@@ -36,15 +32,11 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		file = IndexTestsUtil.createRodinFile(rodinProject, "desc.test");
 		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
 		testDesc = new Descriptor(testEltName, testElt);
-		occurrencesTestSet = IndexTestsUtil.generateOccurrencesTestSet(testElt,
-				3);
-		testOccurrence = IndexTestsUtil.createDefaultOccurrence(testElt);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		testDesc.clearOccurrences();
 		testElt = null;
 		super.tearDown();
 	}
@@ -64,15 +56,6 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		IndexTestsUtil.assertContains(testDesc, occ);
 	}
 
-	public void testRemoveOccurrence() throws Exception {
-		IndexTestsUtil.addOccurrences(occurrencesTestSet, testDesc);
-		testDesc.addOccurrence(testOccurrence);
-
-		testDesc.removeOccurrence(testOccurrence);
-
-		IndexTestsUtil.assertContainsNot(testDesc, testOccurrence);
-	}
-
 	public void testRemoveOccurrences() throws Exception {
 		Occurrence friendOcc = IndexTestsUtil.createDefaultOccurrence(testElt);
 		IRodinFile alien = IndexTestsUtil.createRodinFile(rodinProject, "alienFile.test");
@@ -85,14 +68,6 @@ public class DescriptorTests extends AbstractRodinDBTests {
 
 		IndexTestsUtil.assertContainsNot(testDesc, friendOcc);
 		IndexTestsUtil.assertContains(testDesc, alienOcc);
-	}
-
-	public void testClearOccurrences() throws Exception {
-		IndexTestsUtil.addOccurrences(occurrencesTestSet, testDesc);
-
-		testDesc.clearOccurrences();
-
-		IndexTestsUtil.assertContainsNone(testDesc, occurrencesTestSet);
 	}
 
 }
