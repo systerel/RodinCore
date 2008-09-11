@@ -30,10 +30,6 @@ public class ContextIndexer implements IIndexer {
 
 	private FormulaFactory ff = FormulaFactory.getDefault();
 
-	public boolean canIndex(IRodinFile file) {
-		return isContextFile(file);
-	}
-
 	private boolean isContextFile(IRodinFile file) {
 		return file instanceof IContextFile;
 	}

@@ -17,19 +17,18 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.index.RodinIndex;
 
 public class ContextIndexerTests extends ModifyingResourceTests {
 
+	// FIXME only have a client point of view
 	private static final boolean DEBUG = false;
 
 	private static class TestConstant {
@@ -96,11 +95,10 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	protected void setUp() throws Exception {
 		project = createRodinProject("P");
-		RodinIndexer.register(contextIndexer);
+		RodinIndexer.register(contextIndexer, IContextFile.ELEMENT_TYPE);
 	}
 
 	protected void tearDown() throws Exception {
-		RodinIndexer.deregister(contextIndexer);
 		manager.getIndex(project).clear();
 		deleteProject("P");
 	}
@@ -111,14 +109,14 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	 * 
 	 * @throws CoreException
 	 */
-	private IDescriptor makeConstantDescriptor(TestConstant constant,
+	private Descriptor makeConstantDescriptor(TestConstant constant,
 			TestAxiom axiom, IContextFile file, int start, int end)
 			throws CoreException {
 		IRodinProject tmpProject = createRodinProject("tmpPrj");
 		IConstant tmpCst = file.getConstant(constant.elementName);
 		IAxiom tmpAxm = file.getAxiom(axiom.name);
 
-		IRodinIndex tmpIndex = manager.getIndex(tmpProject);
+		RodinIndex tmpIndex = manager.getIndex(tmpProject);
 		Descriptor descriptor = (Descriptor) tmpIndex.makeDescriptor(tmpCst,
 				constant.identifierString);
 
@@ -140,20 +138,20 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	private static void addOccurrence(IRodinLocation loc,
 			EventBOccurrenceKind kind, Descriptor descriptor, IIndexer indexer) {
 
-		final IOccurrence declaration = new Occurrence(kind, loc, indexer);
+		final Occurrence declaration = new Occurrence(kind, loc);
 		descriptor.addOccurrence(declaration);
 	}
 
-	private static void assertIndex(IDescriptor[] expectedDescriptors,
-			IRodinIndex index) {
-		final IDescriptor[] actDescs = index.getDescriptors();
+	private static void assertIndex(Descriptor[] expectedDescriptors,
+			RodinIndex index) {
+		final Descriptor[] actDescs = index.getDescriptors();
 
 		assertEquals("bad number of descriptors", expectedDescriptors.length,
 				actDescs.length);
 
-		for (IDescriptor exp : expectedDescriptors) {
-			IDescriptor actSameElem = null;
-			for (IDescriptor act : actDescs) {
+		for (Descriptor exp : expectedDescriptors) {
+			Descriptor actSameElem = null;
+			for (Descriptor act : actDescs) {
 				if (act.getName().equals(exp.getName())) {
 					actSameElem = act;
 					break;
@@ -169,17 +167,17 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	 * Based on the hypothesis that there are only 2 occurrences: one
 	 * declaration and one reference
 	 */
-	private static void assertDescriptor(IDescriptor expected,
-			IDescriptor actual) {
-		IOccurrence[] expOccs = expected.getOccurrences();
-		IOccurrence[] actOccs = actual.getOccurrences();
+	private static void assertDescriptor(Descriptor expected,
+			Descriptor actual) {
+		Occurrence[] expOccs = expected.getOccurrences();
+		Occurrence[] actOccs = actual.getOccurrences();
 
 		assertEquals("bad number of occurrences for descriptor of "
 				+ actual.getName(), expOccs.length, actOccs.length);
 
-		for (IOccurrence occ : expOccs) {
-			IOccurrence actSameKind = null;
-			for (IOccurrence act : actOccs) {
+		for (Occurrence occ : expOccs) {
+			Occurrence actSameKind = null;
+			for (Occurrence act : actOccs) {
 				if (act.getKind() == occ.getKind()) {
 					actSameKind = act;
 					break;
@@ -192,7 +190,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	}
 
-	private static void assertOccurrence(IOccurrence expected, IOccurrence actual) {
+	private static void assertOccurrence(Occurrence expected, Occurrence actual) {
 		assertEquals("bad occurrence kind", expected.getKind(), actual
 				.getKind());
 		assertLocation(expected.getLocation(), actual.getLocation());
@@ -214,7 +212,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		assertEquals("bad end location", end, loc.getCharEnd());
 	}
 
-	private void fillTestFile(IContextFile file, List<IDescriptor> descriptors)
+	private void fillTestFile(IContextFile file, List<Descriptor> descriptors)
 			throws CoreException {
 
 		final String S1 = "S1";
@@ -228,9 +226,9 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		addConstants(file, C1, C2);
 		addAxioms(file, A1, A2);
 
-		final IDescriptor C1Descriptor = makeConstantDescriptor(C1, A1, file,
+		final Descriptor C1Descriptor = makeConstantDescriptor(C1, A1, file,
 				0, 1);
-		final IDescriptor C2Descriptor = makeConstantDescriptor(C2, A2, file,
+		final Descriptor C2Descriptor = makeConstantDescriptor(C2, A2, file,
 				2, 4);
 
 		descriptors.add(C1Descriptor);
@@ -253,16 +251,16 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	public void testCtxIndBasicCase() throws Exception {
 		IContextFile file = createContextFile("basicCtx.buc");
-		List<IDescriptor> descList = new ArrayList<IDescriptor>();
+		List<Descriptor> descList = new ArrayList<Descriptor>();
 
 		fillTestFile(file, descList);
 
-		IDescriptor[] expectedResult = descList
-				.toArray(new IDescriptor[descList.size()]);
+		Descriptor[] expectedResult = descList
+				.toArray(new Descriptor[descList.size()]);
 
 		manager.scheduleIndexing(file);
 
-		IRodinIndex index = manager.getIndex(file.getRodinProject());
+		RodinIndex index = manager.getIndex(file.getRodinProject());
 		if (DEBUG) {
 			System.out.println("Basic Case");
 			System.out.println(index.toString());
@@ -272,11 +270,11 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	public void testCtxIndEmptyFile() throws Exception {
 		final IContextFile emptyFile = createContextFile("empty.buc");
-		final IDescriptor[] expectedResult = new IDescriptor[] {};
+		final Descriptor[] expectedResult = new Descriptor[] {};
 
 		manager.scheduleIndexing(emptyFile);
 
-		IRodinIndex index = manager.getIndex(emptyFile.getRodinProject());
+		RodinIndex index = manager.getIndex(emptyFile.getRodinProject());
 		if (DEBUG) {
 			System.out.println("Empty File");
 			System.out.println(index.toString());
