@@ -3,9 +3,7 @@ package org.eventb.core.indexer;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
@@ -16,12 +14,6 @@ public class EventBIndexUtil {
 		if (alloc == Integer.MAX_VALUE)
 			throw new IndexOutOfBoundsException();
 		return "n" + alloc++ + "_" + identifierString;
-	}
-
-	public static Occurrence makeDeclaration(IRodinElement file,
-			IIndexer indexer) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(file);
-		return new Occurrence(EventBOccurrenceKind.DECLARATION, loc, indexer);
 	}
 
 	/**

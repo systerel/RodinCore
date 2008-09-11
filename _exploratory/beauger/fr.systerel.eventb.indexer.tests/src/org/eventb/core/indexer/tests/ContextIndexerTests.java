@@ -9,7 +9,6 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.indexer.ContextIndexer;
 import org.eventb.core.indexer.EventBIndexUtil;
 import org.eventb.core.indexer.EventBOccurrenceKind;
@@ -20,12 +19,14 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IRodinIndex;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.Occurrence;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.Occurrence;
 
 public class ContextIndexerTests extends ModifyingResourceTests {
 
@@ -52,7 +53,6 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	}
 
 	private static IRodinProject project;
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
 	private static final IndexManager manager = IndexManager.getDefault();
 	private static final IIndexer contextIndexer = new ContextIndexer();
 
@@ -119,7 +119,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		IAxiom tmpAxm = file.getAxiom(axiom.name);
 
 		IRodinIndex tmpIndex = manager.getIndex(tmpProject);
-		IDescriptor descriptor = tmpIndex.makeDescriptor(tmpCst,
+		Descriptor descriptor = (Descriptor) tmpIndex.makeDescriptor(tmpCst,
 				constant.identifierString);
 
 		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
@@ -138,9 +138,9 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	}
 
 	private static void addOccurrence(IRodinLocation loc,
-			EventBOccurrenceKind kind, IDescriptor descriptor, IIndexer indexer) {
+			EventBOccurrenceKind kind, Descriptor descriptor, IIndexer indexer) {
 
-		final Occurrence declaration = new Occurrence(kind, loc, indexer);
+		final IOccurrence declaration = new Occurrence(kind, loc, indexer);
 		descriptor.addOccurrence(declaration);
 	}
 
@@ -171,15 +171,15 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	 */
 	private static void assertDescriptor(IDescriptor expected,
 			IDescriptor actual) {
-		Occurrence[] expOccs = expected.getOccurrences();
-		Occurrence[] actOccs = actual.getOccurrences();
+		IOccurrence[] expOccs = expected.getOccurrences();
+		IOccurrence[] actOccs = actual.getOccurrences();
 
 		assertEquals("bad number of occurrences for descriptor of "
 				+ actual.getName(), expOccs.length, actOccs.length);
 
-		for (Occurrence occ : expOccs) {
-			Occurrence actSameKind = null;
-			for (Occurrence act : actOccs) {
+		for (IOccurrence occ : expOccs) {
+			IOccurrence actSameKind = null;
+			for (IOccurrence act : actOccs) {
 				if (act.getKind() == occ.getKind()) {
 					actSameKind = act;
 					break;
@@ -192,10 +192,9 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	}
 
-	private static void assertOccurrence(Occurrence expected, Occurrence actual) {
+	private static void assertOccurrence(IOccurrence expected, IOccurrence actual) {
 		assertEquals("bad occurrence kind", expected.getKind(), actual
 				.getKind());
-		assertEquals("bad indexer", expected.getIndexer(), actual.getIndexer());
 		assertLocation(expected.getLocation(), actual.getLocation());
 	}
 

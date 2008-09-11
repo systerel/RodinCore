@@ -20,9 +20,9 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.IndexingFacade;
-import org.rodinp.core.index.Occurrence;
+import org.rodinp.core.index.RodinIndexer;
 
 public class ContextIndexer implements IIndexer {
 
@@ -38,7 +38,7 @@ public class ContextIndexer implements IIndexer {
 		return file instanceof IContextFile;
 	}
 
-	public void index(IRodinFile file, IndexingFacade index) {
+	public void index(IRodinFile file, IIndexingFacade index) {
 
 		if (!isContextFile(file)) {
 			return;
@@ -87,7 +87,7 @@ public class ContextIndexer implements IIndexer {
 		return result;
 	}
 
-	private void indexConstants(IContextFile file, IndexingFacade index)
+	private void indexConstants(IContextFile file, IIndexingFacade index)
 			throws RodinDBException {
 		IConstant[] constants = file.getConstants();
 
@@ -117,7 +117,7 @@ public class ContextIndexer implements IIndexer {
 
 	private void indexMatchingIdents(
 			final Map<FreeIdentifier, IIdentifierElement> matchingIdents,
-			IndexingFacade index, IAxiom axiom, Predicate pred) {
+			IIndexingFacade index, IAxiom axiom, Predicate pred) {
 
 		for (FreeIdentifier ident : matchingIdents.keySet()) {
 
@@ -145,17 +145,17 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	private void indexConstantDeclaration(IConstant constant,
-			String constantName, IndexingFacade index) {
-		Occurrence occ = EventBIndexUtil.makeDeclaration(constant
-				.getRodinFile(), this);
-		index.addOccurrence(constant, constantName, occ);
+			String constantName, IIndexingFacade index) {
+		index.addDeclaration(constant, constantName);
+		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
+		.getRodinFile());
+		index.addOccurrence(constant, EventBOccurrenceKind.DECLARATION, loc);
 	}
 
 	private void indexConstantReference(IConstant constant, String name,
-			IRodinLocation loc, IndexingFacade index) {
-		final Occurrence occ = new Occurrence(EventBOccurrenceKind.REFERENCE,
-				loc, this);
-		index.addOccurrence(constant, name, occ);
+			IRodinLocation loc, IIndexingFacade index) {
+		index.addOccurrence(constant, EventBOccurrenceKind.REFERENCE,
+				loc);
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
