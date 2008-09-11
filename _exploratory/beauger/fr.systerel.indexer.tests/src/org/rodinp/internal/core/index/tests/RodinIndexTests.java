@@ -5,7 +5,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.RodinIndex;
 
 public class RodinIndexTests extends AbstractRodinDBTests {
@@ -19,7 +18,7 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	private static NamedElement element;
 	private static NamedElement element2;
 
-	private static final IRodinIndex index = new RodinIndex();
+	private static final RodinIndex index = new RodinIndex();
 	private static final String name = "eltName";
 	private static final String name2 = "eltName2";
 

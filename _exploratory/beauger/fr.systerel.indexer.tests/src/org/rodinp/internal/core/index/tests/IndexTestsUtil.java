@@ -20,8 +20,8 @@ import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.index.RodinIndex;
 
 public class IndexTestsUtil {
 
@@ -110,7 +110,7 @@ public class IndexTestsUtil {
 		return el;
 	}
 
-	public static void assertNoSuchDescriptor(IRodinIndex index,
+	public static void assertNoSuchDescriptor(RodinIndex index,
 			IInternalElement element) {
 		IDescriptor desc = index.getDescriptor(element);
 		TestCase.assertNull("there should not be any descriptor for element "

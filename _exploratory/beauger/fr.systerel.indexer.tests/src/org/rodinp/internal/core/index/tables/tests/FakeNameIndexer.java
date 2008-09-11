@@ -34,10 +34,6 @@ public class FakeNameIndexer implements IIndexer {
 		indexedElements = new HashMap<String, Set<IInternalElement>>();
 	}
 
-	public boolean canIndex(IRodinFile rodinFile) {
-		return true;
-	}
-
 	public void index(IRodinFile rodinFile, IIndexingFacade index) {
 		indexedElements.clear();
 		try {

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDescriptor;
 
-public final class RodinIndex implements IRodinIndex {
+public final class RodinIndex {
 
 	private HashMap<Object, IDescriptor> map;
 

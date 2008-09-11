@@ -24,10 +24,6 @@ public class FakeDependenceIndexer implements IIndexer {
 		this.indexingOrder = new ArrayList<IRodinFile>();
 	}
 
-	public boolean canIndex(IRodinFile file) {
-		return true;
-	}
-
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return dependencies.get(file);
 	}

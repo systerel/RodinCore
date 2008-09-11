@@ -7,17 +7,6 @@ import org.rodinp.core.IRodinFile;
 
 public interface IIndexer {
 
-	/**
-	 * True iff the indexer can index the given file and compute its
-	 * dependencies.
-	 * 
-	 * @param file
-	 * @return a boolean indicating its capabilities at indexing the given file.
-	 */
-	
-	// TODO suppress this method and change register
-	public boolean canIndex(IRodinFile file);
-
 	public void index(IRodinFile file, IIndexingFacade index);
 
 	/**

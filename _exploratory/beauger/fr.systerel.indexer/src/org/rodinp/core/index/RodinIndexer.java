@@ -11,6 +11,7 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -32,16 +33,10 @@ public class RodinIndexer {
 	public static final int INVALID_LOCATION = 999;
 
 	/** To be moved to {@link RodinCore} */
-	//TODO add IRodinFileElementType argument
-	public static final void register(IIndexer indexer) {
-		IndexManager.getDefault().addIndexer(indexer);
+	public static final void register(IIndexer indexer, IFileElementType<?> fileType) {
+		IndexManager.getDefault().addIndexer(indexer, fileType);
 	}
-
-	/** To be moved to {@link RodinCore} */
-	public static final void deregister(IIndexer indexer) {
-		IndexManager.getDefault().removeIndexer(indexer);
-	}
-
+	
 	public static IRodinLocation getRodinLocation(IRodinElement element) {
 		return getRodinLocation(element, null);
 	}

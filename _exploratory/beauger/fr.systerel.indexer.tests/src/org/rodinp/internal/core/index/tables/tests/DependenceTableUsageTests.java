@@ -80,9 +80,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
 		IRodinFile[] expectedOrder = new IRodinFile[] { file2, file1 };
 
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file1.getElementType());
 		manager.scheduleIndexing(toIndex);
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
@@ -100,14 +100,13 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
 
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file1.getElementType());
 
 		try {
 			manager.scheduleIndexing(toIndex);
 		} catch (IllegalStateException e) {
 			assertTrue("Good exception but bad message", e.getMessage()
 					.contains("cycle"));
-			RodinIndexer.deregister(indexer);
 			return;
 		}
 		fail("A cycle in dependencies should raise IllegalStateException");
@@ -117,7 +116,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file1.getElementType());
 
 		// file1 must already be known by the manager to be taken into account
 		// when resolving dependencies
@@ -131,7 +130,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		IRodinFile[] expectedOrder = new IRodinFile[] { file2, file1 };
 
 		manager.scheduleIndexing(toIndex);
-		RodinIndexer.deregister(indexer);
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
@@ -143,7 +141,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				f1DepsOnf2, emptyExports);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file1.getElementType());
 
 		// file1 must already be known by the manager to be taken into account
 		// when resolving dependencies and export changes
@@ -156,7 +154,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
 
 		manager.scheduleIndexing(toIndex);
-		RodinIndexer.deregister(indexer);
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
@@ -167,7 +164,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file1.getElementType());
 
 		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
 
@@ -182,7 +179,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
 
 		manager.scheduleIndexing(file2);
-		RodinIndexer.deregister(indexer);
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 

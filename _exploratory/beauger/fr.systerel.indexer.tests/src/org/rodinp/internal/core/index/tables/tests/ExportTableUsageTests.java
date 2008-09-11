@@ -54,13 +54,12 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		elements.put(namedElement, "namedElementName");
 		elements.put(namedElement2, "namedElement2Name");
 		indexer = new FakeExportIndexer(elements);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		RodinIndexer.deregister(indexer);
 		elements.clear();
 		manager.clear();
 		super.tearDown();
@@ -82,9 +81,9 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		
 		// change exports
 		elements.put(namedElement, "expRenName1");
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 		indexer = new FakeExportIndexer(elements);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 		
 		// then index again file
 		manager.scheduleIndexing(file);
@@ -103,9 +102,9 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		
 		// change exports
 		elements.remove(namedElement2);
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 		indexer = new FakeExportIndexer(elements);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 		
 		// then index again file
 		manager.scheduleIndexing(file);
@@ -125,9 +124,9 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		// change exports
 		NamedElement eltAdd = IndexTestsUtil.createNamedElement(file, "eltAdd");
 		elements.put(eltAdd, "expAddName1");
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 		indexer = new FakeExportIndexer(elements);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 		
 		// then index again file
 		manager.scheduleIndexing(file);

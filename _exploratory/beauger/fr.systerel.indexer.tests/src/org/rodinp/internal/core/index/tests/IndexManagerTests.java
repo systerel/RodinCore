@@ -7,8 +7,8 @@ import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.IRodinIndex;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.RodinIndex;
 
 public class IndexManagerTests extends AbstractRodinDBTests {
 
@@ -26,13 +26,12 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		super.setUp();
 		project = createRodinProject("P");
 		file = IndexTestsUtil.createRodinFile(project, "indMan.test");
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		RodinIndexer.deregister(indexer);
 		manager.clear();
 		super.tearDown();
 	}
@@ -43,7 +42,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index = manager.getIndex(project);
+		final RodinIndex index = manager.getIndex(project);
 		final IDescriptor desc = index.getDescriptor(element);
 
 		IndexTestsUtil.assertDescriptor(desc, element,
@@ -60,7 +59,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final String element2Name = IndexTestsUtil.defaultName + "2";
 		final NamedElement element2 = new NamedElement(element2Name, file);
 
-		IRodinIndex index;
+		RodinIndex index;
 
 		// first indexing with element, without element2
 		manager.scheduleIndexing(file);
@@ -96,7 +95,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	}
 
 	public void testIndexNoIndexer() throws Exception {
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 		try {
 			manager.scheduleIndexing(file);
 		} catch (IllegalStateException e) {
@@ -119,9 +118,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		IRodinFile[] toIndex = new IRodinFile[] { file, file2 };
 		manager.scheduleIndexing(toIndex);
 
-		final IRodinIndex index1 = manager.getIndex(project);
+		final RodinIndex index1 = manager.getIndex(project);
 		final IDescriptor desc1 = index1.getDescriptor(elementF1);
-		final IRodinIndex index2 = manager.getIndex(project2);
+		final RodinIndex index2 = manager.getIndex(project2);
 		final IDescriptor desc2 = index2.getDescriptor(elementF2);
 
 		IndexTestsUtil.assertDescriptor(desc1, elementF1,

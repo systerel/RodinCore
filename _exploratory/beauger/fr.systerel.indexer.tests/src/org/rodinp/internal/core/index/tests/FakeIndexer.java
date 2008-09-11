@@ -24,10 +24,6 @@ public class FakeIndexer implements IIndexer {
 	// this.index = index;
 	// }
 
-	public boolean canIndex(IRodinFile file) {
-		return true;
-	}
-
 	/**
 	 * Calls
 	 * {@link IndexTestsUtil#addOccurrencesTestSet(IInternalElement, int, IIndexingFacade)}

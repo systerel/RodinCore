@@ -35,13 +35,12 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
 		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
 		fileElements = new NamedElement[] { namedElement, namedElement2 };
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		RodinIndexer.deregister(indexer);
 		manager.clear();
 		super.tearDown();
 	}

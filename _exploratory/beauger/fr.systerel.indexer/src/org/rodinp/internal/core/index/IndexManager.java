@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -35,7 +36,7 @@ public final class IndexManager {
 
 	private final ProjectMapping<DependenceTable> dependenceTables;
 
-	private Set<IIndexer> indexers;
+	private Map<IFileElementType<?>, List<IIndexer>> indexers;
 
 	private Set<IRodinFile> toBeIndexed;
 
@@ -56,8 +57,8 @@ public final class IndexManager {
 			}
 		};
 
-		indexers = new HashSet<IIndexer>();
-
+		indexers = new HashMap<IFileElementType<?>, List<IIndexer>>();
+		
 		fileTables = new ProjectMapping<FileTable>() {
 			@Override
 			protected FileTable createT() {
@@ -103,14 +104,19 @@ public final class IndexManager {
 	// // TODO: figure out a better use of the delta
 	// }
 
-	public void addIndexer(IIndexer indexer) {
-		indexers.add(indexer);
+	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
+		List<IIndexer> list = indexers.get(fileType);
+		if (list == null) {
+			list = new ArrayList<IIndexer>();
+			indexers.put(fileType, list);
+		}
+		list.add(indexer);
 	}
 
-	public void removeIndexer(IIndexer indexer) {
-		indexers.remove(indexer);
+	public void clearIndexers() {
+		indexers.clear();
 	}
-
+	
 	public void scheduleIndexing(IRodinFile file) {
 
 		toBeIndexed.add(file);
@@ -136,7 +142,7 @@ public final class IndexManager {
 
 			Set<IRodinFile> toIndex = toIndexSplit.get(project);
 
-			final IRodinIndex index = indexes.getMapping(project);
+			final RodinIndex index = indexes.getMapping(project);
 			final FileTable fileTable = fileTables.getMapping(project);
 			final NameTable nameTable = nameTables.getMapping(project);
 			final ExportTable exportTable = exportTables.getMapping(project);
@@ -150,7 +156,7 @@ public final class IndexManager {
 			for (IRodinFile file : indexingOrder) {
 				assertFileExists(file);
 
-				IIndexer indexer = getIndexerFor(file);
+				IIndexer indexer = getIndexerFor(file.getElementType());
 
 				clean(file, index, fileTable, nameTable);
 
@@ -183,7 +189,7 @@ public final class IndexManager {
 		final Set<IRodinFile> dependents = new HashSet<IRodinFile>();
 		
 		for (IRodinFile file : toIndex) {
-			final IIndexer indexer = getIndexerFor(file);
+			final IIndexer indexer = getIndexerFor(file.getElementType());
 			final IRodinFile[] dependFiles = indexer.getDependencies(file);
 			final Map<IInternalElement, String> newExports = indexer
 			.getExports(file);
@@ -287,23 +293,6 @@ public final class IndexManager {
 		}
 	}
 
-	// private Set<IRodinFile> getAffectedFiles(Set<IRodinFile> files,
-	// DependenceTable dependencies, ExportTable oldExports,
-	// ExportTable newExports) {
-	//
-	// Set<IRodinFile> result = new HashSet<IRodinFile>();
-	//
-	// for (IRodinFile file : files) {
-	// final Map<IInternalElement, String> oldExp = oldExports.get(file);
-	// final Map<IInternalElement, String> newExp = newExports.get(file);
-	//
-	// // FIXME attention : plutot implementer ce parcours en appliquant
-	// // les changements aux diverses tables
-	// }
-	//
-	// return result;
-	// }
-
 	private void assertFileExists(IRodinFile file) {
 		if (!file.exists()) {
 			toBeIndexed.remove(file);
@@ -312,17 +301,17 @@ public final class IndexManager {
 		}
 	}
 
-	private IIndexer getIndexerFor(IRodinFile file) {
-		for (IIndexer indexer : indexers) {
-			if (indexer.canIndex(file)) {
-				return indexer;
-			}
+	private IIndexer getIndexerFor(IFileElementType<? extends IRodinFile> fileType) {
+		final List<IIndexer> list = indexers.get(fileType);
+		if (list == null || list.isEmpty()) {
+			throw new IllegalStateException("unable to find an indexer for "
+					+ fileType);
 		}
-		throw new IllegalStateException("unable to find an indexer for "
-				+ file.getElementName());
+		// TODO manage indexers priorities
+		return list.get(0);
 	}
 
-	private void clean(IRodinFile file, final IRodinIndex index,
+	private void clean(IRodinFile file, final RodinIndex index,
 			final FileTable fileTable, final NameTable nameTable) {
 
 		for (IInternalElement element : fileTable.getElements(file)) {
@@ -371,7 +360,7 @@ public final class IndexManager {
 		}
 	}
 
-	public IRodinIndex getIndex(IRodinProject project) {
+	public RodinIndex getIndex(IRodinProject project) {
 		return indexes.getMapping(project);
 	}
 

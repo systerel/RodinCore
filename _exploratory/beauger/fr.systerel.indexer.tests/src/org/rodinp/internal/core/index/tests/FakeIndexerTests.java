@@ -34,13 +34,6 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 		super.tearDown();
 	}
 
-	public void testCanIndex() throws Exception {
-		boolean result;
-
-		result = indexer.canIndex(file);
-		assertTrue("FakeIndexer Should be able to index an IRodinFile", result);
-	}
-
 	public void testIndex() throws Exception {
 		NamedElement element = IndexTestsUtil.createNamedElement(file,
 				IndexTestsUtil.defaultName);

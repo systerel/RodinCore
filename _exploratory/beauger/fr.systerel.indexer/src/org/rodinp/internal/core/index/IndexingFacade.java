@@ -14,13 +14,13 @@ public class IndexingFacade implements IIndexingFacade {
 
 	private final IRodinFile file;
 	private final IIndexer indexer;
-	private final IRodinIndex index;
+	private final RodinIndex index;
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private Descriptor currentDescriptor;
 
 	public IndexingFacade(IRodinFile file, IIndexer indexer,
-			IRodinIndex rodinIndex, FileTable fileTable, NameTable nameTable,
+			RodinIndex rodinIndex, FileTable fileTable, NameTable nameTable,
 			ExportTable exportTable) {
 		this.file = file;
 		this.indexer = indexer;

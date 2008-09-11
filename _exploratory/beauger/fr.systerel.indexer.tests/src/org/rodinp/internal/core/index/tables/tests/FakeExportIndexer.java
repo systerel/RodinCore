@@ -15,10 +15,6 @@ public class FakeExportIndexer implements IIndexer {
 		this.elements = elements;
 	}
 
-	public boolean canIndex(IRodinFile file) {
-		return true;
-	}
-
 	public void index(IRodinFile file, IIndexingFacade index) {
 		// do nothing
 	}

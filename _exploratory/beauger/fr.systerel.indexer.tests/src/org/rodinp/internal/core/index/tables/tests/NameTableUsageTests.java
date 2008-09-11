@@ -29,13 +29,12 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = IndexTestsUtil.createRodinFile(rodinProject, "nameInd.test");
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		RodinIndexer.deregister(indexer);
 		manager.clear();
 		super.tearDown();
 	}
@@ -74,9 +73,9 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 		assertNameTable(file, name2, expectedName2, null);
 
 		// changing the indexer
-		RodinIndexer.deregister(indexer);
+		manager.clearIndexers();
 		indexer = new FakeNameIndexer(1, name1);
-		RodinIndexer.register(indexer);
+		RodinIndexer.register(indexer, file.getElementType());
 
 		// second indexing with 1 element for name1 only
 		manager.scheduleIndexing(file);
