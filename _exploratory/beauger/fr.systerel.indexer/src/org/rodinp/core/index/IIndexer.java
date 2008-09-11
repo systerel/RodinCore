@@ -13,7 +13,7 @@ public interface IIndexer {
 	 * Computes and returns the dependencies of the given file.
 	 * 
 	 * @param file
-	 * @return a non null array containing the file dependencies.
+	 * @return an array containing the file dependencies.
 	 */
 	public IRodinFile[] getDependencies(IRodinFile file);
 
