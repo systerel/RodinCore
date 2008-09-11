@@ -4,28 +4,27 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.index.IDescriptor;
 
 public final class RodinIndex {
 
-	private HashMap<Object, IDescriptor> map;
+	private HashMap<Object, Descriptor> map;
 
 	public RodinIndex() {
-		map = new HashMap<Object, IDescriptor>();
+		map = new HashMap<Object, Descriptor>();
 	}
 
 	// FIXME perhaps we do not really want to have null returned
-	public IDescriptor getDescriptor(Object key) {
+	public Descriptor getDescriptor(Object key) {
 		return map.get(key);
 	}
 
-	public IDescriptor[] getDescriptors() {
-		final Collection<IDescriptor> descriptors = map.values();
-		return descriptors.toArray(new IDescriptor[descriptors.size()]);
+	public Descriptor[] getDescriptors() {
+		final Collection<Descriptor> descriptors = map.values();
+		return descriptors.toArray(new Descriptor[descriptors.size()]);
 	}
 
-	public IDescriptor makeDescriptor(IInternalElement element, String name) {
-		IDescriptor descriptor = map.get(element);
+	public Descriptor makeDescriptor(IInternalElement element, String name) {
+		Descriptor descriptor = map.get(element);
 		if (descriptor == null) {
 			descriptor = new Descriptor(name, element);
 			map.put(element, descriptor);

@@ -39,7 +39,7 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 				IndexTestsUtil.defaultName);
 
 		final RodinIndex rodinIndex = new RodinIndex();
-		IIndexingFacade index = new IndexingFacade(file, indexer, rodinIndex,
+		IIndexingFacade index = new IndexingFacade(file, rodinIndex,
 				new FileTable(), new NameTable(), new ExportTable());
 		indexer.index(file, index);
 

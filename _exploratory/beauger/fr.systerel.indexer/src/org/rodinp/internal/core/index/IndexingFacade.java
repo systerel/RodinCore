@@ -2,7 +2,6 @@ package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.OccurrenceKind;
@@ -13,17 +12,14 @@ import org.rodinp.internal.core.index.tables.NameTable;
 public class IndexingFacade implements IIndexingFacade {
 
 	private final IRodinFile file;
-	private final IIndexer indexer;
 	private final RodinIndex index;
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private Descriptor currentDescriptor;
 
-	public IndexingFacade(IRodinFile file, IIndexer indexer,
-			RodinIndex rodinIndex, FileTable fileTable, NameTable nameTable,
-			ExportTable exportTable) {
+	public IndexingFacade(IRodinFile file, RodinIndex rodinIndex,
+			FileTable fileTable, NameTable nameTable, ExportTable exportTable) {
 		this.file = file;
-		this.indexer = indexer;
 		this.index = rodinIndex;
 		this.fileTable = fileTable;
 		this.nameTable = nameTable;
@@ -41,7 +37,7 @@ public class IndexingFacade implements IIndexingFacade {
 					"Element must be in indexed file: " + element);
 		}
 
-		currentDescriptor = (Descriptor) index.makeDescriptor(element, name);
+		currentDescriptor = index.makeDescriptor(element, name);
 		// fileTable.addElement(element, element.getRodinFile());
 		fileTable.addElement(element, file);
 		// FIXME check with specifications and enforce constraints
@@ -54,7 +50,7 @@ public class IndexingFacade implements IIndexingFacade {
 		// TODO check constraints on arguments
 
 		fetchCurrentDescriptor(element);
-		final Occurrence occurrence = new Occurrence(kind, location, indexer);
+		final Occurrence occurrence = new Occurrence(kind, location);
 		currentDescriptor.addOccurrence(occurrence);
 	}
 
@@ -63,7 +59,7 @@ public class IndexingFacade implements IIndexingFacade {
 				&& currentDescriptor.getElement() == element) {
 			return;
 		}
-		currentDescriptor = (Descriptor) index.getDescriptor(element);
+		currentDescriptor = index.getDescriptor(element);
 		if (currentDescriptor == null) {
 			throw new IllegalArgumentException("Element not declared: "
 					+ element);

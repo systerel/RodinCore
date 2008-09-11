@@ -2,9 +2,9 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.RodinIndex;
 
 public class RodinIndexTests extends AbstractRodinDBTests {
@@ -41,23 +41,23 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	}
 
 	public void testMakeDescriptor() throws Exception {
-		final IDescriptor descriptor = index.makeDescriptor(element, name);
+		final Descriptor descriptor = index.makeDescriptor(element, name);
 
 		IndexTestsUtil.assertDescriptor(descriptor, element, name, 0);
 	}
 
 	public void testGetDescriptor() throws Exception {
-		final IDescriptor descriptorMake = index.makeDescriptor(element, name);
+		final Descriptor descriptorMake = index.makeDescriptor(element, name);
 
-		final IDescriptor descriptorGet = index.getDescriptor(element);
+		final Descriptor descriptorGet = index.getDescriptor(element);
 
 		assertEquals("descriptors returned by make and get are different",
 				descriptorMake, descriptorGet);
 	}
 
 	public void testMakeDoubleDescriptor() throws Exception {
-		final IDescriptor descriptor1 = index.makeDescriptor(element, name);
-		IDescriptor descriptor2 = null;
+		final Descriptor descriptor1 = index.makeDescriptor(element, name);
+		Descriptor descriptor2 = null;
 		try {
 			descriptor2 = index.makeDescriptor(element, name);
 		} catch (IllegalArgumentException e) {
@@ -91,12 +91,12 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 		index.makeDescriptor(element, name);
 		index.makeDescriptor(element2, name2);
 
-		final IDescriptor[] descriptors = index.getDescriptors();
+		final Descriptor[] descriptors = index.getDescriptors();
 
 		assertEquals("bad number of descriptors", 2, descriptors.length);
 
-		IDescriptor desc = descriptors[0];
-		IDescriptor desc2 = descriptors[1];
+		Descriptor desc = descriptors[0];
+		Descriptor desc2 = descriptors[1];
 
 		if (desc.getElement() == element) {
 			IndexTestsUtil.assertDescriptor(desc, element, name, 0);

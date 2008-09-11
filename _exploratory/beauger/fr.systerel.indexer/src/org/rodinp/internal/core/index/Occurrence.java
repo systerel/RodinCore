@@ -2,30 +2,22 @@ package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.OccurrenceKind;
 
-public class Occurrence implements IOccurrence {
+public class Occurrence {
 	private final OccurrenceKind kind;
 	private final IRodinLocation location;
-	private final IIndexer indexer;
 
-	public Occurrence(OccurrenceKind kind, IRodinLocation location,
-			IIndexer indexer) {
+	public Occurrence(OccurrenceKind kind, IRodinLocation location) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
 		if (location == null) {
 			throw new NullPointerException("null location");
 		}
-		if (indexer == null) {
-			throw new NullPointerException("null indexer");
-		}
 		this.kind = kind;
 		this.location = location;
-		this.indexer = indexer;
 	}
 
 	public OccurrenceKind getKind() {
@@ -34,10 +26,6 @@ public class Occurrence implements IOccurrence {
 
 	public IRodinLocation getLocation() {
 		return location;
-	}
-
-	public IIndexer getIndexer() {
-		return indexer;
 	}
 
 	// DEBUG

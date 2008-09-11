@@ -2,7 +2,6 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.tests.AbstractRodinDBTests;
@@ -16,7 +15,6 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	private final FakeIndexer indexer = new FakeIndexer();
 	private final OccurrenceKind defaultKind = OccurrenceKind.NULL;
 	private IRodinLocation location;
 	private Occurrence occ;
@@ -31,10 +29,6 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		assertEquals("Field OccurrenceKind in Occurrence is not correct", expected, actual);
 	}
 
-	private static void assertIndexer(IIndexer expected, IIndexer actual) {
-		assertEquals("Field IIndexer in Occurrence is not correct", expected, actual);
-	}
-	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -45,7 +39,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 
 		location = new RodinLocation(elem, null,
 				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);
-		occ = new Occurrence(defaultKind, location, indexer);
+		occ = new Occurrence(defaultKind, location);
 	}
 
 	@Override
@@ -57,7 +51,6 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 	public void testConstructor() throws Exception {
 		assertKind(defaultKind, occ.getKind());
 		assertLocation(location, occ.getLocation());
-		assertIndexer(indexer, occ.getIndexer());
 	}
 
 }

@@ -161,7 +161,7 @@ public final class IndexManager {
 				clean(file, index, fileTable, nameTable);
 
 				final IIndexingFacade indexingFacade = new IndexingFacade(file,
-						indexer, index, fileTable, nameTable, exportTable);
+						index, fileTable, nameTable, exportTable);
 
 				indexer.index(file, indexingFacade);
 			}
@@ -315,7 +315,7 @@ public final class IndexManager {
 			final FileTable fileTable, final NameTable nameTable) {
 
 		for (IInternalElement element : fileTable.getElements(file)) {
-			final Descriptor descriptor = (Descriptor) index
+			final Descriptor descriptor = index
 					.getDescriptor(element);
 			final String name = descriptor.getName();
 			nameTable.remove(name, element);

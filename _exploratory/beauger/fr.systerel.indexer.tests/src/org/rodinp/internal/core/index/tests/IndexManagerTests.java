@@ -2,11 +2,11 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDescriptor;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.RodinIndex;
 
@@ -43,7 +43,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 
 		final RodinIndex index = manager.getIndex(project);
-		final IDescriptor desc = index.getDescriptor(element);
+		final Descriptor desc = index.getDescriptor(element);
 
 		IndexTestsUtil.assertDescriptor(desc, element,
 				IndexTestsUtil.defaultName, 6);
@@ -65,7 +65,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 
 		index = manager.getIndex(project);
-		final IDescriptor descElement = index.getDescriptor(element);
+		final Descriptor descElement = index.getDescriptor(element);
 
 		IndexTestsUtil.assertDescriptor(descElement, element, elementName, 6);
 		IndexTestsUtil.assertNoSuchDescriptor(index, element2);
@@ -77,7 +77,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 
 		index = manager.getIndex(project);
-		final IDescriptor descElement2 = index.getDescriptor(element2);
+		final Descriptor descElement2 = index.getDescriptor(element2);
 
 		IndexTestsUtil.assertNoSuchDescriptor(index, element);
 		IndexTestsUtil
@@ -119,9 +119,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(toIndex);
 
 		final RodinIndex index1 = manager.getIndex(project);
-		final IDescriptor desc1 = index1.getDescriptor(elementF1);
+		final Descriptor desc1 = index1.getDescriptor(elementF1);
 		final RodinIndex index2 = manager.getIndex(project2);
-		final IDescriptor desc2 = index2.getDescriptor(elementF2);
+		final Descriptor desc2 = index2.getDescriptor(elementF2);
 
 		IndexTestsUtil.assertDescriptor(desc1, elementF1,
 				el1Name, 6);

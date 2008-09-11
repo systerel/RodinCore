@@ -2,7 +2,6 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
@@ -26,7 +25,7 @@ public class DescriptorTests extends AbstractRodinDBTests {
 
 	private Occurrence testOccurrence;
 
-	private IOccurrence[] occurrencesTestSet;
+	private Occurrence[] occurrencesTestSet;
 
 	private static final String testEltName = "testElt";
 
