@@ -23,16 +23,29 @@ public class ExportTable {
 		return new HashMap<IInternalElement, String>(map);
 	}
 
-	public void put(IRodinFile file, Map<IInternalElement, String> elements) {
-		table.put(file, elements);
+	/**
+	 * Overwrites any previous mapping from the given file to the element, and
+	 * from the given element to the name.
+	 * 
+	 * @param file
+	 * @param element
+	 * @param name
+	 */
+	public void add(IRodinFile file, IInternalElement element, String name) {
+		Map<IInternalElement, String> map = table.get(file);
+		if (map == null) {
+			map = new HashMap<IInternalElement, String>();
+			table.put(file, map);
+		}
+		map.put(element, name);
 	}
-	
+
 	public void remove(IRodinFile file) {
 		table.remove(file);
 	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
+
 }

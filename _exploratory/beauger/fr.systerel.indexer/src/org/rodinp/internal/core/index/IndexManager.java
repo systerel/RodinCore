@@ -13,7 +13,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -58,7 +57,7 @@ public final class IndexManager {
 		};
 
 		indexers = new HashMap<IFileElementType<?>, List<IIndexer>>();
-		
+
 		fileTables = new ProjectMapping<FileTable>() {
 			@Override
 			protected FileTable createT() {
@@ -116,7 +115,7 @@ public final class IndexManager {
 	public void clearIndexers() {
 		indexers.clear();
 	}
-	
+
 	public void scheduleIndexing(IRodinFile file) {
 
 		toBeIndexed.add(file);
@@ -136,36 +135,92 @@ public final class IndexManager {
 
 	private void launchIndexing(Set<IRodinFile> files) {
 
-		Map<IRodinProject, Set<IRodinFile>> toIndexSplit = splitIntoProjects(files);
+		final Map<IRodinProject, Set<IRodinFile>> toIndexSplit = splitIntoProjects(files);
 
 		for (IRodinProject project : toIndexSplit.keySet()) {
 
-			Set<IRodinFile> toIndex = toIndexSplit.get(project);
+			final Set<IRodinFile> toIndex = toIndexSplit.get(project);
 
 			final RodinIndex index = indexes.getMapping(project);
 			final FileTable fileTable = fileTables.getMapping(project);
 			final NameTable nameTable = nameTables.getMapping(project);
-			final ExportTable exports = exportTables.getMapping(project);
-			DependenceTable dependencies = dependenceTables.getMapping(project);
+			final ExportTable exportTable = exportTables.getMapping(project);
+			final DependenceTable dependTable = dependenceTables
+					.getMapping(project);
 
-			update(toIndex, dependencies, exports);
-			
-			IRodinFile[] indexingOrder = orderFilesToIndex(toIndex,
-					dependencies);
+			removeInexistent(toIndex, exportTable, dependTable);
+			if (toIndex.isEmpty()) {
+				return;
+			}
 
-			for (IRodinFile file : indexingOrder) {
-				assertFileExists(file);
+			updateDependencies(toIndex, dependTable);
 
-				IIndexer indexer = getIndexerFor(file.getElementType());
+			while (!toIndex.isEmpty()) {
+				// TODO can be quite long, possibly infinite if some problem are
+				// not detected => implement a timer
+
+				IRodinFile file = getNextFile(toIndex, dependTable);
+
+				final IIndexer indexer = getIndexerFor(file.getElementType());
 
 				clean(file, index, fileTable, nameTable);
 
-				final IIndexingFacade indexingFacade = new IndexingFacade(file,
-						index, fileTable, nameTable, exports, dependencies);
+				final IndexingFacade indexingFacade = new IndexingFacade(file,
+						index, fileTable, nameTable, exportTable, dependTable);
 
 				indexer.index(file, indexingFacade);
+
+				toIndex.remove(file);
+
+				if (indexingFacade.mustReindexDependents()) {
+					toIndex.addAll(Arrays.asList(dependTable
+							.getDependents(file)));
+				}
 			}
 		}
+	}
+
+	private void updateDependencies(Set<IRodinFile> toIndex,
+			DependenceTable dependTable) {
+	
+		for (IRodinFile file : toIndex) {
+			final IIndexer indexer = getIndexerFor(file.getElementType());
+			final IRodinFile[] dependFiles = indexer.getDependencies(file);
+			dependTable.put(file, dependFiles);
+		}
+	}
+
+	private IRodinFile getNextFile(Set<IRodinFile> files,
+			DependenceTable dependTable) {
+		
+		IRodinFile zeroDegree = null;
+		for (IRodinFile file : files) {
+			if (degree(file, dependTable, files) == 0) {
+				zeroDegree = file;
+			}
+		}
+		if (zeroDegree == null) {
+			throw new IllegalStateException(
+					"File dependencies contain one or more cycles");
+		}
+		return zeroDegree;
+	}
+
+	private void clean(IRodinFile file, final RodinIndex index,
+			final FileTable fileTable, final NameTable nameTable) {
+
+		for (IInternalElement element : fileTable.getElements(file)) {
+			final Descriptor descriptor = index.getDescriptor(element);
+			final String name = descriptor.getName();
+			nameTable.remove(name, element);
+
+			descriptor.removeOccurrences(file);
+
+			if (descriptor.getOccurrences().length == 0) {
+				index.removeDescriptor(element);
+			}
+		}
+		fileTable.removeElements(file);
 	}
 
 	private Map<IRodinProject, Set<IRodinFile>> splitIntoProjects(
@@ -183,55 +238,6 @@ public final class IndexManager {
 		return result;
 	}
 
-	private void update(Set<IRodinFile> toIndex,
-			DependenceTable dependencies, ExportTable exports) {
-
-		final Set<IRodinFile> dependents = new HashSet<IRodinFile>();
-		
-		for (IRodinFile file : toIndex) {
-			final IIndexer indexer = getIndexerFor(file.getElementType());
-			final IRodinFile[] dependFiles = indexer.getDependencies(file);
-			final Map<IInternalElement, String> newExports = indexer
-			.getExports(file);
-			// FIXME something to do according to exports change
-			if (!newExports.isEmpty() && !newExports.equals(exports.get(file))) {
-				final IRodinFile[] fileDeps = dependencies.getDependents(file);
-				dependents.addAll(Arrays.asList(fileDeps));
-			}
-			dependencies.put(file, dependFiles);
-			exports.put(file, newExports);
-		}
-		toIndex.addAll(dependents);
-	}
-	
-
-	private Integer max(Integer i, Integer j) {
-		return i > j ? i : j;
-	}
-
-	private IRodinFile[] orderFilesToIndex(Set<IRodinFile> files,
-			DependenceTable dependencies) {
-		Map<IRodinFile, Integer> degree = new HashMap<IRodinFile, Integer>();
-		Map<IRodinFile, Integer> level = new HashMap<IRodinFile, Integer>();
-
-		for (IRodinFile file : files) {
-			degree.put(file, degree(file, dependencies, files));
-			level.put(file, 0);
-		}
-
-		final int size = files.size();
-		for (int i = 0; i < size; i++) {
-			IRodinFile zeroDegree = getZeroDegree(degree);
-			if (zeroDegree == null) {
-				throw new IllegalStateException(
-						"File dependencies contain one or more cycles");
-			} else {
-				degree.put(zeroDegree, -1);
-				updateLevels(dependencies, degree, level, zeroDegree);
-			}
-		}
-		return flattenLevels(level);
-	}
 
 	private int degree(IRodinFile file, DependenceTable dependencies,
 			Set<IRodinFile> valuable) {
@@ -243,65 +249,28 @@ public final class IndexManager {
 		return dependents.size();
 	}
 
-	private IRodinFile getZeroDegree(Map<IRodinFile, Integer> degree) {
-		IRodinFile zeroDegree = null;
-		final Integer ZERO = new Integer(0);
-		for (IRodinFile file : degree.keySet()) {
-			if (degree.get(file).equals(ZERO)) {
-				zeroDegree = file;
-				break;
+	private void removeInexistent(Set<IRodinFile> files,
+			ExportTable exportTable, DependenceTable dependenceTable) {
+		List<IRodinFile> toRemove = new ArrayList<IRodinFile>();
+		for (IRodinFile f : files) {
+			if (!f.exists()) {
+				toRemove.add(f);
 			}
 		}
-		return zeroDegree;
+		cleanInexistent(toRemove, exportTable, dependenceTable);
+		files.removeAll(toRemove);
 	}
 
-	private IRodinFile[] flattenLevels(Map<IRodinFile, Integer> level) {
-		Map<Integer, Set<IRodinFile>> sortedLevels = new HashMap<Integer, Set<IRodinFile>>();
-		Integer maxLevel = new Integer(0);
-
-		for (IRodinFile file : level.keySet()) {
-			final Integer lvl = level.get(file);
-			maxLevel = max(maxLevel, lvl);
-			Set<IRodinFile> set = sortedLevels.get(lvl);
-			if (set == null) {
-				set = new HashSet<IRodinFile>();
-				sortedLevels.put(lvl, set);
-			}
-			set.add(file);
-		}
-
-		List<IRodinFile> result = new ArrayList<IRodinFile>();
-		for (Integer l = 0; l <= maxLevel; l++) {
-			final Set<IRodinFile> set = sortedLevels.get(l);
-			result.addAll(set);
-		}
-
-		return result.toArray(new IRodinFile[result.size()]);
-	}
-
-	private void updateLevels(DependenceTable dependencies,
-			Map<IRodinFile, Integer> degree, Map<IRodinFile, Integer> level,
-			IRodinFile zeroDegree) {
-		for (IRodinFile file : level.keySet()) {
-			final List<IRodinFile> list = Arrays.asList(dependencies.get(file));
-			if (list.contains(zeroDegree)) {
-				degree.put(file, degree.get(file) - 1);
-				level
-						.put(file, max(level.get(file),
-								level.get(zeroDegree) + 1));
-			}
+	private void cleanInexistent(List<IRodinFile> toRemove,
+			ExportTable exportTable, DependenceTable dependenceTable) {
+		for (IRodinFile file : toRemove) {
+			exportTable.remove(file);
+			dependenceTable.remove(file);
 		}
 	}
 
-	private void assertFileExists(IRodinFile file) {
-		if (!file.exists()) {
-			toBeIndexed.remove(file);
-			throw new IllegalArgumentException("cannot perform indexing: file "
-					+ file.getBareName() + " does not exist");
-		}
-	}
-
-	private IIndexer getIndexerFor(IFileElementType<? extends IRodinFile> fileType) {
+	private IIndexer getIndexerFor(
+			IFileElementType<? extends IRodinFile> fileType) {
 		final List<IIndexer> list = indexers.get(fileType);
 		if (list == null || list.isEmpty()) {
 			throw new IllegalStateException("unable to find an indexer for "
@@ -311,25 +280,7 @@ public final class IndexManager {
 		return list.get(0);
 	}
 
-	private void clean(IRodinFile file, final RodinIndex index,
-			final FileTable fileTable, final NameTable nameTable) {
-
-		for (IInternalElement element : fileTable.getElements(file)) {
-			final Descriptor descriptor = index
-					.getDescriptor(element);
-			final String name = descriptor.getName();
-			nameTable.remove(name, element);
-
-			descriptor.removeOccurrences(file);
-
-			if (descriptor.getOccurrences().length == 0) {
-				index.removeDescriptor(element);
-			}
-		}
-		fileTable.removeElements(file);
-	}
-
-	private abstract class ProjectMapping<T> {
+	private static abstract class ProjectMapping<T> {
 
 		private final Map<IRodinProject, T> map;
 
@@ -374,6 +325,10 @@ public final class IndexManager {
 
 	public ExportTable getExportTable(IRodinProject project) {
 		return exportTables.getMapping(project);
+	}
+
+	public DependenceTable getDependenceTable(IRodinProject project) {
+		return dependenceTables.getMapping(project);
 	}
 
 	public void saveAll() {

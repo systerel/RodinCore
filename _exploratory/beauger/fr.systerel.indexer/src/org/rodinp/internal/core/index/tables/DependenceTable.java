@@ -71,6 +71,26 @@ public class DependenceTable {
 		return result.toArray(new IRodinFile[result.size()]);
 	}
 
+	public void remove(IRodinFile file) {
+		// remove references in dependents
+		List<IRodinFile> depsToRemove = new ArrayList<IRodinFile>();
+		for (IRodinFile f : table.keySet()) {
+			final List<IRodinFile> list = new ArrayList<IRodinFile>(Arrays
+					.asList(table.get(f)));
+			if (list.remove(file)) {
+				if (list.isEmpty()) {
+					depsToRemove.add(f);
+				} else {
+					table.put(f, list.toArray(new IRodinFile[list.size()]));
+				}
+			}
+		}
+		for (IRodinFile f : depsToRemove) {
+			table.remove(f);			
+		}
+		table.remove(file);
+	}
+
 	public void clear() {
 		table.clear();
 	}
