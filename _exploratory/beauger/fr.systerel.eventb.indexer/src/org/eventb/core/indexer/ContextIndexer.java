@@ -16,7 +16,6 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
@@ -74,23 +73,15 @@ public class ContextIndexer implements IIndexer {
 		return result;
 	}
 
-	private Map<IInternalElement, String> mapToIdentifiers(
-			IIdentifierElement[] elements) throws RodinDBException {
-		Map<IInternalElement, String> result = new HashMap<IInternalElement, String>();
-		for (IIdentifierElement element : elements) {
-			result.put(element, element.getIdentifierString());
-		}
-		return result;
-	}
-
 	private void indexConstants(IContextFile file, IIndexingFacade index)
 			throws RodinDBException {
 		IConstant[] constants = file.getConstants();
 
-		// index declaration for each constant
+		// index declaration for each constant and export them
 		for (IConstant constant : constants) {
 			indexConstantDeclaration(constant, constant.getIdentifierString(),
 					index);
+			index.export(constant);
 		}
 
 		Map<String, IIdentifierElement> constantNames = extractIdentifiers(constants);
@@ -156,23 +147,6 @@ public class ContextIndexer implements IIndexer {
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return NO_DEPENDENCIES;
-	}
-
-	public Map<IInternalElement, String> getExports(IRodinFile file) {
-		if (!(file instanceof IContextFile)) {
-			return null;
-		}
-		final IContextFile ctxFile = (IContextFile) file;
-		Map<IInternalElement, String> result = null; 
-		try {
-			final IConstant[] constants = ctxFile.getConstants();
-			
-			result = mapToIdentifiers(constants);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
 	}
 
 
