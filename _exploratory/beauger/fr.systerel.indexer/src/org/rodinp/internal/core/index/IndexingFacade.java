@@ -1,11 +1,16 @@
 package org.rodinp.internal.core.index;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.OccurrenceKind;
+import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -16,22 +21,23 @@ public class IndexingFacade implements IIndexingFacade {
 	private final RodinIndex index;
 	private final FileTable fileTable;
 	private final NameTable nameTable;
+	private final ExportTable exports;
+	private final DependenceTable dependencies;
 	private Descriptor currentDescriptor;
 
 	public IndexingFacade(IRodinFile file, RodinIndex rodinIndex,
-			FileTable fileTable, NameTable nameTable, ExportTable exportTable) {
+			FileTable fileTable, NameTable nameTable, ExportTable exports,
+			DependenceTable dependencies) {
 		this.file = file;
 		this.index = rodinIndex;
 		this.fileTable = fileTable;
 		this.nameTable = nameTable;
+		this.exports = exports;
+		this.dependencies = dependencies;
 		this.currentDescriptor = null;
 	}
 
 	public void addDeclaration(IInternalElement element, String name) {
-		if (index.isDeclared(element)) {
-			throw new IllegalArgumentException(
-					"Element has already been declared: " + element);
-		}
 
 		if (!element.getRodinFile().equals(file)) {
 			throw new IllegalArgumentException(
@@ -39,17 +45,20 @@ public class IndexingFacade implements IIndexingFacade {
 							+ element.getRodinFile());
 		}
 
+		if (index.isDeclared(element)) {
+			throw new IllegalArgumentException(
+					"Element has already been declared: " + element);
+		}
+
 		currentDescriptor = index.makeDescriptor(element, name);
-		// fileTable.addElement(element, element.getRodinFile());
 		fileTable.addElement(element, file);
-		// FIXME check with specifications and enforce constraints
 		nameTable.put(name, element);
 	}
 
 	public void addOccurrence(IInternalElement element, OccurrenceKind kind,
 			IRodinLocation location) {
 
-		if (!verifyOccurrence(element, kind, location)) {
+		if (!verifyOccurrence(element, location)) {
 			throw new IllegalArgumentException(
 					"Incorrect occurrence for element: " + element);
 		}
@@ -65,10 +74,7 @@ public class IndexingFacade implements IIndexingFacade {
 			return;
 		}
 		currentDescriptor = index.getDescriptor(element);
-		// FIXME could be not null from previous indexing (must not (?)
-		// be declared during this pass). The indexer can not know that.
-		// Verify that getting descriptors of alien elements (declared outside)
-		// is allowed.
+
 		if (currentDescriptor == null) {
 			throw new IllegalArgumentException("Element not declared: "
 					+ element);
@@ -76,18 +82,31 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	private boolean verifyOccurrence(IInternalElement element,
-			OccurrenceKind kind, IRodinLocation location) {
-		// TODO: change constraint
-		// accept an alien IRodinFile only when it is referenced in the
-		// dependence table and there is a concomitant reference in export table.
+			IRodinLocation location) {
 		final IRodinElement locElem = location.getElement();
+		final IRodinFile locElemFile;
 		if (locElem instanceof IRodinFile) {
-			return locElem.equals(file);
+			locElemFile = (IRodinFile) locElem;
+		} else if (locElem instanceof IInternalElement) {
+			locElemFile = ((IInternalElement) locElem).getRodinFile();
+		} else {
+			return false;
 		}
-		if (locElem instanceof IInternalElement) {
-			return ((IInternalElement) locElem).getRodinFile().equals(file);
+		if (locElemFile.equals(file)) { // local occurrence (mandatory)
+			return element.getRodinFile().equals(file) // local element
+					|| isImported(element); // imported element
 		}
 		return false;
+	}
+
+	private boolean isImported(IInternalElement element) {
+		final IRodinFile elemFile = element.getRodinFile();
+
+		final List<IRodinFile> dependsOn = Arrays
+				.asList(dependencies.get(file));
+		final Map<IInternalElement, String> exported = exports.get(elemFile);
+
+		return dependsOn.contains(elemFile) && exported.containsKey(element);
 	}
 
 }

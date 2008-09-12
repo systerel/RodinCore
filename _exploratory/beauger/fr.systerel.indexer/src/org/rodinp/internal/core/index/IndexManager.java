@@ -145,10 +145,10 @@ public final class IndexManager {
 			final RodinIndex index = indexes.getMapping(project);
 			final FileTable fileTable = fileTables.getMapping(project);
 			final NameTable nameTable = nameTables.getMapping(project);
-			final ExportTable exportTable = exportTables.getMapping(project);
+			final ExportTable exports = exportTables.getMapping(project);
 			DependenceTable dependencies = dependenceTables.getMapping(project);
 
-			update(toIndex, dependencies, exportTable);
+			update(toIndex, dependencies, exports);
 			
 			IRodinFile[] indexingOrder = orderFilesToIndex(toIndex,
 					dependencies);
@@ -161,7 +161,7 @@ public final class IndexManager {
 				clean(file, index, fileTable, nameTable);
 
 				final IIndexingFacade indexingFacade = new IndexingFacade(file,
-						index, fileTable, nameTable, exportTable);
+						index, fileTable, nameTable, exports, dependencies);
 
 				indexer.index(file, indexingFacade);
 			}
