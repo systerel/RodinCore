@@ -1,8 +1,5 @@
 package org.rodinp.internal.core.index.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -52,10 +49,6 @@ public class FakeIndexer implements IIndexer {
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return new IRodinFile[0];
-	}
-
-	public Map<IInternalElement, String> getExports(IRodinFile file) {
-		return new HashMap<IInternalElement, String>();
 	}
 
 }

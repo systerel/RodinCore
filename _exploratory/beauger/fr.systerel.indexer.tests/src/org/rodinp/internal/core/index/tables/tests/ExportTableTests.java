@@ -64,35 +64,37 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	}
 
 	
-	public void testPutGet() throws Exception {
+	public void testAddGet() throws Exception {
 		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
 		expected.put(element1F1, name1F1);
 
-		table.put(file1, expected);
+		table.add(file1, element1F1, name1F1);
 		final Map<IInternalElement, String> actual = table.get(file1);
 
 		assertMap(expected, actual);
 	}
 
-	public void testPutGetSeveral() throws Exception {
+	public void testAddGetSeveral() throws Exception {
 		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
 		expected.put(element1F1, name1F1);
 		expected.put(element2F1, name2F1);
 
-		table.put(file1, expected);
+		table.add(file1, element1F1, name1F1);
+		table.add(file1, element2F1, name2F1);
 		final Map<IInternalElement, String> actual = table.get(file1);
 
 		assertMap(expected, actual);
 	}
 
-	public void testPutGetVariousFiles() throws Exception {
+	public void testAddGetVariousFiles() throws Exception {
 		Map<IInternalElement, String> expected1 = new HashMap<IInternalElement, String>();
 		expected1.put(element1F1, name1F1);
 		Map<IInternalElement, String> expected2 = new HashMap<IInternalElement, String>();
 		expected2.put(element1F2, name1F2);
 
-		table.put(file1, expected1);
-		table.put(file2, expected2);
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
+		
 		final Map<IInternalElement, String> actual1 = table.get(file1);
 		final Map<IInternalElement, String> actual2 = table.get(file2);
 
@@ -109,11 +111,9 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	public void testRemove() throws Exception {
 		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
 		expected.put(element1F1, name1F1);
-		Map<IInternalElement, String> elements2 = new HashMap<IInternalElement, String>();
-		elements2.put(element1F2, name1F2);
 
-		table.put(file1, expected);
-		table.put(file2, elements2);
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
 		
 		table.remove(file2);
 		
@@ -125,10 +125,9 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testClear() throws Exception {
-		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
-		expected.put(element1F1, name1F1);
-		Map<IInternalElement, String> elements2 = new HashMap<IInternalElement, String>();
-		elements2.put(element1F2, name1F2);
+		
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
 		
 		table.clear();
 		

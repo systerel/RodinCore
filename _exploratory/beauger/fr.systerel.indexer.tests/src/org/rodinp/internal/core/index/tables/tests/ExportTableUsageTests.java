@@ -7,7 +7,6 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -16,7 +15,7 @@ import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class ExportTableUsageTests extends AbstractRodinDBTests {
 
-	private static IIndexer indexer;
+	private static FakeExportIndexer indexer;
 	private static final Map<IInternalElement, String> elements = new HashMap<IInternalElement, String>();
 	private static IRodinProject rodinProject;
 	private static IRodinFile file;
@@ -64,11 +63,11 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		manager.clear();
 		super.tearDown();
 	}
-
+	
 	public void testExportTableUpdatingFilling() throws Exception {
 		manager.scheduleIndexing(file);
 		
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> expected = indexer.getExports();
 		final Map<IInternalElement, String> actual = manager.getExportTable(
 				rodinProject).get(file);
 		
@@ -89,7 +88,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 		
 		// verify renaming
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> expected = indexer.getExports();
 		final Map<IInternalElement, String> actual = manager.getExportTable(
 				rodinProject).get(file);
 
@@ -110,7 +109,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 		
 		// verify removing
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> expected = indexer.getExports();
 		final Map<IInternalElement, String> actual = manager.getExportTable(
 				rodinProject).get(file);
 
@@ -132,7 +131,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 		
 		// verify adding
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
+		final Map<IInternalElement, String> expected = indexer.getExports();
 		final Map<IInternalElement, String> actual = manager.getExportTable(
 				rodinProject).get(file);
 

@@ -194,6 +194,10 @@ public class IndexTestsUtil {
 		assertLength(elements, 0);
 	}
 
+	public static void assertIsEmpty(IRodinFile[] files) {
+		assertLength(files, 0);
+	}
+
 	public static void assertContainsAll(IInternalElement[] expectedElements,
 			IInternalElement[] actualElements) {
 

@@ -14,13 +14,13 @@ import org.rodinp.internal.core.index.tables.ExportTable;
 public class FakeDependenceIndexer implements IIndexer {
 
 	private final DependenceTable dependencies;
-	private final ExportTable exports;
+	private final ExportTable exportTable;
 	private final List<IRodinFile> indexingOrder;
 	
 	
-	public FakeDependenceIndexer(DependenceTable dependencies, ExportTable exports) {
+	public FakeDependenceIndexer(DependenceTable dependencies, ExportTable exportTable) {
 		this.dependencies = dependencies;
-		this.exports = exports;
+		this.exportTable = exportTable;
 		this.indexingOrder = new ArrayList<IRodinFile>();
 	}
 
@@ -28,12 +28,13 @@ public class FakeDependenceIndexer implements IIndexer {
 		return dependencies.get(file);
 	}
 
-	public Map<IInternalElement, String> getExports(IRodinFile file) {
-		return exports.get(file);
-	}
-
 	public void index(IRodinFile file, IIndexingFacade index) {
 		indexingOrder.add(file);
+		final Map<IInternalElement, String> exports = exportTable.get(file);
+		for (IInternalElement elt : exports.keySet()) {
+			index.addDeclaration(elt, exports.get(elt));
+			index.export(elt);
+		}
 	}
 
 	public IRodinFile[] getIndexingOrder() {

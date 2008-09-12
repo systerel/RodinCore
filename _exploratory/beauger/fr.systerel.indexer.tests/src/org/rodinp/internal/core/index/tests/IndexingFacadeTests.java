@@ -1,9 +1,5 @@
 package org.rodinp.internal.core.index.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexingFacade;
@@ -58,9 +54,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		locF1 = RodinIndexer.getRodinLocation(file1);
 		locF2 = RodinIndexer.getRodinLocation(file2);
 
-		final Map<IInternalElement, String> elt2Map = new HashMap<IInternalElement, String>();
-		elt2Map.put(elt2, name2);
-		f2ExportsElt2.put(file2, elt2Map);
+		f2ExportsElt2.add(file2, elt2, name2);
 		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 
 		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
@@ -142,11 +136,15 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 				fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2
 		indexingFacade2.addDeclaration(elt2, name2);
+		indexingFacade2.export(elt2);
 
 		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
-		indexingFacade1.addOccurrence(elt2, kind, locF1);
-
+		try {
+			indexingFacade1.addOccurrence(elt2, kind, locF1);
+		} catch (Exception e) {
+			fail("Adding an occurrence to an alien file should not raise an exception");
+		}
 		final Descriptor descriptor = index.getDescriptor(elt2);
 		IndexTestsUtil.assertNotNull(descriptor);
 		IndexTestsUtil.assertDescriptor(descriptor, elt2, name2, 1);

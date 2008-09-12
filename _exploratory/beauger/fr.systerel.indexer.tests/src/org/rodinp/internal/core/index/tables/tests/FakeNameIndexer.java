@@ -76,8 +76,4 @@ public class FakeNameIndexer implements IIndexer {
 		return new IRodinFile[0];
 	}
 
-	public Map<IInternalElement, String> getExports(IRodinFile file) {
-		return new HashMap<IInternalElement, String>();
-	}
-	
 }

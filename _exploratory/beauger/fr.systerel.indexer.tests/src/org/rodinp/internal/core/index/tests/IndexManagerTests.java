@@ -88,10 +88,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		IRodinFile inexistentFile = project.getRodinFile("inexistentFile.test");
 		try {
 			manager.scheduleIndexing(inexistentFile);
-		} catch (IllegalArgumentException e) {
-			return;
+		} catch (Exception e) {
+			fail("trying to index a inexistent file should not raise an Exception");
 		}
-		fail("trying to index a inexistent file should raise IllegalArgumentException");
 	}
 
 	public void testIndexNoIndexer() throws Exception {
@@ -111,7 +110,8 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final NamedElement elementF1 = IndexTestsUtil.createNamedElement(file,
 				el1Name);
 		final IRodinProject project2 = createRodinProject("P2");
-		IRodinFile file2 = IndexTestsUtil.createRodinFile(project2, "file2P2.test");
+		IRodinFile file2 = IndexTestsUtil.createRodinFile(project2,
+				"file2P2.test");
 		final NamedElement elementF2 = IndexTestsUtil.createNamedElement(file2,
 				el2Name);
 
@@ -123,11 +123,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final RodinIndex index2 = manager.getIndex(project2);
 		final Descriptor desc2 = index2.getDescriptor(elementF2);
 
-		IndexTestsUtil.assertDescriptor(desc1, elementF1,
-				el1Name, 6);
+		IndexTestsUtil.assertDescriptor(desc1, elementF1, el1Name, 6);
 
-		IndexTestsUtil.assertDescriptor(desc2, elementF2,
-				el2Name, 6);
+		IndexTestsUtil.assertDescriptor(desc2, elementF2, el2Name, 6);
 
 	}
 }

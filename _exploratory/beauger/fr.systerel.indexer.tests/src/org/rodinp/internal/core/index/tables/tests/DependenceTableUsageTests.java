@@ -1,9 +1,5 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.RodinIndexer;
@@ -16,14 +12,15 @@ import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
-	private static IRodinProject rodinProject;
+	private static IRodinProject project;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
 	// private static IRodinFile file3;
 	private static NamedElement eltF2;
 	private static final String eltF2Name = "eltF2Name";
-	private static final Map<IInternalElement, String> eltF2Map = new HashMap<IInternalElement, String>();
+	private static final String eltF2Name2 = "eltF2Name2";
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
+	private static final ExportTable emptyExports = new ExportTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 
 	private static final IndexManager manager = IndexManager.getDefault();
@@ -47,15 +44,14 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		rodinProject = createRodinProject("P");
-		file1 = IndexTestsUtil.createRodinFile(rodinProject, "DepTable1.test");
-		file2 = IndexTestsUtil.createRodinFile(rodinProject, "DepTable2.test");
+		project = createRodinProject("P");
+		file1 = IndexTestsUtil.createRodinFile(project, "DepTable1.test");
+		file2 = IndexTestsUtil.createRodinFile(project, "DepTable2.test");
 		eltF2 = IndexTestsUtil.createNamedElement(file2, "eltF2");
-		eltF2Map.put(eltF2, eltF2Name);
-		f2ExportsElt2.put(file2, eltF2Map);
+		f2ExportsElt2.add(file2, eltF2, eltF2Name);
 		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 
-		// file3 = IndexTestsUtil.createRodinFile(rodinProject,
+		// file3 = IndexTestsUtil.createRodinFile(project,
 		// "DepTable3.test");
 
 	}
@@ -65,7 +61,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		deleteProject("P");
 		manager.clear();
 		f2ExportsElt2.clear();
-		eltF2Map.clear();
 		super.tearDown();
 	}
 
@@ -137,7 +132,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	}
 
 	public void testNoExports() throws Exception {
-		ExportTable emptyExports = new ExportTable();
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				f1DepsOnf2, emptyExports);
@@ -188,30 +182,53 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 	public void testNameChangesOnly() throws Exception {
 
-		// final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-		// f1DepsOnf2, f2ExportsElt2);
-		// RodinIndexer.register(indexer);
-		//
-		// IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
-		//
-		// // file1 and file2 must already be known by the manager to be taken
-		// into
-		// // account when resolving dependencies and export changes
-		// manager.scheduleIndexing(toIndex);
-		// indexer.clearOrder();
-		//
-		// TODO modify elt2Name
-		// // file2 is requested to index, but file1 should not be indexed
-		// // again, even if it depends on file2, because file2 exports are
-		// // unchanged
-		// IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
-		//
-		// manager.scheduleIndexing(file2);
-		// RodinIndexer.deregister(indexer);
-		//
-		// final IRodinFile[] actualOrder = indexer.getIndexingOrder();
-		//
-		// assertSameOrder(expectedOrder, actualOrder);
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				f1DepsOnf2, f2ExportsElt2);
+		RodinIndexer.register(indexer, file1.getElementType());
+
+		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+
+		// file1 and file2 must already be known by the manager to be taken
+		// into account when resolving dependencies and export changes
+		manager.scheduleIndexing(toIndex);
+
+		manager.clearIndexers();
+		final ExportTable f2ExportsElt2Name2 = new ExportTable();
+		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
+		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
+				f1DepsOnf2, f2ExportsElt2Name2);
+		RodinIndexer.register(indexerNewName, file1.getElementType());
+
+		// file2 is requested to index, but file1 should not be indexed
+		// again, even if it depends on file2 and file2 exports are
+		// changed, because it concerns only names
+		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+
+		manager.scheduleIndexing(file2);
+
+		final IRodinFile[] actualOrder = indexerNewName.getIndexingOrder();
+
+		assertSameOrder(expectedOrder, actualOrder);
+	}
+
+	public void testFileRemoved() throws Exception {
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				f1DepsOnf2, f2ExportsElt2);
+		RodinIndexer.register(indexer, file1.getElementType());
+
+		manager.scheduleIndexing(file1);
+
+		file1.delete(true, null);
+
+		try {
+			manager.scheduleIndexing(file1);
+		} catch (Exception e) {
+			fail("Exception thrown when trying to index a deleted file: "
+					+ e.getLocalizedMessage());
+		}
+		final DependenceTable dependenceTable = manager
+				.getDependenceTable(project);
+		IndexTestsUtil.assertIsEmpty(dependenceTable.get(file1));
 	}
 
 }

@@ -32,10 +32,6 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		assertTrue("Missing files", actList.containsAll(expList));
 	}
 
-	private void assertIsEmpty(IRodinFile[] files) {
-		assertEquals("Should be empty", 0, files.length);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -67,7 +63,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	public void testGetNone() throws Exception {
 		final IRodinFile[] actual = table.get(file1);
 
-		assertIsEmpty(actual);
+		IndexTestsUtil.assertIsEmpty(actual);
 	}
 
 	public void testPutGetSeveral() throws Exception {
@@ -103,8 +99,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		try {
 			table.put(file1, selfDep);
 		} catch (IllegalArgumentException e) {
-			assertTrue("bad exception message", e.getMessage().contains(
-					"self"));
+			assertTrue("bad exception message", e.getMessage().contains("self"));
 			return;
 		}
 		fail("Adding redundant dependencies should raise IllegalArgumentException");
@@ -122,8 +117,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		final IRodinFile[] actual1 = table.get(file1);
 		final IRodinFile[] actual3 = table.get(file3);
 
-		assertIsEmpty(actual1);
-		assertIsEmpty(actual3);
+		IndexTestsUtil.assertIsEmpty(actual1);
+		IndexTestsUtil.assertIsEmpty(actual3);
 	}
 
 	public void testGetDependents() throws Exception {
@@ -143,7 +138,38 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 
 		final IRodinFile[] actual = table.getDependents(file1);
 
-		assertIsEmpty(actual);
+		IndexTestsUtil.assertIsEmpty(actual);
+	}
+
+	public void testRemove() throws Exception {
+		final IRodinFile[] top = new IRodinFile[] { file1 };
+
+		table.put(file2, top);
+
+		table.remove(file2);
+
+		final IRodinFile[] actual = table.get(file2);
+
+		IndexTestsUtil.assertIsEmpty(actual);
+	}
+
+	public void testRemoveWithDeps() throws Exception {
+		final IRodinFile[] top1 = new IRodinFile[] { file1 };
+		final IRodinFile[] top14 = new IRodinFile[] { file1, file4 };
+
+		table.put(file2, top1);
+		table.put(file3, top14);
+
+		table.remove(file1);
+
+		final IRodinFile[] expected3 = new IRodinFile[] { file4 };
+		final IRodinFile[] actual1 = table.get(file1);
+		final IRodinFile[] actual2 = table.get(file2);
+		final IRodinFile[] actual3 = table.get(file3);
+
+		IndexTestsUtil.assertIsEmpty(actual1);
+		IndexTestsUtil.assertIsEmpty(actual2);
+		assertSameFiles(expected3, actual3);
 	}
 
 }

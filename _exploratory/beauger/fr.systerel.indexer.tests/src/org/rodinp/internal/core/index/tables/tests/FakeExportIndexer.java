@@ -1,5 +1,6 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
@@ -9,22 +10,24 @@ import org.rodinp.core.index.IIndexingFacade;
 
 public class FakeExportIndexer implements IIndexer {
 
-	final Map<IInternalElement, String> elements;
+	private final Map<IInternalElement, String> exports;
 
 	public FakeExportIndexer(Map<IInternalElement, String> elements) {
-		this.elements = elements;
+		this.exports = elements;
 	}
 
 	public void index(IRodinFile file, IIndexingFacade index) {
-		// do nothing
+		for (IInternalElement elt : exports.keySet()) {
+			index.addDeclaration(elt, exports.get(elt));
+			index.export(elt);
+		}
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return new IRodinFile[0];
 	}
 
-	public Map<IInternalElement, String> getExports(IRodinFile file) {
-		return elements;
+	Map<IInternalElement, String> getExports() {
+		return new HashMap<IInternalElement, String>(exports);
 	}
-
 }
