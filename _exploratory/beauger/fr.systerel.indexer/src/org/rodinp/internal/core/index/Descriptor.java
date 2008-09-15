@@ -38,6 +38,7 @@ public final class Descriptor {
 		return occurrences.toArray(new Occurrence[occurrences.size()]);
 	}
 
+	
 	public void setName(String name) {
 		this.name = name;
 	}
