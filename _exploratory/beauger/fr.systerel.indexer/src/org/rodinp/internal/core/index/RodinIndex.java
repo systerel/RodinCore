@@ -62,6 +62,7 @@ public final class RodinIndex {
 		map.remove(key);
 	}
 
+	
 	public void rename(IInternalElement element, String name) {
 		final Descriptor descriptor = map.get(element);
 
