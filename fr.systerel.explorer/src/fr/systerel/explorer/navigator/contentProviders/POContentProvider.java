@@ -7,29 +7,29 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 
 import fr.systerel.explorer.poModel.Machine;
-import fr.systerel.explorer.poModel.ModelFactory;
+import fr.systerel.explorer.poModel.PoModelFactory;
 import fr.systerel.explorer.poModel.POContainer;
 
 public class POContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
         if (element instanceof IInvariant) {
-			return ModelFactory.getInvariant((IInvariant) element).getProofObligations();
+			return PoModelFactory.getInvariant((IInvariant) element).getIPSStatuses();
         } 
         if (element instanceof IEvent) {
-			return ModelFactory.getEvent((IEvent) element).getProofObligations();
+			return PoModelFactory.getEvent((IEvent) element).getIPSStatuses();
         } 
         if (element instanceof ITheorem) {
-			return ModelFactory.getTheorem((ITheorem) element).getProofObligations();
+			return PoModelFactory.getTheorem((ITheorem) element).getIPSStatuses();
         } 
         if (element instanceof POContainer) {
-			return ((POContainer)element).getProofObligations();
+			return ((POContainer)element).getIPSStatuses();
         } 
         return new Object[0];
 	}
 
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -42,12 +42,12 @@ public class POContentProvider implements ITreeContentProvider {
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
+		// do nothing
 
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
+		// do nothing
 
 	}
 

@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinCore;
 
-import fr.systerel.explorer.poModel.ModelFactory;
+import fr.systerel.explorer.poModel.PoModelFactory;
 
 /**
  * @author Maria Husmann
@@ -48,11 +50,13 @@ public class RodinNavigator extends CommonNavigator implements IElementChangedLi
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
+		System.out.println(event.getDelta().toString());
 		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
 			public void run() {
 				if (getViewSite().getShell() != null) {
-					ModelFactory.clearAll();
+					PoModelFactory.clearAll();
 					getCommonViewer().refresh();
+					System.out.println("refreshed");
 				
 				}
 			}});

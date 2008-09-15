@@ -21,7 +21,9 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ITheorem;
 import org.eventb.ui.projectexplorer.TreeNode;
 
-import fr.systerel.explorer.poModel.ModelFactory;
+import fr.systerel.explorer.complexModel.ComplexContext;
+import fr.systerel.explorer.complexModel.ComplexMachine;
+import fr.systerel.explorer.poModel.PoModelFactory;
 
 /**
  * The content provider for Contexts.
@@ -31,25 +33,29 @@ import fr.systerel.explorer.poModel.ModelFactory;
  */
 public class ContextContentProvider implements ITreeContentProvider {
 
-	public Object[] getChildren(final Object parent) {
-		if (!(parent instanceof IContextFile)) {
-			return new Object[] {};
+	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof ComplexContext) {
+			parentElement = ((ComplexContext) parentElement).getInternalContext();
 		}
-		IContextFile ctx = (IContextFile) parent;
-		ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
-		list.add(new TreeNode<ICarrierSet>("Carrier Sets", ctx,
-				ICarrierSet.ELEMENT_TYPE));
-		list.add(new TreeNode<IConstant>("Constants", ctx,
-				IConstant.ELEMENT_TYPE));
-		list.add(new TreeNode<IAxiom>("Axioms", ctx, IAxiom.ELEMENT_TYPE));
-		list
-				.add(new TreeNode<ITheorem>("Theorems", ctx,
-						ITheorem.ELEMENT_TYPE));
+		if (parentElement instanceof IContextFile) {
+			IContextFile ctx = (IContextFile) parentElement;
+			ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
+			list.add(new TreeNode<ICarrierSet>("Carrier Sets", ctx,
+					ICarrierSet.ELEMENT_TYPE));
+			list.add(new TreeNode<IConstant>("Constants", ctx,
+					IConstant.ELEMENT_TYPE));
+			list.add(new TreeNode<IAxiom>("Axioms", ctx, IAxiom.ELEMENT_TYPE));
+			list
+					.add(new TreeNode<ITheorem>("Theorems", ctx,
+							ITheorem.ELEMENT_TYPE));
 
-		Object[] children = new Object[list.size() +1];
-		list.toArray(children);
-		children[list.size()] = ModelFactory.getContext(ctx);
-		return children;
+			Object[] children = new Object[list.size() +1];
+			list.toArray(children);
+			children[list.size()] = PoModelFactory.getContext(ctx);
+			return children;
+		}
+		return new Object[] {};
+		
 	}
 
 	public Object getParent(Object element) {

@@ -23,7 +23,8 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.ui.projectexplorer.TreeNode;
 
-import fr.systerel.explorer.poModel.ModelFactory;
+import fr.systerel.explorer.complexModel.ComplexMachine;
+import fr.systerel.explorer.poModel.PoModelFactory;
 
 /**
  * The content provider for Machines.
@@ -34,25 +35,28 @@ import fr.systerel.explorer.poModel.ModelFactory;
 public class MachineContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
-		if (!(parentElement instanceof IMachineFile)) {
-			return new Object[] {};
+		if (parentElement instanceof ComplexMachine) {
+			parentElement = ((ComplexMachine) parentElement).getInternalMachine();
 		}
-		IMachineFile mch = (IMachineFile) parentElement;
+		if (parentElement instanceof IMachineFile) {
+			IMachineFile mch = (IMachineFile) parentElement;
 
-		ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
-		list.add(new TreeNode<IVariable>("Variables", mch,
-				IVariable.ELEMENT_TYPE));
-		list.add(new TreeNode<IInvariant>("Invariants", mch,
-				IInvariant.ELEMENT_TYPE));
-		list
-				.add(new TreeNode<ITheorem>("Theorems", mch,
-						ITheorem.ELEMENT_TYPE));
-		list.add(new TreeNode<IEvent>("Events", mch, IEvent.ELEMENT_TYPE));
+			ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
+			list.add(new TreeNode<IVariable>("Variables", mch,
+					IVariable.ELEMENT_TYPE));
+			list.add(new TreeNode<IInvariant>("Invariants", mch,
+					IInvariant.ELEMENT_TYPE));
+			list
+					.add(new TreeNode<ITheorem>("Theorems", mch,
+							ITheorem.ELEMENT_TYPE));
+			list.add(new TreeNode<IEvent>("Events", mch, IEvent.ELEMENT_TYPE));
 
-		Object[] children = new Object[list.size() +1];
-		list.toArray(children);
-		children[list.size()] = ModelFactory.getMachine(mch);
-		return children;
+			Object[] children = new Object[list.size() +1];
+			list.toArray(children);
+			children[list.size()] = PoModelFactory.getMachine(mch);
+			return children;
+		}
+		return new Object[] {};
 
 	}
 

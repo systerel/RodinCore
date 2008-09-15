@@ -23,7 +23,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.poModel.ModelFactory;
+import fr.systerel.explorer.poModel.PoModelFactory;
 
 /**
  * The content provider for Machine and Context elements.
@@ -37,6 +37,7 @@ public class MachineContextContentProvider implements ITreeContentProvider {
         if (element instanceof IRodinProject) {
         	IRodinProject project = (IRodinProject) element;
         	try {
+        		PoModelFactory.processProject(project);
 				return filterChildren(project.getChildren());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -75,6 +76,18 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 		 
 	}
 	
+	public void processProofObligations(IRodinElement[] elements){
+		for (int i = 0; i < elements.length; i++) {
+			IRodinElement element = elements[i];
+			if (element instanceof IPOFile) {
+				PoModelFactory.processPOFile((IPOFile) element);
+			}
+			if (element instanceof IPSFile) {
+				PoModelFactory.processPSFile((IPSFile) element);
+			}
+		}
+	}
+	
 	/**
 	 * This filter lets pass only elements that are of type <code>IMachineFile</code> or <code>IContextFile</code>.
 	 * Process IPOFile (build the model)
@@ -90,12 +103,6 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 				}
 				else if (children[i] instanceof IContextFile) {
 					list.add(children[i]);
-				}
-				else if (children[i] instanceof IPOFile) {
-					ModelFactory.processPOFile((IPOFile)children[i]);
-				}
-				else if (children[i] instanceof IPSFile) {
-					ModelFactory.processPSFile((IPSFile)children[i]);
 				}
 			}
 			return list.toArray();

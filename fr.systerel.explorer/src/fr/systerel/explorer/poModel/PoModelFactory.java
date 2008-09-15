@@ -28,7 +28,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class ModelFactory {
+public class PoModelFactory {
 
 	public static void processPOFile(IPOFile file) {
 		try {
@@ -114,6 +114,28 @@ public class ModelFactory {
 		return inv;
 	}
 
+	/**
+	 * Processes all POFiles and PSFiles of a given project
+	 * @param project The Project to process
+	 */
+	public static void processProject(IRodinProject project){
+		
+		try {
+			IPOFile[] pofiles = project.getChildrenOfType(IPOFile.ELEMENT_TYPE);
+			for (int i = 0; i < pofiles.length; i++) {
+				processPOFile(pofiles[i]);
+			}
+			IPSFile[] psfiles =  project.getChildrenOfType(IPSFile.ELEMENT_TYPE);
+			for (int i = 0; i < psfiles.length; i++) {
+				processPSFile(psfiles[i]);
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public static Event getEvent(IEvent event){
 		// look in the hashmap, if this Event exists
 		if (events.containsKey(event.getHandleIdentifier())) {

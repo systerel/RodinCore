@@ -63,13 +63,23 @@
             <contentExtension
                   pattern="fr.systerel.explorer.pofiles">
             </contentExtension>
+            <contentExtension
+                  pattern="fr.systerel.explorer.navigator.content.complex">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
+      <viewerActionBinding
+            viewerId="fr.systerel.explorer.navigator.view">
+         <includes>
+            <actionExtension
+                  pattern="fr.systerel.explorer.navigator.actionProviders.machine">
+            </actionExtension>
+         </includes>
+      </viewerActionBinding>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
-            activeByDefault="true"
             contentProvider="org.eventb.internal.ui.RodinProjectContentProvider"
             id="fr.systerel.explorer.navigator.content.project"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
@@ -95,9 +105,14 @@
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.machine">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.core.IMachineFile">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.complexModel.ComplexMachine">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
@@ -114,9 +129,14 @@
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.context">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.core.IContextFile">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.complexModel.ComplexContext">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
@@ -161,6 +181,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IInvariant">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.EventContentProvider"
@@ -172,6 +197,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IEvent">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.VariableContentProvider"
@@ -183,6 +213,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IVariable">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.TheoremContentProvider"
@@ -194,6 +229,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.ITheorem">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider"
@@ -205,6 +245,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IAxiom">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ConstantsContentProvider"
@@ -216,6 +261,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IConstant">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.CarrierSetContentProvider"
@@ -227,6 +277,11 @@
                   value="org.eventb.ui.projectexplorer.TreeNode">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.ICarrierSet">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.POContentProvider"
@@ -255,6 +310,11 @@
                </instanceof>
             </or>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.eventb.core.IPSStatus">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.VariantContentProvider"
@@ -267,6 +327,76 @@
             </instanceof>
          </triggerPoints>
       </navigatorContent>
+      <navigatorContent
+            contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexContentProvider"
+            id="fr.systerel.explorer.navigator.content.complex"
+            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            name="%navigatorContent.complex">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.rodinp.core.IRodinProject">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <commonSorter
+               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+         </commonSorter>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+            </or>
+         </possibleChildren>
+      </navigatorContent>
+      <actionProvider
+            class="fr.systerel.explorer.navigator.actionProviders.MachineActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.machine">
+         <enablement>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IEvent">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IVariable">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.ICarrierSet">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IInvariant">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IConstant">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IAxiom">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.ITheorem">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IPSStatus">
+               </instanceof>
+            </or>
+         </enablement>
+      </actionProvider>
    </extension>
 
 </plugin>

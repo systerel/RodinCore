@@ -48,6 +48,10 @@ public class RodinLabelProvider implements
 	 */
 	public Image getImage(Object element) {
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		if (element instanceof IPSStatus) {
+			IPSStatus status = ((IPSStatus) element);
+			return EventBImage.getPRSequentImage(status);
+		}
 		if (element instanceof IRodinElement) {
 			return EventBImage.getRodinImage((IRodinElement) element);
 			
