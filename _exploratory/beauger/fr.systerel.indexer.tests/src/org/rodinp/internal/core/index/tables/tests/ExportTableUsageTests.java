@@ -1,5 +1,8 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +14,6 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class ExportTableUsageTests extends AbstractRodinDBTests {
 
@@ -47,9 +49,9 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "expInd.test");
-		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
-		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
+		file = createRodinFile(rodinProject, "expInd.test");
+		namedElement = createNamedElement(file, "elt1");
+		namedElement2 = createNamedElement(file, "elt2");
 		elements.put(namedElement, "namedElementName");
 		elements.put(namedElement2, "namedElement2Name");
 		indexer = new FakeExportIndexer(elements);
@@ -121,7 +123,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		manager.scheduleIndexing(file);
 		
 		// change exports
-		NamedElement eltAdd = IndexTestsUtil.createNamedElement(file, "eltAdd");
+		NamedElement eltAdd = createNamedElement(file, "eltAdd");
 		elements.put(eltAdd, "expAddName1");
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(elements);

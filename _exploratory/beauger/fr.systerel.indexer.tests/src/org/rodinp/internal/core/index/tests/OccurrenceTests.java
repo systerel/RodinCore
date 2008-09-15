@@ -1,5 +1,8 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IRodinLocation;
@@ -34,8 +37,8 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super.setUp();
 
 		final IRodinProject rodinProject = createRodinProject("P");
-		IRodinFile file = IndexTestsUtil.createRodinFile(rodinProject, "occ.test");
-		NamedElement elem = IndexTestsUtil.createNamedElement(file, "elem");
+		IRodinFile file = createRodinFile(rodinProject, "occ.test");
+		NamedElement elem = createNamedElement(file, "elem");
 
 		location = new RodinLocation(elem, null,
 				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);

@@ -1,5 +1,14 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
+import java.util.Map;
+
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexingFacade;
@@ -10,6 +19,7 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexingFacade;
+import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
@@ -47,13 +57,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file1 = IndexTestsUtil.createRodinFile(project, "indFac1.test");
-		file2 = IndexTestsUtil.createRodinFile(project, "indFac2.test");
-		elt1 = IndexTestsUtil.createNamedElement(file1, "elt1");
-		elt2 = IndexTestsUtil.createNamedElement(file2, "elt2");
+		file1 = createRodinFile(project, "indFac1.test");
+		file2 = createRodinFile(project, "indFac2.test");
+		elt1 = createNamedElement(file1, "elt1");
+		elt2 = createNamedElement(file2, "elt2");
 		locF1 = RodinIndexer.getRodinLocation(file1);
 		locF2 = RodinIndexer.getRodinLocation(file2);
-
+		
 		f2ExportsElt2.add(file2, elt2, name2);
 		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 
@@ -65,6 +75,10 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		index.clear();
+		fileTable.clear();
+		nameTable.clear();
+		f2ExportsElt2.clear();
+		f1DepsOnf2.clear();
 		super.tearDown();
 	}
 
@@ -73,8 +87,8 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		indexingFacade1.addDeclaration(elt1, name1);
 
 		final Descriptor descriptor = index.getDescriptor(elt1);
-		IndexTestsUtil.assertNotNull(descriptor);
-		IndexTestsUtil.assertDescriptor(descriptor, elt1, name1, 0);
+		assertNotNull(descriptor);
+		assertDescriptor(descriptor, elt1, name1, 0);
 	}
 
 	public void testDoubleDeclaration() throws Exception {
@@ -103,8 +117,8 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		indexingFacade1.addOccurrence(elt1, kind, locF1);
 
 		final Descriptor descriptor = index.getDescriptor(elt1);
-		IndexTestsUtil.assertNotNull(descriptor);
-		IndexTestsUtil.assertDescriptor(descriptor, elt1, name1, 1);
+		assertNotNull(descriptor);
+		assertDescriptor(descriptor, elt1, name1, 1);
 	}
 
 	public void testAddOccBadFile() throws Exception {
@@ -131,7 +145,6 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		// it must be exported by a file on which the current file
 		// depends directly
 
-		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
 				fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2
@@ -146,14 +159,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 			fail("Adding an occurrence to an alien file should not raise an exception");
 		}
 		final Descriptor descriptor = index.getDescriptor(elt2);
-		IndexTestsUtil.assertNotNull(descriptor);
-		IndexTestsUtil.assertDescriptor(descriptor, elt2, name2, 1);
+		assertNotNull(descriptor);
+		assertDescriptor(descriptor, elt2, name2, 1);
 
 	}
 
 	public void testAddOccAlienNoDecl() throws Exception {
 
-		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 		IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
 				new RodinIndex(), fileTable, nameTable, f2ExportsElt2,
 				f1DepsOnf2);
@@ -174,7 +186,6 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testAddOccAlienNoDeps() throws Exception {
 
-		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
 				fileTable, nameTable, f2ExportsElt2, emptyDeps);
 		// elt2 is well declared in file2 and exported from it
@@ -194,7 +205,6 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testAddOccAlienNoExp() throws Exception {
 
-		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
 				fileTable, nameTable, emptyExports, f1DepsOnf2);
 		// elt2 is well declared in file2 but not exported from it
@@ -212,4 +222,98 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		fail("Trying to add an alien occurrence when there is no dependence to its file should raise IllegalArgumentException");
 	}
 
+	public void testReindexKeepAlienOccs() throws Exception {
+
+		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
+		// add a declaration of elt2 in file2
+		indexingFacade2.addDeclaration(elt2, name2);
+		indexingFacade2.export(elt2);
+
+		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+				nameTable, f2ExportsElt2, f1DepsOnf2);
+
+		// add an alien occurrence in file1
+		indexingFacade1.addOccurrence(elt2, kind, locF1);
+
+		final Descriptor descBefore = index.getDescriptor(elt2);
+		assertNotNull(descBefore);
+		assertDescriptor(descBefore, elt2, name2, 1);
+
+		// clean before reindexing file2
+		index.getDescriptor(elt2).removeOccurrences(file2);
+		fileTable.remove(file2);
+		final IIndexingFacade indexingFacade2Bis = new IndexingFacade(file2,
+				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
+		// reindexing file2
+		indexingFacade2Bis.addDeclaration(elt2, name2);
+		indexingFacade2Bis.export(elt2);
+
+		// occurrence in file1 must have been kept
+		final Descriptor descAfter = index.getDescriptor(elt2);
+		assertNotNull(descAfter);
+		assertDescriptor(descAfter, elt2, name2, 1);
+
+		final Occurrence occAfter = descAfter.getOccurrences()[0];
+		assertEquals("Alien Occurrence from file1 was not kept", file1,
+				occAfter.getLocation().getElement());
+	}
+
+	public void testRenameWithAlienOccs() throws Exception {
+
+		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
+		// add a declaration of elt2 in file2
+		indexingFacade2.addDeclaration(elt2, name2);
+		indexingFacade2.export(elt2);
+
+		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+				nameTable, f2ExportsElt2, f1DepsOnf2);
+
+		// add an alien occurrence in file1
+		// required to have a non null descriptor after cleaning
+		indexingFacade1.addOccurrence(elt2, kind, locF1);
+
+		final Descriptor descBefore = index.getDescriptor(elt2);
+		assertNotNull(descBefore);
+		assertDescriptor(descBefore, elt2, name2, 1);
+
+		// clean before reindexing file2
+		index.getDescriptor(elt2).removeOccurrences(file2);
+		fileTable.remove(file2);
+		final IIndexingFacade indexingFacade2Bis = new IndexingFacade(file2,
+				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
+		// reindexing file2, renaming elt2
+		final String name2Bis = name2 + "Bis";
+		indexingFacade2Bis.addDeclaration(elt2, name2Bis);
+		indexingFacade2Bis.export(elt2);
+
+		// occurrence in file1 must have been kept
+		final Descriptor descAfter = index.getDescriptor(elt2);
+		assertNotNull(descAfter);
+		assertDescriptor(descAfter, elt2, name2Bis, 1);
+
+		final Occurrence occAfter = descAfter.getOccurrences()[0];
+		assertEquals("Alien Occurrence from file1 was not kept", file1,
+				occAfter.getLocation().getElement());
+
+		// name2Bis should have replaced name2 in nameTable and exportTable
+		final Map<IInternalElement, String> actExports = f2ExportsElt2
+		.get(file2);
+		assertEquals("Exported element " + elt2.getElementName()
+				+ " was not properly renamed", name2Bis, actExports.get(elt2));
+
+		final IInternalElement[] expName2Bis = new IInternalElement[] { elt2 };
+		final IInternalElement[] actName2Bis = nameTable.getElements(name2Bis);
+
+		assertSameElements(expName2Bis, actName2Bis);
+
+		// there should not be anymore reference to the old name in the nameTable
+		// as even if file1 still knows elt2 with name2
+		final IInternalElement[] actName2 = nameTable.getElements(name2);
+
+		assertIsEmpty(actName2);
+	}
+	
+	
 }

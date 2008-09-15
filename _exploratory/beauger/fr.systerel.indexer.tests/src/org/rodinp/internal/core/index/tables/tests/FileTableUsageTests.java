@@ -1,5 +1,9 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -10,7 +14,6 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tests.FakeIndexer;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class FileTableUsageTests extends AbstractRodinDBTests {
 
@@ -31,9 +34,9 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "fileTable.test");
-		namedElement = IndexTestsUtil.createNamedElement(file, "elt1");
-		namedElement2 = IndexTestsUtil.createNamedElement(file, "elt2");
+		file = createRodinFile(rodinProject, "fileTable.test");
+		namedElement = createNamedElement(file, "elt1");
+		namedElement2 = createNamedElement(file, "elt2");
 		fileElements = new NamedElement[] { namedElement, namedElement2 };
 		RodinIndexer.register(indexer, file.getElementType());
 	}
@@ -50,13 +53,13 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 	
 		final FileTable fileTable = manager.getFileTable(rodinFile
 				.getRodinProject());
-		IInternalElement[] actualElements = fileTable.getElements(rodinFile);
+		IInternalElement[] actualElements = fileTable.get(rodinFile);
 
 		if (DEBUG) {
 			System.out.println(getName() + message);
 			System.out.println(fileTable.toString());
 		}
-		IndexTestsUtil.assertSameElements(expectedElements, actualElements);
+		assertSameElements(expectedElements, actualElements);
 	}
 
 	public void testFileTableFilling() throws Exception {

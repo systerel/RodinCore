@@ -1,5 +1,10 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.RodinIndexer;
@@ -8,7 +13,6 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
@@ -33,7 +37,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 			IRodinFile[] actualOrder) {
 
 		final int length = expectedOrder.length;
-		IndexTestsUtil.assertLength(actualOrder, length);
+		assertLength(actualOrder, length);
 
 		for (int i = 0; i < length; i++) {
 			assertEquals("bad order at rank " + (i + 1) + "/" + length,
@@ -45,13 +49,13 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file1 = IndexTestsUtil.createRodinFile(project, "DepTable1.test");
-		file2 = IndexTestsUtil.createRodinFile(project, "DepTable2.test");
-		eltF2 = IndexTestsUtil.createNamedElement(file2, "eltF2");
+		file1 = createRodinFile(project, "DepTable1.test");
+		file2 = createRodinFile(project, "DepTable2.test");
+		eltF2 = createNamedElement(file2, "eltF2");
 		f2ExportsElt2.add(file2, eltF2, eltF2Name);
 		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
 
-		// file3 = IndexTestsUtil.createRodinFile(project,
+		// file3 = createRodinFile(project,
 		// "DepTable3.test");
 
 	}
@@ -228,7 +232,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		}
 		final DependenceTable dependenceTable = manager
 				.getDependenceTable(project);
-		IndexTestsUtil.assertIsEmpty(dependenceTable.get(file1));
+		assertIsEmpty(dependenceTable.get(file1));
 	}
 
 }

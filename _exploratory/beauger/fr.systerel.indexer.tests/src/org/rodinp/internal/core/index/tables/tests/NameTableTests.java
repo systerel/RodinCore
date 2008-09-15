@@ -1,12 +1,16 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tables.NameTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class NameTableTests extends AbstractRodinDBTests {
 
@@ -25,9 +29,9 @@ public class NameTableTests extends AbstractRodinDBTests {
 	@Override
 	protected void setUp() throws Exception {
 		project = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(project, "nameTable.test");
-		element1 = IndexTestsUtil.createNamedElement(file, "elt1");
-		element2 = IndexTestsUtil.createNamedElement(file, "elt2");
+		file = createRodinFile(project, "nameTable.test");
+		element1 = createNamedElement(file, "elt1");
+		element2 = createNamedElement(file, "elt2");
 
 		super.setUp();
 	}
@@ -45,7 +49,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] expectedResult = new IInternalElement[] { element1 };
 		final IInternalElement[] elements = table.getElements(name1);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements);
 	}
 
 	public void testPutGetSeveralSameName() throws Exception {
@@ -56,7 +60,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 				element1, element2 };
 		final IInternalElement[] elements = table.getElements(name1);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements);
 	}
 
 	public void testPutGetVariousNames() throws Exception {
@@ -68,8 +72,8 @@ public class NameTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] elements1 = table.getElements(name1);
 		final IInternalElement[] elements2 = table.getElements(name2);
 
-		IndexTestsUtil.assertSameElements(expectedResult1, elements1);
-		IndexTestsUtil.assertSameElements(expectedResult2, elements2);
+		assertSameElements(expectedResult1, elements1);
+		assertSameElements(expectedResult2, elements2);
 	}
 
 	public void testRemove() throws Exception {
@@ -81,7 +85,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 		final IInternalElement[] expectedResult = new IInternalElement[] { element2 };
 		final IInternalElement[] elements = table.getElements(name1);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements);
 	}
 
 	public void testClear() throws Exception {
@@ -92,7 +96,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 
 		final IInternalElement[] elements = table.getElements(name1);
 
-		IndexTestsUtil.assertIsEmpty(elements);
+		assertIsEmpty(elements);
 	}
 	
 }

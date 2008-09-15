@@ -1,5 +1,8 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +12,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class ExportTableTests extends AbstractRodinDBTests {
 
@@ -49,11 +51,11 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file1 = IndexTestsUtil.createRodinFile(rodinProject, "exp1.test");
-		file2 = IndexTestsUtil.createRodinFile(rodinProject, "exp2.test");
-		element1F1 = IndexTestsUtil.createNamedElement(file1, "elem1F1");
-		element2F1 = IndexTestsUtil.createNamedElement(file1, "elem2F1");
-		element1F2 = IndexTestsUtil.createNamedElement(file2, "elem1F2");
+		file1 = createRodinFile(rodinProject, "exp1.test");
+		file2 = createRodinFile(rodinProject, "exp2.test");
+		element1F1 = createNamedElement(file1, "elem1F1");
+		element2F1 = createNamedElement(file1, "elem2F1");
+		element1F2 = createNamedElement(file2, "elem1F2");
 	}
 
 	@Override

@@ -1,5 +1,11 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
@@ -25,7 +31,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(project, "indMan.test");
+		file = createRodinFile(project, "indMan.test");
 		RodinIndexer.register(indexer, file.getElementType());
 	}
 
@@ -37,38 +43,37 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	}
 
 	public void testScheduleIndexing() throws Exception {
-		final NamedElement element = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultName);
+		final NamedElement element = createNamedElement(file,
+				defaultName);
 
 		manager.scheduleIndexing(file);
 
 		final RodinIndex index = manager.getIndex(project);
 		final Descriptor desc = index.getDescriptor(element);
 
-		IndexTestsUtil.assertDescriptor(desc, element,
-				IndexTestsUtil.defaultName, 6);
+		assertDescriptor(desc, element,
+				defaultName, 6);
 	}
 
 	public void testScheduleSeveralIndexing() throws Exception {
 		// TODO test several calls to scheduleIndexing with same file
 
-		final String elementName = IndexTestsUtil.defaultName;
-		final NamedElement element = IndexTestsUtil.createNamedElement(file,
+		final String elementName = defaultName;
+		final NamedElement element = createNamedElement(file,
 				elementName);
 
-		final String element2Name = IndexTestsUtil.defaultName + "2";
+		final String element2Name = defaultName + "2";
 		final NamedElement element2 = new NamedElement(element2Name, file);
 
-		RodinIndex index;
 
 		// first indexing with element, without element2
 		manager.scheduleIndexing(file);
 
-		index = manager.getIndex(project);
-		final Descriptor descElement = index.getDescriptor(element);
+		final RodinIndex index1 = manager.getIndex(project);
+		final Descriptor descElement = index1.getDescriptor(element);
 
-		IndexTestsUtil.assertDescriptor(descElement, element, elementName, 6);
-		IndexTestsUtil.assertNoSuchDescriptor(index, element2);
+		assertDescriptor(descElement, element, elementName, 6);
+		assertNoSuchDescriptor(index1, element2);
 
 		element.delete(true, null);
 		element2.create(null, null);
@@ -76,16 +81,15 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
-		index = manager.getIndex(project);
-		final Descriptor descElement2 = index.getDescriptor(element2);
+		final RodinIndex index2 = manager.getIndex(project);
+		final Descriptor descElement2 = index2.getDescriptor(element2);
 
-		IndexTestsUtil.assertNoSuchDescriptor(index, element);
-		IndexTestsUtil
-				.assertDescriptor(descElement2, element2, element2Name, 6);
+		assertNoSuchDescriptor(index2, element);
+		assertDescriptor(descElement2, element2, element2Name, 6);
 	}
 
 	public void testIndexFileDoesNotExist() throws Exception {
-		IRodinFile inexistentFile = project.getRodinFile("inexistentFile.test");
+		final IRodinFile inexistentFile = project.getRodinFile("inexistentFile.test");
 		try {
 			manager.scheduleIndexing(inexistentFile);
 		} catch (Exception e) {
@@ -107,15 +111,15 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final String el1Name = "elementF1Name";
 		final String el2Name = "elementF2Name";
 
-		final NamedElement elementF1 = IndexTestsUtil.createNamedElement(file,
+		final NamedElement elementF1 = createNamedElement(file,
 				el1Name);
 		final IRodinProject project2 = createRodinProject("P2");
-		IRodinFile file2 = IndexTestsUtil.createRodinFile(project2,
+		final IRodinFile file2 = createRodinFile(project2,
 				"file2P2.test");
-		final NamedElement elementF2 = IndexTestsUtil.createNamedElement(file2,
+		final NamedElement elementF2 = createNamedElement(file2,
 				el2Name);
 
-		IRodinFile[] toIndex = new IRodinFile[] { file, file2 };
+		final IRodinFile[] toIndex = new IRodinFile[] { file, file2 };
 		manager.scheduleIndexing(toIndex);
 
 		final RodinIndex index1 = manager.getIndex(project);
@@ -123,9 +127,8 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final RodinIndex index2 = manager.getIndex(project2);
 		final Descriptor desc2 = index2.getDescriptor(elementF2);
 
-		IndexTestsUtil.assertDescriptor(desc1, elementF1, el1Name, 6);
+		assertDescriptor(desc1, elementF1, el1Name, 6);
 
-		IndexTestsUtil.assertDescriptor(desc2, elementF2, el2Name, 6);
-
+		assertDescriptor(desc2, elementF2, el2Name, 6);
 	}
 }

@@ -1,5 +1,8 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -7,7 +10,6 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.NameTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class NameTableUsageTests extends AbstractRodinDBTests {
 
@@ -28,7 +30,7 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "nameInd.test");
+		file = createRodinFile(rodinProject, "nameInd.test");
 		RodinIndexer.register(indexer, file.getElementType());
 	}
 
@@ -50,7 +52,7 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 			System.out.println(getName() + ": " + message);
 			System.out.println(table.toString());
 		}
-		IndexTestsUtil.assertSameElements(expectedElements, actualElements);
+		assertSameElements(expectedElements, actualElements);
 	}
 
 	public void testNameTableFilling() throws Exception {

@@ -1,5 +1,7 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class FakeNameIndexer implements IIndexer {
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
-				final NamedElement decl = IndexTestsUtil.createNamedElement(
+				final NamedElement decl = createNamedElement(
 						rodinFile, name);
 				index.addDeclaration(decl, name);
 				final HashSet<IInternalElement> set = new HashSet<IInternalElement>();

@@ -162,9 +162,9 @@ public class IndexTestsUtil {
 
 	public static void assertSameOccurrences(Descriptor desc, Occurrence[] occs) {
 		assertNotNull(desc);
-		assertContainsAll(desc, occs);
-
 		assertLength(desc, occs.length);
+
+		assertContainsAll(desc, occs);
 	}
 
 	public static void assertLength(Descriptor desc, int expectedLength) {
@@ -181,7 +181,7 @@ public class IndexTestsUtil {
 
 	public static void assertName(Descriptor desc, String name) {
 		assertNotNull(desc);
-		TestCase.assertEquals("bad element for descriptor " + desc, name, desc
+		TestCase.assertEquals("bad name for descriptor " + desc, name, desc
 				.getName());
 	}
 

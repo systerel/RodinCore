@@ -1,5 +1,8 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,7 +10,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.internal.core.index.tables.DependenceTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class DependenceTableTests extends AbstractRodinDBTests {
 
@@ -36,10 +38,10 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file1 = IndexTestsUtil.createRodinFile(rodinProject, "dep1.test");
-		file2 = IndexTestsUtil.createRodinFile(rodinProject, "dep2.test");
-		file3 = IndexTestsUtil.createRodinFile(rodinProject, "dep3.test");
-		file4 = IndexTestsUtil.createRodinFile(rodinProject, "dep4.test");
+		file1 = createRodinFile(rodinProject, "dep1.test");
+		file2 = createRodinFile(rodinProject, "dep2.test");
+		file3 = createRodinFile(rodinProject, "dep3.test");
+		file4 = createRodinFile(rodinProject, "dep4.test");
 		table = new DependenceTable();
 	}
 
@@ -63,7 +65,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	public void testGetNone() throws Exception {
 		final IRodinFile[] actual = table.get(file1);
 
-		IndexTestsUtil.assertIsEmpty(actual);
+		assertIsEmpty(actual);
 	}
 
 	public void testPutGetSeveral() throws Exception {
@@ -117,8 +119,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		final IRodinFile[] actual1 = table.get(file1);
 		final IRodinFile[] actual3 = table.get(file3);
 
-		IndexTestsUtil.assertIsEmpty(actual1);
-		IndexTestsUtil.assertIsEmpty(actual3);
+		assertIsEmpty(actual1);
+		assertIsEmpty(actual3);
 	}
 
 	public void testGetDependents() throws Exception {
@@ -138,7 +140,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 
 		final IRodinFile[] actual = table.getDependents(file1);
 
-		IndexTestsUtil.assertIsEmpty(actual);
+		assertIsEmpty(actual);
 	}
 
 	public void testRemove() throws Exception {
@@ -150,7 +152,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 
 		final IRodinFile[] actual = table.get(file2);
 
-		IndexTestsUtil.assertIsEmpty(actual);
+		assertIsEmpty(actual);
 	}
 
 	public void testRemoveWithDeps() throws Exception {
@@ -167,8 +169,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 		final IRodinFile[] actual2 = table.get(file2);
 		final IRodinFile[] actual3 = table.get(file3);
 
-		IndexTestsUtil.assertIsEmpty(actual1);
-		IndexTestsUtil.assertIsEmpty(actual2);
+		assertIsEmpty(actual1);
+		assertIsEmpty(actual2);
 		assertSameFiles(expected3, actual3);
 	}
 

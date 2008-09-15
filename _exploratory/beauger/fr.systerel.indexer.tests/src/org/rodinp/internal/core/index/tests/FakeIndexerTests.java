@@ -1,5 +1,10 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
@@ -26,7 +31,7 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "concInd.test");
+		file = createRodinFile(rodinProject, "concInd.test");
 	}
 
 	@Override
@@ -36,16 +41,16 @@ public class FakeIndexerTests extends AbstractRodinDBTests {
 	}
 
 	public void testIndex() throws Exception {
-		NamedElement element = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultName);
+		NamedElement element = createNamedElement(file,
+				defaultName);
 
 		final RodinIndex rodinIndex = new RodinIndex();
 		IIndexingFacade index = new IndexingFacade(file, rodinIndex,
 				new FileTable(), new NameTable(), new ExportTable(), new DependenceTable());
 		indexer.index(file, index);
 
-		IndexTestsUtil.assertDescriptor(rodinIndex.getDescriptor(element),
-				element, IndexTestsUtil.defaultName, 6);
+		assertDescriptor(rodinIndex.getDescriptor(element),
+				element, defaultName, 6);
 	}
 
 }

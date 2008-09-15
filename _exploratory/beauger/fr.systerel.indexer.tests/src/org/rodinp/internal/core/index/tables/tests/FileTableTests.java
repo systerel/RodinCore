@@ -1,12 +1,16 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tables.FileTable;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class FileTableTests extends AbstractRodinDBTests {
 
@@ -24,10 +28,10 @@ public class FileTableTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "filetable.test");
-		file2 = IndexTestsUtil.createRodinFile(rodinProject, "filetable2.test");
-		element = IndexTestsUtil.createNamedElement(file, "elem");
-		element2 = IndexTestsUtil.createNamedElement(file2, "elem2");
+		file = createRodinFile(rodinProject, "filetable.test");
+		file2 = createRodinFile(rodinProject, "filetable2.test");
+		element = createNamedElement(file, "elem");
+		element2 = createNamedElement(file2, "elem2");
 	}
 
 	@Override
@@ -38,75 +42,74 @@ public class FileTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testGetElementsPresent() throws Exception {
-		table.addElement(element, file);
+		table.add(element, file);
 		final IInternalElement[] expectedResult = new IInternalElement[] { element };
 
-		final IInternalElement[] elements = table.getElements(file);
+		final IInternalElement[] elements = table.get(file);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements);
 	}
 
 	public void testGetElementsFileAbsent() throws Exception {
-		table.addElement(element, file);
+		table.add(element, file);
 
-		final IInternalElement[] elements = table.getElements(file2);
+		final IInternalElement[] elements = table.get(file2);
 
-		IndexTestsUtil.assertIsEmpty(elements);
+		assertIsEmpty(elements);
 	}
 
 	public void testAddElement() throws Exception {
-		table.addElement(element, file);
+		table.add(element, file);
 
 		final IInternalElement[] expectedResult = new IInternalElement[] { element };
-		final IInternalElement[] elements = table.getElements(file);
+		final IInternalElement[] elements = table.get(file);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements);
 	}
 
 	public void testAlienElement() throws Exception {
 		try {
-			table.addElement(element, file2);
-		} catch (IllegalArgumentException e) {
-			return;
+			table.add(element, file2);
+		} catch (Exception e) {
+			fail("adding an alien element to a FileTable should not raise any Exception");
 		}
-		fail("adding an alien element to a FileTable should raise IllegalArgumentException");
 	}
 
 	public void testRemoveElements() throws Exception {
-		table.addElement(element, file);
-		table.addElement(element2, file2);
-		table.removeElements(file);
+		table.add(element, file);
+		table.add(element2, file2);
+		table.remove(file);
 
-		final IInternalElement[] elements = table.getElements(file);
+		final IInternalElement[] elements = table.get(file);
 		final IInternalElement[] expectedResult2 = new IInternalElement[] { element2 };
-		final IInternalElement[] elements2 = table.getElements(file2);
+		final IInternalElement[] elements2 = table.get(file2);
 
-		IndexTestsUtil.assertIsEmpty(elements);
-		IndexTestsUtil.assertSameElements(expectedResult2, elements2);
+		assertIsEmpty(elements);
+		assertSameElements(expectedResult2, elements2);
 	}
 
 	public void testRemoveElementsFileAbsent() throws Exception {
-		table.addElement(element, file);
-		table.removeElements(file2);
+		table.add(element, file);
+		table.remove(file2);
 
 		final IInternalElement[] expectedResult = new IInternalElement[] { element };
-		final IInternalElement[] elements = table.getElements(file);
-		final IInternalElement[] elements2 = table.getElements(file2);
+		final IInternalElement[] elements = table.get(file);
+		final IInternalElement[] elements2 = table.get(file2);
 
-		IndexTestsUtil.assertSameElements(expectedResult, elements);
-		IndexTestsUtil.assertIsEmpty(elements2);
+		assertSameElements(expectedResult, elements);
+		assertIsEmpty(elements2);
 	}
 
 	public void testClear() throws Exception {
-		table.addElement(element, file);
-		table.addElement(element2, file2);
+		table.add(element, file);
+		table.add(element2, file2);
 		table.clear();
 
-		final IInternalElement[] elements = table.getElements(file);
-		final IInternalElement[] elements2 = table.getElements(file2);
+		final IInternalElement[] elements = table.get(file);
+		final IInternalElement[] elements2 = table.get(file2);
 
-		IndexTestsUtil.assertIsEmpty(elements);
-		IndexTestsUtil.assertIsEmpty(elements2);
+		assertIsEmpty(elements);
+		assertIsEmpty(elements2);
 	}
 
 }

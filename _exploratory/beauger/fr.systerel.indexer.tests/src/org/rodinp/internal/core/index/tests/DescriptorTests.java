@@ -1,5 +1,13 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContains;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContainsNot;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertName;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
@@ -29,9 +37,9 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(rodinProject, "desc.test");
-		testElt = IndexTestsUtil.createNamedElement(file, testEltName);
-		testDesc = new Descriptor(testEltName, testElt);
+		file = createRodinFile(rodinProject, "desc.test");
+		testElt = createNamedElement(file, testEltName);
+		testDesc = new Descriptor(testElt, testEltName);
 	}
 
 	@Override
@@ -42,32 +50,39 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	}
 
 	public void testConstructor() throws Exception {
-		IndexTestsUtil.assertElement(testDesc, testElt);
-		IndexTestsUtil.assertName(testDesc, testEltName);
+		assertElement(testDesc, testElt);
+		assertName(testDesc, testEltName);
 		assertNotNull("occurrences should not be null", testDesc
 				.getOccurrences());
 	}
 
 	public void testAddOccurrence() throws Exception {
-		Occurrence occ = IndexTestsUtil.createDefaultOccurrence(testElt);
+		Occurrence occ = createDefaultOccurrence(testElt);
 
 		testDesc.addOccurrence(occ);
 
-		IndexTestsUtil.assertContains(testDesc, occ);
+		assertContains(testDesc, occ);
 	}
 
 	public void testRemoveOccurrences() throws Exception {
-		Occurrence friendOcc = IndexTestsUtil.createDefaultOccurrence(testElt);
-		IRodinFile alien = IndexTestsUtil.createRodinFile(rodinProject, "alienFile.test");
-		Occurrence alienOcc = IndexTestsUtil.createDefaultOccurrence(alien);
+		Occurrence friendOcc = createDefaultOccurrence(testElt);
+		IRodinFile alien = createRodinFile(rodinProject, "alienFile.test");
+		Occurrence alienOcc = createDefaultOccurrence(alien);
 
 		testDesc.addOccurrence(friendOcc);
 		testDesc.addOccurrence(alienOcc);
 
 		testDesc.removeOccurrences(testElt.getRodinFile());
 
-		IndexTestsUtil.assertContainsNot(testDesc, friendOcc);
-		IndexTestsUtil.assertContains(testDesc, alienOcc);
+		assertContainsNot(testDesc, friendOcc);
+		assertContains(testDesc, alienOcc);
 	}
 
+	public void testSetName() throws Exception {
+		final String name2 = testEltName+"2";
+
+		testDesc.setName(name2);
+		
+		assertName(testDesc, name2);
+	}
 }

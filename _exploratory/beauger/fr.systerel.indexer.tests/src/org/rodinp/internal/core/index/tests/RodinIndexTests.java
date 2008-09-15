@@ -1,5 +1,11 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.AbstractRodinDBTests;
@@ -26,11 +32,11 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(project, "rodinIndex.test");
-		element = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultName);
+		file = createRodinFile(project, "rodinIndex.test");
+		element = createNamedElement(file,
+				defaultName);
 		element2 = IndexTestsUtil.createNamedElement(file,
-				IndexTestsUtil.defaultName + "2");
+				defaultName + "2");
 	}
 
 	@Override
@@ -43,7 +49,7 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	public void testMakeDescriptor() throws Exception {
 		final Descriptor descriptor = index.makeDescriptor(element, name);
 
-		IndexTestsUtil.assertDescriptor(descriptor, element, name, 0);
+		assertDescriptor(descriptor, element, name, 0);
 	}
 
 	public void testGetDescriptor() throws Exception {
@@ -56,25 +62,22 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 	}
 
 	public void testMakeDoubleDescriptor() throws Exception {
-		final Descriptor descriptor1 = index.makeDescriptor(element, name);
-		Descriptor descriptor2 = null;
+		index.makeDescriptor(element, name);
+
 		try {
-			descriptor2 = index.makeDescriptor(element, name);
+			index.makeDescriptor(element, name);
 		} catch (IllegalArgumentException e) {
-			fail("2 successive calls to make with same name should not raise an exception "
-					+ e.getLocalizedMessage());
+			return;
 		}
-		assertEquals(
-				"2 successive calls to make with same name should return the same descriptor",
-				descriptor2, descriptor1);
+		fail("2 successive calls to make with same name should raise IllegalArgumentException");
 	}
 
-	public void testMakeDoubleFaultyDescriptor() throws Exception {
+	public void testMakeDoubleDescriptorDiffName() throws Exception {
 		index.makeDescriptor(element, name);
-		
-		try{
+
+		try {
 			index.makeDescriptor(element, name2);
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			return;
 		}
 		fail("2 successive calls to make with different names should raise an exception");
@@ -84,7 +87,7 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 		index.makeDescriptor(element, name);
 		index.removeDescriptor(element);
 
-		IndexTestsUtil.assertNoSuchDescriptor(index, element);
+		assertNoSuchDescriptor(index, element);
 	}
 
 	public void testGetDescriptors() throws Exception {
@@ -99,12 +102,33 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 		Descriptor desc2 = descriptors[1];
 
 		if (desc.getElement() == element) {
-			IndexTestsUtil.assertDescriptor(desc, element, name, 0);
-			IndexTestsUtil.assertDescriptor(desc2, element2, name2, 0);
+			assertDescriptor(desc, element, name, 0);
+			assertDescriptor(desc2, element2, name2, 0);
 		} else {
-			IndexTestsUtil.assertDescriptor(desc, element2, name2, 0);
-			IndexTestsUtil.assertDescriptor(desc2, element, name, 0);
+			assertDescriptor(desc, element2, name2, 0);
+			assertDescriptor(desc2, element, name, 0);
 		}
+	}
+
+	public void testRename() throws Exception {
+		index.makeDescriptor(element, name);
+
+		index.rename(element, name2);
+
+		final Descriptor desc = index.getDescriptor(element);
+
+		assertDescriptor(desc, element, name2, 0);
+	}
+
+	public void testRenameDoesNotExist() throws Exception {
+		// no descriptor already exists for element
+
+		try {
+			index.rename(element, name2);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+		fail("Attempting to rename an element which has no descriptor should raise IllegalArgumentException");
 	}
 
 	public void testClear() throws Exception {
@@ -113,8 +137,8 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 
 		index.clear();
 
-		IndexTestsUtil.assertNoSuchDescriptor(index, element);
-		IndexTestsUtil.assertNoSuchDescriptor(index, element2);
+		assertNoSuchDescriptor(index, element);
+		assertNoSuchDescriptor(index, element2);
 	}
 
 }
