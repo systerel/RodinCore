@@ -18,7 +18,9 @@ public class FakeExportIndexer implements IIndexer {
 
 	public void index(IRodinFile file, IIndexingFacade index) {
 		for (IInternalElement elt : exports.keySet()) {
-			index.addDeclaration(elt, exports.get(elt));
+			if (elt.getRodinFile().equals(file)) {
+				index.addDeclaration(elt, exports.get(elt));
+			}
 			index.export(elt);
 		}
 	}

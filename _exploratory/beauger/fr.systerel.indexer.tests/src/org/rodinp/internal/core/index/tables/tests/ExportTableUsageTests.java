@@ -1,11 +1,11 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -27,20 +27,6 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 
 	public ExportTableUsageTests(String name) {
 		super(name);
-	}
-
-	private void assertExports(Map<IInternalElement, String> expected,
-			Map<IInternalElement, String> actual) {
-		final Set<IInternalElement> expKeySet = expected.keySet();
-		final Set<IInternalElement> actKeySet = actual.keySet();
-	
-		assertTrue("missing exports", actKeySet.containsAll(expKeySet));
-		assertEquals("unexpected exports", expKeySet.size(), actKeySet.size());
-	
-		for (IInternalElement elem : actKeySet) {
-			assertEquals("bad name for element " + elem.getElementName(),
-					actual.get(elem), expected.get(elem));
-		}
 	}
 
 	// TODO avoid all this stuff by overriding runTest and calling a clean method
@@ -139,5 +125,4 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 
 		assertExports(expected, actual);
 	}
-
 }

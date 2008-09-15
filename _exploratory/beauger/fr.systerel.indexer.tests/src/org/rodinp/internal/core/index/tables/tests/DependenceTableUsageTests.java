@@ -1,5 +1,6 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
@@ -19,7 +20,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	private static IRodinProject project;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
-	// private static IRodinFile file3;
+	private static IRodinFile file3;
 	private static NamedElement eltF2;
 	private static final String eltF2Name = "eltF2Name";
 	private static final String eltF2Name2 = "eltF2Name2";
@@ -51,12 +52,10 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "DepTable1.test");
 		file2 = createRodinFile(project, "DepTable2.test");
+		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
 		f2ExportsElt2.add(file2, eltF2, eltF2Name);
 		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
-
-		// file3 = createRodinFile(project,
-		// "DepTable3.test");
 
 	}
 
@@ -233,6 +232,38 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		final DependenceTable dependenceTable = manager
 				.getDependenceTable(project);
 		assertIsEmpty(dependenceTable.get(file1));
+	}
+
+	public void testSerialExports() throws Exception {
+		final DependenceTable f1dF2dF3 = new DependenceTable();
+		f1dF2dF3.put(file1, new IRodinFile[] { file2 });
+		f1dF2dF3.put(file2, new IRodinFile[] { file3 });
+
+		final NamedElement elt3 = createNamedElement(file3, "elt3");
+		final String elt3Name = "elt3Name";
+
+		final ExportTable f1f2f3expElt3 = new ExportTable();
+		f1f2f3expElt3.add(file3, elt3, elt3Name);
+		f1f2f3expElt3.add(file2, elt3, elt3Name);
+		f1f2f3expElt3.add(file1, elt3, elt3Name);
+
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				f1dF2dF3, f1f2f3expElt3);
+		RodinIndexer.register(indexer, file1.getElementType());
+
+		IRodinFile[] toIndex = new IRodinFile[] { file1, file2, file3 };
+
+
+		try {
+			manager.scheduleIndexing(toIndex);
+		} catch (Exception e) {
+			fail("Re-exporting elements should not raise an exception.");
+		}
+
+		final ExportTable exportTable = manager.getExportTable(project);
+		assertExports(f1f2f3expElt3.get(file3), exportTable.get(file3));
+		assertExports(f1f2f3expElt3.get(file2), exportTable.get(file2));
+		assertExports(f1f2f3expElt3.get(file1), exportTable.get(file1));
 	}
 
 }
