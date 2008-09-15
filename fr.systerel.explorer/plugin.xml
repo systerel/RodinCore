@@ -14,6 +14,24 @@
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">
       </view>
+      <view
+            category="fr.systerel.explorer.category"
+            class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
+            id="org.eventb.ui.views.ProofTreeUI"
+            name="%view.ProofTreeUI">
+      </view>
+      <view
+            category="fr.systerel.explorer.category"
+            class="org.eventb.internal.ui.proofinformation.ProofInformation"
+            id="org.eventb.ui.views.ProofInformation"
+            name="%view.ProofInformation">
+      </view>
+      <view
+            category="fr.systerel.explorer.category"
+            class="org.eventb.internal.ui.goal.Goal"
+            id="org.eventb.ui.views.Goal"
+            name="%view.Goal">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -72,7 +90,16 @@
             viewerId="fr.systerel.explorer.navigator.view">
          <includes>
             <actionExtension
-                  pattern="fr.systerel.explorer.navigator.actionProviders.machine">
+                  pattern="fr.systerel.explorer.navigator.actionProviders.file">
+            </actionExtension>
+            <actionExtension
+                  pattern="fr.systerel.explorer.navigator.actionProviders.project">
+            </actionExtension>
+            <actionExtension
+                  pattern="fr.systerel.explorer.navigator.actionProviders.treeNode">
+            </actionExtension>
+            <actionExtension
+                  pattern="fr.systerel.explorer.navigator.actionProviders.element">
             </actionExtension>
          </includes>
       </viewerActionBinding>
@@ -360,8 +387,34 @@
          </possibleChildren>
       </navigatorContent>
       <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.MachineActionProvider"
-            id="fr.systerel.explorer.navigator.actionProviders.machine">
+            class="fr.systerel.explorer.navigator.actionProviders.ProjectActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.project">
+         <enablement>
+            <instanceof
+                  value="org.rodinp.core.IRodinProject">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="fr.systerel.explorer.navigator.actionProviders.TreeNodeActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.treeNode">
+         <enablement>
+            <or>
+               <instanceof
+                     value="fr.systerel.explorer.poModel.Machine">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.ui.projectexplorer.TreeNode">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.poModel.Context">
+               </instanceof>
+            </or>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="fr.systerel.explorer.navigator.actionProviders.FileActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.file">
          <enablement>
             <or>
                <instanceof
@@ -370,29 +423,34 @@
                <instanceof
                      value="org.eventb.core.IContextFile">
                </instanceof>
+            </or>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="fr.systerel.explorer.navigator.actionProviders.ElementActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.element">
+         <enablement>
+            <or>
                <instanceof
-                     value="org.eventb.core.IEvent">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.IVariable">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.ICarrierSet">
+                     value="org.eventb.core.IAxiom">
                </instanceof>
                <instanceof
                      value="org.eventb.core.IInvariant">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IConstant">
+                     value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IAxiom">
+                     value="org.eventb.core.ICarrierSet">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IConstant">
                </instanceof>
                <instanceof
                      value="org.eventb.core.ITheorem">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IPSStatus">
+                     value="org.eventb.core.IVariable">
                </instanceof>
             </or>
          </enablement>
