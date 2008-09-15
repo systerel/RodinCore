@@ -25,6 +25,7 @@ import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class IndexingFacadeTests extends AbstractRodinDBTests {
 
@@ -51,7 +52,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	private static final DependenceTable emptyDeps = new DependenceTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 	private static IndexingFacade indexingFacade1;
-	private static final OccurrenceKind kind = OccurrenceKind.NULL;
+	private static final OccurrenceKind kind = TestOccurrenceKind.TEST_KIND;
 
 	@Override
 	protected void setUp() throws Exception {

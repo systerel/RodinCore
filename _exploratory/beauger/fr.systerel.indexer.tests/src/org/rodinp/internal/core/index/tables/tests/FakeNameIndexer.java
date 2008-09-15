@@ -15,10 +15,10 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
+import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class FakeNameIndexer implements IIndexer {
 
@@ -52,7 +52,7 @@ public class FakeNameIndexer implements IIndexer {
 							.createNamedElement(rodinFile, name + "_DB" + i);
 					final IRodinLocation loc = RodinIndexer
 							.getRodinLocation(element);
-					index.addOccurrence(decl, OccurrenceKind.NULL, loc);
+					index.addOccurrence(decl, TestOccurrenceKind.TEST_KIND, loc);
 					if (DEBUG) {
 						System.out.println(name + ": "
 								+ element.getElementName());

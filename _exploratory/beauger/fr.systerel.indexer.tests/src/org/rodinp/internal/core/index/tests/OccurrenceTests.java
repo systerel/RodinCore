@@ -11,6 +11,7 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinLocation;
+import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class OccurrenceTests extends AbstractRodinDBTests {
 
@@ -18,7 +19,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	private final OccurrenceKind defaultKind = OccurrenceKind.NULL;
+	private final OccurrenceKind defaultKind = TestOccurrenceKind.TEST_KIND;
 	private IRodinLocation location;
 	private Occurrence occ;
 

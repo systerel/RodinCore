@@ -25,37 +25,16 @@ import org.rodinp.internal.core.index.RodinIndex;
 
 public class IndexTestsUtil {
 
-	public static class TestReferenceKind extends OccurrenceKind {
-		private static final long serialVersionUID = 9174271655290648041L;
-
-		protected TestReferenceKind(String name) {
-			super(name);
-		}
-
-		public static final TestReferenceKind TEST_KIND = new TestReferenceKind(
-				"Test Kind");
+	public static enum TestOccurrenceKind implements OccurrenceKind {
+		TEST_KIND
 	}
 
-	public static class RefKind1 extends OccurrenceKind {
-
-		private static final long serialVersionUID = -6158077370017655468L;
-
-		protected RefKind1(String name) {
-			super(name);
-		}
-
-		public static final RefKind1 TEST_KIND_1 = new RefKind1("Test Kind 1");
+	public static enum OccKind1 implements OccurrenceKind {
+		TEST_KIND_1
 	}
 
-	public static class RefKind2 extends OccurrenceKind {
-
-		private static final long serialVersionUID = -7253224209942479317L;
-
-		protected RefKind2(String name) {
-			super(name);
-		}
-
-		public static final RefKind2 TEST_KIND_2 = new RefKind2("Test Kind 2");
+	public static enum OccKind2 implements OccurrenceKind {
+		TEST_KIND_2
 	}
 
 	public static final String defaultName = "banzai";
@@ -68,15 +47,15 @@ public class IndexTestsUtil {
 	}
 
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
-		return new Occurrence(OccurrenceKind.NULL, RodinIndexer
+		return new Occurrence(TestOccurrenceKind.TEST_KIND, RodinIndexer
 				.getRodinLocation(element));
 	}
 
 	public static Occurrence[] generateOccurrencesTestSet(IInternalElement ie,
 			int numEachKind) throws CoreException {
 
-		OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
-				IndexTestsUtil.RefKind2.TEST_KIND_2 };
+		OccurrenceKind[] kinds = { IndexTestsUtil.OccKind1.TEST_KIND_1,
+				IndexTestsUtil.OccKind2.TEST_KIND_2 };
 		ArrayList<Occurrence> result = new ArrayList<Occurrence>();
 
 		for (OccurrenceKind k : kinds) {
@@ -91,8 +70,8 @@ public class IndexTestsUtil {
 	public static void addOccurrencesTestSet(IInternalElement ie,
 			int numEachKind, IIndexingFacade index) throws CoreException {
 
-		OccurrenceKind[] kinds = { IndexTestsUtil.RefKind1.TEST_KIND_1,
-				IndexTestsUtil.RefKind2.TEST_KIND_2 };
+		OccurrenceKind[] kinds = { IndexTestsUtil.OccKind1.TEST_KIND_1,
+				IndexTestsUtil.OccKind2.TEST_KIND_2 };
 		for (OccurrenceKind k : kinds) {
 			for (int i = 0; i < numEachKind; i++) {
 				final IRodinLocation loc = RodinIndexer.getRodinLocation(ie
