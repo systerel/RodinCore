@@ -19,7 +19,7 @@ import org.rodinp.internal.core.index.tables.NameTable;
 public class IndexingFacade implements IIndexingFacade {
 
 	private final IRodinFile file;
-	private final RodinIndex index;
+	private final RodinIndex rodinIndex;
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
@@ -31,12 +31,12 @@ public class IndexingFacade implements IIndexingFacade {
 	/**
 	 * The given DependenceTable is assumed to be up-to-date.
 	 * <p>
-	 * The given ExportTable is assumed to be unchanged since latest indexing
-	 * (empty if it never was indexed). It will be updated through calls to
-	 * {@link IndexingFacade#export(IInternalElement)}.
+	 * The given ExportTable is assumed to be unchanged since latest indexing of
+	 * the given file (empty if it never was indexed). It will be updated
+	 * through calls to {@link IndexingFacade#export(IInternalElement)}.
 	 * <p>
-	 * The given FileTable and NameTable must have been clean // TODO consider
-	 * cleaning here
+	 * The given RodinIndex, FileTable and NameTable are supposed to be just
+	 * coherent with each other. They will be cleaned here.
 	 * 
 	 * @param file
 	 * @param rodinIndex
@@ -48,8 +48,11 @@ public class IndexingFacade implements IIndexingFacade {
 	public IndexingFacade(IRodinFile file, RodinIndex rodinIndex,
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
 			DependenceTable dependTable) {
+
+		clean(file, rodinIndex, fileTable, nameTable);
+
 		this.file = file;
-		this.index = rodinIndex;
+		this.rodinIndex = rodinIndex;
 		this.fileTable = fileTable;
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
@@ -64,23 +67,33 @@ public class IndexingFacade implements IIndexingFacade {
 
 		assertIsLocal(element);
 
-		if (index.isDeclared(element)) {
+		if (Arrays.asList(fileTable.get(file)).contains(element)) {
 			throw new IllegalArgumentException(
 					"Element has already been declared: " + element);
 		}
 
-		currentDescriptor = index.makeDescriptor(element, name);
-		// FIXME element may have been declared in a previous indexing and have
-		// alien occurrences that should be preserved.
-		// FIXME treat renaming also in this case.
-		if (previousExports.containsKey(element)) {
-			final String previousName = previousExports.get(element);
-			if (!previousName.equals(name)) { // renaming
+		currentDescriptor = rodinIndex.getDescriptor(element); // there may be
+		// alien occurrences
+		if (currentDescriptor == null) {
+			currentDescriptor = rodinIndex.makeDescriptor(element, name);
+		} else { // possible renaming
+			final String previousName = currentDescriptor.getName();
+			if (!previousName.equals(name)) {
+				rodinIndex.rename(element, name);
 				nameTable.remove(previousName, element);
-			} // else declared again with same name but maybe no more exported
-		} // else was not yet exported, but may get 
+				// there are alien occurrences of the element;
+				// in those files, it is referred to with previousName
+				// => rodinIndex tables are coherent but those files may not be
+				// indexed again, and the element name is incorrect there
+				// NB: actually, the ExportTable can be incoherent, as the
+				// element may be reexported by dependent files with a bad name.
+				// TODO as far as I can see, the name is no more needed in the
+				// ExportTable, so removing it would be the simplest solution.
+				// Else just propagate name changes through export tables.
+			}
+		}
 
-		fileTable.addElement(element, file);
+		fileTable.add(element, file);
 		nameTable.put(name, element);
 	}
 
@@ -103,6 +116,7 @@ public class IndexingFacade implements IIndexingFacade {
 		fetchCurrentDescriptor(element);
 		final Occurrence occurrence = new Occurrence(kind, location);
 		currentDescriptor.addOccurrence(occurrence);
+		fileTable.add(element, file);
 	}
 
 	public void export(IInternalElement element) {
@@ -114,7 +128,7 @@ public class IndexingFacade implements IIndexingFacade {
 		exportTable.add(file, element, name);
 
 		reindexDependents = !exportTable.get(file).keySet().equals(
-				previousExports.keySet()); // FIXME costly
+				previousExports.keySet()); // FIXME costly (?)
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -122,8 +136,7 @@ public class IndexingFacade implements IIndexingFacade {
 				&& currentDescriptor.getElement() == element) {
 			return;
 		}
-		currentDescriptor = index.getDescriptor(element);
-		// TODO: will never be null after implementing method changes => review
+		currentDescriptor = rodinIndex.getDescriptor(element);
 
 		if (currentDescriptor == null) {
 			throw new IllegalArgumentException("Element not declared: "
@@ -160,6 +173,27 @@ public class IndexingFacade implements IIndexingFacade {
 
 	public boolean mustReindexDependents() {
 		return reindexDependents;
+	}
+
+	private void clean(IRodinFile f, final RodinIndex index,
+			final FileTable fTable, final NameTable nTable) {
+
+		for (IInternalElement element : fTable.get(f)) {
+			final Descriptor descriptor = index.getDescriptor(element);
+
+			if (descriptor == null) {
+				throw new IllegalStateException(
+						"Elements in FileTable with no Descriptor in RodinIndex.");
+			}
+			descriptor.removeOccurrences(f);
+
+			if (descriptor.getOccurrences().length == 0) {
+				final String name = descriptor.getName();
+				nTable.remove(name, element);
+				index.removeDescriptor(element);
+			}
+		}
+		fTable.remove(f);
 	}
 
 }

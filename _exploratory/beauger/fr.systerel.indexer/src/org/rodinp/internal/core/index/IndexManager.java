@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
@@ -22,7 +21,8 @@ public final class IndexManager {
 
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
-
+	// TODO implement an overall consistency check method
+	
 	private static IndexManager instance;
 
 	private final ProjectMapping<RodinIndex> indexes;
@@ -163,8 +163,6 @@ public final class IndexManager {
 
 				final IIndexer indexer = getIndexerFor(file.getElementType());
 
-				clean(file, index, fileTable, nameTable);
-
 				final IndexingFacade indexingFacade = new IndexingFacade(file,
 						index, fileTable, nameTable, exportTable, dependTable);
 
@@ -204,23 +202,6 @@ public final class IndexManager {
 					"File dependencies contain one or more cycles");
 		}
 		return zeroDegree;
-	}
-
-	private void clean(IRodinFile file, final RodinIndex index,
-			final FileTable fileTable, final NameTable nameTable) {
-
-		for (IInternalElement element : fileTable.getElements(file)) {
-			final Descriptor descriptor = index.getDescriptor(element);
-			final String name = descriptor.getName();
-			nameTable.remove(name, element);
-
-			descriptor.removeOccurrences(file);
-
-			if (descriptor.getOccurrences().length == 0) {
-				index.removeDescriptor(element);
-			}
-		}
-		fileTable.removeElements(file);
 	}
 
 	private Map<IRodinProject, Set<IRodinFile>> splitIntoProjects(

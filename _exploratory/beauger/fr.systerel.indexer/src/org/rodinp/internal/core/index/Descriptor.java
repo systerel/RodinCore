@@ -20,7 +20,7 @@ public final class Descriptor {
 	private IInternalElement element;
 	private Set<Occurrence> occurrences;
 
-	public Descriptor(String name, IInternalElement element) {
+	public Descriptor(IInternalElement element, String name) {
 		this.name = name;
 		this.element = element;
 		this.occurrences = new HashSet<Occurrence>();
@@ -36,6 +36,10 @@ public final class Descriptor {
 
 	public Occurrence[] getOccurrences() {
 		return occurrences.toArray(new Occurrence[occurrences.size()]);
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean hasOccurrence(Occurrence occurrence) {

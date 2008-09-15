@@ -2,21 +2,29 @@ package org.rodinp.internal.core.index;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 
 public final class RodinIndex {
 
-	private HashMap<Object, Descriptor> map;
+	private Map<IInternalElement, Descriptor> map;
 
 	public RodinIndex() {
-		map = new HashMap<Object, Descriptor>();
+		map = new HashMap<IInternalElement, Descriptor>();
 	}
 
-	// FIXME perhaps we do not really want to have null returned
-	// in this case remove from all test units assertNotNull(desc) 
-	public Descriptor getDescriptor(Object key) {
-		return map.get(key);
+	/**
+	 * Gets the Descriptor corresponding to the given element. Returns
+	 * <code>null</code> if such a Descriptor does not exist.
+	 * 
+	 * @param element
+	 * @return the Descriptor of the given element, or <code>null</code> if it
+	 *         does not exist.
+	 * @see #makeDescriptor(IInternalElement, String)
+	 */
+	public Descriptor getDescriptor(IInternalElement element) {
+		return map.get(element);
 	}
 
 	public Descriptor[] getDescriptors() {
@@ -24,22 +32,29 @@ public final class RodinIndex {
 		return descriptors.toArray(new Descriptor[descriptors.size()]);
 	}
 
+	/**
+	 * Creates a Descriptor for the given element, with the given name. Throws
+	 * {@link IllegalArgumentException} if a Descriptor already exists for the
+	 * element.
+	 * 
+	 * @param element
+	 *            the element for which to make a Descriptor.
+	 * @param name
+	 *            the public name (user-known) of the element.
+	 * @return the newly created Descriptor.
+	 * @throws IllegalArgumentException
+	 *             if the Descriptor already exists.
+	 * @see #getDescriptor(IInternalElement)
+	 */
 	public Descriptor makeDescriptor(IInternalElement element, String name) {
-		Descriptor descriptor = map.get(element);
-		if (descriptor == null) {
-			descriptor = new Descriptor(name, element);
-			map.put(element, descriptor);
-		} else { // requesting to make an already existing descriptor
-			// TODO dangerous: always throw an exception
-			if (descriptor.getElement() != element
-					|| !descriptor.getName().equals(name)) {
-				throw new IllegalArgumentException("Descriptor for "
-						+ element.getElementName()
-						+ " already exists with a different name");
-			}
-			// else return the already existing one
-			// as it is coherent with the requested one
+		if (map.containsKey(element)) {
+			throw new IllegalArgumentException(
+					"Descriptor for already exists for element: "
+							+ element.getElementName());
 		}
+		final Descriptor descriptor = new Descriptor(element, name);
+		map.put(element, descriptor);
+
 		return descriptor;
 	}
 
@@ -48,9 +63,16 @@ public final class RodinIndex {
 	}
 
 	public void rename(IInternalElement element, String name) {
-		// TODO test and implement
+		final Descriptor descriptor = map.get(element);
+
+		if (descriptor == null) {
+			throw new IllegalArgumentException("The element "
+					+ element.getElementName()
+					+ " cannot be renamed as it has no descriptor");
+		}
+		descriptor.setName(name);
 	}
-	
+
 	public void clear() {
 		map.clear();
 	}
@@ -63,10 +85,6 @@ public final class RodinIndex {
 			sb.append(map.get(o).toString() + "\n");
 		}
 		return sb.toString();
-	}
-
-	public boolean isDeclared(IInternalElement element) {
-		return map.containsKey(element);
 	}
 
 }

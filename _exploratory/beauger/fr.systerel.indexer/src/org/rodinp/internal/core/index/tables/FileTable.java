@@ -18,7 +18,7 @@ public class FileTable {
 		table = new HashMap<IRodinFile, Set<IInternalElement>>();
 	}
 
-	public IInternalElement[] getElements(IRodinFile file) {
+	public IInternalElement[] get(IRodinFile file) {
 		final Set<IInternalElement> elements = table.get(file);
 		if (elements == null || elements.size() == 0) {
 			return NO_ELEMENTS;
@@ -26,7 +26,7 @@ public class FileTable {
 		return elements.toArray(new IInternalElement[elements.size()]);
 	}
 
-	public void removeElements(IRodinFile file) {
+	public void remove(IRodinFile file) {
 		table.remove(file);
 	}
 
@@ -34,13 +34,7 @@ public class FileTable {
 		table.clear();
 	}
 
-	public void addElement(IInternalElement element, IRodinFile file) {
-		// TODO move that verification to the IndexingFacade ? best here ?
-		// could also simply remove the file argument …
-		if (element.getRodinFile() != file) {
-			throw new IllegalArgumentException(
-					"trying to add an element from an alien file");
-		}
+	public void add(IInternalElement element, IRodinFile file) {
 		Set<IInternalElement> elements = table.get(file);
 		if (elements == null) {
 			elements = new HashSet<IInternalElement>();

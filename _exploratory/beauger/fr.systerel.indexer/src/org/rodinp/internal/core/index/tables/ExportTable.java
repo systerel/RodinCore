@@ -8,6 +8,7 @@ import org.rodinp.core.IRodinFile;
 
 public class ExportTable {
 
+	// TODO consider removing the name
 	Map<IRodinFile, Map<IInternalElement, String>> table;
 
 	public ExportTable() {
