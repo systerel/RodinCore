@@ -62,14 +62,13 @@ public final class RodinIndex {
 		map.remove(key);
 	}
 
-	
 	public void rename(IInternalElement element, String name) {
 		final Descriptor descriptor = map.get(element);
 
 		if (descriptor == null) {
 			throw new IllegalArgumentException("The element "
 					+ element.getElementName()
-					+ " cannot be renamed as it has no descriptor");
+					+ " cannot be renamed as it has no descriptor.");
 		}
 		descriptor.setName(name);
 	}

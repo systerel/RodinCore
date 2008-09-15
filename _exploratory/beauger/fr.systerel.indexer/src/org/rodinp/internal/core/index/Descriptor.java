@@ -38,7 +38,6 @@ public final class Descriptor {
 		return occurrences.toArray(new Occurrence[occurrences.size()]);
 	}
 
-	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -77,7 +76,7 @@ public final class Descriptor {
 		StringBuilder sb = new StringBuilder("*** descriptor: ");
 		sb.append(element.getElementName() + "\n");
 		sb.append("Name: " + name + "\n");
-		
+
 		for (Occurrence ref : occurrences) {
 			sb.append(ref.toString() + "\n");
 		}

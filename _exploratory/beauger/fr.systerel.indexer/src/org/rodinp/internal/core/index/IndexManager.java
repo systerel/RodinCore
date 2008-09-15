@@ -22,7 +22,7 @@ public final class IndexManager {
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
 	// TODO implement an overall consistency check method
-	
+
 	private static IndexManager instance;
 
 	private final ProjectMapping<RodinIndex> indexes;
@@ -153,7 +153,8 @@ public final class IndexManager {
 				return;
 			}
 
-			updateDependencies(toIndex, dependTable);
+			updateDependencies(toIndex.toArray(new IRodinFile[toIndex.size()]),
+					dependTable);
 
 			while (!toIndex.isEmpty()) {
 				// TODO can be quite long, possibly infinite if some problem are
@@ -171,16 +172,19 @@ public final class IndexManager {
 				toIndex.remove(file);
 
 				if (indexingFacade.mustReindexDependents()) {
-					toIndex.addAll(Arrays.asList(dependTable
-							.getDependents(file)));
+					final IRodinFile[] dependents = dependTable
+							.getDependents(file);
+//					updateDependencies(dependents, dependTable);
+					// not necessary as those files did not change
+					toIndex.addAll(Arrays.asList(dependents));
 				}
 			}
 		}
 	}
 
-	private void updateDependencies(Set<IRodinFile> toIndex,
+	private void updateDependencies(IRodinFile[] toIndex,
 			DependenceTable dependTable) {
-	
+
 		for (IRodinFile file : toIndex) {
 			final IIndexer indexer = getIndexerFor(file.getElementType());
 			final IRodinFile[] dependFiles = indexer.getDependencies(file);
@@ -190,7 +194,7 @@ public final class IndexManager {
 
 	private IRodinFile getNextFile(Set<IRodinFile> files,
 			DependenceTable dependTable) {
-		
+
 		IRodinFile zeroDegree = null;
 		for (IRodinFile file : files) {
 			if (degree(file, dependTable, files) == 0) {
@@ -218,7 +222,6 @@ public final class IndexManager {
 		}
 		return result;
 	}
-
 
 	private int degree(IRodinFile file, DependenceTable dependencies,
 			Set<IRodinFile> valuable) {

@@ -3,7 +3,6 @@ package org.rodinp.internal.core.index;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -65,7 +64,11 @@ public class IndexingFacade implements IIndexingFacade {
 
 	public void addDeclaration(IInternalElement element, String name) {
 
-		assertIsLocal(element);
+		if (!isLocal(element)) {
+			throw new IllegalArgumentException(
+					"Element must be in indexed file: "
+							+ element.getRodinFile());
+		}
 
 		if (Arrays.asList(fileTable.get(file)).contains(element)) {
 			throw new IllegalArgumentException(
@@ -86,7 +89,8 @@ public class IndexingFacade implements IIndexingFacade {
 				// => rodinIndex tables are coherent but those files may not be
 				// indexed again, and the element name is incorrect there
 				// NB: actually, the ExportTable can be incoherent, as the
-				// element may be reexported by dependent files with a bad name.
+				// element may be re-exported by dependent files with a bad
+				// name.
 				// TODO as far as I can see, the name is no more needed in the
 				// ExportTable, so removing it would be the simplest solution.
 				// Else just propagate name changes through export tables.
@@ -95,14 +99,6 @@ public class IndexingFacade implements IIndexingFacade {
 
 		fileTable.add(element, file);
 		nameTable.put(name, element);
-	}
-
-	private void assertIsLocal(IInternalElement element) {
-		if (!element.getRodinFile().equals(file)) {
-			throw new IllegalArgumentException(
-					"Element must be in indexed file: "
-							+ element.getRodinFile());
-		}
 	}
 
 	public void addOccurrence(IInternalElement element, OccurrenceKind kind,
@@ -120,7 +116,10 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	public void export(IInternalElement element) {
-		assertIsLocal(element);
+		if (!isLocalOrImported(element)) {
+			throw new IllegalArgumentException(
+					"Cannot export an element that is neither local nor imported.");
+		}
 		fetchCurrentDescriptor(element);
 
 		final String name = currentDescriptor.getName();
@@ -155,20 +154,24 @@ public class IndexingFacade implements IIndexingFacade {
 		} else {
 			return false;
 		}
-		if (locElemFile.equals(file)) { // local occurrence (mandatory)
-			return element.getRodinFile().equals(file) // local element
-					|| isImported(element); // imported element
+		return locElemFile.equals(file) && isLocalOrImported(element);
+	}
+
+	private boolean isLocal(IInternalElement element) {
+		return element.getRodinFile().equals(file);
+	}
+
+	private boolean isImported(IInternalElement element) {
+		for (IRodinFile f : localDeps) {
+			if (exportTable.get(f).keySet().contains(element)) {
+				return true;
+			}
 		}
 		return false;
 	}
 
-	private boolean isImported(IInternalElement element) {
-		final IRodinFile elemFile = element.getRodinFile();
-
-		final Set<IInternalElement> exported = exportTable.get(elemFile)
-				.keySet();
-
-		return localDeps.contains(elemFile) && exported.contains(element);
+	private boolean isLocalOrImported(IInternalElement element) {
+		return isLocal(element) || isImported(element);
 	}
 
 	public boolean mustReindexDependents() {
