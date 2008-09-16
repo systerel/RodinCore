@@ -1,5 +1,6 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.TEST_KIND;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class FakeNameIndexer implements IIndexer {
 
@@ -52,7 +52,7 @@ public class FakeNameIndexer implements IIndexer {
 							.createNamedElement(rodinFile, name + "_DB" + i);
 					final IRodinLocation loc = RodinIndexer
 							.getRodinLocation(element);
-					index.addOccurrence(decl, TestOccurrenceKind.TEST_KIND, loc);
+					index.addOccurrence(decl, TEST_KIND, loc);
 					if (DEBUG) {
 						System.out.println(name + ": "
 								+ element.getElementName());

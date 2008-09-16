@@ -1,5 +1,8 @@
 package org.eventb.core.indexer;
 
+import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
+import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,12 +139,12 @@ public class ContextIndexer implements IIndexer {
 		index.declare(constant, constantName);
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
 		.getRodinFile());
-		index.addOccurrence(constant, EventBOccurrenceKind.DECLARATION, loc);
+		index.addOccurrence(constant, DECLARATION, loc);
 	}
 
 	private void indexConstantReference(IConstant constant, String name,
 			IRodinLocation loc, IIndexingFacade index) {
-		index.addOccurrence(constant, EventBOccurrenceKind.REFERENCE,
+		index.addOccurrence(constant, REFERENCE,
 				loc);
 	}
 

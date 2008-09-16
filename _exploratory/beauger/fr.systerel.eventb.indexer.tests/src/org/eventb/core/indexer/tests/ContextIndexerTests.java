@@ -1,5 +1,8 @@
 package org.eventb.core.indexer.tests;
 
+import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
+import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +14,13 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.indexer.ContextIndexer;
 import org.eventb.core.indexer.EventBIndexUtil;
-import org.eventb.core.indexer.EventBOccurrenceKind;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
@@ -121,12 +124,12 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 				constant.identifierString);
 
 		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
-		addOccurrence(locDecl, EventBOccurrenceKind.DECLARATION, descriptor,
+		addOccurrence(locDecl, DECLARATION, descriptor,
 				contextIndexer);
 
 		final IRodinLocation locRef = RodinIndexer.getRodinLocation(tmpAxm,
 				EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
-		addOccurrence(locRef, EventBOccurrenceKind.REFERENCE, descriptor,
+		addOccurrence(locRef, REFERENCE, descriptor,
 				contextIndexer);
 
 		deleteProject(tmpProject.getElementName());
@@ -136,7 +139,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	}
 
 	private static void addOccurrence(IRodinLocation loc,
-			EventBOccurrenceKind kind, Descriptor descriptor, IIndexer indexer) {
+			IOccurrenceKind kind, Descriptor descriptor, IIndexer indexer) {
 
 		final Occurrence declaration = new Occurrence(kind, loc);
 		descriptor.addOccurrence(declaration);

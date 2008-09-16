@@ -14,7 +14,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingFacade;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.OccurrenceKind;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
@@ -23,17 +23,14 @@ import org.rodinp.internal.core.index.RodinIndex;
 
 public class IndexTestsUtil {
 
-	public static enum TestOccurrenceKind implements OccurrenceKind {
-		TEST_KIND
-	}
+	public static final IOccurrenceKind TEST_KIND =
+		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test", "test");
+	
+	public static final IOccurrenceKind TEST_KIND_1 =
+		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_1", "test_1");
 
-	public static enum OccKind1 implements OccurrenceKind {
-		TEST_KIND_1
-	}
-
-	public static enum OccKind2 implements OccurrenceKind {
-		TEST_KIND_2
-	}
+	public static final IOccurrenceKind TEST_KIND_2 =
+		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_2", "test_2");
 
 	public static final String defaultName = "banzai";
 
@@ -45,16 +42,15 @@ public class IndexTestsUtil {
 	}
 
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
-		return new Occurrence(TestOccurrenceKind.TEST_KIND, RodinIndexer
+		return new Occurrence(TEST_KIND, RodinIndexer
 				.getRodinLocation(element));
 	}
 
 	public static void addOccurrencesTestSet(IInternalElement ie,
 			int numEachKind, IIndexingFacade index) throws CoreException {
 
-		OccurrenceKind[] kinds = { IndexTestsUtil.OccKind1.TEST_KIND_1,
-				IndexTestsUtil.OccKind2.TEST_KIND_2 };
-		for (OccurrenceKind k : kinds) {
+		IOccurrenceKind[] kinds = { TEST_KIND_1, TEST_KIND_2 };
+		for (IOccurrenceKind k : kinds) {
 			for (int i = 0; i < numEachKind; i++) {
 				final IRodinLocation loc = RodinIndexer.getRodinLocation(ie
 						.getRodinFile());

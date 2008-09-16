@@ -1,17 +1,17 @@
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.TEST_KIND;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinLocation;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class OccurrenceTests extends AbstractRodinDBTests {
 
@@ -19,7 +19,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	private final OccurrenceKind defaultKind = TestOccurrenceKind.TEST_KIND;
+	private final IOccurrenceKind defaultKind = TEST_KIND;
 	private IRodinLocation location;
 	private Occurrence occ;
 
@@ -29,8 +29,8 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		assertEquals("Field IRodinLocation in Occurrence is not correct", expected, actual);
 	}
 
-	private static void assertKind(OccurrenceKind expected, OccurrenceKind actual) {
-		assertEquals("Field OccurrenceKind in Occurrence is not correct", expected, actual);
+	private static void assertKind(IOccurrenceKind expected, IOccurrenceKind actual) {
+		assertEquals("Field IOccurrenceKind in Occurrence is not correct", expected, actual);
 	}
 
 	@Override
