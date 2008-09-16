@@ -5,7 +5,6 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDe
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -127,8 +126,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		
 		rodinIndex.makeDescriptor(eltF2, eltF2Name);
 		
-		final IRodinFile[] toIndex = makeIRFArray(file, file2);
-		manager.scheduleIndexing(toIndex);
+		manager.scheduleIndexing(file, file2);
 
 		final RodinIndex index1 = manager.getIndex(project);
 		final Descriptor desc1 = index1.getDescriptor(elt1);

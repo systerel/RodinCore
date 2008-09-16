@@ -56,7 +56,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		file2 = createRodinFile(project, "DepTable2.test");
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
-		 rodinIndex.makeDescriptor(eltF2, eltF2Name);
+		rodinIndex.makeDescriptor(eltF2, eltF2Name);
 		f2ExportsElt2.add(file2, eltF2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
@@ -76,14 +76,12 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 
-		// files to index are presented in the reverse order
-		// of the required indexing order
-		// (file2 should be indexed before file1)
-		IRodinFile[] toIndex = makeIRFArray(file1, file2);
 		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
 
 		RodinIndexer.register(indexer, file1.getElementType());
-		manager.scheduleIndexing(toIndex);
+		// files to index are presented in the reverse order of the required
+		// indexing order (file2 should be indexed before file1)
+		manager.scheduleIndexing(file1, file2);
 		manager.clearIndexers();
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
@@ -100,12 +98,10 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, cycle, f2ExportsElt2);
 
-		IRodinFile[] toIndex = makeIRFArray(file1, file2);
-
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		try {
-			manager.scheduleIndexing(toIndex);
+			manager.scheduleIndexing(file1, file2);
 		} catch (IllegalStateException e) {
 			assertTrue("Good exception but bad message", e.getMessage()
 					.contains("cycle"));
@@ -128,10 +124,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		// only file2 is requested to index, but file1 should also be indexed
 		// again, after file2, as it depends on file2, which has exports changes
 		// (file2 was never indexed and its exports are not empty).
-		IRodinFile[] toIndex = makeIRFArray(file2);
 		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
 
-		manager.scheduleIndexing(toIndex);
+		manager.scheduleIndexing(file2);
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
@@ -151,10 +146,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		// file2 is requested to index, but file1 should not be indexed
 		// again, as it depends on file2 but file2 has no exports
-		IRodinFile[] toIndex = makeIRFArray(file2);
 		IRodinFile[] expectedOrder = makeIRFArray(file2);
 
-		manager.scheduleIndexing(toIndex);
+		manager.scheduleIndexing(file2);
 
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
@@ -167,11 +161,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = makeIRFArray(file1, file2);
-
 		// file1 and file2 must already be known by the manager to be taken into
 		// account when resolving dependencies and export changes
-		manager.scheduleIndexing(toIndex);
+		manager.scheduleIndexing(file1, file2);
 		indexer.clearOrder();
 
 		// file2 is requested to index, but file1 should not be indexed
@@ -193,11 +185,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = makeIRFArray(file1, file2);
-
 		// file1 and file2 must already be known by the manager to be taken
 		// into account when resolving dependencies and export changes
-		manager.scheduleIndexing(toIndex);
+		manager.scheduleIndexing(file1, file2);
 
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
@@ -256,10 +246,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				rodinIndex, f1dF2dF3, f1f2f3expElt3);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = makeIRFArray(file1, file2, file3);
-
 		try {
-			manager.scheduleIndexing(toIndex);
+			manager.scheduleIndexing(file1, file2, file3);
 		} catch (Exception e) {
 			fail("Re-exporting elements should not raise an exception.");
 		}
