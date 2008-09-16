@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
@@ -39,14 +43,16 @@ public final class IndexManager {
 
 	private Set<IRodinFile> toBeIndexed;
 
-	// protected IElementChangedListener listener = new
-	// IElementChangedListener() {
-	// rETURNS
-	// public void elementChanged(ElementChangedEvent event) {
-	// IndexManager.this.elementChanged(event);
-	// }
-	//
-	// };
+	protected IElementChangedListener listener = new IElementChangedListener() {
+		public void elementChanged(ElementChangedEvent event) {
+			IndexManager.this.elementChanged(event);
+		}
+
+	};
+
+	private static final int eventMask = ElementChangedEvent.POST_CHANGE;
+
+	private final List<IRodinElementDelta> deltas = new ArrayList<IRodinElementDelta>();
 
 	private IndexManager() {
 		indexes = new ProjectMapping<RodinIndex>() {
@@ -87,7 +93,8 @@ public final class IndexManager {
 		};
 
 		toBeIndexed = new HashSet<IRodinFile>();
-		// TODO: register listener
+
+		RodinCore.addElementChangedListener(listener, eventMask);
 	}
 
 	public static IndexManager getDefault() {
@@ -98,10 +105,9 @@ public final class IndexManager {
 		return instance;
 	}
 
-	// void elementChanged(ElementChangedEvent event) {
-	// scheduleIndexing(event.getDelta().getElement().getRodinProject());
-	// // TODO: figure out a better use of the delta
-	// }
+	void elementChanged(ElementChangedEvent event) {
+		deltas.add(event.getDelta());
+	}
 
 	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
 		List<IIndexer> list = indexers.get(fileType);
@@ -116,21 +122,14 @@ public final class IndexManager {
 		indexers.clear();
 	}
 
-	public void scheduleIndexing(IRodinFile file) {
+	public void scheduleIndexing(IRodinFile... files) {
 
-		toBeIndexed.add(file);
+		toBeIndexed.addAll(Arrays.asList(files));
 
 		launchIndexing(toBeIndexed);
 		toBeIndexed.clear();
 		// TODO don't launch indexing immediately (define scheduling options)
 		// NOTE : that method will be replaced when implementing listeners
-	}
-
-	public void scheduleIndexing(IRodinFile[] files) {
-		toBeIndexed.addAll(Arrays.asList(files));
-
-		launchIndexing(toBeIndexed);
-		toBeIndexed.clear();
 	}
 
 	private void launchIndexing(Set<IRodinFile> files) {
@@ -174,8 +173,6 @@ public final class IndexManager {
 				if (indexingFacade.mustReindexDependents()) {
 					final IRodinFile[] dependents = dependTable
 							.getDependents(file);
-//					updateDependencies(dependents, dependTable);
-					// not necessary as those files did not change
 					toIndex.addAll(Arrays.asList(dependents));
 				}
 			}

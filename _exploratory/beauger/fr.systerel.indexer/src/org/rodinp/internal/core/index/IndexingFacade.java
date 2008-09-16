@@ -119,7 +119,6 @@ public class IndexingFacade implements IIndexingFacade {
 		exportTable.add(file, element);
 
 		reindexDependents = !exportTable.get(file).equals(previousExports);
-		// FIXME costly (?)
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
