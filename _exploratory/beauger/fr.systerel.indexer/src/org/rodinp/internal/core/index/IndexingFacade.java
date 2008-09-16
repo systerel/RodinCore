@@ -2,7 +2,7 @@ package org.rodinp.internal.core.index;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -22,7 +22,7 @@ public class IndexingFacade implements IIndexingFacade {
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
-	private final Map<IInternalElement, String> previousExports;
+	private final Set<IInternalElement> previousExports;
 	private final List<IRodinFile> localDeps;
 	private boolean reindexDependents;
 	private Descriptor currentDescriptor;
@@ -88,12 +88,6 @@ public class IndexingFacade implements IIndexingFacade {
 				// in those files, it is referred to with previousName
 				// => rodinIndex tables are coherent but those files may not be
 				// indexed again, and the element name is incorrect there
-				// NB: actually, the ExportTable can be incoherent, as the
-				// element may be re-exported by dependent files with a bad
-				// name.
-				// TODO as far as I can see, the name is no more needed in the
-				// ExportTable, so removing it would be the simplest solution.
-				// Else just propagate name changes through export tables.
 			}
 		}
 
@@ -122,12 +116,10 @@ public class IndexingFacade implements IIndexingFacade {
 		}
 		fetchCurrentDescriptor(element);
 
-		final String name = currentDescriptor.getName();
+		exportTable.add(file, element);
 
-		exportTable.add(file, element, name);
-
-		reindexDependents = !exportTable.get(file).keySet().equals(
-				previousExports.keySet()); // FIXME costly (?)
+		reindexDependents = !exportTable.get(file).equals(previousExports);
+		// FIXME costly (?)
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -163,7 +155,7 @@ public class IndexingFacade implements IIndexingFacade {
 
 	private boolean isImported(IInternalElement element) {
 		for (IRodinFile f : localDeps) {
-			if (exportTable.get(f).keySet().contains(element)) {
+			if (exportTable.get(f).contains(element)) {
 				return true;
 			}
 		}

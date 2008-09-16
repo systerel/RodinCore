@@ -1,27 +1,27 @@
 package org.rodinp.internal.core.index.tables;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
 public class ExportTable {
 
-	// TODO consider removing the name
-	Map<IRodinFile, Map<IInternalElement, String>> table;
+	Map<IRodinFile, Set<IInternalElement>> table;
 
 	public ExportTable() {
-		table = new HashMap<IRodinFile, Map<IInternalElement, String>>();
+		table = new HashMap<IRodinFile, Set<IInternalElement>>();
 	}
 
-	// TODO consider providing a type that hides the map
-	public Map<IInternalElement, String> get(IRodinFile file) {
-		final Map<IInternalElement, String> map = table.get(file);
-		if (map == null) {
-			return new HashMap<IInternalElement, String>();
+	public Set<IInternalElement> get(IRodinFile file) {
+		final Set<IInternalElement> set = table.get(file);
+		if (set == null) {
+			return new HashSet<IInternalElement>();
 		}
-		return new HashMap<IInternalElement, String>(map);
+		return new HashSet<IInternalElement>(set);
 	}
 
 	/**
@@ -30,15 +30,14 @@ public class ExportTable {
 	 * 
 	 * @param file
 	 * @param element
-	 * @param name
 	 */
-	public void add(IRodinFile file, IInternalElement element, String name) {
-		Map<IInternalElement, String> map = table.get(file);
-		if (map == null) {
-			map = new HashMap<IInternalElement, String>();
-			table.put(file, map);
+	public void add(IRodinFile file, IInternalElement element) {
+		Set<IInternalElement> set = table.get(file);
+		if (set == null) {
+			set = new HashSet<IInternalElement>();
+			table.put(file, set);
 		}
-		map.put(element, name);
+		set.add(element);
 	}
 
 	public void remove(IRodinFile file) {
