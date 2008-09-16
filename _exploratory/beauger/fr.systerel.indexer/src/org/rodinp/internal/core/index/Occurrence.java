@@ -3,13 +3,13 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.OccurrenceKind;
+import org.rodinp.core.index.IOccurrenceKind;
 
 public class Occurrence {
-	private final OccurrenceKind kind;
+	private final IOccurrenceKind kind;
 	private final IRodinLocation location;
 
-	public Occurrence(OccurrenceKind kind, IRodinLocation location) {
+	public Occurrence(IOccurrenceKind kind, IRodinLocation location) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
@@ -20,7 +20,7 @@ public class Occurrence {
 		this.location = location;
 	}
 
-	public OccurrenceKind getKind() {
+	public IOccurrenceKind getKind() {
 		return kind;
 	}
 
@@ -43,6 +43,29 @@ public class Occurrence {
 		sb.append("(" + location.getCharStart() + "; " + location.getCharEnd()
 				+ ")\n");
 		return sb.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + kind.hashCode();
+		result = prime * result + location.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (! (obj instanceof Occurrence))
+			return false;
+		final Occurrence other = (Occurrence) obj;
+		if (!kind.equals(other.kind))
+			return false;
+		if (!location.equals(other.location))
+			return false;
+		return true;
 	}
 
 }

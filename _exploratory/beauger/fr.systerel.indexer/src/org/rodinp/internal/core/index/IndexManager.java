@@ -27,6 +27,7 @@ public final class IndexManager {
 	// deleted.
 	// TODO implement an overall consistency check method
 
+	// Must be accessed only by synchronized methods
 	private static IndexManager instance;
 
 	private final ProjectMapping<RodinIndex> indexes;
@@ -97,8 +98,7 @@ public final class IndexManager {
 		RodinCore.addElementChangedListener(listener, eventMask);
 	}
 
-	public static IndexManager getDefault() {
-		// TODO: examine multithreading issues
+	public static synchronized IndexManager getDefault() {
 		if (instance == null) {
 			instance = new IndexManager();
 		}

@@ -3,8 +3,10 @@ package org.rodinp.internal.core.index;
 import static org.rodinp.internal.core.index.RodinLocationUtil.verifyRodinLocation;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IRodinLocation;
 
 public class RodinLocation implements IRodinLocation {
@@ -86,6 +88,50 @@ public class RodinLocation implements IRodinLocation {
 
 	public int getCharEnd() {
 		return charEnd;
+	}
+
+	public IRodinFile getRodinFile() {
+		if (element instanceof IRodinFile) {
+			return (IRodinFile) element;
+		}
+		if (element instanceof IInternalElement) {
+			return ((IInternalElement) element).getRodinFile();
+		}
+		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + element.hashCode();
+		result = prime * result
+				+ ((attributeType == null) ? 0 : attributeType.hashCode());
+		result = prime * result + charStart;
+		result = prime * result + charEnd;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof RodinLocation))
+			return false;
+		final RodinLocation other = (RodinLocation) obj;
+		if (!element.equals(other.element)) {
+			return false;
+		}
+		if (attributeType == null) {
+			return other.attributeType == null;
+		} else if (!attributeType.equals(other.attributeType)) {
+			return false;
+		}
+		if (charEnd != other.charEnd)
+			return false;
+		if (charStart != other.charStart)
+			return false;
+		return true;
 	}
 
 }

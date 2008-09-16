@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.OccurrenceKind;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -48,6 +47,7 @@ public class IndexingFacade implements IIndexingFacade {
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
 			DependenceTable dependTable) {
 
+		// TODO make this method public, don't call it here
 		clean(file, rodinIndex, fileTable, nameTable);
 
 		this.file = file;
@@ -57,6 +57,7 @@ public class IndexingFacade implements IIndexingFacade {
 		this.exportTable = exportTable;
 		this.localDeps = Arrays.asList(dependTable.get(file));
 		this.previousExports = exportTable.get(file);
+		// TODO mv line below in clean()
 		exportTable.remove(file); // reset exports for this file
 		this.reindexDependents = false;
 		this.currentDescriptor = null;
@@ -95,7 +96,7 @@ public class IndexingFacade implements IIndexingFacade {
 		nameTable.put(name, element);
 	}
 
-	public void addOccurrence(IInternalElement element, OccurrenceKind kind,
+	public void addOccurrence(IInternalElement element, IOccurrenceKind kind,
 			IRodinLocation location) {
 
 		if (!verifyOccurrence(element, location)) {
@@ -119,6 +120,7 @@ public class IndexingFacade implements IIndexingFacade {
 		exportTable.add(file, element);
 
 		reindexDependents = !exportTable.get(file).equals(previousExports);
+		// FIXME costly (?)
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -136,20 +138,12 @@ public class IndexingFacade implements IIndexingFacade {
 
 	private boolean verifyOccurrence(IInternalElement element,
 			IRodinLocation location) {
-		final IRodinElement locElem = location.getElement();
-		final IRodinFile locElemFile;
-		if (locElem instanceof IRodinFile) {
-			locElemFile = (IRodinFile) locElem;
-		} else if (locElem instanceof IInternalElement) {
-			locElemFile = ((IInternalElement) locElem).getRodinFile();
-		} else {
-			return false;
-		}
-		return locElemFile.equals(file) && isLocalOrImported(element);
+		final IRodinFile locElemFile = location.getRodinFile();
+		return file.equals(locElemFile) && isLocalOrImported(element);
 	}
 
 	private boolean isLocal(IInternalElement element) {
-		return element.getRodinFile().equals(file);
+		return file.equals(element.getRodinFile());
 	}
 
 	private boolean isImported(IInternalElement element) {
@@ -176,6 +170,7 @@ public class IndexingFacade implements IIndexingFacade {
 			final Descriptor descriptor = index.getDescriptor(element);
 
 			if (descriptor == null) {
+				// TODO log problem instead
 				throw new IllegalStateException(
 						"Elements in FileTable with no Descriptor in RodinIndex.");
 			}

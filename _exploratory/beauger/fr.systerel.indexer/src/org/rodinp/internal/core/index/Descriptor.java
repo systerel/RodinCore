@@ -1,12 +1,12 @@
 package org.rodinp.internal.core.index;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IRodinLocation;
 
 public final class Descriptor {
 
@@ -51,23 +51,13 @@ public final class Descriptor {
 	}
 
 	public void removeOccurrences(IRodinFile file) {
-		final Set<Occurrence> toRemove = new HashSet<Occurrence>();
-		for (Occurrence occ : occurrences) {
-			if (isInSameFile(occ.getLocation(), file)) {
-				toRemove.add(occ);
+		final Iterator<Occurrence> iter = occurrences.iterator();
+		while (iter.hasNext()) {
+			final Occurrence occ = iter.next();
+			if (file.equals(occ.getLocation().getRodinFile())) {
+				iter.remove();
 			}
 		}
-		occurrences.removeAll(toRemove);
-	}
-
-	private boolean isInSameFile(IRodinLocation location, IRodinFile file) {
-		final IRodinElement locElem = location.getElement();
-		if (locElem instanceof IRodinFile) {
-			return locElem == file;
-		} else if (locElem instanceof IInternalElement) {
-			return ((IInternalElement) locElem).getRodinFile() == file;
-		}
-		return false;
 	}
 
 	// DEBUG
