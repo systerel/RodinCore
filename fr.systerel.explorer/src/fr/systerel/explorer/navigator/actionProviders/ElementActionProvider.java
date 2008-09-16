@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License  v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+  *******************************************************************************/
 package fr.systerel.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IContributionItem;
@@ -9,15 +19,6 @@ import org.eclipse.ui.navigator.ICommonActionConstants;
 
 public class ElementActionProvider extends NavigatorActionProvider {
 
-	/**
-	 * Create the actions.
-	 */
-	@Override
-	protected void makeActions() {
-		makeDoubleClickAction();
-		makeNewProjectAction();
-		makeNewComponentAction();
-	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
@@ -27,14 +28,14 @@ public class ElementActionProvider extends NavigatorActionProvider {
         super.fillActionBars(actionBars);
         // forward doubleClick to doubleClickAction
         actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
-              doubleClickAction);
+              ActionCollection.getOpenAction(site));
     }
 	
     @Override
 	public void fillContextMenu(IMenuManager menu) {
 		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(newProjectAction);
-		newMenu.add(newComponentAction);
+		newMenu.add(ActionCollection.getNewProjectAction(site));
+		newMenu.add(ActionCollection.getNewComponentAction(site));
     	IContributionItem[] items = menu.getItems();
     	// put in front
     	if (items.length > 0) {

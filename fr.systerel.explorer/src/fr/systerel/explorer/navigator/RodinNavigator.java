@@ -12,7 +12,15 @@
 package fr.systerel.explorer.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.navigator.CommonNavigator;
+import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.wizards.NewProjectWizard;
+import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IParent;
@@ -62,4 +70,5 @@ public class RodinNavigator extends CommonNavigator implements IElementChangedLi
 			}});
 	}
 
+	
 }

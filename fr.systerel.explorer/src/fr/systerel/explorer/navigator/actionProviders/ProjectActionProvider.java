@@ -14,9 +14,11 @@ package fr.systerel.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 
 /**
  * @author Maria Husmann
@@ -25,29 +27,20 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 public class ProjectActionProvider extends NavigatorActionProvider {
 
 	
-	/**
-	 * Create the actions.
-	 */
-	@Override
-	protected void makeActions() {
-
-		makeNewProjectAction();
-		makeNewComponentAction();
-		makeDeleteAction();
-	}
-	
     @Override
 	public void fillContextMenu(IMenuManager menu) {
 		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(newProjectAction);
-		newMenu.add(newComponentAction);
+		newMenu.add(ActionCollection.getNewProjectAction(site));
+		newMenu.add(ActionCollection.getNewComponentAction(site));
     	// put in front
     	IContributionItem[] items = menu.getItems();
     	if (items.length > 0) {
     		menu.insertBefore(items[1].getId(), newMenu);
     	} else	menu.add(newMenu);
-		menu.add(new Separator(MODELLING_SEPARATOR));
-    	menu.appendToGroup(MODELLING_SEPARATOR, deleteAction);
+		menu.add(new Separator(GROUP_MODELLING));
+    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
     }	
 	
+   
+    
 }

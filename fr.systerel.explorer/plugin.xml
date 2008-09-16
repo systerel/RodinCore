@@ -101,6 +101,9 @@
             <actionExtension
                   pattern="fr.systerel.explorer.navigator.actionProviders.element">
             </actionExtension>
+            <actionExtension
+                  pattern="fr.systerel.explorer.navigator.actionProviders.po">
+            </actionExtension>
          </includes>
       </viewerActionBinding>
    </extension>
@@ -455,6 +458,38 @@
             </or>
          </enablement>
       </actionProvider>
+      <actionProvider
+            class="fr.systerel.explorer.navigator.actionProviders.POActionProvider"
+            id="fr.systerel.explorer.navigator.actionProviders.po">
+         <enablement>
+            <instanceof
+                  value="org.eventb.core.IPSStatus">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="fr.systerel.explorer.navigator.viewActions.toolbar"
+            targetID="fr.systerel.explorer.navigator.view">
+         <action
+               class="fr.systerel.explorer.navigator.actionProviders.NewProjectActionDelegate"
+               icon="icons/full/clcl16/newprj_wiz.gif"
+               id="fr.systerel.explorer.navigator.actions.newProject"
+               label="%viewActions.newProject.label"
+               toolbarPath="new"
+               tooltip="%viewActions.newProject.tooltip">
+         </action>
+         <action
+               class="fr.systerel.explorer.navigator.actionProviders.NewComponentActionDelegate"
+               icon="icons/full/clcl16/newcomp_wiz.gif"
+               id="fr.systerel.explorer.navigator.actions.newComponent"
+               label="%viewActions.newComponent.label"
+               toolbarPath="new"
+               tooltip="%viewActions.newComponent.tooltip">
+         </action>
+      </viewContribution>
    </extension>
 
 </plugin>

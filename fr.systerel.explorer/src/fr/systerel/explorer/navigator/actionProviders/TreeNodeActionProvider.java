@@ -23,21 +23,12 @@ import org.eclipse.jface.action.Separator;
  */
 public class TreeNodeActionProvider extends NavigatorActionProvider {
 
-	/**
-	 * Create the actions.
-	 */
-	@Override
-	protected void makeActions() {
-
-		makeNewProjectAction();
-		makeNewComponentAction();
-	}
 	
     @Override
 	public void fillContextMenu(IMenuManager menu) {
 		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(newProjectAction);
-		newMenu.add(newComponentAction);
+		newMenu.add(ActionCollection.getNewProjectAction(site));
+		newMenu.add(ActionCollection.getNewComponentAction(site));
     	// put in front
     	IContributionItem[] items = menu.getItems();
     	if (items.length > 0) {

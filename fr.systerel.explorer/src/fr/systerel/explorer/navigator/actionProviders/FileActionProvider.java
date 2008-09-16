@@ -14,12 +14,14 @@ package fr.systerel.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 
 /**
  * The Action Provider for <code>IMachineFile</code>s and <code>IContextFile</code>s 
@@ -31,14 +33,6 @@ public class FileActionProvider extends NavigatorActionProvider {
 	/**
 	 * Create the actions.
 	 */
-	@Override
-	protected void makeActions() {
-
-		makeDoubleClickAction();
-		makeNewProjectAction();
-		makeNewComponentAction();
-		makeDeleteAction();
-	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
@@ -48,24 +42,27 @@ public class FileActionProvider extends NavigatorActionProvider {
         super.fillActionBars(actionBars);
         // forward doubleClick to doubleClickAction
         actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
-              doubleClickAction);
+              ActionCollection.getOpenAction(site));
         // forwards pressing the delete key to deleteAction
-        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), deleteAction);
+        actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), ActionCollection.getDeleteAction(site));
     }
 	
+
+    
     @Override
 	public void fillContextMenu(IMenuManager menu) {
 		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(newProjectAction);
-		newMenu.add(newComponentAction);
+		newMenu.add(ActionCollection.getNewProjectAction(site));
+		newMenu.add(ActionCollection.getNewComponentAction(site));
     	// put in front
     	IContributionItem[] items = menu.getItems();
     	if (items.length > 0) {
     		menu.insertBefore(items[1].getId(), newMenu);
     	} else	menu.add(newMenu);
-		menu.add(new Separator(MODELLING_SEPARATOR));
-    	menu.appendToGroup(MODELLING_SEPARATOR, deleteAction);
+		menu.add(new Separator(GROUP_MODELLING));
+    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
     	
     }	
+    
 	
 }
