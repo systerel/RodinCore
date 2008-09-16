@@ -14,7 +14,7 @@ public class FakeIndexer implements IIndexer {
 
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 	
-	private final RodinIndex localIndex;
+	protected final RodinIndex localIndex;
 
 	public FakeIndexer(RodinIndex index) {
 		this.localIndex = index;

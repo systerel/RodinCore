@@ -8,7 +8,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -53,7 +53,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 	private static IndexingFacade indexingFacade1;
 	private static final OccurrenceKind kind = TestOccurrenceKind.TEST_KIND;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -65,7 +65,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		locF1 = RodinIndexer.getRodinLocation(file1);
 		locF2 = RodinIndexer.getRodinLocation(file2);
 
-		f2ExportsElt2.add(file2, elt2, name2);
+		f2ExportsElt2.add(file2, elt2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
@@ -90,7 +90,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		final Descriptor descriptor = index.getDescriptor(elt1);
 		assertNotNull(descriptor);
 		assertDescriptor(descriptor, elt1, name1, 0);
-		
+
 		final IInternalElement[] elt1Array = makeIIEArray(elt1);
 		assertSameElements(elt1Array, fileTable.get(file1));
 		assertSameElements(elt1Array, nameTable.getElements(name1));
@@ -128,7 +128,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		final IInternalElement[] elt1Array = makeIIEArray(elt1);
 		assertSameElements(elt1Array, fileTable.get(file1));
 		assertSameElements(elt1Array, nameTable.getElements(name1));
-}
+	}
 
 	public void testAddOccBadFile() throws Exception {
 		indexingFacade1.declare(elt1, name1);
@@ -270,9 +270,9 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		final IInternalElement[] elt2Array = makeIIEArray(elt2);
 		assertSameElements(elt2Array, fileTable.get(file2));
 		assertSameElements(elt2Array, fileTable.get(file1));
-		
+
 		assertSameElements(elt2Array, nameTable.getElements(name2));
-}
+	}
 
 	public void testRenameWithAlienOccs() throws Exception {
 
@@ -310,16 +310,16 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 				occAfter.getLocation().getElement());
 
 		// name2Bis should have replaced name2 in nameTable and exportTable
-		final Map<IInternalElement, String> actExports = f2ExportsElt2
-				.get(file2);
-		assertEquals("Exported element " + elt2.getElementName()
-				+ " was not properly renamed", name2Bis, actExports.get(elt2));
+		final Set<IInternalElement> actExports = f2ExportsElt2.get(file2);
+		assertTrue("Element " + elt2.getElementName()
+				+ " should be exported by " + file2.getBareName(), actExports
+				.contains(elt2));
 
 		final IInternalElement[] elt2Array = makeIIEArray(elt2);
 
 		assertSameElements(elt2Array, nameTable.getElements(name2Bis));
 		assertIsEmpty(nameTable.getElements(name2));
-		
+
 		assertSameElements(elt2Array, fileTable.get(file1));
 		assertSameElements(elt2Array, fileTable.get(file2));
 	}

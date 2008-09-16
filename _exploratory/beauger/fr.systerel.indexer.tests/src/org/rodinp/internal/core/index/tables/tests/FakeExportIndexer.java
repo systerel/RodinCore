@@ -1,35 +1,33 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.ExportTable;
+import org.rodinp.internal.core.index.tests.FakeIndexer;
 
-public class FakeExportIndexer implements IIndexer {
+public class FakeExportIndexer extends FakeIndexer {
 
-	private final Map<IInternalElement, String> exports;
+	protected final ExportTable exportTable;
 
-	public FakeExportIndexer(Map<IInternalElement, String> elements) {
-		this.exports = elements;
+	public FakeExportIndexer(RodinIndex rodinIndex, ExportTable exportTable) {
+		super(rodinIndex);
+		this.exportTable = exportTable;
 	}
 
+	@Override
 	public void index(IRodinFile file, IIndexingFacade index) {
-		for (IInternalElement elt : exports.keySet()) {
-			if (elt.getRodinFile().equals(file)) {
-				index.declare(elt, exports.get(elt));
-			}
+		super.index(file, index);
+		for (IInternalElement elt : exportTable.get(file)) {
 			index.export(elt);
 		}
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
-		return new IRodinFile[0];
-	}
-
-	Map<IInternalElement, String> getExports() {
-		return new HashMap<IInternalElement, String>(exports);
+	Set<IInternalElement> getExports(IRodinFile file) {
+		return new HashSet<IInternalElement>(exportTable.get(file));
 	}
 }

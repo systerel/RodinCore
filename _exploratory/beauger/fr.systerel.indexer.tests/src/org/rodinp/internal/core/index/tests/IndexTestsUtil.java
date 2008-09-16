@@ -2,7 +2,6 @@ package org.rodinp.internal.core.index.tests;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -187,28 +186,17 @@ public class IndexTestsUtil {
 				+ " is not present", actList.contains(elem));
 	}
 
-	public static void assertExports(Map<IInternalElement, String> expected,
-			Map<IInternalElement, String> actual) {
-		final Set<IInternalElement> expKeySet = expected.keySet();
-		final Set<IInternalElement> actKeySet = actual.keySet();
+	public static void assertExports(Set<IInternalElement> expected,
+			Set<IInternalElement> actual) {
 
-		TestCase
-				.assertTrue("missing exports", actKeySet.containsAll(expKeySet));
-		TestCase.assertEquals("unexpected exports", expKeySet.size(), actKeySet
-				.size());
-
-		for (IInternalElement elem : actKeySet) {
-			TestCase.assertEquals("bad name for element "
-					+ elem.getElementName(), actual.get(elem), expected
-					.get(elem));
-		}
+		TestCase.assertEquals("Bad exports.", expected, actual);
 	}
 
-	public static IInternalElement[] makeIIEArray(IInternalElement ...elements) {
+	public static IInternalElement[] makeIIEArray(IInternalElement... elements) {
 		return elements;
 	}
 
-	public static IRodinFile[] makeIRFArray(IRodinFile ...files) {
+	public static IRodinFile[] makeIRFArray(IRodinFile... files) {
 		return files;
 	}
 

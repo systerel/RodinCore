@@ -4,8 +4,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -14,16 +13,22 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.ExportTable;
 
 public class ExportTableUsageTests extends AbstractRodinDBTests {
 
 	private static FakeExportIndexer indexer;
-	private static final Map<IInternalElement, String> elements = new HashMap<IInternalElement, String>();
+	private static final ExportTable exportTable = new ExportTable();
 	private static IRodinProject rodinProject;
 	private static IRodinFile file;
-	private static NamedElement namedElement;
-	private static NamedElement namedElement2;
+	private static NamedElement elt1;
+	private static NamedElement elt2;
+	private static final RodinIndex rodinIndex = new RodinIndex();
+
 	private static final IndexManager manager = IndexManager.getDefault();
+	private static final String name1 = "elt1Name";
+	private static final String name2 = "elt2Name";
 
 	public ExportTableUsageTests(String name) {
 		super(name);
@@ -34,48 +39,31 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "expInd.test");
-		namedElement = createNamedElement(file, "elt1");
-		namedElement2 = createNamedElement(file, "elt2");
-		elements.put(namedElement, "namedElementName");
-		elements.put(namedElement2, "namedElement2Name");
-		indexer = new FakeExportIndexer(elements);
+		elt1 = createNamedElement(file, "elt1");
+		elt2 = createNamedElement(file, "elt2");
+		exportTable.add(file, elt1);
+		exportTable.add(file, elt2);
+		rodinIndex.makeDescriptor(elt1, name1);
+		rodinIndex.makeDescriptor(elt2, name2);
+
+		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		elements.clear();
+		rodinIndex.clear();
+		exportTable.clear();
 		manager.clear();
 		super.tearDown();
 	}
-	
+
 	public void testExportTableUpdatingFilling() throws Exception {
 		manager.scheduleIndexing(file);
-		
-		final Map<IInternalElement, String> expected = indexer.getExports();
-		final Map<IInternalElement, String> actual = manager.getExportTable(
-				rodinProject).get(file);
-		
-		assertExports(expected, actual);
-	}
 
-	public void testExportTableRenaming() throws Exception {
-		// index file
-		manager.scheduleIndexing(file);
-		
-		// change exports
-		elements.put(namedElement, "expRenName1");
-		manager.clearIndexers();
-		indexer = new FakeExportIndexer(elements);
-		RodinIndexer.register(indexer, file.getElementType());
-		
-		// then index again file
-		manager.scheduleIndexing(file);
-		
-		// verify renaming
-		final Map<IInternalElement, String> expected = indexer.getExports();
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IInternalElement> expected = indexer.getExports(file);
+		final Set<IInternalElement> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);
@@ -84,19 +72,20 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 	public void testExportTableRemoving() throws Exception {
 		// index file
 		manager.scheduleIndexing(file);
-		
+
 		// change exports
-		elements.remove(namedElement2);
+		exportTable.remove(file);
+		exportTable.add(file, elt1);
 		manager.clearIndexers();
-		indexer = new FakeExportIndexer(elements);
+		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
-		
+
 		// then index again file
 		manager.scheduleIndexing(file);
-		
+
 		// verify removing
-		final Map<IInternalElement, String> expected = indexer.getExports();
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IInternalElement> expected = indexer.getExports(file);
+		final Set<IInternalElement> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);
@@ -105,20 +94,22 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 	public void testExportTableAdding() throws Exception {
 		// index file
 		manager.scheduleIndexing(file);
-		
+
 		// change exports
 		NamedElement eltAdd = createNamedElement(file, "eltAdd");
-		elements.put(eltAdd, "expAddName1");
+		exportTable.add(file, eltAdd);
+		final String eltAddName = "eltAddName";
+		rodinIndex.makeDescriptor(eltAdd, eltAddName);
 		manager.clearIndexers();
-		indexer = new FakeExportIndexer(elements);
+		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
-		
+
 		// then index again file
 		manager.scheduleIndexing(file);
-		
+
 		// verify adding
-		final Map<IInternalElement, String> expected = indexer.getExports();
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IInternalElement> expected = indexer.getExports(file);
+		final Set<IInternalElement> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);

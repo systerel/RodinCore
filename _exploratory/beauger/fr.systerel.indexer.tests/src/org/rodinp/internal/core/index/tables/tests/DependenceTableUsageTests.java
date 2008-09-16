@@ -13,6 +13,7 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 
@@ -23,13 +24,13 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	private static IRodinFile file2;
 	private static IRodinFile file3;
 	private static NamedElement eltF2;
-	private static final String eltF2Name = "eltF2Name";
-	private static final String eltF2Name2 = "eltF2Name2";
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
 	private static final ExportTable emptyExports = new ExportTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
+	private static final RodinIndex rodinIndex = new RodinIndex();
 
 	private static final IndexManager manager = IndexManager.getDefault();
+	private static final String eltF2Name = "eltF2Name";
 
 	public DependenceTableUsageTests(String name) {
 		super(name);
@@ -55,7 +56,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		file2 = createRodinFile(project, "DepTable2.test");
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
-		f2ExportsElt2.add(file2, eltF2, eltF2Name);
+		 rodinIndex.makeDescriptor(eltF2, eltF2Name);
+		f2ExportsElt2.add(file2, eltF2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 	}
@@ -64,6 +66,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	protected void tearDown() throws Exception {
 		deleteProject("P");
 		manager.clear();
+		rodinIndex.clear();
 		f2ExportsElt2.clear();
 		super.tearDown();
 	}
@@ -71,7 +74,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testIndexingOrder() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 
 		// files to index are presented in the reverse order
 		// of the required indexing order
@@ -94,8 +97,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		cycle.put(file1, makeIRFArray(file2));
 		cycle.put(file2, makeIRFArray(file1));
 
-		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(cycle,
-				f2ExportsElt2);
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				rodinIndex, cycle, f2ExportsElt2);
 
 		IRodinFile[] toIndex = makeIRFArray(file1, file2);
 
@@ -114,7 +117,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testReindexDependents() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		// file1 must already be known by the manager to be taken into account
@@ -138,7 +141,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testNoExports() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, emptyExports);
+				rodinIndex, f1DepsOnf2, emptyExports);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		// file1 must already be known by the manager to be taken into account
@@ -161,7 +164,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testExportsUnchanged() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		IRodinFile[] toIndex = makeIRFArray(file1, file2);
@@ -187,7 +190,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testNameChangesOnly() throws Exception {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		IRodinFile[] toIndex = makeIRFArray(file1, file2);
@@ -198,9 +201,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
-		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
+		f2ExportsElt2Name2.add(file2, eltF2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2Name2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
 		RodinIndexer.register(indexerNewName, file1.getElementType());
 
 		// file2 is requested to index, but file1 should not be indexed
@@ -217,7 +220,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 	public void testFileRemoved() throws Exception {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1DepsOnf2, f2ExportsElt2);
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		manager.scheduleIndexing(file1);
@@ -242,14 +245,15 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		final NamedElement elt3 = createNamedElement(file3, "elt3");
 		final String elt3Name = "elt3Name";
+		rodinIndex.makeDescriptor(elt3, elt3Name);
 
 		final ExportTable f1f2f3expElt3 = new ExportTable();
-		f1f2f3expElt3.add(file3, elt3, elt3Name);
-		f1f2f3expElt3.add(file2, elt3, elt3Name);
-		f1f2f3expElt3.add(file1, elt3, elt3Name);
+		f1f2f3expElt3.add(file3, elt3);
+		f1f2f3expElt3.add(file2, elt3);
+		f1f2f3expElt3.add(file1, elt3);
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
-				f1dF2dF3, f1f2f3expElt3);
+				rodinIndex, f1dF2dF3, f1f2f3expElt3);
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		IRodinFile[] toIndex = makeIRFArray(file1, file2, file3);
