@@ -133,7 +133,7 @@ public class ContextIndexer implements IIndexer {
 
 	private void indexConstantDeclaration(IConstant constant,
 			String constantName, IIndexingFacade index) {
-		index.addDeclaration(constant, constantName);
+		index.declare(constant, constantName);
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
 		.getRodinFile());
 		index.addOccurrence(constant, EventBOccurrenceKind.DECLARATION, loc);
