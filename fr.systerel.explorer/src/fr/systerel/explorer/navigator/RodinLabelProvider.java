@@ -13,13 +13,16 @@ package fr.systerel.explorer.navigator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.*;
-import org.eventb.core.seqprover.IConfidence;
+import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
@@ -27,8 +30,6 @@ import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-
-import fr.systerel.explorer.poModel.Machine;
 import fr.systerel.explorer.poModel.POContainer;
 import fr.systerel.explorer.poModel.ProofObligation;
 
@@ -39,7 +40,7 @@ import fr.systerel.explorer.poModel.ProofObligation;
  *
  */
 public class RodinLabelProvider implements
-		ILabelProvider {
+		ILabelProvider, IFontProvider {
 
 	/*
 	 * (non-Javadoc)
@@ -141,6 +142,10 @@ public class RodinLabelProvider implements
 		return new String();
 	}
 
+	public Font getFont(Object element) {
+		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+	}
+	
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
 		
