@@ -1,6 +1,5 @@
 package org.rodinp.internal.core.index.tests;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +48,6 @@ public class IndexTestsUtil {
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
 		return new Occurrence(TestOccurrenceKind.TEST_KIND, RodinIndexer
 				.getRodinLocation(element));
-	}
-
-	public static Occurrence[] generateOccurrencesTestSet(IInternalElement ie,
-			int numEachKind) throws CoreException {
-
-		OccurrenceKind[] kinds = { IndexTestsUtil.OccKind1.TEST_KIND_1,
-				IndexTestsUtil.OccKind2.TEST_KIND_2 };
-		ArrayList<Occurrence> result = new ArrayList<Occurrence>();
-
-		for (OccurrenceKind k : kinds) {
-			for (int i = 0; i < numEachKind; i++) {
-				result.add(new Occurrence(k, RodinIndexer.getRodinLocation(ie
-						.getRodinFile())));
-			}
-		}
-		return result.toArray(new Occurrence[result.size()]);
 	}
 
 	public static void addOccurrencesTestSet(IInternalElement ie,
@@ -219,6 +202,14 @@ public class IndexTestsUtil {
 					+ elem.getElementName(), actual.get(elem), expected
 					.get(elem));
 		}
+	}
+
+	public static IInternalElement[] makeIIEArray(IInternalElement ...elements) {
+		return elements;
+	}
+
+	public static IRodinFile[] makeIRFArray(IRodinFile ...files) {
+		return files;
 	}
 
 }

@@ -5,6 +5,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -55,7 +56,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
 		f2ExportsElt2.add(file2, eltF2, eltF2Name);
-		f1DepsOnf2.put(file1, new IRodinFile[] { file2 });
+		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 	}
 
@@ -75,8 +76,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		// files to index are presented in the reverse order
 		// of the required indexing order
 		// (file2 should be indexed before file1)
-		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
-		IRodinFile[] expectedOrder = new IRodinFile[] { file2, file1 };
+		IRodinFile[] toIndex = makeIRFArray(file1, file2);
+		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
 
 		RodinIndexer.register(indexer, file1.getElementType());
 		manager.scheduleIndexing(toIndex);
@@ -90,13 +91,13 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testCycle() throws Exception {
 		DependenceTable cycle = new DependenceTable();
 		// cycle: file1 -> file2 -> file1
-		cycle.put(file1, new IRodinFile[] { file2 });
-		cycle.put(file2, new IRodinFile[] { file1 });
+		cycle.put(file1, makeIRFArray(file2));
+		cycle.put(file2, makeIRFArray(file1));
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(cycle,
 				f2ExportsElt2);
 
-		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+		IRodinFile[] toIndex = makeIRFArray(file1, file2);
 
 		RodinIndexer.register(indexer, file1.getElementType());
 
@@ -124,8 +125,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		// only file2 is requested to index, but file1 should also be indexed
 		// again, after file2, as it depends on file2, which has exports changes
 		// (file2 was never indexed and its exports are not empty).
-		IRodinFile[] toIndex = new IRodinFile[] { file2 };
-		IRodinFile[] expectedOrder = new IRodinFile[] { file2, file1 };
+		IRodinFile[] toIndex = makeIRFArray(file2);
+		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
 
 		manager.scheduleIndexing(toIndex);
 
@@ -147,8 +148,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		// file2 is requested to index, but file1 should not be indexed
 		// again, as it depends on file2 but file2 has no exports
-		IRodinFile[] toIndex = new IRodinFile[] { file2 };
-		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+		IRodinFile[] toIndex = makeIRFArray(file2);
+		IRodinFile[] expectedOrder = makeIRFArray(file2);
 
 		manager.scheduleIndexing(toIndex);
 
@@ -163,7 +164,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+		IRodinFile[] toIndex = makeIRFArray(file1, file2);
 
 		// file1 and file2 must already be known by the manager to be taken into
 		// account when resolving dependencies and export changes
@@ -173,7 +174,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		// file2 is requested to index, but file1 should not be indexed
 		// again, even if it depends on file2, because file2 exports are
 		// unchanged
-		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+		IRodinFile[] expectedOrder = makeIRFArray(file2);
 
 		manager.scheduleIndexing(file2);
 
@@ -189,7 +190,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				f1DepsOnf2, f2ExportsElt2);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = new IRodinFile[] { file1, file2 };
+		IRodinFile[] toIndex = makeIRFArray(file1, file2);
 
 		// file1 and file2 must already be known by the manager to be taken
 		// into account when resolving dependencies and export changes
@@ -205,7 +206,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		// file2 is requested to index, but file1 should not be indexed
 		// again, even if it depends on file2 and file2 exports are
 		// changed, because it concerns only names
-		IRodinFile[] expectedOrder = new IRodinFile[] { file2 };
+		IRodinFile[] expectedOrder = makeIRFArray(file2);
 
 		manager.scheduleIndexing(file2);
 
@@ -236,8 +237,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 	public void testSerialExports() throws Exception {
 		final DependenceTable f1dF2dF3 = new DependenceTable();
-		f1dF2dF3.put(file1, new IRodinFile[] { file2 });
-		f1dF2dF3.put(file2, new IRodinFile[] { file3 });
+		f1dF2dF3.put(file1, makeIRFArray(file2));
+		f1dF2dF3.put(file2, makeIRFArray(file3));
 
 		final NamedElement elt3 = createNamedElement(file3, "elt3");
 		final String elt3Name = "elt3Name";
@@ -251,7 +252,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 				f1dF2dF3, f1f2f3expElt3);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		IRodinFile[] toIndex = new IRodinFile[] { file1, file2, file3 };
+		IRodinFile[] toIndex = makeIRFArray(file1, file2, file3);
 
 		try {
 			manager.scheduleIndexing(toIndex);

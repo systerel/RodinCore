@@ -4,6 +4,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -46,7 +47,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 	public void testPutGetOneElement() throws Exception {
 		table.put(name1, element1);
 
-		final IInternalElement[] expectedResult = new IInternalElement[] { element1 };
+		final IInternalElement[] expectedResult = makeIIEArray(element1);
 		final IInternalElement[] elements = table.getElements(name1);
 
 		assertSameElements(expectedResult, elements);
@@ -56,8 +57,8 @@ public class NameTableTests extends AbstractRodinDBTests {
 		table.put(name1, element1);
 		table.put(name1, element2);
 
-		final IInternalElement[] expectedResult = new IInternalElement[] {
-				element1, element2 };
+		final IInternalElement[] expectedResult = makeIIEArray(element1,
+				element2);
 		final IInternalElement[] elements = table.getElements(name1);
 
 		assertSameElements(expectedResult, elements);
@@ -67,8 +68,8 @@ public class NameTableTests extends AbstractRodinDBTests {
 		table.put(name1, element1);
 		table.put(name2, element2);
 
-		final IInternalElement[] expectedResult1 = new IInternalElement[] { element1 };
-		final IInternalElement[] expectedResult2 = new IInternalElement[] { element2 };
+		final IInternalElement[] expectedResult1 = makeIIEArray(element1);
+		final IInternalElement[] expectedResult2 = makeIIEArray(element2);
 		final IInternalElement[] elements1 = table.getElements(name1);
 		final IInternalElement[] elements2 = table.getElements(name2);
 
@@ -82,7 +83,7 @@ public class NameTableTests extends AbstractRodinDBTests {
 
 		table.remove(name1, element1);
 
-		final IInternalElement[] expectedResult = new IInternalElement[] { element2 };
+		final IInternalElement[] expectedResult = makeIIEArray(element2);
 		final IInternalElement[] elements = table.getElements(name1);
 
 		assertSameElements(expectedResult, elements);
@@ -98,5 +99,5 @@ public class NameTableTests extends AbstractRodinDBTests {
 
 		assertIsEmpty(elements);
 	}
-	
+
 }

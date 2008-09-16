@@ -2,6 +2,7 @@ package org.rodinp.internal.core.index.tables.tests;
 
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +54,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testPutGet() throws Exception {
-		final IRodinFile[] expected = new IRodinFile[] { file2, file3 };
+		final IRodinFile[] expected = makeIRFArray(file2, file3);
 
 		table.put(file1, expected);
 
@@ -69,8 +70,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testPutGetSeveral() throws Exception {
-		final IRodinFile[] expected2 = new IRodinFile[] { file2 };
-		final IRodinFile[] expected4 = new IRodinFile[] { file4 };
+		final IRodinFile[] expected2 = makeIRFArray(file2);
+		final IRodinFile[] expected4 = makeIRFArray(file4);
 
 		table.put(file1, expected2);
 		table.put(file3, expected4);
@@ -83,7 +84,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testPutRedundancy() throws Exception {
-		final IRodinFile[] redundant = new IRodinFile[] { file1, file4, file1 };
+		final IRodinFile[] redundant = makeIRFArray(file1, file4, file1);
 
 		try {
 			table.put(file2, redundant);
@@ -96,7 +97,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testPutSelfDependent() throws Exception {
-		final IRodinFile[] selfDep = new IRodinFile[] { file4, file1 };
+		final IRodinFile[] selfDep = makeIRFArray(file4, file1);
 
 		try {
 			table.put(file1, selfDep);
@@ -108,8 +109,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testClear() throws Exception {
-		final IRodinFile[] expected2 = new IRodinFile[] { file2 };
-		final IRodinFile[] expected4 = new IRodinFile[] { file4 };
+		final IRodinFile[] expected2 = makeIRFArray(file2);
+		final IRodinFile[] expected4 = makeIRFArray(file4);
 
 		table.put(file1, expected2);
 		table.put(file3, expected4);
@@ -124,8 +125,8 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testGetDependents() throws Exception {
-		final IRodinFile[] top = new IRodinFile[] { file1 };
-		final IRodinFile[] expected = new IRodinFile[] { file2, file3, file4 };
+		final IRodinFile[] top = makeIRFArray(file1);
+		final IRodinFile[] expected = makeIRFArray(file2, file3, file4);
 
 		table.put(file2, top);
 		table.put(file3, top);
@@ -144,7 +145,7 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testRemove() throws Exception {
-		final IRodinFile[] top = new IRodinFile[] { file1 };
+		final IRodinFile[] top = makeIRFArray(file1);
 
 		table.put(file2, top);
 
@@ -156,15 +157,15 @@ public class DependenceTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testRemoveWithDeps() throws Exception {
-		final IRodinFile[] top1 = new IRodinFile[] { file1 };
-		final IRodinFile[] top14 = new IRodinFile[] { file1, file4 };
+		final IRodinFile[] top1 = makeIRFArray(file1);
+		final IRodinFile[] top14 = makeIRFArray(file1, file4);
 
 		table.put(file2, top1);
 		table.put(file3, top14);
 
 		table.remove(file1);
 
-		final IRodinFile[] expected3 = new IRodinFile[] { file4 };
+		final IRodinFile[] expected3 = makeIRFArray(file4);
 		final IRodinFile[] actual1 = table.get(file1);
 		final IRodinFile[] actual2 = table.get(file2);
 		final IRodinFile[] actual3 = table.get(file3);

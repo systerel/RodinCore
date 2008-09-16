@@ -33,7 +33,7 @@ public class FakeDependenceIndexer implements IIndexer {
 		final Map<IInternalElement, String> exports = exportTable.get(file);
 		for (IInternalElement elt : exports.keySet()) {
 			if (elt.getRodinFile().equals(file)) {
-				index.addDeclaration(elt, exports.get(elt));
+				index.declare(elt, exports.get(elt));
 			}
 			index.export(elt);
 		}

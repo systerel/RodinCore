@@ -12,6 +12,7 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tests.FakeIndexer;
 
@@ -22,22 +23,32 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 	}
 
 	private static final boolean DEBUG = false;
-	
-	private static final IIndexer indexer = new FakeIndexer();
+
+	private static IIndexer indexer;
 	private static IRodinFile file;
-	private static NamedElement namedElement;
-	private static NamedElement namedElement2;
+	private static NamedElement elt1;
+	private static NamedElement elt2;
 	private static IInternalElement[] fileElements;
 	private static final IndexManager manager = IndexManager.getDefault();
+
+	private static final String elt1Name = "elt1Name";
+	private static final String elt2Name = "elt2Name";
+
+	private static RodinIndex rodinIndex;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "fileTable.test");
-		namedElement = createNamedElement(file, "elt1");
-		namedElement2 = createNamedElement(file, "elt2");
-		fileElements = new NamedElement[] { namedElement, namedElement2 };
+		elt1 = createNamedElement(file, "elt1");
+		elt2 = createNamedElement(file, "elt2");
+		fileElements = new NamedElement[] { elt1, elt2 };
+		rodinIndex = new RodinIndex();
+		rodinIndex.makeDescriptor(elt1, elt1Name);
+		rodinIndex.makeDescriptor(elt2, elt2Name);
+
+		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, file.getElementType());
 	}
 
@@ -48,9 +59,9 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 		super.tearDown();
 	}
 
-	private void assertFileTable(IRodinFile rodinFile, IInternalElement[] expectedElements,
-			String message) {
-	
+	private void assertFileTable(IRodinFile rodinFile,
+			IInternalElement[] expectedElements, String message) {
+
 		final FileTable fileTable = manager.getFileTable(rodinFile
 				.getRodinProject());
 		IInternalElement[] actualElements = fileTable.get(rodinFile);
@@ -67,17 +78,17 @@ public class FileTableUsageTests extends AbstractRodinDBTests {
 		assertFileTable(file, fileElements, "");
 	}
 
-	public void testFileTableUpdating() throws Exception {
+	public void testDeleteElement() throws Exception {
 
-		// first indexing with namedElement and namedElement2
+		// first indexing with elt1 and elt2
 		manager.scheduleIndexing(file);
 		assertFileTable(file, fileElements, "\nBefore");
 
-		// deleting some file contents
-		namedElement.delete(true, null);
-		IInternalElement[] fileElementsAfter = new NamedElement[] { namedElement2 };
+		// removing an element
+		rodinIndex.removeDescriptor(elt1);
+		IInternalElement[] fileElementsAfter = new NamedElement[] { elt2 };
 
-		// second indexing with namedElement2 only
+		// second indexing with elt2 only
 		manager.scheduleIndexing(file);
 		assertFileTable(file, fileElementsAfter, "\nAfter");
 

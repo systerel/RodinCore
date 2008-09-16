@@ -2,9 +2,10 @@ package org.rodinp.internal.core.index.tests;
 
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -18,10 +19,16 @@ import org.rodinp.internal.core.index.RodinIndex;
 
 public class IndexManagerTests extends AbstractRodinDBTests {
 
-	private IIndexer indexer = new FakeIndexer();
+	private static IIndexer indexer;
+	private static RodinIndex rodinIndex;
 	private IRodinProject project;
 	private IRodinFile file;
-	private final IndexManager manager = IndexManager.getDefault();
+	private static NamedElement elt1;
+	private static NamedElement elt2;
+	private static final String name1 = "elt1Name";
+	private static final String name2 = "elt2Name";
+
+	private static final IndexManager manager = IndexManager.getDefault();
 
 	public IndexManagerTests(String name) {
 		super(name);
@@ -32,6 +39,15 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "indMan.test");
+		elt1 = createNamedElement(file, "elt1");
+		elt2 = createNamedElement(file, "elt2");
+		rodinIndex = new RodinIndex();
+		final Descriptor desc1 = rodinIndex.makeDescriptor(elt1, name1);
+		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
+		final Descriptor desc2 = rodinIndex.makeDescriptor(elt2, name2);
+		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
+		
+		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, file.getElementType());
 	}
 
@@ -43,52 +59,48 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	}
 
 	public void testScheduleIndexing() throws Exception {
-		final NamedElement element = createNamedElement(file,
-				defaultName);
 
 		manager.scheduleIndexing(file);
 
 		final RodinIndex index = manager.getIndex(project);
-		final Descriptor desc = index.getDescriptor(element);
+		final Descriptor desc1 = index.getDescriptor(elt1);
+		final Descriptor desc2 = index.getDescriptor(elt2);
 
-		assertDescriptor(desc, element,
-				defaultName, 6);
+		assertDescriptor(desc1, elt1, name1, 1);
+		assertDescriptor(desc2, elt2, name2, 1);
 	}
 
-	public void testScheduleSeveralIndexing() throws Exception {
+	public void testSeveralIndexing() throws Exception {
 
-		final String elementName = defaultName;
-		final NamedElement element = createNamedElement(file,
-				elementName);
-
-		final String element2Name = defaultName + "2";
-		final NamedElement element2 = new NamedElement(element2Name, file);
-
-
-		// first indexing with element, without element2
+		rodinIndex.removeDescriptor(elt2);
+		
+		// first indexing with elt1, without elt2
 		manager.scheduleIndexing(file);
 
 		final RodinIndex index1 = manager.getIndex(project);
-		final Descriptor descElement = index1.getDescriptor(element);
+		final Descriptor descElement = index1.getDescriptor(elt1);
 
-		assertDescriptor(descElement, element, elementName, 6);
-		assertNoSuchDescriptor(index1, element2);
+		assertDescriptor(descElement, elt1, name1, 1);
+		assertNoSuchDescriptor(index1, elt2);
 
-		element.delete(true, null);
-		element2.create(null, null);
-
+		// removing elt1, adding elt2
+		rodinIndex.removeDescriptor(elt1);
+		final Descriptor desc2 = rodinIndex.makeDescriptor(elt2, name2);
+		desc2.addOccurrence(createDefaultOccurrence(file));
+		
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
 		final RodinIndex index2 = manager.getIndex(project);
-		final Descriptor descElement2 = index2.getDescriptor(element2);
+		final Descriptor descElement2 = index2.getDescriptor(elt2);
 
-		assertNoSuchDescriptor(index2, element);
-		assertDescriptor(descElement2, element2, element2Name, 6);
+		assertNoSuchDescriptor(index2, elt1);
+		assertDescriptor(descElement2, elt2, name2, 1);
 	}
 
 	public void testIndexFileDoesNotExist() throws Exception {
-		final IRodinFile inexistentFile = project.getRodinFile("inexistentFile.test");
+		final IRodinFile inexistentFile = project
+				.getRodinFile("inexistentFile.test");
 		try {
 			manager.scheduleIndexing(inexistentFile);
 		} catch (Exception e) {
@@ -107,27 +119,25 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	}
 
 	public void testIndexSeveralProjects() throws Exception {
-		final String el1Name = "elementF1Name";
-		final String el2Name = "elementF2Name";
+		final String eltF2Name = "eltF2Name";
 
-		final NamedElement elementF1 = createNamedElement(file,
-				el1Name);
 		final IRodinProject project2 = createRodinProject("P2");
-		final IRodinFile file2 = createRodinFile(project2,
-				"file2P2.test");
-		final NamedElement elementF2 = createNamedElement(file2,
-				el2Name);
-
-		final IRodinFile[] toIndex = new IRodinFile[] { file, file2 };
+		final IRodinFile file2 = createRodinFile(project2, "file2P2.test");
+		final NamedElement eltF2 = createNamedElement(file2, eltF2Name);
+		
+		rodinIndex.makeDescriptor(eltF2, eltF2Name);
+		
+		final IRodinFile[] toIndex = makeIRFArray(file, file2);
 		manager.scheduleIndexing(toIndex);
 
 		final RodinIndex index1 = manager.getIndex(project);
-		final Descriptor desc1 = index1.getDescriptor(elementF1);
+		final Descriptor desc1 = index1.getDescriptor(elt1);
 		final RodinIndex index2 = manager.getIndex(project2);
-		final Descriptor desc2 = index2.getDescriptor(elementF2);
+		final Descriptor desc2 = index2.getDescriptor(eltF2);
 
-		assertDescriptor(desc1, elementF1, el1Name, 6);
+		assertDescriptor(desc1, elt1, name1, 1);
+		assertDescriptor(desc2, eltF2, eltF2Name, 0);
 
-		assertDescriptor(desc2, elementF2, el2Name, 6);
+		deleteProject("P2");
 	}
 }

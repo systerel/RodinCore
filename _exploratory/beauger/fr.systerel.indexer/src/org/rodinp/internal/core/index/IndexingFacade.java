@@ -62,7 +62,7 @@ public class IndexingFacade implements IIndexingFacade {
 		this.currentDescriptor = null;
 	}
 
-	public void addDeclaration(IInternalElement element, String name) {
+	public void declare(IInternalElement element, String name) {
 
 		if (!isLocal(element)) {
 			throw new IllegalArgumentException(

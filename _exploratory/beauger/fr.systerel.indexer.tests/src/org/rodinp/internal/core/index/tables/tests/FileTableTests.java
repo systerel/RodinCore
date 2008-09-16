@@ -4,6 +4,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -43,7 +44,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 
 	public void testGetElementsPresent() throws Exception {
 		table.add(element, file);
-		final IInternalElement[] expectedResult = new IInternalElement[] { element };
+		final IInternalElement[] expectedResult = makeIIEArray(element);
 
 		final IInternalElement[] elements = table.get(file);
 
@@ -61,7 +62,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 	public void testAddElement() throws Exception {
 		table.add(element, file);
 
-		final IInternalElement[] expectedResult = new IInternalElement[] { element };
+		final IInternalElement[] expectedResult = makeIIEArray(element);
 		final IInternalElement[] elements = table.get(file);
 
 		assertSameElements(expectedResult, elements);
@@ -81,7 +82,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 		table.remove(file);
 
 		final IInternalElement[] elements = table.get(file);
-		final IInternalElement[] expectedResult2 = new IInternalElement[] { element2 };
+		final IInternalElement[] expectedResult2 = makeIIEArray(element2);
 		final IInternalElement[] elements2 = table.get(file2);
 
 		assertIsEmpty(elements);
@@ -92,7 +93,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 		table.add(element, file);
 		table.remove(file2);
 
-		final IInternalElement[] expectedResult = new IInternalElement[] { element };
+		final IInternalElement[] expectedResult = makeIIEArray(element);
 		final IInternalElement[] elements = table.get(file);
 		final IInternalElement[] elements2 = table.get(file2);
 

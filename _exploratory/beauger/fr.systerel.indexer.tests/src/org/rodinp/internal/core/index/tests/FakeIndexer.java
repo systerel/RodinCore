@@ -1,54 +1,59 @@
 package org.rodinp.internal.core.index.tests;
 
-import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingFacade;
-import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.index.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
 
-	// TODO better pass the wanted index to the constructor and index with it.
-	// private final IRodinIndex index;
+	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
+	
+	private final RodinIndex localIndex;
 
-	public FakeIndexer() {
-		// nothing to do
+	public FakeIndexer(RodinIndex index) {
+		this.localIndex = index;
+	}
+	
+	public IRodinFile[] getDependencies(IRodinFile file) {
+		return NO_FILES;
 	}
 
-	// public FakeIndexer(RodinIndex index) {
-	// this.index = index;
-	// }
-
-	/**
-	 * Calls
-	 * {@link IndexTestsUtil#addOccurrencesTestSet(IInternalElement, int, IIndexingFacade)}
-	 * for every children of type {@link NamedElement#ELEMENT_TYPE} generating 3
-	 * occurrences of each kind.
-	 */
+	
 	public void index(IRodinFile file, IIndexingFacade index) {
-		try {
-
-			final IRodinElement[] fileElems = file
-					.getChildrenOfType(NamedElement.ELEMENT_TYPE);
-
-			for (IRodinElement element : fileElems) {
-				NamedElement namedElt = (NamedElement) element;
-				final String name = namedElt.getElementName();
-				index.addDeclaration(namedElt, name);
-				IndexTestsUtil
-						.addOccurrencesTestSet(namedElt, 3, index);
+		
+		for (Descriptor desc: localIndex.getDescriptors()) {
+			final IInternalElement element = desc.getElement();
+			if (element.getRodinFile().equals(file)) {
+				index.declare(element, desc.getName());
 			}
-
-		} catch (CoreException e) {
-			e.printStackTrace();
-			assert false;
+			for (Occurrence occ: desc.getOccurrences()) {
+				final IRodinLocation location = occ.getLocation();
+				if (isInFile(file, location)) {
+					index.addOccurrence(element, occ.getKind(), location);
+				}
+			}
 		}
 	}
-
-	public IRodinFile[] getDependencies(IRodinFile file) {
-		return new IRodinFile[0];
+	
+	
+	private boolean isInFile(IRodinFile file, IRodinLocation location) {
+		final IRodinElement locElem = location.getElement();
+		final IRodinFile locElemFile;
+		if (locElem instanceof IRodinFile) {
+			locElemFile = (IRodinFile) locElem;
+		} else if (locElem instanceof IInternalElement) {
+			locElemFile = ((IInternalElement) locElem).getRodinFile();
+		} else {
+			return false;
+		}
+		return locElemFile.equals(file);
 	}
+
 
 }

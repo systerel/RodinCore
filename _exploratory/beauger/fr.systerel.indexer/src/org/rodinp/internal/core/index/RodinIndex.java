@@ -58,8 +58,8 @@ public final class RodinIndex {
 		return descriptor;
 	}
 
-	public void removeDescriptor(Object key) {
-		map.remove(key);
+	public void removeDescriptor(IInternalElement element) {
+		map.remove(element);
 	}
 
 	public void rename(IInternalElement element, String name) {

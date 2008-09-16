@@ -43,7 +43,7 @@ public class FakeNameIndexer implements IIndexer {
 			for (String name : names) {
 				final NamedElement decl = createNamedElement(
 						rodinFile, name);
-				index.addDeclaration(decl, name);
+				index.declare(decl, name);
 				final HashSet<IInternalElement> set = new HashSet<IInternalElement>();
 				indexedElements.put(name, set);
 				set.add(decl);
