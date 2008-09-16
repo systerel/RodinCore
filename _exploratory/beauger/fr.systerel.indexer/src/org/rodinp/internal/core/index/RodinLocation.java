@@ -1,5 +1,7 @@
 package org.rodinp.internal.core.index;
 
+import static org.rodinp.internal.core.index.RodinLocationUtil.verifyRodinLocation;
+
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
@@ -57,7 +59,7 @@ public class RodinLocation implements IRodinLocation {
 			throw new NullPointerException("null element");
 		}
 
-		IRodinDBStatus status = RodinLocationUtil.verifyRodinLocation(element,
+		IRodinDBStatus status = verifyRodinLocation(element,
 				attributeType, charStart, charEnd);
 
 		if (!status.isOK()) {

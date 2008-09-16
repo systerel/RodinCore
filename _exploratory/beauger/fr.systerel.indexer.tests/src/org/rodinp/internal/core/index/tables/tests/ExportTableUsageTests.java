@@ -29,8 +29,6 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	// TODO avoid all this stuff by overriding runTest and calling a clean method
-	// then propagate that way of doing through all test units
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

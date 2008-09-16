@@ -122,8 +122,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		indexer.clearOrder();
 
 		// only file2 is requested to index, but file1 should also be indexed
-		// again, after file2, as it depends on file2 and file2 has exports
-		// FIXME should work only when exports change
+		// again, after file2, as it depends on file2, which has exports changes
+		// (file2 was never indexed and its exports are not empty).
 		IRodinFile[] toIndex = new IRodinFile[] { file2 };
 		IRodinFile[] expectedOrder = new IRodinFile[] { file2, file1 };
 
@@ -252,7 +252,6 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		RodinIndexer.register(indexer, file1.getElementType());
 
 		IRodinFile[] toIndex = new IRodinFile[] { file1, file2, file3 };
-
 
 		try {
 			manager.scheduleIndexing(toIndex);

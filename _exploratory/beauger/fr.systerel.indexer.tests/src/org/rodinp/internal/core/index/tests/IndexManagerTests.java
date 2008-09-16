@@ -56,7 +56,6 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	}
 
 	public void testScheduleSeveralIndexing() throws Exception {
-		// TODO test several calls to scheduleIndexing with same file
 
 		final String elementName = defaultName;
 		final NamedElement element = createNamedElement(file,

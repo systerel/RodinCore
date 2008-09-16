@@ -29,8 +29,6 @@ import org.rodinp.internal.core.index.tests.IndexTestsUtil.TestOccurrenceKind;
 
 public class IndexingFacadeTests extends AbstractRodinDBTests {
 
-	// TODO verify that there is no double tests with DependenceTableUsageTests
-
 	public IndexingFacadeTests(String name) {
 		super(name);
 	}
