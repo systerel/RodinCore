@@ -19,8 +19,9 @@ import org.eventb.core.IAxiom;
  *
  */
 public class ModelAxiom extends ModelPOContainer {
-	public ModelAxiom(IAxiom axiom){
+	public ModelAxiom(IAxiom axiom, IModelElement parent){
 		internalAxiom = axiom;
+		this.parent = parent;
 	}
 
 	private IAxiom internalAxiom;

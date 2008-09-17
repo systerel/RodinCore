@@ -36,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  * @author Maria Husmann
  *
  */
-public class ModelProject {
+public class ModelProject implements IModelElement {
 	public ModelProject(IRodinProject project) {
 		internalProject = project;
 	}
@@ -248,8 +248,14 @@ public class ModelProject {
 		}
 		return null;
 	}
+	
+	public IModelElement getParent() {
+		//The Project doesn't have a ModelElement parent
+		return null;
+	}
 
 	
 	private HashMap<String, ModelMachine> machines = new HashMap<String, ModelMachine>();
 	private HashMap<String, ModelContext> contexts = new HashMap<String, ModelContext>();
+
 }

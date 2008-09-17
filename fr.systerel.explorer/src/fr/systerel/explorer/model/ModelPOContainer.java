@@ -23,9 +23,12 @@ import org.eventb.core.IPSStatus;
  * @author Maria Husmann
  *
  */
-public class ModelPOContainer {
+public class ModelPOContainer implements IModelElement{
+	
 	// name for Label Provider
 	public static final String DISPLAY_NAME = "Proof Obligations";
+	
+	protected IModelElement parent;
 	
 	protected HashMap<String, ModelProofObligation> proofObligations = new HashMap<String, ModelProofObligation>();
 
@@ -46,6 +49,10 @@ public class ModelPOContainer {
 		}
 		IPSStatus[] results = new IPSStatus[statuses.size()];
 		return statuses.toArray(results);
+	}
+
+	public IModelElement getParent() {
+		return parent;
 	}
 	
 

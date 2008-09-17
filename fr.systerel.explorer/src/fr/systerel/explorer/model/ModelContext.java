@@ -32,7 +32,7 @@ import org.rodinp.core.RodinDBException;
  * @author Maria Husmann
  *
  */
-public class ModelContext extends ModelPOContainer {
+public class ModelContext extends ModelPOContainer implements IModelElement{
 	public ModelContext(IContextFile file){
 		internalContext = file;
 		try {
@@ -98,11 +98,11 @@ public class ModelContext extends ModelPOContainer {
 	}
 
 	public void addAxiom(IAxiom axiom) {
-		axioms.put(axiom.getElementName(), new ModelAxiom(axiom));
+		axioms.put(axiom.getElementName(), new ModelAxiom(axiom, this));
 	}
 	
 	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem.getElementName(), new ModelTheorem(theorem));
+		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class ModelContext extends ModelPOContainer {
 	
 	/**
 	 * Assuming no cycles
-	 * @return All Ancestors of this machine
+	 * @return All Ancestors of this context (extends context)
 	 */
 	public List<ModelContext> getAncestors(){
 		List<ModelContext> results = new LinkedList<ModelContext>();
@@ -189,6 +189,11 @@ public class ModelContext extends ModelPOContainer {
 	public ModelAxiom getAxiom(IAxiom axiom){
 		return axioms.get(axiom.getElementName());
 	}
+
+	public IModelElement getParent() {
+		return ModelController.getProject(internalContext.getRodinProject());
+	}
+	
 	
 	/**
 	 * The Contexts that extend this Context (children)

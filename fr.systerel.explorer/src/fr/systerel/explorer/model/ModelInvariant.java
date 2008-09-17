@@ -18,9 +18,10 @@ import org.eventb.core.IInvariant;
  * @author Administrator
  *
  */
-public class ModelInvariant extends ModelPOContainer {
-	public ModelInvariant(IInvariant invariant){
+public class ModelInvariant extends ModelPOContainer{
+	public ModelInvariant(IInvariant invariant, IModelElement parent){
 		internalInvariant = invariant;
+		this.parent = parent; 
 	}
 
 	private IInvariant internalInvariant;
@@ -28,5 +29,6 @@ public class ModelInvariant extends ModelPOContainer {
 	public IInvariant getInternalInvariant() {
 		return internalInvariant;
 	}
+
 
 }

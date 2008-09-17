@@ -12,23 +12,15 @@
 
 package fr.systerel.explorer.model;
 
-import org.eventb.core.IEvent;
-
 /**
  * @author Administrator
  *
  */
-public class ModelEvent extends ModelPOContainer {
-	public ModelEvent(IEvent event, IModelElement parent){
-		internalEvent = event;
-		this.parent = parent;
-	}
-
-	private IEvent internalEvent;
+public interface IModelElement {
 	
-	
-	public IEvent getInternalEvent() {
-		return internalEvent;
-	}
-
+	/**
+	 * 
+	 * @return The Parent of this element from the model perspective
+	 */
+	public IModelElement getParent();
 }

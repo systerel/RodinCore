@@ -27,7 +27,7 @@ import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class ModelMachine extends ModelPOContainer {
+public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
 		try {
@@ -103,15 +103,15 @@ public class ModelMachine extends ModelPOContainer {
 	}
 	
 	public void addInvariant(IInvariant invariant) {
-		invariants.put(invariant.getElementName(), new ModelInvariant(invariant));
+		invariants.put(invariant.getElementName(), new ModelInvariant(invariant, this));
 	}
 
 	public void addEvent(IEvent event) {
-		events.put(event.getElementName(), new ModelEvent(event));
+		events.put(event.getElementName(), new ModelEvent(event, this));
 	}
 	
 	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem.getElementName(), new ModelTheorem(theorem));
+		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class ModelMachine extends ModelPOContainer {
 	
 	/**
 	 * Assuming no cycles
-	 * @return All Ancestors of this machine
+	 * @return All Ancestors of this machine (refinement perspective)
 	 */
 	public List<ModelMachine> getAncestors(){
 		List<ModelMachine> results = new LinkedList<ModelMachine>();
@@ -202,6 +202,11 @@ public class ModelMachine extends ModelPOContainer {
 	/**
 	 * Machines that this Machine refines.
 	 */
+
+	public IModelElement getParent() {
+		return ModelController.getProject(internalMachine.getRodinProject());
+	}
+
 	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
 	private IMachineFile internalMachine ;
 	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();

@@ -19,8 +19,9 @@ import org.eventb.core.ITheorem;
  *
  */
 public class ModelTheorem extends ModelPOContainer {
-	public ModelTheorem(ITheorem theorem){
+	public ModelTheorem(ITheorem theorem, IModelElement parent){
 		internalTheorem = theorem;
+		this.parent =  parent;
 	}
 
 	private ITheorem internalTheorem;

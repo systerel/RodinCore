@@ -17,18 +17,21 @@ import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.RodinCore;
 
+import fr.systerel.explorer.model.ModelController;
+
 /**
  * @author Maria Husmann
  *
  */
-public class RodinNavigator extends CommonNavigator implements IElementChangedListener{
+public class RodinNavigator extends CommonNavigator {
 
 	/**
 	 * Observe the database.
 	 *
 	 */
 	public RodinNavigator(){
-		RodinCore.addElementChangedListener(this);
+		controller = new ModelController(this);
+//		RodinCore.addElementChangedListener(this);
 	}
 	
 	/**
@@ -41,21 +44,21 @@ public class RodinNavigator extends CommonNavigator implements IElementChangedLi
 		return RodinCore.getRodinDB();
 	}
 
-	/**
-	 * React to changes in the database.
-	 *
-	 */
-	public void elementChanged(ElementChangedEvent event) {	
-		System.out.println(event.getDelta().toString());
-		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
-			public void run() {
-				if (getViewSite().getShell() != null) {
-					getCommonViewer().refresh();
-					System.out.println("refreshed");
-				
-				}
-			}});
-	}
+//	/**
+//	 * React to changes in the database.
+//	 *
+//	 */
+//	public void elementChanged(ElementChangedEvent event) {	
+//		System.out.println(event.getDelta().toString());
+//		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
+//			public void run() {
+//				if (getViewSite().getShell() != null) {
+//					getCommonViewer().refresh();
+//					System.out.println("refreshed");
+//				
+//				}
+//			}});
+//	}
 
-	
+	private ModelController controller;
 }
