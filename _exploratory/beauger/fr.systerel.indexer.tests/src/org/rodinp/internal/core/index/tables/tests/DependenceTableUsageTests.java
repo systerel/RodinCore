@@ -192,15 +192,16 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
 		final String eltF2Name2 = "eltF2Name2";
+		rodinIndex.rename(eltF2, eltF2Name2);
 		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
 		RodinIndexer.register(indexerNewName, file1.getElementType());
 
-		// file2 is requested to index, but file1 should not be indexed
-		// again, even if it depends on file2 and file2 exports are
-		// changed, because it concerns only names
-		IRodinFile[] expectedOrder = makeIRFArray(file2);
+		// file2 is requested to index, but file1 should be indexed
+		// again, because it depends on file2 and file2 exports are
+		// changed, even if it concerns only names
+		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
 
 		manager.scheduleIndexing(file2);
 
