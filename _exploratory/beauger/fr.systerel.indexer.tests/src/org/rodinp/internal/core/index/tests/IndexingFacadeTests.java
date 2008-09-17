@@ -278,7 +278,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
-		// add a declaration of elt2 in file2
+		// add a declaration of elt2 in file2 and export it
 		indexingFacade2.declare(elt2, name2);
 		indexingFacade2.export(elt2);
 
@@ -323,5 +323,26 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		assertSameElements(elt2Array, fileTable.get(file1));
 		assertSameElements(elt2Array, fileTable.get(file2));
 	}
+	
+	public void testGetImports() throws Exception {
+	
+		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
+		// add a declaration of elt2 in file2 and export it
+		indexingFacade2.declare(elt2, name2);
+		indexingFacade2.export(elt2);
 
+		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+				nameTable, f2ExportsElt2, f1DepsOnf2);
+		
+		final IInternalElement[] imports = indexingFacade1.getImports();
+		
+		assertSameElements(makeIIEArray(elt2), imports);
+	}
+
+	public void testGetImportsEmpty() throws Exception {
+		final IInternalElement[] imports = indexingFacade1.getImports();
+		
+		assertIsEmpty(imports);
+	}
 }
