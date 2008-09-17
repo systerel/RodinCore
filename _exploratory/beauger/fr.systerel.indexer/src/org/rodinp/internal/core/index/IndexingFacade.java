@@ -1,7 +1,7 @@
 package org.rodinp.internal.core.index;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -22,7 +22,9 @@ public class IndexingFacade implements IIndexingFacade {
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
 	private final Set<IInternalElement> previousExports;
-	private final List<IRodinFile> localDeps;
+	private final DependenceTable dependTable;
+	private final IRodinFile[] localDeps;
+	private final Set<IInternalElement> imports;
 	private boolean reindexDependents;
 	private Descriptor currentDescriptor;
 
@@ -55,8 +57,10 @@ public class IndexingFacade implements IIndexingFacade {
 		this.fileTable = fileTable;
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
-		this.localDeps = Arrays.asList(dependTable.get(file));
 		this.previousExports = exportTable.get(file);
+		this.dependTable = dependTable;
+		this.localDeps = dependTable.get(file);
+		this.imports = computeImports();
 		// TODO mv line below in clean()
 		exportTable.remove(file); // reset exports for this file
 		this.reindexDependents = false;
@@ -123,6 +127,14 @@ public class IndexingFacade implements IIndexingFacade {
 		// FIXME costly (?)
 	}
 
+	private Set<IInternalElement> computeImports() {
+		final Set<IInternalElement> result = new HashSet<IInternalElement>();
+		for (IRodinFile f: localDeps) {
+			result.addAll(exportTable.get(f));
+		}
+		return result;
+	}
+	
 	private void fetchCurrentDescriptor(IInternalElement element) {
 		if (currentDescriptor != null
 				&& currentDescriptor.getElement() == element) {
@@ -147,7 +159,7 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	private boolean isImported(IInternalElement element) {
-		for (IRodinFile f : localDeps) {
+		for (IRodinFile f : dependTable.get(file)) {
 			if (exportTable.get(f).contains(element)) {
 				return true;
 			}
@@ -183,6 +195,10 @@ public class IndexingFacade implements IIndexingFacade {
 			}
 		}
 		fTable.remove(f);
+	}
+
+	public IInternalElement[] getImports() {
+		return imports.toArray(new IInternalElement[imports.size()]);
 	}
 
 }

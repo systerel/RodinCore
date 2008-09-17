@@ -9,6 +9,8 @@ public interface IIndexingFacade {
 	void addOccurrence(IInternalElement element, IOccurrenceKind kind,
 			IRodinLocation location);
 	
+	IInternalElement[] getImports();
+	
 	void export(IInternalElement element);
 
 }
