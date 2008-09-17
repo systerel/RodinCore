@@ -56,4 +56,12 @@ public class FileTable {
 		}
 		return sb.toString();
 	}
+
+	public boolean contains(IRodinFile file, IInternalElement element) {
+		final Set<IInternalElement> set = table.get(file);
+		if (set == null) {
+			return false;
+		}
+		return set.contains(element);
+	}
 }

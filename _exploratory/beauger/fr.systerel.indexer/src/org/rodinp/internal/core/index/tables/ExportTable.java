@@ -1,27 +1,27 @@
 package org.rodinp.internal.core.index.tables;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
 public class ExportTable {
 
-	Map<IRodinFile, Set<IInternalElement>> table;
+	// TODO consider removing the name
+	Map<IRodinFile, Map<IInternalElement, String>> table;
 
 	public ExportTable() {
-		table = new HashMap<IRodinFile, Set<IInternalElement>>();
+		table = new HashMap<IRodinFile, Map<IInternalElement, String>>();
 	}
 
-	public Set<IInternalElement> get(IRodinFile file) {
-		final Set<IInternalElement> set = table.get(file);
-		if (set == null) {
-			return new HashSet<IInternalElement>();
+	// TODO consider providing a type that hides the map
+	public Map<IInternalElement, String> get(IRodinFile file) {
+		final Map<IInternalElement, String> map = table.get(file);
+		if (map == null) {
+			return new HashMap<IInternalElement, String>();
 		}
-		return new HashSet<IInternalElement>(set);
+		return new HashMap<IInternalElement, String>(map);
 	}
 
 	/**
@@ -30,14 +30,15 @@ public class ExportTable {
 	 * 
 	 * @param file
 	 * @param element
+	 * @param name
 	 */
-	public void add(IRodinFile file, IInternalElement element) {
-		Set<IInternalElement> set = table.get(file);
-		if (set == null) {
-			set = new HashSet<IInternalElement>();
-			table.put(file, set);
+	public void add(IRodinFile file, IInternalElement element, String name) {
+		Map<IInternalElement, String> map = table.get(file);
+		if (map == null) {
+			map = new HashMap<IInternalElement, String>();
+			table.put(file, map);
 		}
-		set.add(element);
+		map.put(element, name);
 	}
 
 	public void remove(IRodinFile file) {
@@ -46,6 +47,14 @@ public class ExportTable {
 
 	public void clear() {
 		table.clear();
+	}
+
+	public boolean contains(IRodinFile f, IInternalElement element) {
+		final Map<IInternalElement, String> map = table.get(f);
+		if (map == null) {
+			return false;
+		}
+		return map.keySet().contains(element);
 	}
 
 }

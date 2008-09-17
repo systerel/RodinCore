@@ -1,7 +1,7 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -22,12 +22,12 @@ public class FakeExportIndexer extends FakeIndexer {
 	@Override
 	public void index(IRodinFile file, IIndexingFacade index) {
 		super.index(file, index);
-		for (IInternalElement elt : exportTable.get(file)) {
+		for (IInternalElement elt : exportTable.get(file).keySet()) {
 			index.export(elt);
 		}
 	}
 
-	Set<IInternalElement> getExports(IRodinFile file) {
-		return new HashSet<IInternalElement>(exportTable.get(file));
+	Map<IInternalElement, String> getExports(IRodinFile file) {
+		return new HashMap<IInternalElement, String>(exportTable.get(file));
 	}
 }

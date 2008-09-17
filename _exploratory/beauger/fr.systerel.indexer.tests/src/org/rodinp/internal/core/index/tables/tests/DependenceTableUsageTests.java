@@ -57,7 +57,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
 		rodinIndex.makeDescriptor(eltF2, eltF2Name);
-		f2ExportsElt2.add(file2, eltF2);
+		f2ExportsElt2.add(file2, eltF2, eltF2Name);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 	}
@@ -191,7 +191,8 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
-		f2ExportsElt2Name2.add(file2, eltF2);
+		final String eltF2Name2 = "eltF2Name2";
+		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
 		RodinIndexer.register(indexerNewName, file1.getElementType());
@@ -238,9 +239,9 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		rodinIndex.makeDescriptor(elt3, elt3Name);
 
 		final ExportTable f1f2f3expElt3 = new ExportTable();
-		f1f2f3expElt3.add(file3, elt3);
-		f1f2f3expElt3.add(file2, elt3);
-		f1f2f3expElt3.add(file1, elt3);
+		f1f2f3expElt3.add(file3, elt3, elt3Name);
+		f1f2f3expElt3.add(file2, elt3, elt3Name);
+		f1f2f3expElt3.add(file1, elt3, elt3Name);
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1dF2dF3, f1f2f3expElt3);

@@ -1,7 +1,7 @@
 package org.rodinp.internal.core.index;
 
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -21,11 +21,10 @@ public class IndexingFacade implements IIndexingFacade {
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
-	private final Set<IInternalElement> previousExports;
-	private final DependenceTable dependTable;
+	private final Map<IInternalElement, String> previousExports;
+//	private final DependenceTable dependTable;
 	private final IRodinFile[] localDeps;
 	private final Set<IInternalElement> imports;
-	private boolean reindexDependents;
 	private Descriptor currentDescriptor;
 
 	/**
@@ -58,12 +57,11 @@ public class IndexingFacade implements IIndexingFacade {
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
 		this.previousExports = exportTable.get(file);
-		this.dependTable = dependTable;
+//		this.dependTable = dependTable;
 		this.localDeps = dependTable.get(file);
 		this.imports = computeImports();
 		// TODO mv line below in clean()
 		exportTable.remove(file); // reset exports for this file
-		this.reindexDependents = false;
 		this.currentDescriptor = null;
 	}
 
@@ -75,7 +73,7 @@ public class IndexingFacade implements IIndexingFacade {
 							+ element.getRodinFile());
 		}
 
-		if (Arrays.asList(fileTable.get(file)).contains(element)) {
+		if (fileTable.contains(file, element)) {
 			throw new IllegalArgumentException(
 					"Element has already been declared: " + element);
 		}
@@ -121,20 +119,17 @@ public class IndexingFacade implements IIndexingFacade {
 		}
 		fetchCurrentDescriptor(element);
 
-		exportTable.add(file, element);
-
-		reindexDependents = !exportTable.get(file).equals(previousExports);
-		// FIXME costly (?)
+		exportTable.add(file, element, currentDescriptor.getName());
 	}
 
 	private Set<IInternalElement> computeImports() {
 		final Set<IInternalElement> result = new HashSet<IInternalElement>();
-		for (IRodinFile f: localDeps) {
-			result.addAll(exportTable.get(f));
+		for (IRodinFile f : localDeps) {
+			result.addAll(exportTable.get(f).keySet());
 		}
 		return result;
 	}
-	
+
 	private void fetchCurrentDescriptor(IInternalElement element) {
 		if (currentDescriptor != null
 				&& currentDescriptor.getElement() == element) {
@@ -159,8 +154,8 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	private boolean isImported(IInternalElement element) {
-		for (IRodinFile f : dependTable.get(file)) {
-			if (exportTable.get(f).contains(element)) {
+		for (IRodinFile f : localDeps) {
+			if (exportTable.contains(f, element)) {
 				return true;
 			}
 		}
@@ -172,7 +167,8 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	public boolean mustReindexDependents() {
-		return reindexDependents;
+		// FIXME costly (?)
+		return !exportTable.get(file).equals(previousExports);
 	}
 
 	private void clean(IRodinFile f, final RodinIndex index,

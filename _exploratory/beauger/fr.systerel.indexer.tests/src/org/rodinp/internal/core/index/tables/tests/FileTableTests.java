@@ -113,4 +113,18 @@ public class FileTableTests extends AbstractRodinDBTests {
 		assertIsEmpty(elements2);
 	}
 
+	public void testContains() throws Exception {
+		table.add(element, file);
+
+		final boolean contains = table.contains(file, element);
+		
+		assertTrue("FileTable should contain "+element, contains);
+	}
+	
+	public void testContainsNot() throws Exception {
+		final boolean contains = table.contains(file, element);
+		
+		assertFalse("FileTable should not contain "+element, contains);
+		
+	}
 }

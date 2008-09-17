@@ -9,7 +9,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -65,7 +65,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		locF1 = RodinIndexer.getRodinLocation(file1);
 		locF2 = RodinIndexer.getRodinLocation(file2);
 
-		f2ExportsElt2.add(file2, elt2);
+		f2ExportsElt2.add(file2, elt2, name2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
@@ -310,10 +310,10 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 				occAfter.getLocation().getElement());
 
 		// name2Bis should have replaced name2 in nameTable and exportTable
-		final Set<IInternalElement> actExports = f2ExportsElt2.get(file2);
-		assertTrue("Element " + elt2.getElementName()
-				+ " should be exported by " + file2.getBareName(), actExports
-				.contains(elt2));
+		final Map<IInternalElement, String> actExports = f2ExportsElt2
+				.get(file2);
+		assertEquals("Exported element " + elt2.getElementName()
+				+ " was not properly renamed", name2Bis, actExports.get(elt2));
 
 		final IInternalElement[] elt2Array = makeIIEArray(elt2);
 

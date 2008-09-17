@@ -4,8 +4,8 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -21,15 +21,18 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	}
 
 	private static final ExportTable table = new ExportTable();
+	private static final Map<IInternalElement, String> emptyExport = new HashMap<IInternalElement, String>();
 	private static NamedElement element1F1;
 	private static NamedElement element2F1;
 	private static NamedElement element1F2;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
+	private static final String name1F1 = "name1F1";
+	private static final String name2F1 = "name2F1";
+	private static final String name1F2 = "name1F2";
 
-	private void assertEmptyExports(Set<IInternalElement> set) {
-		assertNotNull("the export set should not be null", set);
-		assertTrue("the export set should be empty", set.isEmpty());
+	private void assertEmptyExports(Map<IInternalElement, String> map) {
+		assertExports(emptyExport, map);
 	}
 
 	@Override
@@ -51,60 +54,60 @@ public class ExportTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testAddGet() throws Exception {
-		Set<IInternalElement> expected = new HashSet<IInternalElement>();
-		expected.add(element1F1);
+		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
+		expected.put(element1F1, name1F1);
 
-		table.add(file1, element1F1);
-		final Set<IInternalElement> actual = table.get(file1);
+		table.add(file1, element1F1, name1F1);
+		final Map<IInternalElement, String> actual = table.get(file1);
 
 		assertExports(expected, actual);
 	}
 
 	public void testAddGetSeveral() throws Exception {
-		Set<IInternalElement> expected = new HashSet<IInternalElement>();
-		expected.add(element1F1);
-		expected.add(element2F1);
+		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
+		expected.put(element1F1, name1F1);
+		expected.put(element2F1, name2F1);
 
-		table.add(file1, element1F1);
-		table.add(file1, element2F1);
-		final Set<IInternalElement> actual = table.get(file1);
+		table.add(file1, element1F1, name1F1);
+		table.add(file1, element2F1, name2F1);
+		final Map<IInternalElement, String> actual = table.get(file1);
 
 		assertExports(expected, actual);
 	}
 
 	public void testAddGetVariousFiles() throws Exception {
-		Set<IInternalElement> expected1 = new HashSet<IInternalElement>();
-		expected1.add(element1F1);
-		Set<IInternalElement> expected2 = new HashSet<IInternalElement>();
-		expected2.add(element1F2);
+		Map<IInternalElement, String> expected1 = new HashMap<IInternalElement, String>();
+		expected1.put(element1F1, name1F1);
+		Map<IInternalElement, String> expected2 = new HashMap<IInternalElement, String>();
+		expected2.put(element1F2, name1F2);
 
-		table.add(file1, element1F1);
-		table.add(file2, element1F2);
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
 
-		final Set<IInternalElement> actual1 = table.get(file1);
-		final Set<IInternalElement> actual2 = table.get(file2);
+		final Map<IInternalElement, String> actual1 = table.get(file1);
+		final Map<IInternalElement, String> actual2 = table.get(file2);
 
 		assertExports(expected1, actual1);
 		assertExports(expected2, actual2);
 	}
 
 	public void testGetUnknownFile() throws Exception {
-		final Set<IInternalElement> map = table.get(file1);
+		final Map<IInternalElement, String> map = table.get(file1);
 
 		assertEmptyExports(map);
 	}
 
 	public void testRemove() throws Exception {
-		Set<IInternalElement> expected = new HashSet<IInternalElement>();
-		expected.add(element1F1);
+		Map<IInternalElement, String> expected = new HashMap<IInternalElement, String>();
+		expected.put(element1F1, name1F1);
 
-		table.add(file1, element1F1);
-		table.add(file2, element1F2);
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
 
 		table.remove(file2);
 
-		final Set<IInternalElement> actual1 = table.get(file1);
-		final Set<IInternalElement> actual2 = table.get(file2);
+		final Map<IInternalElement, String> actual1 = table.get(file1);
+		final Map<IInternalElement, String> actual2 = table.get(file2);
 
 		assertExports(expected, actual1);
 		assertEmptyExports(actual2);
@@ -112,16 +115,29 @@ public class ExportTableTests extends AbstractRodinDBTests {
 
 	public void testClear() throws Exception {
 
-		table.add(file1, element1F1);
-		table.add(file2, element1F2);
+		table.add(file1, element1F1, name1F1);
+		table.add(file2, element1F2, name1F2);
 
 		table.clear();
 
-		final Set<IInternalElement> actual1 = table.get(file1);
-		final Set<IInternalElement> actual2 = table.get(file2);
+		final Map<IInternalElement, String> actual1 = table.get(file1);
+		final Map<IInternalElement, String> actual2 = table.get(file2);
 
 		assertEmptyExports(actual1);
 		assertEmptyExports(actual2);
 	}
 
+	public void testContains() throws Exception {
+		table.add(file1, element1F1, name1F1);
+
+		final boolean contains = table.contains(file1, element1F1);
+
+		assertTrue("The ExportTable should contain " + element1F1, contains);
+	}
+
+	public void testContainsNot() throws Exception {
+		final boolean contains = table.contains(file1, element1F1);
+
+		assertFalse("TheExportTable should not contain " + element1F1, contains);
+	}
 }
