@@ -22,7 +22,7 @@ public class IndexingFacade implements IIndexingFacade {
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
 	private final Map<IInternalElement, String> previousExports;
-//	private final DependenceTable dependTable;
+	// private final DependenceTable dependTable;
 	private final IRodinFile[] localDeps;
 	private final Set<IInternalElement> imports;
 	private Descriptor currentDescriptor;
@@ -57,7 +57,7 @@ public class IndexingFacade implements IIndexingFacade {
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
 		this.previousExports = exportTable.get(file);
-//		this.dependTable = dependTable;
+		// this.dependTable = dependTable;
 		this.localDeps = dependTable.get(file);
 		this.imports = computeImports();
 		// TODO mv line below in clean()
@@ -112,6 +112,18 @@ public class IndexingFacade implements IIndexingFacade {
 		fileTable.add(element, file);
 	}
 
+	/**
+	 * The ExportTable records names associated to the exported elements.
+	 * <p>
+	 * If the element is local, it is associated with its declaration name.
+	 * <p>
+	 * If the element was imported, the associated name will be the one it was
+	 * declared with nevertheless, which is possibly different from the one it
+	 * is known by in the current file.
+	 * <p>
+	 * Treating local incoherences of public names in imported elements is
+	 * beyond the scope of the indexing system.
+	 */
 	public void export(IInternalElement element) {
 		if (!isLocalOrImported(element)) {
 			throw new IllegalArgumentException(
@@ -154,12 +166,7 @@ public class IndexingFacade implements IIndexingFacade {
 	}
 
 	private boolean isImported(IInternalElement element) {
-		for (IRodinFile f : localDeps) {
-			if (exportTable.contains(f, element)) {
-				return true;
-			}
-		}
-		return false;
+		return imports.contains(element);
 	}
 
 	private boolean isLocalOrImported(IInternalElement element) {
