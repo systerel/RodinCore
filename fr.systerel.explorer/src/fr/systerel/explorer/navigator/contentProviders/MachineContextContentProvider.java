@@ -17,13 +17,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.poModel.PoModelFactory;
+import fr.systerel.explorer.model.ModelController;
 
 /**
  * The content provider for Machine and Context elements.
@@ -37,7 +35,7 @@ public class MachineContextContentProvider implements ITreeContentProvider {
         if (element instanceof IRodinProject) {
         	IRodinProject project = (IRodinProject) element;
         	try {
-        		PoModelFactory.processProject(project);
+            	ModelController.processProject(project);
 				return filterChildren(project.getChildren());
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -74,18 +72,6 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	   	// Do nothing
 		 
-	}
-	
-	public void processProofObligations(IRodinElement[] elements){
-		for (int i = 0; i < elements.length; i++) {
-			IRodinElement element = elements[i];
-			if (element instanceof IPOFile) {
-				PoModelFactory.processPOFile((IPOFile) element);
-			}
-			if (element instanceof IPSFile) {
-				PoModelFactory.processPSFile((IPSFile) element);
-			}
-		}
 	}
 	
 	/**

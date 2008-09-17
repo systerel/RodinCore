@@ -8,42 +8,45 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-package fr.systerel.explorer.poModel;
 
+
+package fr.systerel.explorer.model;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 
-public class POContainer {
+/**
+ * @author Maria Husmann
+ *
+ */
+public class ModelPOContainer {
+	// name for Label Provider
+	public static final String DISPLAY_NAME = "Proof Obligations";
+	
+	protected HashMap<String, ModelProofObligation> proofObligations = new HashMap<String, ModelProofObligation>();
 
-	private List<ProofObligation> proofObligations = new LinkedList<ProofObligation>();
-
-	public ProofObligation[] getProofObligations() {
-		ProofObligation[] proofs = new ProofObligation[proofObligations.size()];
-		return proofObligations.toArray(proofs);
+	public ModelProofObligation[] getProofObligations() {
+		ModelProofObligation[] proofs = new ModelProofObligation[proofObligations.values().size()];
+		return proofObligations.values().toArray(proofs);
+	}
+	
+	public void addProofObligation(ModelProofObligation po){
+		proofObligations.put(po.getElementName(), po);
 	}
 
 	public IPSStatus[] getIPSStatuses() {
 		List<IPSStatus> statuses = new LinkedList<IPSStatus>();
-		for (Iterator<ProofObligation> iterator =proofObligations.iterator(); iterator.hasNext();) {
-			ProofObligation po = iterator.next();
+		for (Iterator<ModelProofObligation> iterator = proofObligations.values().iterator(); iterator.hasNext();) {
+			ModelProofObligation po = iterator.next();
 			statuses.add(po.getIPSStatus());
 		}
 		IPSStatus[] results = new IPSStatus[statuses.size()];
 		return statuses.toArray(results);
 	}
 	
-	public void addProofObligation(ProofObligation po) {
-		proofObligations.add(po);
-	}
-	
-	public void removeProofObligation(ProofObligation po) {
-		proofObligations.remove(po);
-	}
-	
-	public static String DISPLAY_NAME = "Proof Obligations";
 
 }

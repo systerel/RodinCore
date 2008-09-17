@@ -8,20 +8,26 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-package fr.systerel.explorer.poModel;
 
-import org.eventb.core.IAxiom;
 
-public class Axiom extends POContainer {
-	public Axiom(IAxiom axiom){
-		internalAxiom = axiom;
+package fr.systerel.explorer.model;
+
+import org.eventb.core.ITheorem;
+
+/**
+ * @author Administrator
+ *
+ */
+public class ModelTheorem extends ModelPOContainer {
+	public ModelTheorem(ITheorem theorem){
+		internalTheorem = theorem;
 	}
 
-	private IAxiom internalAxiom;
+	private ITheorem internalTheorem;
 	
 	
-	public IAxiom getInternalAxiom() {
-		return internalAxiom;
+	public ITheorem getInternalTheorem() {
+		return internalTheorem;
 	}
-	
+
 }

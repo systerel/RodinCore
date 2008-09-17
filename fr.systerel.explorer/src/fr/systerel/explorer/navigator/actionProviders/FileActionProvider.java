@@ -14,14 +14,11 @@ package fr.systerel.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.ICommonActionConstants;
-import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 
 /**
  * The Action Provider for <code>IMachineFile</code>s and <code>IContextFile</code>s 

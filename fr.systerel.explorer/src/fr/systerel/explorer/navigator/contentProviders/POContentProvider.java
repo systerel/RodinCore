@@ -12,29 +12,50 @@ package fr.systerel.explorer.navigator.contentProviders;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ITheorem;
 
-import fr.systerel.explorer.poModel.Machine;
-import fr.systerel.explorer.poModel.PoModelFactory;
-import fr.systerel.explorer.poModel.POContainer;
+import fr.systerel.explorer.model.ModelAxiom;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelEvent;
+import fr.systerel.explorer.model.ModelInvariant;
+import fr.systerel.explorer.model.ModelPOContainer;
+import fr.systerel.explorer.model.ModelTheorem;
 
 public class POContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
-        if (element instanceof IInvariant) {
-			return PoModelFactory.getInvariant((IInvariant) element).getIPSStatuses();
-        } 
-        if (element instanceof IEvent) {
-			return PoModelFactory.getEvent((IEvent) element).getIPSStatuses();
-        } 
-        if (element instanceof ITheorem) {
-			return PoModelFactory.getTheorem((ITheorem) element).getIPSStatuses();
-        } 
-        if (element instanceof POContainer) {
-			return ((POContainer)element).getIPSStatuses();
-        } 
+	    if (element instanceof IInvariant) {
+	    	ModelInvariant inv = ModelController.getInvariant((IInvariant) element);
+	    	if (inv != null) {
+	    		return inv.getIPSStatuses();
+	    	}
+	    } 
+	    if (element instanceof IEvent) {
+	    	ModelEvent evt = ModelController.getEvent((IEvent) element);
+	    	if (evt != null) {
+	    		return evt.getIPSStatuses();
+	    	}
+	    } 
+	    if (element instanceof ITheorem) {
+	    	ModelTheorem thm = ModelController.getTheorem((ITheorem) element);
+	    	if (thm != null) {
+	    		return thm.getIPSStatuses();
+	    	}
+	    } 
+	
+	    if (element instanceof IAxiom) {
+	    	ModelAxiom axm = ModelController.getAxiom((IAxiom) element);
+	    	if (axm != null) {
+	    		return axm.getIPSStatuses();
+	    	}
+	    } 
+	
+	    if (element instanceof ModelPOContainer) {
+			return ((ModelPOContainer)element).getIPSStatuses();
+	    } 
         return new Object[0];
 	}
 

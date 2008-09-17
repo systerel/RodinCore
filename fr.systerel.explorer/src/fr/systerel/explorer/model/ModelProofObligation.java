@@ -10,7 +10,7 @@
   *******************************************************************************/
 
 
-package fr.systerel.explorer.poModel;
+package fr.systerel.explorer.model;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,40 +22,34 @@ import org.eventb.core.IPSStatus;
  * @author Administrator
  *
  */
-public class ProofObligation {
-
-	public ProofObligation (IPOSequent sequent, String filename) {
+public class ModelProofObligation {
+	public ModelProofObligation (IPOSequent sequent) {
 		this.internal_sequent = sequent;
-		events = new LinkedList<Event>();
-		invariants = new LinkedList<Invariant>();
-		theorems = new LinkedList<Theorem>();
-		axioms = new LinkedList<Axiom>();
-		this.fileIdentifier = filename;
 	}
+	
 	private IPOSequent internal_sequent;
 	private IPSStatus internal_status;
 	
-	private List<Invariant> invariants;
-	private List<Event> events;
-	private List<Theorem> theorems;
-	private List<Axiom> axioms;
-	private Machine machine;
-	private Context context;
-	private String fileIdentifier;
+	private List<ModelInvariant> invariants = new LinkedList<ModelInvariant>();
+	private List<ModelEvent> events = new LinkedList<ModelEvent>();
+	private List<ModelTheorem> theorems= new LinkedList<ModelTheorem>();
+	private List<ModelAxiom> axioms = new LinkedList<ModelAxiom>();
+	private ModelMachine machine; // A proof obligation can have either a context or a machine
+	private ModelContext context;
 
 	/**
 	 * 
-	 * @return an Identifier for the File that this PO is stored in. 
+	 * @return an Identifier (= filename) for the File that this PO is stored in. 
 	 */
 	public String getIdentifier() {
-		return fileIdentifier;
+		return internal_sequent.getRodinFile().getBareName();
 	}
 	
-	public void setMachine(Machine machine) {
+	public void setMachine(ModelMachine machine) {
 		this.machine = machine;		
 	}
 	
-	public Machine getMachine() {
+	public ModelMachine getMachine() {
 		return machine;
 	}
 	
@@ -67,29 +61,29 @@ public class ProofObligation {
 		return internal_status;
 	}
 	
-	public Invariant[] getInvariants() {
-		Invariant[] inv = new Invariant[invariants.size()];
+	public ModelInvariant[] getInvariants() {
+		ModelInvariant[] inv = new ModelInvariant[invariants.size()];
 		return invariants.toArray(inv);
 	}
 	
-	public void addInvariant(Invariant inv) {
+	public void addInvariant(ModelInvariant inv) {
 		invariants.add(inv);
 	}
 	
-	public void removeInvariants(Invariant inv) {
+	public void removeInvariants(ModelInvariant inv) {
 		invariants.remove(inv);
 	}
 
-	public Event[] getEvents() {
-		Event[] event = new Event[events.size()];
+	public ModelEvent[] getEvents() {
+		ModelEvent[] event = new ModelEvent[events.size()];
 		return events.toArray(event);
 	}
 	
-	public void addEvent(Event event) {
+	public void addEvent(ModelEvent event) {
 		events.add(event);
 	}
 	
-	public void removeEvents(Event event) {
+	public void removeEvents(ModelEvent event) {
 		events.remove(event);
 	}
 
@@ -97,22 +91,26 @@ public class ProofObligation {
 		return internal_sequent.getElementName();
 	}
 
-	public void addTheorem(Theorem th) {
+	public void addTheorem(ModelTheorem th) {
 		theorems.add(th);
 		
 	}
 
-	public void addAxiom(Axiom ax) {
+	public void addAxiom(ModelAxiom ax) {
 		axioms.add(ax);
 		
 	}
 
-	public Context getContext() {
+	public ModelContext getContext() {
 		return context;
 	}
 
-	public void setContext(Context ctx) {
+	public void setContext(ModelContext ctx) {
 		context = ctx;
 	}
 	
+	public String getElementName(){
+		return internal_sequent.getElementName();
+	}
+
 }

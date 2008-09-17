@@ -21,9 +21,9 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.ITheorem;
 import org.eventb.ui.projectexplorer.TreeNode;
 
-import fr.systerel.explorer.complexModel.ComplexContext;
-import fr.systerel.explorer.complexModel.ComplexMachine;
-import fr.systerel.explorer.poModel.PoModelFactory;
+import fr.systerel.explorer.model.ModelContext;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelMachine;
 
 /**
  * The content provider for Contexts.
@@ -34,9 +34,6 @@ import fr.systerel.explorer.poModel.PoModelFactory;
 public class ContextContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof ComplexContext) {
-			parentElement = ((ComplexContext) parentElement).getInternalContext();
-		}
 		if (parentElement instanceof IContextFile) {
 			IContextFile ctx = (IContextFile) parentElement;
 			ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
@@ -51,7 +48,7 @@ public class ContextContentProvider implements ITreeContentProvider {
 
 			Object[] children = new Object[list.size() +1];
 			list.toArray(children);
-			children[list.size()] = PoModelFactory.getContext(ctx);
+			children[list.size()] = ModelController.getContext(ctx);
 			return children;
 		}
 		return new Object[] {};
@@ -61,6 +58,9 @@ public class ContextContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
         if (element instanceof TreeNode) {
         	return ((TreeNode<?>) element).getParent();
+        }
+        if (element instanceof ModelContext) {
+        	return ((ModelContext) element).getInternalContext();
         }
       return null;
 	}

@@ -30,8 +30,9 @@ import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import fr.systerel.explorer.poModel.POContainer;
-import fr.systerel.explorer.poModel.ProofObligation;
+
+import fr.systerel.explorer.model.ModelPOContainer;
+import fr.systerel.explorer.model.ModelProofObligation;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
@@ -83,12 +84,7 @@ public class RodinLabelProvider implements
 			}
 			
 			return null;
-		} else if (element instanceof ProofObligation) {
-			IPSStatus status = ((ProofObligation) element).getIPSStatus();
-			if (status != null) {
-				return EventBImage.getPRSequentImage(status);
-			}
-		} else if (element instanceof POContainer) {
+		} else if (element instanceof ModelPOContainer) {
 			return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
 		} else if (element instanceof IContainer) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
@@ -129,12 +125,8 @@ public class RodinLabelProvider implements
 			return ((IRodinElement) obj).getElementName();
 		
 	
-		} else if (obj instanceof ProofObligation) {
-			return ((ProofObligation) obj).getName();
-		
-	
-		} else if (obj instanceof POContainer) {
-			return POContainer.DISPLAY_NAME;
+		} else if (obj instanceof ModelPOContainer) {
+			return ModelPOContainer.DISPLAY_NAME;
 			
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();

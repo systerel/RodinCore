@@ -8,20 +8,26 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-package fr.systerel.explorer.poModel;
 
-import org.eventb.core.IInvariant;
 
-public class Invariant extends POContainer {
-	
-	public Invariant(IInvariant invariant){
-		internalInvariant = invariant;
+package fr.systerel.explorer.model;
+
+import org.eventb.core.IEvent;
+
+/**
+ * @author Administrator
+ *
+ */
+public class ModelEvent extends ModelPOContainer {
+	public ModelEvent(IEvent event){
+		internalEvent = event;
 	}
 
-	private IInvariant internalInvariant;
+	private IEvent internalEvent;
 	
-	public IInvariant getInternalInvariant() {
-		return internalInvariant;
+	
+	public IEvent getInternalEvent() {
+		return internalEvent;
 	}
 
 }

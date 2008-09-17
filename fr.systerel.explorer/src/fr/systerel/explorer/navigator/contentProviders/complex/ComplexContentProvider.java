@@ -19,62 +19,57 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
-
-import fr.systerel.explorer.complexModel.ComplexContext;
-import fr.systerel.explorer.complexModel.ComplexMachine;
-import fr.systerel.explorer.complexModel.ComplexModelFactory;
-import fr.systerel.explorer.complexModel.ComplexProject;
-import fr.systerel.explorer.poModel.PoModelFactory;
+import fr.systerel.explorer.model.ModelContext;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelMachine;
+import fr.systerel.explorer.model.ModelProject;
 
 public class ComplexContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
         if (element instanceof IRodinProject) {
         	IRodinProject project = (IRodinProject) element;
-        	ComplexModelFactory.processProject(project);
-        	PoModelFactory.processProject(project);
-        	ComplexProject prj = ComplexModelFactory.getProject(project.getHandleIdentifier());
-        	IMachineFile[] machines = ComplexModelFactory.convertToIMachine(prj.getRootMachines());
-        	IContextFile[] contexts = ComplexModelFactory.convertToIContext(prj.getDisconnectedContexts());
+        	ModelController.processProject(project);
+        	ModelProject prj= ModelController.getProject(project);
+        	IMachineFile[] machines = ModelController.convertToIMachine(prj.getRootMachines());
+        	IContextFile[] contexts = ModelController.convertToIContext(prj.getDisconnectedContexts());
         	Object[] results = new Object[machines.length + contexts.length];
         	System.arraycopy(machines, 0, results, 0,machines.length);
         	System.arraycopy(contexts, 0, results, machines.length, contexts.length);
-         	
+     	
         	return results;
         } 
         if (element instanceof IMachineFile) {
-        	
-        	ComplexMachine machine = ComplexModelFactory.getMachine(((IMachineFile) element).getHandleIdentifier());
-        	List<ComplexMachine> rest = machine.getRestMachines();
-        	List<ComplexMachine> machines = new LinkedList<ComplexMachine>();
+        	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
+        	List<ModelMachine> rest = machine.getRestMachines();
+        	List<ModelMachine> machines = new LinkedList<ModelMachine>();
         	List<Object> result = new LinkedList<Object>();
-        	for (Iterator<ComplexMachine> iterator = rest.iterator(); iterator.hasNext();) {
-				ComplexMachine mach = iterator.next();
+        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
+				ModelMachine mach = iterator.next();
 				machines.addAll(mach.getLongestMachineBranch());
 			}
-        	result.addAll(ComplexModelFactory.convertToIMachine(machines));
-
-        	List<ComplexContext> sees = machine.getSeesContexts();
-        	List<ComplexContext> contexts = new LinkedList<ComplexContext>();
-        	for (Iterator<ComplexContext> iterator = sees.iterator(); iterator.hasNext();) {
-				ComplexContext context = iterator.next();
+        	result.addAll(ModelController.convertToIMachine(machines));
+        	List<ModelContext> sees = machine.getSeesContexts();
+        	List<ModelContext> contexts = new LinkedList<ModelContext>();
+        	for (Iterator<ModelContext> iterator = sees.iterator(); iterator.hasNext();) {
+				ModelContext context = iterator.next();
 				contexts.addAll(context.getLongestContextBranch());
 				
 			}
-        	result.addAll(ComplexModelFactory.convertToIContext(contexts));
+        	result.addAll(ModelController.convertToIContext(contexts));
+        	
         	return result.toArray();
         } 
         if (element instanceof IContextFile) {
-        	ComplexContext context = ComplexModelFactory.getContext(((IContextFile) element).getHandleIdentifier());
-        	List<ComplexContext> rest = context.getRestContexts();
-        	List<ComplexContext> result = new LinkedList<ComplexContext>();
-        	for (Iterator<ComplexContext> iterator = rest.iterator(); iterator.hasNext();) {
-				ComplexContext ctx = iterator.next();
+        	ModelContext context = ModelController.getContext(((IContextFile) element));
+        	List<ModelContext> rest = context.getRestContexts();
+        	List<ModelContext> result = new LinkedList<ModelContext>();
+        	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
+				ModelContext ctx = iterator.next();
 				result.addAll(ctx.getLongestContextBranch());
 			}
-        	return ComplexModelFactory.convertToIContext(result).toArray();
+        	return ModelController.convertToIContext(result).toArray();
         } 
         return new Object[0];
 	}

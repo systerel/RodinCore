@@ -139,15 +139,17 @@
                <instanceof
                      value="org.eventb.core.IMachineFile">
                </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.complexModel.ComplexMachine">
-               </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.ui.projectexplorer.TreeNode">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelMachine">
+               </instanceof>
+            </or>
          </possibleChildren>
          <commonSorter
                class="fr.systerel.explorer.navigator.sorters.MachineContentSorter">
@@ -163,15 +165,17 @@
                <instanceof
                      value="org.eventb.core.IContextFile">
                </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.complexModel.ComplexContext">
-               </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.ui.projectexplorer.TreeNode">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelContext">
+               </instanceof>
+            </or>
          </possibleChildren>
          <commonSorter
                class="fr.systerel.explorer.navigator.sorters.ContextSorter">
@@ -333,10 +337,10 @@
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.poModel.Machine">
+                     value="fr.systerel.explorer.model.ModelMachine">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.poModel.Context">
+                     value="fr.systerel.explorer.model.ModelContext">
                </instanceof>
             </or>
          </triggerPoints>
@@ -404,13 +408,13 @@
          <enablement>
             <or>
                <instanceof
-                     value="fr.systerel.explorer.poModel.Machine">
+                     value="fr.systerel.explorer.model.ModelMachine">
                </instanceof>
                <instanceof
                      value="org.eventb.ui.projectexplorer.TreeNode">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.poModel.Context">
+                     value="fr.systerel.explorer.model.ModelContext">
                </instanceof>
             </or>
          </enablement>

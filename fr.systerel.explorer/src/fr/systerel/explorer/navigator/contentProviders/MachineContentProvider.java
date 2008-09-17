@@ -17,14 +17,12 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOSequent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.core.IVariant;
 import org.eventb.ui.projectexplorer.TreeNode;
 
-import fr.systerel.explorer.complexModel.ComplexMachine;
-import fr.systerel.explorer.poModel.PoModelFactory;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelMachine;
 
 /**
  * The content provider for Machines.
@@ -35,9 +33,6 @@ import fr.systerel.explorer.poModel.PoModelFactory;
 public class MachineContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof ComplexMachine) {
-			parentElement = ((ComplexMachine) parentElement).getInternalMachine();
-		}
 		if (parentElement instanceof IMachineFile) {
 			IMachineFile mch = (IMachineFile) parentElement;
 
@@ -53,7 +48,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 
 			Object[] children = new Object[list.size() +1];
 			list.toArray(children);
-			children[list.size()] = PoModelFactory.getMachine(mch);
+			children[list.size()] = ModelController.getMachine(mch);
 			return children;
 		}
 		return new Object[] {};
@@ -63,6 +58,9 @@ public class MachineContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
         if (element instanceof TreeNode) {
         	return ((TreeNode<?>) element).getParent();
+        }
+        if (element instanceof ModelMachine) {
+        	return ((ModelMachine) element).getInternalMachine();
         }
         return null;
 	}
