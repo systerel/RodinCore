@@ -14,24 +14,6 @@
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">
       </view>
-      <view
-            category="fr.systerel.explorer.category"
-            class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
-            id="org.eventb.ui.views.ProofTreeUI"
-            name="%view.ProofTreeUI">
-      </view>
-      <view
-            category="fr.systerel.explorer.category"
-            class="org.eventb.internal.ui.proofinformation.ProofInformation"
-            id="org.eventb.ui.views.ProofInformation"
-            name="%view.ProofInformation">
-      </view>
-      <view
-            category="fr.systerel.explorer.category"
-            class="org.eventb.internal.ui.goal.Goal"
-            id="org.eventb.ui.views.Goal"
-            name="%view.Goal">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
