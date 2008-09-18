@@ -37,7 +37,8 @@ public class ProjectActionProvider extends NavigatorActionProvider {
 		menu.add(new Separator(GROUP_MODELLING));
     	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
        	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRenameAction(site));
-    }	
+      	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getCopyProjectAction(site));
+      	    }	
 	
    
     

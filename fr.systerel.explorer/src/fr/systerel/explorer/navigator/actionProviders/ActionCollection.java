@@ -80,16 +80,70 @@ public class ActionCollection {
 		
 	}
 	
+	
+	public static Action getCopyProjectAction(final ICommonActionExtensionSite site) {
+		Action renameAction = new Action() {
+			@Override
+			public void run() {
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				IRodinProject project = null;
+				for (Iterator<?> it = sel.iterator(); it.hasNext();) {
+					Object obj = it.next();
+					if ((obj instanceof IRodinProject)) {
+						project = (IRodinProject) obj;
+					}
+				}
+				if (project != null) {
+					IProject resource = project.getProject();
+					try {
+						IInputValidator validator= new IInputValidator() {
+							public String isValid(String string) {
+									IResource container = ResourcesPlugin.getWorkspace().getRoot()
+									.findMember(new Path(string));
+	
+								if (string.length() == 0) {
+									return ("Project name must be specified");
+								}
+								if (container != null) {
+									return("A project with this name already exists.");
+								}
+									return null;
+								}
+							
+						};
+						InputDialog dialog = new InputDialog(site.getViewSite().getShell(),
+								"Copy Project",
+								"Please enter the new name of the project", "Copy of "+project.getElementName(),
+								validator);
+						dialog.open();
+						final String bareName = dialog.getValue();
+						if (dialog.getReturnCode() == InputDialog.CANCEL)
+							return; // Cancel
+
+						IProjectDescription desc = resource.getDescription();
+						desc.setName(bareName);
+						resource.copy(desc, true, null);
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		};	
+		renameAction.setText("Copy");
+		return renameAction;
+	}
+	
+	
 	/**
-	 * 
+	 * Produces an action for renaming projects
 	 * @param site
-	 * @return	An action to rename a project
+	 * @return	The action to rename a project
 	 */
 	public static Action getRenameAction(final ICommonActionExtensionSite site){
 		Action renameAction = new Action() {
 			@Override
 			public void run() {
-				//TODO
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
 				IRodinProject project = null;
 				for (Iterator<?> it = sel.iterator(); it.hasNext();) {
