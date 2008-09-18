@@ -14,11 +14,8 @@ package fr.systerel.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 
 /**
  * @author Maria Husmann
@@ -39,6 +36,7 @@ public class ProjectActionProvider extends NavigatorActionProvider {
     	} else	menu.add(newMenu);
 		menu.add(new Separator(GROUP_MODELLING));
     	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
+       	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRenameAction(site));
     }	
 	
    

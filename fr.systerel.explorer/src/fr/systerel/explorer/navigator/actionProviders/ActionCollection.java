@@ -18,9 +18,15 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -44,6 +50,7 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -71,6 +78,67 @@ public class ActionCollection {
 		};
 		return doubleClickAction;
 		
+	}
+	
+	/**
+	 * 
+	 * @param site
+	 * @return	An action to rename a project
+	 */
+	public static Action getRenameAction(final ICommonActionExtensionSite site){
+		Action renameAction = new Action() {
+			@Override
+			public void run() {
+				//TODO
+				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
+				IRodinProject project = null;
+				for (Iterator<?> it = sel.iterator(); it.hasNext();) {
+					Object obj = it.next();
+					if ((obj instanceof IRodinProject)) {
+						project = (IRodinProject) obj;
+					}
+				}
+				if (project != null) {
+					IProject resource = project.getProject();
+					try {
+						IInputValidator validator= new IInputValidator() {
+							public String isValid(String string) {
+									IResource container = ResourcesPlugin.getWorkspace().getRoot()
+									.findMember(new Path(string));
+	
+								if (string.length() == 0) {
+									return ("Project name must be specified");
+								}
+								if (container != null) {
+									return("A project with this name already exists.");
+								}
+									return null;
+								}
+							
+						};
+						InputDialog dialog = new InputDialog(site.getViewSite().getShell(),
+								"Rename Project",
+								"Please enter the new name of the project", "project",
+								validator);
+						dialog.open();
+						final String bareName = dialog.getValue();
+						if (dialog.getReturnCode() == InputDialog.CANCEL)
+							return; // Cancel
+						
+						//TODO is there away to do this without closing the editors?
+						closeOpenEditors(resource);
+						IProjectDescription desc = resource.getDescription();
+						desc.setName(bareName);
+						resource.move(desc, true, null);
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		renameAction.setText("Rename");
+		return renameAction;
 	}
 	
 	public static Action getDeleteAction(final ICommonActionExtensionSite site) {
@@ -260,6 +328,28 @@ public class ActionCollection {
 				page.closeEditor(editor, false);
 			}
 		}
+	}
+	
+	/**
+	 * Close the open editor for a particular Rodin Project
+	 * 
+	 * @param project A Rodin Project
+	 * @throws PartInitException
+	 *             Exception when closing the editor
+	 */
+	static void closeOpenEditors(IProject project) throws PartInitException {
+		IEditorReference[] editorReferences = EventBUIPlugin.getActivePage()
+		.getEditorReferences();
+		for (int j = 0; j < editorReferences.length; j++) {
+			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
+					.getAdapter(IFile.class);
+		
+			if (inputFile.getProject().equals(project)) {
+				IEditorPart editor = editorReferences[j].getEditor(true);
+				IWorkbenchPage page = EventBUIPlugin.getActivePage();
+				page.closeEditor(editor, false);
+			}
+		}	
 	}
 	
 }
