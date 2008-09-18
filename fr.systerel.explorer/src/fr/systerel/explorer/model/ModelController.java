@@ -25,6 +25,8 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPOFile;
+import org.eventb.core.IPSFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -168,6 +170,7 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
+//		System.out.println(event.getDelta());
 		toRefresh = new ArrayList<Object>();
 		processDelta(event.getDelta());
 		navigator.getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
@@ -175,11 +178,11 @@ public class ModelController implements IElementChangedListener {
 				TreeViewer viewer = navigator.getCommonViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					Object[] objects = viewer.getExpandedElements();
+//					Object[] objects = viewer.getExpandedElements();
 					for (Object elem : toRefresh) {
 						viewer.refresh(elem);
 					}
-					viewer.setExpandedElements(objects);
+//					viewer.setExpandedElements(objects);
 				}
 			}});
 	}
@@ -196,6 +199,26 @@ public class ModelController implements IElementChangedListener {
 		}
 		if (element instanceof IContextFile) {
 			project.processContext((IContextFile)element);
+		}
+		if (element instanceof IPOFile) {
+			IPOFile file = (IPOFile) element;
+			//get corresponding machine or context
+			if (file.getMachineFile() != null) {
+				getMachine(file.getMachineFile()).processPOFile();
+			}
+			if (file.getContextFile() != null) {
+				getContext(file.getContextFile()).processPOFile();
+			}
+		}
+		if (element instanceof IPSFile) {
+			IPSFile file = (IPSFile) element;
+			//get corresponding machine or context
+			if (file.getMachineFile() != null) {
+				getMachine(file.getMachineFile()).processPSFile();
+			}
+			if (file.getContextFile() != null) {
+				getContext(file.getContextFile()).processPSFile();
+			}
 		}
 		if (element instanceof IInvariant) {
 			ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getParent();
@@ -222,7 +245,7 @@ public class ModelController implements IElementChangedListener {
 		}
 	}
 	
-	// List of elements need to be refresh in the viewer (when processing Delta of changes).
+	// List of elements need that to be refreshed in the viewer (when processing Delta of changes).
 	ArrayList<Object> toRefresh;
 	
 	/**
@@ -275,14 +298,16 @@ public class ModelController implements IElementChangedListener {
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				refreshModel(element);
-				toRefresh.add(element);
+				//refresh parent for safety (e.g. dependencies between machines)
+				refreshModel(element.getParent());
+				toRefresh.add(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				refreshModel(element);
-				toRefresh.add(element);
+				//refresh parent for safety (e.g. dependencies between machines)
+				refreshModel(element.getParent());
+				toRefresh.add(element.getParent());
 				return;
 			}
 		}

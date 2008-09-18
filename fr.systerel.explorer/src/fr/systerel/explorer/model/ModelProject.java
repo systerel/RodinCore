@@ -84,7 +84,7 @@ public class ModelProject implements IModelElement {
 			
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 	}
@@ -122,18 +122,6 @@ public class ModelProject implements IModelElement {
 		
 	}
 	
-	public void processPOFile(IPOFile file) {
-		try {
-			IPOSequent[] sequents = file.getSequents();
-			for (int i = 0; i < sequents.length; i++) {
-				
-				
-			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	/**
 	 * 

@@ -47,58 +47,68 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 			processPSFile();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
 	
-	public void processPOFile() throws RodinDBException {
-		IPOFile file = internalMachine.getPOFile();
-		IPOSequent[] sequents = file.getSequents();
-		for (int i = 0; i < sequents.length; i++) {
-			IPOSequent sequent =  sequents[i];
-			ModelProofObligation po = new ModelProofObligation(sequent);
-			po.setMachine(this);
-			proofObligations.put(sequent.getElementName(), po);
-
-			IPOSource[] sources = sequents[i].getSources();
-			for (int j = 0; j < sources.length; j++) {
-				IRodinElement source = sources[j].getSource();
-				if (source instanceof IInvariant) {
-					if (invariants.containsKey(((IInvariant) source).getElementName())) {
-						ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());
-						po.addInvariant(inv);
-						inv.addProofObligation(po);
+	public void processPOFile() {
+		try {
+			IPOFile file = internalMachine.getPOFile();
+			IPOSequent[] sequents = file.getSequents();
+			for (int i = 0; i < sequents.length; i++) {
+				IPOSequent sequent =  sequents[i];
+				ModelProofObligation po = new ModelProofObligation(sequent);
+				po.setMachine(this);
+				proofObligations.put(sequent.getElementName(), po);
+	
+				IPOSource[] sources = sequents[i].getSources();
+				for (int j = 0; j < sources.length; j++) {
+					IRodinElement source = sources[j].getSource();
+					if (source instanceof IInvariant) {
+						if (invariants.containsKey(((IInvariant) source).getElementName())) {
+							ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());
+							po.addInvariant(inv);
+							inv.addProofObligation(po);
+						}
 					}
-				}
-				if (source instanceof ITheorem) {
-					if (theorems.containsKey(((ITheorem) source).getElementName())) {
-						ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
-						po.addTheorem(thm);
-						thm.addProofObligation(po);
+					if (source instanceof ITheorem) {
+						if (theorems.containsKey(((ITheorem) source).getElementName())) {
+							ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
+							po.addTheorem(thm);
+							thm.addProofObligation(po);
+						}
 					}
-				}
-				if (source instanceof IEvent) {
-					if (events.containsKey(((IEvent) source).getElementName())) {
-						ModelEvent evt = events.get(((IEvent) source).getElementName());
-						po.addEvent(evt);
-						evt.addProofObligation(po);
+					if (source instanceof IEvent) {
+						if (events.containsKey(((IEvent) source).getElementName())) {
+							ModelEvent evt = events.get(((IEvent) source).getElementName());
+							po.addEvent(evt);
+							evt.addProofObligation(po);
+						}
 					}
 				}
 			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		}
 	}
 
-	public void processPSFile() throws RodinDBException {
-		IPSFile file = internalMachine.getPSFile();
-		IPSStatus[] stats = file.getStatuses();
-		for (int i = 0; i < stats.length; i++) {
-			IPSStatus status = stats[i];
-			IPOSequent sequent = status.getPOSequent();
-			// check if there is a ProofObligation for this status (there should be one!)
-			if (proofObligations.containsKey(sequent.getElementName())) {
-				proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+	public void processPSFile() {
+		try {
+			IPSFile file = internalMachine.getPSFile();
+			IPSStatus[] stats = file.getStatuses();
+			for (int i = 0; i < stats.length; i++) {
+				IPSStatus status = stats[i];
+				IPOSequent sequent = status.getPOSequent();
+				// check if there is a ProofObligation for this status (there should be one!)
+				if (proofObligations.containsKey(sequent.getElementName())) {
+					proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+				}
 			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		}
 	}
 	

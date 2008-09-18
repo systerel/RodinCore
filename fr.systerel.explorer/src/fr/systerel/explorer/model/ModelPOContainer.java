@@ -41,11 +41,18 @@ public class ModelPOContainer implements IModelElement{
 		proofObligations.put(po.getElementName(), po);
 	}
 
+	/**
+	 * 
+	 * @return 	The IPSStatuses of the ProofObligations in this container 
+	 * 			It is possible that some ProofObligatiosn don't have a status
+	 */
 	public IPSStatus[] getIPSStatuses() {
 		List<IPSStatus> statuses = new LinkedList<IPSStatus>();
 		for (Iterator<ModelProofObligation> iterator = proofObligations.values().iterator(); iterator.hasNext();) {
 			ModelProofObligation po = iterator.next();
-			statuses.add(po.getIPSStatus());
+			if (po.getIPSStatus() != null) {
+				statuses.add(po.getIPSStatus());
+			}
 		}
 		IPSStatus[] results = new IPSStatus[statuses.size()];
 		return statuses.toArray(results);
