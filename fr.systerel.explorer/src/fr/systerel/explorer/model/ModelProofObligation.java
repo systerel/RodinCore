@@ -19,7 +19,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 
 /**
- * @author Administrator
+ * Represents a Proof Obligation in the Model.
  *
  */
 public class ModelProofObligation {
@@ -34,16 +34,9 @@ public class ModelProofObligation {
 	private List<ModelEvent> events = new LinkedList<ModelEvent>();
 	private List<ModelTheorem> theorems= new LinkedList<ModelTheorem>();
 	private List<ModelAxiom> axioms = new LinkedList<ModelAxiom>();
-	private ModelMachine machine; // A proof obligation can have either a context or a machine
+	private ModelMachine machine; // A proof obligation can either belong to a context or a machine
 	private ModelContext context;
 
-	/**
-	 * 
-	 * @return an Identifier (= filename) for the File that this PO is stored in. 
-	 */
-	public String getIdentifier() {
-		return internal_sequent.getRodinFile().getBareName();
-	}
 	
 	public void setMachine(ModelMachine machine) {
 		this.machine = machine;		

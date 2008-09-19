@@ -20,7 +20,7 @@ import java.util.List;
 import org.eventb.core.IPSStatus;
 
 /**
- * @author Maria Husmann
+ * An Interface for any elements that may contain ProofObligations
  *
  */
 public class ModelPOContainer implements IModelElement{

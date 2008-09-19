@@ -53,10 +53,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-/**
- * @author Maria Husmann
- *
- */
 public class ActionCollection {
 	
 	public static Action getOpenAction(final ICommonActionExtensionSite site) {
@@ -86,14 +82,8 @@ public class ActionCollection {
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				IRodinProject project = null;
-				for (Iterator<?> it = sel.iterator(); it.hasNext();) {
-					Object obj = it.next();
-					if ((obj instanceof IRodinProject)) {
-						project = (IRodinProject) obj;
-					}
-				}
-				if (project != null) {
+				if ((sel.getFirstElement() instanceof IRodinProject)) {
+					IRodinProject project = (IRodinProject) sel.getFirstElement();
 					IProject resource = project.getProject();
 					try {
 						IInputValidator validator= new IInputValidator() {
@@ -140,19 +130,13 @@ public class ActionCollection {
 	 * @param site
 	 * @return	The action to rename a project
 	 */
-	public static Action getRenameAction(final ICommonActionExtensionSite site){
+	public static Action getRenameProjectAction(final ICommonActionExtensionSite site){
 		Action renameAction = new Action() {
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-				IRodinProject project = null;
-				for (Iterator<?> it = sel.iterator(); it.hasNext();) {
-					Object obj = it.next();
-					if ((obj instanceof IRodinProject)) {
-						project = (IRodinProject) obj;
-					}
-				}
-				if (project != null) {
+				if ((sel.getFirstElement() instanceof IRodinProject)) {
+					IRodinProject project = (IRodinProject) sel.getFirstElement();
 					IProject resource = project.getProject();
 					try {
 						IInputValidator validator= new IInputValidator() {
@@ -385,7 +369,7 @@ public class ActionCollection {
 	}
 	
 	/**
-	 * Close the open editor for a particular Rodin Project
+	 * Close the open editors for a particular Rodin Project
 	 * 
 	 * @param project A Rodin Project
 	 * @throws PartInitException
@@ -397,7 +381,6 @@ public class ActionCollection {
 		for (int j = 0; j < editorReferences.length; j++) {
 			IFile inputFile = (IFile) editorReferences[j].getEditorInput()
 					.getAdapter(IFile.class);
-		
 			if (inputFile.getProject().equals(project)) {
 				IEditorPart editor = editorReferences[j].getEditor(true);
 				IWorkbenchPage page = EventBUIPlugin.getActivePage();

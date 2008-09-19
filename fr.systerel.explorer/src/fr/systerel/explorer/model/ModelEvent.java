@@ -15,7 +15,7 @@ package fr.systerel.explorer.model;
 import org.eventb.core.IEvent;
 
 /**
- * @author Administrator
+ * Represents an Event in the Model
  *
  */
 public class ModelEvent extends ModelPOContainer {

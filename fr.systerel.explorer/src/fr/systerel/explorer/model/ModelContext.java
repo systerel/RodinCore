@@ -29,10 +29,16 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author Maria Husmann
+ * This class represents a Context in the model
  *
  */
 public class ModelContext extends ModelPOContainer implements IModelElement{
+	/**
+	 * Creates a ModelContext from a given IContextFile
+	 * Adds elements such as Axioms and Theorems to the Model
+	 * Processes the corresponding ProofObligation Files and adds them to the Model
+	 * @param file	The ContextFile that this ModelContext is based on.
+	 */
 	public ModelContext(IContextFile file){
 		internalContext = file;
 		try {
@@ -44,7 +50,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 			for (int i = 0; i < thms.length; i++) {
 				addTheorem(thms[i]);
 			}
-			//TODO addInvariants etc.
 			processPOFile();
 			processPSFile();
 		} catch (RodinDBException e) {
@@ -53,7 +58,12 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		}
 	}
 	
-	
+	/**
+	 * Processes the POFile that belongs to this context.
+	 * It creates a ModelProofObligation for each sequent
+	 * and adds it to this context as well as to the
+	 * concerned Theorems and Axioms.
+	 */
 	public void processPOFile() {
 		try {
 			IPOFile file = internalContext.getPOFile();
@@ -88,7 +98,12 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 //			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Processes the PSFile that belongs to this Context
+	 * Each status is added to the corresponding Proof Obligation,
+	 * if that ProofObligation is present.
+	 */
 	public void processPSFile(){
 		try {
 			IPSFile file = internalContext.getPSFile();
@@ -106,17 +121,26 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 //			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Adds a new ModelAxiom to this Context.
+	 * @param axiom The axiom to add.
+	 */
 	public void addAxiom(IAxiom axiom) {
 		axioms.put(axiom.getElementName(), new ModelAxiom(axiom, this));
 	}
 	
+	/**
+	 * Adds a new ModelTheorem to this Context
+	 * @param theorem The Theorem to add.
+	 */
 	public void addTheorem(ITheorem theorem) {
 		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
 	}
 	
 	/**
-	 * Assuming no cycles
+	 * 
+	 * Assuming no cycles in the structure.
 	 * @return The longest branch among the extendedByContexts branches (including this Context)
 	 */
 	public List<ModelContext> getLongestContextBranch() {
@@ -134,7 +158,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 	
 	/**
-	 * Assuming no cycles
+	 * Assuming no cycles in the structure
 	 * @return All Ancestors of this context (extends context)
 	 */
 	public List<ModelContext> getAncestors(){
@@ -158,11 +182,18 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return copy;
 	}
 
-	
+	/**
+	 * Adds a context that extends this context.
+	 * @param context	The context to add
+	 */
 	public void addExtendedByContext(ModelContext context){
 		extendedByContexts.add(context);
 	}
 
+	/**
+	 * Adds a machine that sees this context.
+	 * @param machine	The machine to add.
+	 */
 	public void addSeenByMachine(ModelMachine machine){
 		seenByMachines.add(machine);
 	}
@@ -183,6 +214,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return (seenByMachines.size() == 0);
 	}
 
+	/**
+	 * Adds a context that this context extends
+	 * @param context	The context that is extended by this context.
+	 */
 	public void addExtends(ModelContext context) {
 		extendsContexts.add(context);
 		
@@ -200,6 +235,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return axioms.get(axiom.getElementName());
 	}
 
+	/**
+	 * @return The Project that contains this Context.
+	 */
+	@Override
 	public IModelElement getParent() {
 		return ModelController.getProject(internalContext.getRodinProject());
 	}

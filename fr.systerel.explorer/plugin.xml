@@ -11,6 +11,7 @@
       <view
             category="fr.systerel.explorer.category"
             class="fr.systerel.explorer.navigator.RodinNavigator"
+            icon="icons/full/clcl16/prj_expl.gif"
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">
       </view>
@@ -19,6 +20,12 @@
          point="org.eclipse.ui.navigator.viewer">
       <viewer
             viewerId="fr.systerel.explorer.navigator.view">
+         <options>
+            <property
+                  name="org.eclipse.ui.navigator.hideLinkWithEditorAction"
+                  value="true">
+            </property>
+         </options>
       </viewer>
       <viewerContentBinding
             viewerId="fr.systerel.explorer.navigator.view">
@@ -453,6 +460,18 @@
             </instanceof>
          </enablement>
       </actionProvider>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.DischargedFilter"
+            id="fr.systerel.explorer.navigator.filters.discharged"
+            name="%filters.discharged">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.ObligationTextFilter"
+            id="fr.systerel.explorer.navigator.filters.obligationText"
+            name="%filters.obligationText">
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

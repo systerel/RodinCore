@@ -33,7 +33,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author Maria Husmann
+ * Represents a RodinProject in the Model
  *
  */
 public class ModelProject implements IModelElement {
@@ -42,6 +42,13 @@ public class ModelProject implements IModelElement {
 	}
 	private IRodinProject internalProject;
 	
+	/**
+	 * Process an IMachineFile. Creates an ModelMachine for this IMachineFile
+	 * Creates dependencies between ModelMachines (refines) and ModelContexts (sees)
+	 * May recursively call processMachine(), if a machine in dependency was not processed yet.
+	 * Cycles in the dependencies are not taken into the Model!
+	 * @param machine	The IMachineFile to process.
+	 */
 	public void processMachine(IMachineFile machine) {
 		ModelMachine mach;
 		if (!machines.containsKey(machine.getBareName())) {
@@ -80,7 +87,6 @@ public class ModelProject implements IModelElement {
 				mach.addSeesContext(cplxCtxt);
 				
 			}
-			//TODO process ProofObligations
 			
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -89,6 +95,13 @@ public class ModelProject implements IModelElement {
 		
 	}
 
+	/**
+	 * Process an IContextFile. Creates an ModelContext for this IContextFile
+	 * Creates dependencies betweenModelContexts (extends)
+	 * May recursively call processContext(), if a context in dependency was not processed yet.
+	 * Cycles in the dependencies are not taken into the Model!
+	 * @param context	The IContextFile to process.
+	 */
 	public void processContext(IContextFile context) {
 		ModelContext ctx;
 		if (!contexts.containsKey(context.getBareName())) {
@@ -114,7 +127,6 @@ public class ModelProject implements IModelElement {
 				}
 				
 			}
-			//TODO process ProofObligations
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,10 +152,6 @@ public class ModelProject implements IModelElement {
 		return results.toArray(new ModelMachine[results.size()]);
 	}
 
-	public LinkedList<ModelMachine> findUnrootedMachines(){
-		LinkedList<ModelMachine> results =  new LinkedList<ModelMachine>();
-		return results;
-	}
 	
 	/**
 	 * 

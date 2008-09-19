@@ -15,7 +15,7 @@ package fr.systerel.explorer.model;
 import org.eventb.core.ITheorem;
 
 /**
- * @author Administrator
+ * Represents a Theorem in the Model
  *
  */
 public class ModelTheorem extends ModelPOContainer {

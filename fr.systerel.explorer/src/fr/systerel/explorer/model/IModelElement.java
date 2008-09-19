@@ -12,10 +12,6 @@
 
 package fr.systerel.explorer.model;
 
-/**
- * @author Administrator
- *
- */
 public interface IModelElement {
 	
 	/**

@@ -15,7 +15,7 @@ package fr.systerel.explorer.model;
 import org.eventb.core.IAxiom;
 
 /**
- * @author Administrator
+ * Represents an Axiom in the model.
  *
  */
 public class ModelAxiom extends ModelPOContainer {

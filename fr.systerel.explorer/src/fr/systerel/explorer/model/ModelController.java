@@ -44,33 +44,47 @@ import fr.systerel.explorer.navigator.RodinNavigator;
  */
 public class ModelController implements IElementChangedListener {
 	
+	/**
+	 * Create this controller and register it in the DataBase for changes.
+	 * @param navigator
+	 */
 	public ModelController(RodinNavigator navigator){
 		RodinCore.addElementChangedListener(this);
 		this.navigator = navigator;
 	}
 	
+	/**
+	 * Processes a RodinProject. Creates a model for this project (Machines, Invariants, POs etc.)
+	 * @param project The Project to process.
+	 */
 	public static void processProject(IRodinProject project){
 		try {
 			ModelProject prj;
-			prj =  new ModelProject(project);
-			//overwrite existing project
-			projects.put(project.getHandleIdentifier(), prj);
-			IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-			for (int i = 0; i < machines.length; i++) {
-				prj.processMachine(machines[i]);
-			}
-			
-			IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-			for (int i = 0; i < contexts.length; i++) {
-				prj.processContext(contexts[i]);
-			}
-			
+			//do nothing, if project exists already.
+//			if (!projects.containsKey(project.getHandleIdentifier())) {
+				prj =  new ModelProject(project);
+				projects.put(project.getHandleIdentifier(), prj);
+				IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+				for (int i = 0; i < machines.length; i++) {
+					prj.processMachine(machines[i]);
+				}
+				
+				IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+				for (int i = 0; i < contexts.length; i++) {
+					prj.processContext(contexts[i]);
+				}
+//			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Gets the ModelInvariant for a given Invariant
+	 * @param invariant	The Invariant to look for
+	 * @return	The corresponding ModelInvariant, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelInvariant getInvariant(IInvariant invariant){
 		ModelProject project = projects.get(invariant.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -78,7 +92,12 @@ public class ModelController implements IElementChangedListener {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Gets the ModelEvent for a given Event
+	 * @param event	The Event to look for
+	 * @return	The corresponding ModelEvent, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelEvent getEvent(IEvent event){
 		ModelProject project = projects.get(event.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -87,6 +106,11 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 	
+	/**
+	 * Gets the ModelAxiom for a given Axiom
+	 * @param axiom	The Axiom to look for
+	 * @return	The corresponding ModelAxiom, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelAxiom getAxiom(IAxiom axiom){
 		ModelProject project = projects.get(axiom.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -95,6 +119,11 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 
+	/**
+	 * Gets the ModelTheorem for a given Theorem
+	 * @param theorem	The Theorem to look for
+	 * @return	The corresponding ModelTheorem, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelTheorem getTheorem(ITheorem theorem){
 		ModelProject project = projects.get(theorem.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -103,6 +132,11 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 	
+	/**
+	 * Gets the ModelMachine for a given MachineFile
+	 * @param machineFile	The  MachineFile to look for
+	 * @return	The corresponding ModelMachine, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelMachine getMachine(IMachineFile machineFile){
 		ModelProject project = projects.get(machineFile.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -111,6 +145,11 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 
+	/**
+	 * Gets the ModelContext for a given ContextFile
+	 * @param contextFile	The ContextFile to look for
+	 * @return	The corresponding ModelContext, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelContext getContext(IContextFile contextFile){
 		ModelProject project = projects.get(contextFile.getRodinProject().getHandleIdentifier());
 		if (project != null) {
@@ -119,14 +158,29 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 	
+	/**
+	 * Gets the ModelProject for a given RodinProject
+	 * @param project	The RodinProjecct to look for
+	 * @return	The corresponding ModelProject, if there exists one, <code>null</code> otherwise
+	 */
 	public static ModelProject getProject(IRodinProject project) {
 		return projects.get(project.getHandleIdentifier());
 	}
 	
+	/**
+	 * Removes the corresponding ModelProject from the Model
+	 * if it was present.
+	 * @param project	The Project to remove.
+	 */
 	public static void removeProject(IRodinProject project){
 		projects.remove(project.getHandleIdentifier());
 	}
 	
+	/**
+	 * Gets the corresponding IMachineFiles for a set of ModelMachines
+	 * @param machs	The ModelMachines to convert	
+	 * @return	The corresponding IMachineFiles
+	 */
 	public static IMachineFile[] convertToIMachine(ModelMachine[] machs) {
 		IMachineFile[] results = new IMachineFile[machs.length];
 		for (int i = 0; i < machs.length; i++) {
@@ -136,6 +190,11 @@ public class ModelController implements IElementChangedListener {
 		return results;
 	}
 	
+	/**
+	 * Gets the corresponding IMachineFiles for a set of ModelMachines
+	 * @param machs	The ModelMachines to convert	
+	 * @return	The corresponding IMachineFiles
+	 */
 	public static List<IMachineFile> convertToIMachine(List<ModelMachine> machs) {
 		List<IMachineFile> results = new LinkedList<IMachineFile>();
 		for (Iterator<ModelMachine> iterator = machs.iterator(); iterator.hasNext();) {
@@ -144,6 +203,11 @@ public class ModelController implements IElementChangedListener {
 		return results;
 	}
 
+	/**
+	 * Gets the corresponding IContextFiles for a set of ModelContexts
+	 * @param conts	The ModelContexts to convert	
+	 * @return	The corresponding IContextFiles
+	 */
 	public static IContextFile[] convertToIContext(ModelContext[] conts) {
 		IContextFile[] results = new IContextFile[conts.length];
 		for (int i = 0; i < conts.length; i++) {
@@ -153,6 +217,11 @@ public class ModelController implements IElementChangedListener {
 		return results;
 	}
 
+	/**
+	 * Gets the corresponding IContextFiles for a set of ModelContexts
+	 * @param conts	The ModelContexts to convert	
+	 * @return	The corresponding IContextFiles
+	 */
 	public static List<IContextFile> convertToIContext(List<ModelContext> conts) {
 		List<IContextFile> results = new LinkedList<IContextFile>();
 		for (Iterator<ModelContext> iterator = conts.iterator(); iterator.hasNext();) {
@@ -178,13 +247,11 @@ public class ModelController implements IElementChangedListener {
 				TreeViewer viewer = navigator.getCommonViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-//					Object[] objects = viewer.getExpandedElements();
 					for (Object elem : toRefresh) {
 						viewer.refresh(elem);
 					}
-//					viewer.setExpandedElements(objects);
 				}
-			}});
+		}});
 	}
 
 	

@@ -27,7 +27,18 @@ import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * 
+ * Represents a Machine in the model
+ *
+ */
 public class ModelMachine extends ModelPOContainer implements IModelElement {
+	/**
+	 * Creates a ModelMachine from a given IMachineFile
+	 * Adds elements such as Events, Invariants and Theorems to the Model
+	 * Processes the corresponding ProofObligation Files and adds them to the Model
+	 * @param file	The MachineFile that this ModelMachine is based on.
+	 */
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
 		try {
@@ -52,6 +63,12 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 	
 	
+	/**
+	 * Processes the POFile that belongs to this machine.
+	 * It creates a ModelProofObligation for each sequent
+	 * and adds it to this machines as well as to the
+	 * concerned Invariants, Theorems and Events.
+	 */
 	public void processPOFile() {
 		try {
 			IPOFile file = internalMachine.getPOFile();
@@ -94,6 +111,11 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 	}
 
+	/**
+	 * Processes the PSFile that belongs to this Machine.
+	 * Each status is added to the corresponding Proof Obligation,
+	 * if that ProofObligation is present.
+	 */
 	public void processPSFile() {
 		try {
 			IPSFile file = internalMachine.getPSFile();
@@ -112,14 +134,26 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 	}
 	
+	/**
+	 * Adds a new ModelInvariant to this Machine.
+	 * @param invariant The Invariant to add.
+	 */
 	public void addInvariant(IInvariant invariant) {
 		invariants.put(invariant.getElementName(), new ModelInvariant(invariant, this));
 	}
 
+	/**
+	 * Adds a new ModelEvent to this Machine.
+	 * @param event The Event to add.
+	 */
 	public void addEvent(IEvent event) {
 		events.put(event.getElementName(), new ModelEvent(event, this));
 	}
 	
+	/**
+	 * Adds a new ModelTheorem to this Machine.
+	 * @param theorem The Theorem to add.
+	 */
 	public void addTheorem(ITheorem theorem) {
 		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
 	}
@@ -213,6 +247,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * Machines that this Machine refines.
 	 */
 
+	/**
+	 * @return The Project that contains this Machine.
+	 */
+	@Override
 	public IModelElement getParent() {
 		return ModelController.getProject(internalMachine.getRodinProject());
 	}

@@ -15,7 +15,7 @@ package fr.systerel.explorer.model;
 import org.eventb.core.IInvariant;
 
 /**
- * @author Administrator
+ * Represents an Invariant in the model
  *
  */
 public class ModelInvariant extends ModelPOContainer{

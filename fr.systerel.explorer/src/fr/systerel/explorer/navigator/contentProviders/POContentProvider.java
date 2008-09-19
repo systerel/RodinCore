@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 
 import fr.systerel.explorer.model.ModelAxiom;
@@ -60,7 +61,6 @@ public class POContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-		
 		return null;
 	}
 

@@ -19,11 +19,11 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
  * An abstract Action Provider. 
  * Clients may overwrite <code>fillActionBars(IActionBars actionBars)</code>
  * and <code>fillContextMenu(IMenuManager menu)</code> from superclass.
- * @author Maria Husmann
  *
  */
 public abstract class NavigatorActionProvider extends CommonActionProvider {
 
+	
 	public static String GROUP_MODELLING = "modelling";
 	
     StructuredViewer viewer;
@@ -35,7 +35,7 @@ public abstract class NavigatorActionProvider extends CommonActionProvider {
         super.init(aSite);
         site = aSite;
 		viewer = aSite.getStructuredViewer();
-    }
+  }
 
 	
 	
