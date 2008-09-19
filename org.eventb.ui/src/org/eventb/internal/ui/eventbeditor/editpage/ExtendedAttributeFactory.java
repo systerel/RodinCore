@@ -169,15 +169,6 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IEvent event = (IEvent) element;
-		try {
-			final String oldValue = getValue(event, monitor);
-			if (newValue.equals(oldValue)) {
-				return;
-			}
-		} catch (RodinDBException e) {
-			// TODO show exception ?
-			return;
-		}
 		final boolean extended = newValue.equals(TRUE);
 		if (extended) {
 			RodinCore.run(new SetExtended(event), monitor);
@@ -210,4 +201,10 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 		event.setExtended(false, monitor);
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IEvent;
+		return ((IEvent) element).hasExtended();
+	}
+	
 }

@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -38,17 +39,9 @@ public class RefinesMachineSection extends CComboSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		IRefinesMachine rElement = (IRefinesMachine) element;
-		String abstractMachineName = null;
-		try {
-			rElement.getAbstractMachineName();
-		}
-		catch (RodinDBException e) {
-			// Do nothing
-		}
-		if (abstractMachineName == null || !abstractMachineName.equals(text)) {
-			rElement.setAbstractMachineName(text, monitor);
-		}
+		UIUtils.setStringAttribute(element,
+				new RefinesMachineAbstractMachineNameAttributeFactory(), text,
+				monitor);
 	}
 
 }

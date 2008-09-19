@@ -14,8 +14,6 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,7 +36,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -245,23 +242,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	private void addValues() {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					EventBEditorUtils
-							.createNewConstant(editor, identifier, monitor);
-
-					EventBEditorUtils.createNewAxioms(editor, axmLabels
-							.toArray(new String[axmLabels.size()]), axmSubs
-							.toArray(new String[axmSubs.size()]), monitor);
-				}
-
-			}, null);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final String[] axmNames = axmLabels
+				.toArray(new String[axmLabels.size()]);
+		final String[] lAxmSubs = axmSubs.toArray(new String[axmSubs.size()]);
+		EventBEditorUtils.newConstant(editor, identifier, axmNames, lAxmSubs);
 	}
 
 	private void initialise() {

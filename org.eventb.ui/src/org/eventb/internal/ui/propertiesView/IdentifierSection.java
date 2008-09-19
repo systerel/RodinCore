@@ -3,6 +3,7 @@ package org.eventb.internal.ui.propertiesView;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class IdentifierSection extends TextSection {
@@ -31,12 +32,8 @@ public class IdentifierSection extends TextSection {
 	
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		if (element instanceof IIdentifierElement) {
-			IIdentifierElement iElement = (IIdentifierElement) element;
-			if (!iElement.getIdentifierString().equals(text)) {
-				iElement.setIdentifierString(text, monitor);
-			}
-		}
+		UIUtils.setStringAttribute(element, UIUtils
+				.getIdentifierAttributeFactory(element), text, monitor);
 	}
 
 }

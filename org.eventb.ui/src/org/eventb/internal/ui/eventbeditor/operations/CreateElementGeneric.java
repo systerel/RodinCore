@@ -1,5 +1,8 @@
 package org.eventb.internal.ui.eventbeditor.operations;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -20,8 +23,8 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 	private final IEventBEditor<?> editor;
 	private IInternalElement element;
 	private OperationTree operationDelete;
-	private boolean first ;
-	
+	private boolean first;
+
 	public CreateElementGeneric(IEventBEditor<?> editor,
 			IInternalParent parent, final IInternalElementType<T> type,
 			final IInternalElement sibling) {
@@ -30,7 +33,7 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 		this.type = type;
 		this.sibling = sibling;
 		this.editor = editor;
-		first = true ;
+		first = true;
 	}
 
 	@Override
@@ -45,35 +48,22 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 			return e.getStatus();
 		}
 		final OperationBuilder builder = new OperationBuilder();
-		operationDelete = builder.deleteElement(element);
+		operationDelete = builder.deleteElement(element, true);
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		// try {
-		// element.create(sibling, monitor);
-		// return Status.OK_STATUS;
-		// } catch (RodinDBException e) {
-		// return e.getStatus();
-		// }
 		return operationDelete.undo(monitor, info);
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-//		try {
-//			element.delete(true, monitor);
-//		} catch (RodinDBException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return Status.OK_STATUS;
-		if(first){
-		return operationDelete.execute(monitor, info);
-		}else{
+		if (first) {
+			return operationDelete.execute(monitor, info);
+		} else {
 			return operationDelete.redo(monitor, info);
 		}
 	}
@@ -84,5 +74,17 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 
 	public void setParent(IInternalElement element) {
 		parent = element;
+	}
+
+	@Override
+	public Collection<IInternalElement> getCreatedElements() {
+		ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
+		result.add(element);
+		return result;
+	}
+
+	@Override
+	public IInternalElement getCreatedElement() {
+		return element;
 	}
 }

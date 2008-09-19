@@ -2,6 +2,7 @@ package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class LabelSection extends TextSection {
@@ -24,9 +25,8 @@ public class LabelSection extends TextSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		ILabeledElement lElement = (ILabeledElement) element;
-		if (!lElement.getLabel().equals(text))
-			lElement.setLabel(text, monitor);
+		UIUtils.setStringAttribute(element, UIUtils
+				.getLabelAttributeFactory(element), text, monitor);
 	}
 
 }

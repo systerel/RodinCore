@@ -3,6 +3,9 @@ package org.eventb.internal.ui.propertiesView;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.IExpressionElement;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class ExpressionSection extends TextSection {
@@ -33,11 +36,8 @@ public class ExpressionSection extends TextSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		if (element instanceof IExpressionElement) {
-			IExpressionElement eElement = (IExpressionElement) element;
-			if (!eElement.getExpressionString().equals(text))
-				eElement.setExpressionString(text, monitor);
-		}
+		UIUtils.setStringAttribute(element, new ExpressionAttributeFactory(),
+				text, monitor);
 	}
 
 }

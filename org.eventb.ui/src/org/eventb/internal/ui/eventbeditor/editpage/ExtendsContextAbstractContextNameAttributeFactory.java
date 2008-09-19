@@ -46,19 +46,8 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 	public void setValue(IAttributedElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IExtendsContext;
-
 		IExtendsContext extendsContext = (IExtendsContext) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(str)) {
-			extendsContext.setAbstractContextName(str,
-					new NullProgressMonitor());
-		}
+		extendsContext.setAbstractContextName(str, new NullProgressMonitor());
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
@@ -82,6 +71,12 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 	public void removeAttribute(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
+	}
+	
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IExtendsContext;
+		return ((IExtendsContext) element).hasAbstractContextName();
 	}
 
 }

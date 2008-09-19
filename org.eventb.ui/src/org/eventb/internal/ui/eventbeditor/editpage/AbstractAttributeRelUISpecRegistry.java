@@ -232,6 +232,10 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 				// Do nothing
 			}
 
+			public boolean hasValue(IAttributedElement element,
+					IProgressMonitor monitor) throws RodinDBException {
+				return false;
+			}
 		}
 
 		/**

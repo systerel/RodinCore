@@ -5,6 +5,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventSection extends CComboSection {
@@ -42,17 +43,9 @@ public class RefinesEventSection extends CComboSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		IRefinesEvent rElement = (IRefinesEvent) element;
-		String abstractEventLabel = null;
-		try {
-			rElement.getAbstractEventLabel();
-		}
-		catch (RodinDBException e) {
-			// Do nothing
-		}
-		if (abstractEventLabel == null || !abstractEventLabel.equals(text)) {
-			rElement.setAbstractEventLabel(text, monitor);
-		}
+		UIUtils.setStringAttribute(element,
+				new RefinesEventAbstractEventLabelAttributeFactory(), text,
+				monitor);
 	}
 
 }

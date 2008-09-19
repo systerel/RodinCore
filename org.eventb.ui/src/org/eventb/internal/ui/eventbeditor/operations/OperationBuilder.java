@@ -8,6 +8,8 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.Collection;
 
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -35,15 +37,20 @@ import org.rodinp.core.RodinDBException;
 
 class OperationBuilder {
 
-	public OperationTree deleteElement(IInternalElement element) {
+	public OperationTree deleteElement(IInternalElement element, boolean force) {
 		final OperationTree cmdCreate = getCommandCreateElement(element);
-		return new DeleteElementLeaf(element, cmdCreate);
+		return new DeleteElementLeaf(element, cmdCreate, force);
 	}
 
 	public OperationTree deleteElement(IInternalElement[] elements) {
+		return deleteElement(elements, true);
+	}
+
+	public OperationTree deleteElement(IInternalElement[] elements,
+			boolean force) {
 		OperationNode op = new OperationNode();
 		for (IInternalElement element : elements) {
-			op.addCommande(deleteElement(element));
+			op.addCommande(deleteElement(element, force));
 		}
 		return op;
 	}
@@ -51,8 +58,8 @@ class OperationBuilder {
 	public OperationTree createAxiom(IEventBEditor<IContextFile> editor,
 			String[] labels, String[] predicates) {
 		assertLengthEquals(labels, predicates);
-		return createElementLabelPredicate(editor, IAxiom.ELEMENT_TYPE, labels,
-				predicates);
+		return createElementLabelPredicate(editor, editor.getRodinInput(),
+				IAxiom.ELEMENT_TYPE, labels, predicates);
 	}
 
 	public OperationTree createConstant(IEventBEditor<IContextFile> editor,
@@ -70,43 +77,21 @@ class OperationBuilder {
 	 */
 	public OperationTree createAxiom(IEventBEditor<IContextFile> editor,
 			String label, String predicate) {
-		// assert predicate != null;
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(EventBAttributes.PREDICATE_ATTRIBUTE,
-		// predicate);
-		// if (label != null) {
-		// manager.addAttribute(EventBAttributes.LABEL_ATTRIBUTE, label);
-		// }
-		// return getCreateElementInFile(editor, IAxiom.ELEMENT_TYPE, manager);
 		return createElementLabelPredicate(editor, editor.getRodinInput(),
 				IAxiom.ELEMENT_TYPE, label, predicate);
 	}
 
 	public OperationTree createConstant(IEventBEditor<IContextFile> editor,
 			String identifier) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE,
-		// identifier);
-		// return getCreateElementInFile(editor, IConstant.ELEMENT_TYPE,
-		// manager);
-
-		return createElementOneStringAttribute(editor, IConstant.ELEMENT_TYPE,
-				IDENTIFIER_ATTRIBUTE, identifier);
-
-		// return new CreateConstant(editor, identifier);
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				IConstant.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
 	public OperationTree createCarrierSet(IEventBEditor<IContextFile> editor,
 			String identifier) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE,
-		// identifier);
-		// return getCreateElementInFile(editor, ICarrierSet.ELEMENT_TYPE,
-		// manager);
-
-		return createElementOneStringAttribute(editor,
-				ICarrierSet.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE, identifier);
-		// return new CreateCarrierSetWizard(editor, identifier);
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				ICarrierSet.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
+				identifier);
 	}
 
 	public OperationTree createCarrierSet(IEventBEditor<IContextFile> editor,
@@ -132,17 +117,8 @@ class OperationBuilder {
 
 	public OperationTree createVariant(IEventBEditor<IMachineFile> editor,
 			String predicate) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE,
-		// predicate);
-		// return getCreateElementInFile(editor, IVariant.ELEMENT_TYPE,
-		// manager);
-
-		return createElementOneStringAttribute(editor, IVariant.ELEMENT_TYPE,
-				EXPRESSION_ATTRIBUTE, predicate);
-
-		// return new CreateVariant(editor, predicate);
-
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				IVariant.ELEMENT_TYPE, null, EXPRESSION_ATTRIBUTE, predicate);
 	}
 
 	/**
@@ -234,16 +210,8 @@ class OperationBuilder {
 
 	private OperationCreateElement createVariable(
 			IEventBEditor<IMachineFile> editor, String identifier) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE,
-		// identifier);
-		// return getCreateElementInFile(editor, IVariable.ELEMENT_TYPE,
-		// manager);
-
-		return createElementOneStringAttribute(editor, IVariable.ELEMENT_TYPE,
-				IDENTIFIER_ATTRIBUTE, identifier);
-
-		// return new CreateVariable(editor, varName);
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				IVariable.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
 	public OperationTree createTheorem(IEventBEditor<?> editor, String label,
@@ -255,8 +223,8 @@ class OperationBuilder {
 	public OperationTree createTheorem(IEventBEditor<?> editor,
 			String[] labels, String[] predicates) {
 		assertLengthEquals(labels, predicates);
-		return createElementLabelPredicate(editor, ITheorem.ELEMENT_TYPE,
-				labels, predicates);
+		return createElementLabelPredicate(editor, editor.getRodinInput(),
+				ITheorem.ELEMENT_TYPE, labels, predicates);
 	}
 
 	/*
@@ -273,10 +241,11 @@ class OperationBuilder {
 
 	private <T extends IInternalElement> OperationCreateElement getCreateElement(
 			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<T> type, EventBAttributesManager manager) {
+			IInternalElementType<T> type, IInternalElement sibling,
+			EventBAttributesManager manager) {
 		OperationCreateElement op = new OperationCreateElement(
-				new CreateElementGeneric<T>(editor, parent, type, null));
-		op.addCommande(new ChangeAttribute(manager));
+				new CreateElementGeneric<T>(editor, parent, type, sibling));
+		op.addSubCommande(new ChangeAttribute(manager));
 		return op;
 	}
 
@@ -289,18 +258,14 @@ class OperationBuilder {
 	public OperationNode createInvariant(IEventBEditor<IMachineFile> editor,
 			String[] labels, String[] predicates) {
 		assertLengthEquals(labels, predicates);
-		return createElementLabelPredicate(editor, IInvariant.ELEMENT_TYPE,
-				labels, predicates);
+		return createElementLabelPredicate(editor, editor.getRodinInput(),
+				IInvariant.ELEMENT_TYPE, labels, predicates);
 	}
 
 	private OperationCreateElement createEvent(
 			IEventBEditor<IMachineFile> editor, String label) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(LABEL_ATTRIBUTE, label);
-		// return getCreateElementInFile(editor, IEvent.ELEMENT_TYPE, manager);
-
-		return createElementOneStringAttribute(editor, IEvent.ELEMENT_TYPE,
-				LABEL_ATTRIBUTE, label);
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				IEvent.ELEMENT_TYPE, null, LABEL_ATTRIBUTE, label);
 
 		// return new CreateEvent(editor, label);
 	}
@@ -315,12 +280,14 @@ class OperationBuilder {
 			String[] grdPredicates, String[] actLabels,
 			String[] actSubstitutions) {
 		OperationCreateElement op = createEvent(editor, name);
-		op.addCommande(createParameter(editor, varIdentifiers));
-		op.addCommande(createElementLabelPredicate(editor, IGuard.ELEMENT_TYPE,
-				grdLabels, grdPredicates));
-		op.addCommande(createElementTwoStringAttribute(editor,
-				IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE, ASSIGNMENT_ATTRIBUTE,
-				actLabels, actSubstitutions));
+		op.addSubCommande(createParameter(editor, varIdentifiers));
+		op
+				.addSubCommande(createElementLabelPredicate(editor, editor
+						.getRodinInput(), IGuard.ELEMENT_TYPE, grdLabels,
+						grdPredicates));
+		op.addSubCommande(createElementTwoStringAttribute(editor, editor
+				.getRodinInput(), IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+				ASSIGNMENT_ATTRIBUTE, actLabels, actSubstitutions));
 		return op;
 	}
 
@@ -329,13 +296,13 @@ class OperationBuilder {
 	 * String
 	 * 
 	 */
-	private <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
-			IEventBEditor<?> editor, IInternalElementType<T> typeElement,
+	public <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
+			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElementType<T> typeElement, IInternalElement sibling,
 			IAttributeType.String type, String string) {
 		EventBAttributesManager manager = new EventBAttributesManager();
 		manager.addAttribute(type, string);
-		return getCreateElement(editor, editor.getRodinInput(), typeElement,
-				manager);
+		return getCreateElement(editor, parent, typeElement, sibling, manager);
 	}
 
 	/**
@@ -349,8 +316,8 @@ class OperationBuilder {
 		assert string != null;
 		OperationNode op = new OperationNode();
 		for (int i = 0; i < string.length; i++) {
-			op.addCommande(createElementOneStringAttribute(editor, typeElement,
-					type, string[i]));
+			op.addCommande(createElementOneStringAttribute(editor, editor
+					.getRodinInput(), typeElement, null, type, string[i]));
 		}
 		return op;
 	}
@@ -367,7 +334,7 @@ class OperationBuilder {
 		EventBAttributesManager manager = new EventBAttributesManager();
 		manager.addAttribute(type1, string1);
 		manager.addAttribute(type2, string2);
-		return getCreateElement(editor, parent, typeElement, manager);
+		return getCreateElement(editor, parent, typeElement, null, manager);
 	}
 
 	/**
@@ -376,15 +343,14 @@ class OperationBuilder {
 	 * 
 	 */
 	private <T extends IInternalElement> OperationNode createElementTwoStringAttribute(
-			IEventBEditor<?> editor, IInternalElementType<T> typeElement,
-			IAttributeType.String type1, IAttributeType.String type2,
-			String[] string1, String[] string2) {
+			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElementType<T> typeElement, IAttributeType.String type1,
+			IAttributeType.String type2, String[] string1, String[] string2) {
 		assertLengthEquals(string1, string2);
 		OperationNode op = new OperationNode();
 		for (int i = 0; i < string1.length; i++) {
-			op.addCommande(createElementTwoStringAttribute(editor, editor
-					.getRodinInput(), typeElement, type1, type2, string1[i],
-					string2[i]));
+			op.addCommande(createElementTwoStringAttribute(editor, parent,
+					typeElement, type1, type2, string1[i], string2[i]));
 		}
 		return op;
 	}
@@ -396,40 +362,24 @@ class OperationBuilder {
 	private <T extends IInternalElement> OperationCreateElement createElementLabelPredicate(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type, String label, String predicate) {
-
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(LABEL_ATTRIBUTE, label);
-		// manager.addAttribute(PREDICATE_ATTRIBUTE, predicate);
-		// return getCreateElementInFile(editor, type, manager);
 		return createElementTwoStringAttribute(editor, parent, type,
 				LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE, label, predicate);
 
 	}
 
 	private <T extends IInternalElement> OperationNode createElementLabelPredicate(
-			IEventBEditor<?> editor, IInternalElementType<T> type,
-			String[] labels, String[] predicates) {
-		// assertLengthEquals(labels, predicates);
-		// OperationNode op = new OperationNode();
-		// for (int i = 0; i < labels.length; i++) {
-		// op.addCommande(createElementLabelPredicate(editor, type, labels[i],
-		// predicates[i]));
-		// }
-		// return op;
-		return createElementTwoStringAttribute(editor, type, LABEL_ATTRIBUTE,
-				PREDICATE_ATTRIBUTE, labels, predicates);
+			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElementType<T> type, String[] labels, String[] predicates) {
+		return createElementTwoStringAttribute(editor, parent, type,
+				LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE, labels, predicates);
 	}
 
-	// TODO r√©cuperer les changements avec IParameter ( voir mail de stefan
+	// TODO recuperer les changements avec IParameter ( voir mail de stefan
 	// Hallerstede )
 	private OperationCreateElement createParameter(
 			IEventBEditor<IMachineFile> editor, String identifier) {
-		// EventBAttributesManager manager = new EventBAttributesManager();
-		// manager.addAttribute(IDENTIFIER_ATTRIBUTE, identifier);
-		// return getCreateElementInFile(editor, IVariable.ELEMENT_TYPE,
-		// manager);
-		return createElementOneStringAttribute(editor, IParameter.ELEMENT_TYPE,
-				IDENTIFIER_ATTRIBUTE, identifier);
+		return createElementOneStringAttribute(editor, editor.getRodinInput(),
+				IParameter.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
 	private OperationNode createParameter(IEventBEditor<IMachineFile> editor,
@@ -519,10 +469,19 @@ class OperationBuilder {
 	}
 
 	public OperationTree createAction(IEventBEditor<IMachineFile> editor,
-			IInternalElement event, String label, String predicate,
+			IInternalElement event, String label, String assignement,
 			IInternalElement sibling) {
-		return createElementLabelPredicate(editor, event, IAction.ELEMENT_TYPE,
-				label, predicate);
+		return createElementTwoStringAttribute(editor, event,
+				IAction.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+				EventBAttributes.ASSIGNMENT_ATTRIBUTE, label, assignement);
+	}
+
+	public OperationTree createAction(IEventBEditor<IMachineFile> editor,
+			IInternalElement event, String[] label, String[] assignement,
+			IInternalElement sibling) {
+		return createElementTwoStringAttribute(editor, event,
+				IAction.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+				EventBAttributes.ASSIGNMENT_ATTRIBUTE, label, assignement);
 	}
 
 	private OperationTree copyElement(IRodinFile pasteInto,
@@ -542,6 +501,85 @@ class OperationBuilder {
 			}
 			op.addCommande(copyElement(pasteInto, parent,
 					(IInternalElement) element));
+		}
+		return op;
+	}
+
+	public <T extends IInternalElement> CreateElementGeneric<T> createElement(
+			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElementType<T> elementType, IInternalElement sibling,
+			IAttributeType.String attribute, String value) {
+		return new CreateElementGeneric<T>(editor, parent, elementType, sibling);
+	}
+
+	public OperationTree handle(TreeViewer viewer, boolean up) {
+		return new Handle(viewer, up);
+	}
+
+	public OperationTree move(boolean up, IInternalParent parent,
+			IInternalElementType<?> type, IInternalElement firstElement,
+			IInternalElement lastElement) {
+		IInternalElement prevElement = null;
+		IInternalElement nextElement = null;
+		IInternalElement movedElement = null;
+		IInternalElement oldSibling = null;
+		IInternalElement newSibling = null;
+		IInternalElement[] children = null;
+		try {
+			children = parent.getChildrenOfType(type);
+
+			assert (children.length > 0);
+			prevElement = null;
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i].equals(firstElement))
+					break;
+				prevElement = children[i];
+			}
+			nextElement = null;
+			for (int i = children.length - 1; i >= 0; --i) {
+				if (children[i].equals(lastElement))
+					break;
+				nextElement = children[i];
+			}
+
+			if (up) {
+				if (prevElement != null) {
+					movedElement = prevElement;
+					oldSibling = prevElement.getNextSibling();
+					newSibling = nextElement;
+				}
+			} else {
+				if (nextElement != null) {
+					movedElement = nextElement;
+					oldSibling = nextElement.getNextSibling();
+					newSibling = firstElement;
+				}
+			}
+			if (movedElement != null) {
+				return new Move(parent, movedElement, oldSibling, newSibling);
+			} else {
+				return null;
+			}
+		} catch (RodinDBException e) {
+			return null;
+		}
+
+	}
+
+	public OperationTree renameElement(IRodinFile file,
+			IInternalElementType<?> type, IAttributeFactory factory,
+			String prefix) {
+		final OperationNode op = new OperationNode();
+		int counter = 1;
+		try {
+			for (IInternalElement element : file.getChildrenOfType(type)) {
+				op.addCommande(changeAttribute(factory, element, prefix
+						+ counter));
+				counter++;
+			}
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return op;
 	}

@@ -136,7 +136,7 @@ public class CommentToolTip {
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
 					UIUtils.setStringAttribute(element,
-							EventBAttributes.COMMENT_ATTRIBUTE, original, null);
+							EventBAttributes.COMMENT_ATTRIBUTE, original, false, null);
 					text.dispose();
 					helpShell.dispose();
 					break;
@@ -150,12 +150,13 @@ public class CommentToolTip {
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
 			UIUtils.setStringAttribute(element,
-					EventBAttributes.COMMENT_ATTRIBUTE,
-					text.getTextWidget().getText(), null);
+					EventBAttributes.COMMENT_ATTRIBUTE, text.getTextWidget()
+							.getText(), true, null);
 		}
 
 	}
 
+	
 	protected String getToolTipText(ICommentedElement element) {
 		String comment;
 		try {
@@ -384,7 +385,7 @@ public class CommentToolTip {
 				element = (ICommentedElement) obj;
 			}
 		}
-		if (tipShell != null) {
+		if (tipShell != null && element != null) {
 			tipShell.setVisible(false);
 
 			if (helpShell != null)

@@ -14,8 +14,6 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -36,7 +34,6 @@ import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -262,26 +259,14 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	}
 
 	private void addValues() {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-				
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					EventBEditorUtils.createNewVariable(editor, getName(),
-							monitor);
-					EventBEditorUtils.createNewInvariant(editor, getInvariants(),
-							monitor);
 
-					String actName = getInitActionName();
-					String actSub = getInitActionSubstitution();
-					EventBEditorUtils.createNewInitialisationAction(editor, actName,
-							actSub, monitor);
-				}
-				
-			}, null);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final String varName = getName();
+		final Collection<Pair<String, String>> invariant = getInvariants();
+		final String actName = getInitActionName();
+		final String actSub = getInitActionSubstitution();
+		EventBEditorUtils.newVariable(editor, varName, invariant, actName,
+				actSub);
+
 	}
 
 	private void initialise() {

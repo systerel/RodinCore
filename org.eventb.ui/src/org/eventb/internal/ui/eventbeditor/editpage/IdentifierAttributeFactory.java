@@ -44,15 +44,7 @@ public abstract class IdentifierAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IIdentifierElement;
 		final IIdentifierElement iElement = (IIdentifierElement) element;
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			iElement.setIdentifierString(newValue, new NullProgressMonitor());
-		}
+		iElement.setIdentifierString(newValue, new NullProgressMonitor());
 	}
 
 	public String getValue(IAttributedElement element,
@@ -73,4 +65,10 @@ public abstract class IdentifierAttributeFactory implements IAttributeFactory {
 		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IIdentifierElement;
+		return ((IIdentifierElement) element).hasIdentifierString();
+	}
+	
 }

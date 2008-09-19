@@ -29,8 +29,13 @@ class ChangeAttributeWithFactory extends OperationLeaf {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		try {
-			valueUndo = factory.getValue(element, monitor);
-			factory.setValue(element, valueDo, monitor);
+			// if getValue throws an exception, valueUndo is initialised with
+			// null
+			valueUndo = null;
+			if (factory.hasValue(element, monitor)) {
+				valueUndo = factory.getValue(element, monitor);
+			}
+			setValue(valueDo, monitor);
 		} catch (RodinDBException e) {
 			return e.getStatus();
 		}
@@ -41,18 +46,27 @@ class ChangeAttributeWithFactory extends OperationLeaf {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		try {
-			factory.setValue(element, valueDo, monitor);
+			setValue(valueDo, monitor);
 		} catch (RodinDBException e) {
 			return e.getStatus();
 		}
 		return Status.OK_STATUS;
 	}
 
+	private void setValue(String value, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (value != null) {
+			factory.setValue(element, value, monitor);
+		} else {
+			factory.removeAttribute(element, monitor);
+		}
+	}
+
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		try {
-			factory.setValue(element, valueUndo, monitor);
+			setValue(valueUndo, monitor);
 		} catch (RodinDBException e) {
 			return e.getStatus();
 		}
@@ -60,9 +74,10 @@ class ChangeAttributeWithFactory extends OperationLeaf {
 	}
 
 	/**
-	 * parent is the element to be modified.<p>
+	 * parent is the element to be modified.
+	 * <p>
 	 * The method is not available
-	 * */
+	 */
 	public void setParent(IInternalElement element) {
 		// TODO Auto-generated method stub
 	}

@@ -92,7 +92,7 @@ public class CopyElement extends OperationLeaf {
 					nameCopy);
 
 			if (element != null) {
-				operationDelete = builder.deleteElement(element);
+				operationDelete = builder.deleteElement(element, true);
 				return Status.OK_STATUS;
 			} else {
 				operationDelete = null;
@@ -118,7 +118,6 @@ public class CopyElement extends OperationLeaf {
 			throws ExecutionException {
 		if (operationDelete != null) {
 			if (first) {
-				System.out.println("OperationDelete");
 				first = false;
 				return operationDelete.execute(monitor, info);
 			} else {

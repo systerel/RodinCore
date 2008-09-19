@@ -3,6 +3,8 @@ package org.eventb.internal.ui.propertiesView;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.IAssignmentElement;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class AssignmentSection extends TextSection {
@@ -31,11 +33,8 @@ public class AssignmentSection extends TextSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		if (element instanceof IAssignmentElement) {
-			IAssignmentElement aElement = (IAssignmentElement) element;
-			if (!aElement.getAssignmentString().equals(text))
-				aElement.setAssignmentString(text, monitor);
-		}
+		UIUtils.setStringAttribute(element, new AssignmentAttributeFactory(),
+				text, monitor);
 	}
 
 }

@@ -28,6 +28,8 @@ class CreateInitialisation extends OperationLeaf {
 
 	private IAction action;
 
+
+	// TODO a retravailler en utilisant les autres Operation
 	CreateInitialisation(final IEventBEditor<IMachineFile> editor,
 			final String actLabel, final String actSub) {
 		super("CreateInitialisation");
@@ -111,7 +113,7 @@ class CreateInitialisation extends OperationLeaf {
 			result.setLabel("INITIALISATION", monitor);
 			result.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 					monitor);
-			result.setInherited(false, monitor);
+			result.setExtended(false, monitor);
 			editor.addNewElement(result);
 
 		}

@@ -22,30 +22,30 @@ public class History {
 
 	public void addOperation(AtomicOperation operation) {
 		try {
-			history.execute(operation, null, null);
+			if(operation != null){
+				history.execute(operation, null, null);
+			}
 		} catch (ExecutionException e) {
-			//TODO traiter l'exception
+			// TODO traiter l'exception
 			e.getCause().printStackTrace();
 		}
 	}
-	
-	public void redo(IUndoContext context){
+
+	public void redo(IUndoContext context) {
 		try {
-			history.redo(context, null, null) ;
+			history.redo(context, null, null);
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.getCause().printStackTrace();
 		}
 	}
-	
-	public void undo(IUndoContext context){
+
+	public void undo(IUndoContext context) {
 		try {
-			history.undo(context, null, null) ;
+			history.undo(context, null, null);
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.getCause().printStackTrace();
 		}
 	}
-	
-	
 }

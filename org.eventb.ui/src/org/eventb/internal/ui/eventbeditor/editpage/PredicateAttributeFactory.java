@@ -25,16 +25,7 @@ public class PredicateAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IPredicateElement;
 		final IPredicateElement pElement = (IPredicateElement) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			pElement.setPredicateString(newValue, null);
-		}
+		pElement.setPredicateString(newValue, null);
 	}
 
 	public String getValue(IAttributedElement element,
@@ -62,5 +53,9 @@ public class PredicateAttributeFactory implements IAttributeFactory {
 		// Not applicable for Predicate Element.
 		return null;
 	}
-
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IPredicateElement;
+		return ((IPredicateElement) element).hasPredicateString();
+	}
 }

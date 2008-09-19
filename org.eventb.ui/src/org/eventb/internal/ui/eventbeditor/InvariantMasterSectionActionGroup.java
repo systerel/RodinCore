@@ -92,7 +92,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 		handleUp = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleUp(viewer);
+				EventBEditorUtils.handleUp(editor, viewer);
 			}
 		};
 		handleUp.setText("&Up");
@@ -104,7 +104,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 		handleDown = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleDown(viewer);
+				EventBEditorUtils.handleDown(editor, viewer);
 			}
 		};
 		handleDown.setText("D&own");

@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -38,17 +40,8 @@ public class SeesContextSection extends CComboSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		ISeesContext sElement = (ISeesContext) element;
-		String seenContextName = null;
-		try {
-			sElement.getSeenContextName();
-		}
-		catch (RodinDBException e) {
-			// Do nothing
-		}
-		if (seenContextName == null || !seenContextName.equals(text)) {
-			sElement.setSeenContextName(text, monitor);
-		}
+		UIUtils.setStringAttribute(element,
+				new SeesContextNameAttributeFactory(), text, monitor);
 	}
 
 }

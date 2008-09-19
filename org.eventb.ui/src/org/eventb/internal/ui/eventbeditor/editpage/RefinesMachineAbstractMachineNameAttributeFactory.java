@@ -63,19 +63,8 @@ public class RefinesMachineAbstractMachineNameAttributeFactory implements
 	public void setValue(IAttributedElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IRefinesMachine;
-
 		IRefinesMachine refinesMachine = (IRefinesMachine) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(str)) {
-			refinesMachine.setAbstractMachineName(str,
-					new NullProgressMonitor());
-		}
+		refinesMachine.setAbstractMachineName(str, new NullProgressMonitor());
 	}
 
 	/*
@@ -112,4 +101,9 @@ public class RefinesMachineAbstractMachineNameAttributeFactory implements
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IRefinesMachine;
+		return ((IRefinesMachine) element).hasAbstractMachineName();
+	}
 }

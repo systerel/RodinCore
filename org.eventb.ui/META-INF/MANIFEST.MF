@@ -21,6 +21,7 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.editpage;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.htmlpage;x-friends:="org.eventb.ui.tests",
+ org.eventb.internal.ui.eventbeditor.operations,
  org.eventb.internal.ui.preferences;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.projectexplorer;x-friends:="fr.systerel.explorer",
  org.eventb.internal.ui.prover;x-friends:="org.eventb.ui.tests",

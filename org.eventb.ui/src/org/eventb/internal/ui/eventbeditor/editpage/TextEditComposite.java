@@ -34,8 +34,7 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
@@ -118,12 +117,9 @@ public class TextEditComposite extends AbstractEditComposite {
 
 				@Override
 				protected void commit() {
-					try {
-						uiSpec.getAttributeFactory().setValue(element,
-								text.getText(), new NullProgressMonitor());
-					} catch (RodinDBException e) {
-						EventBUIExceptionHandler.handleSetAttributeException(e);
-					}
+					UIUtils.setStringAttribute(element, uiSpec
+							.getAttributeFactory(), text.getText(),
+							new NullProgressMonitor());
 					super.commit();
 				}
 
@@ -135,12 +131,11 @@ public class TextEditComposite extends AbstractEditComposite {
 			new TimerStyledText(text, 200) {
 				@Override
 				protected void response() {
-					if (text.isFocusControl())
-						History.getInstance().addOperation(
-								OperationFactory.changeAttribute(fEditor
-										.getRodinInput(), uiSpec
-										.getAttributeFactory(), element, text
-										.getText()));
+					if (text.isFocusControl()){
+						UIUtils.setStringAttribute(element, uiSpec
+								.getAttributeFactory(), text
+								.getText(), new NullProgressMonitor());
+					}
 				}
 			};
 			this.getFormToolkit().paintBordersFor(composite);

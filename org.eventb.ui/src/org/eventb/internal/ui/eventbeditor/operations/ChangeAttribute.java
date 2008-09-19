@@ -149,5 +149,4 @@ class ChangeAttribute extends OperationLeaf {
 	public void setParent(IInternalElement element) {
 		this.element = element;
 	}
-
 }

@@ -56,16 +56,7 @@ public abstract class LabelAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ILabeledElement;
 		final ILabeledElement lElement = (ILabeledElement) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			lElement.setLabel(newValue, monitor);
-		}
+		lElement.setLabel(newValue, monitor);
 	}
 
 	/*
@@ -104,4 +95,9 @@ public abstract class LabelAttributeFactory implements IAttributeFactory {
 		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof ILabeledElement;
+		return ((ILabeledElement) element).hasLabel();
+	}
 }

@@ -24,11 +24,11 @@ import org.rodinp.core.RodinDBException;
 
 public class ConvergenceAttributeFactory implements IAttributeFactory {
 
-	private final String ORDINARY = "ordinary";
+	public final static String ORDINARY = "ordinary";
 
-	private final String CONVERGENT = "convergent";
+ 	public final static String CONVERGENT = "convergent";
 
-	private final String ANTICIPATED = "anticipated";
+ 	public final static String ANTICIPATED = "anticipated";
 
 	public String getValue(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -47,24 +47,15 @@ public class ConvergenceAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IEvent;
 		IEvent event = (IEvent) element;
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-
-		if (value == null || !value.equals(newValue)) {
-			if (newValue.equals(ORDINARY))
-				event.setConvergence(Convergence.ORDINARY,
-						new NullProgressMonitor());
-			else if (newValue.equals(CONVERGENT))
-				event.setConvergence(Convergence.CONVERGENT,
-						new NullProgressMonitor());
-			else if (newValue.equals(ANTICIPATED))
-				event.setConvergence(Convergence.ANTICIPATED,
-						new NullProgressMonitor());
-		}
+		if (newValue.equals(ORDINARY))
+			event.setConvergence(Convergence.ORDINARY,
+					new NullProgressMonitor());
+		else if (newValue.equals(CONVERGENT))
+			event.setConvergence(Convergence.CONVERGENT,
+					new NullProgressMonitor());
+		else if (newValue.equals(ANTICIPATED))
+			event.setConvergence(Convergence.ANTICIPATED,
+					new NullProgressMonitor());
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
@@ -89,5 +80,9 @@ public class ConvergenceAttributeFactory implements IAttributeFactory {
 		cElement.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 				monitor);
 	}
-
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IConvergenceElement;
+		return ((IConvergenceElement) element).hasConvergence();
+	}
 }

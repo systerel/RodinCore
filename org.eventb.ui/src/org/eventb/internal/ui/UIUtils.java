@@ -40,9 +40,37 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
+import org.eventb.core.IEvent;
 import org.eventb.core.IEventBFile;
+import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IParameter;
+import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
+import org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.LabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.ParameterIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.operations.EventBAttributesManager;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
@@ -515,15 +543,19 @@ public class UIUtils {
 	 * @param pm
 	 */
 	public static void setStringAttribute(IAttributedElement element,
-			IAttributeType.String attrType, String newValue, IProgressMonitor pm) {
+			IAttributeType.String attrType, String newValue, boolean undoable, IProgressMonitor pm) {
 		try {
-			if (newValue.length() == 0) {
-				if (element.hasAttribute(attrType)) {
-					element.removeAttribute(attrType, pm);
-				}
-			} else if (!element.hasAttribute(attrType)
+			 if (!element.hasAttribute(attrType)
 					|| !newValue.equals(element.getAttributeValue(attrType))) {
-				element.setAttributeValue(attrType, newValue, pm);
+				 if (undoable && element instanceof IInternalElement) {
+						IInternalElement iiElement = (IInternalElement) element;
+						History.getInstance().addOperation(
+								OperationFactory.changeAttribute(iiElement
+										.getRodinFile(), element,
+										attrType,newValue));
+				 }else{
+					 element.setAttributeValue(attrType, newValue, pm);
+				 }
 			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "Error changing attribute " + attrType.getId() //$NON-NLS-1$
@@ -532,7 +564,125 @@ public class UIUtils {
 				e.printStackTrace();
 		}
 	}
+	
+	
+	public static void setBooleanAttribute(IInternalElement element,
+			IAttributeType.Boolean type, boolean value, IProgressMonitor pm) {
+		try {
+			if (!element.hasAttribute(type)
+					|| value != element.getAttributeValue(type)) {
+				EventBAttributesManager manager = new EventBAttributesManager();
+				manager.addAttribute(type, value);
+				History.getInstance().addOperation(
+						OperationFactory.changeAttribute(
+								element.getRodinFile(), element, manager));
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "Error changing attribute " + type.getId() //$NON-NLS-1$
+					+ " for element " + element.getElementName()); //$NON-NLS-1$
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+		}
+	}
 
+	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
+			IAttributedElement element) {
+		if (element instanceof ICarrierSet){
+			return new CarrierSetIdentifierAttributeFactory();
+		}else if(element instanceof IConstant){
+			return new ConstantIdentifierAttributeFactory();
+		}else if(element instanceof IParameter){
+			return new ParameterIdentifierAttributeFactory();
+		}else if(element instanceof IVariable){
+			return new VariableIdentifierAttributeFactory();
+		}else{
+			return null;
+		}
+	}
+	
+
+	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
+			IInternalElementType<?> type) {
+		if (type == ICarrierSet.ELEMENT_TYPE) {
+			return new CarrierSetIdentifierAttributeFactory();
+		} else if (type == IConstant.ELEMENT_TYPE) {
+			return new ConstantIdentifierAttributeFactory();
+		} else if (type == IParameter.ELEMENT_TYPE) {
+			return new ParameterIdentifierAttributeFactory();
+		} else if (type == IVariable.ELEMENT_TYPE) {
+			return new VariableIdentifierAttributeFactory();
+		} else {
+			return null;
+		}
+	}
+	
+	public static LabelAttributeFactory getLabelAttributeFactory(
+			IAttributedElement element) {
+		if (element instanceof IAction) {
+			return new ActionLabelAttributeFactory();
+		}else if(element instanceof IAxiom){
+			return new AxiomLabelAttributeFactory();
+		}else if(element instanceof IEvent){
+			return new EventLabelAttributeFactory();
+		}else if(element instanceof IGuard){
+			return new GuardLabelAttributeFactory();
+		}else if(element instanceof IInvariant){
+			return new InvariantLabelAttributeFactory();
+		}else if(element instanceof ITheorem){
+			return new TheoremLabelAttributeFactory();
+		}else if(element instanceof IWitness){
+			return new WitnessLabelAttributeFactory();
+		}else{
+			return null;
+		}
+	}
+
+	public static LabelAttributeFactory getLabelAttributeFactory(
+			IInternalElementType<?> type) {
+		if (type == IAction.ELEMENT_TYPE) {
+			return new ActionLabelAttributeFactory();
+		} else if (type == IAxiom.ELEMENT_TYPE) {
+			return new AxiomLabelAttributeFactory();
+		} else if (type == IEvent.ELEMENT_TYPE) {
+			return new EventLabelAttributeFactory();
+		} else if (type == IGuard.ELEMENT_TYPE) {
+			return new GuardLabelAttributeFactory();
+		} else if (type == IInvariant.ELEMENT_TYPE) {
+			return new InvariantLabelAttributeFactory();
+		} else if (type == ITheorem.ELEMENT_TYPE) {
+			return new TheoremLabelAttributeFactory();
+		} else if (type == IWitness.ELEMENT_TYPE) {
+			return new WitnessLabelAttributeFactory();
+		} else {
+			return null;
+		}
+	}
+
+	public static void setStringAttribute(IAttributedElement element,
+			IAttributeFactory factory, String value, IProgressMonitor monitor) {
+		try {
+			boolean doModify = true;
+			if(value == null){
+				doModify = factory.hasValue(element, monitor);
+			}else{
+				doModify = (!factory.hasValue(element, monitor)
+					|| !value.equals(factory.getValue(element, monitor)));
+			}
+			if(doModify){
+				IInternalElement iElement = (IInternalElement) element;
+				History.getInstance().addOperation(
+						OperationFactory.changeAttribute(iElement
+								.getRodinFile(), factory, iElement, value));
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "Error changing attribute for element "
+					+ element.getElementName());
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+		}
+	}
+	
+	
 	public static <T extends IInternalElement> String getFreeChildName(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {

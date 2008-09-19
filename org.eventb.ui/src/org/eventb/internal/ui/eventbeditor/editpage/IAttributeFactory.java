@@ -27,6 +27,8 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IAttributeFactory {
 
+	
+	
 	/**
 	 * Set the default value of the attribute for a given element.
 	 * 
@@ -43,6 +45,21 @@ public interface IAttributeFactory {
 			IAttributedElement element, IProgressMonitor monitor)
 			throws RodinDBException;
 
+	
+	
+	/**
+	 * Return true if a given element has the attribute
+	 * 
+	 * @param element
+	 *            an internal element
+	 * @param monitor
+	 *            a progress monitor
+	 * @throws RodinDBException
+	 *             if some problems occurred.
+	 */
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)throws RodinDBException;
+
+	
 	/**
 	 * Get the value of the attribute (in term of string) of a given element.
 	 * 

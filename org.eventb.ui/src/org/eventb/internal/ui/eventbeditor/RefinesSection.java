@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -28,9 +26,13 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -71,7 +73,7 @@ public class RefinesSection extends SectionPart implements
 	// The combo box
 	Combo machineCombo;
 
-	// The refined internal element.
+	// The refined internal element. Must be null if there is no refined Machine.
 	IRefinesMachine refined;
 
 	// Flag to indicate if the combo box need to be updated.
@@ -293,48 +295,30 @@ public class RefinesSection extends SectionPart implements
 	 */
 	void setRefinedMachine(final String machine) {
 		if (machine.equals(NULL_VALUE)) {
+			if (refined != null) {
+				AtomicOperation operation = OperationFactory
+						.deleteElement(refined);
+				History.getInstance().addOperation(operation);
+				refined = null;
+			}
+		} else if (refined == null) { // Create new element
+			AtomicOperation operation = OperationFactory.createElement(editor,
+					IRefinesMachine.ELEMENT_TYPE,
+					EventBAttributes.TARGET_ATTRIBUTE, machine);
+			History.getInstance().addOperation(operation);
+			refined = (IRefinesMachine) operation.getCreatedElement();
+		} else { // Change the element
 			try {
-				if (refined != null) {
-					refined.delete(true, null);
-					refined = null;
+				if (!(refined.getAbstractMachineName().equals(machine))) {
+					AtomicOperation operation = OperationFactory
+							.changeAttribute(
+									editor.getRodinInput(),
+									new RefinesMachineAbstractMachineNameAttributeFactory(),
+									refined, machine);
+					History.getInstance().addOperation(operation);
 				}
 			} catch (RodinDBException exception) {
 				exception.printStackTrace();
-			}
-		} else {
-			if (refined == null) { // Create new element
-				try {
-					final IRodinFile rodinFile = editor.getRodinInput();
-					RodinCore.run(new IWorkspaceRunnable() { // Batch the
-								// creation
-								public void run(IProgressMonitor monitor)
-										throws RodinDBException {
-									refined = rodinFile
-											.getInternalElement(
-													IRefinesMachine.ELEMENT_TYPE,
-													UIUtils
-															.getFreeElementName(
-																	editor,
-																	rodinFile,
-																	IRefinesMachine.ELEMENT_TYPE,
-																	"refinesMachine"));
-									refined.create(null, monitor);
-									refined.setAbstractMachineName(machine,
-											null);
-								}
-							}, null);
-				} catch (RodinDBException exception) {
-					exception.printStackTrace();
-					refined = null;
-				}
-			} else { // Change the element
-				try {
-					if (!(refined.getAbstractMachineName().equals(machine))) {
-						refined.setAbstractMachineName(machine, null);
-					}
-				} catch (RodinDBException exception) {
-					exception.printStackTrace();
-				}
 			}
 		}
 	}
@@ -525,13 +509,15 @@ public class RefinesSection extends SectionPart implements
 				if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
 					// nullButton.setSelection(true);
 					// chooseButton.setSelection(false);
+					refined = null ;
+					machineCombo.setText(NULL_VALUE);
 				}
 			} else if ((kind & IRodinElementDelta.ADDED) != 0) {
 				// chooseButton.setSelection(true);
 				// nullButton.setSelection(false);
 				try {
-					machineCombo.setText(((IRefinesMachine) element)
-							.getAbstractMachineName());
+					refined = (IRefinesMachine) element ;
+					machineCombo.setText(refined.getAbstractMachineName());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

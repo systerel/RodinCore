@@ -13,8 +13,9 @@
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 public class ExtendsEventSection extends CComboSection {
@@ -45,22 +46,9 @@ public class ExtendsEventSection extends CComboSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		IEvent eElement = (IEvent) element;
-		boolean extended;
-		try {
-			extended = eElement.isExtended();
-		} catch (RodinDBException e) {
-			// Set the attribute anyway if there was a problem accessing the
-			// database
-			eElement.setExtended(text.equalsIgnoreCase(FALSE),
-					monitor);
-			return;
-		}
-		if (extended && text.equalsIgnoreCase(FALSE)) {
-			eElement.setExtended(false, new NullProgressMonitor());
-		} else if (!extended && text.equalsIgnoreCase(TRUE)) {
-			eElement.setExtended(true, new NullProgressMonitor());
-		}
+		boolean extend = (text.equalsIgnoreCase(TRUE));
+		UIUtils.setBooleanAttribute(element,
+				EventBAttributes.EXTENDED_ATTRIBUTE, extend, monitor);
 	}
 
 }

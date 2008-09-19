@@ -22,14 +22,12 @@ import org.rodinp.core.RodinDBException;
 
 public class CommentAttributeFactory implements IAttributeFactory {
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) {
+	public String getValue(IAttributedElement element, IProgressMonitor monitor) {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 		try {
 			return cElement.getComment();
-		}
-		catch (RodinDBException e) {
+		} catch (RodinDBException e) {
 			return "";
 		}
 	}
@@ -38,15 +36,12 @@ public class CommentAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
-
-		String value = getValue(element, monitor);
-		if (!value.equals(newValue)) {
-			cElement.setComment(newValue, monitor);
-		}
+		cElement.setComment(newValue, monitor);
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor, IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setDefaultValue(IEventBEditor<?> editor,
+			IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		final ICommentedElement cElement = (ICommentedElement) element;
 		cElement.setComment("", new NullProgressMonitor());
 	}
@@ -59,7 +54,13 @@ public class CommentAttributeFactory implements IAttributeFactory {
 	public String[] getPossibleValues(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		// Not applicable for Commented Element.
-		return null; 
+		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof ICommentedElement;
+		return ((ICommentedElement) element).hasComment();
+
+	}
 }

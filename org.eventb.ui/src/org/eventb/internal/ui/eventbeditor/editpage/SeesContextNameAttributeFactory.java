@@ -61,18 +61,8 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory {
 	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ISeesContext;
-
 		ISeesContext seesContext = (ISeesContext) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			seesContext.setSeenContextName(newValue, monitor);
-		}
+		seesContext.setSeenContextName(newValue, monitor);
 	}
 
 	/*
@@ -106,4 +96,9 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof ISeesContext;
+		return ((ISeesContext) element).hasSeenContextName();
+	}
 }

@@ -14,12 +14,23 @@ class DeleteElementLeaf extends OperationLeaf {
 	private IInternalElement element;
 	private OperationTree createTree;
 	private IInternalElement nextSibling;
+	private final boolean force;
 
 	public DeleteElementLeaf(IInternalElement element, OperationTree createTree) {
 		super("DeleteElement");
 		this.element = element;
 		this.createTree = createTree;
 		nextSibling = null;
+		force = true;
+	}
+
+	public DeleteElementLeaf(IInternalElement element,
+			OperationTree createTree, boolean force) {
+		super("DeleteElement");
+		this.element = element;
+		this.createTree = createTree;
+		nextSibling = null;
+		this.force = force;
 	}
 
 	@Override
@@ -31,7 +42,7 @@ class DeleteElementLeaf extends OperationLeaf {
 			} catch (RodinDBException e) {
 				nextSibling = null;
 			}
-			element.delete(true, monitor);
+			element.delete(force, monitor);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			EventBUIExceptionHandler.handleDeleteElementException(e);
@@ -42,7 +53,6 @@ class DeleteElementLeaf extends OperationLeaf {
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		// TODO Auto-generated method stub
 		return execute(monitor, info);
 	}
 

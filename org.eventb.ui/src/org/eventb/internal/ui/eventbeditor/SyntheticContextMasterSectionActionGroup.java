@@ -126,7 +126,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 		handleUp = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleUp(viewer);
+				EventBEditorUtils.handleUp(editor, viewer);
 			}
 		};
 		handleUp.setText("&Up");
@@ -138,7 +138,7 @@ public class SyntheticContextMasterSectionActionGroup extends
 		handleDown = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleDown(viewer);
+				EventBEditorUtils.handleDown(editor, viewer);
 			}
 		};
 		handleDown.setText("D&own");

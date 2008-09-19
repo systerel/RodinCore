@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -38,16 +39,9 @@ public class ExtendsContextSection extends CComboSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		IExtendsContext eElement = (IExtendsContext) element;
-		String abstractContextName = null;
-		try {
-			abstractContextName = eElement.getAbstractContextName();
-		} catch (RodinDBException e) {
-			// Do nothing
-		}
-		if (abstractContextName == null || !abstractContextName.equals(text)) {
-			eElement.setAbstractContextName(text, monitor);
-		}
+		UIUtils.setStringAttribute(element,
+				new ExtendsContextAbstractContextNameAttributeFactory(), text,
+				monitor);
 	}
 
 }

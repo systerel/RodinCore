@@ -1,5 +1,7 @@
 package org.eventb.internal.ui.eventbeditor.operations;
 
+import java.util.Collection;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -7,16 +9,17 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class AtomicOperation extends AbstractOperation {
 
-	protected final OperationTree command ;
+	protected final OperationTree operation ;
 	
 	public AtomicOperation(OperationTree command) {
 		super("AtomicCommand");
-		this.command = command ;
+		this.operation = command ;
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class AtomicOperation extends AbstractOperation {
 
 				public void run(IProgressMonitor m) throws RodinDBException {
 					try {
-						command.execute(m, info) ;
+						operation.execute(m, info) ;
 					} catch (ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -50,7 +53,7 @@ public class AtomicOperation extends AbstractOperation {
 
 				public void run(IProgressMonitor m) throws RodinDBException {
 					try {
-						command.redo(m, info) ;
+						operation.redo(m, info) ;
 					} catch (ExecutionException e) {
 						e.printStackTrace();
 					}
@@ -70,7 +73,7 @@ public class AtomicOperation extends AbstractOperation {
 
 				public void run(IProgressMonitor m) throws RodinDBException {
 					try {
-						command.undo(m, info) ;
+						operation.undo(m, info) ;
 					} catch (ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -84,6 +87,13 @@ public class AtomicOperation extends AbstractOperation {
 		
 		// TODO Auto-generated method stub
 		return Status.OK_STATUS;
+	}
+	
+	public IInternalElement getCreatedElement(){
+		return operation.getCreatedElement();
+	}
+	public Collection<IInternalElement> getCreatedElements(){
+		return operation.getCreatedElements();
 	}
 
 }

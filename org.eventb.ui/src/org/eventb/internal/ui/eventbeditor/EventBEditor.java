@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -43,6 +44,8 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eventb.internal.ui.eventbeditor.actions.RedoAction;
+import org.eventb.internal.ui.eventbeditor.actions.UndoAction;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -316,9 +319,18 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		contextActivation = contextService
 				.activateContext(EventBUIPlugin.PLUGIN_ID
 						+ ".contexts.eventBEditorScope");
+		// set Retargeted Action
+		setRetargetedAction() ;
+
 	}
 	
 
+	private void setRetargetedAction() {
+		getEditorSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.UNDO.getId(), new UndoAction(this));
+		getEditorSite().getActionBars().setGlobalActionHandler(
+				ActionFactory.REDO.getId(), new RedoAction(this));
+	}
 	protected abstract F getRodinFile(IEditorInput input);
 
 	/*

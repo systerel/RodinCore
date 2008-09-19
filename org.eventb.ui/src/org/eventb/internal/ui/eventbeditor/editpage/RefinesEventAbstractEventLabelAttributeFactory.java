@@ -51,16 +51,7 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IRefinesEvent;
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			refinesEvent.setAbstractEventLabel(newValue,
-					new NullProgressMonitor());
-		}
+		refinesEvent.setAbstractEventLabel(newValue, new NullProgressMonitor());
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
@@ -89,4 +80,9 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IRefinesEvent;
+		return ((IRefinesEvent) element).hasAbstractEventLabel();
+	}
 }

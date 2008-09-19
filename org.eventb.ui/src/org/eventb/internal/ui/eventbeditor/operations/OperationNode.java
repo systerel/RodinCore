@@ -1,7 +1,11 @@
 package org.eventb.internal.ui.eventbeditor.operations;
 
 import static org.eclipse.core.runtime.Status.OK_STATUS;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -9,7 +13,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IInternalElement;
 
-class OperationNode extends AbstractOperation implements OperationTree {
+class OperationNode extends AbstractOperation implements OperationTree,
+		Iterable<OperationTree> {
 
 	protected ArrayList<OperationTree> childrens;
 
@@ -65,4 +70,25 @@ class OperationNode extends AbstractOperation implements OperationTree {
 			children.setParent(element);
 		}
 	}
+
+	public Collection<IInternalElement> getCreatedElements() {
+		ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
+		for (OperationTree op : childrens) {
+			result.addAll(op.getCreatedElements());
+		}
+		return result;
+	}
+
+	public IInternalElement getCreatedElement() {
+		if (childrens.size() > 0) {
+			return childrens.get(0).getCreatedElement();
+		} else {
+			return null;
+		}
+	}
+
+	public Iterator<OperationTree> iterator() {
+		return childrens.iterator();
+	}
+
 }

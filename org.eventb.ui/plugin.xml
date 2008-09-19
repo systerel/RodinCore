@@ -362,32 +362,6 @@
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newvariant.tooltip"/>
-              
-         <menu
-               id="org.eventb.ui.undoRedo"
-               label="%editorAction.menu.undoRedo">
-            <groupMarker name="test"/>
-         </menu>
-         
-          <action
-               actionID="org.eventb.ui.actions.Undo"
-               class="org.eventb.internal.ui.eventbeditor.actions.Undo"
-               id="org.eventb.ui.actions.undo"
-               label="%editorAction.undo.label"
-               menubarPath="org.eventb.ui.undoRedo/test"
-               style="push"
-               toolbarPath="org.eventb.ui.undoRedo"
-               tooltip="%editorAction.undo.tooltip"/>          
-          <action
-               actionID="org.eventb.ui.actions.Redo"
-               class="org.eventb.internal.ui.eventbeditor.actions.Redo"
-               id="org.eventb.ui.actions.redo"
-               label="%editorAction.redo.label"
-               menubarPath="org.eventb.ui.undoRedo/test"
-               style="push"
-               toolbarPath="org.eventb.ui.undoRedo"
-               tooltip="%editorAction.redo.tooltip"/> 
-               
          <menu
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
@@ -501,32 +475,6 @@
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newtheorems.tooltip"/>
-         <menu
-               id="org.eventb.ui.undoRedo"
-               label="%editorAction.menu.undoRedo">
-            <groupMarker name="test"/>
-         </menu>
-         
-          <action
-               actionID="org.eventb.ui.actions.Undo"
-               class="org.eventb.internal.ui.eventbeditor.actions.Undo"
-               id="org.eventb.ui.actions.undo"
-               label="%editorAction.undo.label"
-               menubarPath="org.eventb.ui.undoRedo/test"
-               style="push"
-               toolbarPath="org.eventb.ui.undoRedo"
-               tooltip="%editorAction.redo.tooltip"/> 
-                        
-          <action
-               actionID="org.eventb.ui.actions.Redo"
-               class="org.eventb.internal.ui.eventbeditor.actions.Redo"
-               id="org.eventb.ui.actions.redo"
-               label="%editorAction.redo.label"
-               menubarPath="org.eventb.ui.undoRedo/test"
-               style="push"
-               toolbarPath="org.eventb.ui.undoRedo"
-               tooltip="%editorAction.undo.tooltip"/> 
-               
          <menu
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
