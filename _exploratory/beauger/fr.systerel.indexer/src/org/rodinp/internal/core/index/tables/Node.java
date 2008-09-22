@@ -8,8 +8,7 @@ public class Node<T> {
 
 	private final T label;
 	private final List<Node<T>> predecessors;
-	private final List<Node<T>> successors; // FIXME maybe not needed (but for
-	// dependents)
+	private final List<Node<T>> successors;
 	private boolean mark;
 	private int orderPos;
 
