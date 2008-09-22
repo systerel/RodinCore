@@ -12,16 +12,73 @@
 
 package fr.systerel.explorer.navigator.contentProviders;
 
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
+import org.eventb.core.IContextFile;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.model.ModelContext;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelElementNode;
 
 /**
  * The content provider for Axiom elements
  * @author Maria Husmann
  *
  */
-public class AxiomContentProvider extends ElementsContentProvider {
-	public AxiomContentProvider(){
-		this_class = IAxiom.class;
+public class AxiomContentProvider implements ITreeContentProvider {
+	public Object[] getChildren(Object element) {
+		if (element instanceof IContextFile) {
+			Object[] results = new Object[1];
+			results[0] = ModelController.getContext((IContextFile) element).nodes[2];
+			return results;
+		}
+		if (element instanceof ModelElementNode){
+			IInternalElementType<?> type = ((ModelElementNode) element).getType();
+			if (type.equals(IAxiom.ELEMENT_TYPE)) {
+				ModelContext context = (ModelContext) ((ModelElementNode) element).getParent();
+				try {
+					return context.getInternalContext().getAxioms();
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return new Object[0];
+	}
+	public Object getParent(Object element) {
+    	if (element instanceof IAxiom) {
+    		IAxiom axm =  (IAxiom) element;
+    		IContextFile ctx = (IContextFile) axm.getRodinFile();
+     		ModelContext context = ModelController.getContext(ctx);
+     		if (context != null) {
+    			return context.nodes[2];
+     		}
+		}
+    	if (element instanceof ModelElementNode) {
+    		return ((ModelElementNode) element).getParent();
+    	}
+      return null;
+	}
+
+	public boolean hasChildren(Object element) {
+      return getChildren(element).length > 0;
+	}
+
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
+	public void dispose() {
+    	// Do nothing
+
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    	// Do nothing
+		 
 	}
 
 }

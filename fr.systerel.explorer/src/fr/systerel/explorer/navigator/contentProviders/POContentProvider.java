@@ -13,8 +13,10 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
+import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 
@@ -54,6 +56,22 @@ public class POContentProvider implements ITreeContentProvider {
 	    	}
 	    } 
 	
+	    if (element instanceof IMachineFile) {
+	    	Object [] result = new Object[1];
+	    	if (ModelController.getMachine((IMachineFile)element) != null) {
+		    	result[0] =(ModelController.getMachine((IMachineFile)element));
+		    	return result;
+	    	}
+	    } 
+
+	    if (element instanceof IContextFile) {
+	    	Object [] result = new Object[1];
+	    	if (ModelController.getContext((IContextFile)element) != null) {
+		    	result[0] =(ModelController.getContext((IContextFile)element));
+		    	return result;
+	    	}
+	    } 
+	    
 	    if (element instanceof ModelPOContainer) {
 			return ((ModelPOContainer)element).getIPSStatuses();
 	    } 

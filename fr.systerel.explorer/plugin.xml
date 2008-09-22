@@ -38,12 +38,6 @@
                   pattern="fr.systerel.explorer.navigator.content.project">
             </contentExtension>
             <contentExtension
-                  pattern="fr.systerel.explorer.navigator.content.machine">
-            </contentExtension>
-            <contentExtension
-                  pattern="fr.systerel.explorer.navigator.content.context">
-            </contentExtension>
-            <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.machineContext">
             </contentExtension>
             <contentExtension
@@ -72,6 +66,9 @@
             </contentExtension>
             <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.complex">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.workingSets">
             </contentExtension>
          </includes>
       </viewerContentBinding>
@@ -119,58 +116,6 @@
          </triggerPoints>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContentProvider"
-            id="fr.systerel.explorer.navigator.content.machine"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.machine">
-         <triggerPoints>
-            <or>
-               <instanceof
-                     value="org.eventb.core.IMachineFile">
-               </instanceof>
-            </or>
-         </triggerPoints>
-         <possibleChildren>
-            <or>
-               <instanceof
-                     value="org.eventb.ui.projectexplorer.TreeNode">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.model.ModelMachine">
-               </instanceof>
-            </or>
-         </possibleChildren>
-         <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.MachineContentSorter">
-         </commonSorter>
-      </navigatorContent>
-      <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.ContextContentProvider"
-            id="fr.systerel.explorer.navigator.content.context"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.context">
-         <triggerPoints>
-            <or>
-               <instanceof
-                     value="org.eventb.core.IContextFile">
-               </instanceof>
-            </or>
-         </triggerPoints>
-         <possibleChildren>
-            <or>
-               <instanceof
-                     value="org.eventb.ui.projectexplorer.TreeNode">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.model.ModelContext">
-               </instanceof>
-            </or>
-         </possibleChildren>
-         <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.ContextSorter">
-         </commonSorter>
-      </navigatorContent>
-      <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContextContentProvider"
             id="fr.systerel.explorer.navigator.content.machineContext"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
@@ -198,119 +143,198 @@
             contentProvider="fr.systerel.explorer.navigator.contentProviders.InvariantContentProvider"
             id="fr.systerel.explorer.navigator.content.invariant"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.invariants">
+            name="%navigatorContent.invariants"
+            priority="high">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.IInvariant">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IInvariant">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.EventContentProvider"
             id="fr.systerel.explorer.navigator.content.event"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.events">
+            name="%navigatorContent.events"
+            priority="lowest">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.IEvent">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IEvent">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof></or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.VariableContentProvider"
             id="fr.systerel.explorer.navigator.content.variable"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.variables">
+            name="%navigatorContent.variables"
+            priority="higher">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.IVariable">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IVariable">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.TheoremContentProvider"
             id="fr.systerel.explorer.navigator.content.theorem"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.theorems">
+            name="%navigatorContent.theorems"
+            priority="normal">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.ITheorem">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.ITheorem">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider"
             id="fr.systerel.explorer.navigator.content.axiom"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.axioms">
+            name="%navigatorContent.axioms"
+            priority="normal">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.IAxiom">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IAxiom">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ConstantsContentProvider"
             id="fr.systerel.explorer.navigator.content.constant"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.constants">
+            name="%navigatorContent.constants"
+            priority="high">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.IConstant">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IConstant">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.CarrierSetContentProvider"
             id="fr.systerel.explorer.navigator.content.carrierSet"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.carrierSets">
+            name="%navigatorContent.carrierSets"
+            priority="higher">
          <triggerPoints>
-            <instanceof
-                  value="org.eventb.ui.projectexplorer.TreeNode">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof></or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.eventb.core.ICarrierSet">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.ICarrierSet">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.model.ModelElementNode">
+               </instanceof>
+            </or>
          </possibleChildren>
       </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.POContentProvider"
             id="fr.systerel.explorer.pofiles"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.poFiles">
+            name="%navigatorContent.poFiles"
+            priority="lowest">
          <triggerPoints>
             <or>
                <instanceof
@@ -331,11 +355,23 @@
                <instanceof
                      value="fr.systerel.explorer.model.ModelContext">
                </instanceof>
+               <instanceof
+                     value="org.eventb.core.IMachineFile">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IContextFile">
+               </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
                   value="org.eventb.core.IPSStatus">
+            </instanceof>
+            <instanceof
+                  value="fr.systerel.explorer.model.ModelContext">
+            </instanceof>
+            <instanceof
+                  value="fr.systerel.explorer.model.ModelMachine">
             </instanceof>
          </possibleChildren>
       </navigatorContent>
@@ -354,7 +390,8 @@
             contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexContentProvider"
             id="fr.systerel.explorer.navigator.content.complex"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.complex">
+            name="%navigatorContent.complex"
+            priority="highest">
          <triggerPoints>
             <or>
                <instanceof

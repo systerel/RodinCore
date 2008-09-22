@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
+
 
 /**
   * The abstract content provider for elements like Invariants, Axioms etc.
@@ -28,10 +28,44 @@ public abstract class ElementsContentProvider implements ITreeContentProvider {
 
 	protected Class<?> this_class;
 
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof TreeNode) {
-			return filter(((TreeNode<?>) parentElement).getChildren());
-		}
+	public Object[] getChildren(Object element) {
+//		if (element instanceof IMachineFile) {
+//			return ModelController.getMachine((IMachineFile) element).nodes;
+//		}
+//		if (element instanceof ModelElementNode){
+//			IInternalElementType<?> type = ((ModelElementNode) element).getType();
+//			if (type.equals(IInvariant.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(ITheorem.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(IEvent.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(IVariable.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(IAxiom.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(ICarrierSet.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//			if (type.equals(IConstant.ELEMENT_TYPE)) {
+//				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+//				return machine.getInvariants();
+//			}
+//		}
+//		if (parentElement instanceof TreeNode) {
+//			return filter(((TreeNode<?>) parentElement).getChildren());
+//		}
 		return new Object[0];
 	}
 

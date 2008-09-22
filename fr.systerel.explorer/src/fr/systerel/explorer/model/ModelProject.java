@@ -56,6 +56,11 @@ public class ModelProject implements IModelElement {
 			machines.put(machine.getBareName(), mach);
 		}
 		mach = machines.get(machine.getBareName());
+		mach.processChildren();
+		//clear existing proof obligations and start from scratch
+		mach.proofObligations.clear();
+		mach.processPOFile();
+		mach.processPSFile();
 		try {
 			// get all machines, that this machine refines (all abstract machines)
 			IRefinesMachine[] refines;
@@ -109,6 +114,11 @@ public class ModelProject implements IModelElement {
 			contexts.put(context.getBareName(), ctx);
 		}
 		ctx = contexts.get(context.getBareName());
+		ctx.processChildren();
+		//clear existing proof obligations and start from scratch
+		ctx.proofObligations.clear();
+		ctx.processPOFile();
+		ctx.processPSFile();
 		// get all contexts, that this contexts extends 
 		try {
 			IExtendsContext[] exts;

@@ -24,6 +24,7 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,31 +36,40 @@ import org.rodinp.core.RodinDBException;
 public class ModelMachine extends ModelPOContainer implements IModelElement {
 	/**
 	 * Creates a ModelMachine from a given IMachineFile
-	 * Adds elements such as Events, Invariants and Theorems to the Model
-	 * Processes the corresponding ProofObligation Files and adds them to the Model
 	 * @param file	The MachineFile that this ModelMachine is based on.
 	 */
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
+		nodes = new ModelElementNode[4];
+		nodes[0] = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
+		nodes[1] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
+		nodes[2] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		nodes[3] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
+	}
+	
+	public void processChildren() {
+		//clear existing children
+		invariants.clear();
+		events.clear();
+		theorems.clear();
 		try {
-			IInvariant[] invs = file.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+			IInvariant[] invs = internalMachine.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 			for (int i = 0; i < invs.length; i++) {
 				addInvariant(invs[i]);
 			}
-			IEvent[] evts = file.getChildrenOfType(IEvent.ELEMENT_TYPE);
+			IEvent[] evts = internalMachine.getChildrenOfType(IEvent.ELEMENT_TYPE);
 			for (int i = 0; i < evts.length; i++) {
 				addEvent(evts[i]);
 			}
-			ITheorem[] thms = file.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+			ITheorem[] thms = internalMachine.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 			for (int i = 0; i < thms.length; i++) {
 				addTheorem(thms[i]);
 			}
-			processPOFile();
-			processPSFile();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
 		}
+		
 	}
 	
 	
@@ -209,13 +219,22 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 	
 	public void addRefinesMachine(ModelMachine machine) {
-		refinesMachines.add(machine);
+		//only add new Machines
+		if (!refinesMachines.contains(machine)) {
+			refinesMachines.add(machine);
+		}
 	}
 	public void addRefinedByMachine(ModelMachine machine) {
-		refinedByMachines.add(machine);
+		//only add new Machines
+		if (!refinedByMachines.contains(machine)) {
+			refinedByMachines.add(machine);
+		}
 	}
 	public void addSeesContext(ModelContext context) {
-		seesContexts.add(context);
+		//only add new Contexts
+		if (!seesContexts.contains(context)) {
+			seesContexts.add(context);
+		}
 	}
 
 	public IMachineFile getInternalMachine() {
@@ -229,11 +248,12 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public ModelInvariant getInvariant(IInvariant invariant){
 		return invariants.get(invariant.getElementName());
 	}
-
+	
 	public ModelEvent getEvent(IEvent event){
 		return events.get(event.getElementName());
 	}
 	
+
 	public ModelTheorem getTheorem(ITheorem theorem){
 		return theorems.get(theorem.getElementName());
 	}
@@ -260,5 +280,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
 	private HashMap<String, ModelEvent> events = new HashMap<String, ModelEvent>();
 	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	public ModelElementNode[] nodes;
 	//TODO add variables etc?
 }

@@ -39,7 +39,9 @@ import org.rodinp.core.RodinDBException;
 import fr.systerel.explorer.navigator.RodinNavigator;
 
 /**
- * @author Maria Husmann
+ * The Model is used to present the structure of the machines and contexts 
+ * and the proof obligations.
+ * The ModelController controls the model (e.g. updates it, when the database changes)
  *
  */
 public class ModelController implements IElementChangedListener {
@@ -58,22 +60,25 @@ public class ModelController implements IElementChangedListener {
 	 * @param project The Project to process.
 	 */
 	public static void processProject(IRodinProject project){
+		System.out.println("processing project");
+
 		try {
 			ModelProject prj;
 			//do nothing, if project exists already.
-//			if (!projects.containsKey(project.getHandleIdentifier())) {
+			if (!projects.containsKey(project.getHandleIdentifier())) {
 				prj =  new ModelProject(project);
 				projects.put(project.getHandleIdentifier(), prj);
-				IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-				for (int i = 0; i < machines.length; i++) {
-					prj.processMachine(machines[i]);
-				}
-				
-				IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-				for (int i = 0; i < contexts.length; i++) {
-					prj.processContext(contexts[i]);
-				}
-//			}
+			}	
+			prj =  projects.get(project.getHandleIdentifier());
+			IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+			for (int i = 0; i < machines.length; i++) {
+				prj.processMachine(machines[i]);
+			}
+			
+			IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+			for (int i = 0; i < contexts.length; i++) {
+				prj.processContext(contexts[i]);
+			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -239,6 +244,7 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
+		System.out.println("Element changed Event");
 //		System.out.println(event.getDelta());
 		toRefresh = new ArrayList<Object>();
 		processDelta(event.getDelta());
@@ -248,6 +254,7 @@ public class ModelController implements IElementChangedListener {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					for (Object elem : toRefresh) {
+						System.out.println("refreshing " +elem.toString());
 						viewer.refresh(elem);
 					}
 				}
@@ -315,6 +322,13 @@ public class ModelController implements IElementChangedListener {
 	// List of elements need that to be refreshed in the viewer (when processing Delta of changes).
 	ArrayList<Object> toRefresh;
 	
+	
+	private void addToRefresh(Object o) {
+		if (!toRefresh.contains(o)) {
+			toRefresh.add(o);
+		}
+	}
+	
 	/**
 	 * Process the delta recursively and depend on the kind of the delta.
 	 * <p>
@@ -323,15 +337,16 @@ public class ModelController implements IElementChangedListener {
 	 *            The Delta from the Rodin Database
 	 */
 	private void processDelta(final IRodinElementDelta delta) {
+		System.out.println("processing delta");
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
 			if (element instanceof IRodinProject) {
 //				the content provider refreshes the model
-				toRefresh.add(element.getRodinDB());
+				addToRefresh(element.getRodinDB());
 			} else {
 				refreshModel(element.getParent());
-				toRefresh.add(element.getParent());
+				addToRefresh(element.getParent());
 			}
 			return;
 		}
@@ -339,10 +354,10 @@ public class ModelController implements IElementChangedListener {
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinProject) {
 //				the content provider refreshes the model
-				toRefresh.add(element.getRodinDB());
+				addToRefresh(element.getRodinDB());
 			} else {
 				refreshModel(element.getParent());
-				toRefresh.add(element.getParent());
+				addToRefresh(element.getParent());
 			}
 			return;
 		}
@@ -360,21 +375,21 @@ public class ModelController implements IElementChangedListener {
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
 				refreshModel(element.getParent());
-				toRefresh.add(element.getParent());
+				addToRefresh(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
 				refreshModel(element.getParent());
-				toRefresh.add(element.getParent());
+				addToRefresh(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
 				refreshModel(element.getParent());
-				toRefresh.add(element.getParent());
+				addToRefresh(element.getParent());
 				return;
 			}
 		}

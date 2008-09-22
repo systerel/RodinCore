@@ -18,13 +18,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,23 +40,29 @@ import org.rodinp.core.RodinDBException;
 public class ModelContext extends ModelPOContainer implements IModelElement{
 	/**
 	 * Creates a ModelContext from a given IContextFile
-	 * Adds elements such as Axioms and Theorems to the Model
-	 * Processes the corresponding ProofObligation Files and adds them to the Model
 	 * @param file	The ContextFile that this ModelContext is based on.
 	 */
 	public ModelContext(IContextFile file){
 		internalContext = file;
+		nodes = new ModelElementNode[4];
+		nodes[0] = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
+		nodes[1] = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
+		nodes[2] = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
+		nodes[3] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+	}
+	
+	public void processChildren(){
+		axioms.clear();
+		theorems.clear();
 		try {
-			IAxiom[] axms = file.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+			IAxiom[] axms = internalContext.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 			for (int i = 0; i < axms.length; i++) {
 				addAxiom(axms[i]);
 			}
-			ITheorem[] thms = file.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+			ITheorem[] thms = internalContext.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 			for (int i = 0; i < thms.length; i++) {
 				addTheorem(thms[i]);
 			}
-			processPOFile();
-			processPSFile();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
@@ -219,7 +230,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @param context	The context that is extended by this context.
 	 */
 	public void addExtends(ModelContext context) {
-		extendsContexts.add(context);
+		//only add new contexts
+		if (!extendsContexts.contains(context)) {
+			extendsContexts.add(context);
+		}
 		
 	}
 
@@ -256,5 +270,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	private IContextFile internalContext;
 	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
 	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	public ModelElementNode[] nodes;
 
 }

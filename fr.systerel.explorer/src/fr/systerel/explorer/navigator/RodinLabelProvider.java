@@ -31,6 +31,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.model.ModelElementNode;
 import fr.systerel.explorer.model.ModelPOContainer;
 import fr.systerel.explorer.model.ModelProofObligation;
 
@@ -57,11 +58,10 @@ public class RodinLabelProvider implements
 		if (element instanceof IRodinElement) {
 			return EventBImage.getRodinImage((IRodinElement) element);
 			
-		} else if (element instanceof TreeNode) {
+		} else if (element instanceof TreeNode ) {
 			TreeNode<?> node = (TreeNode<?>) element;
 			
 			if (node.getType().equals(IInvariant.ELEMENT_TYPE)) {
-				
 				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
 			}
 			if (node.getType().equals(ITheorem.ELEMENT_TYPE)) {
@@ -84,6 +84,31 @@ public class RodinLabelProvider implements
 			}
 			
 			return null;
+		} else if (element instanceof ModelElementNode) {
+			ModelElementNode node = (ModelElementNode) element;
+			
+			if (node.getType().equals(IInvariant.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
+			}
+			if (node.getType().equals(ITheorem.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_THEOREM);
+			}
+			if (node.getType().equals(IEvent.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);
+			}
+			if (node.getType().equals(IVariable.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_VARIABLE);
+			}
+			if (node.getType().equals(IAxiom.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_AXIOM);
+			}
+			if (node.getType().equals(ICarrierSet.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_CARRIER_SET);
+			}
+			if (node.getType().equals(IConstant.ELEMENT_TYPE)) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
+			}
+		
 		} else if (element instanceof ModelPOContainer) {
 			return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
 		} else if (element instanceof IContainer) {
@@ -128,6 +153,9 @@ public class RodinLabelProvider implements
 		} else if (obj instanceof ModelPOContainer) {
 			return ModelPOContainer.DISPLAY_NAME;
 			
+		} else if (obj instanceof ModelElementNode) {
+			return ((ModelElementNode) obj).getName();
+		
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();
 		}

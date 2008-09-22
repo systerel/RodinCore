@@ -34,22 +34,23 @@ public class MachineContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IMachineFile) {
-			IMachineFile mch = (IMachineFile) parentElement;
-
-			ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
-			list.add(new TreeNode<IVariable>("Variables", mch,
-					IVariable.ELEMENT_TYPE));
-			list.add(new TreeNode<IInvariant>("Invariants", mch,
-					IInvariant.ELEMENT_TYPE));
-			list
-					.add(new TreeNode<ITheorem>("Theorems", mch,
-							ITheorem.ELEMENT_TYPE));
-			list.add(new TreeNode<IEvent>("Events", mch, IEvent.ELEMENT_TYPE));
-
-			Object[] children = new Object[list.size() +1];
-			list.toArray(children);
-			children[list.size()] = ModelController.getMachine(mch);
-			return children;
+//			IMachineFile mch = (IMachineFile) parentElement;
+//
+//			ArrayList<Object> list = new ArrayList<Object>();
+//		
+//			list.add(new TreeNode<IVariable>("Variables", mch,
+//					IVariable.ELEMENT_TYPE));
+//			list.add(new TreeNode<IInvariant>("Invariants", mch,
+//					IInvariant.ELEMENT_TYPE));
+//			list
+//					.add(new TreeNode<ITheorem>("Theorems", mch,
+//							ITheorem.ELEMENT_TYPE));
+//			list.add(new TreeNode<IEvent>("Events", mch, IEvent.ELEMENT_TYPE));
+//
+//			Object[] children = new Object[list.size() +1];
+//			list.toArray(children);
+//			children[list.size()] = ModelController.getMachine(mch);
+//			return children;
 		}
 		return new Object[] {};
 
