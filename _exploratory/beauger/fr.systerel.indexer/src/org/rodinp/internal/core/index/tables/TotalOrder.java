@@ -25,8 +25,6 @@ import java.util.Set;
  */
 public class TotalOrder<T> implements Iterator<T> {
 
-	// TODO provide a markSuccessors() method to reindex dependents
-
 	private final Map<T, Node<T>> graph;
 	private final List<Node<T>> order;
 	private Iterator<Node<T>> iter;
@@ -48,7 +46,7 @@ public class TotalOrder<T> implements Iterator<T> {
 
 	public void setPredecessors(T label, T[] predecessors) {
 		final Node<T> node = fetchNode(label);
-		
+
 		if (alreadyIterated(node)) {
 			isSorted = false;
 		}
@@ -61,7 +59,7 @@ public class TotalOrder<T> implements Iterator<T> {
 			} else {
 				node.addPredecessor(n);
 				if (alreadyIterated(n)) {
-					isSorted = false; // TODO add tests
+					isSorted = false;
 				}
 			}
 		}
@@ -69,7 +67,7 @@ public class TotalOrder<T> implements Iterator<T> {
 		if (!currentPred.isEmpty()) {
 			for (Node<T> n : currentPred) {
 				if (alreadyIterated(n)) {
-					isSorted = false; // TODO add tests
+					isSorted = false;
 				}
 				node.removePredecessor(n);
 			}
@@ -142,11 +140,19 @@ public class TotalOrder<T> implements Iterator<T> {
 			numberToIter++;
 		}
 	}
-	
-	// successors of the current node
+
+	// successors of the current node will be iterated
 	public void setToIterSuccessors() {
-		if (currentNode != null) {
-			currentNode.markSuccessors();
+		if (currentNode == null) {
+			return;
+		}
+		for (Node<T> node : currentNode.getSuccessors()) {
+			if (node.isAfter(currentNode)) {
+				// The edge to the successor hay have been virtually removed
+				// to break a cycle
+				node.setMark(true);
+				numberToIter++;
+			}
 		}
 	}
 
@@ -188,6 +194,44 @@ public class TotalOrder<T> implements Iterator<T> {
 		final List<Node<T>> zeroDegrees = new ArrayList<Node<T>>();
 		final Set<Node<T>> remaining = new HashSet<Node<T>>();
 
+		initDegrees(degrees, zeroDegrees, remaining);
+		while (!remaining.isEmpty()) {
+
+			sort(degrees, zeroDegrees, remaining);
+
+			if (!remaining.isEmpty()) { // there are cycles => break them
+				final Node<T> minDegree = findMinDegree(remaining);
+				zeroDegrees.add(minDegree);
+				// The cycle is only virtually broken, the graph is not modified
+				// because the user may later break it himself from elsewhere.
+			}
+		}
+		setOrderPos();
+		iter = order.iterator();
+		isSorted = true;
+	}
+
+	private void sort(Degrees<T> degrees, List<Node<T>> zeroDegrees,
+			Set<Node<T>> remaining) {
+		while (!zeroDegrees.isEmpty()) {
+			final Node<T> node = zeroDegrees.get(0);
+			order.add(node);
+			node.setOrderPos(order.size());
+			zeroDegrees.remove(0);
+			remaining.remove(node);
+			for (Node<T> succ : node.getSuccessors()) {
+				if (remaining.contains(succ)) {
+					final int degree = degrees.decr(succ);
+					if (degree == 0) {
+						zeroDegrees.add(succ);
+					}
+				}
+			}
+		}
+	}
+
+	private void initDegrees(Degrees<T> degrees, List<Node<T>> zeroDegrees,
+			Set<Node<T>> remaining) {
 		for (T label : graph.keySet()) {
 			final Node<T> node = graph.get(label);
 			remaining.add(node);
@@ -197,29 +241,28 @@ public class TotalOrder<T> implements Iterator<T> {
 				zeroDegrees.add(node);
 			}
 		}
-		while (remaining.size() > 0) {
-			while (!zeroDegrees.isEmpty()) {
-				final Node<T> node = zeroDegrees.get(0);
-				order.add(node);
-				zeroDegrees.remove(0);
-				remaining.remove(node);
-				for (Node<T> succ : node.getSuccessors()) {
-					final int degree = degrees.decr(succ);
-					if (degree == 0) {
-						zeroDegrees.add(succ);
-					}
-				}
-			}
-			if (remaining.size() > 0) { // there are cycles => break them
-				// FIXME temporary solution
-				// chose 1 node of minimal degree (1 if exists)
-				// put it into zeroDegrees
-				order.addAll(remaining);
-				remaining.clear();
+	}
+
+	private void setOrderPos() {
+		int pos = 0;
+		
+		for (Node<T> node : order) {
+			node.setOrderPos(pos);
+			pos++;
+		}
+	}
+
+	private Node<T> findMinDegree(Set<Node<T>> remaining) {
+		Node<T> minDegNode = null;
+		int minDegree = Integer.MAX_VALUE;
+		for (Node<T> node : remaining) {
+			final int degree = node.degree();
+			if (degree < minDegree) {
+				minDegree = degree;
+				minDegNode = node;
 			}
 		}
-		iter = order.iterator();
-		isSorted = true;
+		return minDegNode;
 	}
 
 	private Node<T> fetchNode(T label) {

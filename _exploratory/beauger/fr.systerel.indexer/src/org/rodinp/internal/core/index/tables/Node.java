@@ -95,12 +95,6 @@ public class Node<T> {
 		return predecessors.size();
 	}
 
-	public void markSuccessors() {
-		for (Node<T> succ : successors) {
-			succ.mark = true;
-		}
-	}
-
 	@Override
 	public String toString() {
 		// return label.toString();
