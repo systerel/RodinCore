@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
@@ -85,6 +86,16 @@ public class ComplexContentProvider implements ITreeContentProvider {
 	}
 
 	public boolean hasChildren(Object element) {
+		if (element instanceof IRodinProject) {
+        	IRodinProject project = (IRodinProject) element;
+        	try {
+				return project.hasChildren();
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
         return getChildren(element).length > 0;
 	}
 

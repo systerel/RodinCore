@@ -57,6 +57,16 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 	}
 
 	public boolean hasChildren(Object element) {
+		if (element instanceof IRodinProject) {
+        	IRodinProject project = (IRodinProject) element;
+        	try {
+				return project.hasChildren();
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
         return getChildren(element).length > 0;
 	}
 
