@@ -163,7 +163,7 @@ public final class IndexManager {
 
 				final IIndexer indexer = getIndexerFor(file.getElementType());
 
-				final IndexingFacade indexingFacade = new IndexingFacade(file,
+				final IndexingToolkit indexingFacade = new IndexingToolkit(file,
 						index, fileTable, nameTable, exportTable, dependTable);
 
 				indexer.index(file, indexingFacade);

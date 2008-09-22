@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.internal.core.index.tables.DependenceTable;
@@ -14,7 +14,7 @@ import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
-public class IndexingFacade implements IIndexingFacade {
+public class IndexingToolkit implements IIndexingToolkit {
 
 	private final IRodinFile file;
 	private final RodinIndex rodinIndex;
@@ -32,7 +32,7 @@ public class IndexingFacade implements IIndexingFacade {
 	 * <p>
 	 * The given ExportTable is assumed to be unchanged since latest indexing of
 	 * the given file (empty if it never was indexed). It will be updated
-	 * through calls to {@link IndexingFacade#export(IInternalElement)}.
+	 * through calls to {@link IndexingToolkit#export(IInternalElement)}.
 	 * <p>
 	 * The given RodinIndex, FileTable and NameTable are supposed to be just
 	 * coherent with each other. They will be cleaned here.
@@ -44,7 +44,7 @@ public class IndexingFacade implements IIndexingFacade {
 	 * @param exportTable
 	 * @param dependTable
 	 */
-	public IndexingFacade(IRodinFile file, RodinIndex rodinIndex,
+	public IndexingToolkit(IRodinFile file, RodinIndex rodinIndex,
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
 			DependenceTable dependTable) {
 
