@@ -5,7 +5,7 @@ import org.rodinp.core.IRodinFile;
 /**
  * Interface for Rodin indexers. Indexers must be able to index one IRodinFile
  * at a time, declaring elements found in it and adding occurrences through the
- * given {@link IIndexingFacade}.
+ * given {@link IIndexingToolkit}.
  * <p>
  * Indexers declare themselves as being able to index one or more
  * IFileElementType. Thus, they will only be asked to index files of the types
@@ -32,7 +32,7 @@ import org.rodinp.core.IRodinFile;
  * <p>
  * This interface is intended to be implemented by clients.
  * 
- * @see IIndexingFacade
+ * @see IIndexingToolkit
  * 
  * @author Nicolas Beauger
  */
@@ -40,15 +40,15 @@ public interface IIndexer {
 
 	/**
 	 * Indexes the given file and sends the results through calls to the given
-	 * IIndexingFacade.
+	 * IIndexingToolkit.
 	 * 
 	 * @param file
 	 *            the file to index.
 	 * @param index
 	 *            the indexing facility to which to send the results.
-	 * @see IIndexingFacade
+	 * @see IIndexingToolkit
 	 */
-	public void index(IRodinFile file, IIndexingFacade index);
+	public void index(IRodinFile file, IIndexingToolkit index);
 
 	/**
 	 * Computes and returns the dependencies of the given file.

@@ -14,7 +14,7 @@ import org.rodinp.core.IInternalElement;
  * 
  * @author Nicolas Beauger
  */
-public interface IIndexingFacade {
+public interface IIndexingToolkit {
 
 	/**
 	 * Declares the given element with the given name.
