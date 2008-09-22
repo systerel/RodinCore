@@ -22,25 +22,31 @@ public class TotalOrderTests extends TestCase {
 		for (Integer i : expectedOrder) {
 			assertNext(iter, i);
 		}
-		assertFalse("Iterator should not have next", iter.hasNext());
+		assertNoNext(iter);
 	}
 
 	private static void assertNext(TotalOrder<Integer> iter, Integer i) {
-		assertTrue("Iterator should have next", iter.hasNext());
+		final boolean hasNext = iter.hasNext();
+		assertTrue("Iterator should have next", hasNext);
 		final Integer next = iter.next();
 		assertEquals("Bad next element", i, next);
 	}
 
 	private static void assertAllIteratedOnce(TotalOrder<Integer> iter,
 			Integer... expected) {
+
 		final Set<Integer> expSet = new HashSet<Integer>(Arrays
 				.asList(expected));
+
 		while (!expSet.isEmpty()) {
 			final boolean hasNext = iter.hasNext();
+
 			assertTrue("Iterator should have next", hasNext);
+
 			final Integer next = iter.next();
-			assertTrue("Unexpected iterated element " + next, expSet
-					.contains(next));
+			final boolean containsNext = expSet.contains(next);
+
+			assertTrue("Unexpected iterated element " + next, containsNext);
 			expSet.remove(next);
 		}
 
@@ -48,38 +54,46 @@ public class TotalOrderTests extends TestCase {
 
 	private static void assertAllIteratedOnceToEnd(TotalOrder<Integer> iter,
 			Integer... expected) {
+
 		assertAllIteratedOnce(iter, expected);
 		assertNoNext(iter);
 	}
 
 	private static void assertPartitionOrder(TotalOrder<Integer> iter,
 			Integer[] before, Integer[] after) {
+
 		assertAllIteratedOnce(iter, before);
 		assertAllIteratedOnceToEnd(iter, after);
 		assertNoNext(iter);
 	}
 
 	private static void assertNoNext(TotalOrder<Integer> iter) {
-		assertFalse("Should not have next", iter.hasNext());
+
+		final boolean hasNext = iter.hasNext();
+		assertFalse("Should not have next", hasNext);
 	}
 
-	private static void setPreds(TotalOrder<Integer> order, Integer label,
+	private static void setPreds(TotalOrder<Integer> iter, Integer label,
 			Integer... preds) {
-		setPreds(order, true, label, preds);
+
+		setPreds(iter, true, label, preds);
 	}
 
-	private static void setPreds(TotalOrder<Integer> order, boolean setToIter,
+	private static void setPreds(TotalOrder<Integer> iter, boolean setToIter,
 			Integer label, Integer... preds) {
-		order.setPredecessors(label, preds);
+
+		iter.setPredecessors(label, preds);
+
 		if (setToIter) {
-			setToIter(order, label);
-			setToIter(order, preds);
+			setToIter(iter, label);
+			setToIter(iter, preds);
 		}
 	}
 
-	private static void setToIter(TotalOrder<Integer> order, Integer... ints) {
+	private static void setToIter(TotalOrder<Integer> iter, Integer... ints) {
+
 		for (Integer i : ints) {
-			order.setToIter(i);
+			iter.setToIter(i);
 		}
 	}
 
@@ -201,7 +215,7 @@ public class TotalOrderTests extends TestCase {
 		assertNext(order, 2);
 	}
 
-	public void testRemoveKeepOrder() throws Exception {
+	public void testRemoveLabel() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
 
@@ -212,23 +226,50 @@ public class TotalOrderTests extends TestCase {
 
 	public void testSetToIter() throws Exception {
 		setPreds(order, false, 2, 1);
-		
+
 		order.setToIter(2);
-		
+
 		assertNext(order, 2);
 		assertNoNext(order);
 	}
-	
+
 	public void testSetToIterSeveralTimesTheSame() throws Exception {
 		setPreds(order, false, 2, 1);
 
 		order.setToIter(2);
 		order.setToIter(2);
-		
+
 		assertNext(order, 2);
 		assertNoNext(order);
 	}
-	
+
+	public void testSetToIterSuccessors() throws Exception {
+		setPreds(order, false, 2, 1);
+		setPreds(order, false, 3, 1);
+
+		order.setToIter(1);
+		order.next();
+
+		order.setToIterSuccessors();
+
+		assertAllIteratedOnceToEnd(order, 2, 3);
+	}
+
+	public void testSTISuccCycle() throws Exception {
+		setPreds(order, false, 2, 1);
+		setPreds(order, false, 3, 2);
+		setPreds(order, false, 4, 3);
+		setPreds(order, false, 1, 4);
+
+		int i = 1;
+		order.setToIter(i);
+		while(order.hasNext()) {
+			assertNext(order, i);
+			order.setToIterSuccessors();
+			i++;
+		}
+	}
+
 	public void testCycle1() throws Exception {
 		try {
 			setPreds(order, 1, 1);
@@ -260,6 +301,16 @@ public class TotalOrderTests extends TestCase {
 		setPreds(order, 1, 4);
 
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4);
+	}
+
+	public void testCycle4Iter24() throws Exception {
+		setPreds(order, false, 2, 1);
+		setPreds(order, false, 3, 2);
+		setPreds(order, false, 4, 3);
+		setPreds(order, false, 1, 4);
+
+		setToIter(order, 2, 4);
+		assertAllIteratedOnceToEnd(order, 2, 4);
 	}
 
 	public void testTwoSeparateCycles() throws Exception {

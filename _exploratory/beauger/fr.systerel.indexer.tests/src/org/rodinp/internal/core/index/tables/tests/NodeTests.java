@@ -138,16 +138,6 @@ public class NodeTests extends TestCase {
 		assertMark(false, NODE_THREE);
 	}
 
-	public void testMarkSuccessors() throws Exception {
-		NODE_THREE.addPredecessor(NODE_ONE);
-		NODE_TWO.addPredecessor(NODE_ONE);
-
-		NODE_ONE.markSuccessors();
-
-		assertMark(true, NODE_THREE);
-		assertMark(true, NODE_TWO);
-	}
-
 	public void testDegree() throws Exception {
 		NODE_THREE.addPredecessor(NODE_ONE);
 		NODE_THREE.addPredecessor(NODE_TWO);
