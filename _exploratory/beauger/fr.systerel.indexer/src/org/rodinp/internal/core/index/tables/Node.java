@@ -11,12 +11,14 @@ public class Node<T> {
 	private final List<Node<T>> successors; // FIXME maybe not needed (but for
 	// dependents)
 	private boolean mark;
+	private int orderPos;
 
 	public Node(T label) {
 		this.label = label;
 		this.predecessors = new ArrayList<Node<T>>();
 		this.successors = new ArrayList<Node<T>>();
 		this.mark = false;
+		this.orderPos = -1;
 	}
 
 	public T getLabel() {
@@ -60,6 +62,8 @@ public class Node<T> {
 			succ.predecessors.remove(this);
 			iterSucc.remove();
 		}
+		this.mark = false;
+		this.orderPos = -1;
 	}
 
 	public void setMark(boolean value) {
@@ -68,6 +72,23 @@ public class Node<T> {
 
 	public boolean isMarked() {
 		return mark;
+	}
+
+	public int getOrderPos() {
+		return orderPos;
+	}
+
+	public void setOrderPos(int orderPos) {
+		if (orderPos < 0) {
+			this.orderPos = -1;
+		} else {
+			this.orderPos = orderPos;
+		}
+	}
+
+	// false if both nodes have -1 as orderPos
+	public boolean isAfter(Node<T> node) {
+		return this.orderPos > node.orderPos;
 	}
 
 	public int degree() {

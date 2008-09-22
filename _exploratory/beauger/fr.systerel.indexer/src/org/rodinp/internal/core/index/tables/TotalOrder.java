@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -31,6 +32,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	private Iterator<Node<T>> iter;
 	private Node<T> currentNode;
 	private boolean isSorted;
+	private int numberToIter;
 
 	/**
 	 * 
@@ -41,10 +43,15 @@ public class TotalOrder<T> implements Iterator<T> {
 		this.iter = null;
 		this.currentNode = null;
 		this.isSorted = false;
+		this.numberToIter = 0;
 	}
 
 	public void setPredecessors(T label, T[] predecessors) {
 		final Node<T> node = fetchNode(label);
+		
+		if (alreadyIterated(node)) {
+			isSorted = false;
+		}
 
 		final List<Node<T>> currentPred = node.getPredecessors();
 		for (T pred : predecessors) {
@@ -53,13 +60,17 @@ public class TotalOrder<T> implements Iterator<T> {
 				currentPred.remove(n);
 			} else {
 				node.addPredecessor(n);
-				isSorted = false; // FIXME still true if not already iterated
+				if (alreadyIterated(n)) {
+					isSorted = false; // TODO add tests
+				}
 			}
 		}
 
 		if (!currentPred.isEmpty()) {
-			isSorted = false;
 			for (Node<T> n : currentPred) {
+				if (alreadyIterated(n)) {
+					isSorted = false; // TODO add tests
+				}
 				node.removePredecessor(n);
 			}
 		}
@@ -70,6 +81,9 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	private void remove(Node<T> node) {
+		if (node.isMarked() && !alreadyIterated(node)) {
+			numberToIter--;
+		}
 		node.clear();
 		graph.remove(node.getLabel());
 		isSorted = false;
@@ -86,23 +100,28 @@ public class TotalOrder<T> implements Iterator<T> {
 	public void clear() {
 		graph.clear();
 		order.clear();
-		this.iter = null;
-		this.currentNode = null;
+		iter = null;
+		currentNode = null;
 		isSorted = false;
+		numberToIter = 0;
 	}
 
 	public boolean hasNext() {
 		if (!isSorted) {
 			sort();
 		}
-		return iter.hasNext();
+		return numberToIter > 0;
 	}
 
 	public T next() {
 		if (!isSorted) {
 			sort();
 		}
-		currentNode = iter.next();
+		if (!this.hasNext()) {
+			throw new NoSuchElementException("No more elements to iter.");
+		}
+		currentNode = nextMarked();
+		numberToIter--;
 		return currentNode.getLabel();
 	}
 
@@ -111,6 +130,33 @@ public class TotalOrder<T> implements Iterator<T> {
 		if (currentNode != null) {
 			remove(currentNode);
 		}
+	}
+
+	public void setToIter(T label) {
+		Node<T> node = graph.get(label);
+		if (node == null) {
+			return;
+		}
+		if (!node.isMarked()) {
+			node.setMark(true);
+			numberToIter++;
+		}
+	}
+	
+	// successors of the current node
+	public void setToIterSuccessors() {
+		if (currentNode != null) {
+			currentNode.markSuccessors();
+		}
+	}
+
+	// assumes hasNext
+	private Node<T> nextMarked() {
+		Node<T> node = iter.next();
+		while (!node.isMarked() && iter.hasNext()) {
+			node = iter.next();
+		}
+		return node;
 	}
 
 	private static class Degrees<T> {
@@ -166,6 +212,8 @@ public class TotalOrder<T> implements Iterator<T> {
 			}
 			if (remaining.size() > 0) { // there are cycles => break them
 				// FIXME temporary solution
+				// chose 1 node of minimal degree (1 if exists)
+				// put it into zeroDegrees
 				order.addAll(remaining);
 				remaining.clear();
 			}
@@ -184,4 +232,8 @@ public class TotalOrder<T> implements Iterator<T> {
 		return node;
 	}
 
+	// true iff already iterated or being iterated
+	private boolean alreadyIterated(Node<T> node) {
+		return !(currentNode == null || node.isAfter(currentNode));
+	}
 }
