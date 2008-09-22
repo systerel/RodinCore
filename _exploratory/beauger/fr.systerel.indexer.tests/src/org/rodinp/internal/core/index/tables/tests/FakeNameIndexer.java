@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -36,7 +36,7 @@ public class FakeNameIndexer implements IIndexer {
 		indexedElements = new HashMap<String, Set<IInternalElement>>();
 	}
 
-	public void index(IRodinFile rodinFile, IIndexingFacade index) {
+	public void index(IRodinFile rodinFile, IIndexingToolkit index) {
 		indexedElements.clear();
 		try {
 			rodinFile.clear(true, null);

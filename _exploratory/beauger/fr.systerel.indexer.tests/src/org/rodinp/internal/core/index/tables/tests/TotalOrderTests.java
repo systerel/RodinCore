@@ -261,12 +261,12 @@ public class TotalOrderTests extends TestCase {
 		setPreds(order, false, 4, 3);
 		setPreds(order, false, 1, 4);
 
-		int i = 1;
+		int i = 3;
 		order.setToIter(i);
-		while(order.hasNext()) {
+		while (order.hasNext()) {
 			assertNext(order, i);
 			order.setToIterSuccessors();
-			i++;
+			i = (i % 4) + 1;
 		}
 	}
 
@@ -363,6 +363,18 @@ public class TotalOrderTests extends TestCase {
 		setPreds(order, 1, 4);
 
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4);
+	}
+
+	public void testModifyBeforeIter() throws Exception {
+		setPreds(order, 2, 1);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		setPreds(order, 1, 0);
+
+		// iteration should restart from 0
+		assertOrderedIteration(order, 0, 1, 2);
 	}
 
 	// TODO add tests with modifications during iteration

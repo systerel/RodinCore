@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tests.FakeIndexer;
@@ -20,7 +20,7 @@ public class FakeExportIndexer extends FakeIndexer {
 	}
 
 	@Override
-	public void index(IRodinFile file, IIndexingFacade index) {
+	public void index(IRodinFile file, IIndexingToolkit index) {
 		super.index(file, index);
 		for (IInternalElement elt : exportTable.get(file).keySet()) {
 			index.export(elt);

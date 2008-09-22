@@ -14,14 +14,14 @@ import java.util.Map;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.IndexingFacade;
+import org.rodinp.internal.core.index.IndexingToolkit;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.DependenceTable;
@@ -29,9 +29,9 @@ import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
-public class IndexingFacadeTests extends AbstractRodinDBTests {
+public class IndexingToolkitTests extends AbstractRodinDBTests {
 
-	public IndexingFacadeTests(String name) {
+	public IndexingToolkitTests(String name) {
 		super(name);
 	}
 
@@ -51,7 +51,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
 	private static final DependenceTable emptyDeps = new DependenceTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
-	private static IndexingFacade indexingFacade1;
+	private static IndexingToolkit indexingFacade1;
 	private static final IOccurrenceKind kind = TEST_KIND;
 
 	@Override
@@ -68,7 +68,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		f2ExportsElt2.add(file2, elt2, name2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, emptyExports, f1DepsOnf2);
 	}
 
@@ -154,13 +154,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		// it must be exported by a file on which the current file
 		// depends directly
 
-		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
+		IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2, index,
 				fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2
 		indexingFacade2.declare(elt2, name2);
 		indexingFacade2.export(elt2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
 		try {
 			indexingFacade1.addOccurrence(elt2, kind, locF1);
@@ -178,14 +178,14 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testAddOccAlienNoDecl() throws Exception {
 
-		IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+		IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2,
 				new RodinIndex(), fileTable, nameTable, f2ExportsElt2,
 				f1DepsOnf2);
 		// the declaration of elt2 in file2 will be recorded in another index;
 		// it will therefore appear as not declared, whereas the rest is OK
 		indexingFacade2.declare(elt2, name2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
 
 		try {
@@ -198,13 +198,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testAddOccAlienNoDeps() throws Exception {
 
-		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
+		IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2, index,
 				fileTable, nameTable, f2ExportsElt2, emptyDeps);
 		// elt2 is well declared in file2 and exported from it
 		// but there is no dependence from file1 to file2
 		indexingFacade2.declare(elt2, name2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, emptyDeps);
 
 		try {
@@ -217,13 +217,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testAddOccAlienNoExp() throws Exception {
 
-		IIndexingFacade indexingFacade2 = new IndexingFacade(file2, index,
+		IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2, index,
 				fileTable, nameTable, emptyExports, f1DepsOnf2);
 		// elt2 is well declared in file2 but not exported from it
 		// there is still a dependence from file1 to file2
 		indexingFacade2.declare(elt2, name2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, emptyExports, f1DepsOnf2);
 
 		try {
@@ -236,13 +236,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testReindexKeepAlienOccs() throws Exception {
 
-		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+		final IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2
 		indexingFacade2.declare(elt2, name2);
 		indexingFacade2.export(elt2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
 
 		// add an alien occurrence in file1
@@ -252,7 +252,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		assertNotNull(descBefore);
 		assertDescriptor(descBefore, elt2, name2, 1);
 
-		final IIndexingFacade indexingFacade2Bis = new IndexingFacade(file2,
+		final IIndexingToolkit indexingFacade2Bis = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// reindexing file2
 		indexingFacade2Bis.declare(elt2, name2);
@@ -276,13 +276,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 
 	public void testRenameWithAlienOccs() throws Exception {
 
-		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+		final IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2 and export it
 		indexingFacade2.declare(elt2, name2);
 		indexingFacade2.export(elt2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
 
 		// add an alien occurrence in file1
@@ -293,7 +293,7 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 		assertNotNull(descBefore);
 		assertDescriptor(descBefore, elt2, name2, 1);
 
-		final IIndexingFacade indexingFacade2Bis = new IndexingFacade(file2,
+		final IIndexingToolkit indexingFacade2Bis = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// reindexing file2, renaming elt2
 		final String name2Bis = name2 + "Bis";
@@ -326,13 +326,13 @@ public class IndexingFacadeTests extends AbstractRodinDBTests {
 	
 	public void testGetImports() throws Exception {
 	
-		final IIndexingFacade indexingFacade2 = new IndexingFacade(file2,
+		final IIndexingToolkit indexingFacade2 = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, f1DepsOnf2);
 		// add a declaration of elt2 in file2 and export it
 		indexingFacade2.declare(elt2, name2);
 		indexingFacade2.export(elt2);
 
-		indexingFacade1 = new IndexingFacade(file1, index, fileTable,
+		indexingFacade1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1DepsOnf2);
 		
 		final IInternalElement[] imports = indexingFacade1.getImports();

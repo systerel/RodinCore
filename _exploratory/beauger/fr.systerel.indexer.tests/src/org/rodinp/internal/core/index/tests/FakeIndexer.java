@@ -4,7 +4,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.Occurrence;
@@ -25,7 +25,7 @@ public class FakeIndexer implements IIndexer {
 	}
 
 	
-	public void index(IRodinFile file, IIndexingFacade index) {
+	public void index(IRodinFile file, IIndexingToolkit index) {
 		
 		for (Descriptor desc: localIndex.getDescriptors()) {
 			final IInternalElement element = desc.getElement();

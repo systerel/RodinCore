@@ -12,7 +12,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -47,7 +47,7 @@ public class IndexTestsUtil {
 	}
 
 	public static void addOccurrencesTestSet(IInternalElement ie,
-			int numEachKind, IIndexingFacade index) throws CoreException {
+			int numEachKind, IIndexingToolkit index) throws CoreException {
 
 		IOccurrenceKind[] kinds = { TEST_KIND_1, TEST_KIND_2 };
 		for (IOccurrenceKind k : kinds) {
