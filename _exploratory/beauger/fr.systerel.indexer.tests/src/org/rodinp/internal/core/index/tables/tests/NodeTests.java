@@ -86,7 +86,7 @@ public class NodeTests extends TestCase {
 
 		assertPredecessors(expected, NODE_THREE);
 	}
-	
+
 	public void testGetSuccessors() {
 		NODE_THREE.addPredecessor(NODE_ONE);
 		NODE_TWO.addPredecessor(NODE_ONE);
@@ -97,7 +97,6 @@ public class NodeTests extends TestCase {
 
 		assertSuccessors(expected, NODE_ONE);
 	}
-	
 
 	public void testRemovePredecessor() {
 		NODE_THREE.addPredecessor(NODE_ONE);
@@ -114,10 +113,17 @@ public class NodeTests extends TestCase {
 	public void testClear() {
 		NODE_THREE.addPredecessor(NODE_ONE);
 		NODE_THREE.addPredecessor(NODE_TWO);
+		NODE_THREE.setMark(true);
+		NODE_THREE.setOrderPos(3);
 
 		NODE_THREE.clear();
 
 		assertNoPredecessors(NODE_THREE);
+		final boolean marked = NODE_THREE.isMarked();
+		final int orderPos = NODE_THREE.getOrderPos();
+		
+		assertFalse("mark not cleared", marked);
+		assertEquals("orderPos not cleared", -1, orderPos);
 	}
 
 	public void testSetIsMarkTrue() {
@@ -150,5 +156,48 @@ public class NodeTests extends TestCase {
 
 		assertEquals("Bad degree", 2, degree);
 	}
+
+	public void testGetOrderPosInit() throws Exception {
+		final int orderPos = NODE_ONE.getOrderPos();
+
+		assertEquals("Initial orderPos should be -1", -1, orderPos);
+	}
+
+	public void testSetGetOrderPos() throws Exception {
+		final int pos = 123;
+
+		NODE_ONE.setOrderPos(pos);
+
+		final int actual = NODE_ONE.getOrderPos();
+
+		assertEquals("Bad orderPos", pos, actual);
+	}
+
+	public void testSetGetOrderPosNegative() throws Exception {
+		final int pos = -21;
+
+		NODE_ONE.setOrderPos(pos);
+
+		final int actual = NODE_ONE.getOrderPos();
+
+		assertEquals("Bad orderPos", -1, actual);
+	}
+
+	public void testIsAfterInit() throws Exception {
+		final boolean after = NODE_THREE.isAfter(NODE_ONE);
+
+		assertFalse("isAfter should return false when orderPos is not set",
+				after);
+	}
 	
+	public void testIsAfter() throws Exception {
+		NODE_ONE.setOrderPos(12);
+		NODE_TWO.setOrderPos(45);
+		
+		final boolean afterTrue = NODE_TWO.isAfter(NODE_ONE);
+		final boolean afterFalse = NODE_ONE.isAfter(NODE_TWO);
+		
+		assertTrue("Nodes not in proper order", afterTrue);
+		assertFalse("Nodes not in proper order", afterFalse);
+	}
 }

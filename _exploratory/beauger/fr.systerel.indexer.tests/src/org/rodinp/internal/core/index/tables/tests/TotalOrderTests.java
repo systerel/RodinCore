@@ -2,6 +2,7 @@ package org.rodinp.internal.core.index.tables.tests;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -47,10 +48,10 @@ public class TotalOrderTests extends TestCase {
 
 	private static void assertAllIteratedOnceToEnd(TotalOrder<Integer> iter,
 			Integer... expected) {
-			assertAllIteratedOnce(iter, expected);
-			assertNoNext(iter);
+		assertAllIteratedOnce(iter, expected);
+		assertNoNext(iter);
 	}
-	
+
 	private static void assertPartitionOrder(TotalOrder<Integer> iter,
 			Integer[] before, Integer[] after) {
 		assertAllIteratedOnce(iter, before);
@@ -64,8 +65,22 @@ public class TotalOrderTests extends TestCase {
 
 	private static void setPreds(TotalOrder<Integer> order, Integer label,
 			Integer... preds) {
+		setPreds(order, true, label, preds);
+	}
+
+	private static void setPreds(TotalOrder<Integer> order, boolean setToIter,
+			Integer label, Integer... preds) {
 		order.setPredecessors(label, preds);
-		// TODO when iterating only marked nodes, mark all
+		if (setToIter) {
+			setToIter(order, label);
+			setToIter(order, preds);
+		}
+	}
+
+	private static void setToIter(TotalOrder<Integer> order, Integer... ints) {
+		for (Integer i : ints) {
+			order.setToIter(i);
+		}
 	}
 
 	@Override
@@ -136,10 +151,45 @@ public class TotalOrderTests extends TestCase {
 		assertNoNext(order);
 	}
 
+	public void testHasNext() throws Exception {
+		setPreds(order, 2, 1);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		assertNoNext(order);
+	}
+
 	public void testIterNext() {
 		setPreds(order, 2, 1);
 
 		assertNext(order, 1);
+	}
+
+	public void testIterNoMoreNext() throws Exception {
+		setPreds(order, 2, 1);
+		order.next();
+		order.next();
+
+		assertNoNext(order);
+		try {
+			order.next();
+		} catch (NoSuchElementException e) {
+			return;
+		}
+		fail("Calling next with no more next element should raise NoSuchElementException");
+	}
+
+	public void testIterNoMoreMarked() throws Exception {
+		setPreds(order, false, 2, 1);
+
+		assertNoNext(order);
+		try {
+			order.next();
+		} catch (NoSuchElementException e) {
+			return;
+		}
+		fail("Calling next with no more elements set to iter should raise NoSuchElementException");
 	}
 
 	public void testIterRemove() {
@@ -160,6 +210,25 @@ public class TotalOrderTests extends TestCase {
 		assertAllIteratedOnceToEnd(order, 1, 3);
 	}
 
+	public void testSetToIter() throws Exception {
+		setPreds(order, false, 2, 1);
+		
+		order.setToIter(2);
+		
+		assertNext(order, 2);
+		assertNoNext(order);
+	}
+	
+	public void testSetToIterSeveralTimesTheSame() throws Exception {
+		setPreds(order, false, 2, 1);
+
+		order.setToIter(2);
+		order.setToIter(2);
+		
+		assertNext(order, 2);
+		assertNoNext(order);
+	}
+	
 	public void testCycle1() throws Exception {
 		try {
 			setPreds(order, 1, 1);
@@ -244,6 +313,6 @@ public class TotalOrderTests extends TestCase {
 
 		assertAllIteratedOnceToEnd(order, 1, 2, 3, 4);
 	}
-	
+
 	// TODO add tests with modifications during iteration
 }
