@@ -22,7 +22,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingFacade;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 
@@ -36,7 +36,7 @@ public class ContextIndexer implements IIndexer {
 		return file instanceof IContextFile;
 	}
 
-	public void index(IRodinFile file, IIndexingFacade index) {
+	public void index(IRodinFile file, IIndexingToolkit index) {
 
 		if (!isContextFile(file)) {
 			return;
@@ -44,9 +44,6 @@ public class ContextIndexer implements IIndexer {
 		IContextFile ctxFile = (IContextFile) file;
 		try {
 			indexConstants(ctxFile, index);
-			// for (IConstant c : ctxFile.getConstants()) {
-			// indexConstant(ctxFile, c, index);
-			// }
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,7 +73,7 @@ public class ContextIndexer implements IIndexer {
 		return result;
 	}
 
-	private void indexConstants(IContextFile file, IIndexingFacade index)
+	private void indexConstants(IContextFile file, IIndexingToolkit index)
 			throws RodinDBException {
 		IConstant[] constants = file.getConstants();
 
@@ -107,7 +104,7 @@ public class ContextIndexer implements IIndexer {
 
 	private void indexMatchingIdents(
 			final Map<FreeIdentifier, IIdentifierElement> matchingIdents,
-			IIndexingFacade index, IAxiom axiom, Predicate pred) {
+			IIndexingToolkit index, IAxiom axiom, Predicate pred) {
 
 		for (FreeIdentifier ident : matchingIdents.keySet()) {
 
@@ -135,7 +132,7 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	private void indexConstantDeclaration(IConstant constant,
-			String constantName, IIndexingFacade index) {
+			String constantName, IIndexingToolkit index) {
 		index.declare(constant, constantName);
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
 		.getRodinFile());
@@ -143,7 +140,7 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	private void indexConstantReference(IConstant constant, String name,
-			IRodinLocation loc, IIndexingFacade index) {
+			IRodinLocation loc, IIndexingToolkit index) {
 		index.addOccurrence(constant, REFERENCE,
 				loc);
 	}
