@@ -147,6 +147,18 @@ public class ModelController implements IElementChangedListener {
 		}
 		return null;
 	}
+	
+	/**
+	 * Removes a ModelMachine from the Model for a given MachineFile
+	 * @param machineFile	The  MachineFile to look for
+	 */
+	public static void removeMachine(IMachineFile machineFile){
+		ModelProject project = projects.get(machineFile.getRodinProject().getHandleIdentifier());
+		if (project != null ) {
+				project.removeMachine(machineFile.getBareName());
+		}
+	}
+	
 
 	/**
 	 * Gets the ModelContext for a given ContextFile
@@ -161,6 +173,16 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 	
+	/**
+	 * Removes a ModelContext from the Model for a given ContextFile
+	 * @param contextFile	The  ContextFile to remove
+	 */
+	public static void removeContext(IContextFile contextFile){
+		ModelProject project = projects.get(contextFile.getRodinProject().getHandleIdentifier());
+		if (project != null) {
+				project.removeContext(contextFile.getBareName());
+		}
+	}
 	/**
 	 * Gets the ModelProject for a given RodinProject
 	 * @param project	The RodinProjecct to look for
@@ -255,6 +277,7 @@ public class ModelController implements IElementChangedListener {
 				if (ctrl != null && !ctrl.isDisposed()) {
 					for (Object elem : toRefresh) {
 						viewer.refresh(elem);
+						System.out.println("refreshing view: "+elem.toString() );
 					}
 				}
 		}});
@@ -266,6 +289,7 @@ public class ModelController implements IElementChangedListener {
 	 * @param element	The element to refresh
 	 */
 	private void refreshModel(IRodinElement element) {
+		System.out.println("refreshing model: "+element.toString() );
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
 			if (element instanceof IMachineFile) {
@@ -355,6 +379,12 @@ public class ModelController implements IElementChangedListener {
 //				the content provider refreshes the model
 				addToRefresh(element.getRodinDB());
 			} else {
+				if (element instanceof IContextFile) {
+					removeContext((IContextFile)element);
+				}
+				if (element instanceof IMachineFile) {
+					removeMachine((IMachineFile)element);
+				}
 				addToRefresh(element.getParent());
 			}
 			return;

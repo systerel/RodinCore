@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -66,11 +68,24 @@ public class ProjectContentProvider implements ITreeContentProvider {
             IContainer container = (IContainer) element;
             if (container.isAccessible()) {
                 try {
-					List<IResource> children = new ArrayList<IResource>();
+					List<Object> children = new ArrayList<Object>();
 					IResource[] members = container.members();
 					for (int i = 0; i < members.length; i++) {
 						if (members[i].getType() != IResource.FILE) {
-							children.add(members[i]);
+							if (members[i].getType() == IResource.PROJECT) {
+								IProject project = (IProject) members[i];
+								if (project.isAccessible()) {
+									if (project.hasNature(RodinCore.NATURE_ID)) {
+										children.add(RodinCore.getRodinDB().getRodinProject(project.getName()));
+									}else {
+										children.add(members[i]);							
+									}
+								}else {
+									children.add(members[i]);
+								}
+							}else {
+								children.add(members[i]);
+							}
 						}
 					}
 					return children.toArray();

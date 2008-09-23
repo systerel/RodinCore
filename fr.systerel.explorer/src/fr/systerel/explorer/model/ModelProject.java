@@ -192,6 +192,10 @@ public class ModelProject implements IModelElement {
 	public boolean hasMachine(String identifier) {
 		return machines.containsKey(identifier);
 	}
+	
+	public void removeMachine(String identifier) {
+		machines.remove(identifier);
+	}
 
 	public ModelContext getContext(String identifier) {
 		return contexts.get(identifier);
@@ -203,6 +207,10 @@ public class ModelProject implements IModelElement {
 	
 	public boolean hasContext(String identifier) {
 		return contexts.containsKey(identifier);
+	}
+	
+	public void removeContext(String identifier) {
+		contexts.remove(identifier);
 	}
 	
 	public ModelInvariant getInvariant(IInvariant invariant){
