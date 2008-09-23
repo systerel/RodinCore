@@ -32,6 +32,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelElementNode;
+import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelPOContainer;
 import fr.systerel.explorer.model.ModelProofObligation;
 
@@ -110,7 +111,13 @@ public class RodinLabelProvider implements
 			}
 		
 		} else if (element instanceof ModelPOContainer) {
-			return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
+			boolean discharged = !((ModelPOContainer) element).hasUndischargedPOs();
+			
+			if (discharged) {
+				return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
+			} else{
+				return EventBImage.getImage(IEventBSharedImages.IMG_PENDING);
+			}
 		} else if (element instanceof IContainer) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 		}

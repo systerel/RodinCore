@@ -62,5 +62,17 @@ public class ModelPOContainer implements IModelElement{
 		return parent;
 	}
 	
+	public boolean hasUndischargedPOs(){
+		for (Iterator<ModelProofObligation> iterator = proofObligations.values().iterator(); iterator.hasNext();) {
+			ModelProofObligation po = iterator.next();
+			if (!po.isDischarged()) {
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	
 
 }

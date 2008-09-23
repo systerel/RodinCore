@@ -31,26 +31,24 @@ public class ComplexContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
         if (element instanceof IRodinProject) {
         	IRodinProject project = (IRodinProject) element;
-        	ModelController.processProject(project);
-        	ModelProject prj= ModelController.getProject(project);
-        	IMachineFile[] machines = ModelController.convertToIMachine(prj.getRootMachines());
-        	IContextFile[] contexts = ModelController.convertToIContext(prj.getDisconnectedContexts());
-        	Object[] results = new Object[machines.length + contexts.length];
-        	System.arraycopy(machines, 0, results, 0,machines.length);
-        	System.arraycopy(contexts, 0, results, machines.length, contexts.length);
-     	
-        	return results;
+        	if (project.getProject().isOpen()) {
+	        	ModelController.processProject(project);
+	        	ModelProject prj= ModelController.getProject(project);
+	        	IMachineFile[] machines = ModelController.convertToIMachine(prj.getRootMachines());
+	        	IContextFile[] contexts = ModelController.convertToIContext(prj.getDisconnectedContexts());
+	        	Object[] results = new Object[machines.length + contexts.length];
+	        	System.arraycopy(contexts, 0, results, 0, contexts.length);
+	        	System.arraycopy(machines, 0, results, contexts.length, machines.length);
+	     	
+	        	return results;
+        	}
         } 
         if (element instanceof IMachineFile) {
         	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
         	List<ModelMachine> rest = machine.getRestMachines();
         	List<ModelMachine> machines = new LinkedList<ModelMachine>();
         	List<Object> result = new LinkedList<Object>();
-        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
-				machines.addAll(mach.getLongestMachineBranch());
-			}
-        	result.addAll(ModelController.convertToIMachine(machines));
+
         	List<ModelContext> sees = machine.getSeesContexts();
         	List<ModelContext> contexts = new LinkedList<ModelContext>();
         	for (Iterator<ModelContext> iterator = sees.iterator(); iterator.hasNext();) {
@@ -59,6 +57,11 @@ public class ComplexContentProvider implements ITreeContentProvider {
 				
 			}
         	result.addAll(ModelController.convertToIContext(contexts));
+        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
+				ModelMachine mach = iterator.next();
+				machines.addAll(mach.getLongestMachineBranch());
+			}
+        	result.addAll(ModelController.convertToIMachine(machines));
         	
         	return result.toArray();
         } 

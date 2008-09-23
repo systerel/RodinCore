@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IConfidence;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Represents a Proof Obligation in the Model.
@@ -36,6 +38,7 @@ public class ModelProofObligation {
 	private List<ModelAxiom> axioms = new LinkedList<ModelAxiom>();
 	private ModelMachine machine; // A proof obligation can either belong to a context or a machine
 	private ModelContext context;
+	private boolean discharged = false;
 
 	
 	public void setMachine(ModelMachine machine) {
@@ -48,6 +51,12 @@ public class ModelProofObligation {
 	
 	public void setIPSStatus(IPSStatus status) {
 		internal_status = status;
+		try {
+			discharged =  (status.getConfidence() > IConfidence.REVIEWED_MAX) && !status.isBroken() ;
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public IPSStatus getIPSStatus() {
@@ -105,5 +114,8 @@ public class ModelProofObligation {
 	public String getElementName(){
 		return internal_sequent.getElementName();
 	}
-
+	
+	public boolean isDischarged(){
+		return discharged;
+	}
 }

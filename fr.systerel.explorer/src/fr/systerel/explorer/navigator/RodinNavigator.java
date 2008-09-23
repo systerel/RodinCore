@@ -158,6 +158,7 @@ public class RodinNavigator extends CommonNavigator {
 				widgetSelected(e);
 			}
 		});
+		
 
 		toolBar.pack();
 		Point size = toolBar.getSize();

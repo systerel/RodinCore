@@ -96,7 +96,7 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
-            contentProvider="org.eventb.internal.ui.RodinProjectContentProvider"
+            contentProvider="fr.systerel.explorer.navigator.contentProviders.ProjectContentProvider"
             id="fr.systerel.explorer.navigator.content.project"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.project"

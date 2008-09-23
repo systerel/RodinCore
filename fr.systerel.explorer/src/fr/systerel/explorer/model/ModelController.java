@@ -30,6 +30,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
@@ -60,11 +61,8 @@ public class ModelController implements IElementChangedListener {
 	 * @param project The Project to process.
 	 */
 	public static void processProject(IRodinProject project){
-		System.out.println("processing project");
-
 		try {
 			ModelProject prj;
-			//do nothing, if project exists already.
 			if (!projects.containsKey(project.getHandleIdentifier())) {
 				prj =  new ModelProject(project);
 				projects.put(project.getHandleIdentifier(), prj);
@@ -244,17 +242,18 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
-		System.out.println("Element changed Event");
-//		System.out.println(event.getDelta());
-		toRefresh = new ArrayList<Object>();
+		toRefresh = new ArrayList<IRodinElement>();
 		processDelta(event.getDelta());
+		for (IRodinElement elem : toRefresh) {
+			refreshModel(elem);
+			
+		}
 		navigator.getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
 			public void run() {
 				TreeViewer viewer = navigator.getCommonViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					for (Object elem : toRefresh) {
-						System.out.println("refreshing " +elem.toString());
 						viewer.refresh(elem);
 					}
 				}
@@ -267,63 +266,65 @@ public class ModelController implements IElementChangedListener {
 	 * @param element	The element to refresh
 	 */
 	private void refreshModel(IRodinElement element) {
-		ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
-		if (element instanceof IMachineFile) {
-			project.processMachine((IMachineFile)element);
-		}
-		if (element instanceof IContextFile) {
-			project.processContext((IContextFile)element);
-		}
-		if (element instanceof IPOFile) {
-			IPOFile file = (IPOFile) element;
-			//get corresponding machine or context
-			if (file.getMachineFile() != null) {
-				getMachine(file.getMachineFile()).processPOFile();
+		if (!(element instanceof IRodinDB)) {
+			ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
+			if (element instanceof IMachineFile) {
+				project.processMachine((IMachineFile)element);
 			}
-			if (file.getContextFile() != null) {
-				getContext(file.getContextFile()).processPOFile();
+			if (element instanceof IContextFile) {
+				project.processContext((IContextFile)element);
 			}
-		}
-		if (element instanceof IPSFile) {
-			IPSFile file = (IPSFile) element;
-			//get corresponding machine or context
-			if (file.getMachineFile() != null) {
-				getMachine(file.getMachineFile()).processPSFile();
+			if (element instanceof IPOFile) {
+				IPOFile file = (IPOFile) element;
+				//get corresponding machine or context
+				if (file.getMachineFile() != null) {
+					getMachine(file.getMachineFile()).processPOFile();
+				}
+				if (file.getContextFile() != null) {
+					getContext(file.getContextFile()).processPOFile();
+				}
 			}
-			if (file.getContextFile() != null) {
-				getContext(file.getContextFile()).processPSFile();
+			if (element instanceof IPSFile) {
+				IPSFile file = (IPSFile) element;
+				//get corresponding machine or context
+				if (file.getMachineFile() != null) {
+					getMachine(file.getMachineFile()).processPSFile();
+				}
+				if (file.getContextFile() != null) {
+					getContext(file.getContextFile()).processPSFile();
+				}
 			}
-		}
-		if (element instanceof IInvariant) {
-			ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getParent();
-			mach.addInvariant((IInvariant) element);
-		}
-		if (element instanceof IEvent) {
-			ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getParent();
-			mach.addEvent((IEvent) element);
-		}
-		if (element instanceof ITheorem) {
-			ModelTheorem thm = getTheorem((ITheorem) element);
-			if (thm.getParent() instanceof ModelMachine) {
-				ModelMachine mach = (ModelMachine) thm.getParent();
-				mach.addTheorem((ITheorem) element);
+			if (element instanceof IInvariant) {
+				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getParent();
+				mach.addInvariant((IInvariant) element);
 			}
-			if (thm.getParent() instanceof ModelContext) {
-				ModelContext ctx = (ModelContext) thm.getParent();
-				ctx.addTheorem((ITheorem) element);
+			if (element instanceof IEvent) {
+				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getParent();
+				mach.addEvent((IEvent) element);
 			}
-		}
-		if (element instanceof IAxiom) {
-			ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getParent();
-			ctx.addAxiom((IAxiom) element);
+			if (element instanceof ITheorem) {
+				ModelTheorem thm = getTheorem((ITheorem) element);
+				if (thm.getParent() instanceof ModelMachine) {
+					ModelMachine mach = (ModelMachine) thm.getParent();
+					mach.addTheorem((ITheorem) element);
+				}
+				if (thm.getParent() instanceof ModelContext) {
+					ModelContext ctx = (ModelContext) thm.getParent();
+					ctx.addTheorem((ITheorem) element);
+				}
+			}
+			if (element instanceof IAxiom) {
+				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getParent();
+				ctx.addAxiom((IAxiom) element);
+			}
 		}
 	}
 	
 	// List of elements need that to be refreshed in the viewer (when processing Delta of changes).
-	ArrayList<Object> toRefresh;
+	ArrayList<IRodinElement> toRefresh;
 	
 	
-	private void addToRefresh(Object o) {
+	private void addToRefresh(IRodinElement o) {
 		if (!toRefresh.contains(o)) {
 			toRefresh.add(o);
 		}
@@ -337,7 +338,6 @@ public class ModelController implements IElementChangedListener {
 	 *            The Delta from the Rodin Database
 	 */
 	private void processDelta(final IRodinElementDelta delta) {
-		System.out.println("processing delta");
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
@@ -345,7 +345,6 @@ public class ModelController implements IElementChangedListener {
 //				the content provider refreshes the model
 				addToRefresh(element.getRodinDB());
 			} else {
-				refreshModel(element.getParent());
 				addToRefresh(element.getParent());
 			}
 			return;
@@ -356,7 +355,6 @@ public class ModelController implements IElementChangedListener {
 //				the content provider refreshes the model
 				addToRefresh(element.getRodinDB());
 			} else {
-				refreshModel(element.getParent());
 				addToRefresh(element.getParent());
 			}
 			return;
@@ -374,24 +372,32 @@ public class ModelController implements IElementChangedListener {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				refreshModel(element.getParent());
 				addToRefresh(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				refreshModel(element.getParent());
 				addToRefresh(element.getParent());
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				refreshModel(element.getParent());
 				addToRefresh(element.getParent());
 				return;
 			}
+			if ((flags & IRodinElementDelta.F_OPENED) != 0) {
+				//refresh parent for safety (e.g. dependencies between machines)
+				addToRefresh(element.getParent());
+				return;
+			}
+			if ((flags & IRodinElementDelta.F_CLOSED) != 0) {
+				//refresh parent for safety (e.g. dependencies between machines)
+				addToRefresh(element.getParent());
+				return;
+			}
+			
 		}
 
 	}

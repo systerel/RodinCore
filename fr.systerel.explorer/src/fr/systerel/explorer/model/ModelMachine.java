@@ -40,7 +40,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
-		nodes = new ModelElementNode[4];
+		nodes = new ModelElementNode[5];
 		nodes[0] = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
 		nodes[1] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
 		nodes[2] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
