@@ -264,6 +264,7 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
+		System.out.println("Event: " +event.getDelta());
 		toRefresh = new ArrayList<IRodinElement>();
 		processDelta(event.getDelta());
 		for (IRodinElement elem : toRefresh) {

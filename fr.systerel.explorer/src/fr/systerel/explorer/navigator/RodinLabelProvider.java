@@ -20,7 +20,9 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eventb.core.*;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
@@ -45,13 +47,18 @@ import fr.systerel.explorer.model.ModelProofObligation;
 public class RodinLabelProvider implements
 		ILabelProvider, IFontProvider {
 
-	/*
+    private WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
+
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+        if (element instanceof  IWorkingSet) {
+        	return labelProvider.getImage(element);
+        }
 		if (element instanceof IPSStatus) {
 			IPSStatus status = ((IPSStatus) element);
 			return EventBImage.getPRSequentImage(status);
@@ -130,6 +137,9 @@ public class RodinLabelProvider implements
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object obj) {
+        if (obj instanceof  IWorkingSet) {
+            return ((IWorkingSet) obj).getLabel();
+        }
 		if (obj instanceof IRodinProject) {
 			return ((IRodinProject) obj).getElementName();
 			
@@ -166,7 +176,7 @@ public class RodinLabelProvider implements
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();
 		}
-		return new String();
+		return obj.toString();
 	}
 
 	public Font getFont(Object element) {

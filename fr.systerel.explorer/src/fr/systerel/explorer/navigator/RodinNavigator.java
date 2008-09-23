@@ -13,6 +13,8 @@ package fr.systerel.explorer.navigator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,13 +30,14 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.internal.ui.TimerText;
-import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.RodinCore;
 
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.navigator.filters.DischargedFilter;
@@ -44,7 +47,7 @@ import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
  * @author Maria Husmann
  *
  */
-public class RodinNavigator extends CommonNavigator {
+public class RodinNavigator extends CommonNavigator implements IPropertyChangeListener {
 
 
 	/**
@@ -61,15 +64,15 @@ public class RodinNavigator extends CommonNavigator {
 	private ModelController controller;
 	
 	
-	/**
-	 * Take the <code>RodinDB</code> as InitialInput and not the <code>Workspace</code>.
-	 *
-	 */
-	@Override
-	protected IAdaptable getInitialInput() {
-		this.getCommonViewer().refresh();
-		return RodinCore.getRodinDB();
-	}
+//	/**
+//	 * Take the <code>RodinDB</code> as InitialInput and not the <code>Workspace</code>.
+//	 *
+//	 */
+//	@Override
+//	protected IAdaptable getInitialInput() {
+//		this.getCommonViewer().refresh();
+//		return RodinCore.getRodinDB();
+//	}
 
 	
 	Text filterText;
@@ -101,6 +104,8 @@ public class RodinNavigator extends CommonNavigator {
 		textData.top = new FormAttachment(coolBar);
 		textData.bottom = new FormAttachment(100);
 		getCommonViewer().getControl().setLayoutData(textData);
+		WorkingSetFilterActionGroup group = new WorkingSetFilterActionGroup(this.getSite().getShell(), this);
+		group.fillContextMenu(this.getViewSite().getActionBars().getMenuManager());
 		
 	}
 	
@@ -167,6 +172,29 @@ public class RodinNavigator extends CommonNavigator {
 		Point preferred = item.computeSize(size.x, size.y);
 		item.setPreferredSize(preferred);
 		return item;
+	}
+
+	public void propertyChange(final PropertyChangeEvent event) {
+		final Object root;
+		if (event.getNewValue() instanceof IWorkingSet) {
+			root =  event.getNewValue();
+		}
+		else {
+			//set to initial input
+			root = getSite().getPage().getInput();
+		}
+		
+		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
+			public void run() {
+				CommonViewer viewer = getCommonViewer();
+				Control ctrl = viewer.getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					Object[] expanded = viewer.getExpandedElements();
+					viewer.setInput(root);
+					viewer.setExpandedElements(expanded);
+				}
+		}});
+		
 	}
 	
 }
