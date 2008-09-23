@@ -1,7 +1,9 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -225,8 +227,13 @@ public class TotalOrderTests extends TestCase {
 
 		order.setToIter(2);
 
-		assertNext(order, 2);
-		assertNoNext(order);
+		assertOrderedIteration(order, 2);
+	}
+
+	public void testSetToIterCreateNode() throws Exception {
+		order.setToIter(314);
+
+		assertOrderedIteration(order, 314);
 	}
 
 	public void testSetToIterSeveralTimesTheSame() throws Exception {
@@ -235,8 +242,7 @@ public class TotalOrderTests extends TestCase {
 		order.setToIter(2);
 		order.setToIter(2);
 
-		assertNext(order, 2);
-		assertNoNext(order);
+		assertOrderedIteration(order, 2);
 	}
 
 	public void testSetToIterSuccessors() throws Exception {
@@ -498,6 +504,21 @@ public class TotalOrderTests extends TestCase {
 		assertOrderedIteration(order, 3);
 	}
 
+	public void testIterSetToIterCreateNode() throws Exception {
+		setPreds(order, 2, 1);
+
+		assertNext(order, 1);
+
+		order.setToIter(3); // new element created => restart iteration
+
+		List<Integer> iterated = new ArrayList<Integer>();
+		while (order.hasNext()) {
+			iterated.add(order.next());
+		}
+		assertTrue("Created node should have been iterated", iterated
+				.contains(3));
+	}
+
 	public void testIterSTISucc() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, false, 3, 2);
@@ -534,7 +555,7 @@ public class TotalOrderTests extends TestCase {
 
 		assertNext(order, second);
 
-		final Integer[] NO_PREDS = makeIntArray();//new Integer[] {};
+		final Integer[] NO_PREDS = makeIntArray();
 		// second is no more the successor of first => breaks the cycle
 		order.setPredecessors(second, NO_PREDS);
 
@@ -561,8 +582,9 @@ public class TotalOrderTests extends TestCase {
 		order.setPredecessors(3, makeIntArray(5)); // making a cycle
 		order.setToIter(4);
 		order.setToIter(5);
-		
+		order.setToIter(6); // creating an independent node
+
 		// 2 remains first but was already iterated
-		assertAllIteratedOnceToEnd(order, 3, 4, 5);
+		assertAllIteratedOnceToEnd(order, 3, 4, 5, 6);
 	}
 }
