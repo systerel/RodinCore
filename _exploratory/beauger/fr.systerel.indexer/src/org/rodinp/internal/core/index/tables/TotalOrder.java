@@ -25,9 +25,6 @@ import java.util.NoSuchElementException;
  */
 public class TotalOrder<T> implements Iterator<T> {
 
-	// FIXME impossible to make a graph with only one node
-	// consider using setToIter(T) for this purpose
-	
 	private final Map<T, Node<T>> graph;
 	private final List<Node<T>> order;
 	private Iterator<Node<T>> iter;
@@ -164,10 +161,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	public void setToIter(T label) {
-		final Node<T> node = graph.get(label);
-		if (node == null) {
-			return;
-		}
+		final Node<T> node = fetchNode(label);
 		setToIter(node);
 	}
 
@@ -371,6 +365,8 @@ public class TotalOrder<T> implements Iterator<T> {
 		if (node == null) {
 			node = new Node<T>(label);
 			graph.put(label, node);
+			isSorted = false;
+			restartIter = true;
 		}
 		return node;
 	}
