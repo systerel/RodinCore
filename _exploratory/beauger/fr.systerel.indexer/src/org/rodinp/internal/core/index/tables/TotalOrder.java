@@ -83,7 +83,6 @@ public class TotalOrder<T> implements Iterator<T> {
 
 		if (currentNode != null) { // iterating
 			isSorted = false;
-			restartIter = true;
 		}
 	}
 
@@ -105,7 +104,6 @@ public class TotalOrder<T> implements Iterator<T> {
 		node.clear();
 		graph.remove(node.getLabel());
 		isSorted = false;
-		restartIter = true;
 	}
 
 	public void remove(T label) {
@@ -147,6 +145,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	private void updateIter() {
 		if (!isSorted) {
 			sort();
+			restartIter = true;
 		}
 		if (restartIter) {
 			initIter();
@@ -366,7 +365,6 @@ public class TotalOrder<T> implements Iterator<T> {
 			node = new Node<T>(label);
 			graph.put(label, node);
 			isSorted = false;
-			restartIter = true;
 		}
 		return node;
 	}
