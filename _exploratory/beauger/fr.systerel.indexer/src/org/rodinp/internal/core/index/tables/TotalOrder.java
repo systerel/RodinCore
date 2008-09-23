@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -26,11 +25,15 @@ import java.util.NoSuchElementException;
  */
 public class TotalOrder<T> implements Iterator<T> {
 
+	// FIXME impossible to make a graph with only one node
+	// consider using setToIter(T) for this purpose
+	
 	private final Map<T, Node<T>> graph;
 	private final List<Node<T>> order;
 	private Iterator<Node<T>> iter;
 	private Node<T> currentNode;
 	private boolean isSorted;
+	private boolean restartIter;
 	private int restartPos;
 	private int numberToIter;
 
@@ -43,12 +46,12 @@ public class TotalOrder<T> implements Iterator<T> {
 		this.iter = null;
 		this.currentNode = null;
 		this.isSorted = false;
+		this.restartIter = true;
 		this.restartPos = -1;
 		this.numberToIter = 0;
 	}
 
 	public void setPredecessors(T label, T[] predecessors) {
-		// FIXME treat case iterating
 		final Node<T> node = fetchNode(label);
 
 		final List<Node<T>> prevPreds = node.getPredecessors();
@@ -64,38 +67,51 @@ public class TotalOrder<T> implements Iterator<T> {
 
 		if (!(toRemove.isEmpty() && toAdd.isEmpty())) { // there are changes
 
-			int minPos = node.getOrderPos();
-			for (Node<T> addNode : toAdd) {
-				node.addPredecessor(addNode);
-
-				minPos = min(minPos, addNode.getOrderPos());
-			}
-			for (Node<T> remNode : toRemove) {
-				node.removePredecessor(remNode);
-				minPos = min(minPos, remNode.getOrderPos());
-			}
-
-			if (currentNode != null) { // iterating
-				isSorted = false;
-				restartPos = minPos;
-			}
+			processPredChanges(node, toRemove, toAdd);
 		}
+	}
+
+	private void processPredChanges(final Node<T> node,
+			final List<Node<T>> toRemove, final List<Node<T>> toAdd) {
+		int minPos = node.getOrderPos();
+		for (Node<T> addNode : toAdd) {
+			node.addPredecessor(addNode);
+
+			minPos = getMinRestartPos(minPos, addNode);
+		}
+		for (Node<T> remNode : toRemove) {
+			node.removePredecessor(remNode);
+			minPos = getMinRestartPos(minPos, remNode);
+		}
+
+		if (currentNode != null) { // iterating
+			isSorted = false;
+			restartIter = true;
+		}
+	}
+
+	private int getMinRestartPos(int pos, Node<T> node) {
+		if (alreadyIterated(node) && node.isMarked()) {
+			pos = min(pos, node.getOrderPos());
+		}
+		return pos;
 	}
 
 	public boolean contains(T label) {
 		return graph.containsKey(label);
 	}
 
-	private void remove(Node<T> node) { // FIXME treat case iterating
+	private void remove(Node<T> node) {
 		if (node.isMarked() && !alreadyIterated(node)) {
 			numberToIter--;
 		}
 		node.clear();
 		graph.remove(node.getLabel());
 		isSorted = false;
+		restartIter = true;
 	}
 
-	public void remove(T label) { // FIXME treat case iterating
+	public void remove(T label) {
 		final Node<T> node = graph.get(label);
 		if (node == null) {
 			return;
@@ -109,30 +125,38 @@ public class TotalOrder<T> implements Iterator<T> {
 		iter = null;
 		currentNode = null;
 		isSorted = false;
+		restartIter = true;
 		restartPos = -1;
 		numberToIter = 0;
 	}
 
 	public boolean hasNext() {
-		if (!isSorted) {
-			sort();
-		}
+		updateIter();
+
 		return numberToIter > 0;
 	}
 
 	public T next() {
-		if (!isSorted) {
-			sort();
-		}
-		if (!this.hasNext()) {
+		updateIter();
+		if (numberToIter <= 0) {
 			throw new NoSuchElementException("No more elements to iter.");
 		}
-		currentNode = nextMarked();
+
+		currentNode = nextMarked(iter);
 		numberToIter--;
 		return currentNode.getLabel();
 	}
 
-	public void remove() { // FIXME treat case iterating
+	private void updateIter() {
+		if (!isSorted) {
+			sort();
+		}
+		if (restartIter) {
+			initIter();
+		}
+	}
+
+	public void remove() {
 		iter.remove();
 		if (currentNode != null) {
 			remove(currentNode);
@@ -140,7 +164,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	public void setToIter(T label) {
-		Node<T> node = graph.get(label); // FIXME treat case iterating
+		final Node<T> node = graph.get(label);
 		if (node == null) {
 			return;
 		}
@@ -148,31 +172,47 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	// successors of the current node will be iterated
-	public void setToIterSuccessors() { // FIXME treat case iterating
+	public void setToIterSuccessors() {
 		if (currentNode == null) {
 			return;
 		}
 		for (Node<T> node : currentNode.getSuccessors()) {
-			if (node.isAfter(currentNode)) { // may be false in case a cycle
-												// was broken
+			if (node.isAfter(currentNode)) { // false if a cycle was broken
 				setToIter(node);
 			} // else the successor is ignored
 		}
 	}
 
-	private void setToIter(Node<T> node) { // FIXME treat case iterating
+	private void setToIter(Node<T> node) {
 		if (!node.isMarked()) {
 			node.setMark(true);
-			numberToIter++;
+			if (alreadyIterated(node)) {
+				restartIter = true;
+			} else {
+				numberToIter++;
+			}
 		}
 	}
 
-	// assumes hasNext
-	private Node<T> nextMarked() {
-		Node<T> node = iter.next();
-		while (!node.isMarked() && iter.hasNext()) {
-			node = iter.next();
+	public void setToIterNone() {
+		if (currentNode != null) { // iterating => restart
+			restartIter = true;
 		}
+		for (T label : graph.keySet()) {
+			final Node<T> node = graph.get(label);
+			node.setMark(false);
+		}
+		numberToIter = 0;
+	}
+
+	private Node<T> nextMarked(Iterator<Node<T>> iterator) {
+		Node<T> node;
+		do {
+			if (!iterator.hasNext()) {
+				return null;
+			}
+			node = iterator.next();
+		} while (!node.isMarked());
 		return node;
 	}
 
@@ -201,11 +241,12 @@ public class TotalOrder<T> implements Iterator<T> {
 
 	private void sort() {
 
-		final int previousPos;
-		if (currentNode == null) {
-			previousPos = -1;
+		final boolean iterating = (currentNode != null);
+		final List<Node<T>> previousOrder;
+		if (iterating) { // do not copy the whole list if not necessary
+			previousOrder = new ArrayList<Node<T>>(order);
 		} else {
-			previousPos = currentNode.getOrderPos();
+			previousOrder = new ArrayList<Node<T>>();
 		}
 
 		order.clear();
@@ -225,16 +266,29 @@ public class TotalOrder<T> implements Iterator<T> {
 				// because the client may later break it himself from elsewhere.
 			}
 		}
-		setOrderPos();
-		currentNode = null;
-		numberToIter = markedCount();
 
-		final int startPos = min(previousPos, restartPos);
-		iter = getIterator(startPos);
+		setOrderPos();
+
+		if (iterating) {
+			final int iterPos = currentNode.getOrderPos(); // pos in new order
+			restartPos = findRestartPos(previousOrder, iterPos);
+		} else {
+			restartPos = 0;
+		}
+
 		isSorted = true;
 	}
 
-	private ListIterator<Node<T>> getIterator(int index) {
+	// restartIter == true
+	// restartPos is set
+	private void initIter() {
+		currentNode = null;
+		iter = getIterator(restartPos);
+		numberToIter = markedCount(restartPos);
+		restartIter = false;
+	}
+
+	private Iterator<Node<T>> getIterator(int index) {
 		if (index < 0) {
 			index = 0;
 		}
@@ -242,12 +296,15 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	// assumes order has been filled
-	private int markedCount() {
+	private int markedCount(int beginIndex) {
 		int count = 0;
-		for (Node<T> node : order) {
-			if (node.isMarked()) {
-				count++;
+		Iterator<Node<T>> iterOrder = order.listIterator(beginIndex);
+		while (iterOrder.hasNext()) {
+			final Node<T> node = nextMarked(iterOrder);
+			if (node == null) {
+				break;
 			}
+			count++;
 		}
 		return count;
 	}
@@ -256,6 +313,7 @@ public class TotalOrder<T> implements Iterator<T> {
 			List<Node<T>> remaining) {
 
 		while (!zeroDegrees.isEmpty()) {
+			// TODO prefer following previous order in zeroDegrees choice
 			final Node<T> node = zeroDegrees.get(0);
 			order.add(node);
 			node.setOrderPos(order.size());
@@ -322,15 +380,27 @@ public class TotalOrder<T> implements Iterator<T> {
 		return !(currentNode == null || node.isAfter(currentNode));
 	}
 
-	// private int getFirstChange(List<Node<T>> previousOrder) {
-	// Iterator<Node<T>> iterOrder = order.listIterator();
-	// int index = 0;
-	// while(iterOrder.hasNext() && index < previousOrder.size()) {
-	// final Node<T> node = iterOrder.next();
-	// if (!previousOrder.get(index).equals(node)) {
-	// return index;
-	// }
-	// }
-	// return index;
-	// }
+	// only considers differences in the order of marked nodes
+	private int findRestartPos(List<Node<T>> previousOrder, int iterPos) {
+		
+		Iterator<Node<T>> iterOrder = order.listIterator();
+		Iterator<Node<T>> iterPrev = previousOrder.listIterator();
+		int pos = 0;
+		while (iterOrder.hasNext() && iterPrev.hasNext()) {
+			final Node<T> nodeOrder = nextMarked(iterOrder);
+			final Node<T> nodePrev = nextMarked(iterPrev);
+
+			if (nodeOrder == null || nodePrev == null) {
+				break;
+			}
+			pos = nodeOrder.getOrderPos();
+			if (pos > iterPos) {
+				break;
+			}
+			if (!nodeOrder.equals(nodePrev)) {
+				break;
+			}
+		}
+		return pos;
+	}
 }

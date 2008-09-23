@@ -111,4 +111,22 @@ public class Node<T> {
 		sb.append(")");
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		return 31 + label.hashCode();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Node))
+			return false;
+		final Node<T> other = (Node<T>) obj;
+		if (!label.equals(other.label))
+			return false;
+		return true;
+	}
 }
