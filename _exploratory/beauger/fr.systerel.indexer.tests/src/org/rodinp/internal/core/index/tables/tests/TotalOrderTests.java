@@ -97,6 +97,15 @@ public class TotalOrderTests extends TestCase {
 		}
 	}
 
+	private void assertContains(TotalOrder<Integer> totalOrder, Integer i) {
+		final boolean contains = totalOrder.contains(i);
+		assertTrue("Should contain element " + i, contains);
+	}
+
+	private int succModulo(int i, int mod) {
+		return (i % mod) + 1;
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -127,10 +136,6 @@ public class TotalOrderTests extends TestCase {
 		assertContains(order, 1);
 		assertContains(order, 2);
 		assertContains(order, 3);
-	}
-
-	private void assertContains(TotalOrder<Integer> totalOrder, Integer i) {
-		assertTrue("Should contain element " + i, totalOrder.contains(i));
 	}
 
 	public void testRemoveFirst() throws Exception {
@@ -206,15 +211,6 @@ public class TotalOrderTests extends TestCase {
 		fail("Calling next with no more elements set to iter should raise NoSuchElementException");
 	}
 
-	public void testIterRemove() {
-		setPreds(order, 2, 1);
-
-		order.next();
-		order.remove();
-
-		assertNext(order, 2);
-	}
-
 	public void testRemoveLabel() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
@@ -266,8 +262,17 @@ public class TotalOrderTests extends TestCase {
 		while (order.hasNext()) {
 			assertNext(order, i);
 			order.setToIterSuccessors();
-			i = (i % 4) + 1;
+			i = succModulo(i, 4);
 		}
+	}
+
+	public void testSetToIterNone() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		order.setToIterNone();
+
+		assertNoNext(order);
 	}
 
 	public void testCycle1() throws Exception {
@@ -377,5 +382,187 @@ public class TotalOrderTests extends TestCase {
 		assertOrderedIteration(order, 0, 1, 2);
 	}
 
-	// TODO add tests with modifications during iteration
+	public void testModifyAtIterPred() throws Exception {
+		setPreds(order, 3, 1);
+		setPreds(order, 4, 3);
+
+		assertNext(order, 1);
+		assertNext(order, 3);
+
+		setPreds(order, 3, 2, 1);
+		setPreds(order, 2, 1);
+
+		// iteration should restart from 2
+		assertOrderedIteration(order, 2, 3, 4);
+	}
+
+	public void testModifyAtIterSucc() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		setPreds(order, 4, 2);
+
+		// iteration should not restart
+		// assertNext(order, 2);
+		assertAllIteratedOnceToEnd(order, 3, 4);
+	}
+
+	public void testModifyAfterIter() throws Exception {
+		setPreds(order, 2, 1);
+
+		assertNext(order, 1);
+
+		setPreds(order, 3, 2);
+		assertOrderedIteration(order, 2, 3);
+	}
+
+	public void testIterRemove() {
+		setPreds(order, 2, 1);
+
+		assertNext(order, 1);
+		order.remove();
+
+		assertOrderedIteration(order, 2);
+	}
+
+	public void testRemoveLabelBeforeIter() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.remove(1);
+
+		assertOrderedIteration(order, 3);
+	}
+
+	public void testRemoveLabelAtIter() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.remove(2);
+
+		assertAllIteratedOnceToEnd(order, 1, 3);
+	}
+
+	public void testRemoveLabelAfterIter() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+
+		order.remove(3);
+
+		assertOrderedIteration(order, 2);
+	}
+
+	public void testIterSetToIterBefore() throws Exception {
+		setPreds(order, false, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 2);
+
+		order.setToIter(1);
+
+		assertOrderedIteration(order, 1, 2, 3);
+	}
+
+	public void testIterSetToIterAtIter() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.setToIter(2); // should do nothing as 2 is already marked
+
+		assertOrderedIteration(order, 3);
+	}
+
+	public void testIterSetToIterAfter() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, false, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.setToIter(3);
+
+		assertOrderedIteration(order, 3);
+	}
+
+	public void testIterSTISucc() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, false, 3, 2);
+		setPreds(order, false, 4, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.setToIterSuccessors();
+
+		assertAllIteratedOnceToEnd(order, 3, 4);
+	}
+
+	public void testIterSetToIterNone() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.setToIterNone();
+
+		assertNoNext(order);
+	}
+
+	public void testIterBreakCycle() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+		setPreds(order, 4, 3);
+		setPreds(order, 1, 4);
+
+		final int first = order.next();
+		final int second = succModulo(first, 4);
+
+		assertNext(order, second);
+
+		final Integer[] NO_PREDS = makeIntArray();//new Integer[] {};
+		// second is no more the successor of first => breaks the cycle
+		order.setPredecessors(second, NO_PREDS);
+
+		// so first becomes the last to iterate and second becomes the first
+		final int new1 = second;
+		final int new2 = succModulo(new1, 4);
+		final int new3 = succModulo(new2, 4);
+		final int new4 = first;
+
+		assertOrderedIteration(order, new1, new2, new3, new4);
+	}
+
+	public void testIterSeveralModifs() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, false, 3, 2);
+		setPreds(order, false, 4, 3);
+
+		assertNext(order, 1);
+		assertNext(order, 2);
+
+		order.remove(1);
+		order.setToIterSuccessors();
+		order.setPredecessors(5, makeIntArray(4));
+		order.setPredecessors(3, makeIntArray(5)); // making a cycle
+		order.setToIter(4);
+		order.setToIter(5);
+		
+		// 2 remains first but was already iterated
+		assertAllIteratedOnceToEnd(order, 3, 4, 5);
+	}
 }
