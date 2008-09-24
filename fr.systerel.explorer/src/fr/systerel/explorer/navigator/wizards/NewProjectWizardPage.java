@@ -26,9 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * This is the WizardPage for the NewProjecWizard.

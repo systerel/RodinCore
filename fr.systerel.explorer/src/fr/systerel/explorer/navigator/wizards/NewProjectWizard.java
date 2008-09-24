@@ -147,7 +147,6 @@ public class NewProjectWizard extends Wizard implements INewWizard{
 		try {
 			final IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
 					.getRodinProject(projectName);
-			final IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
@@ -203,7 +202,7 @@ public class NewProjectWizard extends Wizard implements INewWizard{
 	 * @param project		The project to add
 	 * @param workingSets	The working sets the project should be added to
 	 */
-	private void addToWorkingSets(IProject project, IWorkingSet[] workingSets){
+	void addToWorkingSets(IProject project, IWorkingSet[] workingSets){
 		for (IWorkingSet workingSet : workingSets) {
 			IAdaptable[] oldElements = workingSet.getElements();
 			IAdaptable[] newElements = new IAdaptable[oldElements.length +1];
