@@ -149,7 +149,7 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	/**
-	 * Removes a ModelMachine from the Model for a given MachineFile
+	 * Removes a ModelMachine from the Model for a given MachineFile. Also removes dependencies
 	 * @param machineFile	The  MachineFile to look for
 	 */
 	public static void removeMachine(IMachineFile machineFile){

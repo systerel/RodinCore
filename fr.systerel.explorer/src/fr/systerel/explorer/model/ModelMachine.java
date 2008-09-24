@@ -218,23 +218,45 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return copy;
 	}
 	
+	public List<ModelMachine> getRefinesMachines() {
+		return refinesMachines;
+	}
+	
 	public void addRefinesMachine(ModelMachine machine) {
 		//only add new Machines
 		if (!refinesMachines.contains(machine)) {
 			refinesMachines.add(machine);
 		}
 	}
+
+	public void removeRefinesMachine(ModelMachine machine) {
+		refinesMachines.remove(machine);
+	}
+	
+	public List<ModelMachine> getRefinedByMachines() {
+		return refinedByMachines;
+	}
+
 	public void addRefinedByMachine(ModelMachine machine) {
 		//only add new Machines
 		if (!refinedByMachines.contains(machine)) {
 			refinedByMachines.add(machine);
 		}
 	}
+
+	public void removeRefinedByMachine(ModelMachine machine) {
+		refinedByMachines.remove(machine);
+	}
+	
 	public void addSeesContext(ModelContext context) {
 		//only add new Contexts
 		if (!seesContexts.contains(context)) {
 			seesContexts.add(context);
 		}
+	}
+
+	public void removeSeesContext(ModelContext context) {
+		seesContexts.remove(context);
 	}
 
 	public IMachineFile getInternalMachine() {

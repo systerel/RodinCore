@@ -68,7 +68,7 @@
                   pattern="fr.systerel.explorer.navigator.content.complex">
             </contentExtension>
             <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.workingSets">
+                  pattern="org.eclipse.ui.navigator.resourceContent">
             </contentExtension>
          </includes>
       </viewerContentBinding>
@@ -96,6 +96,7 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
+            activeByDefault="true"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ProjectContentProvider"
             id="fr.systerel.explorer.navigator.content.project"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
@@ -110,9 +111,17 @@
             </instanceof>
          </possibleChildren>
          <triggerPoints>
-            <instanceof
-                  value="org.rodinp.core.IRodinDB">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.rodinp.core.IRodinDB">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.ui.IWorkingSet">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IWorkspaceRoot">
+               </instanceof>
+            </or>
          </triggerPoints>
       </navigatorContent>
       <navigatorContent
@@ -521,6 +530,12 @@
             class="fr.systerel.explorer.navigator.filters.ObligationTextFilter"
             id="fr.systerel.explorer.navigator.filters.obligationText"
             name="%filters.obligationText">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.HideNoneRodinFilter"
+            id="fr.systerel.explorer.navigator.filters.hideNonRodin"
+            name="%filters.hideNonRodin">
       </commonFilter>
    </extension>
    <extension

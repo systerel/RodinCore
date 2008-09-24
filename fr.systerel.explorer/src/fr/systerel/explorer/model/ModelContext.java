@@ -198,15 +198,60 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @param context	The context to add
 	 */
 	public void addExtendedByContext(ModelContext context){
-		extendedByContexts.add(context);
+		if (!extendedByContexts.contains(context)) {
+			extendedByContexts.add(context);
+		}
 	}
+
+	public void removeExtendedByContext(ModelContext context){
+		extendedByContexts.remove(context);
+	}
+
+	public List<ModelContext> getExtendedByContexts() {
+		return extendedByContexts;
+	}
+	
+	/**
+	 * Adds a context that this context extends
+	 * @param context	The context that is extended by this context.
+	 */
+	public void addExtendsContext(ModelContext context) {
+		//only add new contexts
+		if (!extendsContexts.contains(context)) {
+			extendsContexts.add(context);
+		}
+		
+	}
+	
+	public void removeExtendsContext(ModelContext context){
+		extendsContexts.remove(context);
+	}
+	
+	public List<ModelContext> getExtendsContexts() {
+		return extendsContexts;
+	}
+
 
 	/**
 	 * Adds a machine that sees this context.
 	 * @param machine	The machine to add.
 	 */
 	public void addSeenByMachine(ModelMachine machine){
-		seenByMachines.add(machine);
+		if (!seenByMachines.contains(machine)) {
+			seenByMachines.add(machine);
+		}
+	}
+
+	/**
+	 * Removes a machine that sees this context.
+	 * @param machine	The machine to remove.
+	 */
+	public void removeSeenByMachine(ModelMachine machine){
+		seenByMachines.remove(machine);
+	}
+	
+	public List<ModelMachine> getSeenByMachines(){
+		return seenByMachines;
 	}
 	
 	/**
@@ -225,17 +270,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return (seenByMachines.size() == 0);
 	}
 
-	/**
-	 * Adds a context that this context extends
-	 * @param context	The context that is extended by this context.
-	 */
-	public void addExtends(ModelContext context) {
-		//only add new contexts
-		if (!extendsContexts.contains(context)) {
-			extendsContexts.add(context);
-		}
-		
-	}
 
 	public IContextFile getInternalContext(){
 		return internalContext;

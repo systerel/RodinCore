@@ -68,14 +68,17 @@ public class ModelProject implements IModelElement {
 			for (int j = 0; j < refines.length; j++) {
 				IRefinesMachine refine = refines[j];
 				IMachineFile abst = refine.getAbstractMachine();
-				if (!machines.containsKey(abst.getBareName())) {
-					processMachine(abst);
-				}
-				ModelMachine cplxMach = machines.get(abst.getBareName());
-				// don't allow cycles
-				if (!cplxMach.getAncestors().contains(mach)) {
-					cplxMach.addRefinedByMachine(mach);
-					mach.addRefinesMachine(cplxMach);
+				// May not exist, if there are some errors in the project (e.g. was deleted)
+				if (abst.exists()) {
+					if (!machines.containsKey(abst.getBareName())) {
+						processMachine(abst);
+					}
+					ModelMachine cplxMach = machines.get(abst.getBareName());
+					// don't allow cycles
+					if (!cplxMach.getAncestors().contains(mach)) {
+						cplxMach.addRefinedByMachine(mach);
+						mach.addRefinesMachine(cplxMach);
+					}
 				}
 				
 			}
@@ -84,13 +87,15 @@ public class ModelProject implements IModelElement {
 			for (int j = 0; j < sees.length; j++) {
 				ISeesContext see = sees[j];
 				IContextFile ctx = see.getSeenSCContext().getContextFile();
-				if (!contexts.containsKey(ctx.getBareName())) {
-					processContext(ctx);
+				// May not exist, if there are some errors in the project (e.g. was deleted)
+				if (ctx.exists()) {
+					if (!contexts.containsKey(ctx.getBareName())) {
+						processContext(ctx);
+					}
+					ModelContext cplxCtxt = contexts.get(ctx.getBareName());
+					cplxCtxt.addSeenByMachine(mach);
+					mach.addSeesContext(cplxCtxt);
 				}
-				ModelContext cplxCtxt = contexts.get(ctx.getBareName());
-				cplxCtxt.addSeenByMachine(mach);
-				mach.addSeesContext(cplxCtxt);
-				
 			}
 			
 		} catch (RodinDBException e) {
@@ -126,16 +131,18 @@ public class ModelProject implements IModelElement {
 			for (int j = 0; j < exts.length; j++) {
 				IExtendsContext ext = exts[j];
 				IContextFile extCtx = ext.getAbstractSCContext().getContextFile();
-				if (!contexts.containsKey(extCtx.getBareName())) {
-					processContext(extCtx);
+				// May not exist, if there are some errors in the project (e.g. was deleted)
+				if (extCtx.exists()) {
+					if (!contexts.containsKey(extCtx.getBareName())) {
+						processContext(extCtx);
+					}
+					ModelContext cplxCtx = contexts.get(extCtx.getBareName());
+					// don't allow cycles!
+					if (!cplxCtx.getAncestors().contains(ctx)) {
+						cplxCtx.addExtendedByContext(ctx);
+						ctx.addExtendsContext(cplxCtx);
+					}
 				}
-				ModelContext cplxCtx = contexts.get(extCtx.getBareName());
-				// don't allow cycles!
-				if (!cplxCtx.getAncestors().contains(ctx)) {
-					cplxCtx.addExtendedByContext(ctx);
-					ctx.addExtends(cplxCtx);
-				}
-				
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -193,8 +200,28 @@ public class ModelProject implements IModelElement {
 		return machines.containsKey(identifier);
 	}
 	
+	/**
+	 * Removes a machine from this project.
+	 * Also removes dependencies
+	 * @param identifier	An identifier for the machine to remove
+	 */
 	public void removeMachine(String identifier) {
-		machines.remove(identifier);
+		ModelMachine machine = machines.get(identifier);
+		if (machine != null) {
+			for (Iterator<ModelContext> iterator = machine.getSeesContexts().iterator(); iterator.hasNext();) {
+				ModelContext ctx = iterator.next();
+				ctx.removeSeenByMachine(machine);
+			}
+			for (Iterator<ModelMachine> iterator = machine.getRefinedByMachines().iterator(); iterator.hasNext();) {
+				ModelMachine mach = iterator.next();
+				mach.removeRefinesMachine(machine);
+			}
+			for (Iterator<ModelMachine> iterator = machine.getRefinesMachines().iterator(); iterator.hasNext();) {
+				ModelMachine mach = iterator.next();
+				mach.removeRefinedByMachine(machine);
+			}
+			machines.remove(identifier);
+		}
 	}
 
 	public ModelContext getContext(String identifier) {
@@ -210,7 +237,22 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public void removeContext(String identifier) {
-		contexts.remove(identifier);
+		ModelContext context =  contexts.get(identifier);
+		if (context != null) {
+			for (Iterator<ModelContext> iterator = context.getExtendedByContexts().iterator(); iterator.hasNext();) {
+				ModelContext ctx = iterator.next();
+				ctx.removeExtendsContext(context);
+			}
+			for (Iterator<ModelContext> iterator = context.getExtendsContexts().iterator(); iterator.hasNext();) {
+				ModelContext ctx = iterator.next();
+				ctx.removeExtendedByContext(context);
+			}
+			for (Iterator<ModelMachine> iterator = context.getSeenByMachines().iterator(); iterator.hasNext();) {
+				ModelMachine mach = iterator.next();
+				mach.removeSeesContext(context);
+			}
+			contexts.remove(identifier);
+		}
 	}
 	
 	public ModelInvariant getInvariant(IInvariant invariant){
