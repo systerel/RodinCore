@@ -43,6 +43,7 @@ import fr.systerel.explorer.navigator.RodinNavigator;
  * The Model is used to present the structure of the machines and contexts 
  * and the proof obligations.
  * The ModelController controls the model (e.g. updates it, when the database changes)
+ * and grants access to its element such as Projects, Machines, Invariants etc.
  *
  */
 public class ModelController implements IElementChangedListener {
@@ -276,9 +277,14 @@ public class ModelController implements IElementChangedListener {
 				TreeViewer viewer = navigator.getCommonViewer();
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
-					for (Object elem : toRefresh) {
-						viewer.refresh(elem);
-						System.out.println("refreshing view: "+elem.toString() );
+					//TODO: only temporary solution. change this.
+					// refresh everything
+					if (toRefresh.contains(RodinCore.getRodinDB())) {
+						viewer.refresh();
+					} else {
+						for (Object elem : toRefresh) {
+							viewer.refresh(elem);
+						}
 					}
 				}
 		}});
@@ -378,6 +384,8 @@ public class ModelController implements IElementChangedListener {
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinProject) {
 //				the content provider refreshes the model
+				//TODO: adapt this for the workspace or a working set as input
+				// This only works if the DB was used as input.
 				addToRefresh(element.getRodinDB());
 			} else {
 				if (element instanceof IContextFile) {

@@ -17,8 +17,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.eventb.ui.EventBUIPlugin;
+
+import fr.systerel.explorer.navigator.wizards.NewProjectWizard;
 
 public class NewProjectActionDelegate implements IViewActionDelegate {
 

@@ -63,11 +63,8 @@ public class ModelProject implements IModelElement {
 		mach.processPSFile();
 		try {
 			// get all machines, that this machine refines (all abstract machines)
-			IRefinesMachine[] refines;
-			refines = machine.getRefinesClauses();
-			for (int j = 0; j < refines.length; j++) {
-				IRefinesMachine refine = refines[j];
-				IMachineFile abst = refine.getAbstractMachine();
+			for (IRefinesMachine refine : machine.getRefinesClauses()){
+				final IMachineFile abst = refine.getAbstractMachine();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
 				if (abst.exists()) {
 					if (!machines.containsKey(abst.getBareName())) {
