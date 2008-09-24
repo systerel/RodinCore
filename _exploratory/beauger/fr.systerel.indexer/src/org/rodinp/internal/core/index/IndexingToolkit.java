@@ -1,15 +1,17 @@
 package org.rodinp.internal.core.index;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.internal.core.index.tables.DependenceTable;
+import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -22,13 +24,12 @@ public class IndexingToolkit implements IIndexingToolkit {
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
 	private final Map<IInternalElement, String> previousExports;
-	// private final DependenceTable dependTable;
-	private final IRodinFile[] localDeps;
 	private final Set<IInternalElement> imports;
 	private Descriptor currentDescriptor;
+	private boolean isClean;
 
 	/**
-	 * The given DependenceTable is assumed to be up-to-date.
+	 * The given imports are assumed to be up-to-date.
 	 * <p>
 	 * The given ExportTable is assumed to be unchanged since latest indexing of
 	 * the given file (empty if it never was indexed). It will be updated
@@ -42,14 +43,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * @param fileTable
 	 * @param nameTable
 	 * @param exportTable
-	 * @param dependTable
+	 * @param imports
 	 */
 	public IndexingToolkit(IRodinFile file, RodinIndex rodinIndex,
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
-			DependenceTable dependTable) {
-
-		// TODO make this method public, don't call it here
-		clean(file, rodinIndex, fileTable, nameTable);
+			Set<IInternalElement> imports) {
 
 		this.file = file;
 		this.rodinIndex = rodinIndex;
@@ -57,15 +55,15 @@ public class IndexingToolkit implements IIndexingToolkit {
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
 		this.previousExports = exportTable.get(file);
-		// this.dependTable = dependTable;
-		this.localDeps = dependTable.get(file);
-		this.imports = computeImports();
-		// TODO mv line below in clean()
-		exportTable.remove(file); // reset exports for this file
+		this.imports = imports;
 		this.currentDescriptor = null;
+		this.isClean = false;
 	}
 
 	public void declare(IInternalElement element, String name) {
+		if (!isClean) {
+			clean();
+		}
 
 		if (!isLocal(element)) {
 			throw new IllegalArgumentException(
@@ -78,8 +76,8 @@ public class IndexingToolkit implements IIndexingToolkit {
 					"Element has already been declared: " + element);
 		}
 
-		currentDescriptor = rodinIndex.getDescriptor(element); // there may be
-		// alien occurrences
+		currentDescriptor = rodinIndex.getDescriptor(element);
+		// there may be import occurrences
 		if (currentDescriptor == null) {
 			currentDescriptor = rodinIndex.makeDescriptor(element, name);
 		} else { // possible renaming
@@ -87,7 +85,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 			if (!previousName.equals(name)) {
 				rodinIndex.rename(element, name);
 				nameTable.remove(previousName, element);
-				// there are alien occurrences of the element;
+				// there are import occurrences of the element;
 				// in those files, it is referred to with previousName
 				// => rodinIndex tables are coherent but those files may not be
 				// indexed again, and the element name is incorrect there
@@ -100,6 +98,10 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 	public void addOccurrence(IInternalElement element, IOccurrenceKind kind,
 			IRodinLocation location) {
+
+		if (!isClean) {
+			clean();
+		}
 
 		if (!verifyOccurrence(element, location)) {
 			throw new IllegalArgumentException(
@@ -125,6 +127,10 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * beyond the scope of the indexing system.
 	 */
 	public void export(IInternalElement element) {
+		if (!isClean) {
+			clean();
+		}
+
 		if (!isLocalOrImported(element)) {
 			throw new IllegalArgumentException(
 					"Cannot export an element that is neither local nor imported.");
@@ -132,14 +138,6 @@ public class IndexingToolkit implements IIndexingToolkit {
 		fetchCurrentDescriptor(element);
 
 		exportTable.add(file, element, currentDescriptor.getName());
-	}
-
-	private Set<IInternalElement> computeImports() {
-		final Set<IInternalElement> result = new HashSet<IInternalElement>();
-		for (IRodinFile f : localDeps) {
-			result.addAll(exportTable.get(f).keySet());
-		}
-		return result;
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -178,29 +176,38 @@ public class IndexingToolkit implements IIndexingToolkit {
 		return !exportTable.get(file).equals(previousExports);
 	}
 
-	private void clean(IRodinFile f, final RodinIndex index,
-			final FileTable fTable, final NameTable nTable) {
+	public void clean() {
 
-		for (IInternalElement element : fTable.get(f)) {
-			final Descriptor descriptor = index.getDescriptor(element);
+		for (IInternalElement element : fileTable.get(file)) {
+			final Descriptor descriptor = rodinIndex.getDescriptor(element);
 
 			if (descriptor == null) {
-				// TODO log problem instead
-				throw new IllegalStateException(
-						"Elements in FileTable with no Descriptor in RodinIndex.");
-			}
-			descriptor.removeOccurrences(f);
+				IRodinDBStatus status = new RodinDBStatus(
+						IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+						element,
+						getClass()
+								+ ": element in FileTable with no Descriptor in RodinIndex.");
+				RodinCore.getRodinCore().getLog().log(status);
+			} else {
+				descriptor.removeOccurrences(file);
 
-			if (descriptor.getOccurrences().length == 0) {
-				final String name = descriptor.getName();
-				nTable.remove(name, element);
-				index.removeDescriptor(element);
+				if (descriptor.getOccurrences().length == 0) {
+					final String name = descriptor.getName();
+					nameTable.remove(name, element);
+					rodinIndex.removeDescriptor(element);
+				}
 			}
 		}
-		fTable.remove(f);
+		exportTable.remove(file);
+		fileTable.remove(file);
+		isClean = true;
 	}
 
 	public IInternalElement[] getImports() {
+		if (!isClean) {
+			clean();
+		}
+
 		return imports.toArray(new IInternalElement[imports.size()]);
 	}
 

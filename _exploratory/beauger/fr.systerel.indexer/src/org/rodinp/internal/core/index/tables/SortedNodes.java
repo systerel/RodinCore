@@ -25,7 +25,7 @@ public class SortedNodes<T> implements Iterator<T> {
 
 	private final List<Node<T>> order;
 	private Iterator<Node<T>> iter;
-	private boolean restartIter;
+	private boolean startIter;
 	private int restartPos;
 	private Node<T> currentNode;
 	private int numberToIter;
@@ -33,8 +33,8 @@ public class SortedNodes<T> implements Iterator<T> {
 	public SortedNodes() {
 		this.order = new ArrayList<Node<T>>();
 		this.iter = null;
-		this.restartIter = true;
-		this.restartPos = -1;
+		this.startIter = true;
+		this.restartPos = 0;
 		this.currentNode = null;
 		this.numberToIter = 0;
 	}
@@ -42,8 +42,8 @@ public class SortedNodes<T> implements Iterator<T> {
 	public void clear() {
 		order.clear();
 		iter = null;
-		restartIter = true;
-		restartPos = -1;
+		startIter = true;
+		restartPos = 0;
 		currentNode = null;
 		numberToIter = 0;
 	}
@@ -189,8 +189,8 @@ public class SortedNodes<T> implements Iterator<T> {
 		return pos;
 	}
 
-	public void restart() {
-		this.restartIter = true;
+	public void start() { // TODO consider getting rid of it
+		this.startIter = true;
 	}
 	
 	public boolean hasNext() {
@@ -218,11 +218,11 @@ public class SortedNodes<T> implements Iterator<T> {
 	}
 
 	private void updateIter() {
-		if (restartIter) {
+		if (startIter) {
 			currentNode = null;
 			iter = getIterator(restartPos);
 			numberToIter = markedCount(restartPos);
-			restartIter = false;
+			startIter = false;
 		}
 	}
 
@@ -266,7 +266,7 @@ public class SortedNodes<T> implements Iterator<T> {
 
 		if (!node.isMarked()) {
 			if (alreadyIterated(node)) {
-				restartIter = true;
+				startIter = true;
 			}
 			node.setMark(true);
 			numberToIter++;

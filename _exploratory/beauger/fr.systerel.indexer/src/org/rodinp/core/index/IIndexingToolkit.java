@@ -3,7 +3,7 @@ package org.rodinp.core.index;
 import org.rodinp.core.IInternalElement;
 
 /**
- * This interface is the public facade of the indexing system.
+ * This interface is the public toolkit for the indexing system.
  * <p>
  * It allows indexers to declare elements, record their occurrences and export
  * them.

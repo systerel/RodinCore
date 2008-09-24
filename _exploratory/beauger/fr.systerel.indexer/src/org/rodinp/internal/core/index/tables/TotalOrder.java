@@ -35,6 +35,21 @@ public class TotalOrder<T> implements Iterator<T> {
 		this.isSorted = false;
 	}
 
+	public List<T> getPredecessors(T label) {
+		// TODO test and implement
+		final Node<T> node = graph.get(label);
+		if (node == null) {
+			return new ArrayList<T>();
+		}
+		final List<Node<T>> predecessors = node.getPredecessors();
+		final List<T> result = new ArrayList<T>();
+
+		for (Node<T> pred : predecessors) {
+			result.add(pred.getLabel());
+		}
+		return result;
+	}
+
 	public void setPredecessors(T label, T[] predecessors) {
 		final Node<T> node = fetchNode(label);
 
@@ -61,7 +76,7 @@ public class TotalOrder<T> implements Iterator<T> {
 		for (Node<T> addNode : toAdd) {
 			node.addPredecessor(addNode);
 		}
-		
+
 		for (Node<T> remNode : toRemove) {
 			node.removePredecessor(remNode);
 		}
@@ -85,6 +100,14 @@ public class TotalOrder<T> implements Iterator<T> {
 		isSorted = false;
 	}
 
+	/**
+	 * Should be called before each iteration. Can be called to restart an
+	 * iteration in progress.
+	 */
+	public void start() { // TODO consider getting rid of it (otherwise test with iter)
+		sortedNodes.start();
+	}
+
 	public boolean hasNext() {
 		updateSort();
 
@@ -93,13 +116,13 @@ public class TotalOrder<T> implements Iterator<T> {
 
 	public T next() {
 		updateSort();
-		
+
 		return sortedNodes.next();
 	}
 
 	public void remove() {
 		updateSort();
-		
+
 		sortedNodes.remove();
 		remove(sortedNodes.getCurrentNode());
 	}
@@ -114,7 +137,7 @@ public class TotalOrder<T> implements Iterator<T> {
 		if (!isSorted) {
 			sortedNodes.sort(graph);
 			isSorted = true;
-			sortedNodes.restart();
+			sortedNodes.start();
 		}
 	}
 
@@ -129,15 +152,12 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	public void setToIterNone() {
-		sortedNodes.restart();
-
 		for (T label : graph.keySet()) {
 			final Node<T> node = graph.get(label);
 			node.setMark(false);
 		}
-		sortedNodes.restart();
+		sortedNodes.start();
 	}
-
 
 	private Node<T> fetchNode(T label) {
 		Node<T> node = graph.get(label);
