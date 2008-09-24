@@ -68,11 +68,11 @@ public class FileTableTests extends AbstractRodinDBTests {
 		assertSameElements(expectedResult, elements);
 	}
 
-	public void testAlienElement() throws Exception {
+	public void testImportedElement() throws Exception {
 		try {
 			table.add(element, file2);
 		} catch (Exception e) {
-			fail("adding an alien element to a FileTable should not raise any Exception");
+			fail("adding an imported element to a FileTable should not raise any Exception");
 		}
 	}
 
@@ -117,14 +117,14 @@ public class FileTableTests extends AbstractRodinDBTests {
 		table.add(element, file);
 
 		final boolean contains = table.contains(file, element);
-		
-		assertTrue("FileTable should contain "+element, contains);
+
+		assertTrue("FileTable should contain " + element, contains);
 	}
-	
+
 	public void testContainsNot() throws Exception {
 		final boolean contains = table.contains(file, element);
-		
-		assertFalse("FileTable should not contain "+element, contains);
-		
+
+		assertFalse("FileTable should not contain " + element, contains);
+
 	}
 }

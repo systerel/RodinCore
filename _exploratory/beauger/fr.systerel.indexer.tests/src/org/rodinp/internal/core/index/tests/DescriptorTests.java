@@ -65,17 +65,17 @@ public class DescriptorTests extends AbstractRodinDBTests {
 	}
 
 	public void testRemoveOccurrences() throws Exception {
-		Occurrence friendOcc = createDefaultOccurrence(testElt);
-		IRodinFile alien = createRodinFile(rodinProject, "alienFile.test");
-		Occurrence alienOcc = createDefaultOccurrence(alien);
+		Occurrence localOcc = createDefaultOccurrence(testElt);
+		IRodinFile importer = createRodinFile(rodinProject, "importerFile.test");
+		Occurrence importOcc = createDefaultOccurrence(importer);
 
-		testDesc.addOccurrence(friendOcc);
-		testDesc.addOccurrence(alienOcc);
+		testDesc.addOccurrence(localOcc);
+		testDesc.addOccurrence(importOcc);
 
 		testDesc.removeOccurrences(testElt.getRodinFile());
 
-		assertContainsNot(testDesc, friendOcc);
-		assertContains(testDesc, alienOcc);
+		assertContainsNot(testDesc, localOcc);
+		assertContains(testDesc, importOcc);
 	}
 
 	public void testSetName() throws Exception {

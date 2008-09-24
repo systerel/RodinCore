@@ -1,12 +1,12 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.RodinIndexer;
@@ -16,6 +16,8 @@ import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
+import org.rodinp.internal.core.index.tables.FileTable;
+import org.rodinp.internal.core.index.tables.NameTable;
 
 public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
@@ -45,6 +47,19 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 		for (int i = 0; i < length; i++) {
 			assertEquals("bad order at rank " + (i + 1) + "/" + length,
 					expectedOrder[i], actualOrder[i]);
+		}
+	}
+
+	private void assertAnyOrder(IRodinFile[] expectedFiles,
+			IRodinFile[] actualOrder) {
+
+		final int length = expectedFiles.length;
+		assertLength(actualOrder, length);
+
+		List<IRodinFile> actualList = Arrays.asList(actualOrder);
+
+		for (IRodinFile file : expectedFiles) {
+			assertTrue(file + " was not indexed", actualList.contains(file));
 		}
 	}
 
@@ -100,14 +115,12 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		try {
-			manager.scheduleIndexing(file1, file2);
-		} catch (IllegalStateException e) {
-			assertTrue("Good exception but bad message", e.getMessage()
-					.contains("cycle"));
-			return;
-		}
-		fail("A cycle in dependencies should raise IllegalStateException");
+		manager.scheduleIndexing(file1, file2);
+
+		final IRodinFile[] expectedFiles = makeIRFArray(file1, file2);
+		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
+
+		assertAnyOrder(expectedFiles, actualOrder);
 	}
 
 	public void testReindexDependents() throws Exception {
@@ -213,21 +226,34 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	public void testFileRemoved() throws Exception {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer, file1.getElementType());
+		RodinIndexer.register(indexer, file2.getElementType());
 
-		manager.scheduleIndexing(file1);
+		manager.scheduleIndexing(file2);
 
-		file1.delete(true, null);
+		file2.delete(true, null);
 
 		try {
-			manager.scheduleIndexing(file1);
+			manager.scheduleIndexing(file2);
 		} catch (Exception e) {
 			fail("Exception thrown when trying to index a deleted file: "
 					+ e.getLocalizedMessage());
 		}
-		final DependenceTable dependenceTable = manager
-				.getDependenceTable(project);
-		assertIsEmpty(dependenceTable.get(file1));
+
+		final ExportTable exportTable = manager.getExportTable(project);
+		final FileTable fileTable = manager.getFileTable(project);
+		final NameTable nameTable = manager.getNameTable(project);
+		final RodinIndex index = manager.getIndex(project);
+
+		final Map<IInternalElement, String> exports = exportTable.get(file2);
+		final IInternalElement[] fileElements = fileTable.get(file2);
+		final IInternalElement[] nameElements = nameTable
+				.getElements(eltF2Name);
+
+		assertTrue("exports should be empty after file deletion", exports
+				.isEmpty());
+		assertIsEmpty(fileElements);
+		assertIsEmpty(nameElements);
+		assertNoSuchDescriptor(index, eltF2);
 	}
 
 	public void testSerialExports() throws Exception {

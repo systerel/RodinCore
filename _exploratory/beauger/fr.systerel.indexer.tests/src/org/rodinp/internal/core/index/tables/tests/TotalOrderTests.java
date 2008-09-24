@@ -104,6 +104,15 @@ public class TotalOrderTests extends TestCase {
 		assertTrue("Should contain element " + i, contains);
 	}
 
+	private void assertContains(final List<Integer> predecessors, int... preds) {
+		assertEquals("Bad predecessors length", preds.length, predecessors
+				.size());
+		for (int pred : preds) {
+			assertTrue("Predecessors should contain " + pred, predecessors
+					.contains(pred));
+		}
+	}
+
 	private int succModulo(int i, int mod) {
 		return (i % mod) + 1;
 	}
@@ -129,6 +138,14 @@ public class TotalOrderTests extends TestCase {
 		setPreds(order, 3, 1, 2);
 
 		assertPartitionOrder(order, makeIntArray(1, 2), makeIntArray(3));
+	}
+
+	public void testGetPredecessors() throws Exception {
+		setPreds(order, 3, 1, 2);
+
+		final List<Integer> predecessors = order.getPredecessors(3);
+
+		assertContains(predecessors, 1, 2);
 	}
 
 	public void testContains() {
