@@ -67,9 +67,6 @@
             <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.complex">
             </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resourceContent">
-            </contentExtension>
          </includes>
       </viewerContentBinding>
       <viewerActionBinding

@@ -51,7 +51,7 @@ public class NewProjectWizard extends Wizard implements INewWizard{
 
 	/**
 	 * The identifier of the new component wizard (value
-	 * <code>"org.eventb.ui.wizards.NewProject"</code>).
+	 * <code>"fr.systerel.explorer.wizards.NewProject"</code>).
 	 */
 	public static final String WIZARD_ID = "fr.systerel.explorer"
 			+ ".wizards.NewProject";
