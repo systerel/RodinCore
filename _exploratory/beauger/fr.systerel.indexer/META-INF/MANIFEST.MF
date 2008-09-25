@@ -10,3 +10,5 @@ Export-Package: org.rodinp.core.index,
  org.rodinp.internal.core.index.tables;x-friends:="fr.systerel.indexer.tests"
 Bundle-Vendor: %Bundle-Vendor.f0
 Bundle-Localization: plugin
+Bundle-Activator: org.rodinp.core.index.RodinIndexer
+Eclipse-LazyStart: true

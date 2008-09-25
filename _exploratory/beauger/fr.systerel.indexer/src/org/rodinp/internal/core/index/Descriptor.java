@@ -7,6 +7,7 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.index.IOccurrence;
 
 public final class Descriptor {
 
@@ -18,12 +19,12 @@ public final class Descriptor {
 	 */
 	private String name;
 	private IInternalElement element;
-	private Set<Occurrence> occurrences;
+	private Set<IOccurrence> occurrences;
 
 	public Descriptor(IInternalElement element, String name) {
 		this.name = name;
 		this.element = element;
-		this.occurrences = new HashSet<Occurrence>();
+		this.occurrences = new HashSet<IOccurrence>();
 	}
 
 	public String getName() {
@@ -34,26 +35,22 @@ public final class Descriptor {
 		return element;
 	}
 
-	public Occurrence[] getOccurrences() {
+	public IOccurrence[] getOccurrences() {
 		return occurrences.toArray(new Occurrence[occurrences.size()]);
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public boolean hasOccurrence(Occurrence occurrence) {
+	public boolean hasOccurrence(IOccurrence occurrence) {
 		return occurrences.contains(occurrence);
 	}
 
-	public void addOccurrence(Occurrence occurrence) {
+	public void addOccurrence(IOccurrence occurrence) {
 		occurrences.add(occurrence);
 	}
 
 	public void removeOccurrences(IRodinFile file) {
-		final Iterator<Occurrence> iter = occurrences.iterator();
+		final Iterator<IOccurrence> iter = occurrences.iterator();
 		while (iter.hasNext()) {
-			final Occurrence occ = iter.next();
+			final IOccurrence occ = iter.next();
 			if (file.equals(occ.getLocation().getRodinFile())) {
 				iter.remove();
 			}
@@ -67,7 +64,7 @@ public final class Descriptor {
 		sb.append(element.getElementName() + "\n");
 		sb.append("Name: " + name + "\n");
 
-		for (Occurrence ref : occurrences) {
+		for (IOccurrence ref : occurrences) {
 			sb.append(ref.toString() + "\n");
 		}
 		return sb.toString();

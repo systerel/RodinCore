@@ -13,6 +13,8 @@ package org.rodinp.core.index;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Plugin;
+import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinDBStatus;
@@ -33,7 +35,7 @@ import org.rodinp.internal.core.index.RodinLocation;
  * @author Nicolas Beauger
  * 
  */
-public class RodinIndexer {
+public class RodinIndexer extends Plugin {
 
 	private static final Map<String, IOccurrenceKind> kinds =
 		new HashMap<String, IOccurrenceKind>();
@@ -72,6 +74,44 @@ public class RodinIndexer {
 		return new RodinLocation(element, attributeType, start, end);
 	}
 
+
+	// The plug-in ID
+	public static final String PLUGIN_ID = "fr.systerel.indexer";
+
+	// The shared instance
+	private static RodinIndexer plugin;
+	
+	/**
+	 * The constructor
+	 */
+	public RodinIndexer() {
+		// nothing to do
+	}
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		System.out.println("RodinIndexer starting");
+		IndexManager.getDefault().start();
+	}
+
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		IndexManager.getDefault().interrupt();
+		plugin = null;
+		super.stop(context);
+	}
+
+	/**
+	 * Returns the shared instance
+	 *
+	 * @return the shared instance
+	 */
+	public static RodinIndexer getDefault() {
+		return plugin;
+	}
+	
 	/** **************************************************************************** */
 	
 	/** To be moved to {@link IRodinDBStatusConstants} */

@@ -17,6 +17,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Stores and maintains a total order in a set of T objects.
+ * <p>
+ * Those objects are added to the order via {@link #setToIter(Object)} and
+ * {@link #setPredecessors(Object, Object[])} methods, there is no specific
+ * adding method.
+ * <p>
+ * The order implements Iterator, thus allowing the user to scan it in a
+ * sequential manner in the computed total order.
+ * <p>
+ * Note that only nodes explicitly set to iter will be iterated. After an
+ * iteration has finished, the user is required to call {@link #end()}, which
+ * resets the nodes set to iter and allows for a future iteration. This requires
+ * to set the nodes to iter before each new iteration.
+ * <p>
+ * This implementation allows for modifications during iteration. Modifications
+ * will make the iteration restart to the first order difference.
+ * 
  * @author Nicolas Beauger
  * 
  */
@@ -36,7 +53,6 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	public List<T> getPredecessors(T label) {
-		// TODO test and implement
 		final Node<T> node = graph.get(label);
 		if (node == null) {
 			return new ArrayList<T>();
@@ -82,6 +98,11 @@ public class TotalOrder<T> implements Iterator<T> {
 		}
 	}
 
+	public void setToIter(T label) {
+		final Node<T> node = fetchNode(label);
+		sortedNodes.setToIter(node);
+	}
+
 	public boolean contains(T label) {
 		return graph.containsKey(label);
 	}
@@ -100,14 +121,6 @@ public class TotalOrder<T> implements Iterator<T> {
 		isSorted = false;
 	}
 
-	/**
-	 * Should be called before each iteration. Can be called to restart an
-	 * iteration in progress.
-	 */
-	public void start() { // TODO consider getting rid of it (otherwise test with iter)
-		sortedNodes.start();
-	}
-
 	public boolean hasNext() {
 		updateSort();
 
@@ -123,8 +136,26 @@ public class TotalOrder<T> implements Iterator<T> {
 	public void remove() {
 		updateSort();
 
-		sortedNodes.remove();
 		remove(sortedNodes.getCurrentNode());
+		sortedNodes.remove();
+	}
+
+	// successors of the current node will be iterated
+	public void setToIterSuccessors() {
+		sortedNodes.setToIterSuccessors();
+	}
+
+	/**
+	 * Resets iteration. Resets nodes set to iter. Must be called at the end of
+	 * each iteration. Thus, each iteration must be preceded with the setting of
+	 * nodes to iter.
+	 */
+	public void end() {
+		for (T label : graph.keySet()) {
+			final Node<T> node = graph.get(label);
+			node.setMark(false);
+		}
+		sortedNodes.start();
 	}
 
 	private void remove(Node<T> node) {
@@ -139,24 +170,6 @@ public class TotalOrder<T> implements Iterator<T> {
 			isSorted = true;
 			sortedNodes.start();
 		}
-	}
-
-	public void setToIter(T label) {
-		final Node<T> node = fetchNode(label);
-		sortedNodes.setToIter(node);
-	}
-
-	// successors of the current node will be iterated
-	public void setToIterSuccessors() {
-		sortedNodes.setToIterSuccessors();
-	}
-
-	public void setToIterNone() {
-		for (T label : graph.keySet()) {
-			final Node<T> node = graph.get(label);
-			node.setMark(false);
-		}
-		sortedNodes.start();
 	}
 
 	private Node<T> fetchNode(T label) {

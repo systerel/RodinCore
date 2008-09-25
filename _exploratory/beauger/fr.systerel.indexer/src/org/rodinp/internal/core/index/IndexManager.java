@@ -17,7 +17,7 @@ import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
-public final class IndexManager {
+public final class IndexManager extends Thread {
 
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
@@ -58,6 +58,7 @@ public final class IndexManager {
 
 	void elementChanged(ElementChangedEvent event) {
 		deltas.add(event.getDelta());
+//		System.out.println(event);
 	}
 
 	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
@@ -71,8 +72,8 @@ public final class IndexManager {
 	public void scheduleIndexing(IRodinFile... files) {
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
-			final ProjectIndexManager manager = fetchPIM(project);
-			manager.setToIndex(file);
+			final ProjectIndexManager pim = fetchPIM(project);
+			pim.setToIndex(file);
 		}
 
 		launchIndexing();

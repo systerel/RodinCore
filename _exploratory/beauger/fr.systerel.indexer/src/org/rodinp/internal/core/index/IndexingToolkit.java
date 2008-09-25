@@ -83,7 +83,8 @@ public class IndexingToolkit implements IIndexingToolkit {
 		} else { // possible renaming
 			final String previousName = currentDescriptor.getName();
 			if (!previousName.equals(name)) {
-				rodinIndex.rename(element, name);
+				rodinIndex.removeDescriptor(element);
+				currentDescriptor = rodinIndex.makeDescriptor(element, name);
 				nameTable.remove(previousName, element);
 				// there are import occurrences of the element;
 				// in those files, it is referred to with previousName

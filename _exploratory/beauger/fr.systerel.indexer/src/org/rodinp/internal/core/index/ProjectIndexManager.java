@@ -40,7 +40,6 @@ public class ProjectIndexManager {
 
 	public void launchIndexing() {
 
-		order.start();
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
 
@@ -61,7 +60,7 @@ public class ProjectIndexManager {
 				indexingToolkit.clean();
 			}
 		}
-		order.setToIterNone();
+		order.end();
 	}
 
 	public void setToIndex(IRodinFile file) {

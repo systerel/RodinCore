@@ -11,7 +11,6 @@
 package org.rodinp.internal.core.index.tables;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,29 +47,6 @@ public class SortedNodes<T> implements Iterator<T> {
 		numberToIter = 0;
 	}
 	
-	private static class Degrees<T> {
-
-		private final Map<Node<T>, Integer> degrees;
-
-		public Degrees() {
-			degrees = new HashMap<Node<T>, Integer>();
-		}
-
-		public void set(Node<T> node, int degree) {
-			degrees.put(node, degree);
-		}
-
-		public int decr(Node<T> node) {
-			Integer degree = degrees.get(node);
-			if (degree == null) {
-				return -1;
-			}
-			degree--;
-			degrees.put(node, degree);
-			return degree;
-		}
-	}
-
 	public void sort(Map<T, Node<T>> graph) {
 
 		final boolean iterating = (currentNode != null);
@@ -82,86 +58,14 @@ public class SortedNodes<T> implements Iterator<T> {
 		}
 
 		order.clear();
-		final Degrees<T> degrees = new Degrees<T>();
-		final List<Node<T>> zeroDegrees = new ArrayList<Node<T>>();
-		final List<Node<T>> remaining = new ArrayList<Node<T>>();
-
-		initDegrees(graph, degrees, zeroDegrees, remaining);
-		while (!remaining.isEmpty()) {
-
-			sort(degrees, zeroDegrees, remaining);
-
-			if (!remaining.isEmpty()) { // there are cycles => break them
-				final Node<T> minDegree = findMinDegree(remaining);
-				zeroDegrees.add(minDegree);
-				// The cycle is only virtually broken, the graph is not modified
-				// because the client may later break it himself from elsewhere.
-			}
-		}
-
-		setOrderPos();
+		final Sorter<T> sorter = new Sorter<T>(graph);
+		order.addAll(sorter.sort());
 
 		if (iterating) {
 			final int iterPos = currentNode.getOrderPos(); // pos in new order
 			restartPos = findRestartPos(previousOrder, iterPos);
 		} else {
 			restartPos = 0;
-		}
-	}
-
-	private void initDegrees(Map<T, Node<T>> graph, Degrees<T> degrees, List<Node<T>> zeroDegrees,
-			List<Node<T>> remaining) {
-		for (T label : graph.keySet()) {
-			final Node<T> node = graph.get(label);
-			remaining.add(node);
-			final int degree = node.degree();
-			degrees.set(node, degree);
-			if (degree == 0) {
-				zeroDegrees.add(node);
-			}
-		}
-	}
-
-	private void sort(Degrees<T> degrees, List<Node<T>> zeroDegrees,
-			List<Node<T>> remaining) {
-	
-		while (!zeroDegrees.isEmpty()) {
-			// TODO prefer following previous order in zeroDegrees choice
-			final Node<T> node = zeroDegrees.get(0);
-			order.add(node);
-			node.setOrderPos(order.size());
-			zeroDegrees.remove(0);
-			remaining.remove(node);
-			for (Node<T> succ : node.getSuccessors()) {
-				if (remaining.contains(succ)) {
-					final int degree = degrees.decr(succ);
-					if (degree == 0) {
-						zeroDegrees.add(succ);
-					}
-				}
-			}
-		}
-	}
-
-	private Node<T> findMinDegree(List<Node<T>> remaining) {
-		Node<T> minDegNode = null;
-		int minDegree = Integer.MAX_VALUE;
-		for (Node<T> node : remaining) {
-			final int degree = node.degree();
-			if (degree < minDegree) {
-				minDegree = degree;
-				minDegNode = node;
-			}
-		}
-		return minDegNode;
-	}
-
-	private void setOrderPos() {
-		int pos = 0;
-	
-		for (Node<T> node : order) {
-			node.setOrderPos(pos);
-			pos++;
 		}
 	}
 
@@ -189,7 +93,7 @@ public class SortedNodes<T> implements Iterator<T> {
 		return pos;
 	}
 
-	public void start() { // TODO consider getting rid of it
+	public void start() {
 		this.startIter = true;
 	}
 	
