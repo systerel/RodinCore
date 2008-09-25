@@ -14,12 +14,11 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.RodinIndex;
-import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 
-public class DependenceTableUsageTests extends AbstractRodinDBTests {
+public class TotalOrderUsageTests extends AbstractRodinDBTests {
 
 	private static IRodinProject project;
 	private static IRodinFile file1;
@@ -34,7 +33,7 @@ public class DependenceTableUsageTests extends AbstractRodinDBTests {
 	private static final IndexManager manager = IndexManager.getDefault();
 	private static final String eltF2Name = "eltF2Name";
 
-	public DependenceTableUsageTests(String name) {
+	public TotalOrderUsageTests(String name) {
 		super(name);
 	}
 

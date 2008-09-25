@@ -6,7 +6,6 @@ import java.util.List;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.internal.core.index.RodinIndex;
-import org.rodinp.internal.core.index.tables.DependenceTable;
 import org.rodinp.internal.core.index.tables.ExportTable;
 
 public class FakeDependenceIndexer extends FakeExportIndexer {
