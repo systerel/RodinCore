@@ -20,6 +20,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -172,15 +173,15 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	 */
 	private static void assertDescriptor(Descriptor expected,
 			Descriptor actual) {
-		Occurrence[] expOccs = expected.getOccurrences();
-		Occurrence[] actOccs = actual.getOccurrences();
+		IOccurrence[] expOccs = expected.getOccurrences();
+		IOccurrence[] actOccs = actual.getOccurrences();
 
 		assertEquals("bad number of occurrences for descriptor of "
 				+ actual.getName(), expOccs.length, actOccs.length);
 
-		for (Occurrence occ : expOccs) {
-			Occurrence actSameKind = null;
-			for (Occurrence act : actOccs) {
+		for (IOccurrence occ : expOccs) {
+			IOccurrence actSameKind = null;
+			for (IOccurrence act : actOccs) {
 				if (act.getKind() == occ.getKind()) {
 					actSameKind = act;
 					break;
@@ -193,7 +194,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 
 	}
 
-	private static void assertOccurrence(Occurrence expected, Occurrence actual) {
+	private static void assertOccurrence(IOccurrence expected, IOccurrence actual) {
 		assertEquals("bad occurrence kind", expected.getKind(), actual
 				.getKind());
 		assertLocation(expected.getLocation(), actual.getLocation());
