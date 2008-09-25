@@ -5,9 +5,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
@@ -32,7 +32,7 @@ public class FakeIndexer implements IIndexer {
 			if (element.getRodinFile().equals(file)) {
 				index.declare(element, desc.getName());
 			}
-			for (Occurrence occ: desc.getOccurrences()) {
+			for (IOccurrence occ: desc.getOccurrences()) {
 				final IRodinLocation location = occ.getLocation();
 				if (isInFile(file, location)) {
 					index.addOccurrence(element, occ.getKind(), location);

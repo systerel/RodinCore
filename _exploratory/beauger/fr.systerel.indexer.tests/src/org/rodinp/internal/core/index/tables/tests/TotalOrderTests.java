@@ -289,13 +289,28 @@ public class TotalOrderTests extends TestCase {
 		}
 	}
 
-	public void testSetToIterNone() throws Exception {
+	public void testEnd() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
 
-		order.setToIterNone();
+		assertOrderedIteration(order, 1, 2, 3);
+		
+		order.end();
+		
+		setToIter(order, 1,2,3);
+		assertOrderedIteration(order, 1, 2, 3);
+	}
 
-		assertNoNext(order);
+	public void testSeveralEnd() throws Exception {
+		setPreds(order, 2, 1);
+		setPreds(order, 3, 2);
+
+		assertOrderedIteration(order, 1, 2, 3);
+		order.end();
+		order.end();
+
+		setToIter(order, 1,2,3);
+		assertOrderedIteration(order, 1, 2, 3);
 	}
 
 	public void testCycle1() throws Exception {
@@ -549,14 +564,14 @@ public class TotalOrderTests extends TestCase {
 		assertAllIteratedOnceToEnd(order, 3, 4);
 	}
 
-	public void testIterSetToIterNone() throws Exception {
+	public void testIterEnd() throws Exception {
 		setPreds(order, 2, 1);
 		setPreds(order, 3, 2);
 
 		assertNext(order, 1);
 		assertNext(order, 2);
 
-		order.setToIterNone();
+		order.end();
 
 		assertNoNext(order);
 	}

@@ -6,6 +6,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.tests.AbstractRodinDBTests;
@@ -21,7 +22,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 
 	private final IOccurrenceKind defaultKind = TEST_KIND;
 	private IRodinLocation location;
-	private Occurrence occ;
+	private IOccurrence occ;
 
 
 	private static void assertLocation(IRodinLocation expected,

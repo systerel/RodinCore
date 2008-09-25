@@ -15,6 +15,7 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -22,7 +23,6 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexingToolkit;
-import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -267,7 +267,7 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 		assertNotNull(descAfter);
 		assertDescriptor(descAfter, elt2, name2, 1);
 
-		final Occurrence occAfter = descAfter.getOccurrences()[0];
+		final IOccurrence occAfter = descAfter.getOccurrences()[0];
 		assertEquals("Import Occurrence from file1 was not kept", file1,
 				occAfter.getLocation().getElement());
 
@@ -307,11 +307,6 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 		// occurrence in file1 must have been kept
 		final Descriptor descAfter = index.getDescriptor(elt2);
 		assertNotNull(descAfter);
-		assertDescriptor(descAfter, elt2, name2Bis, 1);
-
-		final Occurrence occAfter = descAfter.getOccurrences()[0];
-		assertEquals("Import Occurrence from file1 was not kept", file1,
-				occAfter.getLocation().getElement());
 
 		// name2Bis should have replaced name2 in nameTable and exportTable
 		final Map<IInternalElement, String> actExports = f2ExportsElt2

@@ -13,6 +13,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -78,9 +79,9 @@ public class IndexTestsUtil {
 				desc);
 	}
 
-	public static void addOccurrences(Occurrence[] occurrences,
+	public static void addOccurrences(IOccurrence[] occurrences,
 			Descriptor descriptor) {
-		for (Occurrence occ : occurrences) {
+		for (IOccurrence occ : occurrences) {
 			descriptor.addOccurrence(occ);
 		}
 	}
@@ -93,33 +94,33 @@ public class IndexTestsUtil {
 		assertLength(desc, expectedLength);
 	}
 
-	public static void assertContains(Descriptor desc, Occurrence occ) {
+	public static void assertContains(Descriptor desc, IOccurrence occ) {
 		assertNotNull(desc);
 		TestCase.assertTrue("occurrence not found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
-	public static void assertContainsNot(Descriptor desc, Occurrence occ) {
+	public static void assertContainsNot(Descriptor desc, IOccurrence occ) {
 		assertNotNull(desc);
 		TestCase.assertFalse("occurrence should not be found: "
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
-	public static void assertContainsAll(Descriptor desc, Occurrence[] occs) {
+	public static void assertContainsAll(Descriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
-		for (Occurrence occ : occs) {
+		for (IOccurrence occ : occs) {
 			assertContains(desc, occ);
 		}
 	}
 
-	public static void assertContainsNone(Descriptor desc, Occurrence[] occs) {
+	public static void assertContainsNone(Descriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
-		for (Occurrence occ : occs) {
+		for (IOccurrence occ : occs) {
 			assertContainsNot(desc, occ);
 		}
 	}
 
-	public static void assertSameOccurrences(Descriptor desc, Occurrence[] occs) {
+	public static void assertSameOccurrences(Descriptor desc, IOccurrence[] occs) {
 		assertNotNull(desc);
 		assertLength(desc, occs.length);
 

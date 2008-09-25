@@ -78,11 +78,4 @@ public class DescriptorTests extends AbstractRodinDBTests {
 		assertContains(testDesc, importOcc);
 	}
 
-	public void testSetName() throws Exception {
-		final String name2 = testEltName+"2";
-
-		testDesc.setName(name2);
-		
-		assertName(testDesc, name2);
-	}
 }

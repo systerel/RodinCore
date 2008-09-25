@@ -204,7 +204,8 @@ public class TotalOrderUsageTests extends AbstractRodinDBTests {
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
 		final String eltF2Name2 = "eltF2Name2";
-		rodinIndex.rename(eltF2, eltF2Name2);
+		rodinIndex.removeDescriptor(eltF2);
+		rodinIndex.makeDescriptor(eltF2, eltF2Name2);
 		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
@@ -285,4 +286,21 @@ public class TotalOrderUsageTests extends AbstractRodinDBTests {
 		assertExports(f1f2f3expElt3.get(file1), exportTable.get(file1));
 	}
 
+	public void testSeveralIndexing() throws Exception {
+		final int indexingCount = 4;
+
+		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
+				rodinIndex, f1DepsOnf2, f2ExportsElt2);
+
+		RodinIndexer.register(indexer, file1.getElementType());
+
+		for (int i = 1; i <= indexingCount; i++) {
+			try {
+				manager.scheduleIndexing(file1, file2, file3);
+			} catch (Exception e) {
+				fail("Several indexing raised exception at indexing i=" + i
+						+ "\n" + e);
+			}
+		}
+	}
 }

@@ -110,27 +110,6 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 		}
 	}
 
-	public void testRename() throws Exception {
-		index.makeDescriptor(element, name);
-
-		index.rename(element, name2);
-
-		final Descriptor desc = index.getDescriptor(element);
-
-		assertDescriptor(desc, element, name2, 0);
-	}
-
-	public void testRenameDoesNotExist() throws Exception {
-		// no descriptor already exists for element
-
-		try {
-			index.rename(element, name2);
-		} catch (IllegalArgumentException e) {
-			return;
-		}
-		fail("Attempting to rename an element which has no descriptor should raise IllegalArgumentException");
-	}
-
 	public void testClear() throws Exception {
 		index.makeDescriptor(element, name);
 		index.makeDescriptor(element2, name2);
