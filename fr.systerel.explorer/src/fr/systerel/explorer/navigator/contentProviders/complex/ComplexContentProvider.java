@@ -53,13 +53,13 @@ public class ComplexContentProvider implements ITreeContentProvider {
         	List<ModelContext> contexts = new LinkedList<ModelContext>();
         	for (Iterator<ModelContext> iterator = sees.iterator(); iterator.hasNext();) {
 				ModelContext context = iterator.next();
-				contexts.addAll(context.getLongestContextBranch());
+				contexts.addAll(context.getLongestBranch());
 				
 			}
         	result.addAll(ModelController.convertToIContext(contexts));
         	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
 				ModelMachine mach = iterator.next();
-				machines.addAll(mach.getLongestMachineBranch());
+				machines.addAll(mach.getLongestBranch());
 			}
         	result.addAll(ModelController.convertToIMachine(machines));
         	
@@ -71,7 +71,7 @@ public class ComplexContentProvider implements ITreeContentProvider {
         	List<ModelContext> result = new LinkedList<ModelContext>();
         	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
 				ModelContext ctx = iterator.next();
-				result.addAll(ctx.getLongestContextBranch());
+				result.addAll(ctx.getLongestBranch());
 			}
         	return ModelController.convertToIContext(result).toArray();
         } 

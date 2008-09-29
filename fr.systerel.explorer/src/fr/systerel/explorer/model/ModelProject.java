@@ -12,6 +12,7 @@
 
 package fr.systerel.explorer.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,10 +38,15 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class ModelProject implements IModelElement {
+	
+	private HashMap<String, ModelMachine> machines = new HashMap<String, ModelMachine>();
+	private HashMap<String, ModelContext> contexts = new HashMap<String, ModelContext>();
+	private IRodinProject internalProject;
+
+
 	public ModelProject(IRodinProject project) {
 		internalProject = project;
 	}
-	private IRodinProject internalProject;
 	
 	/**
 	 * Process an IMachineFile. Creates an ModelMachine for this IMachineFile
@@ -54,15 +60,20 @@ public class ModelProject implements IModelElement {
 		if (!machines.containsKey(machine.getBareName())) {
 			mach =  new ModelMachine(machine);
 			machines.put(machine.getBareName(), mach);
+		} else {
+			mach = machines.get(machine.getBareName());
+			//remove existing dependencies. They will be calculated here freshly
+			removeMachineDependencies(mach);
+			mach.resetRefinesMachine();
+			mach.resetSeesContext();
+			mach.resetAncestors();
+			
 		}
-		mach = machines.get(machine.getBareName());
 		mach.processChildren();
 		//clear existing proof obligations and start from scratch
 		mach.proofObligations.clear();
-		mach.processPOFile();
-		mach.processPSFile();
 		try {
-			// get all machines, that this machine refines (all abstract machines)
+			// get all machines, that this machine refines (all abstract machines, usually just 1)
 			for (IRefinesMachine refine : machine.getRefinesClauses()){
 				final IMachineFile abst = refine.getAbstractMachine();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
@@ -70,11 +81,13 @@ public class ModelProject implements IModelElement {
 					if (!machines.containsKey(abst.getBareName())) {
 						processMachine(abst);
 					}
-					ModelMachine cplxMach = machines.get(abst.getBareName());
+					ModelMachine abstMach = machines.get(abst.getBareName());
 					// don't allow cycles
-					if (!cplxMach.getAncestors().contains(mach)) {
-						cplxMach.addRefinedByMachine(mach);
-						mach.addRefinesMachine(cplxMach);
+					if (!abstMach.getAncestors().contains(mach)) {
+						abstMach.addRefinedByMachine(mach);
+						mach.addRefinesMachine(abstMach);
+						mach.addAncestor(abstMach);
+						mach.addAncestors(abstMach.getAncestors());
 					}
 				}
 				
@@ -101,6 +114,36 @@ public class ModelProject implements IModelElement {
 		}
 		
 	}
+	
+	/**
+	 * calculates the longestRefineBranch for all machines of this project
+	 */
+	public void calculateMachineBranches() {
+		//reset previous calculations
+		for (ModelMachine machine : machines.values()) {
+			machine.setLongestBranch(new ArrayList<ModelMachine>());
+		}
+		for (ModelMachine machine : machines.values()) {
+			if (machine.isLeaf()) {
+				ArrayList<ModelMachine> branch =  new ArrayList<ModelMachine>();
+				ModelMachine parent =  machine;
+				while (parent != null) {
+					//add to front
+					branch.add(0, parent);
+					if (parent.getLongestBranch().size() < branch.size()) {
+						//give a copy, because this list might be changed in process
+						parent.setLongestBranch(new ArrayList<ModelMachine>(branch));
+					}
+					if (parent.getRefinesMachines().size() > 0) {
+						//usually there should be just 1, if there are more those are ignored here
+						//in that case, Rodin outputs error messages already.
+						parent = parent.getRefinesMachines().get(0);
+					} else parent = null;
+				}
+			}
+		}
+	}
+	
 
 	/**
 	 * Process an IContextFile. Creates an ModelContext for this IContextFile
@@ -114,13 +157,16 @@ public class ModelProject implements IModelElement {
 		if (!contexts.containsKey(context.getBareName())) {
 			ctx =  new ModelContext(context);
 			contexts.put(context.getBareName(), ctx);
+		} else {
+			ctx = contexts.get(context.getBareName());
+			//remove existing dependencies. They will be calculated here freshly
+			removeContextDependencies(ctx);
+			ctx.resetExtendsContexts();
+			ctx.resetAncestors();
 		}
-		ctx = contexts.get(context.getBareName());
 		ctx.processChildren();
 		//clear existing proof obligations and start from scratch
 		ctx.proofObligations.clear();
-		ctx.processPOFile();
-		ctx.processPSFile();
 		// get all contexts, that this contexts extends 
 		try {
 			IExtendsContext[] exts;
@@ -133,11 +179,13 @@ public class ModelProject implements IModelElement {
 					if (!contexts.containsKey(extCtx.getBareName())) {
 						processContext(extCtx);
 					}
-					ModelContext cplxCtx = contexts.get(extCtx.getBareName());
+					ModelContext exendsCtx = contexts.get(extCtx.getBareName());
 					// don't allow cycles!
-					if (!cplxCtx.getAncestors().contains(ctx)) {
-						cplxCtx.addExtendedByContext(ctx);
-						ctx.addExtendsContext(cplxCtx);
+					if (!exendsCtx.getAncestors().contains(ctx)) {
+						exendsCtx.addExtendedByContext(ctx);
+						ctx.addExtendsContext(exendsCtx);
+						ctx.addAncestor(exendsCtx);
+						ctx.addAncestors(exendsCtx.getAncestors());
 					}
 				}
 			}
@@ -147,6 +195,37 @@ public class ModelProject implements IModelElement {
 		}
 		
 	}
+
+	/**
+	 * calculates the longestExtendsBranch for all context of this project
+	 */
+	public void calculateContextBranches() {
+		//reset previous calculations
+		for (ModelContext context : contexts.values()) {
+			context.setLongestBranch(new ArrayList<ModelContext>());
+		}
+		for (ModelContext context : contexts.values()) {
+			if (context.isLeaf()) {
+				ArrayList<ModelContext> branch =  new ArrayList<ModelContext>();
+				ModelContext parent =  context;
+				while (parent != null) {
+					//add to front
+					branch.add(0, parent);
+					if (parent.getLongestBranch().size() < branch.size()) {
+						//give a copy, because this list might be changed in process
+						parent.setLongestBranch(new ArrayList<ModelContext>(branch));
+					}
+					if (parent.getExtendsContexts().size() > 0) {
+						//usually there should be just 1, if there are more those are ignored here
+						//in that case, Rodin outputs error messages already.
+						//TODO: this is not true for contexts. adapt!
+						parent = parent.getExtendsContexts().get(0);
+					} else parent = null;
+				}
+			}
+		}
+	}
+	
 	
 	
 	/**
@@ -159,7 +238,7 @@ public class ModelProject implements IModelElement {
 		for (Iterator<ModelMachine> iterator = machines.values().iterator(); iterator.hasNext();) {
 			ModelMachine machine = iterator.next();
 			if (machine.isRoot()){
-				results.addAll(machine.getLongestMachineBranch());
+				results.addAll(machine.getLongestBranch());
 			}
 			
 		}
@@ -177,7 +256,7 @@ public class ModelProject implements IModelElement {
 		for (Iterator<ModelContext> iterator = contexts.values().iterator(); iterator.hasNext();) {
 			ModelContext context = iterator.next();
 			if (context.isNotSeen() && context.isRoot()){
-				results.addAll(context.getLongestContextBranch());
+				results.addAll(context.getLongestBranch());
 			}
 			
 		}
@@ -205,19 +284,25 @@ public class ModelProject implements IModelElement {
 	public void removeMachine(String identifier) {
 		ModelMachine machine = machines.get(identifier);
 		if (machine != null) {
-			for (Iterator<ModelContext> iterator = machine.getSeesContexts().iterator(); iterator.hasNext();) {
-				ModelContext ctx = iterator.next();
-				ctx.removeSeenByMachine(machine);
-			}
-			for (Iterator<ModelMachine> iterator = machine.getRefinedByMachines().iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
+			removeMachineDependencies(machine);
+			//other machines also can't refine this machine anymore, because it won't exist any longer
+			for(ModelMachine mach : machine.getRefinedByMachines()) {
 				mach.removeRefinesMachine(machine);
 			}
-			for (Iterator<ModelMachine> iterator = machine.getRefinesMachines().iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
-				mach.removeRefinedByMachine(machine);
-			}
 			machines.remove(identifier);
+		}
+	}
+	
+	/**
+	 * Removes dependencies of this machine:
+	 * Removes this machine from all contexts that it sees and all machine that it refines
+	 */
+	public void removeMachineDependencies(ModelMachine machine){
+		for(ModelContext ctx : machine.getSeesContexts()) {
+			ctx.removeSeenByMachine(machine);
+		}
+		for(ModelMachine mach : machine.getRefinesMachines()) {
+			mach.removeRefinedByMachine(machine);
 		}
 	}
 
@@ -236,21 +321,29 @@ public class ModelProject implements IModelElement {
 	public void removeContext(String identifier) {
 		ModelContext context =  contexts.get(identifier);
 		if (context != null) {
-			for (Iterator<ModelContext> iterator = context.getExtendedByContexts().iterator(); iterator.hasNext();) {
-				ModelContext ctx = iterator.next();
+			removeContextDependencies(context);
+			//other contexts also can't extend this context anymore, because it won't exist any longer
+			for(ModelContext ctx : context.getExtendedByContexts()) {
 				ctx.removeExtendsContext(context);
 			}
-			for (Iterator<ModelContext> iterator = context.getExtendsContexts().iterator(); iterator.hasNext();) {
-				ModelContext ctx = iterator.next();
-				ctx.removeExtendedByContext(context);
-			}
-			for (Iterator<ModelMachine> iterator = context.getSeenByMachines().iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
+			//machines also can't see this context anymore, because it won't exist any longer
+			for(ModelMachine mach : context.getSeenByMachines()) {
 				mach.removeSeesContext(context);
 			}
 			contexts.remove(identifier);
 		}
 	}
+	
+	/**
+	 * Removes dependencies of this context:
+	 * Removes this machine from all contexts that it extends
+	 */
+	public void removeContextDependencies(ModelContext context){
+		for(ModelContext ctx : context.getExtendsContexts()) {
+			ctx.removeExtendedByContext(context);
+		}
+	}
+	
 	
 	public ModelInvariant getInvariant(IInvariant invariant){
 		IRodinFile file = invariant.getRodinFile();
@@ -306,9 +399,5 @@ public class ModelProject implements IModelElement {
 		//The Project doesn't have a ModelElement parent
 		return null;
 	}
-
-	
-	private HashMap<String, ModelMachine> machines = new HashMap<String, ModelMachine>();
-	private HashMap<String, ModelContext> contexts = new HashMap<String, ModelContext>();
 
 }

@@ -60,6 +60,9 @@ public class POContentProvider implements ITreeContentProvider {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getMachine((IMachineFile)element) != null) {
 		    	result[0] =(ModelController.getMachine((IMachineFile)element));
+		    	//build the model
+		    	(ModelController.getMachine((IMachineFile)element)).processPOFile();
+		    	(ModelController.getMachine((IMachineFile)element)).processPSFile();
 		    	return result;
 	    	}
 	    } 
@@ -68,6 +71,9 @@ public class POContentProvider implements ITreeContentProvider {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getContext((IContextFile)element) != null) {
 		    	result[0] =(ModelController.getContext((IContextFile)element));
+		    	//build the model
+		    	(ModelController.getContext((IContextFile)element)).processPOFile();
+		    	(ModelController.getContext((IContextFile)element)).processPSFile();
 		    	return result;
 	    	}
 	    } 

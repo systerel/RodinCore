@@ -48,6 +48,10 @@ import fr.systerel.explorer.navigator.RodinNavigator;
  */
 public class ModelController implements IElementChangedListener {
 	
+	
+	private static HashMap<String, ModelProject> projects = new HashMap<String, ModelProject>();
+	RodinNavigator navigator;
+
 	/**
 	 * Create this controller and register it in the DataBase for changes.
 	 * @param navigator
@@ -69,15 +73,17 @@ public class ModelController implements IElementChangedListener {
 				projects.put(project.getHandleIdentifier(), prj);
 			}	
 			prj =  projects.get(project.getHandleIdentifier());
-			IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-			for (int i = 0; i < machines.length; i++) {
-				prj.processMachine(machines[i]);
-			}
-			
+
 			IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 			for (int i = 0; i < contexts.length; i++) {
 				prj.processContext(contexts[i]);
 			}
+			prj.calculateContextBranches();
+			IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+			for (int i = 0; i < machines.length; i++) {
+				prj.processMachine(machines[i]);
+			}
+			prj.calculateMachineBranches();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -256,10 +262,6 @@ public class ModelController implements IElementChangedListener {
 		return results;
 	}
 	
-	
-	private static HashMap<String, ModelProject> projects = new HashMap<String, ModelProject>();
-	RodinNavigator navigator;
-
 	/**
 	 * React to changes in the database.
 	 *
@@ -280,10 +282,12 @@ public class ModelController implements IElementChangedListener {
 					//TODO: only temporary solution. change this.
 					// refresh everything
 					if (toRefresh.contains(RodinCore.getRodinDB())) {
+						System.out.println("refreshing view");
 						viewer.refresh();
 					} else {
 						for (Object elem : toRefresh) {
 							viewer.refresh(elem);
+							System.out.println("refreshing view: " +elem);
 						}
 					}
 				}

@@ -12,6 +12,7 @@
 
 package fr.systerel.explorer.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,6 +37,33 @@ import org.rodinp.core.RodinDBException;
  */
 public class ModelContext extends ModelPOContainer implements IModelElement{
 	/**
+	 * The Contexts that extend this Context (children)
+	 */
+	private List<ModelContext> extendedByContexts = new LinkedList<ModelContext>();
+	/**
+	 * The Contexts that are extended by this Context (ancestors)
+	 */
+	private List<ModelContext> extendsContexts = new LinkedList<ModelContext>();
+	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
+	private IContextFile internalContext;
+	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
+	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	public ModelElementNode[] nodes;
+	/**
+	 * All contexts that are above this context in the extends tree. 
+	 * (= context that are extended by this context)
+	 */
+	private ArrayList<ModelContext> ancestors =  new ArrayList<ModelContext>();
+	/**
+	 * The longest branch of contexts that extend this context.
+	 * (including this context)
+	 * The value of this is calculated in the ModelProject by calling
+	 * <code>calculateContextBranches()</code>.
+	 */
+	private ArrayList<ModelContext> longestExtendsBranch =  new ArrayList<ModelContext>();
+
+	
+	/**
 	 * Creates a ModelContext from a given IContextFile
 	 * @param file	The ContextFile that this ModelContext is based on.
 	 */
@@ -48,6 +76,44 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		nodes[3] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
 	}
 	
+	public void addAncestor(ModelContext context){
+		if (!ancestors.contains(context)) {
+			ancestors.add(context);
+		}
+	}
+	
+	public void addAncestors(ArrayList<ModelContext> contexts){
+		ancestors.addAll(contexts);
+	}
+
+	public void resetAncestors(){
+		ancestors = new ArrayList<ModelContext>();
+	}
+
+	public ArrayList<ModelContext> getAncestors(){
+		return ancestors;
+	}
+
+	public void addToLongestBranch(ModelContext context){
+		if (!longestExtendsBranch.contains(context)) {
+			longestExtendsBranch.add(context);
+		}
+	}
+	
+	/**
+	 * <code>calculateContextBranches()</code> has to be called before this, 
+	 * to get an result that is up to date.
+	 * 
+	 * @return The longest branch of children (contexts that extend this context)
+	 * 			including this context.
+	 */
+	public ArrayList<ModelContext> getLongestBranch(){
+		return longestExtendsBranch;
+	}
+	
+	public void setLongestBranch(ArrayList<ModelContext> branch){
+		longestExtendsBranch = branch;
+	}
 	public void processChildren(){
 		axioms.clear();
 		theorems.clear();
@@ -148,45 +214,12 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * 
-	 * Assuming no cycles in the structure.
-	 * @return The longest branch among the extendedByContexts branches (including this Context)
-	 */
-	public List<ModelContext> getLongestContextBranch() {
-		List<ModelContext> results = new LinkedList<ModelContext>();
-		results.add(this);
-		List<ModelContext> longest = new LinkedList<ModelContext>();
-		for (Iterator<ModelContext> iterator = extendedByContexts.iterator(); iterator.hasNext();) {
-			ModelContext context = iterator.next();
-			if (context.getLongestContextBranch().size() > longest.size()) {
-				longest = context.getLongestContextBranch();
-			}
-		}
-		results.addAll(longest);
-		return results;
-	}
-	
-	/**
-	 * Assuming no cycles in the structure
-	 * @return All Ancestors of this context (extends context)
-	 */
-	public List<ModelContext> getAncestors(){
-		List<ModelContext> results = new LinkedList<ModelContext>();
-		for (Iterator<ModelContext> iterator = extendsContexts.iterator(); iterator.hasNext();) {
-			ModelContext context = iterator.next();
-			results.add(context);
-			results.addAll(context.getAncestors());
-		}
-		return results;
-		
-	}
-	
-	/**
-	 * 
 	 * @return All the extenedByContexts, that are not returned by getLongestContextBranch
 	 */
 	public List<ModelContext> getRestContexts(){
 		List<ModelContext> copy = new LinkedList<ModelContext>(extendedByContexts);
-		copy.removeAll(getLongestContextBranch());
+//		copy.removeAll(getLongestContextBranch());
+		copy.removeAll(getLongestBranch());
 		return copy;
 	}
 
@@ -228,6 +261,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return extendsContexts;
 	}
 
+	public void resetExtendsContexts() {
+		extendsContexts = new LinkedList<ModelContext>();
+	}
+	
 
 	/**
 	 * Adds a machine that sees this context.
@@ -257,6 +294,16 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public boolean isRoot(){
 		return (extendsContexts.size() ==0);
+	}
+	
+	
+	/**
+	 * 
+	 * @return is this Machine a leaf of a tree of Contexts?
+	 * (= is extended by no other context)
+	 */
+	public boolean isLeaf(){
+		return (extendedByContexts.size() ==0);
 	}
 	
 	/**
@@ -289,18 +336,5 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 	
 	
-	/**
-	 * The Contexts that extend this Context (children)
-	 */
-	private List<ModelContext> extendedByContexts = new LinkedList<ModelContext>();
-	/**
-	 * The Contexts that are extended by this Context (ancestors)
-	 */
-	private List<ModelContext> extendsContexts = new LinkedList<ModelContext>();
-	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
-	private IContextFile internalContext;
-	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
-	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
-	public ModelElementNode[] nodes;
 
 }

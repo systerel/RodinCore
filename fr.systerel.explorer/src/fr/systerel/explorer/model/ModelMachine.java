@@ -10,6 +10,7 @@
   *******************************************************************************/
 package fr.systerel.explorer.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,6 +35,38 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class ModelMachine extends ModelPOContainer implements IModelElement {
+	
+	private List<ModelContext> seesContexts = new LinkedList<ModelContext>();
+	/**
+	 * Machines that refine this Machine.
+	 */
+	private List<ModelMachine> refinedByMachines = new LinkedList<ModelMachine>();
+	/**
+	 * Machines that this Machine refines.
+	 */
+	
+	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
+	private IMachineFile internalMachine ;
+	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
+	private HashMap<String, ModelEvent> events = new HashMap<String, ModelEvent>();
+	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	/**
+	 * All machines that are above this machine in the refinement tree. 
+	 * (= machines that are refined by this machines)
+	 */
+	private ArrayList<ModelMachine> ancestors =  new ArrayList<ModelMachine>();
+	/**
+	 * The longest branch of machines that refine this machine.
+	 * (including this machine)
+	 * The value of this is calculated in the ModelProject by calling
+	 * <code>calculateMachineBranches()</code>.
+	 */
+	private ArrayList<ModelMachine> longestRefineBranch =  new ArrayList<ModelMachine>();
+	
+	public ModelElementNode[] nodes;
+	//TODO add variables etc?
+
+
 	/**
 	 * Creates a ModelMachine from a given IMachineFile
 	 * @param file	The MachineFile that this ModelMachine is based on.
@@ -47,6 +80,63 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		nodes[3] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
 	}
 	
+	/**
+	 * @return The Project that contains this Machine.
+	 */
+	@Override
+	public IModelElement getParent() {
+		return ModelController.getProject(internalMachine.getRodinProject());
+	}
+	
+	public void addAncestor(ModelMachine machine){
+		if (!ancestors.contains(machine)) {
+			ancestors.add(machine);
+		}
+	}
+	
+	public void addAncestors(ArrayList<ModelMachine> machines){
+		ancestors.addAll(machines);
+	}
+
+	public void resetAncestors(){
+		ancestors = new ArrayList<ModelMachine>();
+	}
+
+	public ArrayList<ModelMachine> getAncestors(){
+		return ancestors;
+	}
+
+	public void addToLongestBranch(ModelMachine machine){
+		if (!longestRefineBranch.contains(machine)) {
+			longestRefineBranch.add(machine);
+		}
+	}
+	
+	public void addToLongestBranch(ArrayList<ModelMachine> machines){
+		longestRefineBranch.addAll(machines);
+	}
+
+	public void removeFromLongestBranch(ModelMachine machine){
+		longestRefineBranch.remove(machine);
+	}
+
+	/**
+	 * <code>calculateMachineBranches()</code> has to be called before this, 
+	 * to get a result that is up to date.
+	 * 
+	 * @return The longest branch of children (machines that refine this machine)
+	 * 			including this machine.
+	 */
+	public ArrayList<ModelMachine> getLongestBranch(){
+		System.out.println("LongestBranch machines of " +this +": " +longestRefineBranch);
+		return longestRefineBranch;
+	}
+	
+	public void setLongestBranch(ArrayList<ModelMachine> branch){
+		longestRefineBranch = branch;
+	}
+	
+
 	public void processChildren() {
 		//clear existing children
 		invariants.clear();
@@ -171,50 +261,31 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	/**
 	 * 
 	 * @return is this Machine a root of a tree of Machines?
+	 * (= refines no other machine)
 	 */
 	public boolean isRoot(){
 		return (refinesMachines.size() ==0);
 	}
 	
 	/**
-	 * Assuming no cycles
-	 * @return The longest branch among the refinedByMachines branches (including this Machine)
+	 * 
+	 * @return is this Machine a leaf of a tree of Machines?
+	 * (= is refined by no other machine)
 	 */
-	public List<ModelMachine> getLongestMachineBranch() {
-		List<ModelMachine> results = new LinkedList<ModelMachine>();
-		results.add(this);
-		List<ModelMachine> longest = new LinkedList<ModelMachine>();
-		for (Iterator<ModelMachine> iterator = refinedByMachines.iterator(); iterator.hasNext();) {
-			ModelMachine machine = iterator.next();
-			if (machine.getLongestMachineBranch().size() > longest.size()) {
-				longest = machine.getLongestMachineBranch();
-			}
-		}
-		results.addAll(longest);
-		return results;
+	public boolean isLeaf(){
+		return (refinedByMachines.size() ==0);
 	}
 	
-	/**
-	 * Assuming no cycles
-	 * @return All Ancestors of this machine (refinement perspective)
-	 */
-	public List<ModelMachine> getAncestors(){
-		List<ModelMachine> results = new LinkedList<ModelMachine>();
-		for (Iterator<ModelMachine> iterator = refinesMachines.iterator(); iterator.hasNext();) {
-			ModelMachine machine = iterator.next();
-			results.add(machine);
-			results.addAll(machine.getAncestors());
-		}
-		return results;
-	}
 	
 	/**
 	 * 
 	 * @return All the refinedByMachines, that are not returned by getLongestBranch
 	 */
 	public List<ModelMachine> getRestMachines(){
+		System.out.println();
 		List<ModelMachine> copy = new LinkedList<ModelMachine>(refinedByMachines);
-		copy.removeAll(getLongestMachineBranch());
+		copy.removeAll(getLongestBranch());
+		System.out.println("Rest machines of " +this +": " +copy);
 		return copy;
 	}
 	
@@ -229,6 +300,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 	}
 
+	public void resetRefinesMachine() {
+		refinesMachines  = new LinkedList<ModelMachine>();
+	}
+	
 	public void removeRefinesMachine(ModelMachine machine) {
 		refinesMachines.remove(machine);
 	}
@@ -258,6 +333,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public void removeSeesContext(ModelContext context) {
 		seesContexts.remove(context);
 	}
+	
+	public void resetSeesContext() {
+		seesContexts  = new LinkedList<ModelContext>();
+	}
 
 	public IMachineFile getInternalMachine() {
 		return internalMachine;
@@ -280,28 +359,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return theorems.get(theorem.getElementName());
 	}
 
-	private List<ModelContext> seesContexts = new LinkedList<ModelContext>();
-	/**
-	 * Machines that refine this Machine.
-	 */
-	private List<ModelMachine> refinedByMachines = new LinkedList<ModelMachine>();
-	/**
-	 * Machines that this Machine refines.
-	 */
-
-	/**
-	 * @return The Project that contains this Machine.
-	 */
 	@Override
-	public IModelElement getParent() {
-		return ModelController.getProject(internalMachine.getRodinProject());
+	public String toString(){
+		return ("ModelMachine: "+internalMachine.getBareName());
 	}
 
-	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
-	private IMachineFile internalMachine ;
-	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
-	private HashMap<String, ModelEvent> events = new HashMap<String, ModelEvent>();
-	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
-	public ModelElementNode[] nodes;
-	//TODO add variables etc?
 }

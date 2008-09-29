@@ -23,7 +23,8 @@ import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElementType;
 
 /**
- * @author Administrator
+ * This is a helper class to show a parent node for all invariants,
+ * theorems, events etc. in the navigator tree.
  *
  */
 public class ModelElementNode implements IModelElement{
