@@ -128,7 +128,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * 			including this machine.
 	 */
 	public ArrayList<ModelMachine> getLongestBranch(){
-		System.out.println("LongestBranch machines of " +this +": " +longestRefineBranch);
 		return longestRefineBranch;
 	}
 	
@@ -282,10 +281,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * @return All the refinedByMachines, that are not returned by getLongestBranch
 	 */
 	public List<ModelMachine> getRestMachines(){
-		System.out.println();
 		List<ModelMachine> copy = new LinkedList<ModelMachine>(refinedByMachines);
 		copy.removeAll(getLongestBranch());
-		System.out.println("Rest machines of " +this +": " +copy);
 		return copy;
 	}
 	

@@ -218,7 +218,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public List<ModelContext> getRestContexts(){
 		List<ModelContext> copy = new LinkedList<ModelContext>(extendedByContexts);
-//		copy.removeAll(getLongestContextBranch());
 		copy.removeAll(getLongestBranch());
 		return copy;
 	}
