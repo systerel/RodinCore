@@ -1,10 +1,8 @@
 package org.rodinp.internal.core.index;
 
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.IOccurrenceKind;
+import org.rodinp.core.index.IRodinLocation;
 
 public class Occurrence implements IOccurrence {
 	private final IOccurrenceKind kind;
@@ -34,15 +32,7 @@ public class Occurrence implements IOccurrence {
 	public String toString() {
 		StringBuilder sb = new StringBuilder("occurrence\n");
 		sb.append("kind: " + kind.getName() + "\n");
-		final IRodinElement element = location.getElement();
-		sb.append("location: " + element.getElementName() + " ("
-				+ element.getElementType().getName() + ")\n");
-		final IAttributeType attributeType = location.getAttributeType();
-		sb.append("attribute id: "
-				+ (attributeType == null ? "null" : attributeType.getName())
-				+ "\n");
-		sb.append("(" + location.getCharStart() + "; " + location.getCharEnd()
-				+ ")\n");
+		sb.append("location: " + location);
 		return sb.toString();
 	}
 

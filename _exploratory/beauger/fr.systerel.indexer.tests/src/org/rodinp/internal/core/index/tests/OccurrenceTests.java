@@ -9,10 +9,10 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Occurrence;
-import org.rodinp.internal.core.index.RodinLocation;
 
 public class OccurrenceTests extends AbstractRodinDBTests {
 
@@ -42,8 +42,7 @@ public class OccurrenceTests extends AbstractRodinDBTests {
 		IRodinFile file = createRodinFile(rodinProject, "occ.test");
 		NamedElement elem = createNamedElement(file, "elem");
 
-		location = new RodinLocation(elem, null,
-				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);
+		location = RodinIndexer.getRodinLocation(elem);
 		occ = new Occurrence(defaultKind, location);
 	}
 

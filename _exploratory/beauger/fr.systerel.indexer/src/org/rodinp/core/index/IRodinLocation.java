@@ -1,79 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.rodinp.core.index;
 
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
 /**
- * Type of locations within a IRodinFile.
+ * Common protocol for specifying a location in the Rodin database. A location
+ * can be
+ * <ul>
+ * <li>either a Rodin element ({@link IRodinLocation}),</li>
+ * <li>or an attribute of an internal element ({@link IAttributeLocation}),</li>
+ * <li>or a substring of a string attribute of an internal element ({@link IAttributeSubstringLocation}).</li>
+ * </ul>
  * <p>
- * A IRodinLocation points to a place within a IRodinElement. The element may be
- * the IRodinFile itself, or a IInternalElement within the file.
+ * Locations are handle-only. The items referenced by a location may exist or
+ * not exist. The Rodin database may hand out any number of instances for each
+ * location. Instances that refer to the same location are guaranteed to be
+ * equal, but not necessarily identical.
+ * </p>
  * <p>
- * If the mere element is not accurate enough, it is possible to precise a
- * IAttributeType
- * <p>
- * This interface is NOT intended to be implemented by clients.
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @see IAttributeLocation
+ * @see IAttributeSubstringLocation
  * 
  * @author Nicolas Beauger
+ * @author Laurent Voisin
  */
 public interface IRodinLocation {
 
 	/**
-	 * Constant indicating a null char position.
-	 */
-	int NULL_CHAR_POS = -1;
-
-	/**
-	 * Returns the file containing the location.
+	 * Returns the file containing the location, if any. If the location is a
+	 * Rodin file or occurs within a Rodin file, then this Rodin file is
+	 * returned. Otherwise, <code>null</code> is returned.
 	 * 
-	 * @return the file containing the location.
+	 * @return the file containing the location or <code>null</code>
 	 */
+	// TODO move this method to IRodinElement
 	IRodinFile getRodinFile();
 
 	/**
-	 * Returns the element containing the location.
-	 * <p>
-	 * It may be the file itself, or any inner element.
+	 * Returns the element containing this location.
 	 * 
-	 * @return the element containing the location.
+	 * @return the element containing this location
 	 */
 	IRodinElement getElement();
-
-	/**
-	 * Returns the attribute type containing the location.
-	 * <p>
-	 * It may be <code>null</code>. In this case, the location reduces to the
-	 * mere element returned by {@link #getElement()}. The meaning is that any
-	 * direct child of the element of the location can be pointed to by this
-	 * location.
-	 * <p>
-	 * In case it is not <code>null</code>, the location points to a place
-	 * inside the attribute type (defined by {@link #getCharStart()} and
-	 * {@link #getCharEnd()}. It can be assumed that the element of the
-	 * location has the returned attribute.
-	 * 
-	 * @return the attribute type of the location, or <code>null</code> if it
-	 *         is not relevant.
-	 */
-	IAttributeType getAttributeType();
-
-	/**
-	 * Returns the start position of the location within the attribute type.
-	 * <p>
-	 * The start position is INclusive.
-	 * 
-	 * @return the start position of the location.
-	 */
-	int getCharStart();
-
-	/**
-	 * Returns the end position of the location within the attribute type.
-	 * <p>
-	 * The end position is EXclusive.
-	 * 
-	 * @return the end position of the location.
-	 */
-	int getCharEnd();
 
 }

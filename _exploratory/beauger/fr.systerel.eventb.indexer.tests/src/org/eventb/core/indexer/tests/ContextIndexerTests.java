@@ -14,8 +14,6 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.indexer.ContextIndexer;
 import org.eventb.core.indexer.EventBIndexUtil;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -197,23 +195,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 	private static void assertOccurrence(IOccurrence expected, IOccurrence actual) {
 		assertEquals("bad occurrence kind", expected.getKind(), actual
 				.getKind());
-		assertLocation(expected.getLocation(), actual.getLocation());
-	}
-
-	private static void assertLocation(IRodinLocation expected,
-			IRodinLocation actual) {
-		assertLocation(expected.getElement(), expected.getAttributeType(),
-				expected.getCharStart(), expected.getCharEnd(), actual);
-	}
-
-	private static void assertLocation(IRodinElement element,
-			IAttributeType attributeType, int start, int end, IRodinLocation loc) {
-		assertEquals("bad container element "
-				+ loc.getElement().getElementName(), element, loc.getElement());
-		assertEquals("bad attribute id for " + loc, attributeType, loc
-				.getAttributeType());
-		assertEquals("bad start location", start, loc.getCharStart());
-		assertEquals("bad end location", end, loc.getCharEnd());
+		assertEquals(expected.getLocation(), actual.getLocation());
 	}
 
 	private void fillTestFile(IContextFile file, List<Descriptor> descriptors)

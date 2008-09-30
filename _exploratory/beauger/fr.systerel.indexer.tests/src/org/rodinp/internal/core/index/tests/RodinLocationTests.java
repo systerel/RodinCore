@@ -1,16 +1,18 @@
 package org.rodinp.internal.core.index.tests;
 
-import static org.rodinp.core.index.IRodinLocation.NULL_CHAR_POS;
-
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.index.IAttributeLocation;
+import org.rodinp.core.index.IAttributeSubstringLocation;
 import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
-import org.rodinp.internal.core.index.RodinLocation;
+import org.rodinp.core.tests.basis.NamedElement;
 
 public class RodinLocationTests extends AbstractRodinDBTests {
 
@@ -18,147 +20,120 @@ public class RodinLocationTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	private static IAttributeType.String TEST_ATTRIBUTE;
-	private static IRodinProject project;
-	private static IRodinFile file;
-	private static IInternalElement locElement;
-	private static IRodinLocation loc;
+	private static final IAttributeType.String attrType = RodinCore
+			.getStringAttrType("org.rodinp.core.testAttributeType");
 	private static final int defaultStart = 1;
 	private static final int defaultEnd = 3;
 
-	private void assertLocation(IRodinElement element,
-			IAttributeType attributeType, int start, int end) {
-		assertEquals("RodinLocation constructor: bad element", element, loc
+	private IRodinProject project;
+	private IRodinFile file;
+	private IInternalElement locElement;
+
+	public static void assertLocation(IRodinLocation loc, IRodinElement element) {
+		assertEquals("unexpected element in location", element, loc
 				.getElement());
-		assertEquals("RodinLocation constructor: bad attribute type",
-				attributeType, loc.getAttributeType());
-		assertEquals("RodinLocation constructor: bad char start", start, loc
-				.getCharStart());
-		assertEquals("RodinLocation constructor: bad char end", end, loc
-				.getCharEnd());
 	}
 
-	private void assertException(Exception e, String messageExtract) {
-		assertTrue("bad exception message", e.getMessage().contains(
-				messageExtract));
+	public static void assertLocation(IRodinLocation loc,
+			IInternalParent element, IAttributeType attributeType) {
+		assertLocation(loc, element);
+		assertTrue(loc instanceof IAttributeLocation);
+		final IAttributeLocation aLoc = (IAttributeLocation) loc;
+		assertEquals("unexpected attribute type in location", attributeType,
+				aLoc.getAttributeType());
+	}
+
+	public static void assertLocation(IRodinLocation loc,
+			IInternalParent element, IAttributeType.String attributeType,
+			int start, int end) {
+		assertLocation(loc, element, attributeType);
+		assertTrue(loc instanceof IAttributeSubstringLocation);
+		final IAttributeSubstringLocation aLoc = (IAttributeSubstringLocation) loc;
+		assertEquals("unexpected start position in location", start, aLoc
+				.getCharStart());
+		assertEquals("unexpected end position in location", end, aLoc
+				.getCharEnd());
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		TEST_ATTRIBUTE = RodinCore
-				.getStringAttrType("org.rodinp.core.testAttributeType");
-		project = createRodinProject("P");
-		file = IndexTestsUtil.createRodinFile(project, "rodLoc.test");
-		locElement = IndexTestsUtil.createNamedElement(file, "locElement");
-		locElement.setAttributeValue(TEST_ATTRIBUTE, "testAttribute", null);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		deleteProject("P");
+		project = getRodinProject("P");
+		file = project.getRodinFile("rodLoc.test");
+		locElement = file.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 	}
 
 	public void testConstructor() throws Exception {
-		loc = new RodinLocation(locElement, TEST_ATTRIBUTE, defaultStart,
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType, defaultStart,
 				defaultEnd);
-
-		assertLocation(locElement, TEST_ATTRIBUTE, defaultStart, defaultEnd);
+		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
 	}
 
 	public void testNullElement() throws Exception {
 		try {
-			new RodinLocation(null, TEST_ATTRIBUTE, defaultStart, defaultEnd);
+			RodinIndexer.getRodinLocation(null);
+			fail("expected NullPointerException");
 		} catch (NullPointerException e) {
-			assertException(e, "null");
-			return;
+			// Pass
 		}
-		fail("Trying to construct a RodinLocation from a null element should raise NullPointerException");
 	}
 
 	public void testFileElement() throws Exception {
-		loc = new RodinLocation(file, null, NULL_CHAR_POS, NULL_CHAR_POS);
-
-		assertLocation(file, null, NULL_CHAR_POS, NULL_CHAR_POS);
+		IRodinLocation loc = RodinIndexer.getRodinLocation(file);
+		assertLocation(loc, file);
 	}
 
-	public void testFileDoesNotExist() throws Exception {
-		IRodinFile fileDoesNotExist = project
-				.getRodinFile("fileDoesNotExist.test");
+	public void testInternalElement() throws Exception {
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement);
+		assertLocation(loc, locElement);
+	}
 
+	public void testAttribute() throws Exception {
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType);
+		assertLocation(loc, locElement, attrType);
+	}
+
+	public void testAttributeSubstring() throws Exception {
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType, defaultStart,
+				defaultEnd);
+		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
+	}
+
+	public void testNullAttribute() throws Exception {
 		try {
-			new RodinLocation(fileDoesNotExist, TEST_ATTRIBUTE, defaultStart,
+			RodinIndexer.getRodinLocation(locElement, null, defaultStart,
 					defaultEnd);
-		} catch (IllegalArgumentException e) {
-			assertException(e, "exist");
-			return;
+			fail("expected NullPointerException");
+		} catch (NullPointerException e) {
+			// Pass
 		}
-		fail("Trying to construct a RodinLocation from a RodinElement that does not exist should raise IllegalArgumentException");
 	}
 
-	public void testFileNullAttribute() throws Exception {
-		loc = new RodinLocation(file, null, NULL_CHAR_POS, NULL_CHAR_POS);
-
-		assertLocation(file, null, NULL_CHAR_POS, NULL_CHAR_POS);
-	}
-
-	public void testElementNullAttribute() throws Exception {
-		loc = new RodinLocation(locElement, null, NULL_CHAR_POS, NULL_CHAR_POS);
-
-		assertLocation(locElement, null, NULL_CHAR_POS, NULL_CHAR_POS);
-	}
-
-	public void testNullAttWithPos() throws Exception {
+	public void testInvalidStart() throws Exception {
 		try {
-			new RodinLocation(file, null, defaultStart, defaultEnd);
+			RodinIndexer.getRodinLocation(locElement, attrType, -1, 0);
+			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
-			assertException(e, "attribute");
-			return;
+			// Pass
 		}
-		fail("Constructing a RodinLocation with null attribute and non null char positions should raise IllegalArgumentException");
 	}
 
-	public void testReversePositions() throws Exception {
+	public void testInvalidEnd() throws Exception {
 		try {
-			new RodinLocation(locElement, TEST_ATTRIBUTE, defaultEnd,
-					defaultStart);
+			RodinIndexer.getRodinLocation(locElement, attrType, 0, -1);
+			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
-			assertException(e, "before");
-			return;
+			// Pass
 		}
-		fail("Constructing a RodinLocation with char positions in reverse order should raise IllegalArgumentException");
 	}
 
-	public void testHasNotAttribute() throws Exception {
-		locElement.clear(true, null);
+	public void testEmptySubstring() throws Exception {
 		try {
-			new RodinLocation(locElement, TEST_ATTRIBUTE, defaultStart,
-					defaultEnd);
+			RodinIndexer.getRodinLocation(locElement, attrType, 0, 0);
+			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
-			assertException(e, "exist");
-			return;
+			// Pass
 		}
-		fail("Constructing a RodinLocation with an attribute that the element does not have should raise IllegalArgumentException");
 	}
 
-	public void testFileNotAttribute() throws Exception {
-		try {
-			new RodinLocation(file, TEST_ATTRIBUTE, defaultStart, defaultEnd);
-		} catch (IllegalArgumentException e) {
-			assertException(e, "exist");
-			return;
-		}
-		fail("Constructing a RodinLocation with an attribute that the element does not have should raise IllegalArgumentException");
-	}
-
-	public void testNotAttributedElement() throws Exception {
-		try {
-			new RodinLocation(project, null, NULL_CHAR_POS, NULL_CHAR_POS);
-		} catch (IllegalArgumentException e) {
-			assertException(e, "type");
-			return;
-		}
-		fail("Constructing a RodinLocation with an element that is neither IRodinFile nor IInternalElement should raise IllegalArgumentException");
-	}
 }

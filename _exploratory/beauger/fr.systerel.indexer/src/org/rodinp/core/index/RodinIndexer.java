@@ -21,11 +21,14 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.RodinDBStatus;
+import org.rodinp.internal.core.index.AttributeLocation;
+import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.OccurrenceKind;
 import org.rodinp.internal.core.index.RodinLocation;
@@ -41,16 +44,13 @@ import org.rodinp.internal.core.index.RodinLocation;
  */
 public class RodinIndexer extends Plugin {
 
-	private static final Map<String, IOccurrenceKind> kinds =
-		new HashMap<String, IOccurrenceKind>();
-	
-	
-	
+	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
+
 	/** To be moved to {@link RodinCore} */
 	public static void register(IIndexer indexer, IFileElementType<?> fileType) {
 		IndexManager.getDefault().addIndexer(indexer, fileType);
 	}
-	
+
 	/** To be moved to an extension point */
 	public static IOccurrenceKind addOccurrenceKind(String id, String name) {
 		final OccurrenceKind kind = new OccurrenceKind(id, name);
@@ -62,29 +62,73 @@ public class RodinIndexer extends Plugin {
 	public static IOccurrenceKind getOccurrenceKind(String id) {
 		return kinds.get(id);
 	}
-		
+
+	/**
+	 * Returns the location pointing at the given element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @return the location pointing at the given element
+	 */
 	public static IRodinLocation getRodinLocation(IRodinElement element) {
-		return getRodinLocation(element, null);
+		return new RodinLocation(element);
 	}
 
-	public static IRodinLocation getRodinLocation(IRodinElement element,
+	/**
+	 * Returns the location pointing at the attribute of the given type in the
+	 * given internal element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @param attributeType
+	 *            the type of the attribute to point at
+	 * @return the location pointing at the given attribute of the given element
+	 */
+	public static IRodinLocation getRodinLocation(IInternalParent element,
 			IAttributeType attributeType) {
-		return getRodinLocation(element, attributeType,
-				IRodinLocation.NULL_CHAR_POS, IRodinLocation.NULL_CHAR_POS);
+		return new AttributeLocation(element, attributeType);
 	}
 
-	public static IRodinLocation getRodinLocation(IRodinElement element,
-			IAttributeType attributeType, int start, int end) {
-		return new RodinLocation(element, attributeType, start, end);
+	/**
+	 * Returns the location pointing at the specified substring of the attribute
+	 * of the given type in the given internal element. The substring is
+	 * specified by giving its start (index of first character) and end position
+	 * (index of last character plus one)
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @param attributeType
+	 *            the type of the attribute to point at
+	 * @param start
+	 *            the start position of the substring in the attribute value,
+	 *            that is the index of the first character. Must be less than
+	 *            <code>end</code>
+	 * @param end
+	 *            the end position of the substring in the attribute value, that
+	 *            is the index of the last character plus one. Must be greater
+	 *            than <code>start</code>
+	 * @return the location pointing at the given attribute of the given element
+	 */
+	public static IRodinLocation getRodinLocation(IInternalParent element,
+			IAttributeType.String attributeType, int start, int end) {
+		return new AttributeSubstringLocation(element, attributeType, start, end);
 	}
-
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.indexer";
 
 	// The shared instance
 	private static RodinIndexer plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -100,9 +144,9 @@ public class RodinIndexer extends Plugin {
 			// TODO Auto-generated method stub
 			return Status.OK_STATUS;
 		}
-		
+
 	};
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -121,15 +165,15 @@ public class RodinIndexer extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static RodinIndexer getDefault() {
 		return plugin;
 	}
-	
+
 	/** **************************************************************************** */
-	
+
 	/** To be moved to {@link IRodinDBStatusConstants} */
 	public static final int INVALID_LOCATION = 999;
 

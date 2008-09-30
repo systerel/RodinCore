@@ -2,7 +2,7 @@ package org.eventb.core.indexer;
 
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
@@ -34,12 +34,10 @@ public class EventBIndexUtil {
 	 * @param location
 	 * @return
 	 */
-	public static IRodinLocation getRodinLocation(IRodinElement element,
-			IAttributeType attributeType, SourceLocation location) {
+	public static IRodinLocation getRodinLocation(IInternalParent element,
+			IAttributeType.String attributeType, SourceLocation location) {
 		return RodinIndexer.getRodinLocation(element, attributeType, location
 				.getStart(), location.getEnd() + 1);
-		// Concerning the end character,
-		// SourceLocation is INclusive whereas
-		// RodinLocation is EXclusive
 	}
+
 }
