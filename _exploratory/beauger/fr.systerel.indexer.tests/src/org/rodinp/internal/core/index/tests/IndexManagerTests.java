@@ -45,7 +45,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
 		final Descriptor desc2 = rodinIndex.makeDescriptor(elt2, name2);
 		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
-		
+
 		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, file.getElementType());
 	}
@@ -72,7 +72,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	public void testSeveralIndexing() throws Exception {
 
 		rodinIndex.removeDescriptor(elt2);
-		
+
 		// first indexing with elt1, without elt2
 		manager.scheduleIndexing(file);
 
@@ -86,7 +86,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		rodinIndex.removeDescriptor(elt1);
 		final Descriptor desc2 = rodinIndex.makeDescriptor(elt2, name2);
 		desc2.addOccurrence(createDefaultOccurrence(file));
-		
+
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
@@ -111,10 +111,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		manager.clearIndexers();
 		try {
 			manager.scheduleIndexing(file);
-		} catch (IllegalStateException e) {
-			return;
+		} catch (Exception e) {
+			fail("trying to index with no indexer registered should not raise any Exception");
 		}
-		fail("trying to index with no indexer registered should raise IllegalStateException");
 	}
 
 	public void testIndexSeveralProjects() throws Exception {
@@ -123,9 +122,9 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 		final IRodinProject project2 = createRodinProject("P2");
 		final IRodinFile file2 = createRodinFile(project2, "file2P2.test");
 		final NamedElement eltF2 = createNamedElement(file2, eltF2Name);
-		
+
 		rodinIndex.makeDescriptor(eltF2, eltF2Name);
-		
+
 		manager.scheduleIndexing(file, file2);
 
 		final RodinIndex index1 = manager.getIndex(project);
