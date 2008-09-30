@@ -13,7 +13,11 @@ package org.rodinp.core.index;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IFileElementType;
@@ -88,17 +92,29 @@ public class RodinIndexer extends Plugin {
 		// nothing to do
 	}
 
+	private static Job indexerJob = new Job("Indexer") {
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			IndexManager.getDefault().start(monitor);
+			// TODO Auto-generated method stub
+			return Status.OK_STATUS;
+		}
+		
+	};
+	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		System.out.println("RodinIndexer starting");
-		IndexManager.getDefault().start();
+		indexerJob.setPriority(Job.DECORATE); // TODO decide more precisely
+		indexerJob.setSystem(true);
+		indexerJob.schedule();
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		IndexManager.getDefault().interrupt();
+		indexerJob.cancel();
 		plugin = null;
 		super.stop(context);
 	}

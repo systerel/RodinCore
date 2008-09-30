@@ -12,6 +12,8 @@ import org.rodinp.core.index.IIndexingToolkit;
 
 public class FileIndexingManager {
 
+	private static final IRodinFile[] EMPTY_DEPS = new IRodinFile[] {};
+	
 	private Map<IFileElementType<?>, List<IIndexer>> indexers;
 
 	public FileIndexingManager() {
@@ -27,26 +29,33 @@ public class FileIndexingManager {
 		list.add(indexer);
 	}
 	
+	public boolean isIndexable( IFileElementType<?> fileType) {
+		return indexers.containsKey(fileType);
+	}
+	
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		final IIndexer indexer = getIndexerFor(file.getElementType());
 
+		if (indexer == null) {
+			return EMPTY_DEPS;
+		}
 		final IRodinFile[] result = indexer.getDependencies(file);
-
 		return result;
 	}
 	
 	public void launchIndexing(IRodinFile file, IIndexingToolkit indexingToolkit) {
 		final IIndexer indexer = getIndexerFor(file.getElementType());
 
-		indexer.index(file, indexingToolkit);
+		if (indexer != null) {
+			indexer.index(file, indexingToolkit);
+		}
 	}
 	
 	private IIndexer getIndexerFor(
 			IFileElementType<? extends IRodinFile> fileType) {
 		final List<IIndexer> list = indexers.get(fileType);
 		if (list == null || list.isEmpty()) {
-			throw new IllegalStateException("unable to find an indexer for "
-					+ fileType);
+			return null;
 		}
 		// TODO manage indexers priorities
 		return list.get(0);

@@ -51,10 +51,15 @@ public class IndexRequests {
 		return descriptor.getOccurrences();
 	}
 
-	public IInternalElement[] getElements(IRodinProject project, String name) {
+	public static IInternalElement[] getElements(IRodinProject project, String name) {
 		final NameTable nameTable = IndexManager.getDefault().getNameTable(
 				project);
 
 		return nameTable.getElements(name);
 	}
+	
+	public static boolean isBusy() {
+		return IndexManager.getDefault().isBusy();
+	}
+	
 }

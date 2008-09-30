@@ -33,7 +33,7 @@ public class Occurrence implements IOccurrence {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("occurrence\n");
-		sb.append("kind: " + kind.toString() + "\n");
+		sb.append("kind: " + kind.getName() + "\n");
 		final IRodinElement element = location.getElement();
 		sb.append("location: " + element.getElementName() + " ("
 				+ element.getElementType().getName() + ")\n");

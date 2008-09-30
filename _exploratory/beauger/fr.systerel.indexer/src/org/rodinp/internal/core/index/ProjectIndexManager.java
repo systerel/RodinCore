@@ -15,7 +15,7 @@ import org.rodinp.internal.core.index.tables.TotalOrder;
 public class ProjectIndexManager {
 
 	private final IRodinProject project;
-	
+
 	private final FileIndexingManager fim;
 
 	private final RodinIndex index;
@@ -44,13 +44,12 @@ public class ProjectIndexManager {
 			final IRodinFile file = order.next();
 
 			final Set<IInternalElement> fileImports = computeImports(file);
-			final IndexingToolkit indexingToolkit = new IndexingToolkit(
-					file, index, fileTable, nameTable, exportTable,
-					fileImports);
+			final IndexingToolkit indexingToolkit = new IndexingToolkit(file,
+					index, fileTable, nameTable, exportTable, fileImports);
 
 			if (file.exists()) {
 				fim.launchIndexing(file, indexingToolkit);
-
+				
 				if (indexingToolkit.mustReindexDependents()) {
 					order.setToIterSuccessors();
 				}
@@ -63,15 +62,28 @@ public class ProjectIndexManager {
 		order.end();
 	}
 
-	public void setToIndex(IRodinFile file) {
+	/**
+	 * Returns true if the file was actually set to index, false it the file was
+	 * not indexable.
+	 * 
+	 * @param file
+	 * @return whether the file was actually set to index.
+	 */
+	public boolean setToIndex(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
 					+ " should be indexed in project " + project);
 		}
+
+		if (!fim.isIndexable(file.getElementType())) {
+			return false;
+		}
 		final IRodinFile[] dependFiles = fim.getDependencies(file);
-		
+
 		order.setPredecessors(file, dependFiles);
 		order.setToIter(file);
+
+		return true;
 	}
 
 	public FileTable getFileTable() {
@@ -93,12 +105,11 @@ public class ProjectIndexManager {
 	private Set<IInternalElement> computeImports(IRodinFile file) {
 		final Set<IInternalElement> result = new HashSet<IInternalElement>();
 		final List<IRodinFile> fileDeps = order.getPredecessors(file);
-		
+
 		for (IRodinFile f : fileDeps) {
 			result.addAll(exportTable.get(f).keySet());
 		}
 		return result;
 	}
-
 
 }
