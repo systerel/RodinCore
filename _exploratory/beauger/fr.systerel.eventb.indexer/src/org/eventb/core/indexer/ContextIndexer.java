@@ -3,6 +3,7 @@ package org.eventb.core.indexer;
 import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
 import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,6 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
-
 	private Map<FreeIdentifier, IIdentifierElement> filterFreeIdentifiers(
 			FreeIdentifier[] idents, Map<String, IIdentifierElement> names)
 			throws RodinDBException {
@@ -86,9 +86,13 @@ public class ContextIndexer implements IIndexer {
 
 		Map<String, IIdentifierElement> constantNames = extractIdentifiers(constants);
 
+		// filter invalid axioms
+		final IAxiom[] axioms = file.getAxioms();
+		final List<IAxiom> validAxioms = filterInvalidAxioms(axioms);
 		// index references for each axiom
-		for (IAxiom axiom : file.getAxioms()) {
-			IParseResult result = ff.parsePredicate(axiom.getPredicateString());
+		for (IAxiom axiom : validAxioms) {
+			final String predicateString = axiom.getPredicateString();
+			IParseResult result = ff.parsePredicate(predicateString);
 			if (result.isSuccess()) {
 				final Predicate pred = result.getParsedPredicate();
 				final FreeIdentifier[] idents = pred.getFreeIdentifiers();
@@ -102,6 +106,27 @@ public class ContextIndexer implements IIndexer {
 
 	}
 
+	private List<IAxiom> filterInvalidAxioms(final IAxiom[] axioms)
+			throws RodinDBException {
+		final List<IAxiom> validAxioms = new ArrayList<IAxiom>();
+		for (IAxiom axiom : axioms) {
+			if (isValid(axiom)) {
+				validAxioms.add(axiom);
+			}
+		}
+		return validAxioms;
+	}
+
+	private boolean isValid(IAxiom axiom) throws RodinDBException {
+		if (!axiom.exists()) {
+			return false;
+		}
+		if (!axiom.hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE)) {
+			return false;
+		}
+		return true;
+	}
+	
 	private void indexMatchingIdents(
 			final Map<FreeIdentifier, IIdentifierElement> matchingIdents,
 			IIndexingToolkit index, IAxiom axiom, Predicate pred) {
@@ -135,19 +160,17 @@ public class ContextIndexer implements IIndexer {
 			String constantName, IIndexingToolkit index) {
 		index.declare(constant, constantName);
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
-		.getRodinFile());
+				.getRodinFile());
 		index.addOccurrence(constant, DECLARATION, loc);
 	}
 
 	private void indexConstantReference(IConstant constant, String name,
 			IRodinLocation loc, IIndexingToolkit index) {
-		index.addOccurrence(constant, REFERENCE,
-				loc);
+		index.addOccurrence(constant, REFERENCE, loc);
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return NO_DEPENDENCIES;
 	}
-
 
 }
