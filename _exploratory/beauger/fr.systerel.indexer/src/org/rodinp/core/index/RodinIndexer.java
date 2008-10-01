@@ -22,11 +22,8 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinDBStatus;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
@@ -170,17 +167,6 @@ public class RodinIndexer extends Plugin {
 	 */
 	public static RodinIndexer getDefault() {
 		return plugin;
-	}
-
-	/** **************************************************************************** */
-
-	/** To be moved to {@link IRodinDBStatusConstants} */
-	public static final int INVALID_LOCATION = 999;
-
-	/** To refactor and move in IRodinDBStatus */
-	public static IRodinDBStatus errorStatus(String message) {
-		final Exception exc = new IllegalArgumentException(message);
-		return new RodinDBStatus(INVALID_LOCATION, exc);
 	}
 
 }
