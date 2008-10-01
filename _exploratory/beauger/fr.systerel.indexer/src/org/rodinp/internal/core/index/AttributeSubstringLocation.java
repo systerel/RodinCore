@@ -1,7 +1,7 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.index.IAttributeSubstringLocation;
 
 public class AttributeSubstringLocation extends AttributeLocation implements
@@ -10,7 +10,7 @@ public class AttributeSubstringLocation extends AttributeLocation implements
 	private final int charStart;
 	private final int charEnd;
 
-	public AttributeSubstringLocation(IInternalParent element,
+	public AttributeSubstringLocation(IAttributedElement element,
 			IAttributeType.String attributeType, int charStart, int charEnd) {
 		super(element, attributeType);
 		if (charStart < 0) {

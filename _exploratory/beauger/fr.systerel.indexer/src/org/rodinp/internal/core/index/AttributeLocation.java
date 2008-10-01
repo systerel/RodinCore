@@ -11,7 +11,7 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.index.IAttributeLocation;
 
 public class AttributeLocation extends RodinLocation implements
@@ -19,7 +19,7 @@ public class AttributeLocation extends RodinLocation implements
 
 	private final IAttributeType attributeType;
 
-	public AttributeLocation(IInternalParent element,
+	public AttributeLocation(IAttributedElement element,
 			IAttributeType attributeType) {
 		super(element);
 		if (attributeType == null) {
