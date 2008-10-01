@@ -54,7 +54,7 @@ public class FileIndexingManager {
 		return result;
 	}
 	
-	public void launchIndexing(IRodinFile file, IIndexingToolkit indexingToolkit) {
+	public void doIndexing(IRodinFile file, IIndexingToolkit indexingToolkit) {
 		final IIndexer indexer = getIndexerFor(file.getElementType());
 		if (indexer == null) {
 			return;

@@ -48,7 +48,7 @@ public class ProjectIndexManager {
 					index, fileTable, nameTable, exportTable, fileImports);
 
 			if (file.exists()) {
-				fim.launchIndexing(file, indexingToolkit);
+				fim.doIndexing(file, indexingToolkit);
 				
 				if (indexingToolkit.mustReindexDependents()) {
 					order.setToIterSuccessors();
