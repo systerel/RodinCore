@@ -26,7 +26,7 @@ import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.Occurrence;
-import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class ContextIndexerTests extends ModifyingResourceTests {
 
