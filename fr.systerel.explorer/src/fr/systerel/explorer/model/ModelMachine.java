@@ -12,7 +12,6 @@ package fr.systerel.explorer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,7 +43,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	/**
 	 * Machines that this Machine refines.
 	 */
-	
 	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
 	private IMachineFile internalMachine ;
 	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
@@ -147,12 +145,12 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				addInvariant(invs[i]);
 			}
 			IEvent[] evts = internalMachine.getChildrenOfType(IEvent.ELEMENT_TYPE);
-			for (int i = 0; i < evts.length; i++) {
-				addEvent(evts[i]);
+			for (IEvent evt :  evts) {
+				addEvent(evt);
 			}
 			ITheorem[] thms = internalMachine.getChildrenOfType(ITheorem.ELEMENT_TYPE);
-			for (int i = 0; i < thms.length; i++) {
-				addTheorem(thms[i]);
+			for (ITheorem thm : thms) {
+				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -170,15 +168,16 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	public void processPOFile() {
 		try {
+			//clear old POs
+			proofObligations.clear();
 			IPOFile file = internalMachine.getPOFile();
 			IPOSequent[] sequents = file.getSequents();
-			for (int i = 0; i < sequents.length; i++) {
-				IPOSequent sequent =  sequents[i];
+			for (IPOSequent sequent : sequents) {
 				ModelProofObligation po = new ModelProofObligation(sequent);
 				po.setMachine(this);
 				proofObligations.put(sequent.getElementName(), po);
 	
-				IPOSource[] sources = sequents[i].getSources();
+				IPOSource[] sources = sequent.getSources();
 				for (int j = 0; j < sources.length; j++) {
 					IRodinElement source = sources[j].getSource();
 					if (source instanceof IInvariant) {

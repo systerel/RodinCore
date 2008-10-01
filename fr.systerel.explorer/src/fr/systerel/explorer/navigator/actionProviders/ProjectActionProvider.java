@@ -18,7 +18,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 
 /**
- * @author Maria Husmann
+ * An action provider for projects.
  *
  */
 public class ProjectActionProvider extends NavigatorActionProvider {

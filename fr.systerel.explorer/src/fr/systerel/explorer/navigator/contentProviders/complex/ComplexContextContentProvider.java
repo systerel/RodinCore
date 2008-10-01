@@ -8,6 +8,8 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
+
+
 package fr.systerel.explorer.navigator.contentProviders.complex;
 
 import java.util.Iterator;
@@ -26,7 +28,11 @@ import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
 
-public class ComplexContentProvider implements ITreeContentProvider {
+/**
+ * The content provider for Contexts. 
+ *
+ */
+public class ComplexContextContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
         if (element instanceof IRodinProject) {
@@ -34,36 +40,12 @@ public class ComplexContentProvider implements ITreeContentProvider {
         	if (project.getProject().isOpen()) {
 	        	ModelController.processProject(project);
 	        	ModelProject prj= ModelController.getProject(project);
-	        	IMachineFile[] machines = ModelController.convertToIMachine(prj.getRootMachines());
-	        	IContextFile[] contexts = ModelController.convertToIContext(prj.getDisconnectedContexts());
-	        	Object[] results = new Object[machines.length + contexts.length];
-	        	System.arraycopy(contexts, 0, results, 0, contexts.length);
-	        	System.arraycopy(machines, 0, results, contexts.length, machines.length);
-	     	
-	        	return results;
+	        	return ModelController.convertToIContext(prj.getRootContexts());
         	}
         } 
         if (element instanceof IMachineFile) {
         	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
-        	List<ModelMachine> rest = machine.getRestMachines();
-        	List<ModelMachine> machines = new LinkedList<ModelMachine>();
-        	List<Object> result = new LinkedList<Object>();
-
-        	List<ModelContext> sees = machine.getSeesContexts();
-        	List<ModelContext> contexts = new LinkedList<ModelContext>();
-        	for (Iterator<ModelContext> iterator = sees.iterator(); iterator.hasNext();) {
-				ModelContext context = iterator.next();
-				contexts.addAll(context.getLongestBranch());
-				
-			}
-        	result.addAll(ModelController.convertToIContext(contexts));
-        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
-				machines.addAll(mach.getLongestBranch());
-			}
-        	result.addAll(ModelController.convertToIMachine(machines));
-        	
-        	return result.toArray();
+        	return ModelController.convertToIContext(machine.getSeesContexts()).toArray();
         } 
         if (element instanceof IContextFile) {
         	ModelContext context = ModelController.getContext(((IContextFile) element));

@@ -18,7 +18,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 
 /**
- * @author Administrator
+ * An action provider for ProofObligations.
  *
  */
 public class POActionProvider extends NavigatorActionProvider {

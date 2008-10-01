@@ -20,7 +20,7 @@ import java.util.List;
 import org.eventb.core.IPSStatus;
 
 /**
- * An Interface for any elements that may contain ProofObligations
+ * An Interface for any elements that may contain ProofObligations (Machines, Invariants...)
  *
  */
 public class ModelPOContainer implements IModelElement{
@@ -41,6 +41,11 @@ public class ModelPOContainer implements IModelElement{
 		proofObligations.put(po.getElementName(), po);
 	}
 
+	
+	public ModelProofObligation getProofObligation(IPSStatus status){
+		return proofObligations.get(status.getElementName());
+	}
+	
 	/**
 	 * 
 	 * @return 	The IPSStatuses of the ProofObligations in this container 
@@ -48,8 +53,7 @@ public class ModelPOContainer implements IModelElement{
 	 */
 	public IPSStatus[] getIPSStatuses() {
 		List<IPSStatus> statuses = new LinkedList<IPSStatus>();
-		for (Iterator<ModelProofObligation> iterator = proofObligations.values().iterator(); iterator.hasNext();) {
-			ModelProofObligation po = iterator.next();
+		for (ModelProofObligation po : proofObligations.values()) {
 			if (po.getIPSStatus() != null) {
 				statuses.add(po.getIPSStatus());
 			}
@@ -62,15 +66,17 @@ public class ModelPOContainer implements IModelElement{
 		return parent;
 	}
 	
+	/**
+	 * 
+	 * @return True, if there's an undischarged ProofObligation in this container.
+	 * False otherwise.
+	 */
 	public boolean hasUndischargedPOs(){
-		for (Iterator<ModelProofObligation> iterator = proofObligations.values().iterator(); iterator.hasNext();) {
-			ModelProofObligation po = iterator.next();
+		for (ModelProofObligation po : proofObligations.values()) {
 			if (!po.isDischarged()) {
 				return true;
 			}
-			
 		}
-		
 		return false;
 	}
 	

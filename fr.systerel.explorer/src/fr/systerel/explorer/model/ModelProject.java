@@ -26,6 +26,8 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPSFile;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
@@ -34,7 +36,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Represents a RodinProject in the Model
+ * Represents a RodinProject in the Model.
+ * Contains Machines and Context.
  *
  */
 public class ModelProject implements IModelElement {
@@ -70,8 +73,6 @@ public class ModelProject implements IModelElement {
 			
 		}
 		mach.processChildren();
-		//clear existing proof obligations and start from scratch
-		mach.proofObligations.clear();
 		try {
 			// get all machines, that this machine refines (all abstract machines, usually just 1)
 			for (IRefinesMachine refine : machine.getRefinesClauses()){
@@ -165,7 +166,7 @@ public class ModelProject implements IModelElement {
 			ctx.resetAncestors();
 		}
 		ctx.processChildren();
-		//clear existing proof obligations and start from scratch
+		//clear existing proof obligations
 		ctx.proofObligations.clear();
 		// get all contexts, that this contexts extends 
 		try {
@@ -235,8 +236,7 @@ public class ModelProject implements IModelElement {
 	public ModelMachine[] getRootMachines(){
 		List<ModelMachine> results = new LinkedList<ModelMachine>();
 
-		for (Iterator<ModelMachine> iterator = machines.values().iterator(); iterator.hasNext();) {
-			ModelMachine machine = iterator.next();
+		for (ModelMachine machine : machines.values()) {
 			if (machine.isRoot()){
 				results.addAll(machine.getLongestBranch());
 			}
@@ -245,6 +245,22 @@ public class ModelProject implements IModelElement {
 		return results.toArray(new ModelMachine[results.size()]);
 	}
 
+	/**
+	 * 
+	 * @return 	all contexts of this project marked as root plus for each their longest branch.
+	 */
+	public ModelContext[] getRootContexts(){
+		List<ModelContext> results = new LinkedList<ModelContext>();
+
+		for (ModelContext context : contexts.values()) {
+			if (context.isRoot()){
+				results.addAll(context.getLongestBranch());
+			}
+			
+		}
+		return results.toArray(new ModelContext[results.size()]);
+	}
+	
 	
 	/**
 	 * 
@@ -253,8 +269,7 @@ public class ModelProject implements IModelElement {
 	public ModelContext[] getDisconnectedContexts(){
 		List<ModelContext> results = new LinkedList<ModelContext>();
 
-		for (Iterator<ModelContext> iterator = contexts.values().iterator(); iterator.hasNext();) {
-			ModelContext context = iterator.next();
+		for (ModelContext context : contexts.values()) {
 			if (context.isNotSeen() && context.isRoot()){
 				results.addAll(context.getLongestBranch());
 			}
@@ -318,6 +333,11 @@ public class ModelProject implements IModelElement {
 		return contexts.containsKey(identifier);
 	}
 	
+	/**
+	 * Removes a context from this project.
+	 * Also removes dependencies
+	 * @param identifier	An identifier for the context to remove
+	 */
 	public void removeContext(String identifier) {
 		ModelContext context =  contexts.get(identifier);
 		if (context != null) {
@@ -394,6 +414,23 @@ public class ModelProject implements IModelElement {
 		}
 		return null;
 	}
+	
+	public ModelProofObligation getProofObligation(IPSStatus status){
+		IRodinFile file = status.getRodinFile();
+		if (file instanceof IPSFile) {
+			ModelMachine machine = machines.get(file.getBareName());
+			if (machine != null) {
+				return machine.getProofObligation(status);
+			}
+			
+			ModelContext context = contexts.get(file.getBareName());
+			if (context != null) {
+				return context.getProofObligation(status);
+			}
+		}
+		return null;
+	}
+	
 	
 	public IModelElement getParent() {
 		//The Project doesn't have a ModelElement parent

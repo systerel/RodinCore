@@ -21,7 +21,7 @@ package fr.systerel.explorer.model;
  * extend each other.
  * The Model is built by the ModelController.
  * The modelling of the machines and contexts is triggered by the context providers
- * that provide the machines and context (ComplexContextProvider, MachineContextContentProvider)
+ * that provide the machines and context.
  * The modelling of the proof obligations is triggered by the content provider for the POs
  * (POContentProvider)
  */

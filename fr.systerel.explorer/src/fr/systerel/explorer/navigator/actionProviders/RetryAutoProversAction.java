@@ -40,7 +40,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author Maria Husmann
+ * This is mostly copied from
+ * org.eventb.internal.ui.obligationexplorer.actions.ObligationsAutoProver
  *
  */
 public class RetryAutoProversAction extends Action {

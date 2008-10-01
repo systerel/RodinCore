@@ -24,19 +24,17 @@ import org.rodinp.core.RodinDBException;
 import fr.systerel.explorer.model.ModelController;
 
 /**
- * The content provider for Machine and Context elements.
- * Provides content for a project (shows all machines and contexts).
- * @author Maria Husmann
+ * The content provider for Context elements.
  *
  */
-public class MachineContextContentProvider implements ITreeContentProvider {
+public class ContextContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
         if (element instanceof IRodinProject) {
         	IRodinProject project = (IRodinProject) element;
         	try {
             	ModelController.processProject(project);
-				return filterChildren(project.getChildren());
+				return project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,27 +80,6 @@ public class MachineContextContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	   	// Do nothing
 		 
-	}
-	
-	/**
-	 * This filter lets pass only elements that are of type <code>IMachineFile</code> or <code>IContextFile</code>.
-	 * Process IPOFile (build the model)
-	 * @param children	The children to filter
-	 * @return			The filtered objects
-	 */
-	private Object[] filterChildren(IRodinElement[] children) {
-		if (children != null) {
-			List<IRodinElement> list = new LinkedList<IRodinElement>();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IMachineFile) {
-					list.add(children[i]);
-				}
-				else if (children[i] instanceof IContextFile) {
-					list.add(children[i]);
-				}
-			}
-			return list.toArray();
-		} else return new Object[0];
 	}
 
 }

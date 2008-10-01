@@ -21,6 +21,11 @@ import org.eventb.ui.EventBUIPlugin;
 
 import fr.systerel.explorer.navigator.wizards.NewProjectWizard;
 
+/**
+ * 
+ * An action provider for creating new projects
+ *
+ */
 public class NewProjectActionDelegate implements IViewActionDelegate {
 
 	IViewPart view;

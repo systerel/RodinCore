@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eventb.core.basis.PSStatus;
 
 /**
- * @author Administrator
+ * A filter for Proof Obligation that filters according to a given text.
  *
  */
 public class ObligationTextFilter extends ViewerFilter {

@@ -27,6 +27,11 @@ import fr.systerel.explorer.model.ModelInvariant;
 import fr.systerel.explorer.model.ModelPOContainer;
 import fr.systerel.explorer.model.ModelTheorem;
 
+/**
+ * 
+ * The content provider for proof obligations
+ *
+ */
 public class POContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {

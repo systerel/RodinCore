@@ -14,7 +14,6 @@ package fr.systerel.explorer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,16 +43,21 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * The Contexts that are extended by this Context (ancestors)
 	 */
 	private List<ModelContext> extendsContexts = new LinkedList<ModelContext>();
+	/**
+	 * The Machines that see this context.
+	 */
 	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
+	
 	private IContextFile internalContext;
 	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
 	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
-	public ModelElementNode[] nodes;
+	
 	/**
 	 * All contexts that are above this context in the extends tree. 
-	 * (= context that are extended by this context)
+	 * (= context that are extended by this context or his ancestors)
 	 */
 	private ArrayList<ModelContext> ancestors =  new ArrayList<ModelContext>();
+	
 	/**
 	 * The longest branch of contexts that extend this context.
 	 * (including this context)
@@ -62,6 +66,11 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	private ArrayList<ModelContext> longestExtendsBranch =  new ArrayList<ModelContext>();
 
+	/**
+	 * The nodes are used by the ContextProviders to present a node in the tree
+	 * above elements such as Axioms or Theorems.
+	 */
+	public ModelElementNode[] nodes;
 	
 	/**
 	 * Creates a ModelContext from a given IContextFile
@@ -114,17 +123,23 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public void setLongestBranch(ArrayList<ModelContext> branch){
 		longestExtendsBranch = branch;
 	}
+	
+	/**
+	 * Processes the children of this Context:
+	 * Clears existing axioms and theorems.
+	 * Adds all axioms and theorems found in the internalContext file.
+	 */
 	public void processChildren(){
 		axioms.clear();
 		theorems.clear();
 		try {
 			IAxiom[] axms = internalContext.getChildrenOfType(IAxiom.ELEMENT_TYPE);
-			for (int i = 0; i < axms.length; i++) {
-				addAxiom(axms[i]);
+			for (IAxiom axm : axms) {
+				addAxiom(axm);
 			}
 			ITheorem[] thms = internalContext.getChildrenOfType(ITheorem.ELEMENT_TYPE);
-			for (int i = 0; i < thms.length; i++) {
-				addTheorem(thms[i]);
+			for (ITheorem thm :  thms) {
+				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -142,13 +157,12 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		try {
 			IPOFile file = internalContext.getPOFile();
 			IPOSequent[] sequents = file.getSequents();
-			for (int i = 0; i < sequents.length; i++) {
-				IPOSequent sequent =  sequents[i];
+			for (IPOSequent sequent : sequents) {
 				ModelProofObligation po = new ModelProofObligation(sequent);
 				po.setContext(this);
 				proofObligations.put(sequent.getElementName(), po);
 	
-				IPOSource[] sources = sequents[i].getSources();
+				IPOSource[] sources = sequent.getSources();
 				for (int j = 0; j < sources.length; j++) {
 					IRodinElement source = sources[j].getSource();
 					if (source instanceof ITheorem) {
@@ -182,8 +196,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		try {
 			IPSFile file = internalContext.getPSFile();
 			IPSStatus[] stats = file.getStatuses();
-			for (int i = 0; i < stats.length; i++) {
-				IPSStatus status = stats[i];
+			for (IPSStatus status : stats) {
 				IPOSequent sequent = status.getPOSequent();
 				// check if there is a ProofObligation for this status (there should be one!)
 				if (proofObligations.containsKey(sequent.getElementName())) {

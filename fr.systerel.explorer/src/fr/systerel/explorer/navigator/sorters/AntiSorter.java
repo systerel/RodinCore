@@ -16,9 +16,13 @@ import java.text.Collator;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IMachineFile;
 
 /**
- * @author Administrator
+ * A sorter that doesn't sort.
+ * The elements are sorted by the CNF alphabetically by default, which we don't want.
+ * This overrides the sorting and keeps them in the order they appear.
  *
  */
 public class AntiSorter extends ViewerSorter {
@@ -38,9 +42,9 @@ public class AntiSorter extends ViewerSorter {
 		// TODO Auto-generated constructor stub
 	}
 	
+
 	/**
-	 * Don't sort!! The elements are sorted by the CNF alphabetically by default, which we don't want.
-	 * This overrides the sorting and keeps them in the order they appear.
+	 * Don't sort!! 
 	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {

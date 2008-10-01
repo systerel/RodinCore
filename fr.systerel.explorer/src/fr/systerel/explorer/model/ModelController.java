@@ -27,6 +27,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
 import org.eventb.core.IPSFile;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -62,11 +63,14 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	/**
-	 * Processes a RodinProject. Creates a model for this project (Machines, Invariants, POs etc.)
+	 * Processes a RodinProject. Creates a model for this project (Machines, Contexts, Invariants etc.).
+	 * Proof Obligations are not included in processing.
+	 * 
 	 * @param project The Project to process.
 	 */
 	public static void processProject(IRodinProject project){
 		try {
+//			System.out.println("Processing project start" +System.currentTimeMillis());
 			ModelProject prj;
 			if (!projects.containsKey(project.getHandleIdentifier())) {
 				prj =  new ModelProject(project);
@@ -84,11 +88,13 @@ public class ModelController implements IElementChangedListener {
 				prj.processMachine(machines[i]);
 			}
 			prj.calculateMachineBranches();
+//			System.out.println("Processing project done " +System.currentTimeMillis());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
 	
 	/**
 	 * Gets the ModelInvariant for a given Invariant
@@ -167,6 +173,20 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 
+	/**
+	 * Gets the ModelProofObligation for a given IPSStatus
+	 * @param status	The  IPSStatus to look for
+	 * @return	The corresponding ModelProofObligation, if there exists one, <code>null</code> otherwise
+	 */
+	public static ModelProofObligation getModelPO(IPSStatus status){
+		ModelProject project = projects.get(status.getRodinProject().getHandleIdentifier());
+		if (project != null) {
+				return project.getProofObligation(status);
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * Gets the ModelContext for a given ContextFile
 	 * @param contextFile	The ContextFile to look for
@@ -267,7 +287,7 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
-		System.out.println("Event: " +event.getDelta());
+//		System.out.println("Event: " +event.getDelta());
 		toRefresh = new ArrayList<IRodinElement>();
 		processDelta(event.getDelta());
 		for (IRodinElement elem : toRefresh) {
@@ -282,12 +302,12 @@ public class ModelController implements IElementChangedListener {
 					//TODO: only temporary solution. change this.
 					// refresh everything
 					if (toRefresh.contains(RodinCore.getRodinDB())) {
-						System.out.println("refreshing view");
-						viewer.refresh();
+//						System.out.println("refreshing view");
+						viewer.refresh(false);
 					} else {
 						for (Object elem : toRefresh) {
-							viewer.refresh(elem);
-							System.out.println("refreshing view: " +elem);
+							viewer.refresh(false);
+//							System.out.println("refreshing view: " +elem);
 						}
 					}
 				}
@@ -300,7 +320,7 @@ public class ModelController implements IElementChangedListener {
 	 * @param element	The element to refresh
 	 */
 	private void refreshModel(IRodinElement element) {
-		System.out.println("refreshing model: "+element.toString() );
+//		System.out.println("refreshing model: "+element.toString() );
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
 			if (element instanceof IMachineFile) {

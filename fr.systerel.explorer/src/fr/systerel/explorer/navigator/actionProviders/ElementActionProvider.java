@@ -17,6 +17,11 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 
+/**
+ * 
+ * An action provider for elements such as Invariants, Theorems, Events etc.
+ *
+ */
 public class ElementActionProvider extends NavigatorActionProvider {
 
 

@@ -23,7 +23,7 @@ import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
- * @author Maria Husmann
+ * An action delegate for creating new components.
  *
  */
 public class NewComponentActionDelegate implements IViewActionDelegate {

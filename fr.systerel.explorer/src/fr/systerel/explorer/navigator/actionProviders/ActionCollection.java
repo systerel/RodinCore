@@ -50,11 +50,20 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * A collection of actions for the navigator
+ *
+ */
 public class ActionCollection {
 	
+	/**
+	 * Provides an open action for various elements in Rodin 
+	 * (Machines, Contexts, Invariants, ProofObligations...)
+	 * @param site
+	 * @return An opnen action
+	 */
 	public static Action getOpenAction(final ICommonActionExtensionSite site) {
 		Action doubleClickAction = new Action("Open") {
 			@Override
@@ -76,7 +85,11 @@ public class ActionCollection {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @param site
+	 * @return an action that copies projects
+	 */
 	public static Action getCopyProjectAction(final ICommonActionExtensionSite site) {
 		Action renameAction = new Action() {
 			@Override
@@ -179,6 +192,11 @@ public class ActionCollection {
 		return renameAction;
 	}
 	
+	/**
+	 * 
+	 * @param site
+	 * @return An action for deleting projects
+	 */
 	public static Action getDeleteAction(final ICommonActionExtensionSite site) {
 		Action deleteAction = new Action() {
 			@Override
@@ -281,6 +299,11 @@ public class ActionCollection {
 		return deleteAction;
 	}
 	
+	/**
+	 * 
+	 * @param site
+	 * @return an Action for creating new Projects
+	 */
 	public static Action getNewProjectAction(final ICommonActionExtensionSite site){
 		Action newProjectAction = new Action() {
 			@Override
@@ -303,6 +326,11 @@ public class ActionCollection {
 		return newProjectAction;
 	}
 	
+	/**
+	 * 
+	 * @param site
+	 * @return An action for creating new components.
+	 */
 	public static Action getNewComponentAction(final ICommonActionExtensionSite site){
 		Action newComponentAction = new Action() {
 			@Override

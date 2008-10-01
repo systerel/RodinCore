@@ -35,25 +35,28 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.CommonViewerSorter;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.navigator.filters.DischargedFilter;
+import fr.systerel.explorer.navigator.filters.HideNoneRodinFilter;
 import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
+import fr.systerel.explorer.navigator.filters.WorkingSetProjectFilter;
 
 /**
- * @author Maria Husmann
+ * The Navigator for the CommonNavigator framework.
+ * There are some customizations for the menus 
+ * and the working sets.
  *
  */
 public class RodinNavigator extends CommonNavigator implements IPropertyChangeListener {
+	
+	Text filterText;
+	ToolItem discharge;
 
-
-	/**
-	 * Observe the database.
-	 *
-	 */
 	public RodinNavigator(){
 		controller = new ModelController(this);
 	}
@@ -61,6 +64,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 	/**
 	 * The Controller of the internal model.
 	 */
+	@SuppressWarnings("unused")
 	private ModelController controller;
 	
 	
@@ -73,11 +77,6 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 //		this.getCommonViewer().refresh();
 //		return RodinCore.getRodinDB();
 //	}
-
-	
-	Text filterText;
-	ToolItem discharge;
-	
 
 	/**
 	 * Add some custom items for filtering to the toolbar.
@@ -107,6 +106,14 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		WorkingSetFilterActionGroup group = new WorkingSetFilterActionGroup(this.getSite().getShell(), this);
 		group.fillContextMenu(this.getViewSite().getActionBars().getMenuManager());
 		
+		//add the filters here
+		//those filters are selected by default and can't be chosen
+		//via the "customize view" dialog
+		getCommonViewer().addFilter(new DischargedFilter());
+		getCommonViewer().addFilter(new ObligationTextFilter());
+		getCommonViewer().addFilter(new HideNoneRodinFilter());
+		getCommonViewer().addFilter(new WorkingSetProjectFilter());
+			
 	}
 	
 	CoolItem createText(CoolBar coolBar) {
@@ -174,6 +181,10 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		return item;
 	}
 
+	/**
+	 * React to changes in working set selection:
+	 * Set the input for the ContentProviders accordingly.
+	 */
 	public void propertyChange(final PropertyChangeEvent event) {
 		final Object root;
 		if (event.getNewValue() instanceof IWorkingSet) {
