@@ -41,6 +41,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
 import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.navigator.filters.ContextFilter;
 import fr.systerel.explorer.navigator.filters.DischargedFilter;
 import fr.systerel.explorer.navigator.filters.HideNoneRodinFilter;
 import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
@@ -113,6 +114,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		getCommonViewer().addFilter(new ObligationTextFilter());
 		getCommonViewer().addFilter(new HideNoneRodinFilter());
 		getCommonViewer().addFilter(new WorkingSetProjectFilter());
+		getCommonViewer().addFilter(new ContextFilter());
 			
 	}
 	
