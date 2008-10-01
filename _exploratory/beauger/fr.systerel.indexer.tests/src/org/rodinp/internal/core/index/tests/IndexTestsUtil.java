@@ -20,7 +20,7 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.Occurrence;
-import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexTestsUtil {
 

@@ -8,7 +8,7 @@ import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
 

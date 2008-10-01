@@ -14,7 +14,7 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.RodinIndex;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexManagerTests extends AbstractRodinDBTests {
 

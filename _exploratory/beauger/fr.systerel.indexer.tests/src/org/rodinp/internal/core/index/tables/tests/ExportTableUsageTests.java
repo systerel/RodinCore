@@ -13,8 +13,8 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.ExportTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class ExportTableUsageTests extends AbstractRodinDBTests {
 

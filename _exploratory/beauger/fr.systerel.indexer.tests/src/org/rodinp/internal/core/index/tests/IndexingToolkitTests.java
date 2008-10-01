@@ -23,10 +23,10 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexingToolkit;
-import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexingToolkitTests extends AbstractRodinDBTests {
 
