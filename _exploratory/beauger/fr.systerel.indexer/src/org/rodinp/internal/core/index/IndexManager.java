@@ -20,6 +20,7 @@ import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public final class IndexManager {
 
@@ -277,7 +278,7 @@ public final class IndexManager {
 	 */
 	public void clear() {
 		pims.clear();
-		fim.clear();
+		clearIndexers();
 	}
 
 }

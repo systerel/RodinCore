@@ -32,6 +32,13 @@ public class Node<T> {
 		return new ArrayList<Node<T>>(successors);
 	}
 
+	public void changePredecessors(List<Node<T>> newPredecessors) {
+		clearPredecessors();
+		for (Node<T> pred : newPredecessors) {
+			addPredecessor(pred);
+		}
+	}
+	
 	public void addPredecessor(Node<T> tail) {
 		if (this.equals(tail)) {
 			throw new IllegalArgumentException(
@@ -49,20 +56,28 @@ public class Node<T> {
 	}
 
 	public void clear() {
+		clearPredecessors();
+		clearSuccessors();
+		this.mark = false;
+		this.orderPos = -1;
+	}
+
+	private void clearPredecessors() {
 		final Iterator<Node<T>> iterPred = predecessors.iterator();
 		while (iterPred.hasNext()) {
 			final Node<T> pred = iterPred.next();
 			pred.successors.remove(this);
 			iterPred.remove();
 		}
+	}
+
+	private void clearSuccessors() {
 		final Iterator<Node<T>> iterSucc = successors.iterator();
 		while (iterSucc.hasNext()) {
 			final Node<T> succ = iterSucc.next();
 			succ.predecessors.remove(this);
 			iterSucc.remove();
 		}
-		this.mark = false;
-		this.orderPos = -1;
 	}
 
 	public void setMark(boolean value) {
@@ -128,5 +143,13 @@ public class Node<T> {
 		if (!label.equals(other.label))
 			return false;
 		return true;
+	}
+
+	public List<T> getPredecessorLabels() {
+		final List<T> result = new ArrayList<T>();
+		for (Node<T> pred : predecessors) {
+			result.add(pred.getLabel());
+		}
+		return result;
 	}
 }

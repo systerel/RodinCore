@@ -23,14 +23,8 @@ public class ExportTable {
 		return new HashMap<IInternalElement, String>(map);
 	}
 
-	/**
-	 * Overwrites any previous mapping from the given file to the element, and
-	 * from the given element to the name.
-	 * 
-	 * @param file
-	 * @param element
-	 * @param name
-	 */
+	// Overwrites any previous mapping from the given file to the element,
+	// and from the given element to the name.
 	public void add(IRodinFile file, IInternalElement element, String name) {
 		Map<IInternalElement, String> map = table.get(file);
 		if (map == null) {

@@ -15,6 +15,7 @@ import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexingToolkit implements IIndexingToolkit {
 

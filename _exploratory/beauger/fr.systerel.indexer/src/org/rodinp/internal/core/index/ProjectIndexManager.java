@@ -10,6 +10,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.rodinp.internal.core.index.tables.TotalOrder;
 
 public class ProjectIndexManager {

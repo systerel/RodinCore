@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.index.tables;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,76 +40,62 @@ import java.util.Map;
  */
 public class TotalOrder<T> implements Iterator<T> {
 
-	private final Map<T, Node<T>> graph;
+	private final Map<T, Node<T>> nodes;
 	private final SortedNodes<T> sortedNodes;
 	private boolean isSorted;
+
+	private static <T> boolean sameList(List<T> left, T[] right) {
+		if (left.size() != right.length)
+			return false;
+		if (!left.containsAll(Arrays.asList(right))) 
+			return false;
+		return true;
+	}
 
 	/**
 	 * 
 	 */
 	public TotalOrder() {
-		this.graph = new HashMap<T, Node<T>>();
+		this.nodes = new HashMap<T, Node<T>>();
 		this.sortedNodes = new SortedNodes<T>();
 		this.isSorted = false;
 	}
 
 	public List<T> getPredecessors(T label) {
-		final Node<T> node = graph.get(label);
-		if (node == null) {
-			return new ArrayList<T>();
-		}
-		final List<Node<T>> predecessors = node.getPredecessors();
-		final List<T> result = new ArrayList<T>();
-
-		for (Node<T> pred : predecessors) {
-			result.add(pred.getLabel());
-		}
-		return result;
+		final Node<T> node = nodes.get(label);
+		return node.getPredecessorLabels();
 	}
 
 	public void setPredecessors(T label, T[] predecessors) {
-		final Node<T> node = fetchNode(label);
-
-		final List<Node<T>> prevPreds = node.getPredecessors();
-		final List<Node<T>> newPreds = new ArrayList<Node<T>>();
-		for (T pred : predecessors) {
-			newPreds.add(fetchNode(pred));
+		final Node<T> node = getOrCreateNode(label);
+		final List<T> oldPreds = node.getPredecessorLabels();
+		if (sameList(oldPreds, predecessors)) {
+			return;
 		}
-
-		final List<Node<T>> toRemove = new ArrayList<Node<T>>(prevPreds);
-		toRemove.removeAll(newPreds);
-		final List<Node<T>> toAdd = new ArrayList<Node<T>>(newPreds);
-		toAdd.removeAll(prevPreds);
-
-		if (!(toRemove.isEmpty() && toAdd.isEmpty())) { // there are changes
-			processPredChanges(node, toRemove, toAdd);
-			isSorted = false;
-		}
+		final List<Node<T>> predNodes = getOrCreateNodes(predecessors);
+		node.changePredecessors(predNodes);
+		isSorted = false;
 	}
 
-	private void processPredChanges(final Node<T> node,
-			final List<Node<T>> toRemove, final List<Node<T>> toAdd) {
-
-		for (Node<T> addNode : toAdd) {
-			node.addPredecessor(addNode);
+	private List<Node<T>> getOrCreateNodes(T[] labels) {
+		final List<Node<T>> newPreds = new ArrayList<Node<T>>();
+		for (T pred : labels) {
+			newPreds.add(getOrCreateNode(pred));
 		}
-
-		for (Node<T> remNode : toRemove) {
-			node.removePredecessor(remNode);
-		}
+		return newPreds;
 	}
 
 	public void setToIter(T label) {
-		final Node<T> node = fetchNode(label);
+		final Node<T> node = getOrCreateNode(label);
 		sortedNodes.setToIter(node);
 	}
 
 	public boolean contains(T label) {
-		return graph.containsKey(label);
+		return nodes.containsKey(label);
 	}
 
 	public void remove(T label) {
-		final Node<T> node = graph.get(label);
+		final Node<T> node = nodes.get(label);
 		if (node == null) {
 			return;
 		}
@@ -116,7 +103,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	}
 
 	public void clear() {
-		graph.clear();
+		nodes.clear();
 		sortedNodes.clear();
 		isSorted = false;
 	}
@@ -151,8 +138,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	 * nodes to iter.
 	 */
 	public void end() {
-		for (T label : graph.keySet()) {
-			final Node<T> node = graph.get(label);
+		for (Node<T> node : nodes.values()) {
 			node.setMark(false);
 		}
 		sortedNodes.start();
@@ -160,24 +146,24 @@ public class TotalOrder<T> implements Iterator<T> {
 
 	private void remove(Node<T> node) {
 		node.clear();
-		graph.remove(node.getLabel());
+		nodes.remove(node.getLabel());
 		isSorted = false;
 	}
 
 	private void updateSort() {
 		if (!isSorted) {
-			sortedNodes.sort(graph);
+			sortedNodes.sort(nodes);
 			isSorted = true;
 			sortedNodes.start();
 		}
 	}
 
-	private Node<T> fetchNode(T label) {
-		Node<T> node = graph.get(label);
+	private Node<T> getOrCreateNode(T label) {
+		Node<T> node = nodes.get(label);
 
 		if (node == null) {
 			node = new Node<T>(label);
-			graph.put(label, node);
+			nodes.put(label, node);
 			isSorted = false;
 		}
 		return node;

@@ -14,8 +14,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.RodinIndex;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tables.RodinIndex;
 
 /**
  * @author Nicolas Beauger

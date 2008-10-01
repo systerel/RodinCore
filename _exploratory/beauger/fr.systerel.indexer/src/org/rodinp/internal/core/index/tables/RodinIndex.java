@@ -1,10 +1,11 @@
-package org.rodinp.internal.core.index;
+package org.rodinp.internal.core.index.tables;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.internal.core.index.Descriptor;
 
 public final class RodinIndex {
 
