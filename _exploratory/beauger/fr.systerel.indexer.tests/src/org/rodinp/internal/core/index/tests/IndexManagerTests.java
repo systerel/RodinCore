@@ -10,13 +10,12 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
-public class IndexManagerTests extends AbstractRodinDBTests {
+public class IndexManagerTests extends IndexTests {
 
 	private static IIndexer indexer;
 	private static RodinIndex rodinIndex;
@@ -30,8 +29,8 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	private static final IndexManager manager = IndexManager.getDefault();
 
 	public IndexManagerTests(String name) {
-		super(name);
-		RodinIndexer.getDefault().cancelIndexerJob();
+		super(name, true);
+		RodinIndexer.getDefault().disableIndexing();
 	}
 
 	@Override

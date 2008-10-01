@@ -1,6 +1,7 @@
 package org.rodinp.internal.core.index.tables.tests;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.rodinp.internal.core.index.tables.Node;
@@ -15,12 +16,13 @@ public class NodeTests extends TestCase {
 	private static final Node<Integer> NODE_ONE = new Node<Integer>(ONE);
 	private static final Node<Integer> NODE_TWO = new Node<Integer>(TWO);
 	private static final Node<Integer> NODE_THREE = new Node<Integer>(THREE);
-	private static final List<Node<Integer>> EMPTY_NODE_LIST = new ArrayList<Node<Integer>>();
+	private static final List<Node<Integer>> EMPTY_NODE_LIST = Collections
+			.emptyList();
 
 	private static void assertNodes(String nodeType,
 			List<Node<Integer>> expected, List<Node<Integer>> actual) {
-		assertEquals("Bad " + nodeType + "s length", expected.size(), actual
-				.size());
+		assertEquals("Bad " + nodeType + "s length in: " + actual, expected
+				.size(), actual.size());
 		for (Node<Integer> n : expected) {
 			assertTrue("missing " + nodeType + " " + n.getLabel(), actual
 					.contains(n));
@@ -57,6 +59,9 @@ public class NodeTests extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		NODE_ONE.clear();
+		NODE_TWO.clear();
+		NODE_THREE.clear();
 	}
 
 	public void testGetLabel() {
@@ -67,15 +72,6 @@ public class NodeTests extends TestCase {
 		assertEquals("Bad label", ONE, label);
 	}
 
-	public void testAddPredecessor() {
-		NODE_THREE.addPredecessor(NODE_ONE);
-
-		List<Node<Integer>> expected = new ArrayList<Node<Integer>>();
-		expected.add(NODE_ONE);
-
-		assertPredecessors(expected, NODE_THREE);
-	}
-
 	public void testGetPredecessors() {
 		NODE_THREE.addPredecessor(NODE_ONE);
 		NODE_THREE.addPredecessor(NODE_TWO);
@@ -83,6 +79,14 @@ public class NodeTests extends TestCase {
 		List<Node<Integer>> expected = new ArrayList<Node<Integer>>();
 		expected.add(NODE_ONE);
 		expected.add(NODE_TWO);
+
+		assertPredecessors(expected, NODE_THREE);
+	}
+
+	public void testAddPredecessor() {
+		NODE_THREE.addPredecessor(NODE_ONE);
+
+		List<Node<Integer>> expected = Collections.singletonList(NODE_ONE);
 
 		assertPredecessors(expected, NODE_THREE);
 	}
@@ -121,7 +125,7 @@ public class NodeTests extends TestCase {
 		assertNoPredecessors(NODE_THREE);
 		final boolean marked = NODE_THREE.isMarked();
 		final int orderPos = NODE_THREE.getOrderPos();
-		
+
 		assertFalse("mark not cleared", marked);
 		assertEquals("orderPos not cleared", -1, orderPos);
 	}
@@ -179,14 +183,14 @@ public class NodeTests extends TestCase {
 		assertFalse("isAfter should return false when orderPos is not set",
 				after);
 	}
-	
+
 	public void testIsAfter() throws Exception {
 		NODE_ONE.setOrderPos(12);
 		NODE_TWO.setOrderPos(45);
-		
+
 		final boolean afterTrue = NODE_TWO.isAfter(NODE_ONE);
 		final boolean afterFalse = NODE_ONE.isAfter(NODE_TWO);
-		
+
 		assertTrue("Nodes not in proper order", afterTrue);
 		assertFalse("Nodes not in proper order", afterFalse);
 	}

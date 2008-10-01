@@ -8,15 +8,14 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
-public class RodinIndexTests extends AbstractRodinDBTests {
+public class RodinIndexTests extends IndexTests {
 
 	public RodinIndexTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private static IRodinProject project;

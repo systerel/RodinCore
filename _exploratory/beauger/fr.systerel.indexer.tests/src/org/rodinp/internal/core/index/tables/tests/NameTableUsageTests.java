@@ -7,11 +7,11 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class NameTableUsageTests extends AbstractRodinDBTests {
+public class NameTableUsageTests extends IndexTests {
 
 	private static final boolean DEBUG = false;
 
@@ -23,7 +23,7 @@ public class NameTableUsageTests extends AbstractRodinDBTests {
 	private static final IndexManager manager = IndexManager.getDefault();
 
 	public NameTableUsageTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	@Override

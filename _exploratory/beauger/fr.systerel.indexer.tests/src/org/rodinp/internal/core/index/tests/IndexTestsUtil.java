@@ -24,14 +24,14 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexTestsUtil {
 
-	public static final IOccurrenceKind TEST_KIND =
-		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test", "test");
-	
-	public static final IOccurrenceKind TEST_KIND_1 =
-		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_1", "test_1");
+	public static final IOccurrenceKind TEST_KIND = RodinIndexer
+			.addOccurrenceKind("fr.systerel.indexer.test", "test");
 
-	public static final IOccurrenceKind TEST_KIND_2 =
-		RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_2", "test_2");
+	public static final IOccurrenceKind TEST_KIND_1 = RodinIndexer
+			.addOccurrenceKind("fr.systerel.indexer.test_1", "test_1");
+
+	public static final IOccurrenceKind TEST_KIND_2 = RodinIndexer
+			.addOccurrenceKind("fr.systerel.indexer.test_2", "test_2");
 
 	public static final String defaultName = "banzai";
 
@@ -43,8 +43,7 @@ public class IndexTestsUtil {
 	}
 
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
-		return new Occurrence(TEST_KIND, RodinIndexer
-				.getRodinLocation(element));
+		return new Occurrence(TEST_KIND, RodinIndexer.getRodinLocation(element));
 	}
 
 	public static void addOccurrencesTestSet(IInternalElement ie,
@@ -146,8 +145,8 @@ public class IndexTestsUtil {
 	}
 
 	public static void assertLength(IRodinElement[] elements, int size) {
-		TestCase.assertEquals("incorrect number of elements", size,
-				elements.length);
+		TestCase.assertEquals("incorrect number of elements in: "
+				+ Arrays.asList(elements), size, elements.length);
 	}
 
 	public static void assertIsEmpty(IInternalElement[] elements) {

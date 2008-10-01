@@ -10,15 +10,14 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.Occurrence;
 
-public class DescriptorTests extends AbstractRodinDBTests {
+public class DescriptorTests extends IndexTests {
 
 	public DescriptorTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	// private void assertElement(IRodinElement expected, IRodinElement actual)

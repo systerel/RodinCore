@@ -19,7 +19,6 @@ import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexingToolkit;
@@ -28,10 +27,10 @@ import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
-public class IndexingToolkitTests extends AbstractRodinDBTests {
+public class IndexingToolkitTests extends IndexTests {
 
 	public IndexingToolkitTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private static IRodinProject project;

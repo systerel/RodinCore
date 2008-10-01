@@ -11,13 +11,12 @@ import org.rodinp.core.index.IAttributeLocation;
 import org.rodinp.core.index.IAttributeSubstringLocation;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 
-public class RodinLocationTests extends AbstractRodinDBTests {
+public class RodinLocationTests extends IndexTests {
 
 	public RodinLocationTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private static final IAttributeType.String attrType = RodinCore

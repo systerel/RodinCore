@@ -10,13 +10,13 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class ExportTableUsageTests extends AbstractRodinDBTests {
+public class ExportTableUsageTests extends IndexTests {
 
 	private static FakeExportIndexer indexer;
 	private static final ExportTable exportTable = new ExportTable();
@@ -31,7 +31,7 @@ public class ExportTableUsageTests extends AbstractRodinDBTests {
 	private static final String name2 = "elt2Name";
 
 	public ExportTableUsageTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	@Override

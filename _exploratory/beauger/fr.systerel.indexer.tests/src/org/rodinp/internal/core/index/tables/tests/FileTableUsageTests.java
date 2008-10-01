@@ -9,17 +9,17 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.rodinp.internal.core.index.tests.FakeIndexer;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class FileTableUsageTests extends AbstractRodinDBTests {
+public class FileTableUsageTests extends IndexTests {
 
 	public FileTableUsageTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private static final boolean DEBUG = false;

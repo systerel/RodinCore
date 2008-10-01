@@ -9,14 +9,14 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class NameTableTests extends AbstractRodinDBTests {
+public class NameTableTests extends IndexTests {
 
 	public NameTableTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private static final NameTable table = new NameTable();

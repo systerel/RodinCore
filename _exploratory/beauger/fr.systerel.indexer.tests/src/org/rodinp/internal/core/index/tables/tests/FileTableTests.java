@@ -9,11 +9,11 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tables.FileTable;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class FileTableTests extends AbstractRodinDBTests {
+public class FileTableTests extends IndexTests {
 
 	private static final FileTable table = new FileTable();
 	private static NamedElement element;
@@ -22,7 +22,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 	private static IRodinFile file2;
 
 	public FileTableTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	@Override

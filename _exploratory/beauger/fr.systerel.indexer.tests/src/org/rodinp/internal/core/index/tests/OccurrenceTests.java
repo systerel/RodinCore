@@ -10,14 +10,13 @@ import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Occurrence;
 
-public class OccurrenceTests extends AbstractRodinDBTests {
+public class OccurrenceTests extends IndexTests {
 
 	public OccurrenceTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	private final IOccurrenceKind defaultKind = TEST_KIND;
