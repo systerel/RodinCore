@@ -303,10 +303,10 @@ public class ModelController implements IElementChangedListener {
 					// refresh everything
 					if (toRefresh.contains(RodinCore.getRodinDB())) {
 //						System.out.println("refreshing view");
-						viewer.refresh(false);
+						viewer.refresh();
 					} else {
 						for (Object elem : toRefresh) {
-							viewer.refresh(false);
+							viewer.refresh();
 //							System.out.println("refreshing view: " +elem);
 						}
 					}

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -125,10 +126,10 @@ public class ActionCollection {
 
 						IProjectDescription desc = resource.getDescription();
 						desc.setName(bareName);
-						resource.copy(desc, true, null);
+						resource.copy(desc, false, null);
 					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						MessageDialog.openError(null, "Error", 
+						"Could not copy project. Make sure there is no resource with the same name.");
 					}
 				}
 			}
@@ -180,10 +181,11 @@ public class ActionCollection {
 						closeOpenEditors(resource);
 						IProjectDescription desc = resource.getDescription();
 						desc.setName(bareName);
-						resource.move(desc, true, null);
+						resource.move(desc, false, null);
 					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						MessageDialog.openError(null, "Error", 
+								"Could not rename project. Make sure there is no resource with the same name.");
+
 					}
 				}
 			}
@@ -248,13 +250,13 @@ public class ActionCollection {
 											closeOpenedEditor((IRodinFile) file);
 									}
 		
-									project.delete(true, true, null);
+									project.delete(true, false, null);
 								} catch (PartInitException e) {
 									e.printStackTrace();
 								} catch (RodinDBException e) {
 									e.printStackTrace();
 								} catch (CoreException e) {
-									e.printStackTrace();
+									MessageDialog.openError(null, "Error", "Could not delete project");
 								}
 							}
 						}
