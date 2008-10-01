@@ -1,10 +1,12 @@
 package org.rodinp.internal.core.index;
 
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 
 public class Occurrence implements IOccurrence {
+
 	private final IOccurrenceKind kind;
 	private final IRodinLocation location;
 
@@ -27,6 +29,10 @@ public class Occurrence implements IOccurrence {
 		return location;
 	}
 
+	public IRodinFile getRodinFile() {
+		return location.getRodinFile();
+	}
+	
 	// DEBUG
 	@Override
 	public String toString() {
