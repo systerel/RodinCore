@@ -34,8 +34,10 @@ public class ContextFilter extends ViewerFilter {
 			if(parentElement instanceof TreePath) {
 				TreePath path = (TreePath) parentElement;
 				// if the "grandparent" of this context is a machine, don't show it.
-				if (path.getSegment(path.getSegmentCount() -2) instanceof IMachineFile) {
-					return false;
+				if (path.getSegmentCount() >= 2) {
+					if (path.getSegment(path.getSegmentCount() -2) instanceof IMachineFile) {
+						return false;
+					}
 				}
 			}
 		}

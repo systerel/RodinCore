@@ -462,6 +462,7 @@
             name="%filters.discharged">
       </commonFilter>
       <navigatorContent
+            activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContentProvider"
             id="fr.systerel.explorer.navigator.content.machine"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
@@ -484,6 +485,7 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
+            activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ContextContentProvider"
             id="fr.systerel.explorer.navigator.content.context"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
@@ -559,6 +561,7 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
+            activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.WorkingSetContentProvider"
             id="fr.systerel.explorer.navigator.content.workingSet"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
