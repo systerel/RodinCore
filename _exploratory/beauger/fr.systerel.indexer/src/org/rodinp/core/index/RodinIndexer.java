@@ -28,6 +28,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.IndexRequester;
 import org.rodinp.internal.core.index.OccurrenceKind;
 import org.rodinp.internal.core.index.RodinLocation;
 
@@ -121,6 +122,10 @@ public class RodinIndexer extends Plugin {
 		return new AttributeSubstringLocation(element, attributeType, start, end);
 	}
 
+	public static IIndexRequester getIndexRequester() {
+		return new IndexRequester();
+	}
+	
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.indexer";
 

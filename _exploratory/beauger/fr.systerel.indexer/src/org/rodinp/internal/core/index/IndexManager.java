@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.rodinp.internal.core.index;
 
 import java.util.HashMap;
@@ -22,16 +32,6 @@ import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
-/*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Systerel - initial API and implementation
- *******************************************************************************/
 public final class IndexManager {
 
 	// For debugging and tracing purposes
@@ -56,14 +56,17 @@ public final class IndexManager {
 	private final RodinDBChangeListener listener;
 	private static final int TIME_BEFORE_INDEXING = 10000;
 
-	private boolean ENABLE_INDEXING = true;
-
+	private volatile boolean ENABLE_INDEXING = true;
+    /** Lock guarding table access during indexing */
+//    private final Lock indexingLock;
+    
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
 
 		fim = new FileIndexingManager();
 		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
 		listener = new RodinDBChangeListener(queue);
+//		indexingLock = new ReentrantLock(true); // TODO decide which type of Lock
 	}
 
 	/**
@@ -109,9 +112,7 @@ public final class IndexManager {
 	 * Schedules the indexing of the given files.
 	 * 
 	 * @param files
-	 *            the files to index. // *
-//	 * @deprecated this method is no longer needed as the indexing system // *
-//	 *             mechanism is now based on RodinDB change events listening.
+	 *            the files to index.
 	 */
 	// @Deprecated
 	public void scheduleIndexing(IRodinFile... files) {
@@ -136,7 +137,8 @@ public final class IndexManager {
 	 *            the monitor by which cancel requests can be performed, or
 	 *            <code>null</code> if monitoring is not required.
 	 */
-	synchronized void launchIndexing(IProgressMonitor monitor) {
+	void launchIndexing(IProgressMonitor monitor) {
+		// TODO use indexingLock
 		for (IRodinProject project : pims.keySet()) {
 			fetchPIM(project).launchIndexing();
 			if (monitor != null && monitor.isCanceled()) {
@@ -153,9 +155,9 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested index.
 	 * @return the current index of the given project.
-	 * @see #isBusy()
+	 * @see #isUpToDate()
 	 */
-	public synchronized RodinIndex getIndex(IRodinProject project) {
+	public RodinIndex getIndex(IRodinProject project) {
 		return fetchPIM(project).getIndex();
 	}
 
@@ -167,9 +169,9 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested file table.
 	 * @return the current file table of the given project.
-	 * @see #isBusy()
+	 * @see #isUpToDate()
 	 */
-	public synchronized FileTable getFileTable(IRodinProject project) {
+	public FileTable getFileTable(IRodinProject project) {
 		return fetchPIM(project).getFileTable();
 	}
 
@@ -181,9 +183,9 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested name table.
 	 * @return the current name table of the given project.
-	 * @see #isBusy()
+	 * @see #isUpToDate()
 	 */
-	public synchronized NameTable getNameTable(IRodinProject project) {
+	public NameTable getNameTable(IRodinProject project) {
 		return fetchPIM(project).getNameTable();
 	}
 
@@ -195,9 +197,9 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested export table.
 	 * @return the current export table of the given project.
-	 * @see #isBusy()
+	 * @see #isUpToDate()
 	 */
-	public synchronized ExportTable getExportTable(IRodinProject project) {
+	public ExportTable getExportTable(IRodinProject project) {
 		return fetchPIM(project).getExportTable();
 	}
 
@@ -257,7 +259,7 @@ public final class IndexManager {
 
 			if (isSet) {
 				if (ENABLE_INDEXING) {
-					
+
 					indexing.schedule(TIME_BEFORE_INDEXING);
 					// TODO define scheduling policies
 				}
@@ -275,22 +277,14 @@ public final class IndexManager {
 	}
 
 	/**
-	 * Returns whether the indexing system is currently busy. This method should
-	 * be called before any other request, as a <code>true</code> result
-	 * indicates that the index database is being modified and that the current
-	 * result of the requests may soon become obsolete.
-	 * <p>
-	 * Note that the busy state is inherently volatile, and in most cases
-	 * clients cannot rely on the result of this method being valid by the time
-	 * the result is obtained. For example, if isBusy returns <code>true</code>,
-	 * the indexing may have actually completed by the time the method returns.
-	 * All clients can infer from invoking this method is that the indexing
-	 * system was recently in the returned state.
+	 * Returns <code>true</code> when the indexing system is up to date, else
+	 * blocks until it becomes up to date.
 	 * 
 	 * @return whether the indexing system is currently busy.
 	 */
-	public boolean isBusy() {
-		return indexing.getState() != Job.NONE; // TODO maybe == Job.RUNNING
+	public boolean isUpToDate() {
+		// TODO use indexingLock
+		return indexing.getState() == Job.NONE; // TODO maybe != Job.RUNNING
 	}
 
 	/**
