@@ -12,7 +12,7 @@ import org.rodinp.core.index.IIndexingToolkit;
 
 public class FileIndexingManager {
 
-	private static final IRodinFile[] EMPTY_DEPS = new IRodinFile[] {};
+	private static final IRodinFile[] EMPTY_DEPS = new IRodinFile[0];
 	
 	private Map<IFileElementType<?>, List<IIndexer>> indexers;
 
