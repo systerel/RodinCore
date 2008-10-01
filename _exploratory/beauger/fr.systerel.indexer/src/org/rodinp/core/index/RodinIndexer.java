@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -155,6 +156,7 @@ public class RodinIndexer extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		configurePluginDebugOptions();
 		indexerJob.setPriority(Job.DECORATE); // TODO decide more precisely
 		indexerJob.setSystem(true);
 		indexerJob.schedule();
@@ -174,6 +176,18 @@ public class RodinIndexer extends Plugin {
 	 */
 	public static RodinIndexer getDefault() {
 		return plugin;
+	}
+
+    // To be integrqted with RodinCore option processing
+	public void configurePluginDebugOptions(){
+		if (plugin.isDebugging()){
+			String option = Platform.getDebugOption("fr.systerel.indexer/debug/indexer");
+			if(option != null) IndexManager.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
+			if(option != null) IndexManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		}
+
 	}
 
 }

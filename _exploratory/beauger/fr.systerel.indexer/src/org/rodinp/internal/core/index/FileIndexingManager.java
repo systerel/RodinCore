@@ -39,16 +39,31 @@ public class FileIndexingManager {
 		if (indexer == null) {
 			return EMPTY_DEPS;
 		}
+		if (IndexManager.VERBOSE) {
+			System.out.println("INDEXER: Extracting dependencies for file "
+					+ file.getPath() + " with indexer " + indexer.getId());
+		}
 		final IRodinFile[] result = indexer.getDependencies(file);
+		if (IndexManager.DEBUG) {
+			System.out.println("INDEXER: Dependencies for file "
+					+ file.getPath() + " are:");
+			for (IRodinFile dep: result) {
+				System.out.println("\t" + dep.getPath());
+			}
+		}
 		return result;
 	}
 	
 	public void launchIndexing(IRodinFile file, IIndexingToolkit indexingToolkit) {
 		final IIndexer indexer = getIndexerFor(file.getElementType());
-
-		if (indexer != null) {
-			indexer.index(file, indexingToolkit);
+		if (indexer == null) {
+			return;
 		}
+		if (IndexManager.VERBOSE) {
+			System.out.println("INDEXER: Indexing file "
+					+ file.getPath() + " with indexer " + indexer.getId());
+		}
+		indexer.index(file, indexingToolkit);
 	}
 	
 	private IIndexer getIndexerFor(

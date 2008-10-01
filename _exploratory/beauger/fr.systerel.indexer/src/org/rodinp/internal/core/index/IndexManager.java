@@ -23,6 +23,10 @@ import org.rodinp.internal.core.index.tables.NameTable;
 
 public final class IndexManager {
 
+	// For debugging and tracing purposes
+	public static boolean DEBUG;
+	public static boolean VERBOSE;
+	
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
 	// TODO implement an overall consistency check method
