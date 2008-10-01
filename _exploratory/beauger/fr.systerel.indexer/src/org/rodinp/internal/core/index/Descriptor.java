@@ -17,9 +17,9 @@ public final class Descriptor {
 	 * {@link IRodinElement#getElementName()}, which is of a rather internal
 	 * scope.
 	 */
-	private String name;
-	private IInternalElement element;
-	private Set<IOccurrence> occurrences;
+	private final String name;
+	private final IInternalElement element;
+	private final Set<IOccurrence> occurrences;
 
 	public Descriptor(IInternalElement element, String name) {
 		this.name = name;
@@ -51,19 +51,18 @@ public final class Descriptor {
 		final Iterator<IOccurrence> iter = occurrences.iterator();
 		while (iter.hasNext()) {
 			final IOccurrence occ = iter.next();
-			if (file.equals(occ.getLocation().getRodinFile())) {
+			if (file.equals(occ.getRodinFile())) {
 				iter.remove();
 			}
 		}
 	}
 
-	// DEBUG
+	// For debugging purposes
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("*** descriptor: ");
+		final StringBuilder sb = new StringBuilder("*** descriptor: ");
 		sb.append(element.getElementName() + "\n");
 		sb.append("Name: " + name + "\n");
-
 		for (IOccurrence ref : occurrences) {
 			sb.append(ref.toString() + "\n");
 		}
