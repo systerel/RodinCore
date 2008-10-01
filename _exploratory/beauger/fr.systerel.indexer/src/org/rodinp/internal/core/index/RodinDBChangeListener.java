@@ -13,14 +13,11 @@ import org.rodinp.core.IRodinFile;
 
 public class RodinDBChangeListener implements IElementChangedListener {
 
-
-
 	private final BlockingQueue<IRodinFile> queue;
 
 	public synchronized void elementChanged(ElementChangedEvent event) {
 		final IRodinElementDelta delta = event.getDelta();
 		processDelta(delta);
-//		System.out.println(event);
 	}
 
 	public RodinDBChangeListener(BlockingQueue<IRodinFile> queue) {
@@ -29,7 +26,8 @@ public class RodinDBChangeListener implements IElementChangedListener {
 
 	private void processDelta(IRodinElementDelta delta) {
 		// TODO also listen to project creation and deletion
-		// TODO what about project open and close initiated by user: use workspace listener?
+		// TODO what about project open and close initiated by user: use
+		// workspace listener?
 		final List<IRodinFile> affectedFiles = new ArrayList<IRodinFile>();
 		addAffectedFiles(delta, affectedFiles);
 		for (IRodinFile file : affectedFiles) {
@@ -43,7 +41,7 @@ public class RodinDBChangeListener implements IElementChangedListener {
 			}
 		}
 	}
-	
+
 	private void addAffectedFiles(IRodinElementDelta delta,
 			List<IRodinFile> accumulator) {
 		final IRodinElement element = delta.getElement();
@@ -55,9 +53,9 @@ public class RodinDBChangeListener implements IElementChangedListener {
 			accumulator.add((IRodinFile) element);
 			return;
 		}
-		for (IRodinElementDelta childDelta: delta.getAffectedChildren()) {
+		for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
 			addAffectedFiles(childDelta, accumulator);
 		}
 	}
-	
+
 }

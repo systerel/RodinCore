@@ -147,9 +147,12 @@ public class RodinIndexer extends Plugin {
 
 	};
 
-	public void cancelIndexerJob() {
-		indexerJob.cancel();
-		System.out.println("Indexer job canceled");
+	public void disableIndexing() {
+		IndexManager.getDefault().disableIndexing();
+	}
+	
+	public void enableIndexing() {
+		IndexManager.getDefault().enableIndexing();
 	}
 	
 	@Override
@@ -178,7 +181,7 @@ public class RodinIndexer extends Plugin {
 		return plugin;
 	}
 
-    // To be integrqted with RodinCore option processing
+    // To be integrated with RodinCore option processing
 	public void configurePluginDebugOptions(){
 		if (plugin.isDebugging()){
 			String option = Platform.getDebugOption("fr.systerel.indexer/debug/indexer");

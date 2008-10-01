@@ -27,7 +27,7 @@ public final class IndexManager {
 	// For debugging and tracing purposes
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
-	
+
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
 	// TODO implement an overall consistency check method
@@ -45,6 +45,8 @@ public final class IndexManager {
 	private final BlockingQueue<IRodinFile> queue;
 	private final RodinDBChangeListener listener;
 	private static final int TIME_BEFORE_INDEXING = 10000;
+
+	private boolean ENABLE_INDEXING = true;
 
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
@@ -97,11 +99,11 @@ public final class IndexManager {
 	 * Schedules the indexing of the given files.
 	 * 
 	 * @param files
-	 *            the files to index.
-//	 * @deprecated this method is no longer needed as the indexing system
+	 *            the files to index. // *
+//	 * @deprecated this method is no longer needed as the indexing system // *
 //	 *             mechanism is now based on RodinDB change events listening.
 	 */
-//	@Deprecated
+	// @Deprecated
 	public void scheduleIndexing(IRodinFile... files) {
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
@@ -124,7 +126,7 @@ public final class IndexManager {
 	 *            the monitor by which cancel requests can be performed, or
 	 *            <code>null</code> if monitoring is not required.
 	 */
-	void launchIndexing(IProgressMonitor monitor) {
+	synchronized void launchIndexing(IProgressMonitor monitor) {
 		for (IRodinProject project : pims.keySet()) {
 			fetchPIM(project).launchIndexing();
 			if (monitor != null && monitor.isCanceled()) {
@@ -143,7 +145,7 @@ public final class IndexManager {
 	 * @return the current index of the given project.
 	 * @see #isBusy()
 	 */
-	public RodinIndex getIndex(IRodinProject project) {
+	public synchronized RodinIndex getIndex(IRodinProject project) {
 		return fetchPIM(project).getIndex();
 	}
 
@@ -157,7 +159,7 @@ public final class IndexManager {
 	 * @return the current file table of the given project.
 	 * @see #isBusy()
 	 */
-	public FileTable getFileTable(IRodinProject project) {
+	public synchronized FileTable getFileTable(IRodinProject project) {
 		return fetchPIM(project).getFileTable();
 	}
 
@@ -171,7 +173,7 @@ public final class IndexManager {
 	 * @return the current name table of the given project.
 	 * @see #isBusy()
 	 */
-	public NameTable getNameTable(IRodinProject project) {
+	public synchronized NameTable getNameTable(IRodinProject project) {
 		return fetchPIM(project).getNameTable();
 	}
 
@@ -185,7 +187,7 @@ public final class IndexManager {
 	 * @return the current export table of the given project.
 	 * @see #isBusy()
 	 */
-	public ExportTable getExportTable(IRodinProject project) {
+	public synchronized ExportTable getExportTable(IRodinProject project) {
 		return fetchPIM(project).getExportTable();
 	}
 
@@ -205,7 +207,9 @@ public final class IndexManager {
 	private final Job indexing = new Job("indexing") {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			System.out.println("indexing...");
+			if (VERBOSE) {
+				System.out.println("indexing...");
+			}
 			launchIndexing(monitor);
 			if (monitor != null && monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -242,14 +246,20 @@ public final class IndexManager {
 			final boolean isSet = pim.setToIndex(file);
 
 			if (isSet) {
-				indexing.schedule(TIME_BEFORE_INDEXING); // TODO define scheduling policies
+				if (ENABLE_INDEXING) {
+					
+					indexing.schedule(TIME_BEFORE_INDEXING);
+					// TODO define scheduling policies
+				}
 			}
 		}
 	}
 
 	private void load() {
+		if (VERBOSE) {
+			System.out.println("Loading IndexManager");
+		}
 		// TODO recover from previous save
-		System.out.println("Loading IndexManager");
 
 		RodinCore.addElementChangedListener(listener, eventMask);
 	}
@@ -279,6 +289,14 @@ public final class IndexManager {
 	public void clear() {
 		pims.clear();
 		clearIndexers();
+	}
+
+	public synchronized void enableIndexing() {
+		ENABLE_INDEXING = true;
+	}
+
+	public synchronized void disableIndexing() {
+		ENABLE_INDEXING = false;
 	}
 
 }
