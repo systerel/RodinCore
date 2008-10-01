@@ -138,12 +138,19 @@ public class RodinIndexer extends Plugin {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			IndexManager.getDefault().start(monitor);
-			// TODO Auto-generated method stub
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 			return Status.OK_STATUS;
 		}
 
 	};
 
+	public void cancelIndexerJob() {
+		indexerJob.cancel();
+		System.out.println("Indexer job canceled");
+	}
+	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
