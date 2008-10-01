@@ -29,6 +29,8 @@ import org.rodinp.core.index.RodinIndexer;
 
 public class ContextIndexer implements IIndexer {
 
+	private static final String ID = "fr.systerel.eventb.indexer.context";
+
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
 	private FormulaFactory ff = FormulaFactory.getDefault();
@@ -171,6 +173,10 @@ public class ContextIndexer implements IIndexer {
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return NO_DEPENDENCIES;
+	}
+
+	public String getId() {
+		return ID;
 	}
 
 }

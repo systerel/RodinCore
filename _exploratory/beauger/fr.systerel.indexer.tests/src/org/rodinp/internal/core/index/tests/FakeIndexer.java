@@ -12,6 +12,8 @@ import org.rodinp.internal.core.index.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
 
+	private static final String ID = "fr.systerel.indexer.tests.fakeindexer";
+
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 	
 	protected final RodinIndex localIndex;
@@ -55,5 +57,8 @@ public class FakeIndexer implements IIndexer {
 		return locElemFile.equals(file);
 	}
 
+	public String getId() {
+		return ID;
+	}
 
 }

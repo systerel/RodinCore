@@ -23,6 +23,8 @@ import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 public class FakeNameIndexer implements IIndexer {
 
 	private static final boolean DEBUG = false;
+	
+	private static final String ID = "fr.systerel.indexer.tests.fakenameindexer";
 
 	private final String[] names;
 	private final int numberEach;
@@ -76,6 +78,10 @@ public class FakeNameIndexer implements IIndexer {
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		return new IRodinFile[0];
+	}
+
+	public String getId() {
+		return ID;
 	}
 
 }

@@ -39,18 +39,6 @@ import org.rodinp.core.IRodinFile;
 public interface IIndexer {
 
 	/**
-	 * Indexes the given file and sends the results through calls to the given
-	 * IIndexingToolkit.
-	 * 
-	 * @param file
-	 *            the file to index.
-	 * @param index
-	 *            the indexing facility to which to send the results.
-	 * @see IIndexingToolkit
-	 */
-	public void index(IRodinFile file, IIndexingToolkit index);
-
-	/**
 	 * Computes and returns the dependencies of the given file.
 	 * <p>
 	 * For instance, if file1 depends on file2 and file3 (i.e file1 is allowed
@@ -61,5 +49,26 @@ public interface IIndexer {
 	 * @return an array containing the file dependencies.
 	 */
 	public IRodinFile[] getDependencies(IRodinFile file);
+
+	/**
+	 * Returns the unique id of this indexer. The string returned must be the
+	 * the full id of the indexer, that is its plugin id + its local id as
+	 * declared in the extension point.
+	 * 
+	 * @return the unique id of this indexer
+	 */
+	public String getId();
+
+	/**
+	 * Indexes the given file and sends the results through calls to the given
+	 * IIndexingToolkit.
+	 * 
+	 * @param file
+	 *            the file to index.
+	 * @param index
+	 *            the indexing facility to which to send the results.
+	 * @see IIndexingToolkit
+	 */
+	public void index(IRodinFile file, IIndexingToolkit index);
 
 }
