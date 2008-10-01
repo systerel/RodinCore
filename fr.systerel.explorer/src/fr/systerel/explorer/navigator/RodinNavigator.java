@@ -129,7 +129,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 						Control ctrl = viewer.getControl();
 						if (ctrl != null && !ctrl.isDisposed()) {
 							Object[] expanded = viewer.getExpandedElements();
-							viewer.refresh();
+							viewer.refresh(false);
 							viewer.setExpandedElements(expanded);
 						}
 				}});
@@ -160,7 +160,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 						Control ctrl = viewer.getControl();
 						if (ctrl != null && !ctrl.isDisposed()) {
 							Object[] expanded = viewer.getExpandedElements();
-							viewer.refresh();
+							viewer.refresh(false);
 							viewer.setExpandedElements(expanded);
 						}
 				}});
