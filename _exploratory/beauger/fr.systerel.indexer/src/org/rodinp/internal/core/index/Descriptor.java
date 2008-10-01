@@ -5,18 +5,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IOccurrence;
 
 public final class Descriptor {
 
-	/**
-	 * Name of the described element. It is intended to be used as a public
-	 * name, known by the user, as opposed to the name returned by
-	 * {@link IRodinElement#getElementName()}, which is of a rather internal
-	 * scope.
-	 */
+	// Name of the described element. It is intended to be used as a public
+	// name, known by the user, as opposed to the name returned by
+	// {@link IRodinElement#getElementName()}, which is of a rather internal
+	// scope.
 	private final String name;
 	private final IInternalElement element;
 	private final Set<IOccurrence> occurrences;
