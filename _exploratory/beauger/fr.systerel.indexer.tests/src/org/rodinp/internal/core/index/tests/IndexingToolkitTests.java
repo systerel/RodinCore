@@ -104,20 +104,20 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 		indexingToolkit1.declare(elt1, name1);
 		try {
 			indexingToolkit1.declare(elt1, name1);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Attempting to add a double declaration should raise IllegalArgumentException");
 	}
 
 	public void testAddDeclImport() throws Exception {
 
 		try {
 			indexingToolkit1.declare(elt2, name2);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Declaring an import element should raise IllegalArgumentException");
 	}
 
 	public void testAddOccurrence() throws Exception {
@@ -138,19 +138,19 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 		indexingToolkit1.declare(elt1, name1);
 		try {
 			indexingToolkit1.addOccurrence(elt1, kind, locF2);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Attempting to add an import occurrence should raise IllegalArgumentException");
 	}
 
 	public void testAddOccNoDecl() throws Exception {
 		try {
 			indexingToolkit1.addOccurrence(elt1, kind, locF1);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Adding an occurrence to a non declared element should raise IllegalArgumentException");
 	}
 
 	public void testAddOccImport() throws Exception {
@@ -166,11 +166,9 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 
 		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1ImportsElt2);
-		try {
-			indexingToolkit1.addOccurrence(elt2, kind, locF1);
-		} catch (Exception e) {
-			fail("Adding an import occurrence should not raise an exception");
-		}
+
+		indexingToolkit1.addOccurrence(elt2, kind, locF1);
+
 		final Descriptor descriptor = index.getDescriptor(elt2);
 		assertNotNull(descriptor);
 		assertDescriptor(descriptor, elt2, name2, 1);
@@ -194,10 +192,10 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 
 		try {
 			indexingToolkit1.addOccurrence(elt2, kind, locF1);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Trying to add an import occurrence to a non declared import element should raise IllegalArgumentException");
 	}
 
 	public void testAddOccImportNoImport() throws Exception {
@@ -213,10 +211,10 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 
 		try {
 			indexingToolkit1.addOccurrence(elt2, kind, locF1);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Trying to add an import occurrence when there is no dependence to its file should raise IllegalArgumentException");
 	}
 
 //	public void testAddOccImportNoExp() throws Exception {
@@ -232,10 +230,10 @@ public class IndexingToolkitTests extends AbstractRodinDBTests {
 //
 //		try {
 //			indexingToolkit1.addOccurrence(elt2, kind, locF1);
+//			fail("expected IllegalArgumentException");
 //		} catch (IllegalArgumentException e) {
 //			return;
 //		}
-//		fail("Trying to add an Import occurrence when there is no dependence to its file should raise IllegalArgumentException");
 //	}
 
 	public void testReindexKeepImportOccs() throws Exception {

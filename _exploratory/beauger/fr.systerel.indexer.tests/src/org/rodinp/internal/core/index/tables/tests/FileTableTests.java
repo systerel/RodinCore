@@ -69,11 +69,7 @@ public class FileTableTests extends AbstractRodinDBTests {
 	}
 
 	public void testImportedElement() throws Exception {
-		try {
-			table.add(element, file2);
-		} catch (Exception e) {
-			fail("adding an imported element to a FileTable should not raise any Exception");
-		}
+		table.add(element, file2);
 	}
 
 	public void testRemoveElements() throws Exception {

@@ -232,12 +232,7 @@ public class TotalOrderUsageTests extends AbstractRodinDBTests {
 
 		file2.delete(true, null);
 
-		try {
-			manager.scheduleIndexing(file2);
-		} catch (Exception e) {
-			fail("Exception thrown when trying to index a deleted file: "
-					+ e.getLocalizedMessage());
-		}
+		manager.scheduleIndexing(file2);
 
 		final ExportTable exportTable = manager.getExportTable(project);
 		final FileTable fileTable = manager.getFileTable(project);

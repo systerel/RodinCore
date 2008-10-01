@@ -66,10 +66,10 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 
 		try {
 			index.makeDescriptor(element, name);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("2 successive calls to make with same name should raise IllegalArgumentException");
 	}
 
 	public void testMakeDoubleDescriptorDiffName() throws Exception {
@@ -77,10 +77,10 @@ public class RodinIndexTests extends AbstractRodinDBTests {
 
 		try {
 			index.makeDescriptor(element, name2);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("2 successive calls to make with different names should raise an exception");
 	}
 
 	public void testRemoveDescriptor() throws Exception {

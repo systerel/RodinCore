@@ -212,10 +212,10 @@ public class TotalOrderTests extends TestCase {
 		assertNoNext(order);
 		try {
 			order.next();
+			fail("expected NoSuchElementException");
 		} catch (NoSuchElementException e) {
-			return;
+			// OK
 		}
-		fail("Calling next with no more next element should raise NoSuchElementException");
 	}
 
 	public void testIterNoMoreMarked() throws Exception {
@@ -224,10 +224,10 @@ public class TotalOrderTests extends TestCase {
 		assertNoNext(order);
 		try {
 			order.next();
+			fail("expected NoSuchElementException");
 		} catch (NoSuchElementException e) {
-			return;
+			// OK
 		}
-		fail("Calling next with no more elements set to iter should raise NoSuchElementException");
 	}
 
 	public void testRemoveLabel() throws Exception {
@@ -316,10 +316,10 @@ public class TotalOrderTests extends TestCase {
 	public void testCycle1() throws Exception {
 		try {
 			setPreds(order, 1, 1);
+			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
-			return;
+			// OK
 		}
-		fail("Setting a node as a self-predecessor should raise IllegalArgumentException");
 	}
 
 	public void testCycle2() throws Exception {

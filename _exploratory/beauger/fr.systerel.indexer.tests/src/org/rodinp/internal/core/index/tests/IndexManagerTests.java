@@ -31,6 +31,7 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 
 	public IndexManagerTests(String name) {
 		super(name);
+		RodinIndexer.getDefault().cancelIndexerJob();
 	}
 
 	@Override
@@ -100,20 +101,12 @@ public class IndexManagerTests extends AbstractRodinDBTests {
 	public void testIndexFileDoesNotExist() throws Exception {
 		final IRodinFile inexistentFile = project
 				.getRodinFile("inexistentFile.test");
-		try {
-			manager.scheduleIndexing(inexistentFile);
-		} catch (Exception e) {
-			fail("trying to index a inexistent file should not raise an Exception");
-		}
+		manager.scheduleIndexing(inexistentFile);
 	}
 
 	public void testIndexNoIndexer() throws Exception {
 		manager.clearIndexers();
-		try {
-			manager.scheduleIndexing(file);
-		} catch (Exception e) {
-			fail("trying to index with no indexer registered should not raise any Exception");
-		}
+		manager.scheduleIndexing(file);
 	}
 
 	public void testIndexSeveralProjects() throws Exception {
