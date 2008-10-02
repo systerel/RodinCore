@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Stores and maintains a total order in a set of T objects.
@@ -40,70 +36,38 @@ import java.util.Map;
  */
 public class TotalOrder<T> implements Iterator<T> {
 
-	private final Map<T, Node<T>> nodes;
+	private final Graph<T> graph;
 	private final SortedNodes<T> sortedNodes;
-	private boolean isSorted;
+	boolean isSorted;
 
-	private static <T> boolean sameList(List<T> left, T[] right) {
-		if (left.size() != right.length)
-			return false;
-		if (!left.containsAll(Arrays.asList(right))) 
-			return false;
-		return true;
-	}
-
-	/**
-	 * 
-	 */
+	private final IGraphChangedListener listener = new IGraphChangedListener() {
+		public void graphChanged() {
+			isSorted = false;
+		}
+	};
+	
 	public TotalOrder() {
-		this.nodes = new HashMap<T, Node<T>>();
+		this.graph = new Graph<T>();
 		this.sortedNodes = new SortedNodes<T>();
 		this.isSorted = false;
-	}
-
-	public List<T> getPredecessors(T label) {
-		final Node<T> node = nodes.get(label);
-		return node.getPredecessorLabels();
-	}
-
-	public void setPredecessors(T label, T[] predecessors) {
-		final Node<T> node = getOrCreateNode(label);
-		final List<T> oldPreds = node.getPredecessorLabels();
-		if (sameList(oldPreds, predecessors)) {
-			return;
-		}
-		final List<Node<T>> predNodes = getOrCreateNodes(predecessors);
-		node.changePredecessors(predNodes);
-		isSorted = false;
-	}
-
-	private List<Node<T>> getOrCreateNodes(T[] labels) {
-		final List<Node<T>> newPreds = new ArrayList<Node<T>>();
-		for (T pred : labels) {
-			newPreds.add(getOrCreateNode(pred));
-		}
-		return newPreds;
+		graph.addElementChangedListener(listener);
 	}
 
 	public void setToIter(T label) {
-		final Node<T> node = getOrCreateNode(label);
+		final Node<T> node = graph.getOrCreateNode(label);
 		sortedNodes.setToIter(node);
 	}
 
-	public boolean contains(T label) {
-		return nodes.containsKey(label);
+	public List<T> getPredecessors(T label) {
+		return graph.getPredecessors(label);
 	}
-
-	public void remove(T label) {
-		final Node<T> node = nodes.get(label);
-		if (node == null) {
-			return;
-		}
-		remove(node);
+	
+	public void setPredecessors(T label, T[] predecessors) {
+		graph.setPredecessors(label, predecessors);
 	}
-
+	
 	public void clear() {
-		nodes.clear();
+		graph.clear();
 		sortedNodes.clear();
 		isSorted = false;
 	}
@@ -123,12 +87,13 @@ public class TotalOrder<T> implements Iterator<T> {
 	public void remove() {
 		updateSort();
 
-		remove(sortedNodes.getCurrentNode());
+		graph.remove(sortedNodes.getCurrentNode());
 		sortedNodes.remove();
 	}
 
 	// successors of the current node will be iterated
-	public void setToIterSuccessors() {
+	// FIXME what is the meaning just after remove() ? decide and test
+	public void setToIterSuccessors() { 
 		sortedNodes.setToIterSuccessors();
 	}
 
@@ -138,35 +103,18 @@ public class TotalOrder<T> implements Iterator<T> {
 	 * nodes to iter.
 	 */
 	public void end() {
-		for (Node<T> node : nodes.values()) {
+		for (Node<T> node : graph.getNodes()) {
 			node.setMark(false);
 		}
 		sortedNodes.start();
 	}
 
-	private void remove(Node<T> node) {
-		node.clear();
-		nodes.remove(node.getLabel());
-		isSorted = false;
-	}
-
 	private void updateSort() {
 		if (!isSorted) {
-			sortedNodes.sort(nodes);
+			sortedNodes.sort(graph.getNodes());
 			isSorted = true;
 			sortedNodes.start();
 		}
-	}
-
-	private Node<T> getOrCreateNode(T label) {
-		Node<T> node = nodes.get(label);
-
-		if (node == null) {
-			node = new Node<T>(label);
-			nodes.put(label, node);
-			isSorted = false;
-		}
-		return node;
 	}
 
 }

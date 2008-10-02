@@ -40,10 +40,10 @@ public class Sorter<T> {
 		}
 	}
 
-	private final Map<T, Node<T>> graph;
+	private final List<Node<T>> nodes;
 
-	public Sorter(Map<T, Node<T>> graph) {
-		this.graph = graph;
+	public Sorter(List<Node<T>> nodes) {
+		this.nodes = nodes;
 	}
 
 	public List<Node<T>> sort() {
@@ -71,8 +71,7 @@ public class Sorter<T> {
 
 	private void initDegrees(Degrees<T> degrees, List<Node<T>> zeroDegrees,
 			List<Node<T>> remaining) {
-		for (T label : graph.keySet()) {
-			final Node<T> node = graph.get(label);
+		for (Node<T> node : nodes) {
 			remaining.add(node);
 			final int degree = node.degree();
 			degrees.set(node, degree);
