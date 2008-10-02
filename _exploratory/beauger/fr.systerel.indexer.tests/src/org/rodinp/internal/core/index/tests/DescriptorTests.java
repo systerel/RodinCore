@@ -37,7 +37,7 @@ public class DescriptorTests extends IndexTests {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "desc.test");
-		testElt = createNamedElement(file, testEltName);
+		testElt = createNamedElement(file, "internalName");
 		testDesc = new Descriptor(testElt, testEltName);
 	}
 

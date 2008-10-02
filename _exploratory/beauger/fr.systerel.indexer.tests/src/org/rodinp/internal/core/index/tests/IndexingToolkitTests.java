@@ -8,18 +8,20 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedEle
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexingToolkit;
 import org.rodinp.internal.core.index.tables.ExportTable;
@@ -48,11 +50,12 @@ public class IndexingToolkitTests extends IndexTests {
 	private static final ExportTable emptyExports = new ExportTable();
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
 	// private static final DependenceTable emptyDeps = new DependenceTable();
-//	private static final IRodinFile[] emptyDeps = new IRodinFile[] {};
+	// private static final IRodinFile[] emptyDeps = new IRodinFile[] {};
 	// private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 	// private static IRodinFile[] f1DepsOnf2;
-	private static final Set<IInternalElement> f1ImportsElt2 = new HashSet<IInternalElement>();
-	private static final Set<IInternalElement> emptyImports = new HashSet<IInternalElement>();
+	private static final Set<IDeclaration> f1ImportsElt2 = new HashSet<IDeclaration>();
+	private static final Set<IDeclaration> emptyImports = Collections
+			.emptySet();
 	private static IndexingToolkit indexingToolkit1;
 	private static final IOccurrenceKind kind = TEST_KIND;
 
@@ -70,7 +73,8 @@ public class IndexingToolkitTests extends IndexTests {
 		f2ExportsElt2.add(file2, elt2, name2);
 		// f1DepsOnf2.put(file1, makeIRFArray(file2));
 		// f1DepsOnf2 = makeIRFArray(file2);
-		f1ImportsElt2.add(elt2);
+		final IDeclaration declaration = new Declaration(elt2, name2);
+		f1ImportsElt2.add(declaration);
 		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, emptyExports, f1ImportsElt2);
 	}
@@ -216,24 +220,24 @@ public class IndexingToolkitTests extends IndexTests {
 		}
 	}
 
-//	public void testAddOccImportNoExp() throws Exception {
-//
-//		IndexingToolkit indexingToolkit2 = new IndexingToolkit(file2, index,
-//				fileTable, nameTable, emptyExports, emptyImports);
-//		// elt2 is well declared in file2 but not exported from it
-//		// there is still a dependence from file1 to file2
-//		indexingToolkit2.declare(elt2, name2);
-//
-//		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
-//				nameTable, emptyExports, f1ImportsElt2);
-//
-//		try {
-//			indexingToolkit1.addOccurrence(elt2, kind, locF1);
-//			fail("expected IllegalArgumentException");
-//		} catch (IllegalArgumentException e) {
-//			return;
-//		}
-//	}
+	// public void testAddOccImportNoExp() throws Exception {
+	//
+	// IndexingToolkit indexingToolkit2 = new IndexingToolkit(file2, index,
+	// fileTable, nameTable, emptyExports, emptyImports);
+	// // elt2 is well declared in file2 but not exported from it
+	// // there is still a dependence from file1 to file2
+	// indexingToolkit2.declare(elt2, name2);
+	//
+	// indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
+	// nameTable, emptyExports, f1ImportsElt2);
+	//
+	// try {
+	// indexingToolkit1.addOccurrence(elt2, kind, locF1);
+	// fail("expected IllegalArgumentException");
+	// } catch (IllegalArgumentException e) {
+	// return;
+	// }
+	// }
 
 	public void testReindexKeepImportOccs() throws Exception {
 
@@ -306,10 +310,16 @@ public class IndexingToolkitTests extends IndexTests {
 		assertNotNull(descAfter);
 
 		// name2Bis should have replaced name2 in nameTable and exportTable
-		final Map<IInternalElement, String> actExports = f2ExportsElt2
-				.get(file2);
-		assertEquals("Exported element " + elt2.getElementName()
-				+ " was not properly renamed", name2Bis, actExports.get(elt2));
+		final Set<IDeclaration> actExports = f2ExportsElt2.get(file2);
+		IDeclaration declElt2 = null;
+		for (IDeclaration decl : actExports) {
+			if (decl.getElement().equals(elt2)) {
+				declElt2 = decl;
+			}
+		}
+		assertNotNull("no declaration found for " + elt2, declElt2);
+		assertEquals("Exported element " + elt2 + " was not properly renamed",
+				name2Bis, declElt2.getName());
 
 		final IInternalElement[] elt2Array = makeIIEArray(elt2);
 
@@ -331,17 +341,19 @@ public class IndexingToolkitTests extends IndexTests {
 		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1ImportsElt2);
 
-		final IInternalElement[] imports = indexingToolkit1.getImports();
-
-		assertSameElements(makeIIEArray(elt2), imports);
+		final Set<IDeclaration> imports = indexingToolkit1.getImports();
+		final IDeclaration declElt2 = new Declaration(elt2, name2);
+		final Set<IDeclaration> expected = new HashSet<IDeclaration>();
+		expected.add(declElt2);
+		assertEquals(expected, imports);
 	}
 
 	public void testGetImportsEmpty() throws Exception {
 		final IndexingToolkit indexingToolkit2 = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, emptyImports);
-		
-		final IInternalElement[] imports = indexingToolkit2.getImports();
 
-		assertIsEmpty(imports);
+		final Set<IDeclaration> imports = indexingToolkit2.getImports();
+
+		assertTrue("imports should be empty", imports.isEmpty());
 	}
 }

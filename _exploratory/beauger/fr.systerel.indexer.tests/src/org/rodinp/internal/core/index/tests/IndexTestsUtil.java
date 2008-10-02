@@ -2,7 +2,7 @@ package org.rodinp.internal.core.index.tests;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -12,6 +12,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
@@ -182,8 +183,8 @@ public class IndexTestsUtil {
 				+ " is not present", actList.contains(elem));
 	}
 
-	public static void assertExports(Map<IInternalElement, String> expected,
-			Map<IInternalElement, String> actual) {
+	public static void assertExports(Set<IDeclaration> expected,
+			Set<IDeclaration> actual) {
 
 		TestCase.assertEquals("Bad exports.", expected, actual);
 	}

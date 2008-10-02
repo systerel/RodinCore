@@ -15,6 +15,8 @@ import org.rodinp.core.tests.basis.NamedElement;
 
 public class RodinLocationTests extends IndexTests {
 
+	// TODO comment all tests !
+	
 	public RodinLocationTests(String name) {
 		super(name, true);
 	}
@@ -63,8 +65,8 @@ public class RodinLocationTests extends IndexTests {
 	}
 
 	public void testConstructor() throws Exception {
-		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType, defaultStart,
-				defaultEnd);
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement,
+				attrType, defaultStart, defaultEnd);
 		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
 	}
 
@@ -88,13 +90,14 @@ public class RodinLocationTests extends IndexTests {
 	}
 
 	public void testAttribute() throws Exception {
-		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType);
+		IRodinLocation loc = RodinIndexer
+				.getRodinLocation(locElement, attrType);
 		assertLocation(loc, locElement, attrType);
 	}
 
 	public void testAttributeSubstring() throws Exception {
-		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement, attrType, defaultStart,
-				defaultEnd);
+		IRodinLocation loc = RodinIndexer.getRodinLocation(locElement,
+				attrType, defaultStart, defaultEnd);
 		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
 	}
 
@@ -133,6 +136,46 @@ public class RodinLocationTests extends IndexTests {
 		} catch (IllegalArgumentException e) {
 			// Pass
 		}
+	}
+
+	/**
+	 * Ensures that locations of different nature are never equal.
+	 */
+	public void testDiffers() throws Exception {
+		final IRodinLocation eLoc = RodinIndexer.getRodinLocation(locElement);
+		final IRodinLocation aLoc = RodinIndexer.getRodinLocation(locElement,
+				attrType);
+		final IRodinLocation sLoc = RodinIndexer.getRodinLocation(locElement,
+				attrType, defaultStart, defaultEnd);
+
+		assertFalse(eLoc.equals(aLoc));
+		assertFalse(eLoc.equals(sLoc));
+		assertFalse(aLoc.equals(eLoc));
+		assertFalse(aLoc.equals(sLoc));
+		assertFalse(sLoc.equals(eLoc));
+		assertFalse(sLoc.equals(aLoc));
+	}
+
+	public void testEqualsElement() throws Exception {
+		final IRodinLocation loc1 = RodinIndexer.getRodinLocation(locElement);
+		final IRodinLocation loc2 = RodinIndexer.getRodinLocation(locElement);
+		assertEquals(loc1, loc2);
+	}
+
+	public void testEqualsAttribute() throws Exception {
+		final IRodinLocation loc1 = RodinIndexer.getRodinLocation(locElement,
+				attrType);
+		final IRodinLocation loc2 = RodinIndexer.getRodinLocation(locElement,
+				attrType);
+		assertEquals(loc1, loc2);
+	}
+
+	public void testEqualsSubstring() throws Exception {
+		final IRodinLocation loc1 = RodinIndexer.getRodinLocation(locElement,
+				attrType, defaultStart, defaultEnd);
+		final IRodinLocation loc2 = RodinIndexer.getRodinLocation(locElement,
+				attrType, defaultStart, defaultEnd);
+		assertEquals(loc1, loc2);
 	}
 
 }
