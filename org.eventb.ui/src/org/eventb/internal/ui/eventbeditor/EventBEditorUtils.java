@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -50,7 +51,6 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -410,10 +410,8 @@ public class EventBEditorUtils {
 	
 	private static String[] defaultArray(int size, String defaultString) {
 		assert size > 0;
-		String[] result = new String[size];
-		for(int i = 0 ; i < size ; i++){
-			result[i] = defaultString ;
-		}
+		final String[] result = new String[size];
+		Arrays.fill(result, defaultString);
 		return result ;
 	}
 	
@@ -579,14 +577,14 @@ public class EventBEditorUtils {
 		addNewElements(editor, operation);
 	}
 
-	private static IInternalElement getInitialisation(IRodinFile rodinFile)
+	public static IEvent getInitialisation(IRodinFile rodinFile)
 			throws RodinDBException {
-		IRodinElement[] events = rodinFile
+		final IRodinElement[] events = rodinFile
 				.getChildrenOfType(IEvent.ELEMENT_TYPE);
-		for (IRodinElement event : events) {
-			IEvent element = (IEvent) event;
-			if (element.getLabel().equals("INITIALISATION")) {
-				return element;
+		for (IRodinElement element : events) {
+			final IEvent event = (IEvent) element;
+			if (event.getLabel().equals(IEvent.INITIALISATION)) {
+				return event;
 			}
 		}
 		return null;
@@ -888,7 +886,10 @@ public class EventBEditorUtils {
 
 	public static String getComments(ICommentedElement element) {
 		try {
-			return element.getComment();
+			if (element.hasComment()) {
+				return element.getComment();
+			}
+			return "";
 		} catch (RodinDBException e) {
 			return "";
 		}
@@ -909,18 +910,6 @@ public class EventBEditorUtils {
 			return UIUtils.getFreeElementLabel(editor, initialisation,
 					IAction.ELEMENT_TYPE, defaultPrefix);
 		}
-	}
-
-	
-	static public <T1 extends IRodinFile, T extends IInternalElement> String getFreeChildName(
-			IEventBEditor<T1> editor, String defaultPrefix,
-			IInternalElementType<T> element_type) throws RodinDBException {
-		final String prefix = UIUtils.getNamePrefix(editor.getRodinInput(),
-				element_type, defaultPrefix);
-		final String index = EventBUtils.getFreeChildNameIndex(editor
-				.getRodinInput(), element_type, prefix);
-		final String name = prefix + index;
-		return name;
 	}
 
 	private static void addNewElement(IEventBEditor<?> editor, AtomicOperation op){
