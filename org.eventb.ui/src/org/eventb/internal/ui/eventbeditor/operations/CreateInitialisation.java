@@ -10,11 +10,11 @@ import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 class CreateInitialisation extends OperationLeaf {
@@ -90,33 +90,22 @@ class CreateInitialisation extends OperationLeaf {
 
 	private IEvent getInitialisationEvent(IProgressMonitor monitor)
 			throws RodinDBException {
-		IEvent result = null;
 		final IMachineFile rodinFile = editor.getRodinInput();
-		final IRodinElement[] events = rodinFile
-				.getChildrenOfType(IEvent.ELEMENT_TYPE);
-		newInit = true;
-
-		for (IRodinElement e : events) {
-			IEvent element = (IEvent) e;
-			if (element.getLabel().equals("INITIALISATION")) {
-				result = element;
-				newInit = false;
-				break;
-			}
+		IEvent result = EventBEditorUtils.getInitialisation(rodinFile);
+		if (result != null) {
+			return result;
 		}
-		if (newInit) {
-			String evtName = UIUtils.getFreeElementName(editor, rodinFile,
-					IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
-			result = rodinFile.getEvent(evtName);
-			assert !result.exists();
-			result.create(null, monitor);
-			result.setLabel("INITIALISATION", monitor);
-			result.setConvergence(IConvergenceElement.Convergence.ORDINARY,
-					monitor);
-			result.setExtended(false, monitor);
-			editor.addNewElement(result);
-
-		}
+		
+		final String evtName = UIUtils.getFreeElementName(editor, rodinFile,
+				IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
+		result = rodinFile.getEvent(evtName);
+		assert !result.exists();
+		result.create(null, monitor);
+		result.setLabel(IEvent.INITIALISATION, monitor);
+		result.setConvergence(IConvergenceElement.Convergence.ORDINARY,
+						monitor);
+		result.setExtended(false, monitor);
+		editor.addNewElement(result);
 		return result;
 	}
 
