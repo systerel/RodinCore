@@ -29,7 +29,7 @@ public class ProjectIndexManager {
 
 	private final FileIndexingManager fim;
 
-	private final IndexersManager indexersManager;
+	private final IndexersRegistry indexersManager;
 
 	private final RodinIndex index;
 
@@ -42,7 +42,7 @@ public class ProjectIndexManager {
 	private final TotalOrder<IRodinFile> order;
 
 	public ProjectIndexManager(IRodinProject project, FileIndexingManager fim,
-			IndexersManager indManager) {
+			IndexersRegistry indManager) {
 		this.project = project;
 		this.fim = fim;
 		this.indexersManager = indManager;

@@ -15,14 +15,14 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.internal.core.index.IndexersManager;
+import org.rodinp.internal.core.index.IndexersRegistry;
 import org.rodinp.internal.core.index.tables.tests.FakeNameIndexer;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class IndexersManagerTests extends IndexTests {
+public class IndexersRegistryTests extends IndexTests {
 
 	private static FakeNameIndexer indexer;
 	private static IRodinFile file1;
@@ -31,7 +31,7 @@ public class IndexersManagerTests extends IndexTests {
 	/**
 	 * @param name
 	 */
-	public IndexersManagerTests(String name) {
+	public IndexersRegistryTests(String name) {
 		super(name, true);
 	}
 
@@ -52,7 +52,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testAddGetIndexer() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		indMan.addIndexer(indexer, file1.getElementType());
 		final IIndexer actual = indMan.getIndexerFor(file1.getElementType());
@@ -61,7 +61,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testAddGetSeveralFileTypes() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		indMan.addIndexer(indexer, file1.getElementType());
 		indMan.addIndexer(indexer, file2.getElementType());
@@ -74,7 +74,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testAddGetVariousIndexers() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 		final FakeNameIndexer indexer2 = new FakeNameIndexer(1, "name2");
 
 		indMan.addIndexer(indexer, file1.getElementType());
@@ -88,7 +88,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testGetUnknownFileType() throws Exception {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		try {
 			indMan.getIndexerFor(file1.getElementType());
@@ -100,10 +100,10 @@ public class IndexersManagerTests extends IndexTests {
 
 	/**
 	 * Test method for
-	 * {@link org.rodinp.internal.core.index.IndexersManager#isIndexable(org.rodinp.core.IFileElementType)}.
+	 * {@link org.rodinp.internal.core.index.IndexersRegistry#isIndexable(org.rodinp.core.IFileElementType)}.
 	 */
 	public void testIsIndexableTrue() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		indMan.addIndexer(indexer, file1.getElementType());
 		final boolean indexable = indMan.isIndexable(file1.getElementType());
@@ -113,7 +113,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testIsIndexableFalse() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		final boolean indexable = indMan.isIndexable(file1.getElementType());
 
@@ -122,7 +122,7 @@ public class IndexersManagerTests extends IndexTests {
 	}
 
 	public void testClear() {
-		final IndexersManager indMan = new IndexersManager();
+		final IndexersRegistry indMan = new IndexersRegistry();
 
 		indMan.addIndexer(indexer, file1.getElementType());
 		indMan.clear();

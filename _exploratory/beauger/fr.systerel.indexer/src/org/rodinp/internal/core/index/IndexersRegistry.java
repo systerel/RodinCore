@@ -19,11 +19,11 @@ import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 
-public class IndexersManager {
+public class IndexersRegistry {
 
 	private final Map<IFileElementType<?>, List<IIndexer>> indexers;
 
-	public IndexersManager() {
+	public IndexersRegistry() {
 		this.indexers = new HashMap<IFileElementType<?>, List<IIndexer>>();
 	}
 

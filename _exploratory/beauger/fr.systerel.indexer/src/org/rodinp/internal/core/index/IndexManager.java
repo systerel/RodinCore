@@ -47,7 +47,7 @@ public final class IndexManager {
 
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
-	private final IndexersManager indexersManager;
+	private final IndexersRegistry indexersManager;
 	
 	private final FileIndexingManager fim;
 
@@ -64,7 +64,7 @@ public final class IndexManager {
     
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
-		indexersManager = new IndexersManager();
+		indexersManager = new IndexersRegistry();
 		fim = new FileIndexingManager(indexersManager);
 		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
 		listener = new RodinDBChangeListener(queue);

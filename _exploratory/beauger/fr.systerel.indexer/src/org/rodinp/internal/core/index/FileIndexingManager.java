@@ -17,9 +17,9 @@ import org.rodinp.core.index.IIndexingToolkit;
 
 public class FileIndexingManager {
 
-	private final IndexersManager indexersManager;
+	private final IndexersRegistry indexersManager;
 
-	public FileIndexingManager(IndexersManager indManager) {
+	public FileIndexingManager(IndexersRegistry indManager) {
 		this.indexersManager = indManager;
 	}
 
