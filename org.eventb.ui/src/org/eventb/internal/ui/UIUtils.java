@@ -8,10 +8,9 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - added getFreeIndex method to factorize several methods
+ *     Systerel - added getFreeIndex method to factor several methods
  *     Systerel - added methods indicateUser() and showUnexpectedError()
  *******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -661,14 +660,7 @@ public class UIUtils {
 	public static void setStringAttribute(IAttributedElement element,
 			IAttributeFactory factory, String value, IProgressMonitor monitor) {
 		try {
-			boolean doModify = true;
-			if(value == null){
-				doModify = factory.hasValue(element, monitor);
-			}else{
-				doModify = (!factory.hasValue(element, monitor)
-					|| !value.equals(factory.getValue(element, monitor)));
-			}
-			if(doModify){
+			if (attributeHasChanged(element, factory, value, monitor)) {
 				IInternalElement iElement = (IInternalElement) element;
 				History.getInstance().addOperation(
 						OperationFactory.changeAttribute(iElement
@@ -681,8 +673,18 @@ public class UIUtils {
 				e.printStackTrace();
 		}
 	}
-	
-	
+
+	private static boolean attributeHasChanged(IAttributedElement element,
+			IAttributeFactory factory, String value, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (value == null) {
+			return factory.hasValue(element, monitor);
+		}
+		if (!factory.hasValue(element, monitor))
+			return true;
+		return !value.equals(factory.getValue(element, monitor));
+	}
+
 	public static <T extends IInternalElement> String getFreeChildName(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
@@ -828,7 +830,7 @@ public class UIUtils {
 
 	}
 	
-	static private String getPluginName() {
+	private static String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
