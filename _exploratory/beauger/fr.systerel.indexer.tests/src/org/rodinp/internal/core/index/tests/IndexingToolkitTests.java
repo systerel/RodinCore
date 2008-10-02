@@ -8,8 +8,11 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedEle
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -53,9 +56,9 @@ public class IndexingToolkitTests extends IndexTests {
 	// private static final IRodinFile[] emptyDeps = new IRodinFile[] {};
 	// private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 	// private static IRodinFile[] f1DepsOnf2;
-	private static final Set<IDeclaration> f1ImportsElt2 = new HashSet<IDeclaration>();
-	private static final Set<IDeclaration> emptyImports = Collections
-			.emptySet();
+	private static final Map<IInternalElement, IDeclaration> f1ImportsElt2 = new HashMap<IInternalElement, IDeclaration>();
+	private static final Map<IInternalElement, IDeclaration> emptyImports = Collections
+			.emptyMap();
 	private static IndexingToolkit indexingToolkit1;
 	private static final IOccurrenceKind kind = TEST_KIND;
 
@@ -69,12 +72,12 @@ public class IndexingToolkitTests extends IndexTests {
 		elt2 = createNamedElement(file2, "elt2");
 		locF1 = RodinIndexer.getRodinLocation(file1);
 		locF2 = RodinIndexer.getRodinLocation(file2);
-
-		f2ExportsElt2.add(file2, elt2, name2);
+		final IDeclaration declElt2Name2 = new Declaration(elt2, name2);
+		f2ExportsElt2.add(file2, declElt2Name2);
 		// f1DepsOnf2.put(file1, makeIRFArray(file2));
 		// f1DepsOnf2 = makeIRFArray(file2);
 		final IDeclaration declaration = new Declaration(elt2, name2);
-		f1ImportsElt2.add(declaration);
+		f1ImportsElt2.put(elt2, declaration);
 		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, emptyExports, f1ImportsElt2);
 	}
@@ -341,19 +344,20 @@ public class IndexingToolkitTests extends IndexTests {
 		indexingToolkit1 = new IndexingToolkit(file1, index, fileTable,
 				nameTable, f2ExportsElt2, f1ImportsElt2);
 
-		final Set<IDeclaration> imports = indexingToolkit1.getImports();
+		final IDeclaration[] imports = indexingToolkit1.getImports();
+		final List<IDeclaration> importsList = Arrays.asList(imports);
 		final IDeclaration declElt2 = new Declaration(elt2, name2);
-		final Set<IDeclaration> expected = new HashSet<IDeclaration>();
-		expected.add(declElt2);
-		assertEquals(expected, imports);
+		final List<IDeclaration> expected = Collections.singletonList(declElt2);
+
+		assertEquals("Bad imports", expected, importsList);
 	}
 
 	public void testGetImportsEmpty() throws Exception {
 		final IndexingToolkit indexingToolkit2 = new IndexingToolkit(file2,
 				index, fileTable, nameTable, f2ExportsElt2, emptyImports);
 
-		final Set<IDeclaration> imports = indexingToolkit2.getImports();
+		final IDeclaration[] imports = indexingToolkit2.getImports();
 
-		assertTrue("imports should be empty", imports.isEmpty());
+		assertEquals("imports should be empty", 0, imports.length);
 	}
 }

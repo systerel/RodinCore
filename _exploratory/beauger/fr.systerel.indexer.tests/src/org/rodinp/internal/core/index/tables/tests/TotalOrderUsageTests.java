@@ -18,6 +18,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -32,6 +33,7 @@ public class TotalOrderUsageTests extends IndexTests {
 	private static IRodinFile file2;
 	private static IRodinFile file3;
 	private static NamedElement eltF2;
+	private static IDeclaration declEltF2;
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
 	private static final ExportTable emptyExports = new ExportTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
@@ -78,7 +80,8 @@ public class TotalOrderUsageTests extends IndexTests {
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
 		rodinIndex.makeDescriptor(eltF2, eltF2Name);
-		f2ExportsElt2.add(file2, eltF2, eltF2Name);
+		declEltF2 = new Declaration(eltF2, eltF2Name);
+		f2ExportsElt2.add(file2, declEltF2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
 	}
@@ -213,7 +216,8 @@ public class TotalOrderUsageTests extends IndexTests {
 		final String eltF2Name2 = "eltF2Name2";
 		rodinIndex.removeDescriptor(eltF2);
 		rodinIndex.makeDescriptor(eltF2, eltF2Name2);
-		f2ExportsElt2Name2.add(file2, eltF2, eltF2Name2);
+		final IDeclaration declEltF2Name2 = new Declaration(eltF2, eltF2Name2);
+		f2ExportsElt2Name2.add(file2, declEltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
 		RodinIndexer.register(indexerNewName, file1.getElementType());
@@ -268,9 +272,10 @@ public class TotalOrderUsageTests extends IndexTests {
 		rodinIndex.makeDescriptor(elt3, elt3Name);
 
 		final ExportTable f1f2f3expElt3 = new ExportTable();
-		f1f2f3expElt3.add(file3, elt3, elt3Name);
-		f1f2f3expElt3.add(file2, elt3, elt3Name);
-		f1f2f3expElt3.add(file1, elt3, elt3Name);
+		final IDeclaration declElt3 = new Declaration(elt3, elt3Name);
+		f1f2f3expElt3.add(file3, declElt3);
+		f1f2f3expElt3.add(file2, declElt3);
+		f1f2f3expElt3.add(file1, declElt3);
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1dF2dF3, f1f2f3expElt3);

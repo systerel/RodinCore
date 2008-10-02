@@ -25,6 +25,8 @@ public class ExportTableUsageTests extends IndexTests {
 	private static IRodinFile file;
 	private static NamedElement elt1;
 	private static NamedElement elt2;
+	private static IDeclaration declElt1Name1;
+	private static IDeclaration declElt2Name2;
 	private static final RodinIndex rodinIndex = new RodinIndex();
 
 	private static final IndexManager manager = IndexManager.getDefault();
@@ -42,8 +44,10 @@ public class ExportTableUsageTests extends IndexTests {
 		file = createRodinFile(rodinProject, "expInd.test");
 		elt1 = createNamedElement(file, "elt1");
 		elt2 = createNamedElement(file, "elt2");
-		exportTable.add(file, elt1, name1);
-		exportTable.add(file, elt2, name2);
+		declElt1Name1 = new Declaration(elt1, name1);
+		declElt2Name2 = new Declaration(elt2, name2);
+		exportTable.add(file, declElt1Name1);
+		exportTable.add(file, declElt2Name2);
 		rodinIndex.makeDescriptor(elt1, name1);
 		rodinIndex.makeDescriptor(elt2, name2);
 
@@ -97,7 +101,7 @@ public class ExportTableUsageTests extends IndexTests {
 
 		// change exports
 		exportTable.remove(file);
-		exportTable.add(file, elt1, name1);
+		exportTable.add(file, declElt1Name1);
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
@@ -120,7 +124,8 @@ public class ExportTableUsageTests extends IndexTests {
 		// change exports
 		NamedElement eltAdd = createNamedElement(file, "eltAdd");
 		final String eltAddName = "eltAddName";
-		exportTable.add(file, eltAdd, eltAddName);
+		final IDeclaration declEltAdd = new Declaration(eltAdd, eltAddName);
+		exportTable.add(file, declEltAdd);
 		rodinIndex.makeDescriptor(eltAdd, eltAddName);
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);

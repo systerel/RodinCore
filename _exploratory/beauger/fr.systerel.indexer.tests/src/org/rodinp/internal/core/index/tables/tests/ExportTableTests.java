@@ -17,15 +17,19 @@ import org.rodinp.internal.core.index.tests.IndexTests;
 
 public class ExportTableTests extends IndexTests {
 
+
 	public ExportTableTests(String name) {
 		super(name, true);
 	}
 
 	private static final ExportTable table = new ExportTable();
 	private static final Set<IDeclaration> emptyExport = new HashSet<IDeclaration>();
-	private static NamedElement element1F1;
-	private static NamedElement element2F1;
-	private static NamedElement element1F2;
+	private static NamedElement elt1F1;
+	private static NamedElement elt2F1;
+	private static NamedElement elt1F2;
+	private static IDeclaration declElt1F1Name1F1;
+	private static IDeclaration declElt2F1Name2F1;
+	private static IDeclaration declElt1F2Name1F2;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
 	private static final String name1F1 = "name1F1";
@@ -42,9 +46,12 @@ public class ExportTableTests extends IndexTests {
 		final IRodinProject rodinProject = createRodinProject("P");
 		file1 = createRodinFile(rodinProject, "exp1.test");
 		file2 = createRodinFile(rodinProject, "exp2.test");
-		element1F1 = createNamedElement(file1, "elem1F1");
-		element2F1 = createNamedElement(file1, "elem2F1");
-		element1F2 = createNamedElement(file2, "elem1F2");
+		elt1F1 = createNamedElement(file1, "elem1F1");
+		elt2F1 = createNamedElement(file1, "elem2F1");
+		elt1F2 = createNamedElement(file2, "elem1F2");
+		declElt1F1Name1F1 = new Declaration(elt1F1, name1F1);
+		declElt2F1Name2F1 = new Declaration(elt2F1, name2F1);
+		declElt1F2Name1F2 = new Declaration(elt1F2, name1F2);
 	}
 
 	@Override
@@ -56,9 +63,9 @@ public class ExportTableTests extends IndexTests {
 
 	public void testAddGet() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
-		expected.add(new Declaration(element1F1, name1F1));
+		expected.add(new Declaration(elt1F1, name1F1));
 
-		table.add(file1, element1F1, name1F1);
+		table.add(file1, declElt1F1Name1F1);
 		final Set<IDeclaration> actual = table.get(file1);
 
 		assertExports(expected, actual);
@@ -66,11 +73,11 @@ public class ExportTableTests extends IndexTests {
 
 	public void testAddGetSeveral() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
-		expected.add(new Declaration(element1F1, name1F1));
-		expected.add(new Declaration(element2F1, name2F1));
+		expected.add(new Declaration(elt1F1, name1F1));
+		expected.add(new Declaration(elt2F1, name2F1));
 
-		table.add(file1, element1F1, name1F1);
-		table.add(file1, element2F1, name2F1);
+		table.add(file1, declElt1F1Name1F1);
+		table.add(file1, declElt2F1Name2F1);
 		final Set<IDeclaration> actual = table.get(file1);
 
 		assertExports(expected, actual);
@@ -78,12 +85,12 @@ public class ExportTableTests extends IndexTests {
 
 	public void testAddGetVariousFiles() throws Exception {
 		Set<IDeclaration> expected1 = new HashSet<IDeclaration>();
-		expected1.add(new Declaration(element1F1, name1F1));
+		expected1.add(new Declaration(elt1F1, name1F1));
 		Set<IDeclaration> expected2 = new HashSet<IDeclaration>();
-		expected2.add(new Declaration(element1F2, name1F2));
+		expected2.add(new Declaration(elt1F2, name1F2));
 
-		table.add(file1, element1F1, name1F1);
-		table.add(file2, element1F2, name1F2);
+		table.add(file1, declElt1F1Name1F1);
+		table.add(file2, declElt1F2Name1F2);
 
 		final Set<IDeclaration> actual1 = table.get(file1);
 		final Set<IDeclaration> actual2 = table.get(file2);
@@ -100,10 +107,10 @@ public class ExportTableTests extends IndexTests {
 
 	public void testRemove() throws Exception {
 		Set<IDeclaration> expected = new HashSet<IDeclaration>();
-		expected.add(new Declaration(element1F1, name1F1));
+		expected.add(new Declaration(elt1F1, name1F1));
 
-		table.add(file1, element1F1, name1F1);
-		table.add(file2, element1F2, name1F2);
+		table.add(file1, declElt1F1Name1F1);
+		table.add(file2, declElt1F2Name1F2);
 
 		table.remove(file2);
 
@@ -116,8 +123,8 @@ public class ExportTableTests extends IndexTests {
 
 	public void testClear() throws Exception {
 
-		table.add(file1, element1F1, name1F1);
-		table.add(file2, element1F2, name1F2);
+		table.add(file1, declElt1F1Name1F1);
+		table.add(file2, declElt1F2Name1F2);
 
 		table.clear();
 
@@ -128,17 +135,17 @@ public class ExportTableTests extends IndexTests {
 		assertEmptyExports(actual2);
 	}
 
-//	public void testContains() throws Exception {
-//		table.add(file1, element1F1, name1F1);
-//
-//		final boolean contains = table.contains(file1, element1F1);
-//
-//		assertTrue("The ExportTable should contain " + element1F1, contains);
-//	}
-//
-//	public void testContainsNot() throws Exception {
-//		final boolean contains = table.contains(file1, element1F1);
-//
-//		assertFalse("TheExportTable should not contain " + element1F1, contains);
-//	}
+	// public void testContains() throws Exception {
+	// table.add(file1, elt1F1, name1F1);
+	//
+	// final boolean contains = table.contains(file1, elt1F1);
+	//
+	// assertTrue("The ExportTable should contain " + elt1F1, contains);
+	// }
+	//
+	// public void testContainsNot() throws Exception {
+	// final boolean contains = table.contains(file1, elt1F1);
+	//
+	// assertFalse("TheExportTable should not contain " + elt1F1, contains);
+	// }
 }
