@@ -4,13 +4,14 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
-import java.util.Map;
+import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
@@ -62,8 +63,8 @@ public class ExportTableUsageTests extends IndexTests {
 	public void testExportTableUpdatingFilling() throws Exception {
 		manager.scheduleIndexing(file);
 		
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IDeclaration> expected = indexer.getExports(file);
+		final Set<IDeclaration> actual = manager.getExportTable(
 				rodinProject).get(file);
 		
 		assertExports(expected, actual);
@@ -74,7 +75,7 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 		
 		// change exports
-		exportTable.get(file).put(elt1, "expRenName1");
+		exportTable.get(file).add(new Declaration(elt1, "expRenName1"));
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
@@ -83,8 +84,8 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 		
 		// verify renaming
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IDeclaration> expected = indexer.getExports(file);
+		final Set<IDeclaration> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);
@@ -105,8 +106,8 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 
 		// verify removing
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IDeclaration> expected = indexer.getExports(file);
+		final Set<IDeclaration> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);
@@ -129,8 +130,8 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 
 		// verify adding
-		final Map<IInternalElement, String> expected = indexer.getExports(file);
-		final Map<IInternalElement, String> actual = manager.getExportTable(
+		final Set<IDeclaration> expected = indexer.getExports(file);
+		final Set<IDeclaration> actual = manager.getExportTable(
 				rodinProject).get(file);
 
 		assertExports(expected, actual);

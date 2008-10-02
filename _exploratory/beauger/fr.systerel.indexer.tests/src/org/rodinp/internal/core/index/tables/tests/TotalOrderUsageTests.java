@@ -1,14 +1,21 @@
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.IndexManager;
@@ -239,7 +246,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		final NameTable nameTable = manager.getNameTable(project);
 		final RodinIndex index = manager.getIndex(project);
 
-		final Map<IInternalElement, String> exports = exportTable.get(file2);
+		final Set<IDeclaration> exports = exportTable.get(file2);
 		final IInternalElement[] fileElements = fileTable.get(file2);
 		final IInternalElement[] nameElements = nameTable
 				.getElements(eltF2Name);
@@ -269,11 +276,7 @@ public class TotalOrderUsageTests extends IndexTests {
 				rodinIndex, f1dF2dF3, f1f2f3expElt3);
 		RodinIndexer.register(indexer, file1.getElementType());
 
-		try {
-			manager.scheduleIndexing(file1, file2, file3);
-		} catch (Exception e) {
-			fail("Re-exporting elements should not raise an exception.");
-		}
+		manager.scheduleIndexing(file1, file2, file3);
 
 		final ExportTable exportTable = manager.getExportTable(project);
 		assertExports(f1f2f3expElt3.get(file3), exportTable.get(file3));
