@@ -29,6 +29,8 @@ public class ProjectIndexManager {
 
 	private final FileIndexingManager fim;
 
+	private final IndexersManager indexersManager;
+
 	private final RodinIndex index;
 
 	private final FileTable fileTable;
@@ -39,9 +41,11 @@ public class ProjectIndexManager {
 
 	private final TotalOrder<IRodinFile> order;
 
-	public ProjectIndexManager(IRodinProject project, FileIndexingManager fim) {
+	public ProjectIndexManager(IRodinProject project, FileIndexingManager fim,
+			IndexersManager indManager) {
 		this.project = project;
 		this.fim = fim;
+		this.indexersManager = indManager;
 		this.index = new RodinIndex();
 		this.fileTable = new FileTable();
 		this.nameTable = new NameTable();
@@ -60,7 +64,7 @@ public class ProjectIndexManager {
 
 			if (file.exists()) {
 				fim.doIndexing(file, indexingToolkit);
-				
+
 				if (indexingToolkit.mustReindexDependents()) {
 					order.setToIterSuccessors();
 				}
@@ -86,7 +90,7 @@ public class ProjectIndexManager {
 					+ " should be indexed in project " + project);
 		}
 
-		if (!fim.isIndexable(file.getElementType())) {
+		if (!indexersManager.isIndexable(file.getElementType())) {
 			return false;
 		}
 		final IRodinFile[] dependFiles = fim.getDependencies(file);

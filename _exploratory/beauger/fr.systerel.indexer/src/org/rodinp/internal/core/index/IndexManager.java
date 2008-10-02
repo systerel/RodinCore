@@ -47,6 +47,8 @@ public final class IndexManager {
 
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
+	private final IndexersManager indexersManager;
+	
 	private final FileIndexingManager fim;
 
 	private static final int eventMask = ElementChangedEvent.POST_CHANGE;
@@ -62,8 +64,8 @@ public final class IndexManager {
     
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
-
-		fim = new FileIndexingManager();
+		indexersManager = new IndexersManager();
+		fim = new FileIndexingManager(indexersManager);
 		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
 		listener = new RodinDBChangeListener(queue);
 //		indexingLock = new ReentrantLock(true); // TODO decide which type of Lock
@@ -97,7 +99,7 @@ public final class IndexManager {
 	 *            the associated file type.
 	 */
 	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
-		fim.addIndexer(indexer, fileType);
+		indexersManager.addIndexer(indexer, fileType);
 	}
 
 	/**
@@ -105,7 +107,7 @@ public final class IndexManager {
 	 * have to be added again if indexing is to be performed anew.
 	 */
 	public void clearIndexers() {
-		fim.clear();
+		indexersManager.clear();
 	}
 
 	/**
@@ -206,7 +208,7 @@ public final class IndexManager {
 	private ProjectIndexManager fetchPIM(IRodinProject project) {
 		ProjectIndexManager pim = pims.get(project);
 		if (pim == null) {
-			pim = new ProjectIndexManager(project, fim);
+			pim = new ProjectIndexManager(project, fim, indexersManager);
 			pims.put(project, pim);
 		}
 		return pim;
