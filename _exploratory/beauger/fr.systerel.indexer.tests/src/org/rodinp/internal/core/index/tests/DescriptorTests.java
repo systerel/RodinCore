@@ -1,12 +1,6 @@
 package org.rodinp.internal.core.index.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContains;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContainsNot;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertName;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;

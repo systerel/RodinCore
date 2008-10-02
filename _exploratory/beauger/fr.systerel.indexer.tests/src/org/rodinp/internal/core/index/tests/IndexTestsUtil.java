@@ -145,9 +145,9 @@ public class IndexTestsUtil {
 				.getName());
 	}
 
-	public static void assertLength(IRodinElement[] elements, int size) {
+	public static void assertLength(IRodinElement[] elements, int length) {
 		TestCase.assertEquals("incorrect number of elements in: "
-				+ Arrays.asList(elements), size, elements.length);
+				+ Arrays.asList(elements), length, elements.length);
 	}
 
 	public static void assertIsEmpty(IInternalElement[] elements) {
@@ -187,6 +187,19 @@ public class IndexTestsUtil {
 			Set<IDeclaration> actual) {
 
 		TestCase.assertEquals("Bad exports.", expected, actual);
+	}
+	
+	public static <T> void assertPredecessors(final List<T> predecessors, T... preds) {
+		TestCase.assertEquals("Bad predecessors length", preds.length, predecessors
+				.size());
+		for (T pred : preds) {
+			TestCase.assertTrue("Predecessors should contain " + pred, predecessors
+					.contains(pred));
+		}
+	}
+
+	public static Integer[] makeIntArray(Integer... integers) {
+		return integers;
 	}
 
 	public static IInternalElement[] makeIIEArray(IInternalElement... elements) {
