@@ -4,7 +4,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.IExpressionElement;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
