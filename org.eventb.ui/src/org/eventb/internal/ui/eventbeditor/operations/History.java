@@ -1,19 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eventb.internal.ui.UIUtils;
 
 public class History {
-	private static History singleton = null;
+
+	private static History singleton;
 	final private IOperationHistory history;
 
 	private History() {
 		history = OperationHistoryFactory.getOperationHistory();
 	}
 
-	public static History getInstance() {
+	public static synchronized History getInstance() {
 		if (singleton == null) {
 			singleton = new History();
 		}
@@ -22,12 +34,11 @@ public class History {
 
 	public void addOperation(AtomicOperation operation) {
 		try {
-			if(operation != null){
+			if (operation != null) {
 				history.execute(operation, null, null);
 			}
 		} catch (ExecutionException e) {
-			// TODO traiter l'exception
-			e.getCause().printStackTrace();
+			UIUtils.log(e.getCause(), "when executing an operation");
 		}
 	}
 
@@ -35,8 +46,7 @@ public class History {
 		try {
 			history.redo(context, null, null);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.getCause().printStackTrace();
+			UIUtils.log(e.getCause(), "when redoing an operation");
 		}
 	}
 
@@ -44,8 +54,7 @@ public class History {
 		try {
 			history.undo(context, null, null);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.getCause().printStackTrace();
+			UIUtils.log(e.getCause(), "when undoing an operation");
 		}
 	}
 }
