@@ -12,15 +12,19 @@
 
 package fr.systerel.explorer.navigator.actionProviders;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
 /**
  * An action delegate for creating new components.
@@ -44,6 +48,13 @@ public class NewComponentActionDelegate implements IViewActionDelegate {
 		BusyIndicator.showWhile(view.getViewSite().getShell().getDisplay(), new Runnable() {
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) view.getViewSite().getSelectionProvider().getSelection();
+				//The wizard uses IRodinProjects not IProjects
+				//get the corresponding IRodinProject
+				if (sel.getFirstElement() instanceof IProject) {
+					IProject project = (IProject)sel.getFirstElement();
+					sel = new StructuredSelection(RodinCore.getRodinDB().getRodinProject(project.getName()));
+					
+				}
 				NewComponentWizard wizard = new NewComponentWizard();
 				wizard.init(EventBUIPlugin.getDefault().getWorkbench(),
 						sel);

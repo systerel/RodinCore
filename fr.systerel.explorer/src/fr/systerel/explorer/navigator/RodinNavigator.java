@@ -104,15 +104,15 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		textData.top = new FormAttachment(coolBar);
 		textData.bottom = new FormAttachment(100);
 		getCommonViewer().getControl().setLayoutData(textData);
-		WorkingSetFilterActionGroup group = new WorkingSetFilterActionGroup(this.getSite().getShell(), this);
-		group.fillContextMenu(this.getViewSite().getActionBars().getMenuManager());
+//		WorkingSetFilterActionGroup group = new WorkingSetFilterActionGroup(this.getSite().getShell(), this);
+//		group.fillContextMenu(this.getViewSite().getActionBars().getMenuManager());
 		
 		//add the filters here
 		//those filters are selected by default and can't be chosen
 		//via the "customize view" dialog
 		getCommonViewer().addFilter(new DischargedFilter());
 		getCommonViewer().addFilter(new ObligationTextFilter());
-		getCommonViewer().addFilter(new HideNoneRodinFilter());
+//		getCommonViewer().addFilter(new HideNoneRodinFilter());
 //		getCommonViewer().addFilter(new WorkingSetProjectFilter());
 		getCommonViewer().addFilter(new ContextFilter());
 			
@@ -188,26 +188,26 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 	 * Set the input for the ContentProviders accordingly.
 	 */
 	public void propertyChange(final PropertyChangeEvent event) {
-		final Object root;
-		if (event.getNewValue() instanceof IWorkingSet) {
-			root =  event.getNewValue();
-		}
-		else {
-			//set to initial input
-			root = getSite().getPage().getInput();
-		}
-		
-		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
-			public void run() {
-				CommonViewer viewer = getCommonViewer();
-				Control ctrl = viewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					Object[] expanded = viewer.getExpandedElements();
-					viewer.setInput(root);
-					viewer.setExpandedElements(expanded);
-				}
-		}});
-		
+//		final Object root;
+//		if (event.getNewValue() instanceof IWorkingSet) {
+//			root =  event.getNewValue();
+//		}
+//		else {
+//			//set to initial input
+//			root = getSite().getPage().getInput();
+//		}
+//		
+//		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
+//			public void run() {
+//				CommonViewer viewer = getCommonViewer();
+//				Control ctrl = viewer.getControl();
+//				if (ctrl != null && !ctrl.isDisposed()) {
+//					Object[] expanded = viewer.getExpandedElements();
+//					viewer.setInput(root);
+//					viewer.setExpandedElements(expanded);
+//				}
+//		}});
+//		
 	}
 	
 }

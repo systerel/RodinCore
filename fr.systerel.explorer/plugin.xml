@@ -34,10 +34,6 @@
                   pattern="fr.systerel.explorer.navigator.filters.*">
             </contentExtension>
             <contentExtension
-                  isRoot="true"
-                  pattern="fr.systerel.explorer.navigator.content.project">
-            </contentExtension>
-            <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.machineContext">
             </contentExtension>
             <contentExtension
@@ -77,8 +73,13 @@
                   pattern="fr.systerel.explorer.navigator.content.complex.context">
             </contentExtension>
             <contentExtension
-                  isRoot="true"
-                  pattern="fr.systerel.explorer.navigator.content.workingSet">
+                  pattern="org.eclipse.ui.navigator.resourceContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.filters.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.workingSets">
             </contentExtension>
          </includes>
       </viewerContentBinding>
@@ -90,9 +91,6 @@
             </actionExtension>
             <actionExtension
                   pattern="fr.systerel.explorer.navigator.actionProviders.project">
-            </actionExtension>
-            <actionExtension
-                  pattern="fr.systerel.explorer.navigator.actionProviders.treeNode">
             </actionExtension>
             <actionExtension
                   pattern="fr.systerel.explorer.navigator.actionProviders.element">
@@ -119,45 +117,13 @@
                   pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
             </actionExtension>
             <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.actions.RefactorActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.actions.EditActions">
+                  pattern="org.eclipse.ui.navigator.resources.WorkingSetActions">
             </actionExtension>
          </includes>
       </viewerActionBinding>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
-      <navigatorContent
-            activeByDefault="true"
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.ProjectContentProvider"
-            id="fr.systerel.explorer.navigator.content.project"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.project"
-            priority="higher">
-         <possibleChildren>
-            <instanceof
-                  value="org.rodinp.core.IRodinProject">
-            </instanceof>
-            <instanceof
-                  value="org.eclipse.core.resources.IContainer">
-            </instanceof>
-         </possibleChildren>
-         <triggerPoints>
-            <or>
-               <instanceof
-                     value="org.rodinp.core.IRodinDB">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.ui.IWorkingSet">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IWorkspaceRoot">
-               </instanceof>
-            </or>
-         </triggerPoints>
-      </navigatorContent>
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.InvariantContentProvider"
             id="fr.systerel.explorer.navigator.content.invariant"
@@ -487,9 +453,11 @@
             name="%navigatorContent.machine"
             priority="higher">
          <triggerPoints>
-            <instanceof
-                  value="org.rodinp.core.IRodinProject">
-            </instanceof>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+               </adapt>
+            </or>
          </triggerPoints>
          <possibleChildren>
             <or>
@@ -511,7 +479,7 @@
             priority="highest">
          <triggerPoints>
             <instanceof
-                  value="org.rodinp.core.IRodinProject">
+                  value="org.eclipse.core.resources.IProject">
             </instanceof>
          </triggerPoints>
          <possibleChildren>
@@ -534,7 +502,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.rodinp.core.IRodinProject">
+                     value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
                      value="org.eventb.core.IMachineFile">
@@ -562,7 +530,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.rodinp.core.IRodinProject">
+                     value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
                      value="org.eventb.core.IMachineFile">
@@ -578,27 +546,53 @@
                class="fr.systerel.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
-      <navigatorContent
-            activeByDefault="false"
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.WorkingSetContentProvider"
-            id="fr.systerel.explorer.navigator.content.workingSet"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
-            name="%navigatorContent.workingSet"
-            priority="highest">
-         <triggerPoints>
-            <instanceof
-                  value="org.eclipse.core.resources.IWorkspaceRoot">
-            </instanceof>
-         </triggerPoints>
-         <possibleChildren>
-            <instanceof
-                  value="org.rodinp.core.IRodinProject">
-            </instanceof>
-            <instanceof
-                  value="org.eclipse.core.resources.IResource">
-            </instanceof>
-         </possibleChildren>
-      </navigatorContent>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.HideNoneRodinFilter"
+            id="fr.systerel.explorer.navigator.filters.hideNonRodin"
+            name="%filters.hideNonRodin">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.HideAllResourcesFilter"
+            id="fr.systerel.explorer.navigator.filters.hideResources"
+            name="%filters.hideResources">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BccFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBcc"
+            name="%filters.hideBcc">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BcmFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBcm"
+            name="%filters.hideBcm">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BpoFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBpo"
+            name="%filters.hideBpo">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BprFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBpr"
+            name="%filters.hideBpr">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BpsFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBps"
+            name="%filters.hideBps">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BucFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBuc"
+            name="%filters.hideBuc">
+      </commonFilter>
+      <commonFilter
+            class="fr.systerel.explorer.navigator.filters.BumFilter"
+            id="fr.systerel.explorer.navigator.filters.hideBum"
+            name="%filters.hideBum">
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

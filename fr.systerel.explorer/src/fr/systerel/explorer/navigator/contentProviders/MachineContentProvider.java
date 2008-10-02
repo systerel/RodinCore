@@ -12,15 +12,14 @@
 
 package fr.systerel.explorer.navigator.contentProviders;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelController;
@@ -32,17 +31,24 @@ import fr.systerel.explorer.model.ModelController;
 public class MachineContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
-        if (element instanceof IRodinProject) {
-        	IRodinProject project = (IRodinProject) element;
-        	try {
-            	ModelController.processProject(project);
-				return project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return new Object[0];
-			}
-        } 
+       if (element instanceof IProject) {
+    	   IProject project = (IProject) element;
+    	   if (project.isAccessible()) {
+				try {
+					//if it is a RodinProject return the IRodinProject from the DB.
+					if (project.hasNature(RodinCore.NATURE_ID)) {
+						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						if (proj != null) {
+			            	ModelController.processProject(proj);
+							return proj.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+						}
+					} 
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	   }
+       }
         return new Object[0];
 	}
 

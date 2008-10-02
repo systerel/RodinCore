@@ -16,11 +16,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelController;
@@ -34,14 +37,27 @@ import fr.systerel.explorer.model.ModelProject;
 public class ComplexMachineContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
-        if (element instanceof IRodinProject) {
-        	IRodinProject project = (IRodinProject) element;
-        	if (project.getProject().isOpen()) {
-	        	ModelController.processProject(project);
-	        	ModelProject prj= ModelController.getProject(project);	     	
-	        	return ModelController.convertToIMachine(prj.getRootMachines());
-        	}
-        } 
+		if (element instanceof IProject) {
+			IProject project = (IProject) element;
+			if (project.isAccessible()) {
+				try {
+					//if it is a RodinProject return the IRodinProject from the DB.
+					if (project.hasNature(RodinCore.NATURE_ID)) {
+						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						if (proj != null) {
+			            	ModelController.processProject(proj);
+				        	ModelProject prj= ModelController.getProject(proj);
+				        	if (prj != null) {
+					        	return ModelController.convertToIMachine(prj.getRootMachines());
+				        	}
+						}
+					} 
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+	    }
         if (element instanceof IMachineFile) {
         	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
         	List<ModelMachine> rest = machine.getRestMachines();
