@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -36,10 +37,10 @@ public class IndexingToolkit implements IIndexingToolkit {
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
 	private final Set<IDeclaration> previousExports;
-	private final Set<IDeclaration> imports;
+	private final Map<IInternalElement, IDeclaration> imports;
+	private final Map<IInternalElement, IDeclaration> declarations;
 	private Descriptor currentDescriptor;
-	private boolean isClean; // TODO rather impose a call to clean from
-								// client
+	private boolean isClean; // TODO call to clean from client
 
 	/**
 	 * The given imports are assumed to be up-to-date.
@@ -60,7 +61,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 */
 	public IndexingToolkit(IRodinFile file, RodinIndex rodinIndex,
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
-			Set<IDeclaration> imports) {
+			Map<IInternalElement, IDeclaration> imports) {
 
 		this.file = file;
 		this.rodinIndex = rodinIndex;
@@ -69,6 +70,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 		this.exportTable = exportTable;
 		this.previousExports = exportTable.get(file);
 		this.imports = imports;
+		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.currentDescriptor = null;
 		this.isClean = false;
 	}
@@ -84,7 +86,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 							+ element.getRodinFile());
 		}
 
-		if (fileTable.contains(file, element)) {
+		if (declarations.containsKey(element)) {
 			throw new IllegalArgumentException(
 					"Element has already been declared: " + element);
 		}
@@ -108,6 +110,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 		fileTable.add(element, file);
 		nameTable.put(name, element);
+		declarations.put(element, new Declaration(element, name));
 	}
 
 	public void addOccurrence(IInternalElement element, IOccurrenceKind kind,
@@ -145,14 +148,18 @@ public class IndexingToolkit implements IIndexingToolkit {
 			clean();
 		}
 
-		if (!isLocalOrImported(element)) {
+		final IDeclaration declaration;
+		if (isLocal(element)) {
+			declaration = declarations.get(element);
+		} else if (isImported(element)) {
+			declaration = imports.get(element);
+		} else {
 			throw new IllegalArgumentException(
 					"Cannot export an element that is neither local nor imported.");
 		}
-		fetchCurrentDescriptor(element);
 
-		final String name = currentDescriptor.getName();
-		exportTable.add(file, element, name);
+		fetchCurrentDescriptor(element);
+		exportTable.add(file, declaration);
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -179,13 +186,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	private boolean isImported(IInternalElement element) {
-		// TODO provide a class Import that hides the Set and implements contains (IIE)
-		for (IDeclaration declaration : imports) {
-			if (declaration.getElement().equals(element)) {
-				return true;
-			}
-		}
-		return false;
+		return imports.containsKey(element);
 	}
 
 	private boolean isLocalOrImported(IInternalElement element) {
@@ -224,11 +225,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 		isClean = true;
 	}
 
-	public Set<IDeclaration> getImports() {
+	public IDeclaration[] getImports() {
 		if (!isClean) {
 			clean();
 		}
-		return new HashSet<IDeclaration>(imports);
+		return imports.values().toArray(new IDeclaration[imports.size()]);
 	}
 
 }

@@ -16,10 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.internal.core.index.Declaration;
 
 public class ExportTable {
 
@@ -40,13 +38,12 @@ public class ExportTable {
 
 	// Overwrites any previous mapping from the given file to the element,
 	// and from the given element to the name.
-	public void add(IRodinFile file, IInternalElement element, String name) {
+	public void add(IRodinFile file, IDeclaration declaration) {
 		Set<IDeclaration> declarations = table.get(file);
 		if (declarations == null) {
 			declarations = new HashSet<IDeclaration>();
 			table.put(file, declarations);
 		}
-		final IDeclaration declaration = new Declaration(element, name);
 		declarations.add(declaration);
 	}
 
