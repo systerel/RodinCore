@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -52,7 +53,7 @@ import fr.systerel.explorer.model.ModelPOContainer;
  *
  */
 public class RodinLabelProvider implements
-		ILabelProvider, IFontProvider {
+		ILabelProvider{
 
     /*
 	 * (non-Javadoc)
@@ -60,7 +61,7 @@ public class RodinLabelProvider implements
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+
         if (element instanceof  IWorkingSet) {
         	return EventBImage.getImage(((IWorkingSet) element).getImageDescriptor(), 0);
         }
@@ -184,9 +185,9 @@ public class RodinLabelProvider implements
 		return obj.toString();
 	}
 
-	public Font getFont(Object element) {
-		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-	}
+//	public Font getFont(Object element) {
+//		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+//	}
 	
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing

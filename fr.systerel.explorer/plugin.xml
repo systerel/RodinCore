@@ -593,6 +593,24 @@
             id="fr.systerel.explorer.navigator.filters.hideBum"
             name="%filters.hideBum">
       </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.ObligationTextFilter"
+            id="fr.systerel.explorer.navigator.filters.obligationText"
+            name="%filters.default">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.DischargedFilter"
+            id="fr.systerel.explorer.navigator.filters.discharged"
+            name="%filters.default">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="true"
+            class="fr.systerel.explorer.navigator.filters.ContextFilter"
+            id="fr.systerel.explorer.navigator.filters.contexts"
+            name="%filters.default">
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

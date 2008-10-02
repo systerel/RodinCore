@@ -38,6 +38,9 @@ public abstract class FileExtensionFilter extends ViewerFilter {
 			if (file.getFileExtension().equals(getExtension())) {
 				return false;
 			}
+			if (file.getFileExtension().equals(getExtension()+"_tmp")) {
+				return false;
+			}
 			
 		}
 		return true;

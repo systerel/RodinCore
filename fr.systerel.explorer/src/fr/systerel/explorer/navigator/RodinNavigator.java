@@ -110,11 +110,10 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		//add the filters here
 		//those filters are selected by default and can't be chosen
 		//via the "customize view" dialog
-		getCommonViewer().addFilter(new DischargedFilter());
-		getCommonViewer().addFilter(new ObligationTextFilter());
-//		getCommonViewer().addFilter(new HideNoneRodinFilter());
-//		getCommonViewer().addFilter(new WorkingSetProjectFilter());
-		getCommonViewer().addFilter(new ContextFilter());
+		//TODO this is lost, when the filters are changed via the dialog
+//		getCommonViewer().addFilter(new DischargedFilter());
+//		getCommonViewer().addFilter(new ObligationTextFilter());
+//		getCommonViewer().addFilter(new ContextFilter());
 			
 	}
 	
