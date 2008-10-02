@@ -14,9 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -54,7 +54,7 @@ public class ProjectIndexManager {
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
 
-			final Set<IInternalElement> fileImports = computeImports(file);
+			final Set<IDeclaration> fileImports = computeImports(file);
 			final IndexingToolkit indexingToolkit = new IndexingToolkit(file,
 					index, fileTable, nameTable, exportTable, fileImports);
 
@@ -113,12 +113,12 @@ public class ProjectIndexManager {
 		return index;
 	}
 
-	private Set<IInternalElement> computeImports(IRodinFile file) {
-		final Set<IInternalElement> result = new HashSet<IInternalElement>();
+	private Set<IDeclaration> computeImports(IRodinFile file) {
+		final Set<IDeclaration> result = new HashSet<IDeclaration>();
 		final List<IRodinFile> fileDeps = order.getPredecessors(file);
 
 		for (IRodinFile f : fileDeps) {
-			result.addAll(exportTable.get(f).keySet());
+			result.addAll(exportTable.get(f));
 		}
 		return result;
 	}

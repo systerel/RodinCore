@@ -1,0 +1,71 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
+package org.rodinp.internal.core.index;
+
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.index.IDeclaration;
+
+/**
+ * @author Nicolas Beauger
+ *
+ */
+public class Declaration implements IDeclaration {
+
+	private final IInternalElement element;
+	private final String name;
+	
+	
+	
+	public Declaration(IInternalElement element, String name) {
+		if (element == null) {
+			throw new NullPointerException("null element");
+		}
+		if (name == null) {
+			throw new NullPointerException("null name");
+		}
+		this.element = element;
+		this.name = name;
+	}
+
+	public IInternalElement getElement() {
+		return element;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		final int prime = 31;
+		result = prime + element.hashCode();
+		result = prime * result + name.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		final Declaration other = (Declaration) obj;
+		if (!element.equals(other.element))
+			return false;
+		if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+
+
+}

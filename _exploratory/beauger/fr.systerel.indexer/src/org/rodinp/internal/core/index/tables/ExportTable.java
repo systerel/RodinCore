@@ -10,38 +10,44 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.index.IDeclaration;
+import org.rodinp.internal.core.index.Declaration;
 
 public class ExportTable {
 
-	Map<IRodinFile, Map<IInternalElement, String>> table;
+	Map<IRodinFile, Set<IDeclaration>> table;
 
 	public ExportTable() {
-		table = new HashMap<IRodinFile, Map<IInternalElement, String>>();
+		table = new HashMap<IRodinFile, Set<IDeclaration>>();
 	}
 
-	// TODO consider providing a type that hides the map
-	public Map<IInternalElement, String> get(IRodinFile file) {
-		final Map<IInternalElement, String> map = table.get(file);
-		if (map == null) {
-			return new HashMap<IInternalElement, String>();
+	// TODO consider providing a type that hides the set
+	public Set<IDeclaration> get(IRodinFile file) {
+		final Set<IDeclaration> declarations = table.get(file);
+		if (declarations == null) {
+			return Collections.emptySet();
 		}
-		return new HashMap<IInternalElement, String>(map);
+		return new HashSet<IDeclaration>(declarations);
 	}
 
 	// Overwrites any previous mapping from the given file to the element,
 	// and from the given element to the name.
 	public void add(IRodinFile file, IInternalElement element, String name) {
-		Map<IInternalElement, String> map = table.get(file);
-		if (map == null) {
-			map = new HashMap<IInternalElement, String>();
-			table.put(file, map);
+		Set<IDeclaration> declarations = table.get(file);
+		if (declarations == null) {
+			declarations = new HashSet<IDeclaration>();
+			table.put(file, declarations);
 		}
-		map.put(element, name);
+		final IDeclaration declaration = new Declaration(element, name);
+		declarations.add(declaration);
 	}
 
 	public void remove(IRodinFile file) {
@@ -52,12 +58,12 @@ public class ExportTable {
 		table.clear();
 	}
 
-	public boolean contains(IRodinFile f, IInternalElement element) {
-		final Map<IInternalElement, String> map = table.get(f);
-		if (map == null) {
-			return false;
-		}
-		return map.keySet().contains(element);
-	}
-
+//	public boolean contains(IRodinFile f, IInternalElement element) {
+//		final Set<IDeclaration> map = table.get(f);
+//		if (map == null) {
+//			return false;
+//		}
+//		return map.contains(element);
+//	}
+//
 }

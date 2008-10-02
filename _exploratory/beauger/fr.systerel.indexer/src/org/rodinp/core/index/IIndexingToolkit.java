@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
+import java.util.Set;
+
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -79,7 +81,7 @@ public interface IIndexingToolkit {
 	 * 
 	 * @return the imported elements.
 	 */
-	IInternalElement[] getImports();
+	Set<IDeclaration> getImports();
 
 	/**
 	 * Exports the given element, making it visible to dependent files.

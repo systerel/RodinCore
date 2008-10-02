@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -18,6 +18,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
@@ -34,10 +35,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 	private final FileTable fileTable;
 	private final NameTable nameTable;
 	private final ExportTable exportTable;
-	private final Map<IInternalElement, String> previousExports;
-	private final Set<IInternalElement> imports;
+	private final Set<IDeclaration> previousExports;
+	private final Set<IDeclaration> imports;
 	private Descriptor currentDescriptor;
-	private boolean isClean;
+	private boolean isClean; // TODO rather impose a call to clean from
+								// client
 
 	/**
 	 * The given imports are assumed to be up-to-date.
@@ -58,7 +60,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 */
 	public IndexingToolkit(IRodinFile file, RodinIndex rodinIndex,
 			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
-			Set<IInternalElement> imports) {
+			Set<IDeclaration> imports) {
 
 		this.file = file;
 		this.rodinIndex = rodinIndex;
@@ -149,7 +151,8 @@ public class IndexingToolkit implements IIndexingToolkit {
 		}
 		fetchCurrentDescriptor(element);
 
-		exportTable.add(file, element, currentDescriptor.getName());
+		final String name = currentDescriptor.getName();
+		exportTable.add(file, element, name);
 	}
 
 	private void fetchCurrentDescriptor(IInternalElement element) {
@@ -176,7 +179,13 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	private boolean isImported(IInternalElement element) {
-		return imports.contains(element);
+		// TODO provide a class Import that hides the Set and implements contains (IIE)
+		for (IDeclaration declaration : imports) {
+			if (declaration.getElement().equals(element)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean isLocalOrImported(IInternalElement element) {
@@ -215,12 +224,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 		isClean = true;
 	}
 
-	public IInternalElement[] getImports() {
+	public Set<IDeclaration> getImports() {
 		if (!isClean) {
 			clean();
 		}
-
-		return imports.toArray(new IInternalElement[imports.size()]);
+		return new HashSet<IDeclaration>(imports);
 	}
 
 }
