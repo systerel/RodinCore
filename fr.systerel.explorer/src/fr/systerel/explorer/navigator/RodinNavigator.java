@@ -113,7 +113,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		getCommonViewer().addFilter(new DischargedFilter());
 		getCommonViewer().addFilter(new ObligationTextFilter());
 		getCommonViewer().addFilter(new HideNoneRodinFilter());
-		getCommonViewer().addFilter(new WorkingSetProjectFilter());
+//		getCommonViewer().addFilter(new WorkingSetProjectFilter());
 		getCommonViewer().addFilter(new ContextFilter());
 			
 	}
