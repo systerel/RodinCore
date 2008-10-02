@@ -23,6 +23,7 @@ import org.rodinp.core.IRodinProject;
  * if the WorkingSetContentProvider is active.
  * This is done because otherwise the projects would be shown twice.
  * Once inside the working sets and once directly under the root.
+ * WARNING: This caused trouble when refreshing. Currently not used.
  */
 public class WorkingSetProjectFilter extends ViewerFilter {
 	public WorkingSetProjectFilter() {

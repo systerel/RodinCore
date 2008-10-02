@@ -100,6 +100,30 @@
             <actionExtension
                   pattern="fr.systerel.explorer.navigator.actionProviders.po">
             </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.OpenActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.PortingActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.NewActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.actions.RefactorActions">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.actions.EditActions">
+            </actionExtension>
          </includes>
       </viewerActionBinding>
    </extension>
@@ -111,7 +135,7 @@
             id="fr.systerel.explorer.navigator.content.project"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.project"
-            priority="normal">
+            priority="higher">
          <possibleChildren>
             <instanceof
                   value="org.rodinp.core.IRodinProject">
@@ -139,7 +163,7 @@
             id="fr.systerel.explorer.navigator.content.invariant"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.invariants"
-            priority="high">
+            priority="normal">
          <triggerPoints>
             <or>
                <instanceof
@@ -198,7 +222,7 @@
             id="fr.systerel.explorer.navigator.content.variable"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.variables"
-            priority="higher">
+            priority="high">
          <triggerPoints>
             <or>
                <instanceof
@@ -321,7 +345,7 @@
             id="fr.systerel.explorer.navigator.content.carrierSet"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.carrierSets"
-            priority="higher">
+            priority="high">
          <triggerPoints>
             <or>
                <instanceof
@@ -455,12 +479,6 @@
             </instanceof>
          </enablement>
       </actionProvider>
-      <commonFilter
-            activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.DischargedFilter"
-            id="fr.systerel.explorer.navigator.discharged"
-            name="%filters.discharged">
-      </commonFilter>
       <navigatorContent
             activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContentProvider"
@@ -566,12 +584,20 @@
             id="fr.systerel.explorer.navigator.content.workingSet"
             labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
             name="%navigatorContent.workingSet"
-            priority="higher">
+            priority="highest">
          <triggerPoints>
             <instanceof
                   value="org.eclipse.core.resources.IWorkspaceRoot">
             </instanceof>
          </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.rodinp.core.IRodinProject">
+            </instanceof>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </possibleChildren>
       </navigatorContent>
    </extension>
    <extension

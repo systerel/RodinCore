@@ -13,7 +13,6 @@
 package fr.systerel.explorer.model;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 

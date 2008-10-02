@@ -23,7 +23,6 @@ import org.eventb.core.IMachineFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;

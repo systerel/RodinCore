@@ -14,7 +14,6 @@ package fr.systerel.explorer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,8 +23,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;

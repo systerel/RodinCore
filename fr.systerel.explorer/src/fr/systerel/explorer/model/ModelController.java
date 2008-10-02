@@ -70,7 +70,7 @@ public class ModelController implements IElementChangedListener {
 	 */
 	public static void processProject(IRodinProject project){
 		try {
-//			System.out.println("Processing project start" +System.currentTimeMillis());
+//			System.out.println("Processing project " +project.getElementName());
 			ModelProject prj;
 			if (!projects.containsKey(project.getHandleIdentifier())) {
 				prj =  new ModelProject(project);

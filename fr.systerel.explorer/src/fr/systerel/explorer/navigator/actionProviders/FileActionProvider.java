@@ -48,14 +48,6 @@ public class FileActionProvider extends NavigatorActionProvider {
     
     @Override
 	public void fillContextMenu(IMenuManager menu) {
-		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(ActionCollection.getNewProjectAction(site));
-		newMenu.add(ActionCollection.getNewComponentAction(site));
-    	// put in front
-    	IContributionItem[] items = menu.getItems();
-    	if (items.length > 0) {
-    		menu.insertBefore(items[1].getId(), newMenu);
-    	} else	menu.add(newMenu);
 		menu.add(new Separator(GROUP_MODELLING));
     	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
     	

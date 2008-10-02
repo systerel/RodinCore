@@ -45,13 +45,14 @@ import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControl;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
-import org.eventb.internal.ui.wizards.NewProjectWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.navigator.wizards.NewProjectWizard;
 
 /**
  * A collection of actions for the navigator

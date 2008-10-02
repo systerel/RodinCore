@@ -10,14 +10,10 @@
   *******************************************************************************/
 package fr.systerel.explorer.navigator.contentProviders;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 

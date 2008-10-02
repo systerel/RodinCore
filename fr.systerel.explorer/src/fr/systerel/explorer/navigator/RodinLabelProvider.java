@@ -22,8 +22,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eventb.core.*;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
+import org.eventb.core.IEvent;
+import org.eventb.core.IEventBFile;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.IPSStatus;
+import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.EventBUIPlugin;
@@ -34,9 +43,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelElementNode;
-import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelPOContainer;
-import fr.systerel.explorer.model.ModelProofObligation;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
@@ -46,8 +53,6 @@ import fr.systerel.explorer.model.ModelProofObligation;
  */
 public class RodinLabelProvider implements
 		ILabelProvider, IFontProvider {
-
-    private WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 
     /*
 	 * (non-Javadoc)

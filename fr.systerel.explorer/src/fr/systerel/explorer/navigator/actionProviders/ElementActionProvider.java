@@ -36,17 +36,4 @@ public class ElementActionProvider extends NavigatorActionProvider {
               ActionCollection.getOpenAction(site));
     }
 	
-    @Override
-	public void fillContextMenu(IMenuManager menu) {
-		MenuManager newMenu = new MenuManager("&New");
-		newMenu.add(ActionCollection.getNewProjectAction(site));
-		newMenu.add(ActionCollection.getNewComponentAction(site));
-    	IContributionItem[] items = menu.getItems();
-    	// put in front
-    	if (items.length > 0) {
-    		menu.insertBefore(items[1].getId(), newMenu);
-    	} else	menu.add(newMenu);
-		menu.add(new Separator());
-    }	
-
 }
