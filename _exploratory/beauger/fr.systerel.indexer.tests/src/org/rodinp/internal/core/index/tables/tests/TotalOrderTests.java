@@ -1,5 +1,7 @@
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,17 +9,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.rodinp.internal.core.index.tables.TotalOrder;
+import org.rodinp.internal.core.index.tests.IndexTests;
 
-public class TotalOrderTests extends TestCase {
+public class TotalOrderTests extends IndexTests {
+
+	public TotalOrderTests(String name) {
+		super(name, true);
+	}
 
 	private static final TotalOrder<Integer> order = new TotalOrder<Integer>();
-
-	private static Integer[] makeIntArray(Integer... integers) {
-		return integers;
-	}
 
 	private static void assertOrderedIteration(TotalOrder<Integer> iter,
 			Integer... expectedOrder) {
@@ -40,12 +41,13 @@ public class TotalOrderTests extends TestCase {
 		final Set<Integer> expSet = new HashSet<Integer>(Arrays
 				.asList(expected));
 
+		Integer next = Integer.MIN_VALUE;
 		while (!expSet.isEmpty()) {
 			final boolean hasNext = iter.hasNext();
 
-			assertTrue("Iterator should have next", hasNext);
+			assertTrue("Iterator should have next after " + next, hasNext);
 
-			final Integer next = iter.next();
+			next = iter.next();
 			final boolean containsNext = expSet.contains(next);
 
 			assertTrue("Unexpected iterated element " + next, containsNext);
@@ -99,20 +101,6 @@ public class TotalOrderTests extends TestCase {
 		}
 	}
 
-	private void assertContains(TotalOrder<Integer> totalOrder, Integer i) {
-		final boolean contains = totalOrder.contains(i);
-		assertTrue("Should contain element " + i, contains);
-	}
-
-	private void assertContains(final List<Integer> predecessors, int... preds) {
-		assertEquals("Bad predecessors length", preds.length, predecessors
-				.size());
-		for (int pred : preds) {
-			assertTrue("Predecessors should contain " + pred, predecessors
-					.contains(pred));
-		}
-	}
-
 	private int succModulo(int i, int mod) {
 		return (i % mod) + 1;
 	}
@@ -145,39 +133,7 @@ public class TotalOrderTests extends TestCase {
 
 		final List<Integer> predecessors = order.getPredecessors(3);
 
-		assertContains(predecessors, 1, 2);
-	}
-
-	public void testContains() {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 1);
-
-		assertContains(order, 1);
-		assertContains(order, 2);
-		assertContains(order, 3);
-	}
-
-	public void testRemoveFirst() throws Exception {
-		setPreds(order, 2, 1);
-		order.remove(2);
-
-		assertOrderedIteration(order, 1);
-	}
-
-	public void testRemoveLast() throws Exception {
-		setPreds(order, 2, 1);
-		order.remove(1);
-
-		assertOrderedIteration(order, 2);
-	}
-
-	public void testRemoveInner() throws Exception {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 2);
-
-		order.remove(2);
-
-		assertOrderedIteration(order, 1, 3);
+		assertPredecessors(predecessors, 1, 2);
 	}
 
 	public void testClear() throws Exception {
@@ -228,15 +184,6 @@ public class TotalOrderTests extends TestCase {
 		} catch (NoSuchElementException e) {
 			// OK
 		}
-	}
-
-	public void testRemoveLabel() throws Exception {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 2);
-
-		order.remove(2);
-
-		assertAllIteratedOnceToEnd(order, 1, 3);
 	}
 
 	public void testSetToIter() throws Exception {
@@ -294,10 +241,10 @@ public class TotalOrderTests extends TestCase {
 		setPreds(order, 3, 2);
 
 		assertOrderedIteration(order, 1, 2, 3);
-		
+
 		order.end();
-		
-		setToIter(order, 1,2,3);
+
+		setToIter(order, 1, 2, 3);
 		assertOrderedIteration(order, 1, 2, 3);
 	}
 
@@ -309,7 +256,7 @@ public class TotalOrderTests extends TestCase {
 		order.end();
 		order.end();
 
-		setToIter(order, 1,2,3);
+		setToIter(order, 1, 2, 3);
 		assertOrderedIteration(order, 1, 2, 3);
 	}
 
@@ -466,41 +413,6 @@ public class TotalOrderTests extends TestCase {
 		assertOrderedIteration(order, 2);
 	}
 
-	public void testRemoveLabelBeforeIter() throws Exception {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 2);
-
-		assertNext(order, 1);
-		assertNext(order, 2);
-
-		order.remove(1);
-
-		assertOrderedIteration(order, 3);
-	}
-
-	public void testRemoveLabelAtIter() throws Exception {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 2);
-
-		assertNext(order, 1);
-		assertNext(order, 2);
-
-		order.remove(2);
-
-		assertAllIteratedOnceToEnd(order, 1, 3);
-	}
-
-	public void testRemoveLabelAfterIter() throws Exception {
-		setPreds(order, 2, 1);
-		setPreds(order, 3, 2);
-
-		assertNext(order, 1);
-
-		order.remove(3);
-
-		assertOrderedIteration(order, 2);
-	}
-
 	public void testIterSetToIterBefore() throws Exception {
 		setPreds(order, false, 2, 1);
 		setPreds(order, 3, 2);
@@ -608,15 +520,18 @@ public class TotalOrderTests extends TestCase {
 		assertNext(order, 1);
 		assertNext(order, 2);
 
-		order.remove(1);
 		order.setToIterSuccessors();
-		order.setPredecessors(5, makeIntArray(4));
-		order.setPredecessors(3, makeIntArray(5)); // making a cycle
+		order.remove();
+		setPreds(order, 5, 4);
+		setPreds(order, 3, 5, 4); // making a cycle
 		order.setToIter(4);
+		setPreds(order, 4, 1);
 		order.setToIter(5);
 		order.setToIter(6); // creating an independent node
+		setPreds(order, 6, 5); // thus 6 is after 1
 
-		// 2 remains first but was already iterated
+		// 2 was removed
+		// 1 remains first but was already iterated
 		assertAllIteratedOnceToEnd(order, 3, 4, 5, 6);
 	}
 }
