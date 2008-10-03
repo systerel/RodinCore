@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.HashSet;
@@ -17,9 +16,12 @@ import java.util.Set;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
@@ -54,12 +56,10 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 	
 	@Override
 	protected void addClause(String contextName) throws RodinDBException {
-		final String name = UIUtils.getFreeElementName(editor,
-				rodinFile, IExtendsContext.ELEMENT_TYPE,
-				"extendsContext");
-		final IExtendsContext clause = rodinFile.getExtendsClause(name);
-		clause.create(null, null);
-		clause.setAbstractContextName(contextName, null);
+		History.getInstance().addOperation(
+				OperationFactory.createElement(editor,
+						IExtendsContext.ELEMENT_TYPE,
+						EventBAttributes.TARGET_ATTRIBUTE, contextName));
 	}
 
 	@Override

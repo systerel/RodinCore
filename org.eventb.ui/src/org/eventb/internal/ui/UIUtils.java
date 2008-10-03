@@ -8,10 +8,9 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - added getFreeIndex method to factorize several methods
+ *     Systerel - added getFreeIndex method to factor several methods
  *     Systerel - added methods indicateUser() and showUnexpectedError()
  *******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,9 +39,37 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
+import org.eventb.core.IEvent;
 import org.eventb.core.IEventBFile;
+import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.IParameter;
+import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
+import org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.LabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.ParameterIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.operations.EventBAttributesManager;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
@@ -409,14 +436,13 @@ public class UIUtils {
 		}
 	}
 
-	public static String getNamePrefix(IEventBEditor<?> editor,
+	public static String getNamePrefix(IRodinFile rodinFile,
 			IInternalElementType<?> type, String defaultPrefix) {
-		return "internal_" + getPrefix(editor, type, defaultPrefix); //$NON-NLS-1$
+		return "internal_" + getPrefix(rodinFile, type, defaultPrefix); //$NON-NLS-1$
 	}
 
-	public static String getPrefix(IEventBEditor<?> editor,
+	public static String getPrefix(IRodinFile inputFile,
 			IInternalElementType<?> type, String defaultPrefix) {
-		IRodinFile inputFile = editor.getRodinInput();
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(
@@ -435,7 +461,7 @@ public class UIUtils {
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type, String defaultPrefix)
 			throws RodinDBException {
-		String prefix = getNamePrefix(editor, type, defaultPrefix);
+		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
@@ -443,7 +469,7 @@ public class UIUtils {
 			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, type, defaultPrefix);
+		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
 	}
 
@@ -477,7 +503,7 @@ public class UIUtils {
 			IInternalParent parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor, type, defaultPrefix);
+		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 
@@ -516,15 +542,20 @@ public class UIUtils {
 	 * @param pm
 	 */
 	public static void setStringAttribute(IAttributedElement element,
-			IAttributeType.String attrType, String newValue, IProgressMonitor pm) {
+			IAttributeType.String attrType, String newValue, boolean undoable,
+			IProgressMonitor pm) {
 		try {
-			if (newValue.length() == 0) {
-				if (element.hasAttribute(attrType)) {
-					element.removeAttribute(attrType, pm);
-				}
-			} else if (!element.hasAttribute(attrType)
+			if (!element.hasAttribute(attrType)
 					|| !newValue.equals(element.getAttributeValue(attrType))) {
-				element.setAttributeValue(attrType, newValue, pm);
+				if (undoable && element instanceof IInternalElement) {
+					IInternalElement iiElement = (IInternalElement) element;
+					History.getInstance().addOperation(
+							OperationFactory.changeAttribute(iiElement
+									.getRodinFile(), element, attrType,
+									newValue));
+				} else {
+					element.setAttributeValue(attrType, newValue, pm);
+				}
 			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "Error changing attribute " + attrType.getId() //$NON-NLS-1$
@@ -533,12 +564,133 @@ public class UIUtils {
 				e.printStackTrace();
 		}
 	}
+	
+	
+	public static void setBooleanAttribute(IInternalElement element,
+			IAttributeType.Boolean type, boolean value, IProgressMonitor pm) {
+		try {
+			if (!element.hasAttribute(type)
+					|| value != element.getAttributeValue(type)) {
+				EventBAttributesManager manager = new EventBAttributesManager();
+				manager.addAttribute(type, value);
+				History.getInstance().addOperation(
+						OperationFactory.changeAttribute(
+								element.getRodinFile(), element, manager));
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "Error changing attribute " + type.getId() //$NON-NLS-1$
+					+ " for element " + element.getElementName()); //$NON-NLS-1$
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+		}
+	}
+
+	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
+			IAttributedElement element) {
+		if (element instanceof ICarrierSet){
+			return new CarrierSetIdentifierAttributeFactory();
+		}else if(element instanceof IConstant){
+			return new ConstantIdentifierAttributeFactory();
+		}else if(element instanceof IParameter){
+			return new ParameterIdentifierAttributeFactory();
+		}else if(element instanceof IVariable){
+			return new VariableIdentifierAttributeFactory();
+		}else{
+			return null;
+		}
+	}
+	
+
+	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
+			IInternalElementType<?> type) {
+		if (type == ICarrierSet.ELEMENT_TYPE) {
+			return new CarrierSetIdentifierAttributeFactory();
+		} else if (type == IConstant.ELEMENT_TYPE) {
+			return new ConstantIdentifierAttributeFactory();
+		} else if (type == IParameter.ELEMENT_TYPE) {
+			return new ParameterIdentifierAttributeFactory();
+		} else if (type == IVariable.ELEMENT_TYPE) {
+			return new VariableIdentifierAttributeFactory();
+		} else {
+			return null;
+		}
+	}
+	
+	public static LabelAttributeFactory getLabelAttributeFactory(
+			IAttributedElement element) {
+		if (element instanceof IAction) {
+			return new ActionLabelAttributeFactory();
+		}else if(element instanceof IAxiom){
+			return new AxiomLabelAttributeFactory();
+		}else if(element instanceof IEvent){
+			return new EventLabelAttributeFactory();
+		}else if(element instanceof IGuard){
+			return new GuardLabelAttributeFactory();
+		}else if(element instanceof IInvariant){
+			return new InvariantLabelAttributeFactory();
+		}else if(element instanceof ITheorem){
+			return new TheoremLabelAttributeFactory();
+		}else if(element instanceof IWitness){
+			return new WitnessLabelAttributeFactory();
+		}else{
+			return null;
+		}
+	}
+
+	public static LabelAttributeFactory getLabelAttributeFactory(
+			IInternalElementType<?> type) {
+		if (type == IAction.ELEMENT_TYPE) {
+			return new ActionLabelAttributeFactory();
+		} else if (type == IAxiom.ELEMENT_TYPE) {
+			return new AxiomLabelAttributeFactory();
+		} else if (type == IEvent.ELEMENT_TYPE) {
+			return new EventLabelAttributeFactory();
+		} else if (type == IGuard.ELEMENT_TYPE) {
+			return new GuardLabelAttributeFactory();
+		} else if (type == IInvariant.ELEMENT_TYPE) {
+			return new InvariantLabelAttributeFactory();
+		} else if (type == ITheorem.ELEMENT_TYPE) {
+			return new TheoremLabelAttributeFactory();
+		} else if (type == IWitness.ELEMENT_TYPE) {
+			return new WitnessLabelAttributeFactory();
+		} else {
+			return null;
+		}
+	}
+
+	public static void setStringAttribute(IAttributedElement element,
+			IAttributeFactory factory, String value, IProgressMonitor monitor) {
+		try {
+			if (attributeHasChanged(element, factory, value, monitor)) {
+				IInternalElement iElement = (IInternalElement) element;
+				History.getInstance().addOperation(
+						OperationFactory.changeAttribute(iElement
+								.getRodinFile(), factory, iElement, value));
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "Error changing attribute for element "
+					+ element.getElementName());
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+		}
+	}
+
+	private static boolean attributeHasChanged(IAttributedElement element,
+			IAttributeFactory factory, String value, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (value == null) {
+			return factory.hasValue(element, monitor);
+		}
+		if (!factory.hasValue(element, monitor))
+			return true;
+		return !value.equals(factory.getValue(element, monitor));
+	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
 			IEventBEditor<?> editor, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
-		String prefix = getNamePrefix(editor, type, defaultPrefix);
+		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
@@ -647,14 +799,16 @@ public class UIUtils {
 	 * @param message The dialog message.
 	 */
 	public static void showInfo(final String message) {
+		final String pluginName = getPluginName();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
 						.getActiveWorkbenchWindow();
 				MessageDialog.openInformation(activeWorkbenchWindow.getShell(),
-						getPluginName(), message);
+						pluginName, message);
 			}
 		});
+
 	}
 
 	/**
@@ -663,19 +817,21 @@ public class UIUtils {
 	 * @param e The unexpected error.
 	 */
 	public static void showUnexpectedError(final CoreException e) {
+		final String pluginName = getPluginName();
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				final IStatus status = new Status(IStatus.ERROR,
 						EventBUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getStatus()
 								.getMessage(), null);
 				ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
-						.getShell(), getPluginName(),
+						.getShell(), pluginName,
 						Messages.uiUtils_unexpectedError, status);
 			}
 		});
-	}
 
-	static String getPluginName() {
+	}
+	
+	private static String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}

@@ -8,10 +8,10 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -24,13 +24,14 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 public class ButtonComposite {
 
@@ -127,18 +128,12 @@ public class ButtonComposite {
 		removeHyperlink.setImage(EventBImage
 				.getImage(IEventBSharedImages.IMG_REMOVE));
 		removeHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
-
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				try {
-					((IInternalElement) element).delete(true,
-							new NullProgressMonitor());
-				} catch (RodinDBException exception) {
-					EventBUIExceptionHandler
-							.handleDeleteElementException(exception);
-				}
+				AtomicOperation operation = OperationFactory
+						.deleteElement((IInternalElement) element);
+				History.getInstance().addOperation(operation);
 			}
-
 		});
 
 		updateLinks();

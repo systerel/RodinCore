@@ -1,18 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IExpressionElement;
+import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.ui.IElementModifier;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -25,29 +26,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class ExpressionModifier implements IElementModifier {
 
-	/* (non-Javadoc)
-	 * @see org.eventb.ui.IElementModifier#modify(org.rodinp.core.IRodinElement, java.lang.String)
-	 */
 	public void modify(IRodinElement element, String text)
 			throws RodinDBException {
-		// Try to set the expression string if the element is an expression
-		// element.
+		// Try to set the assignment string if element is an assignment element.
 		if (element instanceof IExpressionElement) {
-			IExpressionElement eElement = (IExpressionElement) element;
-			String expressionString = null;
-			try {
-				expressionString = eElement.getExpressionString();
-			}
-			catch (RodinDBException e) {
-				// Do nothing
-			}
-			
-			// Set the expression string if the expression string is
-			// <code>null</code> or is not equal the input text.
-			if (expressionString == null || !expressionString.equals(text))
-				eElement.setExpressionString(text, new NullProgressMonitor());
+			IExpressionElement aElement = (IExpressionElement) element;
+			IAttributeFactory factory = new ExpressionAttributeFactory();
+			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
-		// Do nothing if the element is not an expression element
+		// Do nothing if the element is not an assignment element.
 		return;
 	}
 

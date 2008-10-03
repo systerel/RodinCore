@@ -1,20 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.ICommentedElement;
 import org.eventb.core.IExpressionElement;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
@@ -31,18 +29,9 @@ public class ExpressionAttributeFactory implements IAttributeFactory {
 
 	public void setValue(IAttributedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof ICommentedElement;
+		assert element instanceof IExpressionElement;
 		final IExpressionElement eElement = (IExpressionElement) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			eElement.setExpressionString(newValue, monitor);
-		}
+		eElement.setExpressionString(newValue, monitor);
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
@@ -63,4 +52,10 @@ public class ExpressionAttributeFactory implements IAttributeFactory {
 		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IExpressionElement;
+		return ((IExpressionElement) element).hasExpressionString();
+
+	}
 }

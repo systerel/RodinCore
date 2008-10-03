@@ -8,14 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,7 +37,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -142,7 +140,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 				.getDefaultPrefix("org.eventb.core.axiomLabel");
-		String axmPrefix = UIUtils.getPrefix(editor,
+		String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(),
 				IAxiom.ELEMENT_TYPE, defaultPrefix);
 		try {
 			axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor.getRodinInput(),
@@ -206,7 +204,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			label.setLayoutData(gd);
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.axiomLabel");
-			String axmPrefix = UIUtils.getPrefix(editor, IAxiom.ELEMENT_TYPE,
+			String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(), IAxiom.ELEMENT_TYPE,
 					defaultPrefix);
 
 			try {
@@ -245,23 +243,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	private void addValues() {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					EventBEditorUtils
-							.createNewConstant(editor, identifier, monitor);
-
-					EventBEditorUtils.createNewAxioms(editor, axmLabels
-							.toArray(new String[axmLabels.size()]), axmSubs
-							.toArray(new String[axmSubs.size()]), monitor);
-				}
-
-			}, null);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final String[] axmNames = axmLabels
+				.toArray(new String[axmLabels.size()]);
+		final String[] lAxmSubs = axmSubs.toArray(new String[axmSubs.size()]);
+		EventBEditorUtils.newConstant(editor, identifier, axmNames, lAxmSubs);
 	}
 
 	private void initialise() {

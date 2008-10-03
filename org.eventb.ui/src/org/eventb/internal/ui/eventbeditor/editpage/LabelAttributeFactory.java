@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,16 +55,7 @@ public abstract class LabelAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof ILabeledElement;
 		final ILabeledElement lElement = (ILabeledElement) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-		if (value == null || !value.equals(newValue)) {
-			lElement.setLabel(newValue, monitor);
-		}
+		lElement.setLabel(newValue, monitor);
 	}
 
 	/*
@@ -104,4 +94,9 @@ public abstract class LabelAttributeFactory implements IAttributeFactory {
 		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof ILabeledElement;
+		return ((ILabeledElement) element).hasLabel();
+	}
 }

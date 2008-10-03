@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -444,26 +445,22 @@ public class NewEventInputDialog extends EventBInputDialog {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor pm) throws RodinDBException {
-					IEvent evt = EventBEditorUtils.createNewEvent(editor, label,
-							pm);
 
-					EventBEditorUtils.createNewParameters(editor, evt, pars
-							.toArray(new String[pars.size()]), pm);
+					final String[] grdNames = grdLabels
+							.toArray(new String[grdLabels.size()]);
+					final String[] lGrdPredicates = grdPredicates
+							.toArray(new String[grdPredicates.size()]);
 
-					EventBEditorUtils.createNewGuards(editor, evt, grdLabels
-							.toArray(new String[grdLabels.size()]),
-							grdPredicates.toArray(new String[grdPredicates
-									.size()]), pm);
+					final String[] actNames = actLabels
+							.toArray(new String[actLabels.size()]);
+					final String[] lActSub = actSubstitutions
+							.toArray(new String[actSubstitutions.size()]);
 
-					EventBEditorUtils
-							.createNewActions(
-									editor,
-									evt,
-									actLabels
-											.toArray(new String[actLabels.size()]),
-									actSubstitutions
-											.toArray(new String[actSubstitutions
-													.size()]), pm);
+					final String[] paramNames = pars.toArray(new String[pars
+							.size()]);
+					EventBEditorUtils.newEvent(editor, label, paramNames,
+							grdNames, lGrdPredicates, actNames, lActSub);
+
 				}
 
 			}, null);

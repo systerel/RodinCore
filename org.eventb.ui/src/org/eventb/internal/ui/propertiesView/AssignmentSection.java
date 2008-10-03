@@ -1,8 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eventb.core.IAssignmentElement;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class AssignmentSection extends TextSection {
@@ -31,11 +44,8 @@ public class AssignmentSection extends TextSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		if (element instanceof IAssignmentElement) {
-			IAssignmentElement aElement = (IAssignmentElement) element;
-			if (!aElement.getAssignmentString().equals(text))
-				aElement.setAssignmentString(text, monitor);
-		}
+		UIUtils.setStringAttribute(element, new AssignmentAttributeFactory(),
+				text, monitor);
 	}
 
 }

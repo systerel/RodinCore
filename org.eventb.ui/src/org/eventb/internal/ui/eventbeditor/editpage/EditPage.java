@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" preference
  *     Systerel - used EventBSharedColor and EventBPreferenceStore
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -28,7 +29,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -53,6 +53,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextFile;
@@ -66,6 +67,9 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -184,37 +188,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 			IInternalElementType<?> type = firstElement.getElementType();
 
 			if (parent != null && parent instanceof IInternalParent) {
-				try {
-					IInternalElement[] children = ((IInternalParent) parent)
-							.getChildrenOfType(type);
-					assert (children.length > 0);
-					IInternalElement prevElement = null;
-					for (int i = 0; i < children.length; ++i) {
-						if (children[i].equals(firstElement))
-							break;
-						prevElement = children[i];
-					}
-					IInternalElement nextElement = null;
-					for (int i = children.length - 1; i >= 0; --i) {
-						if (children[i].equals(lastElement))
-							break;
-						nextElement = children[i];
-					}
-					if (up) {
-						if (prevElement != null) {
-							prevElement.move(parent, nextElement, null, false,
-									new NullProgressMonitor());
-						}
-					} else {
-						if (nextElement != null) {
-							nextElement.move(parent, firstElement, null, false,
-									new NullProgressMonitor());
-						}
-					}
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				AtomicOperation operation = OperationFactory.move(
+						getEventBEditor(), up, (IInternalParent) parent, type,
+						firstElement, lastElement);
+				History.getInstance().addOperation(operation);
 			}
 		}
 	}
@@ -222,7 +199,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	/**
 	 * Utility method for creating the declaration part of this Edit page.
 	 * 
-	 * @param parent the composite parent.
+	 * @param parent
+	 *            the composite parent.
 	 */
 	private void createDeclaration(Composite parent) {
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
@@ -289,6 +267,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		commentWidget.setForeground(EventBPreferenceStore
 				.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND));
 		commentText = new EventBText(commentWidget);
+		final IEventBEditor<?> fEditor = editor;
 		new TimerText(commentWidget, 1000) {
 
 			@Override
@@ -299,8 +278,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 						if (!cElement.hasComment()
 								|| !cElement.getComment().equals(
 										commentWidget.getText())) {
-							cElement.setComment(commentWidget.getText(),
-									new NullProgressMonitor());
+							History.getInstance().addOperation(
+									OperationFactory.changeAttribute(fEditor
+											.getRodinInput(), cElement,
+											EventBAttributes.COMMENT_ATTRIBUTE,
+											commentWidget.getText()));
 						}
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block

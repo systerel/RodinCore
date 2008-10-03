@@ -84,7 +84,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		addVariable = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.addVariable(editor, viewer);
+				 EventBEditorUtils.addVariable(editor, viewer);
 			}
 		};
 		addVariable.setText("New &Variable");
@@ -183,7 +183,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		handleUp = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleUp(viewer);
+				EventBEditorUtils.handleUp(editor, viewer);
 			}
 		};
 		handleUp.setText("&Up");
@@ -195,7 +195,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		handleDown = new Action() {
 			@Override
 			public void run() {
-				EventBEditorUtils.handleDown(viewer);
+				EventBEditorUtils.handleDown(editor, viewer);
 			}
 		};
 		handleDown.setText("D&own");

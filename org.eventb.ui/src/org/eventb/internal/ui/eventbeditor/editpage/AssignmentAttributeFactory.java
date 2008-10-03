@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,21 +24,11 @@ public class AssignmentAttributeFactory implements IAttributeFactory {
 			IProgressMonitor monitor) throws RodinDBException {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement aElement = (IAssignmentElement) element;
-
-		String value;
-		try {
-			value = getValue(element, monitor);
-		} catch (RodinDBException e) {
-			value = null;
-		}
-
-		if (value == null || !value.equals(newValue)) {
-			aElement.setAssignmentString(newValue, monitor);
-		}
+		aElement.setAssignmentString(newValue, monitor);
 	}
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
 		assert element instanceof IAssignmentElement;
 		final IAssignmentElement pElement = (IAssignmentElement) element;
 		return pElement.getAssignmentString();
@@ -63,4 +52,9 @@ public class AssignmentAttributeFactory implements IAttributeFactory {
 		return null;
 	}
 
+	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		assert element instanceof IAssignmentElement;
+		return ((IAssignmentElement) element).hasAssignmentString();
+	}
 }

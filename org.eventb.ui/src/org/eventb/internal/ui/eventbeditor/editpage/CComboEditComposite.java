@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -116,20 +118,13 @@ public class CComboEditComposite extends AbstractEditComposite {
 
 				public void widgetSelected(SelectionEvent e) {
 					if (combo.getText().equals(UNDEFINED)) {
-						try {
-							uiSpec.getAttributeFactory().removeAttribute(element,
-									new NullProgressMonitor());
-						} catch (RodinDBException e1) {
-							EventBUIExceptionHandler.handleRemoveAttributeException(e1);
-						}
+							UIUtils.setStringAttribute(element, uiSpec
+								.getAttributeFactory(), null,
+								new NullProgressMonitor());
 					} else {
-						try {
-							uiSpec.getAttributeFactory().setValue(element, combo
-									.getText(), new NullProgressMonitor());
-						} catch (RodinDBException exception) {
-							EventBUIExceptionHandler
-									.handleSetAttributeException(exception);
-						}
+						UIUtils.setStringAttribute(element, uiSpec
+								.getAttributeFactory(), combo.getText(),
+								new NullProgressMonitor());
 					}
 				}
 			});
