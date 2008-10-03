@@ -3,17 +3,17 @@ package org.eventb.core.indexer;
 import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
 import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IAxiom;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
@@ -77,49 +77,68 @@ public class ContextIndexer implements IIndexer {
 
 	private void indexConstants(IContextFile file, IIndexingToolkit index)
 			throws RodinDBException {
-		IConstant[] constants = file.getConstants();
+		//processIdentifierElements(index, file.getCarrierSets());
+		processIdentifierElements(index, file.getConstants());
 
+		Map<String, IIdentifierElement> constantNames = extractIdentifiers(file.getConstants());
+
+		processPredicateElements(file, index, constantNames, file.getAxioms());
+		//processPredicateElements(file, index, constantNames, file.getTheorems());
+	}
+
+	private void processIdentifierElements(IIndexingToolkit index,
+			IIdentifierElement[] elems) throws RodinDBException {
 		// index declaration for each constant and export them
-		for (IConstant constant : constants) {
-			indexConstantDeclaration(constant, constant.getIdentifierString(),
+		for (IIdentifierElement elem : elems) {
+			indexIdentifierDeclaration(elem, elem.getIdentifierString(),
 					index);
-			index.export(constant);
+			index.export(elem);
 		}
-
-		Map<String, IIdentifierElement> constantNames = extractIdentifiers(constants);
-
-		// filter invalid axioms
-		final IAxiom[] axioms = file.getAxioms();
-		final List<IAxiom> validAxioms = filterInvalidAxioms(axioms);
-		// index references for each axiom
-		for (IAxiom axiom : validAxioms) {
-			final String predicateString = axiom.getPredicateString();
-			IParseResult result = ff.parsePredicate(predicateString);
-			if (result.isSuccess()) {
-				final Predicate pred = result.getParsedPredicate();
-				final FreeIdentifier[] idents = pred.getFreeIdentifiers();
-				final Map<FreeIdentifier, IIdentifierElement> matchingIdents = filterFreeIdentifiers(
-						idents, constantNames);
-
-				indexMatchingIdents(matchingIdents, index, axiom, pred);
-			}
-			// TODO Can we index anything when parsing does not succeed ?
-		}
-
 	}
 
-	private List<IAxiom> filterInvalidAxioms(final IAxiom[] axioms)
+	private void processPredicateElements(IContextFile file, IIndexingToolkit index,
+			Map<String, IIdentifierElement> constantNames, IPredicateElement[] elems)
 			throws RodinDBException {
-		final List<IAxiom> validAxioms = new ArrayList<IAxiom>();
-		for (IAxiom axiom : axioms) {
-			if (isValid(axiom)) {
-				validAxioms.add(axiom);
-			}
+		for (IPredicateElement elem : elems) {
+			processPredicateElement(elem, index, constantNames);
 		}
-		return validAxioms;
 	}
 
-	private boolean isValid(IAxiom axiom) throws RodinDBException {
+	private void processPredicateElement(IPredicateElement element,
+			IIndexingToolkit index,
+			Map<String, IIdentifierElement> constantNames)
+			throws RodinDBException {
+		if (!isValid(element))
+			return;
+		
+		final String predicateString = element.getPredicateString();
+		IParseResult result = ff.parsePredicate(predicateString);
+		if (!result.isSuccess())
+			return;
+
+		final Predicate pred = result.getParsedPredicate();
+		extractOccurrences(element, index, constantNames, pred);
+	}
+
+	private void extractOccurrences(IPredicateElement element,
+			IIndexingToolkit index,
+			Map<String, IIdentifierElement> constantNames,
+			Formula<?> formula) throws RodinDBException {
+		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
+		
+		// Idea: filter idents that are indeed declared. Ignore those that are
+		// not and at the same time build a map from ident to declaration.
+		// Then visit the predicate and make an occurrence for each identifier
+		// that belongs to the map.
+		
+		final Map<FreeIdentifier, IIdentifierElement> matchingIdents = filterFreeIdentifiers(
+				idents, constantNames);
+
+		indexMatchingIdents(matchingIdents, index, element, formula);
+		// TODO Can we index anything when parsing does not succeed ?
+	}
+
+	private boolean isValid(IPredicateElement axiom) throws RodinDBException {
 		if (!axiom.exists()) {
 			return false;
 		}
@@ -131,7 +150,7 @@ public class ContextIndexer implements IIndexer {
 	
 	private void indexMatchingIdents(
 			final Map<FreeIdentifier, IIdentifierElement> matchingIdents,
-			IIndexingToolkit index, IAxiom axiom, Predicate pred) {
+			IIndexingToolkit index, IPredicateElement element, Formula<?> pred) {
 
 		for (FreeIdentifier ident : matchingIdents.keySet()) {
 
@@ -149,7 +168,7 @@ public class ContextIndexer implements IIndexer {
 					final SourceLocation srcLoc = pred.getSubFormula(pos)
 							.getSourceLocation();
 					final IRodinLocation loc = EventBIndexUtil
-							.getRodinLocation(axiom,
+							.getRodinLocation(element,
 									EventBAttributes.PREDICATE_ATTRIBUTE,
 									srcLoc);
 					indexConstantReference(constant, identName, loc, index);
@@ -158,7 +177,7 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
-	private void indexConstantDeclaration(IConstant constant,
+	private void indexIdentifierDeclaration(IIdentifierElement constant,
 			String constantName, IIndexingToolkit index) {
 		index.declare(constant, constantName);
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(constant
