@@ -33,25 +33,43 @@ public class RodinDBChangeListener implements IElementChangedListener {
 	public RodinDBChangeListener(BlockingQueue<IRodinFile> queue) {
 		this.queue = queue;
 	}
-
+	
+	// Concurrency: no synchronization is required in the {contains;put} block
+	// The possible situations are the following:
+	// 1/ queue.contains(file) is true, then queue.take is called and takes file
+	// => the condition becomes false but put is not called.
+	// This is not a problem since the taker will process an up to date version 
+	// of the file (after the current delta event that caused a possible put)
+	//  
+	// 2/ queue.contains(file) is false, then queue.take is called before put
+	// but it cannot take the file to put since it is not yet present !
 	private void processDelta(IRodinElementDelta delta) {
 		// TODO also listen to project creation and deletion
 		// TODO what about project open and close initiated by user: use
 		// workspace listener?
 		final List<IRodinFile> affectedFiles = new ArrayList<IRodinFile>();
 		addAffectedFiles(delta, affectedFiles);
-		for (IRodinFile file : affectedFiles) {
-			if (!queue.contains(file)) {
+		boolean interrupted = false;
+		try {
+			while(true) {
 				try {
-					queue.put(file);
+					for (IRodinFile file : affectedFiles) {
+						if (!queue.contains(file)) {
+							queue.put(file);
+						}
+					}
+					return;
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					interrupted = true;
 				}
+			}
+		} finally {
+			if (interrupted) {
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
-
+	
 	private void addAffectedFiles(IRodinElementDelta delta,
 			List<IRodinFile> accumulator) {
 		final IRodinElement element = delta.getElement();

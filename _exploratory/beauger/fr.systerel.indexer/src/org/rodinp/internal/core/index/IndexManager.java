@@ -247,24 +247,32 @@ public final class IndexManager {
 		indexing.setRule(rodinDB.getSchedulingRule());
 		// indexing.setUser(true);
 
-		while (!startMonitor.isCanceled()) {
-			IRodinFile file = null;
-			try {
-				file = queue.take();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			final IRodinProject project = file.getRodinProject();
-			final ProjectIndexManager pim = fetchPIM(project);
-			final boolean isSet = pim.setToIndex(file);
+		boolean interrupted = false;
+		try {
+			while(true) {
+				try {
+					while (!startMonitor.isCanceled()) {
+						final IRodinFile file = queue.take();
 
-			if (isSet) {
-				if (ENABLE_INDEXING) {
+						final IRodinProject project = file.getRodinProject();
+						final ProjectIndexManager pim = fetchPIM(project);
+						final boolean isSet = pim.setToIndex(file);
 
-					indexing.schedule(TIME_BEFORE_INDEXING);
-					// TODO define scheduling policies
+						if (isSet) {
+							if (ENABLE_INDEXING) {
+								indexing.schedule(TIME_BEFORE_INDEXING);
+								// TODO define scheduling policies
+							}
+						}
+					}
+					return;
+				} catch (InterruptedException e) {
+					interrupted = true;
 				}
+			}
+		} finally {
+			if (interrupted) {
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
