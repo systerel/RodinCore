@@ -171,25 +171,28 @@ public class ModelProject implements IModelElement {
 			exts = context.getExtendsClauses();
 			for (int j = 0; j < exts.length; j++) {
 				IExtendsContext ext = exts[j];
-				IContextFile extCtx = ext.getAbstractSCContext().getContextFile();
-				// May not exist, if there are some errors in the project (e.g. was deleted)
-				if (extCtx.exists()) {
-					if (!contexts.containsKey(extCtx.getBareName())) {
-						processContext(extCtx);
-					}
-					ModelContext exendsCtx = contexts.get(extCtx.getBareName());
-					// don't allow cycles!
-					if (!exendsCtx.getAncestors().contains(ctx)) {
-						exendsCtx.addExtendedByContext(ctx);
-						ctx.addExtendsContext(exendsCtx);
-						ctx.addAncestor(exendsCtx);
-						ctx.addAncestors(exendsCtx.getAncestors());
+				if (ext.getAbstractSCContext() != null) {
+					IContextFile extCtx = ext.getAbstractSCContext().getContextFile();
+					// May not exist, if there are some errors in the project (e.g. was deleted)
+					if (extCtx.exists()) {
+						if (!contexts.containsKey(extCtx.getBareName())) {
+							processContext(extCtx);
+						}
+						ModelContext exendsCtx = contexts.get(extCtx.getBareName());
+						// don't allow cycles!
+						if (!exendsCtx.getAncestors().contains(ctx)) {
+							exendsCtx.addExtendedByContext(ctx);
+							ctx.addExtendsContext(exendsCtx);
+							ctx.addAncestor(exendsCtx);
+							ctx.addAncestors(exendsCtx.getAncestors());
+						}
 					}
 				}
+				
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 	}

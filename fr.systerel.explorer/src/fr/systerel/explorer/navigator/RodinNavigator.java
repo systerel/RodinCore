@@ -11,11 +11,7 @@
 
 package fr.systerel.explorer.navigator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,22 +26,15 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.CommonViewerSorter;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.navigator.filters.ContextFilter;
 import fr.systerel.explorer.navigator.filters.DischargedFilter;
-import fr.systerel.explorer.navigator.filters.HideNoneRodinFilter;
 import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
-import fr.systerel.explorer.navigator.filters.WorkingSetProjectFilter;
 
 /**
  * The Navigator for the CommonNavigator framework.
@@ -53,7 +42,7 @@ import fr.systerel.explorer.navigator.filters.WorkingSetProjectFilter;
  * and the working sets.
  *
  */
-public class RodinNavigator extends CommonNavigator implements IPropertyChangeListener {
+public class RodinNavigator extends CommonNavigator {
 	
 	Text filterText;
 	ToolItem discharge;
@@ -104,16 +93,7 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		textData.top = new FormAttachment(coolBar);
 		textData.bottom = new FormAttachment(100);
 		getCommonViewer().getControl().setLayoutData(textData);
-//		WorkingSetFilterActionGroup group = new WorkingSetFilterActionGroup(this.getSite().getShell(), this);
-//		group.fillContextMenu(this.getViewSite().getActionBars().getMenuManager());
 		
-		//add the filters here
-		//those filters are selected by default and can't be chosen
-		//via the "customize view" dialog
-		//TODO this is lost, when the filters are changed via the dialog
-//		getCommonViewer().addFilter(new DischargedFilter());
-//		getCommonViewer().addFilter(new ObligationTextFilter());
-//		getCommonViewer().addFilter(new ContextFilter());
 			
 	}
 	
@@ -182,31 +162,5 @@ public class RodinNavigator extends CommonNavigator implements IPropertyChangeLi
 		return item;
 	}
 
-	/**
-	 * React to changes in working set selection:
-	 * Set the input for the ContentProviders accordingly.
-	 */
-	public void propertyChange(final PropertyChangeEvent event) {
-//		final Object root;
-//		if (event.getNewValue() instanceof IWorkingSet) {
-//			root =  event.getNewValue();
-//		}
-//		else {
-//			//set to initial input
-//			root = getSite().getPage().getInput();
-//		}
-//		
-//		getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
-//			public void run() {
-//				CommonViewer viewer = getCommonViewer();
-//				Control ctrl = viewer.getControl();
-//				if (ctrl != null && !ctrl.isDisposed()) {
-//					Object[] expanded = viewer.getExpandedElements();
-//					viewer.setInput(root);
-//					viewer.setExpandedElements(expanded);
-//				}
-//		}});
-//		
-	}
 	
 }

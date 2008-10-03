@@ -13,7 +13,6 @@
 package fr.systerel.explorer.navigator.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -34,8 +33,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;

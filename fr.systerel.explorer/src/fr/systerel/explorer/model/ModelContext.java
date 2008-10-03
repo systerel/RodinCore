@@ -117,6 +117,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * 			including this context.
 	 */
 	public ArrayList<ModelContext> getLongestBranch(){
+		//contains at least itself
+		if (longestExtendsBranch.size() == 0) {
+			longestExtendsBranch.add(this);
+		}
 		return longestExtendsBranch;
 	}
 	

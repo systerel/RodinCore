@@ -22,18 +22,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.IViewDescriptor;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-
-import fr.systerel.explorer.navigator.RodinNavigator;
 
 /**
  * The Content Provider for Rodin Projects

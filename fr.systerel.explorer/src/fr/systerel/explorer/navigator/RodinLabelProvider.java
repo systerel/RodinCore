@@ -12,17 +12,12 @@
 package fr.systerel.explorer.navigator;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -34,9 +29,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
