@@ -4,7 +4,8 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.ui.tests;singleton:=true
 Bundle-Version: 0.8.2
 Require-Bundle: org.junit4,
- org.eventb.ui
+ org.eventb.ui,
+ org.rodinp.core.tests
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eventb.ui.tests.EventBUITestsPlugin
