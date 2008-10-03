@@ -189,16 +189,15 @@ public class ProjectIndexManager {
 	 * not indexable.
 	 * 
 	 * @param file
-	 * @return whether the file was actually set to index.
 	 */
-	public boolean setToIndex(IRodinFile file) {
+	public void setToIndex(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
 					+ " should be indexed in project " + project);
 		}
 
 		if (!indexersRegistry.isIndexable(file.getElementType())) {
-			return false;
+			return;
 		}
 		try {
 			final IRodinFile[] dependFiles = fim.getDependencies(file);
@@ -206,10 +205,8 @@ public class ProjectIndexManager {
 			order.setPredecessors(file, dependFiles);
 			order.setToIter(file);
 
-			return true;
 		} catch (Throwable t) {
 			// was managed by fim 
-			return false;
 		}
 	}
 

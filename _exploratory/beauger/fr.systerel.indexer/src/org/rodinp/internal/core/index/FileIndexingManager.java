@@ -45,7 +45,7 @@ public class FileIndexingManager {
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file);
 			if (IndexManager.DEBUG) {
-				System.out.println("INDEXER: Dependencies for file "
+				System.out.println("INDEXER: dependencies for file "
 						+ file.getPath() + " are:");
 				for (IRodinFile dep : result) {
 					System.out.println("\t" + dep.getPath());
@@ -76,7 +76,7 @@ public class FileIndexingManager {
 				.getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 
-		printVerbose(makeMessage("Indexing", file, indexer));
+		printVerbose(makeMessage("indexing", file, indexer));
 
 		IIndexingResult result = IndexingResult.failed(file);
 

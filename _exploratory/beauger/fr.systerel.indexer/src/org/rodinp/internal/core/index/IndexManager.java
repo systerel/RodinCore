@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -39,6 +41,9 @@ public final class IndexManager {
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
 
+	private static final long QUEUE_WAITING_TIME = 500;
+	private static final TimeUnit QUEUE_WAITING_UNIT = TimeUnit.MILLISECONDS;
+
 	private static final int INDEXING_TIMEOUT = 1;
 	private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 	// TODO should automatically remove projects mappings when a project gets
@@ -59,7 +64,7 @@ public final class IndexManager {
 	private static final int QUEUE_CAPACITY = 10;
 	private final BlockingQueue<IRodinFile> queue;
 	private final RodinDBChangeListener listener;
-	private static final int TIME_BEFORE_INDEXING = 2000;
+	// private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean ENABLE_INDEXING = true;
 	/** Lock guarding table access during indexing */
@@ -222,7 +227,6 @@ public final class IndexManager {
 		// TODO
 	}
 
-	
 	private final Job indexing = new Job("indexing") {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
@@ -257,23 +261,35 @@ public final class IndexManager {
 			while (true) {
 				try {
 					boolean cancel = false;
-					do {
-						final IRodinFile file = queue.take();
+					while (!cancel) { // !startMonitor.isCanceled()) {
+						final List<IRodinFile> toIndex = new ArrayList<IRodinFile>();
+						
+						boolean stop = false;
+						while(!stop) {
+							final IRodinFile file = queue.poll(QUEUE_WAITING_TIME,
+									QUEUE_WAITING_UNIT);
+							if (file == null) {
+								stop = true;
+							} else {
+								toIndex.add(file);
+							}
+						}
 
-						final IRodinProject project = file.getRodinProject();
-						final ProjectIndexManager pim = fetchPIM(project);
-						final boolean isSet = pim.setToIndex(file);
-
-						if (isSet) {
+						if (!toIndex.isEmpty()) {
+							for (IRodinFile file : toIndex) {
+								final IRodinProject project = file.getRodinProject();
+								final ProjectIndexManager pim = fetchPIM(project);
+								pim.setToIndex(file);
+							}
 							if (ENABLE_INDEXING) {
-								indexing.schedule(TIME_BEFORE_INDEXING);
+								indexing.schedule();
 								// TODO define scheduling policies
 							}
 						}
 						cancel = startMonitor.isCanceled()
-								|| Status.CANCEL_STATUS.equals(indexing
-										.getResult());
-					} while (!cancel); // !startMonitor.isCanceled()) {
+						|| Status.CANCEL_STATUS.equals(indexing
+								.getResult());
+					} 
 					return;
 				} catch (InterruptedException e) {
 					interrupted = true;
