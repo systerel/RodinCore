@@ -11,50 +11,89 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.internal.core.RodinDBStatus;
 
 public class FileIndexingManager {
 
-	private final IndexersRegistry indexersManager;
+	private final IndexersRegistry indexersRegistry;
 
 	public FileIndexingManager(IndexersRegistry indManager) {
-		this.indexersManager = indManager;
+		this.indexersRegistry = indManager;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
+	public IRodinFile[] getDependencies(IRodinFile file) throws Throwable {
 		final IFileElementType<? extends IRodinFile> fileType = file
 				.getElementType();
 
-		final IIndexer indexer = indexersManager.getIndexerFor(fileType);
+		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 
 		if (IndexManager.VERBOSE) {
 			System.out.println("INDEXER: Extracting dependencies for file "
 					+ file.getPath() + " with indexer " + indexer.getId());
 		}
-		final IRodinFile[] result = indexer.getDependencies(file);
-		if (IndexManager.DEBUG) {
-			System.out.println("INDEXER: Dependencies for file "
-					+ file.getPath() + " are:");
-			for (IRodinFile dep : result) {
-				System.out.println("\t" + dep.getPath());
+		try {
+			final IRodinFile[] result = indexer.getDependencies(file);
+			if (IndexManager.DEBUG) {
+				System.out.println("INDEXER: Dependencies for file "
+						+ file.getPath() + " are:");
+				for (IRodinFile dep : result) {
+					System.out.println("\t" + dep.getPath());
+				}
 			}
+			return result;
+		} catch (Throwable t) {
+			if (IndexManager.DEBUG) {
+				printIndexerException(file, indexer, t,
+						"extracting dependencies");
+			}
+			IRodinDBStatus status = new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
+			RodinCore.getRodinCore().getLog().log(status);
+
+			// propagate
+			throw t;
 		}
-		return result;
 	}
 
-
-	public IIndexingResult doIndexing(IRodinFile file, IndexingToolkit indexingToolkit) {
+	public IIndexingResult doIndexing(IRodinFile file,
+			IndexingToolkit indexingToolkit) {
+	
+		if (!file.exists()) {
+			return IndexingResult.failed(file);
+		}
+		
 		final IFileElementType<? extends IRodinFile> fileType = file
 				.getElementType();
-		final IIndexer indexer = indexersManager.getIndexerFor(fileType);
-		
+		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
+	
 		if (IndexManager.VERBOSE) {
 			System.out.println("INDEXER: Indexing file " + file.getPath()
 					+ " with indexer " + indexer.getId());
 		}
-		indexer.index(file, indexingToolkit);
-		
-		return indexingToolkit.getResult();
+		try {
+			indexer.index(file, indexingToolkit);
+	
+			return indexingToolkit.getResult();
+		} catch (Throwable t) {
+			if (IndexManager.DEBUG) {
+				printIndexerException(file, indexer, t, "indexing");
+			}
+			IRodinDBStatus status = new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
+			RodinCore.getRodinCore().getLog().log(status);
+
+			return IndexingResult.failed(file);
+		}
+	
+	}
+
+	private void printIndexerException(IRodinFile file, IIndexer indexer,
+			Throwable e, String context) {
+		System.out.println("INDEXER: Exception while " + context + " in file "
+				+ file.getPath() + " with indexer " + indexer.getId());
+		System.out.println(e.getMessage());
 	}
 }

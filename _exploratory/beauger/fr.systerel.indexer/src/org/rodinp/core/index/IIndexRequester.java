@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
+import java.util.concurrent.CancellationException;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 
@@ -52,13 +54,13 @@ public interface IIndexRequester {
 
 	/**
 	 * Returns <code>true</code> when the indexing system is up to date, else
-	 * blocks util it becomes up to date. Throws an exception if the indexing is
-	 * canceled. // FIXME which exception
+	 * blocks util it becomes up to date. Throws a CancellationException if the
+	 * indexing is canceled.
 	 * 
 	 * Calling this method before any other request makes the result valid.
 	 * 
 	 * @return true when the indexing system is currently busy.
 	 */
-	boolean isUpToDate();
+	boolean isUpToDate() throws CancellationException;
 
 }

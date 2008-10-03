@@ -36,7 +36,7 @@ public class ProjectIndexManager {
 
 	private final FileIndexingManager fim;
 
-	private final IndexersRegistry indexersManager;
+	private final IndexersRegistry indexersRegistry;
 
 	private final RodinIndex index;
 
@@ -52,7 +52,7 @@ public class ProjectIndexManager {
 			IndexersRegistry indManager) {
 		this.project = project;
 		this.fim = fim;
-		this.indexersManager = indManager;
+		this.indexersRegistry = indManager;
 		this.index = new RodinIndex();
 		this.fileTable = new FileTable();
 		this.nameTable = new NameTable();
@@ -69,10 +69,10 @@ public class ProjectIndexManager {
 			final IndexingToolkit indexingToolkit = new IndexingToolkit(file,
 					fileImports);
 
-			if (file.exists()) {
-				final IIndexingResult result = fim.doIndexing(file,
-						indexingToolkit);
+			final IIndexingResult result = fim.doIndexing(file,
+					indexingToolkit);
 
+			if (result.isSuccess()) {
 				if (mustReindexDependents(result)) {
 					order.setToIterSuccessors();
 				}
@@ -117,7 +117,7 @@ public class ProjectIndexManager {
 
 		final Map<IInternalElement, Set<IOccurrence>> occurrencesMap = result
 				.getOccurrences();
-		
+
 		for (IInternalElement element : occurrencesMap.keySet()) {
 			final Set<IOccurrence> occurrences = occurrencesMap.get(element);
 			final Descriptor descriptor = index.getDescriptor(element);
@@ -196,15 +196,20 @@ public class ProjectIndexManager {
 					+ " should be indexed in project " + project);
 		}
 
-		if (!indexersManager.isIndexable(file.getElementType())) {
+		if (!indexersRegistry.isIndexable(file.getElementType())) {
 			return false;
 		}
-		final IRodinFile[] dependFiles = fim.getDependencies(file);
+		try {
+			final IRodinFile[] dependFiles = fim.getDependencies(file);
 
-		order.setPredecessors(file, dependFiles);
-		order.setToIter(file);
+			order.setPredecessors(file, dependFiles);
+			order.setToIter(file);
 
-		return true;
+			return true;
+		} catch (Throwable t) {
+			// was managed by fim 
+			return false;
+		}
 	}
 
 	public FileTable getFileTable() {

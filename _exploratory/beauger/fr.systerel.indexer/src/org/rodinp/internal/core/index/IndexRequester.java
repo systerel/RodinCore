@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.concurrent.CancellationException;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IIndexRequester;
@@ -59,7 +61,7 @@ public class IndexRequester implements IIndexRequester {
 		return nameTable.getElements(name);
 	}
 
-	public boolean isUpToDate() {
+	public boolean isUpToDate() throws CancellationException {
 		return IndexManager.getDefault().isUpToDate();
 	}
 

@@ -14,12 +14,22 @@ import org.rodinp.core.IInternalElement;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public interface IDeclaration {
 
+	/**
+	 * Returns the declared element.
+	 * 
+	 * @return the declared element.
+	 */
 	IInternalElement getElement();
-	
+
+	/**
+	 * Returns the declared name.
+	 * 
+	 * @return the declared name.
+	 */
 	String getName();
-	
+
 }

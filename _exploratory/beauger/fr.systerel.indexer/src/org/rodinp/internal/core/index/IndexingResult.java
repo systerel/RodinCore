@@ -16,12 +16,14 @@ public class IndexingResult implements IIndexingResult {
 	private Map<IInternalElement, IDeclaration> declarations;
 	private final Set<IDeclaration> exports;
 	private final Map<IInternalElement, Set<IOccurrence>> occurrences;
+	private boolean success;
 
 	public IndexingResult(IRodinFile file) {
 		this.file = file;
 		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.exports = new HashSet<IDeclaration>();
 		this.occurrences = new HashMap<IInternalElement, Set<IOccurrence>>();
+		this.success = false;
 	}
 	
 	public void addExport(IDeclaration declaration) {
@@ -41,7 +43,15 @@ public class IndexingResult implements IIndexingResult {
 		this.declarations = declarations;
 	}
 
-		public Map<IInternalElement, IDeclaration> getDeclarations() {
+	public void setSuccess(boolean value) {
+		this.success = value;
+	}
+
+	public static IIndexingResult failed(IRodinFile f) {
+		return new IndexingResult(f);
+	}
+	
+	public Map<IInternalElement, IDeclaration> getDeclarations() {
 		return declarations;
 	}
 
@@ -55,6 +65,10 @@ public class IndexingResult implements IIndexingResult {
 
 	public IRodinFile getFile() {
 		return file;
+	}
+
+	public boolean isSuccess() {
+		return success;
 	}
 	
 }

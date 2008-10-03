@@ -132,8 +132,8 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 	public IIndexingResult getResult() {
 		result.setDeclarations(declarations);
-		// result.setReindexDependents(mustReindexDependents());
-
+		result.setSuccess(true);
+		
 		return result;
 	}
 

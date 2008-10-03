@@ -23,6 +23,7 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.AttributeLocation;
@@ -43,6 +44,9 @@ import org.rodinp.internal.core.index.RodinLocation;
  */
 public class RodinIndexer extends Plugin {
 
+	/** To be moved to {@link IRodinDBStatusConstants} */
+	public static final int INDEXER_ERROR = 1100;
+	
 	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
 
 	/** To be moved to {@link RodinCore} */
