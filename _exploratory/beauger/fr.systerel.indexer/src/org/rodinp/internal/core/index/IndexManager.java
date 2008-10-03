@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +39,8 @@ public final class IndexManager {
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
 
+	private static final int INDEXING_TIMEOUT = 1;
+	private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
 	// TODO implement an overall consistency check method
@@ -48,7 +51,7 @@ public final class IndexManager {
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
 	private final IndexersRegistry indexersManager;
-	
+
 	private final FileIndexingManager fim;
 
 	private static final int eventMask = ElementChangedEvent.POST_CHANGE;
@@ -56,19 +59,19 @@ public final class IndexManager {
 	private static final int QUEUE_CAPACITY = 10;
 	private final BlockingQueue<IRodinFile> queue;
 	private final RodinDBChangeListener listener;
-	private static final int TIME_BEFORE_INDEXING = 10000;
+	private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean ENABLE_INDEXING = true;
-    /** Lock guarding table access during indexing */
-//    private final Lock indexingLock;
-    
+	/** Lock guarding table access during indexing */
+	private final Object indexingLock;
+
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
 		indexersManager = new IndexersRegistry();
 		fim = new FileIndexingManager(indexersManager);
 		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
 		listener = new RodinDBChangeListener(queue);
-//		indexingLock = new ReentrantLock(true); // TODO decide which type of Lock
+		indexingLock = new Object();
 	}
 
 	/**
@@ -124,27 +127,28 @@ public final class IndexManager {
 			pim.setToIndex(file);
 		}
 
-		launchIndexing(null);
+		doIndexing(null);
 		// TODO don't launch indexing immediately (define scheduling options)
 		// NOTE : that method will be replaced when implementing listeners
 	}
 
 	/**
-	 * Performs immediately the actual indexing of all files currently set to
-	 * index. Files are indexed project per project. If cancellation is
-	 * requested on the given progress monitor, the method returns when the
-	 * indexing of the current project has completed.
+	 * Performs the actual indexing of all files currently set to index, as soon
+	 * as the indexing lock is obtained. Files are indexed project per project.
+	 * If cancellation is requested on the given progress monitor, the method
+	 * returns when the indexing of the current project has completed.
 	 * 
 	 * @param monitor
 	 *            the monitor by which cancel requests can be performed, or
 	 *            <code>null</code> if monitoring is not required.
 	 */
-	void launchIndexing(IProgressMonitor monitor) {
-		// TODO use indexingLock
-		for (IRodinProject project : pims.keySet()) {
-			fetchPIM(project).doIndexing();
-			if (monitor != null && monitor.isCanceled()) {
-				return;
+	void doIndexing(IProgressMonitor monitor) {
+		synchronized (indexingLock) {
+			for (IRodinProject project : pims.keySet()) {
+				fetchPIM(project).doIndexing(INDEXING_TIMEOUT, TIMEOUT_UNIT);
+				if (monitor != null && monitor.isCanceled()) {
+					return;
+				}
 			}
 		}
 	}
@@ -218,13 +222,14 @@ public final class IndexManager {
 		// TODO
 	}
 
+	
 	private final Job indexing = new Job("indexing") {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			if (VERBOSE) {
 				System.out.println("indexing...");
 			}
-			launchIndexing(monitor);
+			doIndexing(monitor);
 			if (monitor != null && monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -249,9 +254,10 @@ public final class IndexManager {
 
 		boolean interrupted = false;
 		try {
-			while(true) {
+			while (true) {
 				try {
-					while (!startMonitor.isCanceled()) {
+					boolean cancel = false;
+					do {
 						final IRodinFile file = queue.take();
 
 						final IRodinProject project = file.getRodinProject();
@@ -264,7 +270,10 @@ public final class IndexManager {
 								// TODO define scheduling policies
 							}
 						}
-					}
+						cancel = startMonitor.isCanceled()
+								|| Status.CANCEL_STATUS.equals(indexing
+										.getResult());
+					} while (!cancel); // !startMonitor.isCanceled()) {
 					return;
 				} catch (InterruptedException e) {
 					interrupted = true;
@@ -293,23 +302,27 @@ public final class IndexManager {
 	 * @return whether the indexing system is currently busy.
 	 */
 	public boolean isUpToDate() {
-		// TODO use indexingLock
-		return indexing.getState() == Job.NONE; // TODO maybe != Job.RUNNING
+		// TODO use 1 lock per project
+		synchronized (indexingLock) {
+			return true; // indexing.getState() == Job.NONE;
+		}
 	}
 
 	/**
 	 * Clears the indexes, tables and indexers.
 	 */
 	public void clear() {
-		pims.clear();
-		clearIndexers();
+		synchronized (indexingLock) { // TODO or cancel
+			pims.clear();
+			clearIndexers();
+		}
 	}
 
-	public synchronized void enableIndexing() {
+	public void enableIndexing() {
 		ENABLE_INDEXING = true;
 	}
 
-	public synchronized void disableIndexing() {
+	public void disableIndexing() {
 		ENABLE_INDEXING = false;
 	}
 

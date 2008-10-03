@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
@@ -60,7 +61,7 @@ public class ProjectIndexManager {
 		this.order = new TotalOrder<IRodinFile>();
 	}
 
-	public void doIndexing() {
+	public void doIndexing(int timeout, TimeUnit timeUnit) {
 
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
@@ -70,7 +71,7 @@ public class ProjectIndexManager {
 					fileImports);
 
 			final IIndexingResult result = fim.doIndexing(file,
-					indexingToolkit);
+					indexingToolkit, timeout, timeUnit);
 
 			if (result.isSuccess()) {
 				if (mustReindexDependents(result)) {

@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.RodinDBStatus;
 
@@ -32,10 +40,8 @@ public class FileIndexingManager {
 
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 
-		if (IndexManager.VERBOSE) {
-			System.out.println("INDEXER: Extracting dependencies for file "
-					+ file.getPath() + " with indexer " + indexer.getId());
-		}
+		printVerbose(makeMessage("extracting dependencies", file, indexer));
+
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file);
 			if (IndexManager.DEBUG) {
@@ -47,11 +53,11 @@ public class FileIndexingManager {
 			}
 			return result;
 		} catch (Throwable t) {
-			if (IndexManager.DEBUG) {
-				printIndexerException(file, indexer, t,
-						"extracting dependencies");
-			}
-			IRodinDBStatus status = new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
+			printDebug(makeMessage("Exception while extracting dependencies",
+					file, indexer));
+
+			IRodinDBStatus status = new RodinDBStatus(
+					RodinIndexer.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
 
 			// propagate
@@ -60,40 +66,91 @@ public class FileIndexingManager {
 	}
 
 	public IIndexingResult doIndexing(IRodinFile file,
-			IndexingToolkit indexingToolkit) {
-	
+			IndexingToolkit indexingToolkit, int timeout, TimeUnit timeUnit) {
+
 		if (!file.exists()) {
 			return IndexingResult.failed(file);
 		}
-		
+
 		final IFileElementType<? extends IRodinFile> fileType = file
 				.getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
-	
-		if (IndexManager.VERBOSE) {
-			System.out.println("INDEXER: Indexing file " + file.getPath()
-					+ " with indexer " + indexer.getId());
-		}
-		try {
-			indexer.index(file, indexingToolkit);
-	
-			return indexingToolkit.getResult();
-		} catch (Throwable t) {
-			if (IndexManager.DEBUG) {
-				printIndexerException(file, indexer, t, "indexing");
-			}
-			IRodinDBStatus status = new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
-			RodinCore.getRodinCore().getLog().log(status);
 
-			return IndexingResult.failed(file);
+		printVerbose(makeMessage("Indexing", file, indexer));
+
+		IIndexingResult result = IndexingResult.failed(file);
+
+		final RunIndexing runIndexing = new RunIndexing(indexer, file,
+				indexingToolkit);
+
+		Future<?> task = taskExec.submit(runIndexing);
+		try {
+			try {
+				task.get(timeout, timeUnit); // FIXME define better
+				result = indexingToolkit.getResult();
+			} catch (InterruptedException e) {
+				printDebug(makeMessage("InterruptedException while indexing",
+						file, indexer));
+				// task will be canceled below
+			} catch (TimeoutException e) {
+				printDebug(makeMessage("Timeout while indexing", file, indexer));
+				// task will be canceled below
+			} catch (ExecutionException e) {
+				// propagate
+				throw e.getCause();
+			} finally {
+				final boolean cancel = task.cancel(true);
+				if (cancel) {
+					printVerbose(makeMessage("Canceling indexing ", file, indexer));
+				}
+			}
+		} catch (Throwable t) {
+			printDebug(makeMessage("Exception while indexing: "
+					+ t.getMessage(), file, indexer));
+
+			IRodinDBStatus status = new RodinDBStatus(
+					RodinIndexer.INDEXER_ERROR, t);
+			RodinCore.getRodinCore().getLog().log(status);
 		}
-	
+		return result;
 	}
 
-	private void printIndexerException(IRodinFile file, IIndexer indexer,
-			Throwable e, String context) {
-		System.out.println("INDEXER: Exception while " + context + " in file "
-				+ file.getPath() + " with indexer " + indexer.getId());
-		System.out.println(e.getMessage());
+	private String makeMessage(String context, IRodinFile file,
+			final IIndexer indexer) {
+		return "INDEXER: " + context + " : file=" + file.getPath() + " : indexer="
+				+ indexer.getId();
+	}
+
+	private final ExecutorService taskExec = Executors
+			.newSingleThreadExecutor();
+
+	private static final class RunIndexing implements Runnable {
+		private final IIndexer indexer;
+		private final IRodinFile file;
+		private final IIndexingToolkit indexingToolkit;
+
+		public RunIndexing(IIndexer indexer, IRodinFile file,
+				IIndexingToolkit indexingToolkit) {
+			this.indexer = indexer;
+			this.file = file;
+			this.indexingToolkit = indexingToolkit;
+		}
+
+		public void run() {
+			indexer.index(file, indexingToolkit);
+		}
+
+	}
+
+	private void printVerbose(final String message) {
+		if (IndexManager.VERBOSE) {
+			System.out.println(message);
+		}
+	}
+
+	private void printDebug(String message) {
+		if (IndexManager.DEBUG) {
+			System.out.println(message);
+		}
 	}
 }
