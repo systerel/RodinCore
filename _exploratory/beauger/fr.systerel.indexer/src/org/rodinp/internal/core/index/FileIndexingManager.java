@@ -13,7 +13,6 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
 
 public class FileIndexingManager {
 
@@ -26,10 +25,6 @@ public class FileIndexingManager {
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		final IFileElementType<? extends IRodinFile> fileType = file
 				.getElementType();
-		if (!indexersManager.isIndexable(fileType)) {
-			throw new IllegalArgumentException("No known indexers for file: "
-					+ file.getPath());
-		}
 
 		final IIndexer indexer = indexersManager.getIndexerFor(fileType);
 
@@ -48,17 +43,18 @@ public class FileIndexingManager {
 		return result;
 	}
 
-	public void doIndexing(IRodinFile file, IIndexingToolkit indexingToolkit) {
+
+	public IIndexingResult doIndexing(IRodinFile file, IndexingToolkit indexingToolkit) {
 		final IFileElementType<? extends IRodinFile> fileType = file
 				.getElementType();
 		final IIndexer indexer = indexersManager.getIndexerFor(fileType);
-		if (indexer == null) {
-			return;
-		}
+		
 		if (IndexManager.VERBOSE) {
 			System.out.println("INDEXER: Indexing file " + file.getPath()
 					+ " with indexer " + indexer.getId());
 		}
 		indexer.index(file, indexingToolkit);
+		
+		return indexingToolkit.getResult();
 	}
 }

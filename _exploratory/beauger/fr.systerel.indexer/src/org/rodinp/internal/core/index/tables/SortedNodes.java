@@ -66,12 +66,13 @@ public class SortedNodes<T> implements Iterator<T> {
 
 	private int findRestartPos() {
 		
-		Iterator<Node<T>> iterOrder = order.listIterator();
 		Iterator<Node<T>> iterPrev = iterated.listIterator();
+		Iterator<Node<T>> iterNew = order.listIterator();
 		int pos = 0;
-		while (iterOrder.hasNext() && iterPrev.hasNext()) {
-			final Node<T> nodeOrder = nextMarked(iterOrder);
-			final Node<T> nodePrev = nextMarked(iterPrev);
+
+		while (iterNew.hasNext() && iterPrev.hasNext()) {
+			final Node<T> nodePrev = iterPrev.next();
+			final Node<T> nodeOrder = nextMarked(iterNew);
 	
 			if (nodeOrder == null || nodePrev == null) {
 				break;

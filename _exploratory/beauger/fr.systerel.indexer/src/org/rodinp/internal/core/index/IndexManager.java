@@ -142,7 +142,7 @@ public final class IndexManager {
 	void launchIndexing(IProgressMonitor monitor) {
 		// TODO use indexingLock
 		for (IRodinProject project : pims.keySet()) {
-			fetchPIM(project).launchIndexing();
+			fetchPIM(project).doIndexing();
 			if (monitor != null && monitor.isCanceled()) {
 				return;
 			}
