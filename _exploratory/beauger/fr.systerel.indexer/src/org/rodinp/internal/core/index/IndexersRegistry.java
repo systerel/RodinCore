@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 
 public class IndexersRegistry {
@@ -36,7 +35,7 @@ public class IndexersRegistry {
 		list.add(indexer);
 	}
 
-	public IIndexer getIndexerFor(IFileElementType<? extends IRodinFile> fileType) {
+	public IIndexer getIndexerFor(IFileElementType<?> fileType) {
 		final List<IIndexer> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {
