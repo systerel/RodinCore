@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Graph<T> {
 
@@ -21,7 +22,7 @@ public class Graph<T> {
 
 	public Graph() {
 		this.nodes = new HashMap<T, Node<T>>();
-		this.listeners = new ArrayList<IGraphChangedListener>();
+		this.listeners = new CopyOnWriteArrayList<IGraphChangedListener>();
 	}
 
 	public void addElementChangedListener(IGraphChangedListener listener) {
@@ -51,7 +52,6 @@ public class Graph<T> {
 		}
 		final List<Node<T>> predNodes = getOrCreateNodes(predecessors);
 		node.changePredecessors(predNodes);
-		// isSorted = false; TODO listener
 		fireGraphChanged();
 	}
 
@@ -65,14 +65,12 @@ public class Graph<T> {
 
 	public void clear() {
 		nodes.clear();
-		// isSorted = false; TODO listener
 		fireGraphChanged();
 	}
 
 	public void remove(Node<T> node) {
 		node.clear();
 		nodes.remove(node.getLabel());
-		// isSorted = false; TODO listener
 		fireGraphChanged();
 	}
 
@@ -86,7 +84,6 @@ public class Graph<T> {
 		if (node == null) {
 			node = new Node<T>(label);
 			nodes.put(label, node);
-			// isSorted = false; TODO listener
 			fireGraphChanged();
 		}
 		return node;
