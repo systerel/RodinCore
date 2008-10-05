@@ -11,14 +11,34 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 
 /**
- * This interface is the public toolkit for the indexing system.
+ * Common protocol for reporting the result of indexing a Rodin file.
  * <p>
- * It allows indexers to declare elements, record their occurrences and export
- * them.
+ * When a file is indexed, an instance of this interface is passed to the
+ * indexer which gets its inputs and reports its results through its methods.
+ * </p>
  * <p>
- * This interface is NOT intended to be implemented by clients.
+ * Two methods allow the indexer to query its inputs:
+ * <ul>
+ * <li><code>getRodinFile</code> returns the file which is currently indexed.</li>
+ * <li><code>getImports</code> returns the declarations exported by the files
+ * on which the current file depends.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Three methods allow the indexer to report its results:
+ * <ul>
+ * <li><code>declare</code> reports a new declaration in the current file.</li>
+ * <li><code>addOccurrence</code> reports an occurrence in the current file.</li>
+ * <li><code>export</code> indicates that a declaration is to be exported to
+ * files that depend on the current file.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see IIndexer
  * 
@@ -27,24 +47,38 @@ import org.rodinp.core.IInternalElement;
 public interface IIndexingToolkit {
 
 	/**
-	 * Declares the given element with the given name.
+	 * Returns the Rodin file which is currently being indexed.
+	 * 
+	 * @return the Rodin file to index
+	 */
+	IRodinFile getRodinFile();
+
+	/**
+	 * Returns the declarations visible from files on which the current file
+	 * depends. The declarations returned are all those that were exported by
+	 * the last indexing of a file on which the current file depends.
 	 * <p>
-	 * The given element must be local to the file being indexed, that is, a
-	 * call to element.getRodinFile() must return the file being indexed.
-	 * <p>
-	 * The same element cannot be declared more than once.
-	 * <p>
+	 * The returned declarations can subsequently be exported (so they come
+	 * visible to dependent files) and the indexer can report occurrences for
+	 * them.
+	 * </p>
+	 * 
+	 * @return the imported declarations
+	 */
+	IDeclaration[] getImports();
+
+	/**
+	 * Declares the given element with the given name. The name represents the
+	 * user-visible name of the element, not the element name in the Rodin
+	 * database. An element must not be declared more than once in an indexing
+	 * run.
 	 * 
 	 * @param element
-	 *            the element to declare.
+	 *            the element to declare, must belong to the current file
 	 * @param name
-	 *            the public name of the element, the one known by the user.
-	 * @throws IllegalArgumentException
-	 *             if the element's file is not the one being indexed.
-	 * @throws IllegalArgumentException
-	 *             if the element has already been declared within the same file
-	 *             indexing pass.
+	 *            the user-visible name of the element
 	 */
+	// TODO return the declaration created for this element
 	void declare(IInternalElement element, String name);
 
 	/**
@@ -68,29 +102,18 @@ public interface IIndexingToolkit {
 	 * @throws IllegalArgumentException
 	 *             if the element is neither local nor imported.
 	 */
+	// TODO pass declaration rather than element
 	void addOccurrence(IInternalElement element, IOccurrenceKind kind,
 			IRodinLocation location);
-
-	/**
-	 * Returns the elements visible from other files.
-	 * <p>
-	 * It is thus allowed to add occurrences of these elements and to export
-	 * them.
-	 * 
-	 * @return the imported elements.
-	 */
-	IDeclaration[] getImports();
 
 	/**
 	 * Exports the given element, making it visible to dependent files.
 	 * 
 	 * @param element
-	 *            the element to export.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given element is neither declared in the current file
-	 *             nor imported.
+	 *            the element to export, must be declared in the current file or
+	 *            imported
 	 */
+	// TODO pass declaration rather than element
 	void export(IInternalElement element);
 
 }

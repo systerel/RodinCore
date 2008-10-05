@@ -95,6 +95,8 @@ public class IndexingToolkit implements IIndexingToolkit {
 	public void export(IInternalElement element) {
 
 		final IDeclaration declaration;
+		
+		// TODO simplify by not testing any condition and performing two lookups in a row
 		if (isLocal(element)) {
 			declaration = declarations.get(element);
 		} else if (isImported(element)) {
@@ -108,6 +110,10 @@ public class IndexingToolkit implements IIndexingToolkit {
 		result.addExport(declaration);
 	}
 
+	public IRodinFile getRodinFile() {
+		return file;
+	}
+	
 	public IDeclaration[] getImports() {
 		return imports.values().toArray(new IDeclaration[imports.size()]);
 	}
