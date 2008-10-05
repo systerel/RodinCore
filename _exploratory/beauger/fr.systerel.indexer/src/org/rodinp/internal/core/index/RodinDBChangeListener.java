@@ -49,9 +49,13 @@ public class RodinDBChangeListener implements IElementChangedListener {
 		// workspace listener?
 		final List<IRodinFile> affectedFiles = new ArrayList<IRodinFile>();
 		addAffectedFiles(delta, affectedFiles);
+		enqueueAffectedFiles(affectedFiles);
+	}
+
+	private void enqueueAffectedFiles(final List<IRodinFile> affectedFiles) {
 		boolean interrupted = false;
 		try {
-			while(true) {
+			while (true) {
 				try {
 					for (IRodinFile file : affectedFiles) {
 						if (!queue.contains(file)) {
