@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinProject;
 public interface IIndexRequester {
 
 	/**
-	 * Returns the currently indexed user-defined name of the given element.
+	 * Returns the user-visible name for the given element.
 	 * 
 	 * @param element
 	 *            the element for which to get the name.
@@ -26,22 +26,23 @@ public interface IIndexRequester {
 	 *         empty String.
 	 * @see #isUpToDate()
 	 */
+	// TODO Rather return a declaration ?
 	String getIndexName(IInternalElement element);
 
 	/**
-	 * Returns the currently indexed occurrences at which the given element was
-	 * found.
+	 * Returns the occurrences of the given element.
 	 * 
 	 * @param element
 	 *            the element for which to get the occurrences.
 	 * @return the indexed occurrences of the element.
 	 * @see #isUpToDate()
 	 */
+	// TODO Rather pass a declaration ?
 	IOccurrence[] getOccurrences(IInternalElement element);
 
 	/**
-	 * Returns the currently indexed elements having the given user-defined
-	 * name.
+	 * Returns all the elements that have been declared with the given
+	 * user-visible name.
 	 * 
 	 * @param project
 	 *            the project in which to search.
@@ -54,13 +55,14 @@ public interface IIndexRequester {
 
 	/**
 	 * Returns <code>true</code> when the indexing system is up to date, else
-	 * blocks util it becomes up to date. Throws a CancellationException if the
-	 * indexing is canceled.
+	 * blocks until it becomes up to date. Throws a CancellationException if the
+	 * indexing has been canceled.
 	 * 
 	 * Calling this method before any other request makes the result valid.
 	 * 
 	 * @return true when the indexing system is currently busy.
 	 */
+	// TODO What's the point in always returning true ?
 	boolean isUpToDate() throws CancellationException;
 
 }

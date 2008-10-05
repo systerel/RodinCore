@@ -79,6 +79,7 @@ public interface IIndexer {
 	 *            the indexing facility to which to send the results.
 	 * @see IIndexingToolkit
 	 */
+	// TODO remove the file parameter, it's already in the toolkit.
 	public void index(IRodinFile file, IIndexingToolkit index);
 
 }
