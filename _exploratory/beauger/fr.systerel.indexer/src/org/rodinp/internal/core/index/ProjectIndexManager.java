@@ -185,11 +185,12 @@ public class ProjectIndexManager {
 	}
 
 	/**
-	 * Returns true if the file was actually set to index, false it the file was
-	 * not indexable.
+	 * Indicates that the given file has to be (re)-indexed. Also, update the
+	 * dependents of the given file in the dependency graph.
 	 * 
 	 * @param file
 	 */
+	// TODO rename to fileChanged() ?
 	public void setToIndex(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
@@ -199,15 +200,12 @@ public class ProjectIndexManager {
 		if (!indexersRegistry.isIndexable(file.getElementType())) {
 			return;
 		}
-		try {
-			final IRodinFile[] dependFiles = fim.getDependencies(file);
+		final IRodinFile[] dependFiles = fim.getDependencies(file);
+		if (dependFiles == null)
+			return;
 
-			order.setPredecessors(file, dependFiles);
-			order.setToIter(file);
-
-		} catch (Throwable t) {
-			// was managed by fim 
-		}
+		order.setPredecessors(file, dependFiles);
+		order.setToIter(file);
 	}
 
 	public FileTable getFileTable() {

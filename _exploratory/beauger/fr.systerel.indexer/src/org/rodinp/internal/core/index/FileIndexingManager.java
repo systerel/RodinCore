@@ -34,18 +34,14 @@ public class FileIndexingManager {
 		this.indexersRegistry = indManager;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) throws Throwable {
-		final IFileElementType<? extends IRodinFile> fileType = file
-				.getElementType();
-
+	public IRodinFile[] getDependencies(IRodinFile file) {
+		final IFileElementType<?> fileType = file.getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
-
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
-
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file);
 			if (IndexManager.DEBUG) {
-				System.out.println("INDEXER: dependencies for file "
+				System.out.println("INDEXER: Dependencies for file "
 						+ file.getPath() + " are:");
 				for (IRodinFile dep : result) {
 					System.out.println("\t" + dep.getPath());
@@ -59,9 +55,7 @@ public class FileIndexingManager {
 			IRodinDBStatus status = new RodinDBStatus(
 					RodinIndexer.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
-
-			// propagate
-			throw t;
+			return null;
 		}
 	}
 
@@ -72,8 +66,7 @@ public class FileIndexingManager {
 			return IndexingResult.failed(file);
 		}
 
-		final IFileElementType<? extends IRodinFile> fileType = file
-				.getElementType();
+		final IFileElementType<?> fileType = file.getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 
 		printVerbose(makeMessage("indexing", file, indexer));
