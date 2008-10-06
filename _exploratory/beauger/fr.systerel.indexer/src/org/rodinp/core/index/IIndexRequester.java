@@ -15,6 +15,20 @@ import java.util.concurrent.CancellationException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 
+/**
+ * Common protocol for performing requests to the indexing system.
+ * <p>
+ * Requests results may be obsolete if the indexing system is performing a new
+ * indexing. Clients should call {@link #isUpToDate()} before sending requests
+ * in order to get the most accurate result.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @author Nicolas Beauger
+ * 
+ */
 public interface IIndexRequester {
 
 	/**

@@ -86,10 +86,12 @@ public interface IIndexingToolkit {
 	 * location.
 	 * <p>
 	 * The location must point to a place inside the file being indexed.
+	 * </p>
 	 * <p>
 	 * The element must be either local to the file or imported. The latter case
 	 * is equivalent to saying that the element must be contained in the ones
 	 * returned by {@link #getImports()}.
+	 * </p>
 	 * 
 	 * @param element
 	 *            the element to which to add an occurrence.

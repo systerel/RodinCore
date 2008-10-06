@@ -35,9 +35,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * The given ExportTable is assumed to be unchanged since latest indexing of
 	 * the given file (empty if it never was indexed). It will be updated
 	 * through calls to {@link IndexingToolkit#export(IInternalElement)}.
+	 * </p>
 	 * <p>
 	 * The given RodinIndex, FileTable and NameTable are supposed to be just
 	 * coherent with each other. They will be cleaned here.
+	 * </p>
 	 * 
 	 * @param file
 	 * @param imports
@@ -82,21 +84,22 @@ public class IndexingToolkit implements IIndexingToolkit {
 		result.addOccurrence(element, occurrence);
 	}
 
-	 // The exported declaration records the name associated to the element.
-	 // 
-	 // If the element is local, it is associated with its declaration name.
-	 // 
-	 // If the element was imported, the associated name will be the one it was
-	 // declared with nevertheless, which is possibly different from the one it
-	 // is known by in the current file.
-	 // 
-	 // Treating local incoherences of public names in imported elements is
-	 // beyond the scope of the indexing system.
+	// The exported declaration records the name associated to the element.
+	// 
+	// If the element is local, it is associated with its declaration name.
+	// 
+	// If the element was imported, the associated name will be the one it was
+	// declared with nevertheless, which is possibly different from the one it
+	// is known by in the current file.
+	// 
+	// Treating local incoherences of public names in imported elements is
+	// beyond the scope of the indexing system.
 	public void export(IInternalElement element) {
 
 		final IDeclaration declaration;
-		
-		// TODO simplify by not testing any condition and performing two lookups in a row
+
+		// TODO simplify by not testing any condition and performing two lookups
+		// in a row
 		if (isLocal(element)) {
 			declaration = declarations.get(element);
 		} else if (isImported(element)) {
@@ -113,7 +116,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	public IRodinFile getRodinFile() {
 		return file;
 	}
-	
+
 	public IDeclaration[] getImports() {
 		return imports.values().toArray(new IDeclaration[imports.size()]);
 	}
@@ -139,7 +142,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	public IIndexingResult getResult() {
 		result.setDeclarations(declarations);
 		result.setSuccess(true);
-		
+
 		return result;
 	}
 

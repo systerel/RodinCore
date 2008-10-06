@@ -18,11 +18,11 @@ import java.util.Map;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.index.IIndexer;
 
-public class IndexersRegistry {
+public class IndexerRegistry {
 
 	private final Map<IFileElementType<?>, List<IIndexer>> indexers;
 
-	public IndexersRegistry() {
+	public IndexerRegistry() {
 		this.indexers = new HashMap<IFileElementType<?>, List<IIndexer>>();
 	}
 

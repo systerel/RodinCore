@@ -12,6 +12,19 @@ package org.rodinp.core.index;
 
 import org.rodinp.core.IRodinFile;
 
+/**
+ * Common protocol for occurrences in indexed files.
+ * <p>
+ * An occurrence has a kind {@link IOccurrenceKind} and a location
+ * {@link IRodinLocation} inside a {@link IRodinFile}.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @author Nicolas Beauger
+ * 
+ */
 public interface IOccurrence {
 
 	/**
@@ -36,6 +49,7 @@ public interface IOccurrence {
 	 * Rodin file is returned. Otherwise, <code>null</code> is returned.
 	 * <p>
 	 * Equivalent to <code>getLocation().getRodinFile()</code>.
+	 * </p>
 	 * 
 	 * @return the file containing the location or <code>null</code>
 	 * @see IRodinLocation#getRodinFile()

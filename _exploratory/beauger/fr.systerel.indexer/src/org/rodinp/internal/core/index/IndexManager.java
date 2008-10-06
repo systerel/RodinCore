@@ -55,7 +55,7 @@ public final class IndexManager {
 
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
-	private final IndexersRegistry indexersManager;
+	private final IndexerRegistry indexersManager;
 
 	private final FileIndexingManager fim;
 
@@ -72,7 +72,7 @@ public final class IndexManager {
 
 	private IndexManager() {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
-		indexersManager = new IndexersRegistry();
+		indexersManager = new IndexerRegistry();
 		fim = new FileIndexingManager(indexersManager);
 		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
 		listener = new RodinDBChangeListener(queue);
@@ -96,10 +96,12 @@ public final class IndexManager {
 	 * <p>
 	 * The same indexer may be added for several file types. It will then be
 	 * called whenever a file of one of those file types has to be indexed.
+	 * </p>
 	 * <p>
 	 * Conversely, several indexers may be added for the same file type. They
 	 * will then all be called each time a file of the given file type has to be
 	 * indexed, according to the order they were added in.
+	 * </p>
 	 * 
 	 * @param indexer
 	 *            the indexer to add.
@@ -162,6 +164,7 @@ public final class IndexManager {
 	 * Returns the current index of the given project.
 	 * <p>
 	 * Note that the result may be erroneous if the project is being indexed.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project of the requested index.
@@ -176,6 +179,7 @@ public final class IndexManager {
 	 * Returns the current file table of the given project.
 	 * <p>
 	 * Note that the result may be erroneous if the project is being indexed.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project of the requested file table.
@@ -190,6 +194,7 @@ public final class IndexManager {
 	 * Returns the current name table of the given project.
 	 * <p>
 	 * Note that the result may be erroneous if the project is being indexed.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project of the requested name table.
@@ -204,6 +209,7 @@ public final class IndexManager {
 	 * Returns the current export table of the given project.
 	 * <p>
 	 * Note that the result may be erroneous if the project is being indexed.
+	 * </p>
 	 * 
 	 * @param project
 	 *            the project of the requested export table.
@@ -263,11 +269,11 @@ public final class IndexManager {
 					boolean cancel = false;
 					while (!cancel) { // !startMonitor.isCanceled()) {
 						final List<IRodinFile> toIndex = new ArrayList<IRodinFile>();
-						
+
 						boolean stop = false;
-						while(!stop) {
-							final IRodinFile file = queue.poll(QUEUE_WAITING_TIME,
-									QUEUE_WAITING_UNIT);
+						while (!stop) {
+							final IRodinFile file = queue.poll(
+									QUEUE_WAITING_TIME, QUEUE_WAITING_UNIT);
 							if (file == null) {
 								stop = true;
 							} else {
@@ -277,7 +283,8 @@ public final class IndexManager {
 
 						if (!toIndex.isEmpty()) {
 							for (IRodinFile file : toIndex) {
-								final IRodinProject project = file.getRodinProject();
+								final IRodinProject project = file
+										.getRodinProject();
 								final ProjectIndexManager pim = fetchPIM(project);
 								pim.setToIndex(file);
 							}
@@ -287,9 +294,9 @@ public final class IndexManager {
 							}
 						}
 						cancel = startMonitor.isCanceled()
-						|| Status.CANCEL_STATUS.equals(indexing
-								.getResult());
-					} 
+								|| Status.CANCEL_STATUS.equals(indexing
+										.getResult());
+					}
 					return;
 				} catch (InterruptedException e) {
 					interrupted = true;

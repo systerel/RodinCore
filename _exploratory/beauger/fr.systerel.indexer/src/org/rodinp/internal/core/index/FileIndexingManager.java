@@ -28,9 +28,9 @@ import org.rodinp.internal.core.RodinDBStatus;
 
 public class FileIndexingManager {
 
-	private final IndexersRegistry indexersRegistry;
+	private final IndexerRegistry indexersRegistry;
 
-	public FileIndexingManager(IndexersRegistry indManager) {
+	public FileIndexingManager(IndexerRegistry indManager) {
 		this.indexersRegistry = indManager;
 	}
 

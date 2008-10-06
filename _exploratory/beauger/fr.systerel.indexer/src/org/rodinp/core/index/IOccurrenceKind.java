@@ -11,11 +11,13 @@
 package org.rodinp.core.index;
 
 /**
- * Interface for occurrence kinds.
+ * Common protocol for kinds of occurrences found while indexing files.
  * <p>
  * Clients should add their own kinds through the extension point mechanism.
+ * </p>
  * <p>
- * This interface is NOT intended to be implemented by clients.
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @author Nicolas Beauger
  */

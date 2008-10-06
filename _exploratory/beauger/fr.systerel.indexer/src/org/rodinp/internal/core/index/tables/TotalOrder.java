@@ -19,17 +19,21 @@ import java.util.List;
  * Those objects are added to the order via {@link #setToIter(Object)} and
  * {@link #setPredecessors(Object, Object[])} methods, there is no specific
  * adding method.
+ * </p>
  * <p>
  * The order implements Iterator, thus allowing the user to scan it in a
  * sequential manner in the computed total order.
+ * </p>
  * <p>
  * Note that only nodes explicitly set to iter will be iterated. After an
  * iteration has finished, the user is required to call {@link #end()}, which
  * resets the nodes set to iter and allows for a future iteration. This requires
  * to set the nodes to iter before each new iteration.
+ * </p>
  * <p>
  * This implementation allows for modifications during iteration. Modifications
  * will make the iteration restart to the first order difference.
+ * </p>
  * 
  * @author Nicolas Beauger
  * 
@@ -45,7 +49,7 @@ public class TotalOrder<T> implements Iterator<T> {
 			isSorted = false;
 		}
 	};
-	
+
 	public TotalOrder() {
 		this.graph = new Graph<T>();
 		this.sortedNodes = new SortedNodes<T>();
@@ -61,11 +65,11 @@ public class TotalOrder<T> implements Iterator<T> {
 	public List<T> getPredecessors(T label) {
 		return graph.getPredecessors(label);
 	}
-	
+
 	public void setPredecessors(T label, T[] predecessors) {
 		graph.setPredecessors(label, predecessors);
 	}
-	
+
 	public void clear() {
 		graph.clear();
 		sortedNodes.clear();
@@ -93,7 +97,7 @@ public class TotalOrder<T> implements Iterator<T> {
 
 	// successors of the current node will be iterated
 	// FIXME what is the meaning just after remove() ? decide and test
-	public void setToIterSuccessors() { 
+	public void setToIterSuccessors() {
 		sortedNodes.setToIterSuccessors();
 	}
 

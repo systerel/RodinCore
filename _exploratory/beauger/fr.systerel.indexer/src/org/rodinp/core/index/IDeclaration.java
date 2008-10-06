@@ -13,6 +13,15 @@ package org.rodinp.core.index;
 import org.rodinp.core.IInternalElement;
 
 /**
+ * Common protocol for indexed element declaration.
+ * <p>
+ * A IDeclaration has an element and an associated name, that is the name given
+ * by an indexer while indexing the file that declares the element.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
  * @author Nicolas Beauger
  * 
  */

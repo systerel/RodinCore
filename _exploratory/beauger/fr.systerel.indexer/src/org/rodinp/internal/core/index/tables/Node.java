@@ -1,9 +1,3 @@
-package org.rodinp.internal.core.index.tables;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /*******************************************************************************
  * Copyright (c) 2008 Systerel and others.
  * All rights reserved. This program and the accompanying materials
@@ -14,6 +8,12 @@ import java.util.List;
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
+package org.rodinp.internal.core.index.tables;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class Node<T> {
 
 	private final T label;
