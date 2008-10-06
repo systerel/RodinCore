@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.internal.core.index.Descriptor;
 
 public final class RodinIndex {
@@ -32,7 +33,7 @@ public final class RodinIndex {
 	 * @param element
 	 * @return the Descriptor of the given element, or <code>null</code> if it
 	 *         does not exist.
-	 * @see #makeDescriptor(IInternalElement, String)
+	 * @see #makeDescriptor(IDeclaration)
 	 */
 	public Descriptor getDescriptor(IInternalElement element) {
 		return map.get(element);
@@ -48,22 +49,21 @@ public final class RodinIndex {
 	 * {@link IllegalArgumentException} if a Descriptor already exists for the
 	 * element.
 	 * 
-	 * @param element
-	 *            the element for which to make a Descriptor.
-	 * @param name
-	 *            the public name (user-known) of the element.
+	 * @param declaration
+	 *            the declaration of the element for which to make a Descriptor.
 	 * @return the newly created Descriptor.
 	 * @throws IllegalArgumentException
 	 *             if the Descriptor already exists.
 	 * @see #getDescriptor(IInternalElement)
 	 */
-	public Descriptor makeDescriptor(IInternalElement element, String name) {
+	public Descriptor makeDescriptor(IDeclaration declaration) {
+		final IInternalElement element = declaration.getElement();
 		if (map.containsKey(element)) {
 			throw new IllegalArgumentException(
-					"Descriptor for already exists for element: "
+					"Descriptor already exists for element: "
 							+ element.getElementName());
 		}
-		final Descriptor descriptor = new Descriptor(element, name);
+		final Descriptor descriptor = new Descriptor(declaration);
 		map.put(element, descriptor);
 
 		return descriptor;

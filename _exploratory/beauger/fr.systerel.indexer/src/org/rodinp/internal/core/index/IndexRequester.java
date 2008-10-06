@@ -38,8 +38,7 @@ public class IndexRequester implements IIndexRequester {
 			throw new IllegalArgumentException("element is not indexed: "
 					+ element);
 		}
-		// TODO descriptor.getDeclaration();
-		return new Declaration(element, descriptor.getName());
+		return descriptor.getDeclaration();
 	}
 
 	public IOccurrence[] getOccurrences(IDeclaration declaration) {

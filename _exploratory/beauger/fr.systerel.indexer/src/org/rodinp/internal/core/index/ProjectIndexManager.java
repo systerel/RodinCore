@@ -142,12 +142,12 @@ public class ProjectIndexManager {
 			Descriptor descriptor = index.getDescriptor(element);
 			// there may be import occurrences
 			if (descriptor == null) {
-				descriptor = index.makeDescriptor(element, name);
+				descriptor = index.makeDescriptor(declaration);
 			} else { // possible renaming
-				final String previousName = descriptor.getName();
+				final String previousName = descriptor.getDeclaration().getName();
 				if (!previousName.equals(name)) {
 					index.removeDescriptor(element);
-					descriptor = index.makeDescriptor(element, name);
+					descriptor = index.makeDescriptor(declaration);
 					nameTable.remove(previousName, element);
 					// there are import occurrences of the element;
 					// in those files, it is referred to with previousName
@@ -178,7 +178,7 @@ public class ProjectIndexManager {
 				descriptor.removeOccurrences(file);
 
 				if (descriptor.getOccurrences().length == 0) {
-					final String name = descriptor.getName();
+					final String name = descriptor.getDeclaration().getName();
 					nameTable.remove(name, element);
 					index.removeDescriptor(element);
 				}

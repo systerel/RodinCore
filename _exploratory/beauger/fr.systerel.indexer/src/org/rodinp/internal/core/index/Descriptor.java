@@ -14,44 +14,22 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 
 public final class Descriptor {
 
-	// Name of the described element. It is intended to be used as a public
-	// name, known by the user, as opposed to the name returned by
-	// {@link IRodinElement#getElementName()}, which is of a rather internal
-	// scope.
-	private final String name;
-	private final IInternalElement element;
-//	private final IDeclaration declaration;
+	private final IDeclaration declaration;
 	private final Set<IOccurrence> occurrences;
 
-	public Descriptor(IInternalElement element, String name) {
-		this.name = name;
-		this.element = element;
-//		this.declaration = declaration;
+	public Descriptor(IDeclaration declaration) {
+		this.declaration = declaration;
 		this.occurrences = new HashSet<IOccurrence>();
 	}
 
-//	public Descriptor(IDeclaration declaration) {
-//		this.declaration = declaration;
-//		this.occurrences = new HashSet<IOccurrence>();
-//	}
-
-//	// TODO use instead of getName and getElement
-//	public IDeclaration getDeclaration() {
-//		return declaration;
-//	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public IInternalElement getElement() {
-		return element;
+	public IDeclaration getDeclaration() {
+		return declaration;
 	}
 
 	public IOccurrence[] getOccurrences() {
@@ -80,10 +58,9 @@ public final class Descriptor {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("*** descriptor: ");
-		sb.append(element.getElementName() + "\n");
-		sb.append("Name: " + name + "\n");
-		for (IOccurrence ref : occurrences) {
-			sb.append(ref.toString() + "\n");
+		sb.append(declaration + "\n");
+		for (IOccurrence occ : occurrences) {
+			sb.append(occ + "\n");
 		}
 		return sb.toString();
 	}
