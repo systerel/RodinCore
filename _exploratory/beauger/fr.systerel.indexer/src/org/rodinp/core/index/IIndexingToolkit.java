@@ -118,4 +118,14 @@ public interface IIndexingToolkit {
 	// TODO pass declaration rather than element
 	void export(IInternalElement element);
 
+	/**
+	 * Tells whether this task has been cancelled.
+	 * <p>
+	 * This method should be regularly called by indexers to stop as soon as
+	 * possible when cancel is requested.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this task has been cancelled.
+	 */
+	boolean isCancelled();
 }

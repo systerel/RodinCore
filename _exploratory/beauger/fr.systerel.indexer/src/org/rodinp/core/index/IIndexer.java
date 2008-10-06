@@ -79,13 +79,10 @@ public interface IIndexer {
 	 * Indexes the given file and sends the results through calls to the given
 	 * IIndexingToolkit.
 	 * 
-	 * @param file
-	 *            the file to index.
 	 * @param index
 	 *            the indexing facility to which to send the results.
 	 * @see IIndexingToolkit
 	 */
-	// TODO remove the file parameter, it's already in the toolkit.
-	public void index(IRodinFile file, IIndexingToolkit index);
+	public void index(IIndexingToolkit index);
 
 }

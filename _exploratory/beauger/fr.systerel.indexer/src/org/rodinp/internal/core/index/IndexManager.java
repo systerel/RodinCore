@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
@@ -41,11 +39,6 @@ public final class IndexManager {
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
 
-	private static final long QUEUE_WAITING_TIME = 500;
-	private static final TimeUnit QUEUE_WAITING_UNIT = TimeUnit.MILLISECONDS;
-
-	private static final int INDEXING_TIMEOUT = 1;
-	private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
 	// TODO implement an overall consistency check method
@@ -134,7 +127,7 @@ public final class IndexManager {
 			pim.setToIndex(file);
 		}
 
-		doIndexing(null);
+		doIndexing(new NullProgressMonitor());
 		// TODO don't launch indexing immediately (define scheduling options)
 		// NOTE : that method will be replaced when implementing listeners
 	}
@@ -146,14 +139,18 @@ public final class IndexManager {
 	 * returns when the indexing of the current project has completed.
 	 * 
 	 * @param monitor
-	 *            the monitor by which cancel requests can be performed, or
-	 *            <code>null</code> if monitoring is not required.
+	 *            the monitor by which cancel requests can be performed.
 	 */
 	void doIndexing(IProgressMonitor monitor) {
+		if (monitor == null) {
+			throw new NullPointerException(
+					"Should not pass a null IProgressMonitor");
+		}
 		synchronized (indexingLock) {
 			for (IRodinProject project : pims.keySet()) {
-				fetchPIM(project).doIndexing(INDEXING_TIMEOUT, TIMEOUT_UNIT);
-				if (monitor != null && monitor.isCanceled()) {
+				fetchPIM(project).doIndexing(monitor);
+				monitor.done();
+				if (monitor.isCanceled()) {
 					return;
 				}
 			}
@@ -240,6 +237,9 @@ public final class IndexManager {
 				System.out.println("indexing...");
 			}
 			doIndexing(monitor);
+			if (VERBOSE) {
+				System.out.println("...end indexing");
+			}
 			if (monitor != null && monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -268,30 +268,15 @@ public final class IndexManager {
 				try {
 					boolean cancel = false;
 					while (!cancel) { // !startMonitor.isCanceled()) {
-						final List<IRodinFile> toIndex = new ArrayList<IRodinFile>();
+						final IRodinFile file = queue.take();
 
-						boolean stop = false;
-						while (!stop) {
-							final IRodinFile file = queue.poll(
-									QUEUE_WAITING_TIME, QUEUE_WAITING_UNIT);
-							if (file == null) {
-								stop = true;
-							} else {
-								toIndex.add(file);
-							}
-						}
+						final IRodinProject project = file.getRodinProject();
+						final ProjectIndexManager pim = fetchPIM(project);
 
-						if (!toIndex.isEmpty()) {
-							for (IRodinFile file : toIndex) {
-								final IRodinProject project = file
-										.getRodinProject();
-								final ProjectIndexManager pim = fetchPIM(project);
-								pim.setToIndex(file);
-							}
-							if (ENABLE_INDEXING) {
-								indexing.schedule();
-								// TODO define scheduling policies
-							}
+						pim.setToIndex(file);
+						if (ENABLE_INDEXING) {
+							indexing.schedule(2000);
+							// TODO define scheduling policies
 						}
 						cancel = startMonitor.isCanceled()
 								|| Status.CANCEL_STATUS.equals(indexing

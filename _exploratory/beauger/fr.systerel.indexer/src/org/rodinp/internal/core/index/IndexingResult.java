@@ -35,11 +35,11 @@ public class IndexingResult implements IIndexingResult {
 		this.occurrences = new HashMap<IInternalElement, Set<IOccurrence>>();
 		this.success = false;
 	}
-	
+
 	public void addExport(IDeclaration declaration) {
 		exports.add(declaration);
 	}
-	
+
 	public void addOccurrence(IInternalElement element, IOccurrence occurrence) {
 		Set<IOccurrence> set = occurrences.get(element);
 		if (set == null) {
@@ -60,7 +60,7 @@ public class IndexingResult implements IIndexingResult {
 	public static IIndexingResult failed(IRodinFile f) {
 		return new IndexingResult(f);
 	}
-	
+
 	public Map<IInternalElement, IDeclaration> getDeclarations() {
 		return declarations;
 	}
@@ -80,5 +80,16 @@ public class IndexingResult implements IIndexingResult {
 	public boolean isSuccess() {
 		return success;
 	}
-	
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("file: " + file + "\n");
+		sb.append("success: " + success + "\n");
+		sb.append("declarations: " + declarations.values() + "\n");
+		sb.append("occurrences: " + occurrences + "\n");
+		sb.append("exports: " + exports + "\n");
+		return sb.toString();
+	}
+
 }

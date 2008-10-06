@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -61,18 +61,22 @@ public class ProjectIndexManager {
 		this.order = new TotalOrder<IRodinFile>();
 	}
 
-	public void doIndexing(int timeout, TimeUnit timeUnit) {
-
+	public void doIndexing(IProgressMonitor monitor) {
+		monitor.beginTask("indexing project " + project,
+				IProgressMonitor.UNKNOWN);
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
 
 			final Map<IInternalElement, IDeclaration> fileImports = computeImports(file);
 			final IndexingToolkit indexingToolkit = new IndexingToolkit(file,
-					fileImports);
+					fileImports, monitor);
 
-			final IIndexingResult result = fim.doIndexing(file,
-					indexingToolkit, timeout, timeUnit);
+			final IIndexingResult result = fim
+					.doIndexing(indexingToolkit);
 
+			if (indexingToolkit.isCancelled()) {
+				break;
+			}
 			if (result.isSuccess()) {
 				if (mustReindexDependents(result)) {
 					order.setToIterSuccessors();

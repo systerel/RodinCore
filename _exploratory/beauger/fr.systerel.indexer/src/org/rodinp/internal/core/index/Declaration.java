@@ -19,7 +19,7 @@ public class Declaration implements IDeclaration {
 	private final String name;
 
 	public Declaration(IInternalElement element, String name) {
-		
+
 		// TODO If it's internal API, this is not needed.
 		if (element == null) {
 			throw new NullPointerException("null element");
@@ -62,4 +62,14 @@ public class Declaration implements IDeclaration {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		sb.append("element: " + element);
+		sb.append(", ");
+		sb.append("name: " + name);
+		sb.append(")");
+		return sb.toString();
+	}
 }

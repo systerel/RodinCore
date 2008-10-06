@@ -13,6 +13,7 @@ package org.rodinp.internal.core.index;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
@@ -28,6 +29,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 	private final Map<IInternalElement, IDeclaration> declarations;
 	private final IndexingResult result;
+	private final IProgressMonitor monitor;
 
 	/**
 	 * The given imports are assumed to be up-to-date.
@@ -43,15 +45,19 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * 
 	 * @param file
 	 * @param imports
+	 * @param monitor
 	 */
 	public IndexingToolkit(IRodinFile file,
-			Map<IInternalElement, IDeclaration> imports) {
+			Map<IInternalElement, IDeclaration> imports,
+			IProgressMonitor monitor) {
 
 		this.file = file;
 		this.imports = imports;
 
 		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.result = new IndexingResult(file);
+		this.result.setDeclarations(declarations);
+		this.monitor = monitor;
 	}
 
 	public void declare(IInternalElement element, String name) {
@@ -139,10 +145,16 @@ public class IndexingToolkit implements IIndexingToolkit {
 		return isLocal(element) || isImported(element);
 	}
 
-	public IIndexingResult getResult() {
-		result.setDeclarations(declarations);
-		result.setSuccess(true);
+	public boolean isCancelled() {
+		return monitor.isCanceled();
+	}
 
+	// to call before getResult;
+	public void complete() {
+		result.setSuccess(!monitor.isCanceled());
+	}
+
+	public IIndexingResult getResult() {
 		return result;
 	}
 

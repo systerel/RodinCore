@@ -46,8 +46,9 @@ public class Occurrence implements IOccurrence {
 	// DEBUG
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("occurrence\n");
-		sb.append("kind: " + kind.getName() + "\n");
+		StringBuilder sb = new StringBuilder();
+		sb.append("kind: " + kind.getName());
+		sb.append(" ");
 		sb.append("location: " + location);
 		return sb.toString();
 	}

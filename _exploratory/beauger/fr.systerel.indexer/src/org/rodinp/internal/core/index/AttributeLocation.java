@@ -52,7 +52,7 @@ public class AttributeLocation extends RodinLocation implements
 	
 	@Override
 	public String toString() {
-		return super.toString() + "." + attributeType;
+		return super.toString() + "." + attributeType.getName();
 	}
 
 }
