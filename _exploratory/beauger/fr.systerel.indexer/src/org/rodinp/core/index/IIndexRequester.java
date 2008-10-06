@@ -35,24 +35,24 @@ public interface IIndexRequester {
 	 * Returns the user-visible name for the given element.
 	 * 
 	 * @param element
-	 *            the element for which to get the name.
-	 * @return the name of the element if it was found in the index, else an
-	 *         empty String.
+	 *            the element for which to get the declaration.
+	 * @return the declaration of the element if it was found in the index.
+	 * @throws IllegalArgumentException
+	 *             if the element is not known by the indexing system.
 	 * @see #isUpToDate()
 	 */
-	// TODO Rather return a declaration ?
-	String getIndexName(IInternalElement element);
+	IDeclaration getDeclaration(IInternalElement element);
 
 	/**
 	 * Returns the occurrences of the given element.
 	 * 
-	 * @param element
-	 *            the element for which to get the occurrences.
+	 * @param declaration
+	 *            the declaration of the element for which to get the
+	 *            occurrences.
 	 * @return the indexed occurrences of the element.
 	 * @see #isUpToDate()
 	 */
-	// TODO Rather pass a declaration ?
-	IOccurrence[] getOccurrences(IInternalElement element);
+	IOccurrence[] getOccurrences(IDeclaration declaration);
 
 	/**
 	 * Returns all the elements that have been declared with the given

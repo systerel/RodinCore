@@ -36,7 +36,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * <p>
 	 * The given ExportTable is assumed to be unchanged since latest indexing of
 	 * the given file (empty if it never was indexed). It will be updated
-	 * through calls to {@link IndexingToolkit#export(IInternalElement)}.
+	 * through calls to {@link IndexingToolkit#export(IDeclaration)}.
 	 * </p>
 	 * <p>
 	 * The given RodinIndex, FileTable and NameTable are supposed to be just
@@ -60,7 +60,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 		this.monitor = monitor;
 	}
 
-	public void declare(IInternalElement element, String name) {
+	public IDeclaration declare(IInternalElement element, String name) {
 
 		if (!isLocal(element)) {
 			throw new IllegalArgumentException(
@@ -73,36 +73,28 @@ public class IndexingToolkit implements IIndexingToolkit {
 					"Element has already been declared: " + element);
 		}
 
-		// modifications storage
-		declarations.put(element, new Declaration(element, name));
+		final Declaration declaration = new Declaration(element, name);
+		declarations.put(element, declaration);
+		
+		return declaration;
 	}
 
-	public void addOccurrence(IInternalElement element, IOccurrenceKind kind,
+	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IRodinLocation location) {
-
+		final IInternalElement element = declaration.getElement();
+		
 		if (!verifyOccurrence(element, location)) {
 			throw new IllegalArgumentException(
 					"Incorrect occurrence for element: " + element);
 		}
 
-		// modifications storage
 		final IOccurrence occurrence = new Occurrence(kind, location);
 		result.addOccurrence(element, occurrence);
 	}
 
-	// The exported declaration records the name associated to the element.
-	// 
-	// If the element is local, it is associated with its declaration name.
-	// 
-	// If the element was imported, the associated name will be the one it was
-	// declared with nevertheless, which is possibly different from the one it
-	// is known by in the current file.
-	// 
-	// Treating local incoherences of public names in imported elements is
-	// beyond the scope of the indexing system.
-	public void export(IInternalElement element) {
+	public void export(IDeclaration declaration) {
 
-		final IDeclaration declaration;
+		final IInternalElement element = declaration.getElement();
 
 		// TODO simplify by not testing any condition and performing two lookups
 		// in a row

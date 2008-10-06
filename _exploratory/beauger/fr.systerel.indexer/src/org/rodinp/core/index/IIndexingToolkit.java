@@ -77,13 +77,13 @@ public interface IIndexingToolkit {
 	 *            the element to declare, must belong to the current file
 	 * @param name
 	 *            the user-visible name of the element
+	 * @return the declaration created for this element
 	 */
-	// TODO return the declaration created for this element
-	void declare(IInternalElement element, String name);
+	IDeclaration declare(IInternalElement element, String name);
 
 	/**
-	 * Adds an occurrence of the given element, of the given kind, at the given
-	 * location.
+	 * Adds an occurrence of the given declared element, of the given kind, at
+	 * the given location.
 	 * <p>
 	 * The location must point to a place inside the file being indexed.
 	 * </p>
@@ -93,8 +93,8 @@ public interface IIndexingToolkit {
 	 * returned by {@link #getImports()}.
 	 * </p>
 	 * 
-	 * @param element
-	 *            the element to which to add an occurrence.
+	 * @param declaration
+	 *            the declaration of the element to which to add an occurrence.
 	 * @param kind
 	 *            the kind of the occurrence.
 	 * @param location
@@ -104,19 +104,17 @@ public interface IIndexingToolkit {
 	 * @throws IllegalArgumentException
 	 *             if the element is neither local nor imported.
 	 */
-	// TODO pass declaration rather than element
-	void addOccurrence(IInternalElement element, IOccurrenceKind kind,
+	void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IRodinLocation location);
 
 	/**
 	 * Exports the given element, making it visible to dependent files.
 	 * 
-	 * @param element
-	 *            the element to export, must be declared in the current file or
-	 *            imported
+	 * @param declaration
+	 *            the declaration of the element to export, must be declared in
+	 *            the current file or imported
 	 */
-	// TODO pass declaration rather than element
-	void export(IInternalElement element);
+	void export(IDeclaration declaration);
 
 	/**
 	 * Tells whether this task has been cancelled.

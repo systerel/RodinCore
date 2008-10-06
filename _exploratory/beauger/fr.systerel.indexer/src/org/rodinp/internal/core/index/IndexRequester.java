@@ -14,6 +14,7 @@ import java.util.concurrent.CancellationException;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexRequester;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -25,23 +26,24 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
  */
 public class IndexRequester implements IIndexRequester {
 
-	private static final String EMPTY_STRING = "";
-
 	private static final IOccurrence[] EMPTY_OCCURRENCES = new IOccurrence[] {};
 
-	public String getIndexName(IInternalElement element) {
+	public IDeclaration getDeclaration(IInternalElement element) {
 		final IRodinProject project = element.getRodinProject();
 		final RodinIndex index = IndexManager.getDefault().getIndex(project);
 
 		final Descriptor descriptor = index.getDescriptor(element);
 
 		if (descriptor == null) {
-			return EMPTY_STRING;
+			throw new IllegalArgumentException("element is not indexed: "
+					+ element);
 		}
-		return descriptor.getName();
+		// TODO descriptor.getDeclaration();
+		return new Declaration(element, descriptor.getName());
 	}
 
-	public IOccurrence[] getOccurrences(IInternalElement element) {
+	public IOccurrence[] getOccurrences(IDeclaration declaration) {
+		final IInternalElement element = declaration.getElement();
 		final IRodinProject project = element.getRodinProject();
 		final RodinIndex index = IndexManager.getDefault().getIndex(project);
 
@@ -53,8 +55,7 @@ public class IndexRequester implements IIndexRequester {
 		return descriptor.getOccurrences();
 	}
 
-	public IInternalElement[] getElements(IRodinProject project,
-			String name) {
+	public IInternalElement[] getElements(IRodinProject project, String name) {
 		final NameTable nameTable = IndexManager.getDefault().getNameTable(
 				project);
 
