@@ -38,7 +38,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.navigator.RodinNavigator;
+import fr.systerel.explorer.RodinNavigator;
 
 /**
  * The Model is used to present the structure of the machines and contexts 

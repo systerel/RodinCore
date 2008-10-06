@@ -93,7 +93,7 @@ public class ActionCollection {
 	 * @return an action that copies projects
 	 */
 	public static Action getCopyProjectAction(final ICommonActionExtensionSite site) {
-		Action renameAction = new Action() {
+		Action copyAction = new Action() {
 			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
@@ -135,8 +135,8 @@ public class ActionCollection {
 				}
 			}
 		};	
-		renameAction.setText("Copy");
-		return renameAction;
+		copyAction.setText("Copy");
+		return copyAction;
 	}
 	
 	

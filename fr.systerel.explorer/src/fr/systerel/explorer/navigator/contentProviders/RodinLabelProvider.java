@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.explorer.navigator;
+package fr.systerel.explorer.navigator.contentProviders;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -37,6 +37,7 @@ import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelElementNode;
 import fr.systerel.explorer.model.ModelPOContainer;
+import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.

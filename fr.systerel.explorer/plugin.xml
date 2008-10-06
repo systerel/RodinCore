@@ -10,7 +10,7 @@
       </category>
       <view
             category="fr.systerel.explorer.category"
-            class="fr.systerel.explorer.navigator.RodinNavigator"
+            class="fr.systerel.explorer.RodinNavigator"
             icon="icons/full/clcl16/prj_expl.gif"
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">
@@ -127,7 +127,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.InvariantContentProvider"
             id="fr.systerel.explorer.navigator.content.invariant"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.invariants"
             priority="normal">
          <triggerPoints>
@@ -157,7 +157,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.EventContentProvider"
             id="fr.systerel.explorer.navigator.content.event"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.events"
             priority="lowest">
          <triggerPoints>
@@ -186,7 +186,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.VariableContentProvider"
             id="fr.systerel.explorer.navigator.content.variable"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.variables"
             priority="high">
          <triggerPoints>
@@ -216,7 +216,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.TheoremContentProvider"
             id="fr.systerel.explorer.navigator.content.theorem"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.theorems"
             priority="normal">
          <triggerPoints>
@@ -249,7 +249,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider"
             id="fr.systerel.explorer.navigator.content.axiom"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.axioms"
             priority="normal">
          <triggerPoints>
@@ -279,7 +279,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ConstantsContentProvider"
             id="fr.systerel.explorer.navigator.content.constant"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.constants"
             priority="high">
          <triggerPoints>
@@ -309,7 +309,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.CarrierSetContentProvider"
             id="fr.systerel.explorer.navigator.content.carrierSet"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.carrierSets"
             priority="high">
          <triggerPoints>
@@ -338,7 +338,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.POContentProvider"
             id="fr.systerel.explorer.pofiles"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.poFiles"
             priority="lowest">
          <triggerPoints>
@@ -443,7 +443,7 @@
             activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContentProvider"
             id="fr.systerel.explorer.navigator.content.machine"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.machine"
             priority="higher">
          <triggerPoints>
@@ -468,7 +468,7 @@
             activeByDefault="false"
             contentProvider="fr.systerel.explorer.navigator.contentProviders.ContextContentProvider"
             id="fr.systerel.explorer.navigator.content.context"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.context"
             priority="highest">
          <triggerPoints>
@@ -490,7 +490,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexContextContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.context"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.complex.context"
             priority="highest">
          <triggerPoints>
@@ -518,7 +518,7 @@
       <navigatorContent
             contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.machine"
-            labelProvider="fr.systerel.explorer.navigator.RodinLabelProvider"
+            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.complex.machine"
             priority="higher">
          <triggerPoints>
