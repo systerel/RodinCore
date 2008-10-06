@@ -10,11 +10,18 @@ package org.rodinp.internal.core.index.tests;
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContains;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContainsNot;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.Occurrence;
 
@@ -24,15 +31,11 @@ public class DescriptorTests extends IndexTests {
 		super(name, true);
 	}
 
-	// private void assertElement(IRodinElement expected, IRodinElement actual)
-	// {
-	// assertEquals("unexpected element", expected, actual);
-	// }
-
 	private IRodinProject rodinProject;
 	private IRodinFile file;
 	private Descriptor testDesc;
 	private NamedElement testElt;
+	private IDeclaration declTestElt;
 
 	private static final String testEltName = "testElt";
 
@@ -42,7 +45,8 @@ public class DescriptorTests extends IndexTests {
 		rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "desc.test");
 		testElt = createNamedElement(file, "internalName");
-		testDesc = new Descriptor(testElt, testEltName);
+		declTestElt = new Declaration(testElt, testEltName);
+		testDesc = new Descriptor(declTestElt);
 	}
 
 	@Override
@@ -53,24 +57,34 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testConstructor() throws Exception {
-		assertElement(testDesc, testElt);
-		assertName(testDesc, testEltName);
+		final Descriptor desc = new Descriptor(declTestElt);
+		assertDescriptor(desc, declTestElt);
 		assertNotNull("occurrences should not be null", testDesc
 				.getOccurrences());
 	}
 
-	public void testAddOccurrence() throws Exception {
-		Occurrence occ = createDefaultOccurrence(testElt);
+	public void testAddHasOccurrence() throws Exception {
+		final Occurrence occ = createDefaultOccurrence(testElt);
 
 		testDesc.addOccurrence(occ);
 
-		assertContains(testDesc, occ);
+		assertTrue("occurrence expected: " + occ, testDesc.hasOccurrence(occ));
+	}
+
+	public void testGetOccurrences() throws Exception {
+		final Occurrence occ1 = createDefaultOccurrence(testElt);
+		final Occurrence occ2 = createDefaultOccurrence(file);
+
+		testDesc.addOccurrence(occ1);
+		testDesc.addOccurrence(occ2);
+		
+		IndexTestsUtil.assertContainsAll(testDesc, occ1, occ2);
 	}
 
 	public void testRemoveOccurrences() throws Exception {
-		Occurrence localOcc = createDefaultOccurrence(testElt);
-		IRodinFile importer = createRodinFile(rodinProject, "importerFile.test");
-		Occurrence importOcc = createDefaultOccurrence(importer);
+		final Occurrence localOcc = createDefaultOccurrence(testElt);
+		final IRodinFile importer = createRodinFile(rodinProject, "importerFile.test");
+		final Occurrence importOcc = createDefaultOccurrence(importer);
 
 		testDesc.addOccurrence(localOcc);
 		testDesc.addOccurrence(importOcc);

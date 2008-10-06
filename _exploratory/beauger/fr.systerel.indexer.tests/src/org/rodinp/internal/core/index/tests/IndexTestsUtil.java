@@ -23,10 +23,8 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
@@ -35,6 +33,8 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexTestsUtil {
 
+	// TODO remove unused methods
+	
 	public static final IOccurrenceKind TEST_KIND = RodinIndexer
 			.addOccurrenceKind("fr.systerel.indexer.test", "test");
 
@@ -55,19 +55,6 @@ public class IndexTestsUtil {
 
 	public static Occurrence createDefaultOccurrence(IRodinElement element) {
 		return new Occurrence(TEST_KIND, RodinIndexer.getRodinLocation(element));
-	}
-
-	public static void addOccurrencesTestSet(IInternalElement ie,
-			int numEachKind, IIndexingToolkit index) throws CoreException {
-
-		IOccurrenceKind[] kinds = { TEST_KIND_1, TEST_KIND_2 };
-		for (IOccurrenceKind k : kinds) {
-			for (int i = 0; i < numEachKind; i++) {
-				final IRodinLocation loc = RodinIndexer.getRodinLocation(ie
-						.getRodinFile());
-				index.addOccurrence(ie, k, loc);
-			}
-		}
 	}
 
 	public static NamedElement createNamedElement(IRodinFile file,
@@ -97,10 +84,8 @@ public class IndexTestsUtil {
 	}
 
 	public static void assertDescriptor(Descriptor desc,
-			IInternalElement element, String name, int expectedLength) {
-		assertNotNull(desc);
-		assertElement(desc, element);
-		assertName(desc, name);
+			IDeclaration declaration, int expectedLength) {
+		assertDescriptor(desc, declaration);
 		assertLength(desc, expectedLength);
 	}
 
@@ -116,7 +101,7 @@ public class IndexTestsUtil {
 				+ occ.getLocation().getElement(), desc.hasOccurrence(occ));
 	}
 
-	public static void assertContainsAll(Descriptor desc, IOccurrence[] occs) {
+	public static void assertContainsAll(Descriptor desc, IOccurrence... occs) {
 		assertNotNull(desc);
 		for (IOccurrence occ : occs) {
 			assertContains(desc, occ);
@@ -130,34 +115,22 @@ public class IndexTestsUtil {
 		}
 	}
 
-	public static void assertSameOccurrences(Descriptor desc, IOccurrence[] occs) {
-		assertNotNull(desc);
-		assertLength(desc, occs.length);
-
-		assertContainsAll(desc, occs);
-	}
-
 	public static void assertLength(Descriptor desc, int expectedLength) {
 		assertNotNull(desc);
 		TestCase.assertEquals("bad number of occurrences", expectedLength, desc
 				.getOccurrences().length);
 	}
 
-	public static void assertElement(Descriptor desc, IInternalElement element) {
+	public static void assertDescriptor(Descriptor desc,
+			IDeclaration declaration) {
 		assertNotNull(desc);
-		TestCase.assertEquals("bad element for descriptor " + desc, element,
-				desc.getElement());
-	}
-
-	public static void assertName(Descriptor desc, String name) {
-		assertNotNull(desc);
-		TestCase.assertEquals("bad name for descriptor " + desc, name, desc
-				.getName());
+		TestCase.assertEquals("bad declaration for descriptor " + desc,
+				declaration, desc.getDeclaration());
 	}
 
 	public static void assertLength(IRodinElement[] elements, int length) {
-		TestCase.assertEquals("incorrect number of elements in: "
-				+ Arrays.asList(elements), length, elements.length);
+		TestCase.assertEquals("incorrect number of elements in: " + elements
+				+ "=" + Arrays.asList(elements), length, elements.length);
 	}
 
 	public static void assertIsEmpty(IInternalElement[] elements) {
@@ -198,13 +171,14 @@ public class IndexTestsUtil {
 
 		TestCase.assertEquals("Bad exports.", expected, actual);
 	}
-	
-	public static <T> void assertPredecessors(final List<T> predecessors, T... preds) {
-		TestCase.assertEquals("Bad predecessors length", preds.length, predecessors
-				.size());
+
+	public static <T> void assertPredecessors(final List<T> predecessors,
+			T... preds) {
+		TestCase.assertEquals("Bad predecessors length", preds.length,
+				predecessors.size());
 		for (T pred : preds) {
-			TestCase.assertTrue("Predecessors should contain " + pred, predecessors
-					.contains(pred));
+			TestCase.assertTrue("Predecessors should contain " + pred,
+					predecessors.contains(pred));
 		}
 	}
 

@@ -89,8 +89,9 @@ public class TotalOrderUsageTests extends IndexTests {
 		file2 = createRodinFile(project, "DepTable2.test");
 		file3 = createRodinFile(project, "DepTable3.test");
 		eltF2 = createNamedElement(file2, "eltF2");
-		rodinIndex.makeDescriptor(eltF2, eltF2Name);
+		
 		declEltF2 = new Declaration(eltF2, eltF2Name);
+		rodinIndex.makeDescriptor(declEltF2);
 		f2ExportsElt2.add(file2, declEltF2);
 		f1DepsOnf2.put(file1, makeIRFArray(file2));
 
@@ -224,9 +225,9 @@ public class TotalOrderUsageTests extends IndexTests {
 		manager.clearIndexers();
 		final ExportTable f2ExportsElt2Name2 = new ExportTable();
 		final String eltF2Name2 = "eltF2Name2";
-		rodinIndex.removeDescriptor(eltF2);
-		rodinIndex.makeDescriptor(eltF2, eltF2Name2);
 		final IDeclaration declEltF2Name2 = new Declaration(eltF2, eltF2Name2);
+		rodinIndex.removeDescriptor(eltF2);
+		rodinIndex.makeDescriptor(declEltF2Name2);
 		f2ExportsElt2Name2.add(file2, declEltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
@@ -279,10 +280,10 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final NamedElement elt3 = createNamedElement(file3, "elt3");
 		final String elt3Name = "elt3Name";
-		rodinIndex.makeDescriptor(elt3, elt3Name);
+		final IDeclaration declElt3 = new Declaration(elt3, elt3Name);
+		rodinIndex.makeDescriptor(declElt3);
 
 		final ExportTable f1f2f3expElt3 = new ExportTable();
-		final IDeclaration declElt3 = new Declaration(elt3, elt3Name);
 		f1f2f3expElt3.add(file3, declElt3);
 		f1f2f3expElt3.add(file2, declElt3);
 		f1f2f3expElt3.add(file1, declElt3);

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IRodinLocation;
@@ -48,23 +49,25 @@ public class FakeNameIndexer implements IIndexer {
 		indexedElements = new HashMap<String, Set<IInternalElement>>();
 	}
 
-	public void index(IRodinFile rodinFile, IIndexingToolkit index) {
+	public void index(IIndexingToolkit index) {
 		indexedElements.clear();
+		
+		IRodinFile rodinFile = index.getRodinFile(); 
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
-				final NamedElement decl = createNamedElement(
+				final NamedElement elt = createNamedElement(
 						rodinFile, name);
-				index.declare(decl, name);
+				final IDeclaration declaration = index.declare(elt, name);
 				final HashSet<IInternalElement> set = new HashSet<IInternalElement>();
 				indexedElements.put(name, set);
-				set.add(decl);
+				set.add(elt);
 				for (int i = 0; i < numberEach; i++) {
 					final NamedElement element = IndexTestsUtil
 							.createNamedElement(rodinFile, name + "_DB" + i);
 					final IRodinLocation loc = RodinIndexer
 							.getRodinLocation(element);
-					index.addOccurrence(decl, TEST_KIND, loc);
+					index.addOccurrence(declaration, TEST_KIND, loc);
 					if (DEBUG) {
 						System.out.println(name + ": "
 								+ element.getElementName());

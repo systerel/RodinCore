@@ -18,7 +18,9 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.defaultName;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
@@ -30,22 +32,26 @@ public class RodinIndexTests extends IndexTests {
 
 	private static IRodinProject project;
 	private static IRodinFile file;
-	private static NamedElement element;
-	private static NamedElement element2;
+	private static NamedElement elt1;
+	private static NamedElement elt2;
 
 	private static final RodinIndex index = new RodinIndex();
-	private static final String name = "eltName";
+	private static final String name1 = "eltName1";
 	private static final String name2 = "eltName2";
+	private static IDeclaration declElt1;
+	private static IDeclaration declElt2;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "rodinIndex.test");
-		element = createNamedElement(file,
+		elt1 = createNamedElement(file,
 				defaultName);
-		element2 = IndexTestsUtil.createNamedElement(file,
+		elt2 = IndexTestsUtil.createNamedElement(file,
 				defaultName + "2");
+		declElt1 = new Declaration(elt1, name1);
+		declElt2 = new Declaration(elt2, name2);
 	}
 
 	@Override
@@ -56,25 +62,25 @@ public class RodinIndexTests extends IndexTests {
 	}
 
 	public void testMakeDescriptor() throws Exception {
-		final Descriptor descriptor = index.makeDescriptor(element, name);
+		final Descriptor descriptor = index.makeDescriptor(declElt1);
 
-		assertDescriptor(descriptor, element, name, 0);
+		assertDescriptor(descriptor, declElt1, 0);
 	}
 
 	public void testGetDescriptor() throws Exception {
-		final Descriptor descriptorMake = index.makeDescriptor(element, name);
+		final Descriptor descriptorMake = index.makeDescriptor(declElt1);
 
-		final Descriptor descriptorGet = index.getDescriptor(element);
+		final Descriptor descriptorGet = index.getDescriptor(elt1);
 
 		assertEquals("descriptors returned by make and get are different",
 				descriptorMake, descriptorGet);
 	}
 
 	public void testMakeDoubleDescriptor() throws Exception {
-		index.makeDescriptor(element, name);
+		index.makeDescriptor(declElt1);
 
 		try {
-			index.makeDescriptor(element, name);
+			index.makeDescriptor(declElt1);
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -82,10 +88,10 @@ public class RodinIndexTests extends IndexTests {
 	}
 
 	public void testMakeDoubleDescriptorDiffName() throws Exception {
-		index.makeDescriptor(element, name);
+		index.makeDescriptor(declElt1);
 
 		try {
-			index.makeDescriptor(element, name2);
+			index.makeDescriptor(new Declaration(elt1, name2));
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -93,15 +99,15 @@ public class RodinIndexTests extends IndexTests {
 	}
 
 	public void testRemoveDescriptor() throws Exception {
-		index.makeDescriptor(element, name);
-		index.removeDescriptor(element);
+		index.makeDescriptor(declElt1);
+		index.removeDescriptor(elt1);
 
-		assertNoSuchDescriptor(index, element);
+		assertNoSuchDescriptor(index, elt1);
 	}
 
 	public void testGetDescriptors() throws Exception {
-		index.makeDescriptor(element, name);
-		index.makeDescriptor(element2, name2);
+		index.makeDescriptor(declElt1);
+		index.makeDescriptor(declElt2);
 
 		final Descriptor[] descriptors = index.getDescriptors();
 
@@ -110,23 +116,23 @@ public class RodinIndexTests extends IndexTests {
 		Descriptor desc = descriptors[0];
 		Descriptor desc2 = descriptors[1];
 
-		if (desc.getElement() == element) {
-			assertDescriptor(desc, element, name, 0);
-			assertDescriptor(desc2, element2, name2, 0);
+		if (desc.getDeclaration().getElement() == elt1) {
+			assertDescriptor(desc, declElt1, 0);
+			assertDescriptor(desc2, declElt2, 0);
 		} else {
-			assertDescriptor(desc, element2, name2, 0);
-			assertDescriptor(desc2, element, name, 0);
+			assertDescriptor(desc, declElt2, 0);
+			assertDescriptor(desc2, declElt1, 0);
 		}
 	}
 
 	public void testClear() throws Exception {
-		index.makeDescriptor(element, name);
-		index.makeDescriptor(element2, name2);
+		index.makeDescriptor(declElt1);
+		index.makeDescriptor(declElt2);
 
 		index.clear();
 
-		assertNoSuchDescriptor(index, element);
-		assertNoSuchDescriptor(index, element2);
+		assertNoSuchDescriptor(index, elt1);
+		assertNoSuchDescriptor(index, elt2);
 	}
 
 }

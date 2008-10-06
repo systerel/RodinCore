@@ -58,8 +58,10 @@ public class ExportTableUsageTests extends IndexTests {
 		declElt2Name2 = new Declaration(elt2, name2);
 		exportTable.add(file, declElt1Name1);
 		exportTable.add(file, declElt2Name2);
-		rodinIndex.makeDescriptor(elt1, name1);
-		rodinIndex.makeDescriptor(elt2, name2);
+		final IDeclaration declElt1 = new Declaration(elt1, name1);
+		final IDeclaration declElt2 = new Declaration(elt2, name2);
+		rodinIndex.makeDescriptor(declElt1);
+		rodinIndex.makeDescriptor(declElt2);
 
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());
@@ -136,7 +138,7 @@ public class ExportTableUsageTests extends IndexTests {
 		final String eltAddName = "eltAddName";
 		final IDeclaration declEltAdd = new Declaration(eltAdd, eltAddName);
 		exportTable.add(file, declEltAdd);
-		rodinIndex.makeDescriptor(eltAdd, eltAddName);
+		rodinIndex.makeDescriptor(declEltAdd);
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getElementType());

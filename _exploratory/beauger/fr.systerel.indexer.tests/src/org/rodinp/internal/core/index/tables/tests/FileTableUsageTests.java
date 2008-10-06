@@ -17,9 +17,11 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFil
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
@@ -55,8 +57,10 @@ public class FileTableUsageTests extends IndexTests {
 		elt2 = createNamedElement(file, "elt2");
 		fileElements = new NamedElement[] { elt1, elt2 };
 		rodinIndex = new RodinIndex();
-		rodinIndex.makeDescriptor(elt1, elt1Name);
-		rodinIndex.makeDescriptor(elt2, elt2Name);
+		final IDeclaration declElt1 = new Declaration(elt1, elt1Name);
+		final IDeclaration declElt2 = new Declaration(elt2, elt2Name);
+		rodinIndex.makeDescriptor(declElt1);
+		rodinIndex.makeDescriptor(declElt2);
 
 		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, file.getElementType());

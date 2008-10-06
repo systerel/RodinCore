@@ -30,10 +30,11 @@ public class FakeExportIndexer extends FakeIndexer {
 	}
 
 	@Override
-	public void index(IRodinFile file, IIndexingToolkit index) {
-		super.index(file, index);
+	public void index(IIndexingToolkit index) {
+		super.index(index);
+		final IRodinFile file = index.getRodinFile();
 		for (IDeclaration declaration : exportTable.get(file)) {
-			index.export(declaration.getElement());
+			index.export(declaration);
 		}
 	}
 
