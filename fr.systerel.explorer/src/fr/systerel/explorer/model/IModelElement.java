@@ -20,9 +20,9 @@ package fr.systerel.explorer.model;
  * I.e. how the machines refine each other, what contexts they see and how the contexts
  * extend each other.
  * The Model is built by the ModelController.
- * The modelling of the machines and contexts is triggered by the context providers
+ * The modeling of the machines and contexts is triggered by the context providers
  * that provide the machines and context.
- * The modelling of the proof obligations is triggered by the content provider for the POs
+ * The modeling of the proof obligations is triggered by the content provider for the POs
  * (POContentProvider)
  */
 public interface IModelElement {
@@ -31,5 +31,5 @@ public interface IModelElement {
 	 * 
 	 * @return The Parent of this element from the model perspective
 	 */
-	public IModelElement getParent();
+	public IModelElement getModelParent();
 }

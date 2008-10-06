@@ -78,11 +78,12 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public ModelContext(IContextFile file){
 		internalContext = file;
-		nodes = new ModelElementNode[4];
+		nodes = new ModelElementNode[5];
 		nodes[0] = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
 		nodes[1] = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
 		nodes[2] = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
 		nodes[3] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		nodes[4] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	public void addAncestor(ModelContext context){
@@ -347,7 +348,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @return The Project that contains this Context.
 	 */
 	@Override
-	public IModelElement getParent() {
+	public IModelElement getModelParent() {
 		return ModelController.getProject(internalContext.getRodinProject());
 	}
 	

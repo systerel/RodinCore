@@ -12,9 +12,7 @@
 
 package fr.systerel.explorer.navigator.actionProviders;
 
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 
 /**

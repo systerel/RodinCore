@@ -21,7 +21,7 @@ import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelElementNode;
+import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for CarrierSet elements
@@ -32,15 +32,16 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
+			//get the intermediary node for carrier sets
 			results[0] = ModelController.getContext((IContextFile) element).nodes[0];
 			return results;
 		}
-		if (element instanceof ModelElementNode){
-			IInternalElementType<?> type = ((ModelElementNode) element).getType();
+		if (element instanceof IElementNode){
+			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(ICarrierSet.ELEMENT_TYPE)) {
-				ModelContext context = (ModelContext) ((ModelElementNode) element).getParent();
+				IContextFile context = (IContextFile) ((IElementNode) element).getParent();
 				try {
-					return context.getInternalContext().getCarrierSets();
+					return context.getCarrierSets();
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -58,8 +59,8 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
     			return context.nodes[0];
      		}
 		}
-    	if (element instanceof ModelElementNode) {
-    		return ((ModelElementNode) element).getParent();
+    	if (element instanceof IElementNode) {
+    		return ((IElementNode) element).getParent();
     	}
       return null;
 	}

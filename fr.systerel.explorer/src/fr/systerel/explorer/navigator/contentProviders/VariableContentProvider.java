@@ -20,8 +20,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelElementNode;
 import fr.systerel.explorer.model.ModelMachine;
+import fr.systerel.explorer.navigator.IElementNode;
 
 
 /**
@@ -33,15 +33,16 @@ public class VariableContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
+			//get the intermediary node for variables
 			results[0] = ModelController.getMachine((IMachineFile) element).nodes[0];
 			return results;
 		}
-		if (element instanceof ModelElementNode){
-			IInternalElementType<?> type = ((ModelElementNode) element).getType();
+		if (element instanceof IElementNode){
+			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(IVariable.ELEMENT_TYPE)) {
-				ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
+				IMachineFile machine = (IMachineFile) ((IElementNode) element).getParent();
 				try {
-					return machine.getInternalMachine().getVariables();
+					return machine.getVariables();
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -59,8 +60,8 @@ public class VariableContentProvider implements ITreeContentProvider {
     			return machine.nodes[0];
      		}
 		}
-    	if (element instanceof ModelElementNode) {
-    		return ((ModelElementNode) element).getParent();
+    	if (element instanceof IElementNode) {
+    		return ((IElementNode) element).getParent();
     	}
       return null;
 	}

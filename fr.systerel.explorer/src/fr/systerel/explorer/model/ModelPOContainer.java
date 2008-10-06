@@ -61,7 +61,7 @@ public class ModelPOContainer implements IModelElement{
 		return statuses.toArray(results);
 	}
 
-	public IModelElement getParent() {
+	public IModelElement getModelParent() {
 		return parent;
 	}
 	

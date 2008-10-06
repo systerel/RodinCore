@@ -136,7 +136,7 @@
                      value="org.eventb.core.IMachineFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -146,7 +146,7 @@
                      value="org.eventb.core.IInvariant">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -166,7 +166,7 @@
                      value="org.eventb.core.IMachineFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -176,7 +176,7 @@
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof></or>
          </possibleChildren>
          <commonSorter
@@ -195,7 +195,7 @@
                      value="org.eventb.core.IMachineFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -205,7 +205,7 @@
                      value="org.eventb.core.IVariable">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -228,7 +228,7 @@
                      value="org.eventb.core.IContextFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -238,7 +238,7 @@
                      value="org.eventb.core.ITheorem">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -258,7 +258,7 @@
                      value="org.eventb.core.IContextFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -268,7 +268,7 @@
                      value="org.eventb.core.IAxiom">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -288,7 +288,7 @@
                      value="org.eventb.core.IContextFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -298,7 +298,7 @@
                      value="org.eventb.core.IConstant">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -318,7 +318,7 @@
                      value="org.eventb.core.IContextFile">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof></or>
          </triggerPoints>
          <possibleChildren>
@@ -327,7 +327,7 @@
                      value="org.eventb.core.ICarrierSet">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelElementNode">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
@@ -356,10 +356,7 @@
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.model.ModelMachine">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.model.ModelContext">
+                     value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
                <instanceof
                      value="org.eventb.core.IMachineFile">
@@ -374,10 +371,7 @@
                   value="org.eventb.core.IPSStatus">
             </instanceof>
             <instanceof
-                  value="fr.systerel.explorer.model.ModelContext">
-            </instanceof>
-            <instanceof
-                  value="fr.systerel.explorer.model.ModelMachine">
+                  value="fr.systerel.explorer.navigator.IElementNode">
             </instanceof>
          </possibleChildren>
          <commonSorter

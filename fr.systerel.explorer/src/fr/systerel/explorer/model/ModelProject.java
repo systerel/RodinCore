@@ -432,7 +432,7 @@ public class ModelProject implements IModelElement {
 	}
 	
 	
-	public IModelElement getParent() {
+	public IModelElement getModelParent() {
 		//The Project doesn't have a ModelElement parent
 		return null;
 	}

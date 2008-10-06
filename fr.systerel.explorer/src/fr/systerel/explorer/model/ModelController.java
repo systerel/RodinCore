@@ -350,26 +350,26 @@ public class ModelController implements IElementChangedListener {
 				}
 			}
 			if (element instanceof IInvariant) {
-				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getParent();
+				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getModelParent();
 				mach.addInvariant((IInvariant) element);
 			}
 			if (element instanceof IEvent) {
-				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getParent();
+				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getModelParent();
 				mach.addEvent((IEvent) element);
 			}
 			if (element instanceof ITheorem) {
 				ModelTheorem thm = getTheorem((ITheorem) element);
-				if (thm.getParent() instanceof ModelMachine) {
-					ModelMachine mach = (ModelMachine) thm.getParent();
+				if (thm.getModelParent() instanceof ModelMachine) {
+					ModelMachine mach = (ModelMachine) thm.getModelParent();
 					mach.addTheorem((ITheorem) element);
 				}
-				if (thm.getParent() instanceof ModelContext) {
-					ModelContext ctx = (ModelContext) thm.getParent();
+				if (thm.getModelParent() instanceof ModelContext) {
+					ModelContext ctx = (ModelContext) thm.getModelParent();
 					ctx.addTheorem((ITheorem) element);
 				}
 			}
 			if (element instanceof IAxiom) {
-				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getParent();
+				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getModelParent();
 				ctx.addAxiom((IAxiom) element);
 			}
 		}

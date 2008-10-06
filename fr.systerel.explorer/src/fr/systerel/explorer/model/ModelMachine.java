@@ -76,13 +76,14 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		nodes[1] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
 		nodes[2] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
 		nodes[3] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
+		nodes[4] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	/**
 	 * @return The Project that contains this Machine.
 	 */
 	@Override
-	public IModelElement getParent() {
+	public IModelElement getModelParent() {
 		return ModelController.getProject(internalMachine.getRodinProject());
 	}
 	

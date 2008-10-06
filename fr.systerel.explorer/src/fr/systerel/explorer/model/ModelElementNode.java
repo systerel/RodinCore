@@ -16,35 +16,45 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBFile;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElementType;
+
+import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * This is a helper class to show a parent node for all invariants,
  * theorems, events etc. in the navigator tree.
  *
  */
-public class ModelElementNode implements IModelElement{
+public class ModelElementNode implements IModelElement, IElementNode{
 	public ModelElementNode(IInternalElementType<?> type, IModelElement parent) {
 		this.type = type;
 		this.parent = parent;
+		if (parent instanceof ModelMachine) {
+			this.parentFile = ((ModelMachine) parent).getInternalMachine();
+		}
+		if (parent instanceof ModelContext) {
+			this.parentFile = ((ModelContext) parent).getInternalContext();
+		}
 	}
 	
 	private IInternalElementType<?> type;
 	private IModelElement parent;
-	
+	private IEventBFile parentFile;	
 
-	public IModelElement getParent() {
+	public IModelElement getModelParent() {
 		return parent;
 	}
 
-	public IInternalElementType<?> getType() {
+	public IInternalElementType<?> getChildrenType() {
 		return type;
 	}
 
-	public String getName() {
+	public String getLabel() {
 		if (type.equals(IInvariant.ELEMENT_TYPE)) {
 			return INVARIANT_TYPE;
 		}
@@ -66,18 +76,27 @@ public class ModelElementNode implements IModelElement{
 		if (type.equals(IConstant.ELEMENT_TYPE)) {
 			return CONSTANT_TYPE;
 		}
-		
+		if (type.equals(IPSStatus.ELEMENT_TYPE)) {
+			return PO_TYPE;
+		}
+
 		return null;
 	}
 	
 	
-	public static String INVARIANT_TYPE = "Invariants";
-	public static String AXIOM_TYPE = "Axioms";
-	public static String EVENT_TYPE = "Events";
-	public static String CONSTANT_TYPE = "Constants";
-	public static String THEOREM_TYPE = "Theorems";
-	public static String CARRIER_TYPE = "Carrier Sets";
-	public static String VARIABLE_TYPE = "Variables";
+	private static String INVARIANT_TYPE = "Invariants";
+	private static String AXIOM_TYPE = "Axioms";
+	private static String EVENT_TYPE = "Events";
+	private static String CONSTANT_TYPE = "Constants";
+	private static String THEOREM_TYPE = "Theorems";
+	private static String CARRIER_TYPE = "Carrier Sets";
+	private static String VARIABLE_TYPE = "Variables";
+	private static String PO_TYPE = "Proof Obligations";
+
+
+	public IEventBFile getParent() {
+		return parentFile;
+	}
 	
 
 }

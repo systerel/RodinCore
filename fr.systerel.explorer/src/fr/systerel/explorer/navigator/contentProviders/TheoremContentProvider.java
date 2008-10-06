@@ -22,8 +22,8 @@ import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelElementNode;
 import fr.systerel.explorer.model.ModelMachine;
+import fr.systerel.explorer.navigator.IElementNode;
 
 
 /**
@@ -35,25 +35,28 @@ public class TheoremContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
+			//get the intermediary node for theorems
 			results[0] = ModelController.getMachine((IMachineFile) element).nodes[2];
 			return results;
 		}
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
+			//get the intermediary node for theorems
 			results[0] = ModelController.getContext((IContextFile) element).nodes[3];
 			return results;
 		}
-		if (element instanceof ModelElementNode){
-			IInternalElementType<?> type = ((ModelElementNode) element).getType();
+		if (element instanceof IElementNode){
+			IElementNode node = (IElementNode) element;
+			IInternalElementType<?> type = node.getChildrenType();
 			if (type.equals(ITheorem.ELEMENT_TYPE)) {
 				try {
-					if (((ModelElementNode) element).getParent() instanceof ModelMachine) {
-						ModelMachine machine = (ModelMachine) ((ModelElementNode) element).getParent();
-						return machine.getInternalMachine().getTheorems();
+					if (node.getParent() instanceof IMachineFile) {
+						IMachineFile machine = (IMachineFile) node.getParent();
+						return machine.getTheorems();
 					}
-					if (((ModelElementNode) element).getParent() instanceof ModelContext) {
-						ModelContext machine = (ModelContext) ((ModelElementNode) element).getParent();
-						return machine.getInternalContext().getTheorems();
+					if (node.getParent() instanceof IContextFile) {
+						IContextFile context = (IContextFile) node.getParent();
+						return context.getTheorems();
 					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -81,8 +84,8 @@ public class TheoremContentProvider implements ITreeContentProvider {
          		}
     		}
 		}
-    	if (element instanceof ModelElementNode) {
-    		return ((ModelElementNode) element).getParent();
+    	if (element instanceof IElementNode) {
+    		return ((IElementNode) element).getParent();
     	}
       return null;
 	}

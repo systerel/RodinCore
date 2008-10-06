@@ -14,10 +14,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.rodinp.core.RodinCore;
 
 /**
  * 
- * Filters out all projects that are not rodin projects
+ * Filters out all projects that are not rodin projects. 
+ * Also filters out all closed projects (including closed rodin projects).
  *
  */
 public class HideNoneRodinFilter extends ViewerFilter {
@@ -32,7 +34,7 @@ public class HideNoneRodinFilter extends ViewerFilter {
 			IProject project = (IProject) element;
 		try {
 			if (project.isAccessible()) {
-				if(project.hasNature("org.rodinp.core.rodinnature")) {
+				if(project.hasNature(RodinCore.NATURE_ID)) {
 					return true;
 				} else return false;
 			} else return false;

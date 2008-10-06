@@ -24,8 +24,8 @@ import fr.systerel.explorer.model.ModelAxiom;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelEvent;
 import fr.systerel.explorer.model.ModelInvariant;
-import fr.systerel.explorer.model.ModelPOContainer;
 import fr.systerel.explorer.model.ModelTheorem;
+import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * 
@@ -64,7 +64,7 @@ public class POContentProvider implements ITreeContentProvider {
 	    if (element instanceof IMachineFile) {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getMachine((IMachineFile)element) != null) {
-		    	result[0] =(ModelController.getMachine((IMachineFile)element));
+		    	result[0] =(ModelController.getMachine((IMachineFile)element).nodes[4]);
 		    	//build the model
 		    	(ModelController.getMachine((IMachineFile)element)).processPOFile();
 		    	(ModelController.getMachine((IMachineFile)element)).processPSFile();
@@ -75,7 +75,7 @@ public class POContentProvider implements ITreeContentProvider {
 	    if (element instanceof IContextFile) {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getContext((IContextFile)element) != null) {
-		    	result[0] =(ModelController.getContext((IContextFile)element));
+		    	result[0] =(ModelController.getContext((IContextFile)element).nodes[4]);
 		    	//build the model
 		    	(ModelController.getContext((IContextFile)element)).processPOFile();
 		    	(ModelController.getContext((IContextFile)element)).processPSFile();
@@ -83,8 +83,17 @@ public class POContentProvider implements ITreeContentProvider {
 	    	}
 	    } 
 	    
-	    if (element instanceof ModelPOContainer) {
-			return ((ModelPOContainer)element).getIPSStatuses();
+	    if (element instanceof IElementNode) {
+	    	IElementNode node = (IElementNode) element;
+	    	if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
+		    	if (node.getParent() instanceof IMachineFile) {
+		    		return ModelController.getMachine((IMachineFile)node.getParent()).getIPSStatuses();
+		    	}
+		    	if (node.getParent() instanceof IContextFile) {
+		    		return ModelController.getContext((IContextFile)node.getParent()).getIPSStatuses();
+
+		    	}
+	    	}
 	    } 
         return new Object[0];
 	}

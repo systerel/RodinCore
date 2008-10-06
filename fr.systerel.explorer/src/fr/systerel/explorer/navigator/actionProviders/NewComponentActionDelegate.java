@@ -23,7 +23,6 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
 /**

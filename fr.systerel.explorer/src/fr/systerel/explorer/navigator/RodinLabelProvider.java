@@ -31,7 +31,6 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -65,55 +64,39 @@ public class RodinLabelProvider implements
 		if (element instanceof IRodinElement) {
 			return EventBImage.getRodinImage((IRodinElement) element);
 			
-		} else if (element instanceof TreeNode ) {
-			TreeNode<?> node = (TreeNode<?>) element;
+		} else if (element instanceof IElementNode) {
+			IElementNode node = (IElementNode) element;
 			
-			if (node.getType().equals(IInvariant.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(IInvariant.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
 			}
-			if (node.getType().equals(ITheorem.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(ITheorem.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_THEOREM);
 			}
-			if (node.getType().equals(IEvent.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(IEvent.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);
 			}
-			if (node.getType().equals(IVariable.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(IVariable.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_VARIABLE);
 			}
-			if (node.getType().equals(IAxiom.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(IAxiom.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_AXIOM);
 			}
-			if (node.getType().equals(ICarrierSet.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(ICarrierSet.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_CARRIER_SET);
 			}
-			if (node.getType().equals(IConstant.ELEMENT_TYPE)) {
+			if (node.getChildrenType().equals(IConstant.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
 			}
-			
-			return null;
-		} else if (element instanceof ModelElementNode) {
-			ModelElementNode node = (ModelElementNode) element;
-			
-			if (node.getType().equals(IInvariant.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
-			}
-			if (node.getType().equals(ITheorem.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_THEOREM);
-			}
-			if (node.getType().equals(IEvent.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);
-			}
-			if (node.getType().equals(IVariable.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_VARIABLE);
-			}
-			if (node.getType().equals(IAxiom.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_AXIOM);
-			}
-			if (node.getType().equals(ICarrierSet.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_CARRIER_SET);
-			}
-			if (node.getType().equals(IConstant.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
+			if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
+				ModelPOContainer parent = (ModelPOContainer) ((ModelElementNode) node).getModelParent();
+				boolean discharged = !parent.hasUndischargedPOs();
+				
+				if (discharged) {
+					return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
+				} else{
+					return EventBImage.getImage(IEventBSharedImages.IMG_PENDING);
+				}
 			}
 		
 		} else if (element instanceof ModelPOContainer) {
@@ -145,9 +128,6 @@ public class RodinLabelProvider implements
 		} else if (obj instanceof IEventBFile) {
 			return ((IEventBFile) obj).getBareName();
 		
-		} else if (obj instanceof TreeNode) {
-				return ((TreeNode<?>) obj).toString();
-		
 		} else if (obj instanceof ILabeledElement) {
 			try {
 				return ((ILabeledElement) obj).getLabel();
@@ -169,8 +149,8 @@ public class RodinLabelProvider implements
 		} else if (obj instanceof ModelPOContainer) {
 			return ModelPOContainer.DISPLAY_NAME;
 			
-		} else if (obj instanceof ModelElementNode) {
-			return ((ModelElementNode) obj).getName();
+		} else if (obj instanceof IElementNode) {
+			return ((IElementNode) obj).getLabel();
 		
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();
