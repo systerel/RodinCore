@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.indexer;
 
 import org.eclipse.core.runtime.Plugin;
@@ -27,7 +37,6 @@ public class EventBIndexer extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		System.out.println("Starting EventBIndexer");
 		RodinIndexer.register(new ContextIndexer(), IContextFile.ELEMENT_TYPE);
 	}
 
