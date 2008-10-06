@@ -13,18 +13,14 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 
-/**
- * @author Nicolas Beauger
- *
- */
 public class Declaration implements IDeclaration {
 
 	private final IInternalElement element;
 	private final String name;
-	
-	
-	
+
 	public Declaration(IInternalElement element, String name) {
+		
+		// TODO If it's internal API, this is not needed.
 		if (element == null) {
 			throw new NullPointerException("null element");
 		}
@@ -65,7 +61,5 @@ public class Declaration implements IDeclaration {
 			return false;
 		return true;
 	}
-
-
 
 }
