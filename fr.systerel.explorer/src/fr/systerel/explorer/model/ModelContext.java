@@ -161,27 +161,29 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public void processPOFile() {
 		try {
 			IPOFile file = internalContext.getPOFile();
-			IPOSequent[] sequents = file.getSequents();
-			for (IPOSequent sequent : sequents) {
-				ModelProofObligation po = new ModelProofObligation(sequent);
-				po.setContext(this);
-				proofObligations.put(sequent.getElementName(), po);
-	
-				IPOSource[] sources = sequent.getSources();
-				for (int j = 0; j < sources.length; j++) {
-					IRodinElement source = sources[j].getSource();
-					if (source instanceof ITheorem) {
-						if (theorems.containsKey(((ITheorem) source).getElementName())) {
-							ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
-							po.addTheorem(thm);
-							thm.addProofObligation(po);
+			if (file.exists()) {
+				IPOSequent[] sequents = file.getSequents();
+				for (IPOSequent sequent : sequents) {
+					ModelProofObligation po = new ModelProofObligation(sequent);
+					po.setContext(this);
+					proofObligations.put(sequent.getElementName(), po);
+		
+					IPOSource[] sources = sequent.getSources();
+					for (int j = 0; j < sources.length; j++) {
+						IRodinElement source = sources[j].getSource();
+						if (source instanceof ITheorem) {
+							if (theorems.containsKey(((ITheorem) source).getElementName())) {
+								ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
+								po.addTheorem(thm);
+								thm.addProofObligation(po);
+							}
 						}
-					}
-					if (source instanceof IAxiom) {
-						if (axioms.containsKey(((IAxiom) source).getElementName())) {
-							ModelAxiom axm = axioms.get(((IAxiom) source).getElementName());
-							po.addAxiom(axm);
-							axm.addProofObligation(po);
+						if (source instanceof IAxiom) {
+							if (axioms.containsKey(((IAxiom) source).getElementName())) {
+								ModelAxiom axm = axioms.get(((IAxiom) source).getElementName());
+								po.addAxiom(axm);
+								axm.addProofObligation(po);
+							}
 						}
 					}
 				}
@@ -200,12 +202,14 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public void processPSFile(){
 		try {
 			IPSFile file = internalContext.getPSFile();
-			IPSStatus[] stats = file.getStatuses();
-			for (IPSStatus status : stats) {
-				IPOSequent sequent = status.getPOSequent();
-				// check if there is a ProofObligation for this status (there should be one!)
-				if (proofObligations.containsKey(sequent.getElementName())) {
-					proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+			if (file.exists()) {
+				IPSStatus[] stats = file.getStatuses();
+				for (IPSStatus status : stats) {
+					IPOSequent sequent = status.getPOSequent();
+					// check if there is a ProofObligation for this status (there should be one!)
+					if (proofObligations.containsKey(sequent.getElementName())) {
+						proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+					}
 				}
 			}
 		} catch (RodinDBException e) {
