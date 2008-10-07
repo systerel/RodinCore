@@ -9,17 +9,17 @@ package org.eventb.core.ast;
 
 import org.eventb.internal.core.ast.Position;
 
-/*package*/ class SingleRewriter {
+/*package*/class SingleRewriter {
 
 	final IPosition position;
 	final int[] indexes;
 	int depth;
 	final Formula<?> subFormula;
 	final FormulaFactory factory;
-	
+
 	public SingleRewriter(IPosition position, Formula<?> subFormula,
 			FormulaFactory factory) {
-		
+
 		this.position = position;
 		this.indexes = ((Position) position).indexes;
 		this.depth = 0;
@@ -34,7 +34,7 @@ import org.eventb.internal.core.ast.Position;
 		throw new IllegalArgumentException(
 				"New sub-formula should be a bound identifier declaration");
 	}
-	
+
 	Expression getExpression() {
 		if (subFormula instanceof Expression) {
 			return (Expression) subFormula;
@@ -42,7 +42,7 @@ import org.eventb.internal.core.ast.Position;
 		throw new IllegalArgumentException(
 				"New sub-formula should be an expression");
 	}
-	
+
 	Predicate getPredicate() {
 		if (subFormula instanceof Predicate) {
 			return (Predicate) subFormula;
@@ -50,8 +50,7 @@ import org.eventb.internal.core.ast.Position;
 		throw new IllegalArgumentException(
 				"New sub-formula should be a predicate");
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public <T extends Formula<T>> T rewrite(Formula<T> formula) {
 		if (depth == indexes.length) {
 			return formula.getCheckedReplacement(this);
@@ -59,6 +58,5 @@ import org.eventb.internal.core.ast.Position;
 		int index = indexes[depth++];
 		return formula.rewriteChild(index, this);
 	}
-	
-	
+
 }
