@@ -36,7 +36,9 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IParameter;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ITheorem;
+import org.eventb.core.IWitness;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
@@ -66,8 +68,6 @@ public class ProofInformationPage extends Page implements
 
 	ScrolledForm scrolledForm;
 
-//	private ProverUI editor;
-
 	private IEventBFormText formText;
 
 	IUserSupport userSupport;
@@ -94,7 +94,7 @@ public class ProofInformationPage extends Page implements
 	 */
 	@Override
 	public void dispose() {
-		// Deregister with the user support.
+		// Deregister with the user support manager.
 		USM.removeChangeListener(this);
 		formText.dispose();
 		super.dispose();
@@ -137,6 +137,7 @@ public class ProofInformationPage extends Page implements
 	 *            the current prSequent
 	 */
 	// TODO share code with ASTConverter
+	// Should there be a pretty-print form for every RodinElement?
 	void setFormText(IPSStatus prSequent, IProgressMonitor monitor) {
 		try {
 			StringBuilder formBuilder = new StringBuilder("<form>");
@@ -149,7 +150,6 @@ public class ProofInformationPage extends Page implements
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
 				}
-//				final IEventBFile file = (IEventBFile) element.getParent();
 				if (element instanceof ITheorem) {
 					final ITheorem thm = (ITheorem) element;
 					formBuilder.append("<li style=\"bullet\">Theorem in ");
@@ -192,10 +192,27 @@ public class ProofInformationPage extends Page implements
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, evt.getLabel()));
 					formBuilder.append(":</li>");
+					IRefinesEvent[] refinesClauses = evt.getRefinesClauses();
 					IParameter[] params = evt.getParameters();
 					IGuard[] guards = evt.getGuards();
+					IWitness[] witnesses = evt.getWitnesses();
 					IAction[] actions = evt.getActions();
-
+					
+					if (refinesClauses.length != 0) {
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder.append("<b>REFINES</b></li>");
+						for (IRefinesEvent refinesClause : refinesClauses) {
+							formBuilder
+									.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+							formBuilder
+									.append(UIUtils.makeHyperlink(refinesClause
+											.getHandleIdentifier(),
+									refinesClause.getAbstractEventLabel()));
+							formBuilder.append("</li>");
+						}
+					}
+					
 					if (params.length != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
@@ -230,6 +247,22 @@ public class ProofInformationPage extends Page implements
 						formBuilder.append("</li>");
 					}
 
+					if (witnesses.length != 0) {
+						formBuilder
+								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+						formBuilder.append("<b>WITH</b></li>");
+						for (IWitness witness : witnesses) {
+							formBuilder
+									.append("<li style=\"text\" value=\"\" bindent=\"40\">");
+							formBuilder.append(UIUtils.makeHyperlink(witness
+									.getHandleIdentifier(), witness.getLabel()));
+							formBuilder.append(": ");
+							formBuilder.append(UIUtils.XMLWrapUp(witness
+									.getPredicateString()));
+							formBuilder.append("</li>");
+						}
+					}
+					
 					if (guards.length != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent=\"20\">");
@@ -249,6 +282,11 @@ public class ProofInformationPage extends Page implements
 					formBuilder
 							.append("<li style=\"text\" value=\"\" bindent=\"20\">");
 					formBuilder.append("<b>END</b></li>");
+				}
+				else {
+					if (ProofInformationUtils.DEBUG) {
+						ProofInformationUtils.debug("Unknow element " + element);
+					}
 				}
 			}
 			formBuilder.append("</form>");
@@ -399,6 +437,9 @@ public class ProofInformationPage extends Page implements
 
 	}
 
+	/**
+	 * Utility method to clear the form text, i.e. set the form text to blank.
+	 */
 	protected void clearFormText() {
 		scrolledForm.setText("");
 		formText.getFormText().setText("<form></form>", true, false);
