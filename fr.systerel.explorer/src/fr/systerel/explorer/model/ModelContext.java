@@ -27,6 +27,7 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.eventb.core.IWitness;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -171,6 +172,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					IPOSource[] sources = sequent.getSources();
 					for (int j = 0; j < sources.length; j++) {
 						IRodinElement source = sources[j].getSource();
+						if (source instanceof IWitness ) {
+							source = source.getParent();
+						}
 						if (source instanceof ITheorem) {
 							if (theorems.containsKey(((ITheorem) source).getElementName())) {
 								ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());

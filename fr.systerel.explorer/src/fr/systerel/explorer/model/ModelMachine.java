@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IPOFile;
@@ -25,6 +26,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.IWitness;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -182,6 +184,12 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 					IPOSource[] sources = sequent.getSources();
 					for (int j = 0; j < sources.length; j++) {
 						IRodinElement source = sources[j].getSource();
+						if (source instanceof IGuard ) {
+							source = source.getParent();
+						}
+						if (source instanceof IWitness ) {
+							source = source.getParent();
+						}
 						if (source instanceof IInvariant) {
 							if (invariants.containsKey(((IInvariant) source).getElementName())) {
 								ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());

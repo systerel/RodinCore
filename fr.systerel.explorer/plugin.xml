@@ -90,9 +90,6 @@
                   pattern="fr.systerel.explorer.navigator.actionProviders.file">
             </actionExtension>
             <actionExtension
-                  pattern="fr.systerel.explorer.navigator.actionProviders.project">
-            </actionExtension>
-            <actionExtension
                   pattern="fr.systerel.explorer.navigator.actionProviders.element">
             </actionExtension>
             <actionExtension
@@ -378,15 +375,6 @@
                class="fr.systerel.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
-      <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.ProjectActionProvider"
-            id="fr.systerel.explorer.navigator.actionProviders.project">
-         <enablement>
-            <instanceof
-                  value="org.rodinp.core.IRodinProject">
-            </instanceof>
-         </enablement>
-      </actionProvider>
       <actionProvider
             class="fr.systerel.explorer.navigator.actionProviders.FileActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.file">
