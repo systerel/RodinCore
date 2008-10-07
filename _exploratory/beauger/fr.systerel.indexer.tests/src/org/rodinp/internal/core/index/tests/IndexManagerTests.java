@@ -145,4 +145,15 @@ public class IndexManagerTests extends IndexTests {
 
 		deleteProject("P2");
 	}
+	
+	public void testIndexerException() throws Exception {
+		final IIndexer exceptionIndexer = new FakeExceptionIndexer();
+		
+		manager.clearIndexers();
+		
+		RodinIndexer.register(exceptionIndexer, file.getElementType());
+		
+		// should not throw an exception
+		manager.scheduleIndexing(file);
+	}
 }
