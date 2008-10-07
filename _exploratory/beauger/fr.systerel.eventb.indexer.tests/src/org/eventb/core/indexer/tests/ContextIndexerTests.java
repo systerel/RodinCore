@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
 import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
@@ -23,6 +33,7 @@ import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.Occurrence;
@@ -119,8 +130,8 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		IAxiom tmpAxm = file.getAxiom(axiom.name);
 
 		RodinIndex tmpIndex = manager.getIndex(tmpProject);
-		Descriptor descriptor = (Descriptor) tmpIndex.makeDescriptor(tmpCst,
-				constant.identifierString);
+		Descriptor descriptor = (Descriptor) tmpIndex.makeDescriptor(new Declaration(tmpCst,
+				constant.identifierString));
 
 		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
 		addOccurrence(locDecl, DECLARATION, descriptor,
@@ -152,14 +163,16 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 				actDescs.length);
 
 		for (Descriptor exp : expectedDescriptors) {
+			final String expName = exp.getDeclaration().getName();
 			Descriptor actSameElem = null;
 			for (Descriptor act : actDescs) {
-				if (act.getName().equals(exp.getName())) {
+				final String actName = act.getDeclaration().getName();
+				if (actName.equals(expName)) {
 					actSameElem = act;
 					break;
 				}
 			}
-			assertNotNull("Missing descriptor for element " + exp.getName(),
+			assertNotNull("Missing descriptor for element " + expName,
 					actSameElem);
 			assertDescriptor(exp, actSameElem);
 		}
@@ -174,8 +187,9 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 		IOccurrence[] expOccs = expected.getOccurrences();
 		IOccurrence[] actOccs = actual.getOccurrences();
 
+		final String actualName = actual.getDeclaration().getName();
 		assertEquals("bad number of occurrences for descriptor of "
-				+ actual.getName(), expOccs.length, actOccs.length);
+				+ actualName, expOccs.length, actOccs.length);
 
 		for (IOccurrence occ : expOccs) {
 			IOccurrence actSameKind = null;
@@ -186,7 +200,7 @@ public class ContextIndexerTests extends ModifyingResourceTests {
 				}
 			}
 			assertNotNull("Missing occurrence " + occ + " in descriptor of "
-					+ actual.getName(), actSameKind);
+					+ actualName, actSameKind);
 			assertOccurrence(occ, actSameKind);
 		}
 
