@@ -62,8 +62,10 @@ public class ProjectIndexManager {
 	}
 
 	public void doIndexing(IProgressMonitor monitor) {
-		monitor.beginTask("indexing project " + project,
-				IProgressMonitor.UNKNOWN);
+		if (monitor != null) {
+			monitor.beginTask("indexing project " + project,
+					IProgressMonitor.UNKNOWN);
+		}
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
 

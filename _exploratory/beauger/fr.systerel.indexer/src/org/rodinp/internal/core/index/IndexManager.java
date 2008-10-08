@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -127,7 +128,7 @@ public final class IndexManager {
 			pim.setToIndex(file);
 		}
 
-		doIndexing(new NullProgressMonitor());
+		doIndexing(null);
 		// TODO don't launch indexing immediately (define scheduling options)
 		// NOTE : that method will be replaced when implementing listeners
 	}
@@ -142,16 +143,14 @@ public final class IndexManager {
 	 *            the monitor by which cancel requests can be performed.
 	 */
 	void doIndexing(IProgressMonitor monitor) {
-		if (monitor == null) {
-			throw new NullPointerException(
-					"Should not pass a null IProgressMonitor");
-		}
 		synchronized (indexingLock) {
 			for (IRodinProject project : pims.keySet()) {
 				fetchPIM(project).doIndexing(monitor);
-				monitor.done();
-				if (monitor.isCanceled()) {
-					return;
+				if (monitor != null) {
+					monitor.done();
+					if (monitor.isCanceled()) {
+						return;
+					}
 				}
 			}
 		}
@@ -166,7 +165,7 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested index.
 	 * @return the current index of the given project.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	public RodinIndex getIndex(IRodinProject project) {
 		return fetchPIM(project).getIndex();
@@ -181,7 +180,7 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested file table.
 	 * @return the current file table of the given project.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	public FileTable getFileTable(IRodinProject project) {
 		return fetchPIM(project).getFileTable();
@@ -196,7 +195,7 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested name table.
 	 * @return the current name table of the given project.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	public NameTable getNameTable(IRodinProject project) {
 		return fetchPIM(project).getNameTable();
@@ -211,7 +210,7 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested export table.
 	 * @return the current export table of the given project.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	public ExportTable getExportTable(IRodinProject project) {
 		return fetchPIM(project).getExportTable();
@@ -269,13 +268,13 @@ public final class IndexManager {
 					boolean cancel = false;
 					while (!cancel) { // !startMonitor.isCanceled()) {
 						final IRodinFile file = queue.take();
-
+						
 						final IRodinProject project = file.getRodinProject();
 						final ProjectIndexManager pim = fetchPIM(project);
 
 						pim.setToIndex(file);
 						if (ENABLE_INDEXING) {
-							indexing.schedule(2000);
+							indexing.schedule();//(500);
 							// TODO define scheduling policies
 						}
 						cancel = startMonitor.isCanceled()
@@ -307,12 +306,11 @@ public final class IndexManager {
 	 * Returns <code>true</code> when the indexing system is up to date, else
 	 * blocks until it becomes up to date.
 	 * 
-	 * @return whether the indexing system is currently busy.
 	 */
-	public boolean isUpToDate() {
+	public void waitUpToDate() throws CancellationException {
 		// TODO use 1 lock per project
 		synchronized (indexingLock) {
-			return true; // indexing.getState() == Job.NONE;
+			return; // indexing.getState() == Job.NONE;
 		}
 	}
 

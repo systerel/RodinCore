@@ -138,12 +138,15 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	public boolean isCancelled() {
+		if (monitor == null) {
+			return false;
+		}
 		return monitor.isCanceled();
 	}
 
 	// to call before getResult;
 	public void complete() {
-		result.setSuccess(!monitor.isCanceled());
+		result.setSuccess(!isCancelled());
 	}
 
 	public IIndexingResult getResult() {

@@ -61,8 +61,8 @@ public class IndexRequester implements IIndexRequester {
 		return nameTable.getElements(name);
 	}
 
-	public boolean isUpToDate() throws CancellationException {
-		return IndexManager.getDefault().isUpToDate();
+	public void waitUpToDate() throws CancellationException {
+		IndexManager.getDefault().waitUpToDate();
 	}
 
 }

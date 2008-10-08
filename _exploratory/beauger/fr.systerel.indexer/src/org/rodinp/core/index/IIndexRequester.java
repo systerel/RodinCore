@@ -19,7 +19,7 @@ import org.rodinp.core.IRodinProject;
  * Common protocol for performing requests to the indexing system.
  * <p>
  * Requests results may be obsolete if the indexing system is performing a new
- * indexing. Clients should call {@link #isUpToDate()} before sending requests
+ * indexing. Clients should call {@link #waitUpToDate()} before sending requests
  * in order to get the most accurate result.
  * </p>
  * <p>
@@ -39,7 +39,7 @@ public interface IIndexRequester {
 	 * @return the declaration of the element if it was found in the index.
 	 * @throws IllegalArgumentException
 	 *             if the element is not known by the indexing system.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	IDeclaration getDeclaration(IInternalElement element);
 
@@ -50,7 +50,7 @@ public interface IIndexRequester {
 	 *            the declaration of the element for which to get the
 	 *            occurrences.
 	 * @return the indexed occurrences of the element.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	IOccurrence[] getOccurrences(IDeclaration declaration);
 
@@ -63,20 +63,18 @@ public interface IIndexRequester {
 	 * @param name
 	 *            the researched name.
 	 * @return the found elements with the given name.
-	 * @see #isUpToDate()
+	 * @see #waitUpToDate()
 	 */
 	IInternalElement[] getElements(IRodinProject project, String name);
 
 	/**
-	 * Returns <code>true</code> when the indexing system is up to date, else
-	 * blocks until it becomes up to date. Throws a CancellationException if the
-	 * indexing has been canceled.
+	 * Returns when the indexing system is up to date, else blocks until it
+	 * becomes up to date. Throws a CancellationException if the indexing has
+	 * been canceled.
 	 * 
 	 * Calling this method before any other request makes the result valid.
-	 * 
-	 * @return true when the indexing system is currently busy.
 	 */
 	// TODO What's the point in always returning true ?
-	boolean isUpToDate() throws CancellationException;
+	void waitUpToDate() throws CancellationException;
 
 }
