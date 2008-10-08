@@ -18,13 +18,13 @@ import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
-	
-	public static final IOccurrenceKind 	DECLARATION =
-		RodinIndexer.addOccurrenceKind("fr.systerel.eventb.indexer.declaration",
-				"declaration");
-	public static final IOccurrenceKind 	REFERENCE =
-		RodinIndexer.addOccurrenceKind("fr.systerel.eventb.indexer.reference",
-				"reference");
+
+	public static final IOccurrenceKind DECLARATION = RodinIndexer
+			.addOccurrenceKind("fr.systerel.eventb.indexer.declaration",
+					"declaration");
+	public static final IOccurrenceKind REFERENCE = RodinIndexer
+			.addOccurrenceKind("fr.systerel.eventb.indexer.reference",
+					"reference");
 
 	private static int alloc;
 
@@ -42,7 +42,7 @@ public class EventBIndexUtil {
 	 * @param element
 	 * @param attributeType
 	 * @param location
-	 * @return
+	 * @return the corresponding IRodinLocation
 	 */
 	public static IRodinLocation getRodinLocation(IInternalParent element,
 			IAttributeType.String attributeType, SourceLocation location) {
