@@ -161,6 +161,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public void processPOFile() {
 		try {
+			//clear old POs
+			proofObligations.clear();
 			IPOFile file = internalContext.getPOFile();
 			if (file.exists()) {
 				IPOSequent[] sequents = file.getSequents();

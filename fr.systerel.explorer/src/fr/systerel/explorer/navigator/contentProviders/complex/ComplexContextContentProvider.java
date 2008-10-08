@@ -87,17 +87,23 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 	}
 
 	public boolean hasChildren(Object element) {
-		if (element instanceof IRodinProject) {
-        	IRodinProject project = (IRodinProject) element;
-        	try {
-				return project.hasChildren();
+		if (element instanceof IProject) {
+        	IProject project = (IProject) element;
+			//if it is a RodinProject return the IRodinProject from the DB.
+			try {
+				if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
+					return (RodinCore.getRodinDB().getRodinProject(project.getName())).getChildrenOfType(IContextFile.ELEMENT_TYPE).length >0;
+				}
 			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		}
-        return getChildren(element).length > 0;
+        return false;
 	}
 
 	public Object[] getElements(Object inputElement) {

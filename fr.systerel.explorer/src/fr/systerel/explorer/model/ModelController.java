@@ -70,25 +70,26 @@ public class ModelController implements IElementChangedListener {
 	 */
 	public static void processProject(IRodinProject project){
 		try {
-//			System.out.println("Processing project " +project.getElementName());
 			ModelProject prj;
 			if (!projects.containsKey(project.getHandleIdentifier())) {
 				prj =  new ModelProject(project);
 				projects.put(project.getHandleIdentifier(), prj);
 			}	
 			prj =  projects.get(project.getHandleIdentifier());
-
-			IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-			for (int i = 0; i < contexts.length; i++) {
-				prj.processContext(contexts[i]);
+			//only process if really needed
+			if (prj.needsProcessing) {
+				IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+				for (IContextFile context : contexts) {
+					prj.processContext(context);
+				}
+				prj.calculateContextBranches();
+				IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+				for (IMachineFile machine : machines) {
+					prj.processMachine(machine);
+				}
+				prj.calculateMachineBranches();
+				prj.needsProcessing = false;
 			}
-			prj.calculateContextBranches();
-			IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-			for (int i = 0; i < machines.length; i++) {
-				prj.processMachine(machines[i]);
-			}
-			prj.calculateMachineBranches();
-//			System.out.println("Processing project done " +System.currentTimeMillis());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -323,6 +324,11 @@ public class ModelController implements IElementChangedListener {
 //		System.out.println("refreshing model: "+element.toString() );
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
+			if (element instanceof IRodinProject) {
+				project.needsProcessing = true;
+				processProject((IRodinProject)element);
+			}
+			
 			if (element instanceof IMachineFile) {
 				project.processMachine((IMachineFile)element);
 			}
@@ -407,7 +413,6 @@ public class ModelController implements IElementChangedListener {
 
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinProject) {
-//				the content provider refreshes the model
 				//TODO: adapt this for the workspace or a working set as input
 				// This only works if the DB was used as input.
 				addToRefresh(element.getRodinDB());

@@ -42,6 +42,8 @@ public class ModelProject implements IModelElement {
 	private HashMap<String, ModelMachine> machines = new HashMap<String, ModelMachine>();
 	private HashMap<String, ModelContext> contexts = new HashMap<String, ModelContext>();
 	private IRodinProject internalProject;
+	//indicates whether to projects needs to be processed freshly (process Machines etc.)
+	public boolean needsProcessing =  true;
 
 
 	public ModelProject(IRodinProject project) {
@@ -163,8 +165,6 @@ public class ModelProject implements IModelElement {
 			ctx.resetAncestors();
 		}
 		ctx.processChildren();
-		//clear existing proof obligations
-		ctx.proofObligations.clear();
 		// get all contexts, that this contexts extends 
 		try {
 			IExtendsContext[] exts;

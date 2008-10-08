@@ -79,5 +79,28 @@ public class ModelPOContainer implements IModelElement{
 		return false;
 	}
 	
+	/**
+	 * 
+	 * @return the total number of Proof Obligations
+	 */
+	public int getPOcount(){
+		return proofObligations.size();
+		
+	}
+	/**
+	 * 
+	 * @return The number of undischarged Proof Obligations
+	 */
+	public int getUndischargedPOcount() {
+		int result = 0;
+		for (ModelProofObligation po : proofObligations.values()) {
+			if (!po.isDischarged()) {
+				result++;
+			}
+		}
+		return result;
+		
+	}
+	
 
 }

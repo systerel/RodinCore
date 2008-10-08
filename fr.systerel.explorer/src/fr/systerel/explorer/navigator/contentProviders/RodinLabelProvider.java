@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -32,7 +31,6 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelElementNode;
@@ -55,9 +53,6 @@ public class RodinLabelProvider implements
 	 */
 	public Image getImage(Object element) {
 
-        if (element instanceof  IWorkingSet) {
-        	return EventBImage.getImage(((IWorkingSet) element).getImageDescriptor(), 0);
-        }
 		if (element instanceof IPSStatus) {
 			IPSStatus status = ((IPSStatus) element);
 			return EventBImage.getPRSequentImage(status);
@@ -100,14 +95,6 @@ public class RodinLabelProvider implements
 				}
 			}
 		
-		} else if (element instanceof ModelPOContainer) {
-			boolean discharged = !((ModelPOContainer) element).hasUndischargedPOs();
-			
-			if (discharged) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
-			} else{
-				return EventBImage.getImage(IEventBSharedImages.IMG_PENDING);
-			}
 		} else if (element instanceof IContainer) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
 		}
@@ -120,13 +107,7 @@ public class RodinLabelProvider implements
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object obj) {
-        if (obj instanceof  IWorkingSet) {
-            return ((IWorkingSet) obj).getName();
-        }
-		if (obj instanceof IRodinProject) {
-			return ((IRodinProject) obj).getElementName();
-			
-		} else if (obj instanceof IEventBFile) {
+		if (obj instanceof IEventBFile) {
 			return ((IEventBFile) obj).getBareName();
 		
 		} else if (obj instanceof ILabeledElement) {
