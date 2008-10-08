@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Proofskeleton Plug-in
+Bundle-SymbolicName: org.eventb.ui.proofskeleton; singleton:=true
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eventb.core,
+ org.eventb.ui
+Eclipse-LazyStart: true
+Export-Package: org.eventb.ui.proofskeleton,
+ org.eventb.ui.proofskeleton.views
+Bundle-Localization: plugin
