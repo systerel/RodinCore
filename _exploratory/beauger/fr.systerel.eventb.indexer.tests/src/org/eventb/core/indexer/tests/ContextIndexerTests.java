@@ -1,286 +1,517 @@
-/*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Systerel - initial API and implementation
- *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
 import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
 import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.IPredicateElement;
+import org.eventb.core.ITheorem;
 import org.eventb.core.indexer.ContextIndexer;
-import org.eventb.core.indexer.EventBIndexUtil;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.ModifyingResourceTests;
+import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.Occurrence;
-import org.rodinp.internal.core.index.tables.RodinIndex;
 
-public class ContextIndexerTests extends ModifyingResourceTests {
+/**
+ * @author Nicolas Beauger
+ * 
+ */
+/**
+ * @author Nicolas Beauger
+ * 
+ */
+public class ContextIndexerTests extends AbstractRodinDBTests {
 
-	// FIXME only have a client point of view
-	private static final boolean DEBUG = false;
-
-	private static class TestConstant {
-		public final String elementName;
-		public final String identifierString;
-
-		public TestConstant(String identifierString) {
-			this.elementName = EventBIndexUtil.getUniqueName(identifierString);
-			this.identifierString = identifierString;
-		}
-	}
-
-	private static class TestAxiom {
-		public final String name;
-		public final String pred;
-
-		public TestAxiom(String name, String pred) {
-			this.name = name;
-			this.pred = pred;
-		}
-	}
-
+	private static final String CST1 = "cst1";
+	private static final String INTERNAL_ELEMENT1 = "internal_element1";
+	private static final String FILE_NAME = "file.buc";
 	private static IRodinProject project;
-	private static final IndexManager manager = IndexManager.getDefault();
-	private static final IIndexer contextIndexer = new ContextIndexer();
+	private static final List<IDeclaration> EMPTY_DECL = Collections
+			.emptyList();
+	private static final List<IOccurrence> EMPTY_OCC = Collections.emptyList();
 
-	private static void addCarrierSets(IContextFile rodinFile, String... names)
-			throws RodinDBException {
-		for (String name : names) {
-			ICarrierSet set = rodinFile.getCarrierSet(EventBIndexUtil
-					.getUniqueName(name));
-			set.create(null, null);
-			set.setIdentifierString(name, null);
+	private static void setContents(IFile file, String contents)
+			throws Exception {
+		final InputStream input = new ByteArrayInputStream(contents
+				.getBytes("utf-8"));
+		file.setContents(input, IResource.NONE, null);
+	}
+
+	private static IRodinFile createRodinFile(IRodinProject project,
+			String fileName) throws RodinDBException {
+		IRodinFile file = project.getRodinFile(fileName);
+		file.create(true, null);
+		return file;
+	}
+
+	private static void initFile(IRodinFile rodinFile, String contents)
+			throws Exception {
+		final IFile resource = rodinFile.getResource();
+		setContents(resource, contents);
+	}
+
+	private static IContextFile createContext(IRodinProject project,
+			String fileName, String contents) throws Exception {
+		final IRodinFile rFile = createRodinFile(project, fileName);
+		initFile(rFile, contents);
+		final IContextFile context = (IContextFile) rFile
+				.getAdapter(IContextFile.class);
+		assertNotNull("could not get adapter to IContextFile", context);
+
+		return context;
+	}
+
+	@SuppressWarnings("restriction")
+	private IDeclaration getDeclCst(IContextFile context, String cstIntName,
+			String cstName) throws RodinDBException {
+		final IConstant cst = context.getConstant(cstIntName);
+		final IDeclaration declCst = makeDecl(cst, cstName);
+
+		return declCst;
+	}
+
+	@SuppressWarnings("restriction")
+	private IDeclaration getDeclSet(IContextFile context, String setIntName,
+			String setName) throws RodinDBException {
+		final ICarrierSet set = context.getCarrierSet(setIntName);
+		final IDeclaration declSet = makeDecl(set, setName);
+
+		return declSet;
+	}
+
+	@SuppressWarnings("restriction")
+	private IOccurrence makeOccDecl(final IRodinElement element) {
+		final IOccurrence occDecl = new Occurrence(DECLARATION, RodinIndexer
+				.getRodinLocation(element));
+		return occDecl;
+	}
+
+	@SuppressWarnings("restriction")
+	private IOccurrence makeOccRef(IAttributedElement element,
+			IAttributeType.String attributeType, int start, int end) {
+		final IOccurrence occDecl = new Occurrence(REFERENCE, RodinIndexer
+				.getRodinLocation(element, attributeType, start, end));
+		return occDecl;
+	}
+
+	private IOccurrence makeOccRefPred(IPredicateElement pred, int start, int end) {
+		return makeOccRef(pred, EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
+	}
+
+	@SuppressWarnings("restriction")
+	private IDeclaration makeDecl(IIdentifierElement elt, String name) {
+		final IDeclaration declCst1 = new Declaration(elt, name);
+		return declCst1;
+	}
+
+	private List<IDeclaration> makeDeclList(IDeclaration... declarations) {
+		final List<IDeclaration> expected = new ArrayList<IDeclaration>();
+		for (IDeclaration declaration : declarations) {
+			expected.add(declaration);
 		}
-
+		return expected;
 	}
 
-	private static void addConstants(IContextFile rodinFile,
-			TestConstant... constants) throws RodinDBException {
-		for (TestConstant c : constants) {
-			IConstant constant = rodinFile.getConstant(c.elementName);
-			constant.create(null, null);
-			constant.setIdentifierString(c.identifierString, null);
+	private List<IOccurrence> makeOccList(IOccurrence... occurrences) {
+		final List<IOccurrence> expected = new ArrayList<IOccurrence>();
+		for (IOccurrence occurrence : occurrences) {
+			expected.add(occurrence);
 		}
+		return expected;
 	}
 
-	public static void addAxioms(IContextFile rodinFile, TestAxiom... axioms)
-			throws RodinDBException {
-		for (TestAxiom a : axioms) {
-			IAxiom axiom = rodinFile.getAxiom(a.name);
-			axiom.create(null, null);
-			axiom.setPredicateString(a.pred, null);
-			axiom.setLabel(a.name, null);
-		}
-	}
-
-	public static String[] makeSList(String... strings) {
-		return strings;
-	}
-
-	public ContextIndexerTests(String name) {
+	/**
+	 * @param name
+	 * @throws Exception
+	 */
+	@SuppressWarnings("restriction")
+	public ContextIndexerTests(String name) throws Exception {
 		super(name);
+		IndexManager.getDefault().disableIndexing();
 	}
 
 	protected void setUp() throws Exception {
 		project = createRodinProject("P");
-		RodinIndexer.register(contextIndexer, IContextFile.ELEMENT_TYPE);
+		super.setUp();
 	}
 
 	protected void tearDown() throws Exception {
-		manager.getIndex(project).clear();
 		deleteProject("P");
+		super.tearDown();
+	}
+
+	// TODO see if tests with carrier sets and theorems are needed (code review)
+
+	private static final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
+			+ "</org.eventb.core.contextFile>";
+
+	/**
+	 * @throws Exception
+	 */
+	public void testDeclaration() throws Exception {
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL);
+
+		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1, CST1);
+		final List<IDeclaration> expected = makeDeclList(declCst1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertDeclarations(expected);
 	}
 
 	/**
-	 * The given constant is assumed to be declared in the given file and to
-	 * have exactly one reference in the given axiom at the given position.
+	 * @throws Exception
+	 */
+	public void testOccurrence() throws Exception {
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL);
+
+		final IOccurrence occDecl = makeOccDecl(context);
+
+		final List<IOccurrence> expected = makeOccList(occDecl);
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrences(cst1, expected);
+
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testOccurrenceOtherThanDecl() throws Exception {
+		final String CST_1DECL_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.carrierSet name=\"internal_element1\" org.eventb.core.identifier=\"set1\"/>"
+				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
+				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"cst1 ∈ set1\"/>"
+				+ "</org.eventb.core.contextFile>";
+
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL_1REF_AXM);
+
+		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeOccRefPred(axiom, 0, 4);
+
+		final List<IOccurrence> expected = makeOccList(occRef);
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(cst1, expected);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testDoubleOccurrenceSameElement() throws Exception {
+		final String CST_1DECL_2OCC_SAME_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
+				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"cst1 = cst1\"/>"
+				+ "<org.eventb.core.carrierSet name=\"internal_element1\" org.eventb.core.identifier=\"set1\"/>"
+				+ "</org.eventb.core.contextFile>";
+
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL_2OCC_SAME_AXM);
+
+		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occRef1 = makeOccRefPred(axiom, 0, 4);
+		final IOccurrence occRef2 = makeOccRefPred(axiom, 7, 11);
+
+		final List<IOccurrence> expected = makeOccList(occRef1, occRef2);
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(cst1, expected);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testExportLocal() throws Exception {
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL);
+
+		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1, CST1);
+		final List<IDeclaration> expected = makeDeclList(declCst1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertExports(expected);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testExportImported() throws Exception {
+		final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
+
+		final IContextFile exporter = createContext(project, FILE_NAME,
+				CST_1DECL);
+
+		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1, CST1);
+		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
+
+		final IContextFile importer = createContext(project, FILE_NAME,
+				EMPTY_CONTEXT);
+
+		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertExports(declCst1List);
+	}
+
+	private static final String CST_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.comment=\"\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"1 &lt; cst1\"/>"
+			+ "</org.eventb.core.contextFile>";
+
+	/**
+	 * @throws Exception
+	 */
+	public void testImportedOccurrence() throws Exception {
+		final IContextFile exporter = createContext(project, FILE_NAME,
+				CST_1DECL);
+
+		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1, CST1);
+		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
+
+		final IContextFile importer = createContext(project, FILE_NAME,
+				CST_1REF_AXM);
+
+		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occCst1 = makeOccRefPred(axiom, 4, 8);
+		final List<IOccurrence> expected = makeOccList(occCst1);
+
+		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(declCst1.getElement(), expected);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testUnknownElement() throws Exception {
+		final IContextFile independent = createContext(project, FILE_NAME,
+				CST_1DECL);
+		final IDeclaration declCst1 = getDeclCst(independent, INTERNAL_ELEMENT1, CST1);
+
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1REF_AXM);
+
+		final List<IOccurrence> expected = EMPTY_OCC;
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(declCst1.getElement(), expected);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void testTwoImportsSameName() throws Exception {
+		final IContextFile exporter1 = createContext(project, FILE_NAME,
+				CST_1DECL);
+		final IDeclaration declCstExp1 = getDeclCst(exporter1, INTERNAL_ELEMENT1, CST1);
+
+		final IContextFile exporter2 = createContext(project, FILE_NAME,
+				CST_1DECL);
+		final IDeclaration declCstExp2 = getDeclCst(exporter2, INTERNAL_ELEMENT1, CST1);
+
+		final List<IDeclaration> declList = makeDeclList(declCstExp1,
+				declCstExp2);
+
+		final IContextFile importer = createContext(project, FILE_NAME,
+				CST_1REF_AXM);
+
+		final ToolkitStub tk = new ToolkitStub(importer, declList, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(declCstExp1.getElement(), EMPTY_OCC);
+		tk.assertOccurrencesOtherThanDecl(declCstExp2.getElement(), EMPTY_OCC);
+	}
+
+	/**
+	 * All other tests only check constants. This test checks a simple
+	 * declaration of a carrier set. According to code structure, carrier sets
+	 * are treated the same way as constants, so this test is sufficient to
+	 * verify that carrier sets are also treated.
 	 * 
-	 * @throws CoreException
+	 * @throws Exception
 	 */
-	private Descriptor makeConstantDescriptor(TestConstant constant,
-			TestAxiom axiom, IContextFile file, int start, int end)
-			throws CoreException {
-		IRodinProject tmpProject = createRodinProject("tmpPrj");
-		IConstant tmpCst = file.getConstant(constant.elementName);
-		IAxiom tmpAxm = file.getAxiom(axiom.name);
+	public void testDeclSet() throws Exception {
+		final String SET_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.carrierSet name=\"internal_element1\" org.eventb.core.identifier=\"set1\"/>"
+				+ "</org.eventb.core.contextFile>";
 
-		RodinIndex tmpIndex = manager.getIndex(tmpProject);
-		Descriptor descriptor = (Descriptor) tmpIndex.makeDescriptor(new Declaration(tmpCst,
-				constant.identifierString));
+		final String set1IntName = INTERNAL_ELEMENT1;
+		final String set1Name = "set1";
 
-		final IRodinLocation locDecl = RodinIndexer.getRodinLocation(file);
-		addOccurrence(locDecl, DECLARATION, descriptor,
-				contextIndexer);
+		final IContextFile context = createContext(project, FILE_NAME,
+				SET_1DECL);
 
-		final IRodinLocation locRef = RodinIndexer.getRodinLocation(tmpAxm,
-				EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
-		addOccurrence(locRef, REFERENCE, descriptor,
-				contextIndexer);
+		final IDeclaration declSet1 = getDeclSet(context, set1IntName, set1Name);
+		final List<IDeclaration> expected = makeDeclList(declSet1);
 
-		deleteProject(tmpProject.getElementName());
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
 
-		return descriptor;
+		final ContextIndexer indexer = new ContextIndexer();
 
+		indexer.index(tk);
+
+		tk.assertDeclarations(expected);
 	}
 
-	private static void addOccurrence(IRodinLocation loc,
-			IOccurrenceKind kind, Descriptor descriptor, IIndexer indexer) {
+	public void testOccThm() throws Exception {
+		final String CST_1DECL_1REF_THM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+		"<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">" +
+		"<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>" +
+		"<org.eventb.core.theorem name=\"internal_element1\" org.eventb.core.label=\"thm1\" org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>" +
+		"</org.eventb.core.contextFile>";
+		
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL_1REF_THM);
 
-		final Occurrence declaration = new Occurrence(kind, loc);
-		descriptor.addOccurrence(declaration);
+		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeOccRefPred(thm, 9, 13);
+
+		final List<IOccurrence> expected = makeOccList(occRef);
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		indexer.index(tk);
+
+		tk.assertOccurrencesOtherThanDecl(cst1, expected);
 	}
+	
+	/**
+	 * @throws Exception
+	 */
+	public void testMalformedXML() throws Exception {
+		// constant node is not closed
+		final String MALFORMED_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\">"
+				+ "</org.eventb.core.contextFile>";
 
-	private static void assertIndex(Descriptor[] expectedDescriptors,
-			RodinIndex index) {
-		final Descriptor[] actDescs = index.getDescriptors();
+		final IContextFile context = createContext(project, FILE_NAME,
+				MALFORMED_CONTEXT);
 
-		assertEquals("bad number of descriptors", expectedDescriptors.length,
-				actDescs.length);
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
 
-		for (Descriptor exp : expectedDescriptors) {
-			final String expName = exp.getDeclaration().getName();
-			Descriptor actSameElem = null;
-			for (Descriptor act : actDescs) {
-				final String actName = act.getDeclaration().getName();
-				if (actName.equals(expName)) {
-					actSameElem = act;
-					break;
-				}
-			}
-			assertNotNull("Missing descriptor for element " + expName,
-					actSameElem);
-			assertDescriptor(exp, actSameElem);
-		}
+		final ContextIndexer indexer = new ContextIndexer();
+
+		// should not throw an exception
+		indexer.index(tk);
 	}
 
 	/**
-	 * Based on the hypothesis that there are only 2 occurrences: one
-	 * declaration and one reference
+	 * @throws Exception
 	 */
-	private static void assertDescriptor(Descriptor expected,
-			Descriptor actual) {
-		IOccurrence[] expOccs = expected.getOccurrences();
-		IOccurrence[] actOccs = actual.getOccurrences();
+	public void testMissingAttribute() throws Exception {
+		final String CST_1DECL_1AXM_NO_PRED_ATT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\"/>"
+				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.comment=\"\" org.eventb.core.identifier=\"cst1\"/>"
+				+ "</org.eventb.core.contextFile>";
 
-		final String actualName = actual.getDeclaration().getName();
-		assertEquals("bad number of occurrences for descriptor of "
-				+ actualName, expOccs.length, actOccs.length);
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL_1AXM_NO_PRED_ATT);
 
-		for (IOccurrence occ : expOccs) {
-			IOccurrence actSameKind = null;
-			for (IOccurrence act : actOccs) {
-				if (act.getKind() == occ.getKind()) {
-					actSameKind = act;
-					break;
-				}
-			}
-			assertNotNull("Missing occurrence " + occ + " in descriptor of "
-					+ actualName, actSameKind);
-			assertOccurrence(occ, actSameKind);
-		}
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
 
+		final ContextIndexer indexer = new ContextIndexer();
+
+		// should not throw an exception
+		indexer.index(tk);
 	}
 
-	private static void assertOccurrence(IOccurrence expected, IOccurrence actual) {
-		assertEquals("bad occurrence kind", expected.getKind(), actual
-				.getKind());
-		assertEquals(expected.getLocation(), actual.getLocation());
+	/**
+	 * @throws Exception
+	 */
+	public void testDoesNotParse() throws Exception {
+		final String CST_1DECL_1AXM_DOES_NOT_PARSE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"(1&lt;\"/>"
+				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
+				+ "</org.eventb.core.contextFile>";
+
+		final IContextFile context = createContext(project, FILE_NAME,
+				CST_1DECL_1AXM_DOES_NOT_PARSE);
+
+		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		// should not throw an exception
+		indexer.index(tk);
 	}
 
-	private void fillTestFile(IContextFile file, List<Descriptor> descriptors)
-			throws CoreException {
-
-		final String S1 = "S1";
-		final TestConstant C1 = new TestConstant("C");
-		final TestConstant C2 = new TestConstant("C2");
-
-		final TestAxiom A1 = new TestAxiom("A1", "C ∈ ℕ ∪ S1");
-		final TestAxiom A2 = new TestAxiom("A2", "  C2 ∈ S1");
-
-		addCarrierSets(file, S1);
-		addConstants(file, C1, C2);
-		addAxioms(file, A1, A2);
-
-		final Descriptor C1Descriptor = makeConstantDescriptor(C1, A1, file,
-				0, 1);
-		final Descriptor C2Descriptor = makeConstantDescriptor(C2, A2, file,
-				2, 4);
-
-		descriptors.add(C1Descriptor);
-		descriptors.add(C2Descriptor);
-	}
-
-	private static IContextFile createContextFile(final String fileName)
-			throws CoreException {
-		assertNotNull("project was not initialized", project);
-		assertTrue("project does not exist", project.exists());
-
-		final IRodinFile file = project.getRodinFile(fileName);
-		file.create(true, null);
-		IContextFile resultFile = (IContextFile) file
-				.getAdapter(IContextFile.class);
-		assertNotNull("could not get adapter to ContextFile", resultFile);
-
-		return resultFile;
-	}
-
-	public void testCtxIndBasicCase() throws Exception {
-		IContextFile file = createContextFile("basicCtx.buc");
-		List<Descriptor> descList = new ArrayList<Descriptor>();
-
-		fillTestFile(file, descList);
-
-		Descriptor[] expectedResult = descList
-				.toArray(new Descriptor[descList.size()]);
-
-		manager.scheduleIndexing(file);
-
-		RodinIndex index = manager.getIndex(file.getRodinProject());
-		if (DEBUG) {
-			System.out.println("Basic Case");
-			System.out.println(index.toString());
-		}
-		assertIndex(expectedResult, index);
-	}
-
-	public void testCtxIndEmptyFile() throws Exception {
-		final IContextFile emptyFile = createContextFile("empty.buc");
-		final Descriptor[] expectedResult = new Descriptor[] {};
-
-		manager.scheduleIndexing(emptyFile);
-
-		RodinIndex index = manager.getIndex(emptyFile.getRodinProject());
-		if (DEBUG) {
-			System.out.println("Empty File");
-			System.out.println(index.toString());
-		}
-		assertIndex(expectedResult, index);
-	}
-
-	// TODO add tests
 }
