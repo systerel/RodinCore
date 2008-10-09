@@ -4,24 +4,19 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.eventb.core.EventBPlugin.getContextFileName;
-import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eventb.core.IContextFile;
-import org.eventb.core.IExtendsContext;
 import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.IMachineFile;
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.IVariant;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
@@ -33,27 +28,34 @@ import org.rodinp.core.index.RodinIndexer;
  * @author Nicolas Beauger
  * 
  */
-public class ContextIndexer implements IIndexer {
+public class MachineIndexer implements IIndexer {
 
 	private static final boolean DEBUG = true;
 	// FIXME manage exceptions and remove
 
-	private static final String ID = "fr.systerel.eventb.indexer.context";
+	private static final String ID = "fr.systerel.eventb.indexer.machine";
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
 	private IIndexingToolkit index;
 
 	// TODO consider passing as parameter
-	// TODO manage exceptions
+
+	public IRodinFile[] getDependencies(IRodinFile file) {
+		return NO_DEPENDENCIES;
+	}
+
+	public String getId() {
+		return ID;
+	}
 
 	public void index(IIndexingToolkit index) {
 		this.index = index;
 		final IRodinFile file = index.getRodinFile();
 
-		if (file instanceof IContextFile) {
+		if (file instanceof IMachineFile) {
 			try {
-				index((IContextFile) file);
+				index((IMachineFile) file);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				if (DEBUG) {
@@ -63,22 +65,24 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
-	private void index(IContextFile file) throws RodinDBException {
+	private void index(IMachineFile file) throws RodinDBException {
 		final SymbolTable symbolTable = new SymbolTable();
 
 		processImports(index.getImports(), symbolTable);
-		processIdentifierElements(file.getCarrierSets(), symbolTable);
-		processIdentifierElements(file.getConstants(), symbolTable);
+		processIdentifierElements(file.getVariables(), symbolTable);
+		processLabeledElements(file.getEvents(), symbolTable);
 
-		processPredicateElements(file.getAxioms(), symbolTable);
+		processPredicateElements(file.getInvariants(), symbolTable);
 		processPredicateElements(file.getTheorems(), symbolTable);
+		processExpressionElements(file.getVariants(), symbolTable);
 	}
 
+	// TODO consider factorizing methods with ContextIndexer
+
 	private void processImports(IDeclaration[] imports, SymbolTable symbolTable) {
-		// export each imported declaration
 		// put the declarations into the SymbolTable
 		for (IDeclaration declaration : imports) {
-			index.export(declaration);
+			// index.export(declaration);
 			symbolTable.put(declaration);
 		}
 	}
@@ -94,6 +98,17 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
+	private void processLabeledElements(ILabeledElement[] elems,
+			SymbolTable symbolTable) throws RodinDBException {
+		// index declaration for each identifier element and export them
+		// put the declarations into the SymbolTable
+		for (ILabeledElement label : elems) {
+			final IDeclaration declaration = indexLabel(label);
+			index.export(declaration);
+			symbolTable.put(declaration);
+		}
+	}
+
 	private void processPredicateElements(IPredicateElement[] elems,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : elems) {
@@ -103,62 +118,31 @@ public class ContextIndexer implements IIndexer {
 		}
 	}
 
-	private IDeclaration indexIdent(IIdentifierElement ident)
-			throws RodinDBException {
-		final IDeclaration declaration = index.declare(ident, ident
-				.getIdentifierString());
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(ident
+	private void processExpressionElements(IVariant[] variants,
+			SymbolTable symbolTable) throws RodinDBException {
+		for (IVariant variant : variants) {
+			final ExpressionElementIndexer exprIndexer = new ExpressionElementIndexer(
+					variant, symbolTable);
+			exprIndexer.process(index);
+		}
+	}
+
+	private IDeclaration indexElement(IInternalElement element, String name) {
+		final IDeclaration declaration = index.declare(element, name);
+		final IRodinLocation loc = RodinIndexer.getRodinLocation(element
 				.getRodinFile());
-		index.addOccurrence(declaration, DECLARATION, loc);
+		index.addOccurrence(declaration, EventBIndexUtil.DECLARATION, loc);
 		return declaration;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
-		if (!(file instanceof IContextFile)) {
-			return NO_DEPENDENCIES;
-		}
-		final IContextFile context = (IContextFile) file;
-
-		final List<IRodinFile> extendedFiles = new ArrayList<IRodinFile>();
-		try {
-			final IExtendsContext[] extendsClauses = context
-					.getExtendsClauses();
-
-			addExtendedFiles(extendsClauses, extendedFiles);
-			
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			if (DEBUG) {
-				e.printStackTrace();
-			}
-		}
-		return extendedFiles.toArray(new IRodinFile[extendedFiles.size()]);
-	}
-
-	private void addExtendedFiles(final IExtendsContext[] extendsClauses,
-			final List<IRodinFile> extendedFiles) throws RodinDBException {
-
-		for (IExtendsContext extendsContext : extendsClauses) {
-			final IRodinFile extended = getExtendedFile(extendsContext);
-			if (extended != null) {
-				extendedFiles.add(extended);
-			}
-		}
-	}
-
-	private IRodinFile getExtendedFile(IExtendsContext extendsContext)
+	private IDeclaration indexIdent(IIdentifierElement ident)
 			throws RodinDBException {
-		final String extBareName = extendsContext.getAbstractContextName();
-		final String extFileName = getContextFileName(extBareName);
-
-		final IRodinProject project = extendsContext.getRodinProject();
-		final IRodinFile extended = project.getRodinFile(extFileName);
-
-		return extended;
+		return indexElement(ident, ident.getIdentifierString());
 	}
 
-	public String getId() {
-		return ID;
+	private IDeclaration indexLabel(ILabeledElement label)
+			throws RodinDBException {
+		return indexElement(label, label.getLabel());
 	}
 
 }
