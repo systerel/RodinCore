@@ -1,11 +1,14 @@
 package org.eventb.core.indexer.tests;
 
+import static org.eventb.core.indexer.tests.ListAssert.*;
+import static org.eventb.core.indexer.tests.OccUtils.*;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.indexer.EventBIndexUtil;
@@ -16,8 +19,6 @@ import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.Occurrence;
 
 /**
  * Stub for the indexing toolkit. Stores the actions performed by an indexer.
@@ -27,23 +28,7 @@ import org.rodinp.internal.core.index.Occurrence;
  */
 public class ToolkitStub implements IIndexingToolkit {
 
-	private static <T> String makeString(String listDesc, List<T> list) {
-		return listDesc + ": " + list + "\n";
-	}
-
-	private static <T> String makeActExpString(List<T> expected, List<T> actual) {
-		return makeString("act", actual) + makeString("exp", expected);
-	}
-
-	private static <T> void assertSameElements(List<T> expected,
-			List<T> actual, String listEltDesc) {
-		TestCase.assertEquals(listEltDesc + ": bad size in\n"
-				+ makeActExpString(expected, actual), expected.size(), actual
-				.size());
-		TestCase.assertTrue(listEltDesc + ": incorrect items in"
-				+ makeActExpString(expected, actual), actual
-				.containsAll(expected));
-	}
+	private static final List<IOccurrence> EMPTY_OCC = Collections.emptyList();
 
 	private final IRodinFile file;
 	private final List<IDeclaration> imports;
@@ -74,7 +59,7 @@ public class ToolkitStub implements IIndexingToolkit {
 
 	@SuppressWarnings("restriction")
 	public IDeclaration declare(IInternalElement element, String name) {
-		final IDeclaration declaration = new Declaration(element, name);
+		final IDeclaration declaration = makeDecl(element, name);
 		declarations.add(declaration);
 		return declaration;
 	}
@@ -82,7 +67,7 @@ public class ToolkitStub implements IIndexingToolkit {
 	@SuppressWarnings("restriction")
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IRodinLocation location) {
-		final IOccurrence occurrence = new Occurrence(kind, location);
+		final IOccurrence occurrence = makeOcc(kind, location);
 		final IInternalElement element = declaration.getElement();
 		List<IOccurrence> list = occurrences.get(element);
 		if (list == null) {
@@ -114,14 +99,19 @@ public class ToolkitStub implements IIndexingToolkit {
 	public void assertDeclarations(List<IDeclaration> expected) {
 		assertSameElements(expected, declarations, "declarations");
 	}
-
+	
+	public void assertEmptyOccurrences(IInternalElement element) {
+		assertOccurrences(element, EMPTY_OCC);
+	}
+	
 	/**
 	 * @param element
 	 * @param expected
 	 */
 	public void assertOccurrences(IInternalElement element,
 			List<IOccurrence> expected) {
-		assertSameElements(expected, occurrences.get(element), "occurrences");
+		List<IOccurrence> allOccs = getAllOccs(element);
+		assertSameElements(expected, allOccs, "occurrences");
 	}
 
 	/**
@@ -130,13 +120,18 @@ public class ToolkitStub implements IIndexingToolkit {
 	 */
 	public void assertOccurrencesOtherThanDecl(IInternalElement element,
 			List<IOccurrence> expected) {
+		List<IOccurrence> allOccs = getAllOccs(element);
+		final List<IOccurrence> occsNoDecl = getOccsOtherThanDecl(allOccs);
+		assertSameElements(expected, occsNoDecl,
+				"occurrences other than declaration");
+	}
+
+	private List<IOccurrence> getAllOccs(IInternalElement element) {
 		List<IOccurrence> allOccs = occurrences.get(element);
 		if (allOccs == null) {
 			allOccs = new ArrayList<IOccurrence>();
 		}
-		final List<IOccurrence> occsNoDecl = getOccsOtherThanDecl(allOccs);
-		assertSameElements(expected, occsNoDecl,
-				"occurrences other than declaration");
+		return allOccs;
 	}
 
 	private static List<IOccurrence> getOccsOtherThanDecl(List<IOccurrence> occs) {
