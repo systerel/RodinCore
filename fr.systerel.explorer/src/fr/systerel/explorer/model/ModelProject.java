@@ -437,4 +437,63 @@ public class ModelProject implements IModelElement {
 		return null;
 	}
 
+	/**
+	 * @return the total number of Proof Obligations of this project
+	 */
+	public int getPOcount(){
+		int result = 0;
+		for (ModelMachine machine : machines.values()) {
+			result += machine.getPOcount();
+		}
+		for (ModelContext context : contexts.values()) {
+			result += context.getPOcount();
+		}
+		return result;
+	}
+	
+	/**
+	 * @return The number of undischarged Proof Obligations of this project
+	 */
+	public int getUndischargedPOcount() {
+		int result = 0;
+		for (ModelMachine machine : machines.values()) {
+			result += machine.getUndischargedPOcount();
+		}
+		for (ModelContext context : contexts.values()) {
+			result += context.getUndischargedPOcount();
+		}
+		return result;
+		
+	}
+
+	/**
+	 * @return The number of manually discharged Proof Obligations of this project
+	 */
+	public int getManuallyDischargedPOcount() {
+		int result = 0;
+		for (ModelMachine machine : machines.values()) {
+			result += machine.getManuallyDischargedPOcount();
+		}
+		for (ModelContext context : contexts.values()) {
+			result += context.getManuallyDischargedPOcount();
+		}
+		return result;
+	}
+
+	/**
+	 * @return The number of manually discharged Proof Obligations of this project
+	 */
+	public int getReviewedPOcount() {
+		int result = 0;
+		for (ModelMachine machine : machines.values()) {
+			result += machine.getReviewedPOcount();
+		}
+		for (ModelContext context : contexts.values()) {
+			result += context.getReviewedPOcount();
+		}
+		return result;
+		
+	}
+	
+	
 }

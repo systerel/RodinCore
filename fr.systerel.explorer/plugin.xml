@@ -4,12 +4,8 @@
    <extension
          id="org.eclipse.ui.navigator.resourceContent"
          point="org.eclipse.ui.views">
-      <category
-            id="fr.systerel.explorer.category"
-            name="%view.category.eventB">
-      </category>
       <view
-            category="fr.systerel.explorer.category"
+            category="org.eventb.ui"
             class="fr.systerel.explorer.RodinNavigator"
             icon="icons/full/clcl16/prj_expl.gif"
             id="fr.systerel.explorer.navigator.view"

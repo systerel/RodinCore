@@ -63,6 +63,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	private ArrayList<ModelMachine> longestRefineBranch =  new ArrayList<ModelMachine>();
 	
+	public boolean psNeedsProcessing = true;
+	public boolean poNeedsProcessing = true;
+	
 	public ModelElementNode[] nodes;
 	//TODO add variables etc?
 
@@ -170,53 +173,59 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * concerned Invariants, Theorems and Events.
 	 */
 	public void processPOFile() {
-		try {
-			//clear old POs
-			proofObligations.clear();
-			IPOFile file = internalMachine.getPOFile();
-			if (file.exists()) {
-				IPOSequent[] sequents = file.getSequents();
-				for (IPOSequent sequent : sequents) {
-					ModelProofObligation po = new ModelProofObligation(sequent);
-					po.setMachine(this);
-					proofObligations.put(sequent.getElementName(), po);
-		
-					IPOSource[] sources = sequent.getSources();
-					for (int j = 0; j < sources.length; j++) {
-						IRodinElement source = sources[j].getSource();
-						if (source instanceof IGuard ) {
-							source = source.getParent();
-						}
-						if (source instanceof IWitness ) {
-							source = source.getParent();
-						}
-						if (source instanceof IInvariant) {
-							if (invariants.containsKey(((IInvariant) source).getElementName())) {
-								ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());
-								po.addInvariant(inv);
-								inv.addProofObligation(po);
-							}
-						}
-						if (source instanceof ITheorem) {
-							if (theorems.containsKey(((ITheorem) source).getElementName())) {
-								ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
-								po.addTheorem(thm);
-								thm.addProofObligation(po);
-							}
-						}
-						if (source instanceof IEvent) {
-							if (events.containsKey(((IEvent) source).getElementName())) {
-								ModelEvent evt = events.get(((IEvent) source).getElementName());
-								po.addEvent(evt);
-								evt.addProofObligation(po);
+		if (poNeedsProcessing) {
+			try {
+				//clear old POs
+				proofObligations.clear();
+				IPOFile file = internalMachine.getPOFile();
+				if (file.exists()) {
+					IPOSequent[] sequents = file.getSequents();
+					for (IPOSequent sequent : sequents) {
+						ModelProofObligation po = new ModelProofObligation(sequent);
+						po.setMachine(this);
+						proofObligations.put(sequent.getElementName(), po);
+			
+						IPOSource[] sources = sequent.getSources();
+						for (int j = 0; j < sources.length; j++) {
+							IRodinElement source = sources[j].getSource();
+							//only process sources that belong to this machine.
+							if (internalMachine.equals(source.getAncestor(IMachineFile.ELEMENT_TYPE))) {
+								if (source instanceof IGuard ) {
+									source = source.getParent();
+								}
+								if (source instanceof IWitness ) {
+									source = source.getParent();
+								}
+								if (source instanceof IInvariant) {
+									if (invariants.containsKey(((IInvariant) source).getElementName())) {
+										ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());
+										po.addInvariant(inv);
+										inv.addProofObligation(po);
+									}
+								}
+								if (source instanceof ITheorem) {
+									if (theorems.containsKey(((ITheorem) source).getElementName())) {
+										ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
+										po.addTheorem(thm);
+										thm.addProofObligation(po);
+									}
+								}
+								if (source instanceof IEvent) {
+									if (events.containsKey(((IEvent) source).getElementName())) {
+										ModelEvent evt = events.get(((IEvent) source).getElementName());
+										po.addEvent(evt);
+										evt.addProofObligation(po);
+									}
+								}
 							}
 						}
 					}
 				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+	//			e.printStackTrace();
 			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			poNeedsProcessing = false;
 		}
 	}
 
@@ -226,22 +235,25 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * if that ProofObligation is present.
 	 */
 	public void processPSFile() {
-		try {
-			IPSFile file = internalMachine.getPSFile();
-			if (file.exists()) {
-				IPSStatus[] stats = file.getStatuses();
-				for (int i = 0; i < stats.length; i++) {
-					IPSStatus status = stats[i];
-					IPOSequent sequent = status.getPOSequent();
-					// check if there is a ProofObligation for this status (there should be one!)
-					if (proofObligations.containsKey(sequent.getElementName())) {
-						proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+		if (psNeedsProcessing) {
+			try {
+				IPSFile file = internalMachine.getPSFile();
+				if (file.exists()) {
+					IPSStatus[] stats = file.getStatuses();
+					for (int i = 0; i < stats.length; i++) {
+						IPSStatus status = stats[i];
+						IPOSequent sequent = status.getPOSequent();
+						// check if there is a ProofObligation for this status (there should be one!)
+						if (proofObligations.containsKey(sequent.getElementName())) {
+							proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+						}
 					}
 				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			psNeedsProcessing = false;
 		}
 	}
 	
@@ -372,5 +384,37 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public String toString(){
 		return ("ModelMachine: "+internalMachine.getBareName());
 	}
-
+	
+	/**
+	 * process the proof obligations if needed
+	 * @return the total number of Proof Obligations
+	 */
+	@Override
+	public int getPOcount(){
+		if (poNeedsProcessing || psNeedsProcessing) {
+			processPOFile();
+			processPSFile();
+		}
+		return proofObligations.size();
+	}
+	
+	/**
+	 * process the proof obligations if needed
+	 * @return The number of undischarged Proof Obligations
+	 */
+	public int getUndischargedPOcount() {
+		if (poNeedsProcessing || psNeedsProcessing) {
+			processPOFile();
+			processPSFile();
+		}
+		int result = 0;
+		for (ModelProofObligation po : proofObligations.values()) {
+			if (!po.isDischarged()) {
+				result++;
+			}
+		}
+		return result;
+		
+	}
+	
 }

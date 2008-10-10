@@ -326,7 +326,8 @@ public class ModelController implements IElementChangedListener {
 			ModelProject project = projects.get(element.getRodinProject().getHandleIdentifier());
 			if (element instanceof IRodinProject) {
 				project.needsProcessing = true;
-				processProject((IRodinProject)element);
+				//will be processed in the content provider
+//				processProject((IRodinProject)element);
 			}
 			
 			if (element instanceof IMachineFile) {
@@ -339,20 +340,28 @@ public class ModelController implements IElementChangedListener {
 				IPOFile file = (IPOFile) element;
 				//get corresponding machine or context
 				if (file.getMachineFile() != null) {
-					getMachine(file.getMachineFile()).processPOFile();
+					ModelMachine machine = getMachine(file.getMachineFile());
+					machine.poNeedsProcessing = true;
+					machine.processPOFile();
 				}
 				if (file.getContextFile() != null) {
-					getContext(file.getContextFile()).processPOFile();
+					ModelContext context = getContext(file.getContextFile());
+					context.poNeedsProcessing = true;
+					context.processPOFile();
 				}
 			}
 			if (element instanceof IPSFile) {
 				IPSFile file = (IPSFile) element;
 				//get corresponding machine or context
 				if (file.getMachineFile() != null) {
-					getMachine(file.getMachineFile()).processPSFile();
+					ModelMachine machine = getMachine(file.getMachineFile());
+					machine.psNeedsProcessing = true;
+					machine.processPSFile();
 				}
 				if (file.getContextFile() != null) {
-					getContext(file.getContextFile()).processPSFile();
+					ModelContext context = getContext(file.getContextFile());
+					context.psNeedsProcessing = true;
+					context.processPSFile();
 				}
 			}
 			if (element instanceof IInvariant) {

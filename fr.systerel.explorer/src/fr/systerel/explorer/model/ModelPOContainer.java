@@ -87,9 +87,10 @@ public class ModelPOContainer implements IModelElement{
 		return proofObligations.size();
 		
 	}
+	
 	/**
 	 * 
-	 * @return The number of undischarged Proof Obligations
+	 * @return The number of undischarged Proof Obligations (including Reviewed POs)
 	 */
 	public int getUndischargedPOcount() {
 		int result = 0;
@@ -99,8 +100,49 @@ public class ModelPOContainer implements IModelElement{
 			}
 		}
 		return result;
-		
 	}
 	
+	/**
+	 * 
+	 * @return The number of broken Proof Obligations
+	 */
+	public int getBrokenPOcount() {
+		int result = 0;
+		for (ModelProofObligation po : proofObligations.values()) {
+			if (po.isBroken()) {
+				result++;
+			}
+		}
+		return result;
+	}
 
+	/**
+	 * 
+	 * @return The number of manually discharged Proof Obligations (not including reviewed POs)
+	 */
+	public int getManuallyDischargedPOcount() {
+		int result = 0;
+		for (ModelProofObligation po : proofObligations.values()) {
+			if (po.isManual() &&po.isDischarged()) {
+				result++;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @return The number of reviewed Proof Obligations
+	 */
+	public int getReviewedPOcount() {
+		int result = 0;
+		for (ModelProofObligation po : proofObligations.values()) {
+			if (po.isReviewed()) {
+				result++;
+			}
+		}
+		return result;
+	}
+	
+	
 }

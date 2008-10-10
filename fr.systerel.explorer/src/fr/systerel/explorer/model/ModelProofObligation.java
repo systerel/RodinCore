@@ -39,6 +39,9 @@ public class ModelProofObligation {
 	private ModelMachine machine; // A proof obligation can either belong to a context or a machine
 	private ModelContext context;
 	private boolean discharged = false;
+	private boolean broken = false;
+	private boolean manual = false;
+	private boolean reviewed = false;
 
 	
 	public void setMachine(ModelMachine machine) {
@@ -49,10 +52,19 @@ public class ModelProofObligation {
 		return machine;
 	}
 	
+	/**
+	 * Set the status of this proof obligation.
+	 * Updates stored attributes such as discharged or reviewed
+	 * @param status The new status of this proof obligation
+	 */
 	public void setIPSStatus(IPSStatus status) {
 		internal_status = status;
 		try {
+			int confidence = status.getConfidence();
 			discharged =  (status.getConfidence() > IConfidence.REVIEWED_MAX) && !status.isBroken() ;
+			reviewed = (confidence > IConfidence.PENDING && confidence <= IConfidence.REVIEWED_MAX);
+			broken = status.isBroken();
+			manual = status.getHasManualProof();
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +127,25 @@ public class ModelProofObligation {
 		return internal_sequent.getElementName();
 	}
 	
+	/**
+	 * 
+	 * @return <code>true</code> if this PO is discharged
+	 * <code>false</code> otherwise.
+	 */
 	public boolean isDischarged(){
 		return discharged;
 	}
+
+	public boolean isBroken(){
+		return broken;
+	}
+
+	public boolean isReviewed(){
+		return reviewed;
+	}
+
+	public boolean isManual(){
+		return manual;
+	}
+
 }
