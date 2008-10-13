@@ -72,6 +72,8 @@ public class ModelProject implements IModelElement {
 			
 		}
 		mach.processChildren();
+		mach.poNeedsProcessing = true;
+		mach.psNeedsProcessing = true;
 		try {
 			// get all machines, that this machine refines (all abstract machines, usually just 1)
 			for (IRefinesMachine refine : machine.getRefinesClauses()){
@@ -165,6 +167,8 @@ public class ModelProject implements IModelElement {
 			ctx.resetAncestors();
 		}
 		ctx.processChildren();
+		ctx.poNeedsProcessing = true;
+		ctx.psNeedsProcessing = true;
 		// get all contexts, that this contexts extends 
 		try {
 			IExtendsContext[] exts;
