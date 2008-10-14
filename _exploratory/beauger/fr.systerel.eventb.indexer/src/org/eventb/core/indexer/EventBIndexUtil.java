@@ -22,9 +22,15 @@ public class EventBIndexUtil {
 	public static final IOccurrenceKind DECLARATION = RodinIndexer
 			.addOccurrenceKind("fr.systerel.eventb.indexer.declaration",
 					"declaration");
+
 	public static final IOccurrenceKind REFERENCE = RodinIndexer
 			.addOccurrenceKind("fr.systerel.eventb.indexer.reference",
 					"reference");
+
+	// TODO use for assignments:
+	public static final IOccurrenceKind MODIFICATION = RodinIndexer
+	.addOccurrenceKind("fr.systerel.eventb.indexer.modification",
+			"modification");
 
 	private static int alloc;
 

@@ -10,32 +10,33 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
+import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eventb.core.IEvent;
+import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IParameter;
 import org.eventb.core.IPredicateElement;
-import org.eventb.core.IVariant;
+import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
-import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.RodinIndexer;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class MachineIndexer implements IIndexer {
-
-	private static final boolean DEBUG = true;
-	// FIXME manage exceptions and remove
+public class MachineIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.machine";
-
-	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
 	private IIndexingToolkit index;
 
@@ -66,83 +67,148 @@ public class MachineIndexer implements IIndexer {
 	}
 
 	private void index(IMachineFile file) throws RodinDBException {
-		final SymbolTable symbolTable = new SymbolTable();
+		final SymbolTable imports = new SymbolTable(null);
 
-		processImports(index.getImports(), symbolTable);
-		processIdentifierElements(file.getVariables(), symbolTable);
-		processLabeledElements(file.getEvents(), symbolTable);
+		final Map<IEvent, SymbolTable> abstractEventTables = processImports(
+				index.getImports(), imports);
 
-		processPredicateElements(file.getInvariants(), symbolTable);
-		processPredicateElements(file.getTheorems(), symbolTable);
-		processExpressionElements(file.getVariants(), symbolTable);
+		final SymbolTable declImports = new SymbolTable(imports);
+
+		processIdentifierElements(file.getVariables(), declImports);
+
+		processPredicateElements(file.getInvariants(), declImports);
+		processPredicateElements(file.getTheorems(), declImports);
+		processExpressionElements(file.getVariants(), declImports);
+
+		processEvents(file.getEvents(), declImports, abstractEventTables);
 	}
 
-	// TODO consider factorizing methods with ContextIndexer
-
-	private void processImports(IDeclaration[] imports, SymbolTable symbolTable) {
+	// TODO simplify the code
+	// TODO make more homogeneous argument passing and returning
+	private Map<IEvent, SymbolTable> processImports(IDeclaration[] imports,
+			SymbolTable symbolTable) {
 		// put the declarations into the SymbolTable
+		// filter event parameters to put them into separate SymbolTables
+		final Map<IEvent, SymbolTable> abstractSTs = new HashMap<IEvent, SymbolTable>();
 		for (IDeclaration declaration : imports) {
 			// index.export(declaration);
-			symbolTable.put(declaration);
+			final IInternalElement element = declaration.getElement();
+//			if (element instanceof IEvent) {
+//				final IEvent event = (IEvent) element;
+//				addAbstractDeclaration(abstractSTs, declaration, event);
+//			} else 
+				if (element instanceof IParameter) {
+				final IParameter parameter = (IParameter) element;
+				final IEvent event = (IEvent) parameter.getParent();
+				addAbstractDeclaration(abstractSTs, declaration, event);
+			} else {
+				// FIXME should not be added to the main table as they are not
+				// visible in guards and actions if not re-declared
+				// but we are not implementing a visibility checker => OK
+				symbolTable.put(declaration, false);
+			}
 		}
+		return abstractSTs;
 	}
 
-	private void processIdentifierElements(IIdentifierElement[] elems,
-			SymbolTable symbolTable) throws RodinDBException {
+	private void addAbstractDeclaration(Map<IEvent, SymbolTable> result,
+			IDeclaration declaration, IEvent event) {
+		SymbolTable abstractST = result.get(event);
+		if (abstractST == null) {
+			abstractST = new SymbolTable(null);
+			result.put(event, abstractST);
+		}
+		abstractST.put(declaration, false);
+	}
+
+	// TODO pull up
+	private void processIdentifierElements(IIdentifierElement[] idents,
+			SymbolTable declmports) throws RodinDBException {
 		// index declaration for each identifier element and export them
 		// put the declarations into the SymbolTable
-		for (IIdentifierElement ident : elems) {
-			final IDeclaration declaration = indexIdent(ident);
+		// FIXME re-declarations should override import declarations in ST
+		// and generate a REFERENCE to the abstract one
+		for (IIdentifierElement ident : idents) {
+			final String name = ident.getIdentifierString();
+			final IDeclaration declaration = indexDeclaration(ident, name,
+					index);
 			index.export(declaration);
-			symbolTable.put(declaration);
+			final IDeclaration previousDecl = declmports.lookup(name);
+			if (previousDecl != null) { // re-declaration of abstract variable
+				final IRodinFile file = index.getRodinFile();
+				indexReference(previousDecl, getRodinLocation(file), index);
+			}
+			declmports.put(declaration, true);
 		}
 	}
 
-	private void processLabeledElements(ILabeledElement[] elems,
+	private void processPredicateElements(IPredicateElement[] preds,
 			SymbolTable symbolTable) throws RodinDBException {
-		// index declaration for each identifier element and export them
-		// put the declarations into the SymbolTable
-		for (ILabeledElement label : elems) {
-			final IDeclaration declaration = indexLabel(label);
-			index.export(declaration);
-			symbolTable.put(declaration);
-		}
-	}
-
-	private void processPredicateElements(IPredicateElement[] elems,
-			SymbolTable symbolTable) throws RodinDBException {
-		for (IPredicateElement elem : elems) {
-			final PredicateElementIndexer predIndexer = new PredicateElementIndexer(
-					elem, symbolTable);
+		for (IPredicateElement elem : preds) {
+			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
+					symbolTable);
 			predIndexer.process(index);
 		}
 	}
 
-	private void processExpressionElements(IVariant[] variants,
+	private void processExpressionElements(IExpressionElement[] exprs,
 			SymbolTable symbolTable) throws RodinDBException {
-		for (IVariant variant : variants) {
-			final ExpressionElementIndexer exprIndexer = new ExpressionElementIndexer(
-					variant, symbolTable);
+		for (IExpressionElement expr : exprs) {
+			final ExpressionIndexer exprIndexer = new ExpressionIndexer(expr,
+					symbolTable);
 			exprIndexer.process(index);
 		}
 	}
 
-	private IDeclaration indexElement(IInternalElement element, String name) {
-		final IDeclaration declaration = index.declare(element, name);
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element
-				.getRodinFile());
-		index.addOccurrence(declaration, EventBIndexUtil.DECLARATION, loc);
-		return declaration;
+	private void processEvents(IEvent[] events, SymbolTable declImports,
+			Map<IEvent, SymbolTable> abstractEventTables)
+			throws RodinDBException {
+		// index declaration for each event and event parameter, and export them
+		// put the declarations into the SymbolTable
+		// processLabeledElements(events, symbolTable);
+		for (IEvent event : events) {
+			// processIdentifierElements(event.getParameters(), symbolTable);
+			final SymbolTable abstPrmsDeclImports = new SymbolTable(declImports);
+			addAbstractSymbols(event, abstractEventTables, abstPrmsDeclImports);
+			
+			final EventIndexer eventIndexer = new EventIndexer(event,
+					abstPrmsDeclImports);
+			eventIndexer.process(index);
+		}
 	}
 
-	private IDeclaration indexIdent(IIdentifierElement ident)
+	/**
+	 * @param eventTable
+	 * @throws RodinDBException
+	 */
+	private void addAbstractSymbols(IEvent event,
+			Map<IEvent, SymbolTable> abstractEventTables, SymbolTable abstPrmsDeclImports)
 			throws RodinDBException {
-		return indexElement(ident, ident.getIdentifierString());
+		final List<IEvent> abstractEvents = getEvents(event.getRefinesClauses(), abstPrmsDeclImports);
+		for (IEvent abstEvent : abstractEvents) {
+			final SymbolTable abstSymbolTable = abstractEventTables
+					.get(abstEvent);
+			if (abstSymbolTable != null) {
+				abstPrmsDeclImports.putAll(abstSymbolTable, false);
+			}
+		}
 	}
 
-	private IDeclaration indexLabel(ILabeledElement label)
+	/**
+	 * @param abstParams 
+	 * @throws RodinDBException
+	 */
+	private List<IEvent> getEvents(IRefinesEvent[] refinesClauses, SymbolTable imports)
 			throws RodinDBException {
-		return indexElement(label, label.getLabel());
+		final List<IEvent> result = new ArrayList<IEvent>();
+		for (IRefinesEvent refinesEvent : refinesClauses) {
+			final String absEventLabel = refinesEvent.getAbstractEventLabel();
+			final IDeclaration declaration = imports.lookup(absEventLabel);
+			final IInternalElement element = declaration.getElement();
+			final IEvent absEvent = (IEvent) element;
+			result.add(absEvent);
+		}
+		return result;
 	}
 
 }

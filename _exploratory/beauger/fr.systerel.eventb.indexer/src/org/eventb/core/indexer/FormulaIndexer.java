@@ -12,11 +12,11 @@ package org.eventb.core.indexer;
 
 import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ast.DefaultVisitor;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.indexer.SymbolTable.IdentTable;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
@@ -26,17 +26,19 @@ import org.rodinp.core.index.IRodinLocation;
  * @author Nicolas Beauger
  * 
  */
-public class FreeIdentIndexer extends DefaultVisitor {
+public class FormulaIndexer extends DefaultVisitor {
 	
 	private final IInternalElement visited;
+	private final IAttributeType.String attributeType;
 	private final IdentTable visibleIdents;
 	private final IIndexingToolkit index;
 
 
 
-	public FreeIdentIndexer(IInternalElement visited,
+	public FormulaIndexer(IInternalElement visited, IAttributeType.String attributeType,
 			IdentTable visibleIdents, IIndexingToolkit index) {
 		this.visited = visited;
+		this.attributeType = attributeType;
 		this.visibleIdents = visibleIdents;
 		this.index = index;
 	}
@@ -45,12 +47,15 @@ public class FreeIdentIndexer extends DefaultVisitor {
 
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
-		final SourceLocation srcLoc = ident.getSourceLocation();
-
+		if (ident.isPrimed()) {
+			ident = ident.withoutPrime(FormulaFactory.getDefault());
+		}
+		
 		if (visibleIdents.contains(ident)) {
 			final IDeclaration declaration = visibleIdents.get(ident);
+			final SourceLocation srcLoc = ident.getSourceLocation();
 			final IRodinLocation loc = EventBIndexUtil.getRodinLocation(
-					visited, EventBAttributes.PREDICATE_ATTRIBUTE, srcLoc);
+					visited, attributeType, srcLoc);
 
 			index.addOccurrence(declaration, REFERENCE, loc);
 		}

@@ -11,7 +11,6 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.EventBPlugin.getContextFileName;
-import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,25 +23,17 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
-import org.rodinp.core.index.IRodinLocation;
-import org.rodinp.core.index.RodinIndexer;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class ContextIndexer implements IIndexer {
-
-	private static final boolean DEBUG = true;
-	// FIXME manage exceptions and remove
+public class ContextIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.context";
 
-	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
-
-	private IIndexingToolkit index;
+	IIndexingToolkit index;
 
 	// TODO consider passing as parameter
 	// TODO manage exceptions
@@ -64,7 +55,7 @@ public class ContextIndexer implements IIndexer {
 	}
 
 	private void index(IContextFile file) throws RodinDBException {
-		final SymbolTable symbolTable = new SymbolTable();
+		final SymbolTable symbolTable = new SymbolTable(null);
 
 		processImports(index.getImports(), symbolTable);
 		processIdentifierElements(file.getCarrierSets(), symbolTable);
@@ -79,7 +70,7 @@ public class ContextIndexer implements IIndexer {
 		// put the declarations into the SymbolTable
 		for (IDeclaration declaration : imports) {
 			index.export(declaration);
-			symbolTable.put(declaration);
+			symbolTable.put(declaration, false);
 		}
 	}
 
@@ -88,29 +79,21 @@ public class ContextIndexer implements IIndexer {
 		// index declaration for each identifier element and export them
 		// put the declarations into the SymbolTable
 		for (IIdentifierElement ident : elems) {
-			final IDeclaration declaration = indexIdent(ident);
+			final IDeclaration declaration = indexDeclaration(ident, ident
+					.getIdentifierString(), index);
 			index.export(declaration);
-			symbolTable.put(declaration);
+			// TODO process any conflict in symbol table ?
+			symbolTable.put(declaration, true);
 		}
 	}
 
 	private void processPredicateElements(IPredicateElement[] elems,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : elems) {
-			final PredicateElementIndexer predIndexer = new PredicateElementIndexer(
-					elem, symbolTable);
+			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
+					symbolTable);
 			predIndexer.process(index);
 		}
-	}
-
-	private IDeclaration indexIdent(IIdentifierElement ident)
-			throws RodinDBException {
-		final IDeclaration declaration = index.declare(ident, ident
-				.getIdentifierString());
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(ident
-				.getRodinFile());
-		index.addOccurrence(declaration, DECLARATION, loc);
-		return declaration;
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
@@ -125,7 +108,7 @@ public class ContextIndexer implements IIndexer {
 					.getExtendsClauses();
 
 			addExtendedFiles(extendsClauses, extendedFiles);
-			
+
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			if (DEBUG) {

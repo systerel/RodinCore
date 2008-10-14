@@ -3,68 +3,90 @@ package org.eventb.core.indexer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.index.IDeclaration;
 
 public class SymbolTable {
 
-	public static class IdentTable {
-		private final Map<FreeIdentifier, IDeclaration> table;
-		
-		public IdentTable() {
-			this.table = new HashMap<FreeIdentifier, IDeclaration>();
-		}
-		
-		public void put(FreeIdentifier ident, IDeclaration declaration) {
-			table.put(ident, declaration);
-		}
-		
-		public IDeclaration get(FreeIdentifier ident) {
-			return table.get(ident);
-		}
-		
-		public boolean contains(FreeIdentifier ident) {
-			return table.containsKey(ident);
-		}
-		
-		public boolean isEmpty() {
-			return table.isEmpty();
-		}
-	}
-	
-	
 	private final Map<String, IDeclaration> table;
-	
-	SymbolTable() {
+	private final SymbolTable prev;
+
+	SymbolTable(SymbolTable prev) {
 		this.table = new HashMap<String, IDeclaration>();
+		this.prev = prev;
 	}
-	
-//	public IDeclaration get(String symbol) {
-//		return table.get(symbol);
-//	}
-	
-	public void put(IDeclaration declaration) {
+
+	public IDeclaration lookup(String symbol) {
+		final IDeclaration declaration = table.get(symbol);
+		if (declaration == null && prev != null) {
+			return prev.lookup(symbol);
+		}
+		return declaration;
+	}
+
+	/**
+	 * Puts the given declaration in this SymbolTable.
+	 * <p>
+	 * It is possible that a declaration with the same name already exists. The
+	 * value of the <code>override</code> parameter effects the resolution of
+	 * such a conflict:
+	 * <ul>
+	 * <li><code>true</code> - in this case the declaration erases the
+	 * previous one</li>
+	 * <li><code>false</code> - in this case the declaration is not put and
+	 * the previous one is removed.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param declaration
+	 *            the declaration to add
+	 * @param override
+	 *            specify how to handle conflict is the same name already exists
+	 */
+	public void put(IDeclaration declaration, boolean override) {
 		// TODO maybe return a boolean false if an association already exists
 		final String name = declaration.getName();
-		final IDeclaration previous = table.put(name, declaration);
-		if (previous != null) {
+
+		if (override || !table.containsKey(name)) {
+			table.put(name, declaration);
+		} else {
 			table.remove(name);
-			// TODO maybe store both in a list of duplicate symbols
 		}
 	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
-	public IdentTable extractIdentTable(FreeIdentifier[] idents) {
-		final IdentTable result = new IdentTable();
+
+	/**
+	 * Extracts an IdentTable with only the given FreeIdentifiers.
+	 * 
+	 * @param idents
+	 * @param identTable 
+	 */
+	public void addToIdentTable(FreeIdentifier[] idents, IdentTable identTable) {
 		for (FreeIdentifier ident : idents) {
-			final IDeclaration declaration = table.get(ident.getName());
+			if (ident.isPrimed()) {
+				ident = ident.withoutPrime(FormulaFactory.getDefault());
+			}
+			final IDeclaration declaration = lookup(ident.getName());
 			if (declaration != null) {
-				result.put(ident, declaration);
+				identTable.put(ident, declaration);
 			}
 		}
-		return result;
+	}
+
+	/**
+	 * @param abstSymbolTable
+	 * @param override 
+	 */
+	public void putAll(SymbolTable abstSymbolTable, boolean override) {
+		for (IDeclaration declaration : abstSymbolTable.table.values()) {
+			this.put(declaration, override);
+		}
+		if (abstSymbolTable.prev != null) {
+			putAll(abstSymbolTable.prev, override);
+		}
 	}
 }

@@ -1,61 +1,37 @@
-/*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Systerel - initial API and implementation
- *******************************************************************************/
 package org.eventb.core.indexer;
 
-import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.IContextFile;
-import org.osgi.framework.BundleContext;
+import static org.eventb.core.indexer.EventBIndexUtil.*;
+
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
+import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 
+public abstract class EventBIndexer implements IIndexer {
 
-public class EventBIndexer extends Plugin {
+	protected static final boolean DEBUG = false;
+	// FIXME manage exceptions and remove
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "fr.systerel.eventb.indexer";
+	protected static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
-	// The shared instance
-	private static EventBIndexer plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public EventBIndexer() {
+	protected IDeclaration indexDeclaration(IInternalElement element,
+			String name, IIndexingToolkit index) throws RodinDBException {
+
+		final IDeclaration declaration = index.declare(element, name);
+		final IRodinLocation loc = RodinIndexer.getRodinLocation(element
+				.getRodinFile());
+
+		index.addOccurrence(declaration, DECLARATION, loc);
+
+		return declaration;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-		RodinIndexer.register(new ContextIndexer(), IContextFile.ELEMENT_TYPE);
+	protected void indexReference(IDeclaration declaration,
+			IRodinLocation location, IIndexingToolkit index) {
+		index.addOccurrence(declaration, REFERENCE, location);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static EventBIndexer getDefault() {
-		return plugin;
-	}
-
 }
