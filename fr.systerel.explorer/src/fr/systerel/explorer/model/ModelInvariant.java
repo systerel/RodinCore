@@ -13,6 +13,8 @@
 package fr.systerel.explorer.model;
 
 import org.eventb.core.IInvariant;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Represents an Invariant in the model
@@ -30,5 +32,19 @@ public class ModelInvariant extends ModelPOContainer{
 		return internalInvariant;
 	}
 
+	@Override
+	public String getLabel() {
+		try {
+			return "Invariant " +internalInvariant.getLabel();
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Invariant ??";
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalInvariant;
+	}
 
 }

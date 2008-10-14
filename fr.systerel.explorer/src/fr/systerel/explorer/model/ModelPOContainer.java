@@ -16,13 +16,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eventb.core.IAxiom;
+import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ITheorem;
+import org.rodinp.core.IInternalElementType;
 
 /**
- * An Interface for any elements that may contain ProofObligations (Machines, Invariants...)
+ * An abstract class for any elements that may contain ProofObligations (Machines, Invariants...)
  *
  */
-public class ModelPOContainer implements IModelElement{
+public abstract class ModelPOContainer implements IModelElement{
 	
 	// name for Label Provider
 	public static final String DISPLAY_NAME = "Proof Obligations";
@@ -87,6 +92,93 @@ public class ModelPOContainer implements IModelElement{
 		return proofObligations.size();
 		
 	}
+
+	/**
+	 * Gets the total number of proof obligations that belong to a certain element type (e.g invariants)
+	 * @param aType The type of the element (invariant, theorem, event...)
+	 * @return the total number of proof obligations that have an element of the given type as source
+	 */
+	public int getPOcount(IInternalElementType<?> aType){
+		int result = 0;
+		if (aType == IInvariant.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.getInvariants().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == ITheorem.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.getTheorems().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiom.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.getAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IEvent.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.getEvents().length > 0) {
+					result++;
+				}
+			}
+		}
+		//return all proof obligations.
+		if (aType == IPSStatus.ELEMENT_TYPE){
+			result = getPOcount();
+		}
+
+		return result;
+	}
+
+	
+	/**
+	 * Gets the number of undischarged proof obligations that belong to a certain element type (e.g invariants)
+	 * @param aType The type of the element (invariant, theorem, event...)
+	 * @return The number of undischarged Proof Obligations (including Reviewed POs)
+	 */
+	public int getUndischargedPOcount(IInternalElementType<?> aType) {
+		int result = 0;
+		if (aType == IInvariant.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getInvariants().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == ITheorem.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getTheorems().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiom.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IEvent.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (!po.isDischarged() && po.getEvents().length > 0) {
+					result++;
+				}
+			}
+		}
+		//return all undischarged proof obligations.
+		if (aType == IPSStatus.ELEMENT_TYPE){
+			result = getUndischargedPOcount();
+		}
+
+		return result;
+	}
 	
 	/**
 	 * 
@@ -101,6 +193,7 @@ public class ModelPOContainer implements IModelElement{
 		}
 		return result;
 	}
+	
 	
 	/**
 	 * 
@@ -131,6 +224,50 @@ public class ModelPOContainer implements IModelElement{
 	}
 
 	/**
+	 * Gets the number of manually discharged proof obligations that belong to a certain element type (e.g invariants)
+	 * @param aType The type of the element (invariant, theorem, event...)
+	 * @return The number of manually discharged Proof Obligations (not including reviewed POs)
+	 */
+	public int getManuallyDischargedPOcount(IInternalElementType<?> aType) {
+		int result = 0;
+		if (aType == IInvariant.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() &&po.isDischarged() && po.getInvariants().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == ITheorem.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() &&po.isDischarged() && po.getTheorems().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiom.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() &&po.isDischarged() && po.getAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IEvent.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isManual() &&po.isDischarged() && po.getEvents().length > 0) {
+					result++;
+				}
+			}
+		}
+		//return all manually discharged proof obligations.
+		if (aType == IPSStatus.ELEMENT_TYPE){
+			result = getManuallyDischargedPOcount();
+		}
+
+		return result;
+	}
+	
+	
+	/**
 	 * 
 	 * @return The number of reviewed Proof Obligations
 	 */
@@ -143,6 +280,51 @@ public class ModelPOContainer implements IModelElement{
 		}
 		return result;
 	}
+
+	/**
+	 * Gets the number of reviewed proof obligations that belong to a certain element type (e.g invariants)
+	 * @param aType The type of the element (invariant, theorem, event...)
+	 * @return The number of reviewed Proof Obligations
+	 */
+	public int getReviewedPOcount(IInternalElementType<?> aType) {
+		int result = 0;
+		if (aType == IInvariant.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getInvariants().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == ITheorem.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getTheorems().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IAxiom.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getAxioms().length > 0) {
+					result++;
+				}
+			}
+		}
+		if (aType == IEvent.ELEMENT_TYPE){
+			for (ModelProofObligation po : proofObligations.values()) {
+				if (po.isReviewed() && po.getEvents().length > 0) {
+					result++;
+				}
+			}
+		}
+		//return all reviewed proof obligations.
+		if (aType == IPSStatus.ELEMENT_TYPE){
+			result = getReviewedPOcount();
+		}
+
+		return result;
+	}
 	
+	
+	public abstract String getLabel();
 	
 }

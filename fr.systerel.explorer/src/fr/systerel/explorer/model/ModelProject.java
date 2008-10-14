@@ -28,6 +28,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -497,6 +498,10 @@ public class ModelProject implements IModelElement {
 		}
 		return result;
 		
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalProject;
 	}
 	
 	

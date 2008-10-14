@@ -13,6 +13,8 @@
 package fr.systerel.explorer.model;
 
 import org.eventb.core.IEvent;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Represents an Event in the Model
@@ -31,4 +33,19 @@ public class ModelEvent extends ModelPOContainer {
 		return internalEvent;
 	}
 
+	@Override
+	public String getLabel() {
+		try {
+			return "Event " +internalEvent.getLabel();
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Eventt ??";
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalEvent;
+	}
+	
 }

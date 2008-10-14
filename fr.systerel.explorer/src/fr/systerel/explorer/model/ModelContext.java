@@ -28,6 +28,7 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -375,6 +376,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return ModelController.getProject(internalContext.getRodinProject());
 	}
 	
+	
 	/**
 	 * process the proof obligations if needed
 	 * @return the total number of Proof Obligations
@@ -392,6 +394,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * process the proof obligations if needed
 	 * @return The number of undischarged Proof Obligations
 	 */
+	@Override
 	public int getUndischargedPOcount() {
 		if (poNeedsProcessing || psNeedsProcessing) {
 			processPOFile();
@@ -407,5 +410,13 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		
 	}
 	
+	@Override
+	public String getLabel() {
+		return "Context " +internalContext.getBareName();
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalContext;
+	}
 
 }

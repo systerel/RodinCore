@@ -76,8 +76,7 @@ public class ModelProofObligation {
 	}
 	
 	public ModelInvariant[] getInvariants() {
-		ModelInvariant[] inv = new ModelInvariant[invariants.size()];
-		return invariants.toArray(inv);
+		return invariants.toArray(new ModelInvariant[invariants.size()]);
 	}
 	
 	public void addInvariant(ModelInvariant inv) {
@@ -89,8 +88,7 @@ public class ModelProofObligation {
 	}
 
 	public ModelEvent[] getEvents() {
-		ModelEvent[] event = new ModelEvent[events.size()];
-		return events.toArray(event);
+		return events.toArray(new ModelEvent[events.size()]);
 	}
 	
 	public void addEvent(ModelEvent event) {
@@ -107,7 +105,10 @@ public class ModelProofObligation {
 
 	public void addTheorem(ModelTheorem th) {
 		theorems.add(th);
-		
+	}
+
+	public ModelTheorem[] getTheorems() {
+		return theorems.toArray(new ModelTheorem[theorems.size()]);
 	}
 
 	public void addAxiom(ModelAxiom ax) {
@@ -115,6 +116,10 @@ public class ModelProofObligation {
 		
 	}
 
+	public ModelAxiom[] getAxioms() {
+		return axioms.toArray(new ModelAxiom[axioms.size()]);
+	}
+	
 	public ModelContext getContext() {
 		return context;
 	}

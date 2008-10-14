@@ -12,6 +12,8 @@
 
 package fr.systerel.explorer.model;
 
+import org.rodinp.core.IRodinElement;
+
 /**
  * The Model is used to present the structure of the machines and contexts 
  * and the proof obligations. For a machine, context, invariant, theorem, axiom and event
@@ -32,4 +34,12 @@ public interface IModelElement {
 	 * @return The Parent of this element from the model perspective
 	 */
 	public IModelElement getModelParent();
+	
+	/**
+	 * 
+	 * @return The RodinElement that this ModelElement is based on
+	 * 			 (e.g. an IMachineFile for ModelMachine)
+	 * 			or <code>null</code> if there is none.
+	 */	
+	public IRodinElement getInternalElement();
 }

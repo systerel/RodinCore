@@ -22,6 +22,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 
 import fr.systerel.explorer.navigator.IElementNode;
 
@@ -96,6 +97,13 @@ public class ModelElementNode implements IModelElement, IElementNode{
 
 	public IEventBFile getParent() {
 		return parentFile;
+	}
+
+	/**
+	 * does not have an internal element
+	 */
+	public IRodinElement getInternalElement() {
+		return null;
 	}
 	
 

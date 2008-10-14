@@ -13,6 +13,8 @@
 package fr.systerel.explorer.model;
 
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Represents a Theorem in the Model
@@ -31,4 +33,19 @@ public class ModelTheorem extends ModelPOContainer {
 		return internalTheorem;
 	}
 
+	@Override
+	public String getLabel() {
+		try {
+			return "Theorem " +internalTheorem.getLabel();
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Theorem ??";
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalTheorem;
+	}
+	
 }

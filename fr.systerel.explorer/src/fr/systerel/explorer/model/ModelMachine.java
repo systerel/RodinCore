@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -184,12 +185,14 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 						ModelProofObligation po = new ModelProofObligation(sequent);
 						po.setMachine(this);
 						proofObligations.put(sequent.getElementName(), po);
-			
 						IPOSource[] sources = sequent.getSources();
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this machine.
 							if (internalMachine.equals(source.getAncestor(IMachineFile.ELEMENT_TYPE))) {
+								if (source instanceof IAction) {
+									source =source.getParent();
+								}
 								if (source instanceof IGuard ) {
 									source = source.getParent();
 								}
@@ -402,6 +405,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * process the proof obligations if needed
 	 * @return The number of undischarged Proof Obligations
 	 */
+	@Override
 	public int getUndischargedPOcount() {
 		if (poNeedsProcessing || psNeedsProcessing) {
 			processPOFile();
@@ -416,5 +420,15 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return result;
 		
 	}
+
+	@Override
+	public String getLabel() {
+		return "Machine " +internalMachine.getBareName();
+	}
+
+	public IRodinElement getInternalElement() {
+		return internalMachine;
+	}
+	
 	
 }
