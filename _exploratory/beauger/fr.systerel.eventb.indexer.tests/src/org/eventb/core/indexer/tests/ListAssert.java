@@ -16,29 +16,29 @@ import junit.framework.TestCase;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class ListAssert {
-	
-	
-	public static <T> void assertSameElements(List<T> expected,
-			List<T> actual, String listEltDesc) {
-		TestCase.assertEquals(listEltDesc + ": bad size in\n"
-				+ ListAssert.makeActExpString(expected, actual), expected.size(), actual
-				.size());
+
+	public static <T> void assertSameElements(List<T> expected, List<T> actual,
+			String listEltDesc) {
+		final String actExpString = ListAssert.makeActExpString(expected,
+				actual);
+		TestCase.assertEquals(listEltDesc + ": bad size in\n" + actExpString,
+				expected.size(), actual.size());
+
+		final boolean containsAll = actual.containsAll(expected);
 		TestCase.assertTrue(listEltDesc + ": incorrect items in\n"
-				+ ListAssert.makeActExpString(expected, actual), actual
-				.containsAll(expected));
+				+ actExpString, containsAll);
 	}
 
 	private static <T> String makeActExpString(List<T> expected, List<T> actual) {
-		return ListAssert.makeString("act", actual) + ListAssert.makeString("exp", expected);
+		return ListAssert.makeString("act", actual)
+				+ ListAssert.makeString("exp", expected);
 	}
 
 	private static <T> String makeString(String listDesc, List<T> list) {
 		return listDesc + ": " + list + "\n";
 	}
 
-	
-	
 }

@@ -79,7 +79,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testDeclaration() throws Exception {
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
 		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1,
@@ -99,10 +99,10 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testOccurrence() throws Exception {
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
-		final IOccurrence occDecl = makeOccDecl(context);
+		final IOccurrence occDecl = makeDecl(context);
 
 		final List<IOccurrence> expected = makeOccList(occDecl);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
@@ -128,11 +128,11 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"cst1 ∈ set1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_AXM);
 
 		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeOccRefPred(axiom, 0, 4);
+		final IOccurrence occRef = makeRefPred(axiom, 0, 4);
 
 		final List<IOccurrence> expected = makeOccList(occRef);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
@@ -156,12 +156,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"cst1 = cst1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_2OCC_SAME_AXM);
 
 		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occRef1 = makeOccRefPred(axiom, 0, 4);
-		final IOccurrence occRef2 = makeOccRefPred(axiom, 7, 11);
+		final IOccurrence occRef1 = makeRefPred(axiom, 0, 4);
+		final IOccurrence occRef2 = makeRefPred(axiom, 7, 11);
 
 		final List<IOccurrence> expected = makeOccList(occRef1, occRef2);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
@@ -179,7 +179,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testExportLocal() throws Exception {
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
 		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1,
@@ -203,14 +203,14 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
 
 		// FIXME do not use the same names for both files
-		final IContextFile exporter = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile exporter = createContext(project, "exporter",
 				CST_1DECL);
 
 		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1,
 				CST1);
 		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
 
-		final IContextFile importer = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile importer = createContext(project, "importer",
 				EMPTY_CONTEXT);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
@@ -231,18 +231,18 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testImportedOccurrence() throws Exception {
-		final IContextFile exporter = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile exporter = createContext(project, "exporter",
 				CST_1DECL);
 
 		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1,
 				CST1);
 		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
 
-		final IContextFile importer = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile importer = createContext(project, "importer",
 				CST_1REF_AXM);
 
 		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occCst1 = makeOccRefPred(axiom, 4, 8);
+		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8);
 		final List<IOccurrence> expected = makeOccList(occCst1);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
@@ -258,12 +258,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testUnknownElement() throws Exception {
-		final IContextFile independent = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile independent = createContext(project, "independent",
 				CST_1DECL);
 		final IDeclaration declCst1 = getDeclCst(independent,
 				INTERNAL_ELEMENT1, CST1);
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1REF_AXM);
 
 		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
@@ -279,12 +279,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testTwoImportsSameName() throws Exception {
-		final IContextFile exporter1 = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile exporter1 = createContext(project, "exporter1",
 				CST_1DECL);
 		final IDeclaration declCstExp1 = getDeclCst(exporter1,
 				INTERNAL_ELEMENT1, CST1);
 
-		final IContextFile exporter2 = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile exporter2 = createContext(project, "exporter2",
 				CST_1DECL);
 		final IDeclaration declCstExp2 = getDeclCst(exporter2,
 				INTERNAL_ELEMENT1, CST1);
@@ -292,7 +292,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final List<IDeclaration> declList = makeDeclList(declCstExp1,
 				declCstExp2);
 
-		final IContextFile importer = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile importer = createContext(project, "importer",
 				CST_1REF_AXM);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declList, null);
@@ -322,7 +322,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final String set1IntName = INTERNAL_ELEMENT1;
 		final String set1Name = "set1";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				SET_1DECL);
 
 		final IDeclaration declSet1 = getDeclSet(context, set1IntName, set1Name);
@@ -352,11 +352,11 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.theorem name=\"internal_element1\" org.eventb.core.label=\"thm1\" org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
 
 		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeOccRefPred(thm, 9, 13);
+		final IOccurrence occRef = makeRefPred(thm, 9, 13);
 
 		final List<IOccurrence> expected = makeOccList(occRef);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
@@ -372,12 +372,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 	public void testBadFileType() throws Exception {
 		final String VAR_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-			+ "<org.eventb.core.variable name=\"internal_element1\" org.eventb.core.identifier=\"var1\"/>"
-			+ "<org.eventb.core.invariant name=\"internal_element1\" org.eventb.core.label=\"inv1\" org.eventb.core.predicate=\"var1 &gt; 1\"/>"
-			+ "</org.eventb.core.machineFile>";
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.variable name=\"internal_element1\" org.eventb.core.identifier=\"var1\"/>"
+				+ "<org.eventb.core.invariant name=\"internal_element1\" org.eventb.core.label=\"inv1\" org.eventb.core.predicate=\"var1 &gt; 1\"/>"
+				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, "file.bum",
+		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
 		final ToolkitStub tk = new ToolkitStub(machine, EMPTY_DECL, null);
@@ -387,7 +387,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		// should not throw an exception
 		indexer.index(tk);
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -398,7 +398,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\">"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				MALFORMED_CONTEXT);
 
 		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
@@ -419,7 +419,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.comment=\"\" org.eventb.core.identifier=\"cst1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1AXM_NO_PRED_ATT);
 
 		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
@@ -440,7 +440,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, ResourceUtils.CTX_FILE_NAME,
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1AXM_DOES_NOT_PARSE);
 
 		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);

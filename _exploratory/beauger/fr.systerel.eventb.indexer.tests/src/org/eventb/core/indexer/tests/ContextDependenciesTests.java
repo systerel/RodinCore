@@ -30,9 +30,9 @@ import org.rodinp.core.IRodinProject;
 public class ContextDependenciesTests extends EventBIndexerTests {
 
 	private static final List<IRodinFile> NO_FILES = Collections.emptyList();
-	private static final String C1_NAME = "c1.buc";
-	private static final String C2_NAME = "c2.buc";
-	private static final String C3_NAME = "c3.buc";
+	private static final String C1_NAME = "c1";
+	private static final String C2_NAME = "c2";
+	private static final String C3_NAME = "c3";
 
 	private static IRodinProject project;
 
@@ -142,7 +142,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 				+ "</org.eventb.core.contextFile>";
 
 		final IContextFile context = createContext(project,
-				ResourceUtils.CTX_FILE_NAME, MALFORMED_CONTEXT);
+				ResourceUtils.CTX_BARE_NAME, MALFORMED_CONTEXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -160,7 +160,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 				+ "</org.eventb.core.contextFile>";
 
 		final IContextFile context = createContext(project,
-				ResourceUtils.CTX_FILE_NAME, CTX_1EXT_NO_TARGET_ATT);
+				ResourceUtils.CTX_BARE_NAME, CTX_1EXT_NO_TARGET_ATT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
