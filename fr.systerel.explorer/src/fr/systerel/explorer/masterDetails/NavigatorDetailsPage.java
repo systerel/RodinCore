@@ -12,7 +12,14 @@
 
 package fr.systerel.explorer.masterDetails;
 
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,8 +28,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -32,7 +37,7 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 
 import fr.systerel.explorer.Activator;
-import fr.systerel.explorer.masterDetails.Statistics.StatisticsTab;
+import fr.systerel.explorer.masterDetails.statistics.StatisticsTab;
 
 /**
  * This is the Details page of the MasterDetails pattern of the Navigator.
@@ -43,6 +48,8 @@ import fr.systerel.explorer.masterDetails.Statistics.StatisticsTab;
  */
 public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 
+	private static final String MASTER_DETAILS_ID = Activator.PLUGIN_ID +".masterDetails";
+	private static final String DETAILS_TAB_CLASS = "Class";
 	private TabFolder tabFolder = null;
 	private ListenerList listenerList = new ListenerList();
 	private ITreeSelection selection;
@@ -54,10 +61,13 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 		if (tabFolder == null ) {
 			tabFolder = new TabFolder(parent, SWT.NONE);
 			parent.setLayout(new FillLayout());
-			INavigatorDetailsTab stats = new StatisticsTab();
-			TabItem tab = stats.getTabItem(tabFolder);
-			assert (tab.getParent() == tabFolder);
-			stats.registerAsListener(this);
+			INavigatorDetailsTab[] tabs = loadTabs();
+			for (INavigatorDetailsTab tab : tabs) {
+				TabItem tabItem = tab.createTabItem(tabFolder);
+				assert (tabItem != null);
+				assert (tabItem.getParent() == tabFolder);
+				tab.registerAsListener(this);
+			}
 		}
 		
 	}
@@ -76,7 +86,7 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
-		//the tabFolder is automatically disposed.
+		//the tabFolder is automatically disposed when its parent is disposed.s
 		tabFolder = null;
 		listenerList.clear();
 		
@@ -180,5 +190,22 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 		}
 	}
 
+	private INavigatorDetailsTab[] loadTabs() {
+		ArrayList<INavigatorDetailsTab> results = new ArrayList<INavigatorDetailsTab>();
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint extensionPoint = reg.getExtensionPoint(MASTER_DETAILS_ID);
+		IConfigurationElement[] configurations = extensionPoint
+				.getConfigurationElements();
+		for (IConfigurationElement  configuration: configurations) {
+			try {
+				INavigatorDetailsTab tab =  (INavigatorDetailsTab) configuration.createExecutableExtension(DETAILS_TAB_CLASS);
+				results.add(tab);
+			} catch (CoreException e) {
+				System.out.println("Unable to instanatiate details tab class for " +configuration.getAttribute("id"));
+			}		
+		}
+		
+		return results.toArray(new INavigatorDetailsTab[results.size()]);
+	}
 
 }

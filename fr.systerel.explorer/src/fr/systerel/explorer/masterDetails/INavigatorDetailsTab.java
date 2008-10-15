@@ -40,7 +40,7 @@ public interface INavigatorDetailsTab {
 	 * @param tabFolder The tabFolder the tabItem should be created with.
 	 * @return A TabItem that has been created with tabFolder
 	 */
-	public TabItem getTabItem(TabFolder tabFolder);
+	public TabItem createTabItem(TabFolder tabFolder);
 	
 	/**
 	 * Allows you to register with a selectionProvider.
