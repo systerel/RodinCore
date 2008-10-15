@@ -18,7 +18,8 @@ import org.eclipse.swt.graphics.Image;
 
 
 /**
- * @author Administrator
+ * This is a LabelProvider for the IStatistics that also shows a label (name)
+ * for each line in the table. It is used in the details viewer.
  *
  */
 public class StatisticsDetailsLabelProvider implements ITableLabelProvider {

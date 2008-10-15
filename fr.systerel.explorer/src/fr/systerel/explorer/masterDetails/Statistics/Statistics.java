@@ -26,7 +26,9 @@ import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
- * @author Administrator
+ * This class represents a simple statistics that is not aggregated. 
+ * 
+ * @see fr.systerel.explorer.masterDetails.Statistics.IStatistics
  *
  */
 public class Statistics implements IStatistics{
@@ -42,6 +44,9 @@ public class Statistics implements IStatistics{
 		calculate();
 	}
 	
+	/**
+	 * Calculates the statistics from the given parent.
+	 */
 	public void calculate() {
 		if (parent instanceof ModelPOContainer) {
 			ModelPOContainer container = (ModelPOContainer) parent;
@@ -105,6 +110,9 @@ public class Statistics implements IStatistics{
 	
 	public String getParentLabel() {
 		Object internal_parent = null;
+		if (parent instanceof IElementNode) {
+			return ((IElementNode) parent).getLabel();
+		}
 		if (parent instanceof IModelElement) {
 			internal_parent = ((IModelElement) parent).getInternalElement();
 		}

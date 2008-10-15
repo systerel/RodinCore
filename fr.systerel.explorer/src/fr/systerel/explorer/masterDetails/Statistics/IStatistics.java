@@ -13,7 +13,10 @@
 package fr.systerel.explorer.masterDetails.Statistics;
 
 /**
- * @author Administrator
+ * This describes the statistics of an element that is associated with proof obligations.
+ * The element that it is associated with can be reached via <code>getParent</code>.
+ * It is possible that this statistics is an aggregate of several statistics. 
+ * In that case there is no parent element.
  *
  */
 public interface IStatistics {

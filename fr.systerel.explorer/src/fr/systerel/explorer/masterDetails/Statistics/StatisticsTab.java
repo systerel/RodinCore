@@ -12,11 +12,8 @@
 
 package fr.systerel.explorer.masterDetails.Statistics;
 
-import java.util.HashMap;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -32,9 +29,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -48,13 +42,17 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineFile;
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.eventb.core.IVariable;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -68,7 +66,8 @@ import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
- * The Content Provider for Statistics.
+ * This creates a tab an populates it with viewers to show statistics
+ * for the selection in the master part.
  *
  */
 public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedListener {
@@ -170,6 +169,7 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 		int machConts = 2;
 		int nodes = 3;
 		int invs = 4;
+		int pos = 5;
 		
 		for (Object el : elements) {
 			String selection = "Selection is not valid.";
@@ -205,11 +205,33 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 				}
 			}
 			else if (el instanceof IElementNode ) {
-				if (level == 0) {
-					level = nodes;
+				IInternalElementType<?> type = ((IElementNode) el).getChildrenType();
+				if (type == IVariable.ELEMENT_TYPE) {
+					return "No statistics for this selection.";
 				}
-				else if (level != nodes) {
-					return selection;
+				if (type == ICarrierSet.ELEMENT_TYPE) {
+					return "No statistics for this selection.";
+				}
+				if (type == IConstant.ELEMENT_TYPE) {
+					return "No statistics for this selection.";
+				}
+				//for the proof obligation node only other proof obligations nodes are allowed
+				// otherwise we may count some proof obligations twice
+				if (type == IPSStatus.ELEMENT_TYPE) {
+					if (level == 0) {
+						level = pos;
+					}
+					else if (level != pos) {
+						return selection;
+					}
+				// all other nodes (invariants, events, theorems, axioms)
+				} else {
+					if (level == 0) {
+						level = nodes;
+					}
+					else if (level != nodes) {
+						return selection;
+					}
 				}
 			}
 			else if (el instanceof IInvariant || el instanceof IEvent || el instanceof ITheorem || el instanceof IAxiom ) {
@@ -219,7 +241,7 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 				else if (level != invs) {
 					return selection;
 				}
-			} else return selection;
+			} else return "No statistics for this selection.";
 		}
 		return null;
 	}
@@ -250,7 +272,10 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 		IWorkbenchPart part =Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 		if (part instanceof RodinNavigator) {
 			RodinNavigator navigator = (RodinNavigator) part;
-			if (element instanceof IModelElement) {
+			if (element instanceof IElementNode) {
+				navigator.getCommonViewer().setSelection(new StructuredSelection(element), true);
+			}
+			else if (element instanceof IModelElement) {
 				navigator.getCommonViewer().setSelection(new StructuredSelection(((IModelElement)element).getInternalElement()), true);
 			}
 		}
@@ -273,12 +298,7 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 	    popupMenu.add(copyAction);
 	    menu = popupMenu.createContextMenu(viewer.getTable());
 	    viewer.getTable().setMenu(menu);
-//		IWorkbenchPart part =Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-//		if (part instanceof RodinNavigator) {
-//			RodinNavigator navigator = (RodinNavigator) part;
-//			navigator.getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
-//			navigator.getViewSite().getActionBars().updateActionBars();
-//		}
+	    
 	}
 	
 	

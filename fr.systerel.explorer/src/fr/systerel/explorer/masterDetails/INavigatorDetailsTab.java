@@ -17,7 +17,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 /**
- * @author Administrator
+ * This interface needs to be implemented by all clients who wish to
+ * add content to the Details part of the Navigator's Master/Details pattern.
  *
  */
 public interface INavigatorDetailsTab {

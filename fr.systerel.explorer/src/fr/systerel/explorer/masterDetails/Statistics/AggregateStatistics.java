@@ -15,7 +15,8 @@ package fr.systerel.explorer.masterDetails.Statistics;
 
 
 /**
- * @author Administrator
+ * This is a statistics that is composed of several <code>IStatistics</code>.
+ * This means that it doesn't have parent and therefore no ParentLabel.
  *
  */
 public class AggregateStatistics implements IStatistics{

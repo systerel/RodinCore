@@ -33,7 +33,10 @@ import fr.systerel.explorer.Activator;
 import fr.systerel.explorer.masterDetails.Statistics.StatisticsTab;
 
 /**
- * @author Administrator
+ * This is the Details page of the MasterDetails pattern of the Navigator.
+ * There is just one details page (this one), not matter what was selected in the master part.
+ * Content can be added to the details page by implementing a new <code>INavigatorDetailsTab</code>
+ * and adding it via the extension point.
  *
  */
 public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {

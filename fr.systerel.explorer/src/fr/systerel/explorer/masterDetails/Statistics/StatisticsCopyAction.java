@@ -24,7 +24,7 @@ import org.eclipse.swt.dnd.Transfer;
 import fr.systerel.explorer.Activator;
 
 /**
- * @author Administrator
+ * This is a copy action for IStatistics.
  *
  */
 public class StatisticsCopyAction extends Action implements ISelectionChangedListener{
@@ -33,7 +33,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 	private boolean copyLabel;
 	
 	/**
-	 * This is a copy Action for Statistics.
+	 * This is a copy Action for IStatistics.
 	 * @param selectionProvider
 	 * @param copyLabel Indicates whether the label of the statistics is copied too.
 	 */
@@ -50,6 +50,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 	public void run() {
 		if (selectionProvider.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
+			//create a suitable string from the selected statistics.
 			String text = "";
 			for (Object element : selection.toArray()) {
 				if (element instanceof IStatistics){
@@ -69,6 +70,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 					text += System.getProperty("line.separator");
 				}
 			}
+			// copy the string to the clipboard.
 			if (text.length() > 0) {
 				clipboard.setContents(new Object[] { text },
 						new Transfer[] { TextTransfer.getInstance() });
@@ -77,6 +79,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
+		//disable the action for empty selections
 		if (event.getSelection().isEmpty()) {
 			setEnabled(false);
 		} else setEnabled(true);

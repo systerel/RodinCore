@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 
 /**
- * @author Administrator
+ * This comparator can be used for sorting statistics by various criteria.
  *
  */
 public class StatisticsDetailsComparator extends ViewerComparator {
@@ -56,16 +56,22 @@ public class StatisticsDetailsComparator extends ViewerComparator {
 
 			switch (criteria) {
 				case NAME : 
+					//ascending order
 					return stats1.getParentLabel().compareTo(stats2.getParentLabel()); 
 				case TOTAL :
+					//descending order
 					return stats1.getTotal() > stats2.getTotal() ? -1 : (stats1.getTotal() < stats2.getTotal()) ? 1 : 0;
 				case AUTO :
+					//descending order
 					return stats1.getAuto() > stats2.getAuto() ? -1 : (stats1.getAuto() < stats2.getAuto()) ? 1 : 0;
 				case MANUAL :
+					//descending order
 					return stats1.getManual() > stats2.getManual() ? -1 : (stats1.getManual() < stats2.getManual()) ? 1 : 0;
 				case REVIEWED :
+					//descending order
 					return stats1.getReviewed() > stats2.getReviewed() ? -1 : (stats1.getReviewed() < stats2.getReviewed()) ? 1 : 0;
 				case UNDISCHARGED :
+					//descending order
 					return stats1.getUndischargedRest() > stats2.getUndischargedRest() ? -1 : (stats1.getUndischargedRest() < stats2.getUndischargedRest()) ? 1 : 0;
 				default:
 					return 0;

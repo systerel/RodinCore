@@ -29,7 +29,7 @@ import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
- * @author Administrator
+ * This is a content provider for the statistics details viewer.
  *
  */
 public class StatisticsDetailsContentProvider extends StatisticsContentProvider {

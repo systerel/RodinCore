@@ -30,15 +30,12 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelMachine;
-import fr.systerel.explorer.model.ModelPOContainer;
 import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
- * @author Administrator
+ * This is the content provider for the overview of the statistics.
  *
  */
 public class StatisticsContentProvider implements IStructuredContentProvider {
@@ -51,6 +48,7 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 			Object[] elements = (Object[]) inputElement;
 			ArrayList<IStatistics> result = new ArrayList<IStatistics>();
 			IStatistics stats;
+			//get the statistics for all elements
 			for (Object element : elements) {
 				stats = getStatistics(element);
 				if (stats != null) {
@@ -61,7 +59,7 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 			if ( result.size() ==1) {
 				return result.toArray();
 			}
-			// create an AggregateStatistics
+			// create an AggregateStatistics if there is more than one result
 			if ( result.size() >1) {
 				Object[] res=  new Object[1];
 				res[0] = new AggregateStatistics(result.toArray(new IStatistics[result.size()]));
@@ -111,23 +109,6 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 		return false;
 	}
 
-	/**
-	 * Decides whether the given elements are a valid selection for statistics.
-	 * A selection is valid if all elements are on the same level. E.g. all elements are projects or
-	 * all elements are contexts or machines. 
-	 * For example a selection that contains both projects and machines is not valid.
-	 * @param elements The selected elements
-	 * @return true, if the selection is valid, false otherwise.
-	 */
-//	private boolean validSelection(Object[] elements) {
-//		if (elements.length > 1) {
-//			for (Object element : elements) {
-//				
-//			}
-//		}
-//		
-//		return true;
-//	}
 	
 	
 	public IStatistics getStatistics(Object inputElement) {

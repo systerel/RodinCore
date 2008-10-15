@@ -18,7 +18,8 @@ import org.eclipse.swt.graphics.Image;
 
 
 /**
- * @author Administrator
+ * This is a LabelProvider for the IStatistics is used for the overview
+ * in the statistics tab. It doesn't show a label (name) for each line.
  *
  */
 public class StatisticsLabelProvider implements ITableLabelProvider {
