@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -44,13 +46,12 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 	private TabFolder tabFolder = null;
 	private ListenerList listenerList = new ListenerList();
 	private ITreeSelection selection;
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
-		if (tabFolder == null) {
+		if (tabFolder == null ) {
 			tabFolder = new TabFolder(parent, SWT.NONE);
 			parent.setLayout(new FillLayout());
 			INavigatorDetailsTab stats = new StatisticsTab();
@@ -75,7 +76,10 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 	 * @see org.eclipse.ui.forms.IFormPart#dispose()
 	 */
 	public void dispose() {
-		tabFolder.dispose();
+		//the tabFolder is automatically disposed.
+		tabFolder = null;
+		listenerList.clear();
+		
 	}
 
 	/* (non-Javadoc)
@@ -175,6 +179,6 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 			});
 		}
 	}
-	
+
 
 }

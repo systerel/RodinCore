@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -76,7 +77,8 @@ public class RodinNavigator extends CommonNavigator {
 //	}
 
 	/**
-	 * Add some custom items for filtering to the toolbar.
+	 * Create the master Details Block
+	 * From in there super.createPartControl() will be called.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {		
@@ -96,5 +98,15 @@ public class RodinNavigator extends CommonNavigator {
 	public void superCreatePartControl(Composite parent) {
 		super.createPartControl(parent);
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		managedForm.getForm().dispose();
+		for (IFormPart part : managedForm.getParts()) {
+			part.dispose();
+		}
+	}
+	
 	
 }
