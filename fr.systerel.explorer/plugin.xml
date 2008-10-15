@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension-point id="masterDetails" name="%point.masterDetails" schema="schema/masterDetails.exsd"/>
    <extension
          id="org.eclipse.ui.navigator.resourceContent"
          point="org.eclipse.ui.views">
@@ -612,6 +613,13 @@
                tooltip="%viewActions.newComponent.tooltip">
          </action>
       </viewContribution>
+   </extension>
+   <extension
+         point="fr.systerel.explorer.masterDetails">
+      <detailsTab
+            Class="fr.systerel.explorer.masterDetails.statistics.StatisticsTab"
+            id="fr.systerel.explorer.masterDetails.statistics">
+      </detailsTab>
    </extension>
 
 </plugin>
