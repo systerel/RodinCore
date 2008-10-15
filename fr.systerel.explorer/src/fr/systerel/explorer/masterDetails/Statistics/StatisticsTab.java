@@ -12,6 +12,10 @@
 
 package fr.systerel.explorer.masterDetails.Statistics;
 
+import java.util.HashMap;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -45,11 +49,23 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eventb.core.IAxiom;
+import org.eventb.core.IContextFile;
+import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
+import org.eventb.core.IMachineFile;
+import org.eventb.core.ITheorem;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.Activator;
 import fr.systerel.explorer.RodinNavigator;
 import fr.systerel.explorer.masterDetails.INavigatorDetailsTab;
 import fr.systerel.explorer.model.IModelElement;
+import fr.systerel.explorer.model.ModelController;
+import fr.systerel.explorer.model.ModelProject;
+import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The Content Provider for Statistics.
@@ -76,7 +92,7 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 		item.setText ("Statistics ");	
 		
 		// create a label that is shown when there are no statistics
-		label =  new Label(container, SWT.SHADOW_NONE | SWT.LEFT );
+		label =  new Label(container, SWT.SHADOW_NONE | SWT.LEFT | SWT.WRAP);
 		label.setText("No statistics available");
 		FormData data = new FormData();
 		data.left = new FormAttachment(0);
@@ -125,19 +141,20 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 			return;
 
 		if (selection instanceof ITreeSelection) {
-//			final Object selectedNode = ((ITreeSelection) selection).getPaths()[0]
-//					.getLastSegment();
-//			if (selectedNode != null) {
-//				viewer.setInput(selectedNode);
-//				detailsViewer.setInput(selectedNode);
-//			}
-			// TODO: check if selection is valid
-			viewer.setInput(((ITreeSelection) selection).toArray());
-			viewer.getTable().setVisible(isValidSelection(((ITreeSelection) selection).toArray()));
-			// if the viewer is not visible, show the "no statistics" label
-			label.setVisible(!viewer.getTable().getVisible());
-			detailsViewer.setInput(((ITreeSelection) selection).toArray());
-			detailsViewer.getTable().setVisible(detailsRequired(((ITreeSelection) selection).toArray()));
+			String valid = isValidSelection(((ITreeSelection) selection).toArray());
+			if ( valid == null) {
+				viewer.setInput(((ITreeSelection) selection).toArray());
+				viewer.getTable().setVisible(true);
+				label.setVisible(false);
+				detailsViewer.setInput(((ITreeSelection) selection).toArray());
+				detailsViewer.getTable().setVisible( detailsRequired(((ITreeSelection) selection).toArray()));
+			} else {
+				// if the viewer is not visible, show the "no statistics" label
+				viewer.getTable().setVisible(false);
+				label.setText("No statistics available: " +valid);
+				label.setVisible(true);
+				detailsViewer.getTable().setVisible(false);
+			}
 		}
 		
 	}
@@ -145,11 +162,66 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 	/**
 	 * Decides, if a given selection is valid for statistics
 	 * @param elements The selected elements
-	 * @return true, if the selection is valid, false otherwise.
+	 * @return null, if the selection is valid, otherwise a String describing why it is not valid.
 	 */
-	private boolean isValidSelection(Object[] elements) {
-		// TODO
-		return true;
+	private String isValidSelection(Object[] elements) {
+		int level = 0;
+		int projects = 1;
+		int machConts = 2;
+		int nodes = 3;
+		int invs = 4;
+		
+		for (Object el : elements) {
+			String selection = "Selection is not valid.";
+			if (el instanceof IProject) {
+				IProject project = (IProject) el;
+				try {
+					if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
+						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						if (proj != null) {
+							ModelProject modelproject = ModelController.getProject(proj);
+							if (modelproject !=  null) {
+								if (level == 0) {
+									level = projects;
+								}
+								else if (level != projects) {
+									return selection;
+								}
+							} else return "Expand the projects at least once to see the statistics.";
+						} else return "Project not found in database";
+					} else return "Must be a Rodin Project and not closed.";
+				} catch (RodinDBException e) {
+					return "Error accessing the project.";
+				} catch (CoreException e) {
+					return "Error accessing the project.";
+				} 
+			}
+			else if (el instanceof IMachineFile || el instanceof IContextFile) {
+				if (level == 0) {
+					level = machConts;
+				}
+				else if (level != machConts) {
+					return selection;
+				}
+			}
+			else if (el instanceof IElementNode ) {
+				if (level == 0) {
+					level = nodes;
+				}
+				else if (level != nodes) {
+					return selection;
+				}
+			}
+			else if (el instanceof IInvariant || el instanceof IEvent || el instanceof ITheorem || el instanceof IAxiom ) {
+				if (level == 0) {
+					level = invs;
+				}
+				else if (level != invs) {
+					return selection;
+				}
+			} else return selection;
+		}
+		return null;
 	}
 	
 	/**
@@ -158,8 +230,16 @@ public class StatisticsTab implements INavigatorDetailsTab, ISelectionChangedLis
 	 * @return true, if the details view is required, false otherwise
 	 */
 	private boolean detailsRequired(Object[] elements) {
-		//TODO
-		return true;
+		// the selection entered here is never empty
+		if (elements.length > 1) {
+			return true;
+		}
+		if (elements[0] instanceof IProject || elements[0] instanceof IMachineFile  
+				|| elements[0] instanceof IContextFile  || elements[0] instanceof IElementNode) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**

@@ -41,9 +41,9 @@ public class StatisticsDetailsContentProvider extends StatisticsContentProvider 
 	public Object[] getElements(Object inputElement) {
 		ArrayList<Object> children = new ArrayList<Object>();
 		if (inputElement instanceof Object[]) {
-			for (Object object : (Object[])inputElement) {
-				
-		
+			//just one input element: show details for children
+			if (((Object[])inputElement).length == 1) {
+				Object object = ((Object[])inputElement)[0];
 				try {
 					if (object instanceof IMachineFile){
 						children.addAll(Arrays.asList(((IMachineFile) object).getChildren()));
@@ -81,6 +81,10 @@ public class StatisticsDetailsContentProvider extends StatisticsContentProvider 
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
+			}
+			else {
+				//several input elements: show details for each.
+				children.addAll(Arrays.asList((Object[])inputElement));
 			}
 		}
 		ArrayList<IStatistics> result = new ArrayList<IStatistics>();
