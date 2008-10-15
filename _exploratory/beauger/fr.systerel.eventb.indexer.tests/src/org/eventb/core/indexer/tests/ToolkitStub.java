@@ -1,17 +1,18 @@
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.tests.ListAssert.*;
-import static org.eventb.core.indexer.tests.OccUtils.*;
+import static org.eventb.core.indexer.tests.ListAssert.assertSameElements;
+import static org.eventb.core.indexer.tests.OccUtils.newDecl;
+import static org.eventb.core.indexer.tests.OccUtils.newOcc;
+import static org.eventb.core.indexer.tests.ResourceUtils.EMPTY_DECL;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.indexer.EventBIndexUtil;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
@@ -28,15 +29,13 @@ import org.rodinp.core.index.IRodinLocation;
  */
 public class ToolkitStub implements IIndexingToolkit {
 
-	private static final List<IOccurrence> EMPTY_OCC = Collections.emptyList();
-
 	private final IRodinFile file;
 	private final List<IDeclaration> imports;
 	private final List<IDeclaration> declarations;
 	private final Map<IInternalElement, List<IOccurrence>> occurrences;
 	private final List<IDeclaration> exports;
-	private final IProgressMonitor monitor;
 
+	// TODO change constructor imports arg from List to ...
 	/**
 	 * Constructor.
 	 * 
@@ -44,14 +43,10 @@ public class ToolkitStub implements IIndexingToolkit {
 	 *            the file to index.
 	 * @param imports
 	 *            imports for the current file.
-	 * @param monitor
-	 *            the monitor of the task
 	 */
-	public ToolkitStub(IRodinFile file, List<IDeclaration> imports,
-			IProgressMonitor monitor) {
+	public ToolkitStub(IRodinFile file, IDeclaration... imports) {
 		this.file = file;
-		this.imports = imports;
-		this.monitor = monitor;
+		this.imports = Arrays.asList(imports);
 		this.declarations = new ArrayList<IDeclaration>();
 		this.occurrences = new HashMap<IInternalElement, List<IOccurrence>>();
 		this.exports = new ArrayList<IDeclaration>();
@@ -59,7 +54,7 @@ public class ToolkitStub implements IIndexingToolkit {
 
 	@SuppressWarnings("restriction")
 	public IDeclaration declare(IInternalElement element, String name) {
-		final IDeclaration declaration = makeDecl(element, name);
+		final IDeclaration declaration = newDecl(element, name);
 		declarations.add(declaration);
 		return declaration;
 	}
@@ -67,7 +62,7 @@ public class ToolkitStub implements IIndexingToolkit {
 	@SuppressWarnings("restriction")
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IRodinLocation location) {
-		final IOccurrence occurrence = makeOcc(kind, location);
+		final IOccurrence occurrence = newOcc(kind, location);
 		final IInternalElement element = declaration.getElement();
 		List<IOccurrence> list = occurrences.get(element);
 		if (list == null) {
@@ -90,28 +85,60 @@ public class ToolkitStub implements IIndexingToolkit {
 	}
 
 	public boolean isCancelled() {
-		return monitor.isCanceled();
+		return false;
 	}
 
 	/**
 	 * @param expected
 	 */
-	public void assertDeclarations(List<IDeclaration> expected) {
-		assertSameElements(expected, declarations, "declarations");
+	public void assertDeclarations(IDeclaration... expected) {
+		final List<IDeclaration> expList = Arrays.asList(expected);
+		assertSameElements(expList, declarations, "declarations");
 	}
-	
+
+	public void assertDeclarations(IElementType<?> elementType,
+			IDeclaration... expected) {
+		final List<IDeclaration> expList = Arrays.asList(expected);
+		final List<IDeclaration> declsOfType = getDeclsOfType(elementType,
+				declarations);
+		assertSameElements(expList, declsOfType, "declarations of type "
+				+ elementType);
+	}
+
+	/**
+	 * @param expected
+	 */
+	public void assertExports(IDeclaration... expected) {
+		final List<IDeclaration> expList = Arrays.asList(expected);
+		assertSameElements(expList, exports, "exports");
+	}
+
+	public void assertEmptyExports() {
+		assertSameElements(EMPTY_DECL, exports, "exports");
+	}
+
+	public void assertExports(IElementType<?> elementType,
+			IDeclaration... expected) {
+		final List<IDeclaration> expList = Arrays.asList(expected);
+		final List<IDeclaration> declsOfType = getDeclsOfType(elementType,
+				exports);
+		assertSameElements(expList, declsOfType, "exports of type "
+				+ elementType);
+	}
+
 	public void assertEmptyOccurrences(IInternalElement element) {
-		assertOccurrences(element, EMPTY_OCC);
+		assertOccurrences(element);
 	}
-	
+
 	/**
 	 * @param element
 	 * @param expected
 	 */
 	public void assertOccurrences(IInternalElement element,
-			List<IOccurrence> expected) {
+			IOccurrence... expected) {
+		final List<IOccurrence> expList = Arrays.asList(expected);
 		List<IOccurrence> allOccs = getAllOccs(element);
-		assertSameElements(expected, allOccs, "occurrences");
+		assertSameElements(expList, allOccs, "occurrences");
 	}
 
 	/**
@@ -119,10 +146,11 @@ public class ToolkitStub implements IIndexingToolkit {
 	 * @param expected
 	 */
 	public void assertOccurrencesOtherThanDecl(IInternalElement element,
-			List<IOccurrence> expected) {
+			IOccurrence... expected) {
+		final List<IOccurrence> expList = Arrays.asList(expected);
 		List<IOccurrence> allOccs = getAllOccs(element);
 		final List<IOccurrence> occsNoDecl = getOccsOtherThanDecl(allOccs);
-		assertSameElements(expected, occsNoDecl,
+		assertSameElements(expList, occsNoDecl,
 				"occurrences other than declaration");
 	}
 
@@ -145,11 +173,15 @@ public class ToolkitStub implements IIndexingToolkit {
 		return result;
 	}
 
-	/**
-	 * @param expected
-	 */
-	public void assertExports(List<IDeclaration> expected) {
-		assertSameElements(expected, exports, "exports");
+	private static List<IDeclaration> getDeclsOfType(
+			IElementType<?> elementType, List<IDeclaration> declarations) {
+		final List<IDeclaration> result = new ArrayList<IDeclaration>();
+		for (IDeclaration declaration : declarations) {
+			if (declaration.getElement().getElementType().equals(elementType)) {
+				result.add(declaration);
+			}
+		}
+		return result;
 	}
 
 }

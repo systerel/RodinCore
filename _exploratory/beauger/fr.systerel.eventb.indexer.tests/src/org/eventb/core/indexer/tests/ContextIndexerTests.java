@@ -13,8 +13,6 @@ package org.eventb.core.indexer.tests;
 import static org.eventb.core.indexer.tests.OccUtils.*;
 import static org.eventb.core.indexer.tests.ResourceUtils.*;
 
-import java.util.List;
-
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -34,6 +32,7 @@ import org.rodinp.core.index.IOccurrence;
 public class ContextIndexerTests extends EventBIndexerTests {
 
 	// TODO test indexing cancellation
+	// TODO test name conflicts
 
 	private static final String CST1 = "cst1";
 	private static IRodinProject project;
@@ -42,14 +41,14 @@ public class ContextIndexerTests extends EventBIndexerTests {
 			String cstIntName, String cstName) throws RodinDBException {
 		final IConstant cst = context.getConstant(cstIntName);
 
-		return makeDecl(cst, cstName);
+		return newDecl(cst, cstName);
 	}
 
 	private static IDeclaration getDeclSet(IContextFile context,
 			String setIntName, String setName) throws RodinDBException {
 		final ICarrierSet set = context.getCarrierSet(setIntName);
 
-		return makeDecl(set, setName);
+		return newDecl(set, setName);
 	}
 
 	/**
@@ -84,15 +83,14 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1,
 				CST1);
-		final List<IDeclaration> expected = makeDeclList(declCst1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertDeclarations(expected);
+		tk.assertDeclarations(declCst1);
 	}
 
 	/**
@@ -104,16 +102,15 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence occDecl = makeDecl(context);
 
-		final List<IOccurrence> expected = makeOccList(occDecl);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertOccurrences(cst1, expected);
+		tk.assertOccurrences(cst1, occDecl);
 
 	}
 
@@ -134,16 +131,15 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(axiom, 0, 4);
 
-		final List<IOccurrence> expected = makeOccList(occRef);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertOccurrencesOtherThanDecl(cst1, expected);
+		tk.assertOccurrencesOtherThanDecl(cst1, occRef);
 	}
 
 	/**
@@ -163,16 +159,15 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRef1 = makeRefPred(axiom, 0, 4);
 		final IOccurrence occRef2 = makeRefPred(axiom, 7, 11);
 
-		final List<IOccurrence> expected = makeOccList(occRef1, occRef2);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertOccurrencesOtherThanDecl(cst1, expected);
+		tk.assertOccurrencesOtherThanDecl(cst1, occRef1, occRef2);
 	}
 
 	/**
@@ -184,15 +179,14 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final IDeclaration declCst1 = getDeclCst(context, INTERNAL_ELEMENT1,
 				CST1);
-		final List<IDeclaration> expected = makeDeclList(declCst1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertExports(expected);
+		tk.assertExports(declCst1);
 	}
 
 	/**
@@ -202,24 +196,22 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
 
-		// FIXME do not use the same names for both files
 		final IContextFile exporter = createContext(project, "exporter",
 				CST_1DECL);
 
 		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1,
 				CST1);
-		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
 
 		final IContextFile importer = createContext(project, "importer",
 				EMPTY_CONTEXT);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
+		final ToolkitStub tk = new ToolkitStub(importer, declCst1);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertExports(declCst1List);
+		tk.assertExports(declCst1);
 	}
 
 	private static final String CST_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -236,22 +228,20 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final IDeclaration declCst1 = getDeclCst(exporter, INTERNAL_ELEMENT1,
 				CST1);
-		final List<IDeclaration> declCst1List = makeDeclList(declCst1);
 
 		final IContextFile importer = createContext(project, "importer",
 				CST_1REF_AXM);
 
 		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
 		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8);
-		final List<IOccurrence> expected = makeOccList(occCst1);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declCst1List, null);
+		final ToolkitStub tk = new ToolkitStub(importer, declCst1);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertOccurrences(declCst1.getElement(), expected);
+		tk.assertOccurrences(declCst1.getElement(), occCst1);
 	}
 
 	/**
@@ -266,7 +256,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1REF_AXM);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -289,13 +279,11 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IDeclaration declCstExp2 = getDeclCst(exporter2,
 				INTERNAL_ELEMENT1, CST1);
 
-		final List<IDeclaration> declList = makeDeclList(declCstExp1,
-				declCstExp2);
-
 		final IContextFile importer = createContext(project, "importer",
 				CST_1REF_AXM);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declList, null);
+		final ToolkitStub tk = new ToolkitStub(importer, declCstExp1,
+				declCstExp2);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -326,15 +314,14 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				SET_1DECL);
 
 		final IDeclaration declSet1 = getDeclSet(context, set1IntName, set1Name);
-		final List<IDeclaration> expected = makeDeclList(declSet1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertDeclarations(expected);
+		tk.assertDeclarations(declSet1);
 	}
 
 	/**
@@ -358,16 +345,15 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(thm, 9, 13);
 
-		final List<IOccurrence> expected = makeOccList(occRef);
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		indexer.index(tk);
 
-		tk.assertOccurrencesOtherThanDecl(cst1, expected);
+		tk.assertOccurrencesOtherThanDecl(cst1, occRef);
 	}
 
 	public void testBadFileType() throws Exception {
@@ -380,7 +366,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
-		final ToolkitStub tk = new ToolkitStub(machine, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(machine);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -401,7 +387,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				MALFORMED_CONTEXT);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -422,7 +408,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1AXM_NO_PRED_ATT);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -443,7 +429,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1AXM_DOES_NOT_PARSE);
 
-		final ToolkitStub tk = new ToolkitStub(context, EMPTY_DECL, null);
+		final ToolkitStub tk = new ToolkitStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 

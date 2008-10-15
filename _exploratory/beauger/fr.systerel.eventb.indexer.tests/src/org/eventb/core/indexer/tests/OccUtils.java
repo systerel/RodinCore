@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.EventBIndexUtil.DECLARATION;
-import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+import static org.eventb.core.indexer.EventBIndexUtil.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,10 @@ import java.util.List;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.IExpressionElement;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
@@ -41,36 +42,43 @@ public class OccUtils {
 
 	public static IOccurrence makeDecl(final IRodinElement element) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
-		return makeOcc(DECLARATION, loc);
+		return newOcc(DECLARATION, loc);
 	}
 
 	public static IOccurrence makeRef(IAttributedElement element,
 			IAttributeType.String attributeType, int start, int end) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType, start, end);
-		return makeOcc(REFERENCE, loc);
+		return newOcc(REFERENCE, loc);
 	}
 	
 	public static IOccurrence makeRef(IAttributedElement element,
 			IAttributeType.String attributeType) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType);
-		return makeOcc(REFERENCE, loc);
+		return newOcc(REFERENCE, loc);
 	}
 	
 	public static IOccurrence makeRef(IRodinElement element) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
-		return makeOcc(REFERENCE, loc);
+		return newOcc(REFERENCE, loc);
 	}
 
+	public static IOccurrence makeModif(IAttributedElement element,
+			IAttributeType.String attributeType, int start, int end) {
+		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
+				attributeType, start, end);
+		return newOcc(MODIFICATION, loc);
+	}
+	
 	public static IOccurrence makeRefPred(IPredicateElement pred, int start,
 			int end) {
 		return makeRef(pred, EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
 	}
 
-	public static IOccurrence makeRefAssign(IAssignmentElement assign,
+	public static IOccurrence makeModifAssign(IAssignmentElement assign,
 			int start, int end) {
-		return makeRef(assign, EventBAttributes.ASSIGNMENT_ATTRIBUTE, start,
+		return makeModif(assign, EventBAttributes.ASSIGNMENT_ATTRIBUTE, start,
 				end);
 	}
 
@@ -83,15 +91,25 @@ public class OccUtils {
 	public static IOccurrence makeRefLabel(ILabeledElement label) {
 		return makeRef(label, EventBAttributes.LABEL_ATTRIBUTE);
 	}
+	
+	public static IOccurrence makeRefIdent(IIdentifierElement ident) {
+		return makeRef(ident, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+	}
+	
+	public static IOccurrence makeRefTarget(IRefinesEvent refines) {
+		return makeRef(refines, EventBAttributes.TARGET_ATTRIBUTE);
+	}
+	
+	
 
 	@SuppressWarnings("restriction")
-	public static IDeclaration makeDecl(IInternalElement elt, String name) {
+	public static IDeclaration newDecl(IInternalElement elt, String name) {
 		final IDeclaration declCst1 = new Declaration(elt, name);
 		return declCst1;
 	}
 
 	@SuppressWarnings("restriction")
-	public static IOccurrence makeOcc(IOccurrenceKind kind,
+	public static IOccurrence newOcc(IOccurrenceKind kind,
 			IRodinLocation location) {
 		return new Occurrence(kind, location);
 	}
