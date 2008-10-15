@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+import static org.eventb.core.indexer.EventBIndexUtil.*;
 
+import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.DefaultVisitor;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.SourceLocation;
@@ -20,6 +22,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 
 /**
@@ -47,6 +50,36 @@ public class FormulaIndexer extends DefaultVisitor {
 
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
+		index(ident, REFERENCE);
+		
+		return true;
+	}
+
+
+
+	public boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		return false;
+	}
+
+	public boolean exitBECOMES_EQUAL_TO(BecomesEqualTo assign) {
+		for (FreeIdentifier ident : assign.getAssignedIdentifiers()) {
+			index(ident, MODIFICATION);
+		}
+		
+		for (Expression expression : assign.getExpressions()) {
+			expression.accept(this);
+		}
+		
+		return true;
+	}
+
+
+
+	/**
+	 * @param ident
+	 * @param kind TODO
+	 */
+	private void index(FreeIdentifier ident, IOccurrenceKind kind) {
 		if (ident.isPrimed()) {
 			ident = ident.withoutPrime(FormulaFactory.getDefault());
 		}
@@ -56,10 +89,9 @@ public class FormulaIndexer extends DefaultVisitor {
 			final SourceLocation srcLoc = ident.getSourceLocation();
 			final IRodinLocation loc = EventBIndexUtil.getRodinLocation(
 					visited, attributeType, srcLoc);
-
-			index.addOccurrence(declaration, REFERENCE, loc);
+	
+			index.addOccurrence(declaration, kind, loc);
 		}
-		return true;
 	}
 
 

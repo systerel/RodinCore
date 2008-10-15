@@ -10,17 +10,25 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
-import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
-import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
+import static org.eventb.core.EventBAttributes.*;
+import static org.eventb.core.indexer.EventBIndexUtil.*;
+import static org.rodinp.core.index.RodinIndexer.*;
+
+import java.util.Map;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IParameter;
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
@@ -29,62 +37,148 @@ import org.rodinp.core.index.IIndexingToolkit;
  * @author Nicolas Beauger
  * 
  */
-public class EventIndexer extends ElementIndexer {
+public class EventIndexer {
 
 	private final IEvent event;
+	private final Map<IEvent, SymbolTable> absParamTables;
+	private final SymbolTable eventST;
+	private final SymbolTable declImportST;
+	private final IIndexingToolkit index;
 
-	public EventIndexer(IEvent event, SymbolTable abstParamsDeclImports) {
-		super(abstParamsDeclImports);
+	/**
+	 * Constructor.
+	 * 
+	 * @param event
+	 *            the event to index
+	 * @param absParamTables
+	 * @param eventST
+	 * @param declImportST
+	 *            a SymbolTable containing, by decreasing order of priority:
+	 *            <ul>
+	 *            <li>local declarations</li>
+	 *            <li>imported declarations</li>
+	 *            </ul>
+	 * @param index 
+	 */
+	public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
+			SymbolTable eventST, SymbolTable declImportST,
+			IIndexingToolkit index) {
+		this.declImportST = declImportST;
 		this.event = event;
+		this.absParamTables = absParamTables;
+		this.eventST = eventST;
+		this.index = index;
 	}
 
-	public void process(IIndexingToolkit index) throws RodinDBException {
+	public void process() throws RodinDBException {
 
-		final SymbolTable paramsDeclImports = new SymbolTable(symbolTable);
+		processEventLabel();
 
-		processParameters(event.getParameters(), paramsDeclImports, index);
+		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
+		processRefines(event.getRefinesClauses(), absPrmDeclImpST);
 
-		// FIXME manage priorities
+		final SymbolTable totalST = new SymbolTable(absPrmDeclImpST);
+		processParameters(event.getParameters(), totalST);
 
-		processPredicateElements(event.getGuards(), paramsDeclImports, index);
-		processActions(event.getActions(), paramsDeclImports, index);
+		processPredicateElements(event.getGuards(), totalST);
+		processActions(event.getActions(), totalST);
 
-		processWitnesses(event.getWitnesses(), paramsDeclImports, index);
+		processWitnesses(event.getWitnesses(), totalST);
+	}
+
+	/**
+	 * @param refinesEvents
+	 * @throws RodinDBException
+	 */
+	private void processRefines(IRefinesEvent[] refinesEvents,
+			SymbolTable absParamDeclImportST) throws RodinDBException {
+		for (IRefinesEvent refinesEvent : refinesEvents) {
+			final String absEventLabel = refinesEvent.getAbstractEventLabel();
+
+			final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
+			if (declAbsEvent != null) {
+				final IInternalElement element = declAbsEvent.getElement();
+				if (element instanceof IEvent) {
+					addRefAttribute(declAbsEvent, refinesEvent,
+							TARGET_ATTRIBUTE);
+
+					addAbstractParams((IEvent) element, absParamDeclImportST);
+				}
+			}
+
+		}
+
+	}
+
+	/**
+	 * @param declaration
+	 * @param element
+	 * @param attribute
+	 * @param index
+	 */
+	private void addRefAttribute(final IDeclaration declaration,
+			IAttributedElement element, IAttributeType.String attribute) {
+		index.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
+				attribute));
+	}
+
+	/**
+	 * @param declaration
+	 * @param absParamDeclImportST
+	 */
+	private void addAbstractParams(IEvent abstractEvent,
+			SymbolTable absParamDeclImportST) {
+		final SymbolTable absParamST = absParamTables.get(abstractEvent);
+		if (absParamST != null) {
+			absParamDeclImportST.putAll(absParamST);
+		}
+	}
+
+	/**
+	 * @param index
+	 * @throws RodinDBException
+	 */
+	private void processEventLabel() throws RodinDBException {
+		final String eventLabel = event.getLabel();
+		final IDeclaration declaration = index.declare(event, eventLabel);
+		index.export(declaration);
 	}
 
 	/**
 	 * @param witnesses
-	 * @param eventTable
+	 * @param totalST
 	 * @param index
 	 * @throws RodinDBException
 	 */
-	private void processWitnesses(IWitness[] witnesses,
-			SymbolTable eventTable, IIndexingToolkit index)
+	private void processWitnesses(IWitness[] witnesses, SymbolTable totalST)
 			throws RodinDBException {
 
-		processLabeledElements(witnesses, eventTable, index);
-		processPredicateElements(witnesses, eventTable, index);
+		processWitnessLabels(witnesses, totalST);
+		processPredicateElements(witnesses, totalST);
 	}
 
 	/**
-	 * @param labels
-	 * @param eventTable
+	 * @param witnesses
+	 * @param totalST
 	 * @param index
 	 * @param ff
 	 * @throws RodinDBException
 	 */
-	private void processLabeledElements(ILabeledElement[] labels,
-			SymbolTable eventTable, IIndexingToolkit index)
-			throws RodinDBException {
+	private void processWitnessLabels(ILabeledElement[] witnesses,
+			SymbolTable totalST) throws RodinDBException {
 
-		for (ILabeledElement labelElem : labels) {
-			final String name = getNameNoPrime(labelElem);
+		for (ILabeledElement label : witnesses) {
+			final String name = getNameNoPrime(label);
 
-			final IDeclaration declaration = eventTable.lookup(name);
+			final IDeclaration declAbs = totalST.lookUpper(name);
 
-			if (declaration != null) {
-				index.addOccurrence(declaration, REFERENCE, getRodinLocation(
-						labelElem, LABEL_ATTRIBUTE));
+			if (declAbs != null) {
+				final IInternalElement element = declAbs.getElement();
+				if (element instanceof IParameter
+						|| element instanceof IVariable) {
+					// could be a namesake
+					addRefAttribute(declAbs, label, LABEL_ATTRIBUTE);
+				}
 			}
 		}
 	}
@@ -94,8 +188,10 @@ public class EventIndexer extends ElementIndexer {
 	 * @return
 	 * @throws RodinDBException
 	 */
-	private String getNameNoPrime(ILabeledElement labelElem)
+	private static String getNameNoPrime(ILabeledElement labelElem)
 			throws RodinDBException {
+		final FormulaFactory ff = FormulaFactory.getDefault();
+
 		final String label = labelElem.getLabel();
 		final FreeIdentifier ident = ff.makeFreeIdentifier(label, null);
 		final String name;
@@ -114,17 +210,36 @@ public class EventIndexer extends ElementIndexer {
 	 * @throws RodinDBException
 	 */
 	private void processParameters(final IParameter[] parameters,
-			SymbolTable paramsDeclImports, IIndexingToolkit index)
-			throws RodinDBException {
-		for (IParameter p : parameters) {
-			IDeclaration decl = index.declare(p, p.getIdentifierString());
-			paramsDeclImports.put(decl, false);
-			index.export(decl);
+			SymbolTable totalST) throws RodinDBException {
+		for (IParameter parameter : parameters) {
+			final String ident = parameter.getIdentifierString();
+
+			IDeclaration declaration = index.declare(parameter, ident);
+			totalST.put(declaration);
+			index.export(declaration);
+
+			refAnyAbstractParam(ident, parameter, totalST);
 		}
 	}
 
-	private void processActions(IAction[] actions,
-			SymbolTable eventTable, IIndexingToolkit index)
+	/**
+	 * @param ident
+	 * @param parameter
+	 * @param totalST
+	 * @param index
+	 */
+	private void refAnyAbstractParam(final String ident, IParameter parameter,
+			SymbolTable totalST) {
+		final IDeclaration declAbsParam = totalST.lookUpper(ident);
+		if (declAbsParam != null) {
+			if (declAbsParam.getElement() instanceof IParameter) {
+				// could be a namesake
+				addRefAttribute(declAbsParam, parameter, IDENTIFIER_ATTRIBUTE);
+			}
+		}
+	}
+
+	private void processActions(IAction[] actions, SymbolTable eventTable)
 			throws RodinDBException {
 		for (IAction action : actions) {
 			final AssignmentIndexer assignIndexer = new AssignmentIndexer(
@@ -134,8 +249,7 @@ public class EventIndexer extends ElementIndexer {
 	}
 
 	private void processPredicateElements(IPredicateElement[] preds,
-			SymbolTable symbolTable, IIndexingToolkit index)
-			throws RodinDBException {
+			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
 					symbolTable);

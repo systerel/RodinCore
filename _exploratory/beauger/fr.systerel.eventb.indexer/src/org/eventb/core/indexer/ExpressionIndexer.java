@@ -20,15 +20,13 @@ import org.rodinp.core.index.IIndexingToolkit;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class ExpressionIndexer extends ElementIndexer {
 
-	// TODO consider factorizing material with PredicateIndexer
-	
 	private final IExpressionElement element;
-	public ExpressionIndexer(IExpressionElement element,
-			SymbolTable symbolTable) {
+
+	public ExpressionIndexer(IExpressionElement element, SymbolTable symbolTable) {
 		super(symbolTable);
 		this.element = element;
 	}
@@ -45,6 +43,4 @@ public class ExpressionIndexer extends ElementIndexer {
 		final Expression expr = result.getParsedExpression();
 		visitAndIndex(element, EXPRESSION_ATTRIBUTE, expr, index);
 	}
-
-
 }

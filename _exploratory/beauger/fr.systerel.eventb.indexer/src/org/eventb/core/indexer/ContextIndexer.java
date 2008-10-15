@@ -35,7 +35,6 @@ public class ContextIndexer extends EventBIndexer {
 
 	IIndexingToolkit index;
 
-	// TODO consider passing as parameter
 	// TODO manage exceptions
 
 	public void index(IIndexingToolkit index) {
@@ -55,14 +54,16 @@ public class ContextIndexer extends EventBIndexer {
 	}
 
 	private void index(IContextFile file) throws RodinDBException {
-		final SymbolTable symbolTable = new SymbolTable(null);
 
-		processImports(index.getImports(), symbolTable);
-		processIdentifierElements(file.getCarrierSets(), symbolTable);
-		processIdentifierElements(file.getConstants(), symbolTable);
+		final SymbolTable imports = new SymbolTable(null);
+		processImports(index.getImports(), imports);
+		
+		final SymbolTable totalST = new SymbolTable(imports);
+		processIdentifierElements(file.getCarrierSets(), totalST);
+		processIdentifierElements(file.getConstants(), totalST);
 
-		processPredicateElements(file.getAxioms(), symbolTable);
-		processPredicateElements(file.getTheorems(), symbolTable);
+		processPredicateElements(file.getAxioms(), totalST);
+		processPredicateElements(file.getTheorems(), totalST);
 	}
 
 	private void processImports(IDeclaration[] imports, SymbolTable symbolTable) {
@@ -70,7 +71,7 @@ public class ContextIndexer extends EventBIndexer {
 		// put the declarations into the SymbolTable
 		for (IDeclaration declaration : imports) {
 			index.export(declaration);
-			symbolTable.put(declaration, false);
+			symbolTable.put(declaration);
 		}
 	}
 
@@ -82,8 +83,8 @@ public class ContextIndexer extends EventBIndexer {
 			final IDeclaration declaration = indexDeclaration(ident, ident
 					.getIdentifierString(), index);
 			index.export(declaration);
-			// TODO process any conflict in symbol table ?
-			symbolTable.put(declaration, true);
+			// FIXME possible conflict between sets and constants
+			symbolTable.put(declaration);
 		}
 	}
 

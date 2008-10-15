@@ -26,31 +26,23 @@ public class SymbolTable {
 	}
 
 	/**
-	 * Puts the given declaration in this SymbolTable.
+	 * Puts the given declaration in this SymbolTable, at the closest level.
 	 * <p>
-	 * It is possible that a declaration with the same name already exists. The
-	 * value of the <code>override</code> parameter effects the resolution of
-	 * such a conflict:
-	 * <ul>
-	 * <li><code>true</code> - in this case the declaration erases the
-	 * previous one</li>
-	 * <li><code>false</code> - in this case the declaration is not put and
-	 * the previous one is removed.</li>
-	 * </ul>
+	 * It is possible that a declaration with the same name already exists at
+	 * the same level of the table. In this case the declaration is not put and
+	 * the previous one is removed.
 	 * </p>
 	 * 
 	 * @param declaration
 	 *            the declaration to add
-	 * @param override
-	 *            specify how to handle conflict is the same name already exists
 	 */
-	public void put(IDeclaration declaration, boolean override) {
-		// TODO maybe return a boolean false if an association already exists
+	// TODO maybe return a boolean false if an association already exists
+	public void put(IDeclaration declaration) {
 		final String name = declaration.getName();
 
-		if (override || !table.containsKey(name)) {
-			table.put(name, declaration);
-		} else {
+		final IDeclaration previousDecl = table.put(name, declaration);
+
+		if (previousDecl != null) {
 			table.remove(name);
 		}
 	}
@@ -59,11 +51,19 @@ public class SymbolTable {
 		table.clear();
 	}
 
+	public IDeclaration lookUpper(String symbol) {
+		if (prev == null) {
+			return null;
+		}
+		return prev.lookup(symbol);
+	}
+
 	/**
-	 * Extracts an IdentTable with only the given FreeIdentifiers.
+	 * Extracts an IdentTable containing only the given FreeIdentifiers, when
+	 * they are found.
 	 * 
 	 * @param idents
-	 * @param identTable 
+	 * @param identTable
 	 */
 	public void addToIdentTable(FreeIdentifier[] idents, IdentTable identTable) {
 		for (FreeIdentifier ident : idents) {
@@ -79,14 +79,13 @@ public class SymbolTable {
 
 	/**
 	 * @param abstSymbolTable
-	 * @param override 
 	 */
-	public void putAll(SymbolTable abstSymbolTable, boolean override) {
+	public void putAll(SymbolTable abstSymbolTable) {
 		for (IDeclaration declaration : abstSymbolTable.table.values()) {
-			this.put(declaration, override);
+			this.put(declaration);
 		}
 		if (abstSymbolTable.prev != null) {
-			putAll(abstSymbolTable.prev, override);
+			putAll(abstSymbolTable.prev);
 		}
 	}
 }
