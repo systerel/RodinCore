@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
+import static org.eventb.core.EventBPlugin.*;
+import static org.rodinp.core.index.RodinIndexer.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.IEvent;
@@ -21,10 +24,13 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.IParameter;
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
@@ -40,7 +46,70 @@ public class MachineIndexer extends EventBIndexer {
 	private IIndexingToolkit index;
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		return NO_DEPENDENCIES;
+		if (!(file instanceof IMachineFile)) {
+			return NO_DEPENDENCIES;
+		}
+		final IMachineFile machine = (IMachineFile) file;
+
+		final List<IRodinFile> extendedFiles = new ArrayList<IRodinFile>();
+		try {
+			final IRefinesMachine[] refines = machine.getRefinesClauses();
+			final ISeesContext[] sees = machine.getSeesClauses();
+
+			addRefinedFiles(refines, extendedFiles);
+			addSeenFiles(sees, extendedFiles);
+
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			if (DEBUG) {
+				e.printStackTrace();
+			}
+		}
+		return extendedFiles.toArray(new IRodinFile[extendedFiles.size()]);
+	}
+
+	/**
+	 * @param sees
+	 * @param extendedFiles
+	 * @throws RodinDBException
+	 */
+	private void addSeenFiles(ISeesContext[] sees,
+			List<IRodinFile> extendedFiles) throws RodinDBException {
+		for (ISeesContext seesContext : sees) {
+			final IRodinFile seenFile = getSeenFile(seesContext);
+			if (seenFile != null) {
+				extendedFiles.add(seenFile);
+			}
+		}
+
+	}
+
+	/**
+	 * @param seesContext
+	 * @throws RodinDBException
+	 */
+	private IRodinFile getSeenFile(ISeesContext seesContext)
+			throws RodinDBException {
+
+		final String seenBareName = seesContext.getSeenContextName();
+		final String seenFileName = getContextFileName(seenBareName);
+
+		final IRodinProject project = seesContext.getRodinProject();
+
+		return project.getRodinFile(seenFileName);
+	}
+
+	/**
+	 * @param refines
+	 * @param extendedFiles
+	 * @throws RodinDBException
+	 */
+	private void addRefinedFiles(IRefinesMachine[] refines,
+			List<IRodinFile> extendedFiles) throws RodinDBException {
+		for (IRefinesMachine refinesMachine : refines) {
+			final IMachineFile absMachine = refinesMachine.getAbstractMachine();
+			extendedFiles.add(absMachine);
+		}
 	}
 
 	public String getId() {

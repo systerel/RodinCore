@@ -57,7 +57,7 @@ public class ContextIndexer extends EventBIndexer {
 
 		final SymbolTable imports = new SymbolTable(null);
 		processImports(index.getImports(), imports);
-		
+
 		final SymbolTable totalST = new SymbolTable(imports);
 		processIdentifierElements(file.getCarrierSets(), totalST);
 		processIdentifierElements(file.getConstants(), totalST);
@@ -119,8 +119,8 @@ public class ContextIndexer extends EventBIndexer {
 		return extendedFiles.toArray(new IRodinFile[extendedFiles.size()]);
 	}
 
-	private void addExtendedFiles(final IExtendsContext[] extendsClauses,
-			final List<IRodinFile> extendedFiles) throws RodinDBException {
+	private void addExtendedFiles(IExtendsContext[] extendsClauses,
+			List<IRodinFile> extendedFiles) throws RodinDBException {
 
 		for (IExtendsContext extendsContext : extendsClauses) {
 			final IRodinFile extended = getExtendedFile(extendsContext);
@@ -132,13 +132,13 @@ public class ContextIndexer extends EventBIndexer {
 
 	private IRodinFile getExtendedFile(IExtendsContext extendsContext)
 			throws RodinDBException {
+		
 		final String extBareName = extendsContext.getAbstractContextName();
 		final String extFileName = getContextFileName(extBareName);
 
 		final IRodinProject project = extendsContext.getRodinProject();
-		final IRodinFile extended = project.getRodinFile(extFileName);
-
-		return extended;
+		
+		return project.getRodinFile(extFileName);
 	}
 
 	public String getId() {
