@@ -28,7 +28,6 @@ import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -37,6 +36,14 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class ModelContext extends ModelPOContainer implements IModelElement{
+	
+	//The indexes for the IElement nodes in array
+	public static final int CARRIERSET_NODE = 0;
+	public static final int CONSTANT_NODE = 1;
+	public static final int AXIOM_NODE = 2;
+	public static final int THEOREM_NODE = 3;
+	public static final int PO_NODE = 4;
+
 	/**
 	 * The Contexts that extend this Context (children)
 	 */
@@ -85,11 +92,11 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public ModelContext(IContextFile file){
 		internalContext = file;
 		nodes = new ModelElementNode[5];
-		nodes[0] = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
-		nodes[1] = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
-		nodes[2] = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
-		nodes[3] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
-		nodes[4] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
+		nodes[CARRIERSET_NODE] = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
+		nodes[CONSTANT_NODE] = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
+		nodes[AXIOM_NODE] = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
+		nodes[THEOREM_NODE] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		nodes[PO_NODE] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	public void addAncestor(ModelContext context){

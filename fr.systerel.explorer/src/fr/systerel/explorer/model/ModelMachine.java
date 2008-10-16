@@ -38,6 +38,13 @@ import org.rodinp.core.RodinDBException;
  */
 public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
+	//The indexes for the IElement nodes in array
+	public static final int VARIABLE_NODE = 0;
+	public static final int INVARIANT_NODE = 1;
+	public static final int THEOREM_NODE = 2;
+	public static final int EVENT_NODE = 3;
+	public static final int PO_NODE = 4;
+	
 	private List<ModelContext> seesContexts = new LinkedList<ModelContext>();
 	/**
 	 * Machines that refine this Machine.
@@ -78,11 +85,11 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
 		nodes = new ModelElementNode[5];
-		nodes[0] = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
-		nodes[1] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
-		nodes[2] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
-		nodes[3] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
-		nodes[4] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
+		nodes[VARIABLE_NODE] = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
+		nodes[INVARIANT_NODE] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
+		nodes[THEOREM_NODE] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		nodes[EVENT_NODE] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
+		nodes[PO_NODE] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	/**

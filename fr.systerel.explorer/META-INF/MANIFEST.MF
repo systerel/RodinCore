@@ -11,4 +11,14 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator
 Eclipse-LazyStart: true
 Bundle-Localization: plugin
-Export-Package: fr.systerel.explorer.navigator
+Export-Package: fr.systerel.explorer,
+ fr.systerel.explorer.masterDetails;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.masterDetails.statistics;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.model;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator,
+ fr.systerel.explorer.navigator.actionProviders;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator.contentProviders;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator.contentProviders.complex;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator.filters;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator.sorters;x-friends:="fr.systerel.explorer.tests",
+ fr.systerel.explorer.navigator.wizards;x-friends:="fr.systerel.explorer.tests"
