@@ -243,8 +243,8 @@ public class EventIndexer {
 			throws RodinDBException {
 		for (IAction action : actions) {
 			final AssignmentIndexer assignIndexer = new AssignmentIndexer(
-					action, eventTable);
-			assignIndexer.process(index);
+					action, eventTable, index);
+			assignIndexer.process();
 		}
 	}
 
@@ -252,8 +252,8 @@ public class EventIndexer {
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
-					symbolTable);
-			predIndexer.process(index);
+					symbolTable, index);
+			predIndexer.process();
 		}
 	}
 

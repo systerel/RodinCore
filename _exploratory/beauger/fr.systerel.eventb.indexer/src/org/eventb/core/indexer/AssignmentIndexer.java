@@ -26,13 +26,13 @@ public class AssignmentIndexer extends ElementIndexer {
 	final IAssignmentElement element;
 
 	public AssignmentIndexer(IAssignmentElement element,
-			SymbolTable eventSpecificTable) {
+			SymbolTable symbolTable, IIndexingToolkit index) {
 
-		super(eventSpecificTable);
+		super(symbolTable, index);
 		this.element = element;
 	}
 
-	public void process(IIndexingToolkit index) throws RodinDBException {
+	public void process() throws RodinDBException {
 		if (!isValid(element, EventBAttributes.ASSIGNMENT_ATTRIBUTE)) {
 			return;
 		}
@@ -42,7 +42,7 @@ public class AssignmentIndexer extends ElementIndexer {
 			return;
 		}
 		final Assignment assign = result.getParsedAssignment();
-		visitAndIndex(element, EventBAttributes.ASSIGNMENT_ATTRIBUTE, assign, index);
+		visitAndIndex(element, EventBAttributes.ASSIGNMENT_ATTRIBUTE, assign);
 	}
 
 }

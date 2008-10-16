@@ -14,15 +14,17 @@ public abstract class ElementIndexer {
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	protected final SymbolTable symbolTable;
+	private final IIndexingToolkit index;
 
-	public ElementIndexer(SymbolTable symbolTable) {
+	public ElementIndexer(SymbolTable symbolTable, IIndexingToolkit index) {
 		this.symbolTable = symbolTable;
+		this.index = index;
 	}
 
-	public abstract void process(IIndexingToolkit index) throws RodinDBException;
+	public abstract void process() throws RodinDBException;
 
-	protected void visitAndIndex(IInternalElement element, IAttributeType.String attribute, Formula<?> formula,
-			IIndexingToolkit index) {
+	protected void visitAndIndex(IInternalElement element,
+			IAttributeType.String attribute, Formula<?> formula) {
 		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
 
 		// Idea: filter idents that are indeed declared. Ignore those that are
@@ -34,14 +36,15 @@ public abstract class ElementIndexer {
 		symbolTable.addToIdentTable(idents, identTable);
 
 		if (!identTable.isEmpty()) {
-			final FormulaIndexer formulaIndexer = new FormulaIndexer(
-					element, attribute, identTable, index);
+			final FormulaIndexer formulaIndexer = new FormulaIndexer(element,
+					attribute, identTable, index);
 
 			formula.accept(formulaIndexer);
 		}
 	}
-	
-	protected boolean isValid(IAttributedElement elem, IAttributeType.String attribute) throws RodinDBException {
+
+	protected boolean isValid(IAttributedElement elem,
+			IAttributeType.String attribute) throws RodinDBException {
 		if (!elem.exists()) {
 			return false;
 		}

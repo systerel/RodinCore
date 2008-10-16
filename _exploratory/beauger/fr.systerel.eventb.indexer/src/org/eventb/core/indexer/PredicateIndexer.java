@@ -27,13 +27,13 @@ public class PredicateIndexer extends ElementIndexer {
 	final IPredicateElement element;
 
 	public PredicateIndexer(IPredicateElement element,
-			SymbolTable symbolTable) {
+			SymbolTable symbolTable, IIndexingToolkit index) {
 
-		super(symbolTable);
+		super(symbolTable, index);
 		this.element = element;
 	}
 
-	public void process(IIndexingToolkit index) throws RodinDBException {
+	public void process() throws RodinDBException {
 		if (!isValid(element, PREDICATE_ATTRIBUTE)) {
 			return;
 		}
@@ -43,7 +43,7 @@ public class PredicateIndexer extends ElementIndexer {
 			return;
 		}
 		final Predicate pred = result.getParsedPredicate();
-		visitAndIndex(element, PREDICATE_ATTRIBUTE, pred, index);
+		visitAndIndex(element, PREDICATE_ATTRIBUTE, pred);
 	}
 
 

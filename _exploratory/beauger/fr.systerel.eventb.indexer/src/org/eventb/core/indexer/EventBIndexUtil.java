@@ -27,18 +27,9 @@ public class EventBIndexUtil {
 			.addOccurrenceKind("fr.systerel.eventb.indexer.reference",
 					"reference");
 
-	// TODO use for assignments:
 	public static final IOccurrenceKind MODIFICATION = RodinIndexer
 	.addOccurrenceKind("fr.systerel.eventb.indexer.modification",
 			"modification");
-
-	private static int alloc;
-
-	public static String getUniqueName(String identifierString) {
-		if (alloc == Integer.MAX_VALUE)
-			throw new IndexOutOfBoundsException();
-		return "n" + alloc++ + "_" + identifierString;
-	}
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is

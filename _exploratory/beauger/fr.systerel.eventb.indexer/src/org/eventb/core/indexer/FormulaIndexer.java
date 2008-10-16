@@ -87,7 +87,7 @@ public class FormulaIndexer extends DefaultVisitor {
 		if (visibleIdents.contains(ident)) {
 			final IDeclaration declaration = visibleIdents.get(ident);
 			final SourceLocation srcLoc = ident.getSourceLocation();
-			final IRodinLocation loc = EventBIndexUtil.getRodinLocation(
+			final IRodinLocation loc = getRodinLocation(
 					visited, attributeType, srcLoc);
 	
 			index.addOccurrence(declaration, kind, loc);

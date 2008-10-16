@@ -18,12 +18,10 @@ import java.util.List;
 import org.eventb.core.IContextFile;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
 
 /**
  * @author Nicolas Beauger
@@ -33,51 +31,37 @@ public class ContextIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.context";
 
-	IIndexingToolkit index;
-
-	// TODO manage exceptions
-
-	public void index(IIndexingToolkit index) {
-		this.index = index;
-		final IRodinFile file = index.getRodinFile();
-
-		if (file instanceof IContextFile) {
-			try {
-				index((IContextFile) file);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				if (DEBUG) {
-					e.printStackTrace();
-				}
-			}
+	protected void index(IRodinFile file) throws RodinDBException {
+		if (!(file instanceof IContextFile)) {
+			throwIllArgException(file);
 		}
+		index((IContextFile) file);
 	}
 
 	private void index(IContextFile file) throws RodinDBException {
+		checkCancel();
 
-		if (index.isCancelled()) return;
-		
-		final SymbolTable imports = new SymbolTable(null);
-		processImports(index.getImports(), imports);
-		if (index.isCancelled()) return;
+		final SymbolTable importST = new SymbolTable(null);
+		processImports(index.getImports(), importST);
+		checkCancel();
 
-		final SymbolTable totalST = new SymbolTable(imports);
+		final SymbolTable totalST = new SymbolTable(importST);
 		processIdentifierElements(file.getCarrierSets(), totalST);
-		if (index.isCancelled()) return;
+		checkCancel();
 		processIdentifierElements(file.getConstants(), totalST);
-		if (index.isCancelled()) return;
+		checkCancel();
 
 		processPredicateElements(file.getAxioms(), totalST);
-		if (index.isCancelled()) return;
+		checkCancel();
 		processPredicateElements(file.getTheorems(), totalST);
 	}
 
-	private void processImports(IDeclaration[] imports, SymbolTable symbolTable) {
+	private void processImports(IDeclaration[] imports, SymbolTable importST) {
 		// export each imported declaration
 		// put the declarations into the SymbolTable
 		for (IDeclaration declaration : imports) {
-			index.export(declaration);
-			symbolTable.put(declaration);
+			export(declaration);
+			importST.put(declaration);
 		}
 	}
 
@@ -87,44 +71,26 @@ public class ContextIndexer extends EventBIndexer {
 		// put the declarations into the SymbolTable
 		for (IIdentifierElement ident : elems) {
 			final IDeclaration declaration = indexDeclaration(ident, ident
-					.getIdentifierString(), index);
-			index.export(declaration);
+					.getIdentifierString());
+			export(declaration);
 			// FIXME possible conflict between sets and constants
 			symbolTable.put(declaration);
 		}
 	}
 
-	private void processPredicateElements(IPredicateElement[] elems,
-			SymbolTable symbolTable) throws RodinDBException {
-		for (IPredicateElement elem : elems) {
-			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
-					symbolTable);
-			predIndexer.process(index);
-			
-			if (index.isCancelled()) return;
-		}
-	}
-
-	public IRodinFile[] getDependencies(IRodinFile file) {
+	public IRodinFile[] getDeps(IRodinFile file) throws RodinDBException {
 		if (!(file instanceof IContextFile)) {
-			return NO_DEPENDENCIES;
+			throwIllArgException(file);
 		}
 		final IContextFile context = (IContextFile) file;
 
-		final List<IRodinFile> extendedFiles = new ArrayList<IRodinFile>();
-		try {
-			final IExtendsContext[] extendsClauses = context
-					.getExtendsClauses();
+		final List<IRodinFile> extFiles = new ArrayList<IRodinFile>();
 
-			addExtendedFiles(extendsClauses, extendedFiles);
+		final IExtendsContext[] extendsClauses = context.getExtendsClauses();
 
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			if (DEBUG) {
-				e.printStackTrace();
-			}
-		}
-		return extendedFiles.toArray(new IRodinFile[extendedFiles.size()]);
+		addExtendedFiles(extendsClauses, extFiles);
+
+		return extFiles.toArray(new IRodinFile[extFiles.size()]);
 	}
 
 	private void addExtendedFiles(IExtendsContext[] extendsClauses,
@@ -140,12 +106,12 @@ public class ContextIndexer extends EventBIndexer {
 
 	private IRodinFile getExtendedFile(IExtendsContext extendsContext)
 			throws RodinDBException {
-		
+
 		final String extBareName = extendsContext.getAbstractContextName();
 		final String extFileName = getContextFileName(extBareName);
 
 		final IRodinProject project = extendsContext.getRodinProject();
-		
+
 		return project.getRodinFile(extFileName);
 	}
 

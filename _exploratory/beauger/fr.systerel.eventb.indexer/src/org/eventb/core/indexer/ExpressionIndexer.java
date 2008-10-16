@@ -26,21 +26,24 @@ public class ExpressionIndexer extends ElementIndexer {
 
 	private final IExpressionElement element;
 
-	public ExpressionIndexer(IExpressionElement element, SymbolTable symbolTable) {
-		super(symbolTable);
+	public ExpressionIndexer(IExpressionElement element,
+			SymbolTable symbolTable, IIndexingToolkit index) {
+		super(symbolTable, index);
 		this.element = element;
 	}
 
-	public void process(IIndexingToolkit index) throws RodinDBException {
+	public void process() throws RodinDBException {
 		if (!isValid(element, EXPRESSION_ATTRIBUTE)) {
 			return;
 		}
 		final String expressionString = element.getExpressionString();
+		// TODO checkCancel()
 		IParseResult result = ff.parseExpression(expressionString);
+		// TODO checkCancel()
 		if (!result.isSuccess()) {
 			return;
 		}
 		final Expression expr = result.getParsedExpression();
-		visitAndIndex(element, EXPRESSION_ATTRIBUTE, expr, index);
+		visitAndIndex(element, EXPRESSION_ATTRIBUTE, expr);
 	}
 }
