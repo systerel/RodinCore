@@ -1,16 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -90,11 +95,12 @@ public interface IRefinesMachine extends IInternalElement {
 	/**
 	 * Returns a handle to the unchecked version of the abstract machine.
 	 * 
-	 * @return a handle to the unchecked version of the abstract machine
+	 * @return a handle to the unchecked version of the abstract machine (
+	 *         IRodinFile(IMachineRoot) )
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	IMachineFile getAbstractMachine() throws RodinDBException;
+	IRodinFile getAbstractMachine() throws RodinDBException;
 
 	/**
 	 * Returns a handle to the checked version of the abstract machine, that is
@@ -104,6 +110,6 @@ public interface IRefinesMachine extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
+	IRodinFile getAbstractSCMachine() throws RodinDBException;
 
 }

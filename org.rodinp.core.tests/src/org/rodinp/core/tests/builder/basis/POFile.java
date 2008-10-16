@@ -1,12 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.rodinp.core.tests.builder.basis;
 
 import org.eclipse.core.resources.IFile;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.tests.builder.IPOFile;
-import org.rodinp.core.tests.builder.ISCContext;
-import org.rodinp.core.tests.builder.ISCMachine;
 
+@Deprecated
 public class POFile extends Component implements IPOFile {
 
 	public POFile(IFile file, IRodinElement parent) {
@@ -14,16 +24,8 @@ public class POFile extends Component implements IPOFile {
 	}
 
 	@Override
-	public IFileElementType<IPOFile> getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
-	}
-
-	public ISCContext getCheckedContext() {
-		return (ISCContext) getAlternateVersion("csc");
-	}
-
-	public ISCMachine getCheckedMachine() {
-		return (ISCMachine) getAlternateVersion("msc") ;
 	}
 
 }

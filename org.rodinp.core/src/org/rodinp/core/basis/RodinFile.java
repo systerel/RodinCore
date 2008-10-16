@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - added clear() method
  *     Systerel - removed deprecated methods and occurrence count
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -34,6 +35,7 @@ import org.rodinp.internal.core.CopyResourceElementsOperation;
 import org.rodinp.internal.core.CreateRodinFileOperation;
 import org.rodinp.internal.core.DeleteResourceElementsOperation;
 import org.rodinp.internal.core.ElementComparer;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.FileElementType;
 import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementType;
@@ -78,9 +80,15 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 	 */
 	private boolean snapshot;
 
+	private InternalElementType<?> rootType ;
+
 	protected RodinFile(IFile file, IRodinElement parent) {
 		super((RodinElement) parent);
 		this.file = file;
+		
+		final ElementTypeManager etm = ElementTypeManager.getInstance();
+		final FileElementType type = etm.getFileElementType(file);
+		rootType = type.getRootElementType();
 	}
 	
 	public final IRodinElement[] findElements(IRodinElement element) {
@@ -145,7 +153,7 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 	}
 
 	private final IRodinFile createNewHandle() {
-		final FileElementType<?> type = (FileElementType<?>) getElementType();
+		final FileElementType type = (FileElementType) getElementType();
 		return type.createInstance(file, (RodinProject) getParent());
 	}
 
@@ -186,7 +194,7 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 	}
 
 	@Override
-	public abstract IFileElementType<? extends IRodinFile> getElementType();
+	public abstract IFileElementType getElementType();
 
 	@Override
 	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
@@ -227,8 +235,8 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		if (isSnapshot()) {
 			return this;
 		}
-		final RodinFile result = (RodinFile) createNewHandle();
-		result.snapshot = true;
+		final IRodinFile result = createNewHandle();
+		((RodinFile) result).snapshot = true;
 		return result;
 	}
 
@@ -427,4 +435,10 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
 	}
 
+	public IInternalElement getRoot() {
+		final IPath path = file.getProjectRelativePath();
+		final String name = path.removeFileExtension().lastSegment();
+		return rootType.createInstance(name, this);
+	}
+	
 }

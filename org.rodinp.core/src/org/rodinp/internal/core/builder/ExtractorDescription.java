@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.rodinp.internal.core.builder;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IExtractor;
 
@@ -27,7 +30,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	private final ToolDescription toolDescription;
 	
 	// List of file types that this extractor can parse.
-	private final IFileElementType<?>[] inputTypes;
+	private final IInternalElementType<?>[] inputTypes;
 
 	/**
 	 * Creates a new extractor decription.
@@ -44,11 +47,11 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 		this.toolDescription = toolDescription;
 		
 		IConfigurationElement[] children = configElement.getChildren("inputType");
-		this.inputTypes = new IFileElementType[children.length];
+		this.inputTypes = new IInternalElementType[children.length];
 		for (int i = 0; i < children.length; i++) {
 			final String id = children[i].getAttribute("id");
 			// TODO check for existence of the file element type
-			this.inputTypes[i] = RodinCore.getFileElementType(id);
+			this.inputTypes[i] = RodinCore.getInternalElementType(id);
 		}
 	}
 
@@ -75,7 +78,7 @@ public class ExtractorDescription extends ExecutableExtensionDesc {
 	 * 
 	 * @return Returns the input types known to this extractor.
 	 */
-	public IFileElementType<?>[] getInputTypes() {
+	public IInternalElementType<?>[] getInputTypes() {
 		return inputTypes;
 	}
 

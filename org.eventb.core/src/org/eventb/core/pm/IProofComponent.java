@@ -12,10 +12,10 @@ package org.eventb.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eventb.core.IEventBFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -57,7 +57,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  * 
- * @see IProofManager#getProofComponent(IEventBFile)
+ * @see IProofManager#getProofComponent(IEventBRoot)
  * @see IProofAttempt
  */
 public interface IProofComponent {
@@ -95,7 +95,7 @@ public interface IProofComponent {
 	 * 
 	 * @return the proof obligation file of this component.
 	 */
-	IPOFile getPOFile();
+	IPORoot getPOFile();
 
 	/**
 	 * Returns the Rodin file associated with this proof component and
@@ -103,7 +103,7 @@ public interface IProofComponent {
 	 * 
 	 * @return the proof file of this component.
 	 */
-	IPRFile getPRFile();
+	IPRRoot getPRFile();
 
 	/**
 	 * Returns an array of all proof attempts that have been created for this
@@ -156,7 +156,7 @@ public interface IProofComponent {
 	 * 
 	 * @return the proof status file of this component.
 	 */
-	IPSFile getPSFile();
+	IPSRoot getPSFile();
 
 	/**
 	 * Returns the scheduling rule used by this component for interacting with

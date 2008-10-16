@@ -9,9 +9,9 @@ package org.eventb.core.basis;
 
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinElement;
 
 /**
  * @author Stefan Hallerstede
@@ -25,7 +25,7 @@ public final class EventBUtil {
 	}
 	
 	public static <T extends IRodinElement> T getSingletonChild(
-			RodinElement parent,
+			IInternalElement parent,
 			IElementType<T> elementType,
 			String message) throws RodinDBException {
 

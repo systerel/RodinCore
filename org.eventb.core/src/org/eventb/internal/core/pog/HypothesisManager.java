@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
@@ -13,10 +17,10 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
@@ -60,7 +64,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 
 	public static String PRD_NAME_PREFIX = "PRD";
 	private final IRodinElement parentElement;
-	protected final IPOFile target;
+	protected final IPORoot target;
 	private final ISCPredicateElement[] predicateTable;
 	private final String[] hypothesisNames;
 	private final Hashtable<String, Integer> predicateMap;
@@ -77,7 +81,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 
 	public HypothesisManager(
 			IRodinElement parentElement, 
-			IPOFile target,
+			IPORoot target,
 			ISCPredicateElement[] predicateTable, 
 			boolean accurate,
 			String rootHypName, 

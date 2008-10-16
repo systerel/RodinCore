@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -12,9 +16,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -22,6 +24,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.PSWrapper;
 import org.eventb.internal.core.ProofMonitor;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -47,7 +50,7 @@ public final class RecalculateAutoStatus {
 		// Nothing to do.
 	}
 
-	public static void run(IPRFile prFile, IPSFile psFile, IPSStatus[] pos,
+	public static void run(IRodinFile prFile, IRodinFile psFile, IPSStatus[] pos,
 			IProgressMonitor monitor) throws RodinDBException {
 		try {
 			monitor.beginTask("auto-proving", pos.length);
@@ -68,7 +71,7 @@ public final class RecalculateAutoStatus {
 		}
 	}
 
-	private static boolean processPo(IPRFile prFile, IPSStatus status,
+	private static boolean processPo(IRodinFile prFile, IPSStatus status,
 			IProgressMonitor pm) throws RodinDBException {
 
 		try {

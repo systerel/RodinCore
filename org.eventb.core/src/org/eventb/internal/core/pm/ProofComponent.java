@@ -19,10 +19,10 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
@@ -48,10 +48,10 @@ public class ProofComponent implements IProofComponent {
 	private final Map<String, Map<String, ProofAttempt>> known;
 
 	// The PS file of this component
-	private final IPSFile psFile;
+	private final IPSRoot psRoot;
 
-	public ProofComponent(IPSFile psFile) {
-		this.psFile = psFile;
+	public ProofComponent(IPSRoot psRoot) {
+		this.psRoot = psRoot;
 		this.known = new HashMap<String, Map<String, ProofAttempt>>();
 	}
 
@@ -71,12 +71,12 @@ public class ProofComponent implements IProofComponent {
 		return map.get(owner);
 	}
 
-	public IPOFile getPOFile() {
-		return psFile.getPOFile();
+	public IPORoot getPOFile() {
+		return getPSFile().getPORoot();
 	}
 
-	public IPRFile getPRFile() {
-		return psFile.getPRFile();
+	public IPRRoot getPRFile() {
+		return getPSFile().getPRRoot();
 	}
 
 	public ProofAttempt[] getProofAttempts() {
@@ -89,8 +89,8 @@ public class ProofComponent implements IProofComponent {
 		return values(poName).toArray(NO_PROOF_ATTEMPTS);
 	}
 
-	public IPSFile getPSFile() {
-		return psFile;
+	public IPSRoot getPSFile() {
+		return psRoot;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -162,8 +162,8 @@ public class ProofComponent implements IProofComponent {
 	}
 
 	public boolean hasUnsavedChanges() throws RodinDBException {
-		return getPRFile().hasUnsavedChanges()
-				|| getPSFile().hasUnsavedChanges();
+		return getPRFile().getRodinFile().hasUnsavedChanges()
+				|| getPSFile().getRodinFile().hasUnsavedChanges();
 	}
 
 	public void makeConsistent(IProgressMonitor monitor)

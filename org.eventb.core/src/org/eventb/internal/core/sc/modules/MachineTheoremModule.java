@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -11,8 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITheorem;
 import org.eventb.core.sc.SCCore;
@@ -28,6 +32,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -49,7 +54,7 @@ public class MachineTheoremModule extends TheoremModule {
 		IAbstractMachineInfo abstractMachineInfo = (IAbstractMachineInfo) repository
 				.getState(IAbstractMachineInfo.STATE_TYPE);
 
-		ISCMachineFile scMachineFile = abstractMachineInfo.getAbstractMachine();
+		ISCMachineRoot scMachineFile = abstractMachineInfo.getAbstractMachine();
 
 		monitor.subTask(Messages.bind(Messages.progress_MachineTheorems));
 
@@ -88,7 +93,7 @@ public class MachineTheoremModule extends TheoremModule {
 
 	@Override
 	protected ISCTheorem getSCTheorem(IInternalParent target, String elementName) {
-		return ((ISCMachineFile) target).getSCTheorem(elementName);
+		return ((ISCMachineRoot) target).getSCTheorem(elementName);
 	}
 
 	@Override
@@ -101,8 +106,9 @@ public class MachineTheoremModule extends TheoremModule {
 	@Override
 	protected ITheorem[] getFormulaElements(IRodinElement element)
 			throws CoreException {
-		IMachineFile machineFile = (IMachineFile) element;
-		return machineFile.getTheorems();
+		IRodinFile machineFile = (IRodinFile) element;
+		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
+		return machineRoot.getTheorems();
 	}
 
 	@Override

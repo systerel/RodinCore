@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.rodinp.core.tests;
 
 import java.io.ByteArrayInputStream;
@@ -13,6 +24,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.RodinTestFile;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.xml.sax.SAXParseException;
 
 public class TestFileCreation extends ModifyingResourceTests {
@@ -103,7 +115,7 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertExists("File should exist", rodinFile);
 
 		// Check the file is empty
-		assertEquals("File should be empty", 0, rodinFile.getChildren().length);
+		assertEquals("File should be empty", 0, rodinFile.getRoot().getChildren().length);
 		
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
@@ -197,11 +209,12 @@ public class TestFileCreation extends ModifyingResourceTests {
 		// Create a Rodin file and modify it
 		IRodinFile rodinFile = rodinProject.getRodinFile("toto.test");
 		rodinFile.create(false, null);
-		createNEPositive(rodinFile, "foo", null);
+		final RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		
 		// Create the same Rodin file again
 		rodinFile.create(true, null);
-		assertEquals("File should be empty", 0, rodinFile.getChildren().length);
+		assertEquals("File should be empty", 0, rodinFile.getRoot().getChildren().length);
 		
 		// Then delete it
 		rodinFile.getResource().delete(true, null);
@@ -316,12 +329,12 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Wrong element", rodinProject, children[0]);
 		
 		children = rodinProject.getChildrenOfType(RodinTestFile.ELEMENT_TYPE);
-		assertTrue(children instanceof RodinTestFile[]);
+		assertTrue(children instanceof IRodinFile[]);
 		assertEquals("Array should be empty", 0, children.length);
 		
 		IRodinFile rf = createRodinFile("/foo/x.test");
 		children = rodinProject.getChildrenOfType(RodinTestFile.ELEMENT_TYPE);
-		assertTrue(children instanceof RodinTestFile[]);
+		assertTrue(children instanceof IRodinFile[]);
 		assertEquals("Array should contain one element", 1, children.length);
 		assertEquals("Wrong element", rf, children[0]);
 	}

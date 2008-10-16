@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
@@ -12,6 +16,7 @@ import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCTheorem;
@@ -32,6 +37,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  */
+@Deprecated
 public class SCContextFile extends EventBFile implements ISCContextFile {
 
 	/**
@@ -42,68 +48,75 @@ public class SCContextFile extends EventBFile implements ISCContextFile {
 	}
 
 	@Override
-	public IFileElementType<ISCContextFile> getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ISCCarrierSet[] getSCCarrierSets() 
 	throws RodinDBException {
-		return getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCCarrierSets();
 	}
 	
 	public ISCConstant[] getSCConstants() throws RodinDBException {
-		return getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCConstants();
 	}
 
 	public ISCAxiom[] getSCAxioms() throws RodinDBException {
-		return getChildrenOfType(ISCAxiom.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCAxioms();
 	}
 
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCTheorems();
 	}
 
 	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
-		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getAbstractSCContexts();
 	}
 	
 	public ISCExtendsContext getSCExtendsClause(String elementName) {
-		return getInternalElement(ISCExtendsContext.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCExtendsClause(elementName);
 	}
 
 	public ISCExtendsContext[] getSCExtendsClauses() throws RodinDBException {
-		return getChildrenOfType(ISCExtendsContext.ELEMENT_TYPE); 
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCExtendsClauses();
 	}
 
 	public ISCInternalContext getSCInternalContext(String elementName) {
-		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCInternalContext(elementName);
 	}
 
 	public ISCAxiom getSCAxiom(String elementName) {
-		return getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCAxiom(elementName);
 	}
 
 	public ISCCarrierSet getSCCarrierSet(String elementName) {
-		return getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCCarrierSet(elementName);
 	}
 
 	public ISCConstant getSCConstant(String elementName) {
-		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCConstant(elementName);
 	}
 
 	public ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getSCTheorem(elementName);
 	}
 
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
-		
-		ITypeEnvironment typenv = factory.makeTypeEnvironment();
-		for (ISCInternalContext ictx: getAbstractSCContexts()) {
-			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
-		}
-		SCContextUtil.augmentTypeEnvironment(this, typenv, factory);
-		return typenv;
+		final ISCContextRoot root = (ISCContextRoot) getRoot();
+		return root.getTypeEnvironment(factory);
 	}
 
 }

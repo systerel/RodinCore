@@ -1,13 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.internal.core.tool.types.IStateRepository;
 
 /**
@@ -28,6 +32,6 @@ public interface IPOGStateRepository extends IStateRepository<IPOGState> {
 	 * 
 	 * @return a handle to the PO file to be generated
 	 */
-	IPOFile getTarget();
+	IPORoot getTarget();
 	
 }

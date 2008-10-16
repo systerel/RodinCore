@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
@@ -12,6 +16,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCSeesContext;
 import org.eventb.core.ISCTheorem;
@@ -19,7 +24,6 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.internal.core.Messages;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -36,6 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * 
  */
+@Deprecated
 public class SCMachineFile extends EventBFile implements ISCMachineFile {
 
 	/**
@@ -46,118 +51,117 @@ public class SCMachineFile extends EventBFile implements ISCMachineFile {
 	}
 
 	@Override
-	public IFileElementType<ISCMachineFile> getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ISCVariable[] getSCVariables() throws RodinDBException {
-		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCVariables(); 
 	}
 	
 	public ISCEvent[] getSCEvents() throws RodinDBException {
-		return getChildrenOfType(ISCEvent.ELEMENT_TYPE); 
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCEvents(); 
 	}
 	
 	@Deprecated
 	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
-		ISCRefinesMachine machine = getRefinesClause();
-		if (machine == null)
-			return null;
-		else
-			return machine.getAbstractSCMachine();
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return (ISCMachineFile) root.getAbstractSCMachine(); 
 	}
 
 	public ISCInternalContext[] getSCSeenContexts() throws RodinDBException {
-		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCSeenContexts(); 
 	}
 
 	public ISCInvariant[] getSCInvariants() throws RodinDBException {
-		return getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCInvariants(); 
 	}
 
 	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCTheorems(); 
 	}
 
 	@Deprecated
 	public ISCRefinesMachine getRefinesClause() throws RodinDBException {
-		return getSingletonChild(
-				ISCRefinesMachine.ELEMENT_TYPE, 
-				Messages.database_SCMachineMultipleRefinesFailure);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getRefinesClause(); 
 	}
 
 	@Deprecated
 	public ISCVariant getSCVariant() throws RodinDBException {
-		return getSingletonChild(
-				ISCVariant.ELEMENT_TYPE, 
-				Messages.database_SCMachineMultipleVariantFailure);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCVariant(); 
 	}
 
 	public ISCMachineFile[] getAbstractSCMachines() throws RodinDBException {
-		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses();
-		final int length = refinesMachines.length;
-		ISCMachineFile[] machineFiles = new ISCMachineFile[length];
-		for (int i=0; i<length; i++) {
-			machineFiles[i] = refinesMachines[i].getAbstractSCMachine();
-		}
-		return machineFiles;
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return (ISCMachineFile[]) root.getAbstractSCMachines(); 
 	}
 
 	public ISCRefinesMachine[] getSCRefinesClauses() throws RodinDBException {
-		return getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE); 
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCRefinesClauses(); 
 	}
 
 	public ISCSeesContext[] getSCSeesClauses() throws RodinDBException {
-		return getChildrenOfType(ISCSeesContext.ELEMENT_TYPE); 
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCSeesClauses(); 
 	}
 
 	public ISCVariant[] getSCVariants() throws RodinDBException {
-		return getChildrenOfType(ISCVariant.ELEMENT_TYPE); 
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCVariants(); 
 	}
 
 	public ISCEvent getSCEvent(String elementName) {
-		return getInternalElement(ISCEvent.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCEvent(elementName); 
 	}
 
 	public ISCInvariant getSCInvariant(String elementName) {
-		return getInternalElement(ISCInvariant.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCInvariant(elementName);
 	}
 
 	public ISCRefinesMachine getSCRefinesClause(String elementName) {
-		return getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCRefinesClause(elementName); 
 	}
 
 	public ISCSeesContext getSCSeesClause(String elementName) {
-		return getInternalElement(ISCSeesContext.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCSeesClause(elementName); 
 	}
 
 	public ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCTheorem(elementName); 
 	}
 
 	public ISCVariable getSCVariable(String elementName) {
-		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCVariable(elementName); 
 	}
 
 	public ISCVariant getSCVariant(String elementName) {
-		return getInternalElement(ISCVariant.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCVariant(elementName); 
 	}
 
 	public ISCInternalContext getSCSeenContext(String elementName) {
-		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getSCSeenContext(elementName); 
 	}
 
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
-
-		ITypeEnvironment typenv = factory.makeTypeEnvironment();
-		for (ISCInternalContext ictx : getSCSeenContexts()) {
-			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
-		}
-		for (ISCVariable vrb : getSCVariables()) {
-			typenv.add(vrb.getIdentifier(factory));
-		}
-		return typenv;
+		ISCMachineRoot root = (ISCMachineRoot) getRoot();
+		return root.getTypeEnvironment(factory); 
 	}
 
 }

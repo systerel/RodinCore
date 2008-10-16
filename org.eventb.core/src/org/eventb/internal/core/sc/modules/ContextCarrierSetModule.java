@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -11,8 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.SCCore;
@@ -23,6 +27,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -49,9 +54,11 @@ public class ContextCarrierSetModule extends IdentifierModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		IContextFile contextFile = (IContextFile) element;
-
-		ICarrierSet[] carrierSets = contextFile.getCarrierSets();
+		
+		IRodinFile contextFile = (IRodinFile) element;
+		IContextRoot root = (IContextRoot) contextFile.getRoot();
+		
+		ICarrierSet[] carrierSets = root.getCarrierSets();
 
 		if (carrierSets.length == 0)
 			return;
@@ -72,7 +79,7 @@ public class ContextCarrierSetModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
 			IIdentifierElement element) {
-		IEventBFile context = (IEventBFile) element.getParent();
+		IEventBRoot context = (IEventBRoot) element.getParent();
 		return SymbolFactory.getInstance().makeLocalCarrierSet(name, true,
 				element, context.getComponentName());
 	}

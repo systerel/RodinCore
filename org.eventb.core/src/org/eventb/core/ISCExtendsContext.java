@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,7 +48,7 @@ public interface ISCExtendsContext extends ITraceableElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCContextFile getAbstractSCContext() throws RodinDBException;
+	ISCContextRoot getAbstractSCContext() throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC context file introduced by this extends clause.
@@ -58,7 +61,7 @@ public interface ISCExtendsContext extends ITraceableElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setAbstractSCContext(ISCContextFile abstractSCContext,
+	void setAbstractSCContext(ISCContextRoot abstractSCContext,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

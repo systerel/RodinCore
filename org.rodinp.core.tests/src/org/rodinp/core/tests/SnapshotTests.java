@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.rodinp.core.tests;
 
 import org.eclipse.core.runtime.CoreException;
@@ -13,6 +16,7 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
  * Tests about Rodin file snapshots.
@@ -147,7 +151,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testIntIsSnapshot() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo"); 
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo"); 
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		testIsSnapshot(e11);
 	}
@@ -157,11 +162,12 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testIntSnapshotExists() throws CoreException {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		testSnapshotNotExists(e11);
 		createRodinFile("P/X.test");
-		createNEPositive(rf, "foo", null);
+		createNEPositive(root, "foo", null);
 		createNEPositive(e1, "bar", null);
 		rf.save(null, false);
 		testSnapshotExists(e11);
@@ -174,7 +180,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testIntSnapshotInvolutive() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		testSnapshotInvolutive(e11);
 	}
@@ -185,7 +192,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testIntSnapshotParent() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		assertDiffers("Parents of mutable and snapshot internal should differ",
 				e11.getParent(), e11.getSnapshot().getParent()
@@ -197,7 +205,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testIntSnapshotReadonly() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		final NamedElement e11 = getNamedElement(e1, "bar"); 
 		testSnapshotReadonly(e11);
 	}
@@ -208,7 +217,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testTopIsSnapshot() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		testIsSnapshot(getNamedElement(rf, "foo"));
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		testIsSnapshot(getNamedElement(root, "foo"));
 	}
 
 	/**
@@ -216,10 +226,11 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testTopSnapshotExists() throws CoreException {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		testSnapshotNotExists(e1);
 		createRodinFile("P/X.test");
-		createNEPositive(rf, "foo", null);
+		createNEPositive(root, "foo", null);
 		rf.save(null, false);
 		testSnapshotExists(e1);
 	}
@@ -231,7 +242,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testTopSnapshotInvolutive() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		testSnapshotInvolutive(e1);
 	}
 	
@@ -241,7 +253,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testTopSnapshotParent() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		assertDiffers("Parents of mutable and snapshot internal should differ",
 				e1.getParent(), e1.getSnapshot().getParent()
 		);
@@ -252,7 +265,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testTopSnapshotReadonly() {
 		final IRodinFile rf = getRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = getNamedElement(root, "foo");
 		testSnapshotReadonly(e1);
 	}
 	
@@ -261,15 +275,17 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotDecorrelated() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		final NamedElement e2 = createNEPositive(rf, "bar", null);
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = createNEPositive(root, "foo", null);
+		final NamedElement e2 = createNEPositive(root, "bar", null);
 		final NamedElement e11 = createNEPositive(e1, "baz", null); 
 		rf.save(null, false);
 		
 		String frozenContents = 
-			"  foo[org.rodinp.core.tests.namedElement]\n" + 
-			"    baz[org.rodinp.core.tests.namedElement]\n" + 
-			"  bar[org.rodinp.core.tests.namedElement]";
+			"  X[org.rodinp.core.tests.test]\n" + 
+			"    foo[org.rodinp.core.tests.namedElement]\n" + 
+			"      baz[org.rodinp.core.tests.namedElement]\n" + 
+			"    bar[org.rodinp.core.tests.namedElement]";
 		assertElementDescendants("Unexpected file contents",
 				"X.test\n" + 
 				frozenContents,
@@ -282,8 +298,9 @@ public class SnapshotTests extends ModifyingResourceTests {
 		e2.delete(false, null);
 		assertElementDescendants("Unexpected file contents",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]\n" + 
-				"    baz[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" + 
+				"    foo[org.rodinp.core.tests.namedElement]\n" + 
+				"      baz[org.rodinp.core.tests.namedElement]",
 				rf);
 		assertElementDescendants("Unexpected snapshot contents",
 				"X.test!\n" + 
@@ -293,7 +310,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 		e11.delete(false, null);
 		assertElementDescendants("Unexpected file contents",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" + 
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rf);
 		assertElementDescendants("Unexpected snapshot contents",
 				"X.test!\n" + 
@@ -306,10 +324,11 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotCreateInternalElement() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = createNEPositive(root, "foo", null);
 		rf.save(null, false);
 
-		createNENegative(rf.getSnapshot(), "bar", null,
+		createNENegative(root.getSnapshot(), "bar", null,
 				IRodinDBStatusConstants.READ_ONLY);
 		createNENegative(e1.getSnapshot(), "baz", null,
 				IRodinDBStatusConstants.READ_ONLY); 
@@ -320,7 +339,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 */
 	public void testSnapshotChangeInternalElementContents() throws CoreException {
 		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final NamedElement e1 = createNEPositive(root, "foo", null);
 		assertContentsChanged(e1, "initial");
 		final NamedElement e11 = createNEPositive(e1, "bar", null);
 		assertContentsChanged(e11, "initial");

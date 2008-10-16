@@ -1,16 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
@@ -52,16 +55,16 @@ public class SCExtendsContext extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
-	public ISCContextFile getAbstractSCContext() throws RodinDBException {
+	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
 		IRodinElement target = getAbstractSCContextHandle();
-		if (!(target instanceof ISCContextFile)) {
+		if (!(target instanceof ISCContextRoot)) {
 			throw Util.newRodinDBException(
 					Messages.database_SCExtendsContextTypeFailure, this);
 		}
-		return (ISCContextFile) target;
+		return (ISCContextRoot) target;
 	}
 
-	public void setAbstractSCContext(ISCContextFile abstractSCContext,
+	public void setAbstractSCContext(ISCContextRoot abstractSCContext,
 			IProgressMonitor monitor) throws RodinDBException {
 
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE,

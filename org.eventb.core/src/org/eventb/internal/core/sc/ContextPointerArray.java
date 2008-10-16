@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
@@ -14,11 +18,11 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCContext;
-import org.eventb.core.ISCContextFile;
 import org.eventb.core.sc.state.IContextPointerArray;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * 
@@ -54,7 +58,7 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	
 	private final IInternalElement[] contextPointers;
 	
-	private final ISCContextFile[] contextFiles;
+	private final IRodinFile[] contextFiles;
 	
 	private final boolean[] error;
 	
@@ -65,7 +69,7 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	public ContextPointerArray(
 			PointerType pointerType,
 			IInternalElement[] contextPointers, 
-			ISCContextFile[] contextFiles) {
+			IRodinFile[] contextFiles) {
 		
 		assert contextPointers.length == contextFiles.length;
 		
@@ -126,7 +130,7 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 		return contextPointers[index];
 	}
 
-	public ISCContextFile getSCContextFile(final int index) {
+	public IRodinFile getSCContextFile(final int index) {
 		return contextFiles[index];
 	}
 

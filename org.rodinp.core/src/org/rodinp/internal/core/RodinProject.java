@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.internal.core.JavaProject
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed deprecated methods and occurrence count
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -358,7 +359,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	 */
 	public IRodinFile getRodinFile(String fileName) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		FileElementType<?> type = manager.getFileElementTypeFor(fileName);
+		FileElementType type = manager.getFileElementTypeFor(fileName);
 		if (type == null) {
 			return null;		// Not a Rodin file.
 		}

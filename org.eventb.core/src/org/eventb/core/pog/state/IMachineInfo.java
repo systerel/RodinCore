@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ISCMachineFile;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.tool.IStateType;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Basic information on the currently treated machine.
@@ -30,7 +34,7 @@ public interface IMachineInfo extends IPOGState {
 	 * 
 	 * @return the statically checked abstract machine, or <code>null</code> if there is none
 	 */
-	ISCMachineFile getAbstractMachine();
+	IRodinFile getAbstractMachine();
 	
 	/**
 	 * Returns whether the machine managed by this manager is initial, i.e., it does not refine

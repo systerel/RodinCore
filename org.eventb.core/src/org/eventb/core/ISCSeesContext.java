@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -46,7 +50,7 @@ public interface ISCSeesContext extends ITraceableElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCContextFile getSeenSCContext() throws RodinDBException;
+	ISCContextRoot getSeenSCContext() throws RodinDBException;
 
 	/**
 	 * Sets the seen SC context file introduced by this sees clause.
@@ -59,7 +63,7 @@ public interface ISCSeesContext extends ITraceableElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setSeenSCContext(ISCContextFile seenSCContext,
+	void setSeenSCContext(IRodinFile seenSCContext,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

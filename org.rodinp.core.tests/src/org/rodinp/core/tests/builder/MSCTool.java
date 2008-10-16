@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -12,6 +16,7 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IGraph;
@@ -38,26 +43,28 @@ public class MSCTool extends SCTool {
 		if (SCTool.SHOW_EXTRACT)
 			ToolTrace.addTrace(MSC, "extract", file);
 		
-		IMachine mch = (IMachine) RodinCore.valueOf(file);
+		IRodinFile mchFile = RodinCore.valueOf(file);
+		IMachineRoot mch = (IMachineRoot) mchFile.getRoot();
 		
-		ISCMachine smch = mch.getCheckedVersion();
-		IFile scFile = smch.getResource();
+		ISCMachineRoot smch = mch.getCheckedVersion();
+		IFile scFile = smch.getRodinFile().getResource();
 		graph.addTarget(scFile);
-		graph.addToolDependency(mch.getResource(), scFile, true);
+		graph.addToolDependency(mchFile.getResource(), scFile, true);
 		
-		ISCMachine machine = mch.getReferencedMachine();
+		ISCMachineRoot machine = mch.getReferencedMachine();
 		if (machine != null) {
+			IRodinFile machineFile = machine.getRodinFile();
 			graph.addUserDependency(
-					mch.getResource(), machine.getResource(), scFile, false);
+					mchFile.getResource(), machineFile.getResource(), scFile, false);
 		}
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(mch.getUsedContexts().length * 4 / 3 + 1);
-		for (IContext usedContext: mch.getUsedContexts()) {
-			IFile source = usedContext.getCheckedVersion().getResource();
+		for (IContextRoot usedContext: mch.getUsedContexts()) {
+			IFile source = usedContext.getCheckedVersion().getRodinFile().getResource();
 			newSources.add(source);
 		}
 		for (IFile newSrc : newSources)
-			graph.addUserDependency(mch.getResource(), newSrc, scFile, false);
+			graph.addUserDependency(mch.getRodinFile().getResource(), newSrc, scFile, false);
 		
 	}
 	
@@ -65,11 +72,12 @@ public class MSCTool extends SCTool {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(MSC, "run", file);
 
-		ISCMachine target = (ISCMachine) RodinCore.valueOf(file);
-		IMachine mch = target.getUncheckedVersion(); 
+		IRodinFile targetFile = RodinCore.valueOf(file);
+		ISCMachineRoot target = (ISCMachineRoot) targetFile.getRoot();
+		IMachineRoot mch = target.getUncheckedVersion();
 		
 		// First clean up target
-		target.create(true, null);
+		targetFile.create(true, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(mch, target);
@@ -81,14 +89,14 @@ public class MSCTool extends SCTool {
 				mch.getResource().createMarker(RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER);
 		}
 		
-		for (IContext usedContext: mch.getUsedContexts()) {
+		for (IContextRoot usedContext: mch.getUsedContexts()) {
 			if (usedContext.getCheckedVersion().exists())
 				copyDataElements(usedContext.getCheckedVersion(), target);
 			else
 				mch.getResource().createMarker(RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER);
 		}
 		
-		target.save(null, true);
+		targetFile.save(null, true);
 		return true;
 	}
 

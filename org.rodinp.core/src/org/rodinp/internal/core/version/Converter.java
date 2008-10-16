@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed input parameter of convert() to InputStream
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -22,9 +23,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -91,7 +91,7 @@ public class Converter {
 	}
 
 	ConversionSheet addConversionSheet(IConfigurationElement configElement,
-			IFileElementType<IRodinFile> type) {
+			IInternalElementType<?> type) {
 		int length = sheets.length;
 		ConversionSheet sheet = ConversionSheetFactory.makeConversionSheet(
 				configElement, type);

@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007,2008 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -12,6 +16,7 @@ import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.IOpenable;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -22,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  * current status of a proof obligation.
  * <p>
  * Instances of this interface can be obtained by using the factory method
- * {@link EventBPlugin#getPSWrapper(IEventBFile)}.
+ * {@link EventBPlugin#getPSWrapper(IRodinFile)}.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -44,14 +49,14 @@ public interface IPSWrapper {
 	 * 
 	 * @return the wrapped-up PS file
 	 */
-	IPSFile getPSFile();
+	IRodinFile getPSFile();
 
 	/**
 	 * Returns the proof file encapsulated by this interface.
 	 * 
 	 * @return the wrapped-up PR file
 	 */
-	IPRFile getPRFile();
+	IRodinFile getPRFile();
 
 	/**
 	 * Returns the status of the proof obligation with the given name.

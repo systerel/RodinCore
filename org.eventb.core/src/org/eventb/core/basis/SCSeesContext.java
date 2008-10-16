@@ -1,21 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCSeesContext;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -52,16 +56,19 @@ public class SCSeesContext extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
-	public ISCContextFile getSeenSCContext() throws RodinDBException {
+	public ISCContextRoot getSeenSCContext() throws RodinDBException {
 		IRodinElement target = getSeenSCContextHandle();
-		if (!(target instanceof ISCContextFile)) {
-			throw Util.newRodinDBException(
-					Messages.database_SCSeesContextTypeFailure, this);
+		if (target instanceof IRodinFile) {
+			IRodinFile rf = (IRodinFile) target;
+			if(rf.getRoot() instanceof ISCContextRoot){
+				return (ISCContextRoot) rf.getRoot();
+			}
 		}
-		return (ISCContextFile) target;
+		throw Util.newRodinDBException(
+				Messages.database_SCSeesContextTypeFailure, this);
 	}
 
-	public void setSeenSCContext(ISCContextFile seenSCContext,
+	public void setSeenSCContext(IRodinFile seenSCContext,
 			IProgressMonitor monitor) throws RodinDBException {
 
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE,

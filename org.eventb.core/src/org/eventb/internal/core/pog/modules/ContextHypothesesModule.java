@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -13,10 +17,10 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.ISCAxiom;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCTheorem;
@@ -27,6 +31,7 @@ import org.eventb.internal.core.pog.ContextAxiomTable;
 import org.eventb.internal.core.pog.ContextHypothesisManager;
 import org.eventb.internal.core.pog.ContextTheoremTable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 
@@ -46,7 +51,7 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 	ContextHypothesisManager hypothesisManager;
 	ContextAxiomTable axiomTable;
 	ContextTheoremTable theoremTable;
-	IPOFile target;
+	IPORoot target;
 	
 	@Override
 	public void initModule(
@@ -55,21 +60,23 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
-		ISCContextFile scContextFile = (ISCContextFile) element;
+		IRodinFile scContextFile = (IRodinFile) element;
+		ISCContextRoot scContextRoot = (ISCContextRoot) scContextFile.getRoot();
+		
 		
 		target = repository.getTarget();
 		
 		IPOPredicateSet rootSet = target.getPredicateSet(ContextHypothesisManager.ABS_HYP_NAME);
 		rootSet.create(null, monitor);
 		
-		ISCInternalContext[] contexts = scContextFile.getAbstractSCContexts();
+		ISCInternalContext[] contexts = scContextRoot.getAbstractSCContexts();
 		
 		copyContexts(rootSet, contexts, monitor);
 				
-		fetchCarriersSetsAndConstants(scContextFile, rootSet, monitor);
+		fetchCarriersSetsAndConstants(scContextRoot, rootSet, monitor);
 		
-		ISCAxiom[] axioms = scContextFile.getSCAxioms();
-		ISCTheorem[] theorems = scContextFile.getSCTheorems();
+		ISCAxiom[] axioms = scContextRoot.getSCAxioms();
+		ISCTheorem[] theorems = scContextRoot.getSCTheorems();
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		fetchPredicates(predicates, axioms);
@@ -87,7 +94,7 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
-		boolean accuracy = scContextFile.isAccurate();
+		boolean accuracy = scContextRoot.isAccurate();
 		
 		hypothesisManager = 
 			new ContextHypothesisManager(scContextFile, target, predicateElements, accuracy);

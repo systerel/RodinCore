@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed for Rodin DB API cleanup
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -42,7 +43,7 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	
 	private String expandFile(IRodinFile file) throws RodinDBException {
 		StringBuilder builder = new StringBuilder(file.getElementName());
-		IRodinElement[] children = file.getChildren();
+		IRodinElement[] children = file.getRoot().getChildren();
 		for (IRodinElement element : children) {
 			IInternalElement child = (IInternalElement) element;
 			if (child.getElementType() == IDependency.ELEMENT_TYPE) {
@@ -70,7 +71,8 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	int index = 0;
 	
 	protected IData createData(IRodinFile parent, String contents) throws RodinDBException {
-		IData data = (IData) parent.getInternalElement(IData.ELEMENT_TYPE,
+		IInternalElement root = parent.getRoot();
+		IData data = (IData) root.getInternalElement(IData.ELEMENT_TYPE,
 				"foo" + index++);
 		data.create(null, null);
 		data.setAttributeValue(fString, contents, null);
@@ -78,14 +80,16 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 	}
 
 	protected IDependency createDependency(IRodinFile parent, String target) throws RodinDBException {
-		IDependency dep = (IDependency) parent.getInternalElement(
+		IInternalElement root = parent.getRoot();
+		IDependency dep = (IDependency) root.getInternalElement(
 				IDependency.ELEMENT_TYPE, target);
 		dep.create(null, null);
 		return dep;
 	}
 	
 	protected IReference createReference(IRodinFile parent, String target) throws RodinDBException {
-		IReference ref = (IReference) parent.getInternalElement(
+		IInternalElement root = parent.getRoot();
+		IReference ref = (IReference) root.getInternalElement(
 				IReference.ELEMENT_TYPE, target);
 		ref.create(null, null);
 		return ref;

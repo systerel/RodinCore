@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.rodinp.internal.core;
 
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * Base class for all element types (predefined or contributed).
@@ -46,8 +50,8 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 		}
 	}
 
-	private static final HashMap<String, ElementType<? extends IRodinElement>>
-		registry = new HashMap<String, ElementType<? extends IRodinElement>>();
+	private static final HashMap<String, ElementType<?>> registry =
+		new HashMap<String, ElementType<?>>();
 	
 	public static final DatabaseElementType DATABASE_ELEMENT_TYPE = 
 		new DatabaseElementType();
@@ -55,16 +59,17 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 	public static final ProjectElementType PROJECT_ELEMENT_TYPE = 
 		new ProjectElementType();
 
-	private static void register(String id, ElementType<? extends IRodinElement> type) {
-		final ElementType<? extends IRodinElement> oldType = registry.put(id, type);
+	private static void register(String id, ElementType<?> type) {
+		final ElementType<?> oldType = registry.put(id, type);
 		if (oldType != null) {
 			registry.put(id, oldType);
-			throw new IllegalStateException(
-					"Attempt to create twice element type " + id);
+			String msg = "Attempt to create twice element type " + id;
+			Util.log(null, msg);
+			throw new IllegalStateException();
 		}
 	}
 	
-	public static IElementType<? extends IRodinElement> getElementType(String id) {
+	public static IElementType<?> getElementType(String id) {
 		return registry.get(id);
 	}
 	

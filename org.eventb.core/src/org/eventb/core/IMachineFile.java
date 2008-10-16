@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core;
 
@@ -42,10 +46,11 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public interface IMachineFile extends IEventBFile, ICommentedElement, IConfigurationElement {
 
-	IFileElementType<IMachineFile> ELEMENT_TYPE =
-		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".machineFile"); //$NON-NLS-1$
+	IFileElementType ELEMENT_TYPE =
+		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".machineFileF"); //$NON-NLS-1$
 
 	/**
 	 * Returns a handle to a child refines clause with the given element name.

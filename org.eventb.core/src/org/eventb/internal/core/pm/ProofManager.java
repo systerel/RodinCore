@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.IEventBFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
@@ -47,11 +47,11 @@ public class ProofManager implements IProofManager {
 	 * All accesses to this field must be synchronized (locking of this object).
 	 * </p>
 	 */
-	private final Map<IPSFile, Reference<ProofComponent>> known;
+	private final Map<IPSRoot, Reference<ProofComponent>> known;
 
 	private ProofManager() {
 		// singleton constructor to be called once.
-		known = new HashMap<IPSFile, Reference<ProofComponent>>();
+		known = new HashMap<IPSRoot, Reference<ProofComponent>>();
 	}
 
 	public synchronized IProofAttempt[] getProofAttempts() {
@@ -65,21 +65,20 @@ public class ProofManager implements IProofManager {
 		return res.toArray(ProofComponent.NO_PROOF_ATTEMPTS);
 	}
 
-	public IProofComponent getProofComponent(IEventBFile file) {
-		final IPSFile psFile = file.getPSFile();
-		return internalGet(psFile);
+	public IProofComponent getProofComponent(IEventBRoot file) {
+		return internalGet(file.getPSRoot());
 	}
 
-	private synchronized IProofComponent internalGet(IPSFile psFile) {
-		final Reference<ProofComponent> ref = known.get(psFile);
+	private synchronized IProofComponent internalGet(IPSRoot psRoot) {
+		final Reference<ProofComponent> ref = known.get(psRoot);
 		if (ref != null) {
 			final IProofComponent res = ref.get();
 			if (res != null) {
 				return res;
 			}
 		}
-		final ProofComponent res = new ProofComponent(psFile);
-		known.put(psFile, new SoftReference<ProofComponent>(res));
+		final ProofComponent res = new ProofComponent(psRoot);
+		known.put(psRoot, new SoftReference<ProofComponent>(res));
 		return res;
 	}
 

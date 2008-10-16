@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
@@ -20,7 +24,6 @@ import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -30,7 +33,7 @@ public class ModuleFactory implements IModuleFactory {
 	
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> filterMap;
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> processorMap;
-	private Map<IFileElementType<? extends IRodinFile>, ModuleDesc<? extends IModule>> rootMap;
+	private Map<IFileElementType, ModuleDesc<? extends IModule>> rootMap;
 
 	protected void addFilterToFactory(
 			ModuleDesc<? extends IModule> key, 
@@ -55,7 +58,7 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	protected void addRootToFactory(
-			IFileElementType<? extends IRodinFile> key, 
+			IFileElementType key, 
 			ModuleDesc<? extends IModule> root) {
 		ModuleDesc<? extends IModule> oldRoot = rootMap.put(key, root);
 		if (oldRoot != null)
@@ -68,7 +71,7 @@ public class ModuleFactory implements IModuleFactory {
 		processorMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
 		rootMap = 
-			new HashMap<IFileElementType<? extends IRodinFile>, ModuleDesc<? extends IModule>>();
+			new HashMap<IFileElementType, ModuleDesc<? extends IModule>>();
 		for (Node<ModuleDesc<? extends IModule>> node : graph.getSorted())
 			node.getObject().addToModuleFactory(this, modules);
 	}
@@ -109,7 +112,7 @@ public class ModuleFactory implements IModuleFactory {
 		}
 	}
 
-	public IProcessorModule getRootModule(IFileElementType<? extends IRodinFile> type) {
+	public IProcessorModule getRootModule(IFileElementType type) {
 		ModuleDesc<? extends IModule> desc = rootMap.get(type);
 		if (desc == null)
 			throw new IllegalArgumentException("No root module for " + type.getId());
@@ -145,7 +148,7 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	// debugging support
-	public String printModuleTree(IFileElementType<? extends IRodinFile> type) {
+	public String printModuleTree(IFileElementType type) {
 		StringBuffer buffer = new StringBuffer();
 		ModuleDesc<? extends IModule> desc = rootMap.get(type);
 		if (desc == null) {

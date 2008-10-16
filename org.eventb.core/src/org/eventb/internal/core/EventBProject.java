@@ -1,22 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
-import org.eventb.core.ISCContextFile;
-import org.eventb.core.ISCMachineFile;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -60,39 +58,39 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 		return rodinProject;
 	}
 	
-	public IContextFile getContextFile(String bareName) {
+	public IRodinFile getContextFile(String bareName) {
 		String name = EventBPlugin.getContextFileName(bareName);
-		return (IContextFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public IMachineFile getMachineFile(String bareName) {
+	public IRodinFile getMachineFile(String bareName) {
 		String name = EventBPlugin.getMachineFileName(bareName);
-		return (IMachineFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public IPRFile getPRFile(String bareName) {
+	public IRodinFile getPRFile(String bareName) {
 		String name = EventBPlugin.getPRFileName(bareName);
-		return (IPRFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public ISCContextFile getSCContextFile(String bareName) {
+	public IRodinFile getSCContextFile(String bareName) {
 		String name = EventBPlugin.getSCContextFileName(bareName);
-		return (ISCContextFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public ISCMachineFile getSCMachineFile(String bareName) {
+	public IRodinFile getSCMachineFile(String bareName) {
 		String name = EventBPlugin.getSCMachineFileName(bareName);
-		return (ISCMachineFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public IPOFile getPOFile(String bareName) {
+	public IRodinFile getPOFile(String bareName) {
 		String name = EventBPlugin.getPOFileName(bareName);
-		return (IPOFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
-	public IPSFile getPSFile(String bareName) {
+	public IRodinFile getPSFile(String bareName) {
 		String name = EventBPlugin.getPSFileName(bareName);
-		return (IPSFile) getRodinProject().getRodinFile(name);
+		return getRodinProject().getRodinFile(name);
 	}
 
 }

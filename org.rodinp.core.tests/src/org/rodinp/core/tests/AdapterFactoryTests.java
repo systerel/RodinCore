@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added tests for asRodinElement()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -122,7 +123,7 @@ public class AdapterFactoryTests extends AbstractRodinDBTests {
 		assertAdapterPositive(rodinFile, IResource.class, file);
 		
 		// Internal elements do not have a corresponding resource 
-		IInternalElement foo = getNamedElement(rodinFile, "foo");
+		IInternalElement foo = getNamedElement(rodinFile.getRoot(), "foo");
 		assertAdapterNegative(foo, IResource.class);
 		
 		IInternalElement bar = getNamedElement(foo, "bar");

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -18,7 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Util;
 
@@ -53,7 +54,7 @@ public class ToolManager {
 	private HashMap<String, ExtractorDescription> extractors;
 	
 	// Map from input type to list of extractor description
-	private HashMap<IFileElementType<?>, List<ExtractorDescription>> extractorsForType;
+	private HashMap<IInternalElementType<?>, List<ExtractorDescription>> extractorsForType;
 	
 	// Map from tool id to tool description
 	private HashMap<String, ToolDescription> tools;
@@ -66,13 +67,13 @@ public class ToolManager {
 	private void add(ExtractorDescription extractorDesc) {
 		final String id = extractorDesc.getId();
 		extractors.put(id, extractorDesc);
-		for (IFileElementType<?> inputType : extractorDesc.getInputTypes()) {
+		for (IInternalElementType<?> inputType : extractorDesc.getInputTypes()) {
 			addExtractorForType(extractorDesc, inputType);
 		}
 	}
 	
 	private void addExtractorForType(ExtractorDescription extractorDesc,
-			IFileElementType<?> inputType) {
+			IInternalElementType<?> inputType) {
 
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null) {
@@ -98,7 +99,7 @@ public class ToolManager {
 		
 		tools = new HashMap<String, ToolDescription>();
 		extractors = new HashMap<String, ExtractorDescription>();
-		extractorsForType = new HashMap<IFileElementType<?>, List<ExtractorDescription>>();
+		extractorsForType = new HashMap<IInternalElementType<?>, List<ExtractorDescription>>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -115,7 +116,7 @@ public class ToolManager {
 		}
 	}
 	
-	public ExtractorDescription[] getExtractorDescriptions(IFileElementType<?> inputType) {
+	public ExtractorDescription[] getExtractorDescriptions(IInternalElementType<?> inputType) {
 		computeToolList();
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);
 		if (extractorSet == null || extractorSet.size() == 0) {
@@ -139,14 +140,14 @@ public class ToolManager {
 	private void removeExtractor(String id) {
 		final ExtractorDescription extractorDesc = extractors.get(id);
 		if (extractorDesc != null) {
-			for (IFileElementType<?> inputType : extractorDesc.getInputTypes()) {
+			for (IInternalElementType<?> inputType : extractorDesc.getInputTypes()) {
 				removeExtractorForType(inputType, extractorDesc);
 			}
 			extractors.remove(id);
 		}
 	}
 	
-	private void removeExtractorForType(IFileElementType<?> inputType,
+	private void removeExtractorForType(IInternalElementType<?> inputType,
 			ExtractorDescription extractorDesc) {
 
 		List<ExtractorDescription> extractorSet = extractorsForType.get(inputType);

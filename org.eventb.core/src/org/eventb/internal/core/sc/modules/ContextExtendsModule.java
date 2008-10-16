@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -11,9 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.sc.GraphProblem;
@@ -27,6 +31,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -55,22 +60,26 @@ public class ContextExtendsModule extends ContextPointerModule {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 
-		IContextFile contextFile = (IContextFile) element;
+	
+		final IRodinFile contextFile = (IRodinFile) element;
+		final IContextRoot root = (IContextRoot) contextFile.getRoot();
+		
+		
+		IExtendsContext[] extendsContexts = root.getExtendsClauses();
 
-		IExtendsContext[] extendsContexts = contextFile.getExtendsClauses();
-
-		ISCContextFile[] contextFiles = new ISCContextFile[extendsContexts.length];
+//		ISCContextFile[] contextFiles = new ISCContextFile[extendsContexts.length];
+		IRodinFile[] contextFiles = new IRodinFile[extendsContexts.length];
 
 		for (int i = 0; i < extendsContexts.length; i++) {
 			if (extendsContexts[i].hasAbstractContextName()) {
-				contextFiles[i] = extendsContexts[i].getAbstractSCContext();
+				contextFiles[i] = extendsContexts[i].getAbstractSCContext().getRodinFile();
 				if (!contextFiles[i].exists()) {
 					createProblemMarker(extendsContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.AbstractContextNotFoundError,
 							extendsContexts[i].getAbstractContextName());
 					contextFiles[i] = null;
-				} else if (!contextFiles[i].hasConfiguration()) {
+				} else if (!((ISCContextRoot) contextFiles[i].getRoot()).hasConfiguration()) {
 					createProblemMarker(
 							extendsContexts[i],
 							EventBAttributes.TARGET_ATTRIBUTE,
@@ -120,7 +129,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 
 		contextPointerArray.makeImmutable();
 
-		accurate &= createExtendsClauses((ISCContextFile) target);
+		accurate &= createExtendsClauses((ISCContextRoot) target);
 
 		if (!accurate)
 			accuracyInfo.setNotAccurate();
@@ -133,27 +142,28 @@ public class ContextExtendsModule extends ContextPointerModule {
 	@Override
 	protected ISCInternalContext getSCInternalContext(IInternalParent target,
 			String elementName) {
-		return ((ISCContextFile) target).getSCInternalContext(elementName);
+		ISCContextRoot root = (ISCContextRoot) target;
+		return root.getSCInternalContext(elementName);
 	}
 
-	private boolean createExtendsClauses(ISCContextFile scCtxFile)
+	private boolean createExtendsClauses(final ISCContextRoot scCtxRoot)
 			throws RodinDBException {
-
 		boolean accurate = true;
 
 		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
-			final ISCContextFile scSeenContext = contextPointerArray
+			final IRodinFile scSeenContext = contextPointerArray
 					.getSCContextFile(i);
 			if (scSeenContext == null || contextPointerArray.hasError(i)) {
 				accurate = false;
 			} else {
-				final ISCExtendsContext scExtends = scCtxFile
+				final ISCExtendsContext scExtends = scCtxRoot
 						.getSCExtendsClause(EXTENDS_NAME_PREFIX + count++);
 				scExtends.create(null, null);
 
-				scExtends.setAbstractSCContext(scSeenContext, null);
+				scExtends.setAbstractSCContext((ISCContextRoot) scSeenContext
+						.getRoot(), null);
 
 				final IInternalElement source = contextPointerArray
 						.getContextPointer(i);

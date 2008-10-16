@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
@@ -32,6 +33,7 @@ import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -47,7 +49,7 @@ public class PSUpdater {
 	// access to the proof files
 	final IProofComponent pc;
 	
-	final IPSFile psFile;
+	final IPSRoot psRoot;
 
 	final int initialNbOfStatuses;
 	
@@ -78,9 +80,10 @@ public class PSUpdater {
 			throws RodinDBException {
 		try {
 			this.pc = pc;
-			psFile = pc.getPSFile();
+			psRoot = pc.getPSFile();
+			IRodinFile psFile = psRoot.getRodinFile();
 			if (psFile.exists()) {
-				final IPSStatus[] ss = psFile.getStatuses();
+				final IPSStatus[] ss = psRoot.getStatuses();
 				initialNbOfStatuses = ss.length;
 				unusedStatuses = new HashSet<IPSStatus>(Arrays.asList(ss));
 			} else {
@@ -130,13 +133,13 @@ public class PSUpdater {
 			public void move(IPSStatus element, IPSStatus nextSibling)
 					throws RodinDBException {
 				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
-				element.move(psFile, nextSibling, null, false, spm);
+				element.move(psRoot, nextSibling, null, false, spm);
 			}
 		};
 		try {
 			pm.beginTask("Cleaning up proof statuses", initialNbOfStatuses);
 			removeUnusedStatuses(pm);
-			sorter.sort(psFile.getStatuses(), mover);
+			sorter.sort(psRoot.getStatuses(), mover);
 		} finally {
 			pm.done();
 		}

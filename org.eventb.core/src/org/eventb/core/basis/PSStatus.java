@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.CONFIDENCE_ATTRIBUTE;
@@ -12,14 +16,14 @@ import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PROOF_BROKEN_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -53,9 +57,10 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	
 	
 	public IPRProof getProof(){
-		final IPSFile psFile = (IPSFile) getRodinFile();
-		final IPRFile prFile = psFile.getPRFile();
-		return prFile.getProof(getElementName());
+		final IRodinFile psFile = getRodinFile();
+		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+		final IPRRoot prRoot = psRoot.getPRRoot();
+		return prRoot.getProof(getElementName());
 	}
 
 
@@ -97,9 +102,9 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	}
 	
 	public IPOSequent getPOSequent() {
-		final IPSFile psFile = (IPSFile) getRodinFile();
-		final IPOFile poFile = psFile.getPOFile();
-		return poFile.getSequent(getElementName());
+		final IRodinFile psFile = getRodinFile();
+		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+		return psRoot.getPORoot().getSequent(getElementName());
 	}
 
 	@Deprecated

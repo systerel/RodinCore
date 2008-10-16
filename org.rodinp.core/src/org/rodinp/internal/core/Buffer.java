@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added deleteElementChildren() method
  *     Systerel - removed deprecated methods (contents)
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -162,7 +163,9 @@ public class Buffer {
 		// the version is always fetched from the file;
 		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
 		version = fetchVersion(doc);
-		long reqVersion = VersionManager.getInstance().getVersion(owner.getElementType());
+		Element root = doc.getDocumentElement();
+		IInternalElementType<?> rootType = getElementType(root);
+		long reqVersion = VersionManager.getInstance().getVersion(rootType);
 
 		if (version > reqVersion) {
 			throw versionProblem(FUTURE_VERSION, "" + version);

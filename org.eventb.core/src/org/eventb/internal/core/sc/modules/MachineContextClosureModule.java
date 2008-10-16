@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -16,7 +20,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCSeesContext;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -60,8 +64,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		ISCMachineFile scMachFile = (ISCMachineFile) target;
-
+		ISCMachineRoot scMachRoot = (ISCMachineRoot) target;
+		
 		if (abstractMachineInfo.getAbstractMachine() == null)
 			return;
 
@@ -94,10 +98,11 @@ public class MachineContextClosureModule extends SCProcessorModule {
 						GraphProblem.ContextOnlyInAbstractMachineWarning,
 						context.getComponentName());
 
+				
 				// repair
-				copySeesClause(scMachFile, abstractMachineInfo
+				copySeesClause(scMachRoot, abstractMachineInfo
 						.getAbstractMachine(), context, count++);
-				context.copy(scMachFile, null, null, false, null);
+				context.copy(scMachRoot, null, null, false, null);
 
 			}
 		}
@@ -107,8 +112,8 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	// Copy the sees clause from the abstraction if it introduces directly the
 	// context, otherwise don't add any sees clause: the context is seen
 	// indirectly.
-	private void copySeesClause(ISCMachineFile scMachine,
-			ISCMachineFile scAbsMachFile, ISCInternalContext scContext,
+	private void copySeesClause(ISCMachineRoot scMachine,
+			ISCMachineRoot scAbsMachFile, ISCInternalContext scContext,
 			int count) throws RodinDBException {
 
 		final String ctxName = scContext.getElementName();

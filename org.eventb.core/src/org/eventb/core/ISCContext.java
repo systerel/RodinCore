@@ -15,13 +15,13 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * There are two kinds of such contexts:
  * <ul>
- * <li>{@link org.eventb.core.ISCContextFile} is a statically checked context
+ * <li>{@link org.eventb.core.ISCContextRoot} is a statically checked context
  * that corresponds directly to a context file
- * {@link org.eventb.core.IContextFile}</li>
+ * {@link org.eventb.core.IContextRoot}</li>
  * <li>{@link org.eventb.core.ISCInternalContext} is a statically checked
  * context that is stored inside another statically checked context or
  * statically checked machine. It is usually a copy of an
- * {@link org.eventb.core.ISCContextFile}.</li>
+ * {@link org.eventb.core.ISCContextRoot}.</li>
  * <ul>
  * </p>
  * <p>
@@ -43,7 +43,6 @@ public interface ISCContext extends IRodinElement {
 	 * </p>
 	 * 
 	 * @see IRodinElement#getElementName()
-	 * @see IEventBFile#getComponentName()
 	 * 
 	 * @return the name of the event-B component
 	 */

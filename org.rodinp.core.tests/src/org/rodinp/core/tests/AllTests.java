@@ -13,6 +13,7 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for org.rodinp.core.tests.*");
 		// $JUnit-BEGIN$
+		suite.addTestSuite(HandleTests.class);
 		suite.addTestSuite(TestInternalManipulation.class);
 		suite.addTestSuite(DeleteTests.class);
 		suite.addTestSuite(ClearTests.class);

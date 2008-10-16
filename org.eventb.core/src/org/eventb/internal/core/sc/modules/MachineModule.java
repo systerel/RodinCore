@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IMachineAccuracyInfo;
 import org.eventb.core.sc.state.IMachineLabelSymbolTable;
@@ -29,7 +33,7 @@ public class MachineModule extends BaseModule {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
 
-	private ISCMachineFile machineFile;
+	private ISCMachineRoot machineFile;
 
 	private IMachineAccuracyInfo accuracyInfo;
 
@@ -60,7 +64,7 @@ public class MachineModule extends BaseModule {
 	public void process(IRodinElement element, IInternalParent target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		machineFile = (ISCMachineFile) target;
+		machineFile = (ISCMachineRoot) target;
 		super.process(element, target, repository, monitor);
 	}
 

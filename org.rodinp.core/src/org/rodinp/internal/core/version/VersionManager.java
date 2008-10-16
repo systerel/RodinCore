@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -16,8 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -36,10 +39,10 @@ public class VersionManager {
 			return type.getId() + ":" + version;
 		}
 		
-		protected final IFileElementType<IRodinFile> type;
+		protected final IInternalElementType<?> type;
 		protected final long version;
 		private String[] names;
-		public VersionDesc(long version, IFileElementType<IRodinFile> type, String name) {
+		public VersionDesc(long version, IInternalElementType<?> type, String name) {
 			this.version = version;
 			this.type = type;
 			names = new String[] { name };
@@ -78,7 +81,7 @@ public class VersionManager {
 	
 	private static VersionManager MANAGER = new VersionManager();
 	
-	Map<IFileElementType<IRodinFile>, Converter> converters;
+	Map<IInternalElementType<?>, Converter> converters;
 	
 	private VersionManager() {
 		// only one instance; lazily initialised
@@ -90,19 +93,19 @@ public class VersionManager {
 		return MANAGER;
 	}
 	
-	public Converter getConverter(IFileElementType<? extends IRodinFile> type) {
+	public Converter getConverter(IInternalElementType<?> type) {
 		if (converters == null) {
 			computeConverters();
 		}
 		return converters.get(type);
 	}
 	
-	public Map<IFileElementType<IRodinFile>, Converter> computeConverters(
+	public Map<IInternalElementType<?>, Converter> computeConverters(
 			List<VersionDesc> descs, IConfigurationElement[] elements) {
-		HashMap<IFileElementType<IRodinFile>, Converter> fc = 
-			new HashMap<IFileElementType<IRodinFile>, Converter>(17);
+		HashMap<IInternalElementType<?>, Converter> fc = 
+			new HashMap<IInternalElementType<?>, Converter>(17);
 		for (IConfigurationElement configElement : elements) {
-			IFileElementType<IRodinFile> type = getFileElementType(configElement, "type");
+			IInternalElementType<?> type = getFileElementType(configElement, "type");
 			
 			if (canConvert(descs, configElement.getContributor().getName(), type)) {
 
@@ -128,7 +131,7 @@ public class VersionManager {
 	}
 
 	private void addMissingConverters(
-			HashMap<IFileElementType<IRodinFile>, Converter> fc,
+			HashMap<IInternalElementType<?>, Converter> fc,
 			List<VersionDesc> descs) {
 		// TODO this could be added to computeConverters()
 		// (but perhaps it would be nice to generate warnings)
@@ -161,14 +164,13 @@ public class VersionManager {
 		}
 	}
 
-	private IFileElementType<IRodinFile> getFileElementType(
+	private IInternalElementType<?> getFileElementType(
 			IConfigurationElement configElement, String id) {
 		String typeString = configElement.getAttribute(id);
-		IFileElementType<IRodinFile> type = RodinCore.getFileElementType(typeString);
-		return type;
+		return RodinCore.getInternalElementType(typeString);
 	}
 
-	private boolean canConvert(List<VersionDesc> descs, String name, IFileElementType<IRodinFile> type) {
+	private boolean canConvert(List<VersionDesc> descs, String name, IInternalElementType<?> type) {
 		if (versionDescs == null) {
 			computeVersionDescs();
 		}
@@ -200,7 +202,7 @@ public class VersionManager {
 		versionDescs = computeVersionDescs(elements);
 	}
 
-	public long parseVersion(IConfigurationElement confElement, IFileElementType<IRodinFile> type) {
+	public long parseVersion(IConfigurationElement confElement, IInternalElementType<?> type) {
 		String versionString = confElement.getAttribute("version");
 		long version;
 		try {
@@ -218,7 +220,7 @@ public class VersionManager {
 
 	private void addVersionDesc(List<VersionDesc> descs, IConfigurationElement element) {
 		assert element.getName().equals("fileElementVersion");
-		IFileElementType<IRodinFile> type = getFileElementType(element, "id");
+		IInternalElementType<?> type = getFileElementType(element, "id");
 		long version = parseVersion(element, type);
 		VersionDesc desc = findVersionDesc(descs, type);
 		String name = element.getContributor().getName();

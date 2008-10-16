@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - added missing cleanup in dispose() and refresh()
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofComponent;
@@ -35,6 +36,7 @@ import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -89,8 +91,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		deltaProcessor.newUserSupport(this);
 	}
 
-	public void setInput(final IPSFile psFile) {
-		pc = EventBPlugin.getProofManager().getProofComponent(psFile);
+	public void setInput(final IRodinFile psFile) {
+		IPSRoot root = (IPSRoot) psFile.getRoot();
+		pc = EventBPlugin.getProofManager().getProofComponent(root);
 	}
 
 	private void loadProofStatesIfNeeded() throws RodinDBException {
@@ -116,9 +119,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			}
 		}
 	}
-	public IPSFile getInput() {
+	public IRodinFile getInput() {
 		if (pc != null)
-			return pc.getPSFile();
+			return pc.getPSFile().getRodinFile();
 		return null;
 	}
 
@@ -536,7 +539,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 						e.printStackTrace();
 					}
 				}
-
 				// Process Rebuilt
 				for (IProofState proofState : usDeltaProcessor.getToBeRebuilt()) {
 					try {
@@ -574,7 +576,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		StringBuffer buffer = new StringBuffer("****** User Support for: ");
 		buffer.append(this.getInput().getBareName() + " ******\n");
 		buffer.append("** Proof States **\n");
-		for (IProofState proofState : getPOs()) {
+		IProofState[] tab = getPOs();
+		for (IProofState proofState : tab) {
 			buffer.append(proofState.toString());
 			buffer.append("\n");
 		}

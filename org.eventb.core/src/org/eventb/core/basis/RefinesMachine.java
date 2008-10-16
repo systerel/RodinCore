@@ -1,20 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
 import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISCMachineFile;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -64,23 +67,23 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getAbstractMachine()
 	 */
-	public IMachineFile getAbstractMachine() 
+	public IRodinFile getAbstractMachine() 
 	throws RodinDBException {
 		final String bareName = getAbstractMachineName();
 		final String scName = EventBPlugin.getMachineFileName(bareName);
 		final IRodinProject project = getRodinProject();
-		return (IMachineFile) project.getRodinFile(scName);
+		return project.getRodinFile(scName);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IRefinesMachine#getAbstractSCMachine()
 	 */
-	public ISCMachineFile getAbstractSCMachine() 
+	public IRodinFile getAbstractSCMachine() 
 	throws RodinDBException {
 		final String bareName = getAbstractMachineName();
 		final String scName = EventBPlugin.getSCMachineFileName(bareName);
 		final IRodinProject project = getRodinProject();
-		return (ISCMachineFile) project.getRodinFile(scName);
+		return project.getRodinFile(scName);
 	}
 
 	/* (non-Javadoc)

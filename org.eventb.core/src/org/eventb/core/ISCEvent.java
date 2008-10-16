@@ -251,7 +251,7 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @return the type environment of this event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @see ISCMachineFile#getTypeEnvironment(FormulaFactory)
+	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
 	 */
 	ITypeEnvironment getTypeEnvironment(ITypeEnvironment machineTEnv,
 			FormulaFactory factory) throws RodinDBException;

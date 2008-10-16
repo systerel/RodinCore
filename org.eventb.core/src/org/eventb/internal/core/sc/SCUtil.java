@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
-import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -45,8 +49,8 @@ public class SCUtil {
 				name = ((ILabeledElement) element).getLabel();
 			else if (element instanceof IIdentifierElement)
 				name = ((IIdentifierElement) element).getIdentifierString();
-			else if (element instanceof IEventBFile)
-				name = ((IEventBFile) element).getBareName();
+			else if (element instanceof IRodinFile)
+				name = ((IRodinFile) element).getBareName();
 		} catch (RodinDBException e) {
 			// ignore
 		} finally {

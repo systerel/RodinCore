@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -19,13 +20,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
@@ -62,10 +63,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
 			throws RodinDBException {
 		
-		final IPSFile psFile = (IPSFile) RodinCore.valueOf(target);
-		final IProofComponent pc = manager.getProofComponent(psFile);
+		final IRodinFile psFile = RodinCore.valueOf(target);
+		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+		final IProofComponent pc = manager.getProofComponent(psRoot);
 
-		final String componentName = psFile.getComponentName();
+		final String componentName = psRoot.getComponentName();
 		
 		final IPOSequent[] poSequents = pc.getPOFile().getSequents();
 		final int nbOfPOs = poSequents.length;
@@ -146,7 +148,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				pc.makeConsistent(null);
 			} catch (RodinDBException e) {
 				Util.log(e, "when reverting changes to proof and status files for"
-						+ pc.getPRFile().getComponentName());
+						+ ((IPORoot)pc.getPRFile()).getComponentName());
 			}
 			throw new OperationCanceledException();
 		}
@@ -154,7 +156,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	public void clean(IFile source, IFile target, IProgressMonitor monitor)
 			throws RodinDBException {
-		final IPSFile psFile = (IPSFile) RodinCore.valueOf(target);
+		final IRodinFile psFile = RodinCore.valueOf(target);
 		if (psFile.exists()) {
 			psFile.delete(true, monitor);
 		}
@@ -174,14 +176,15 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	}
 
 	private static IFile getPSResource(IFile poResource) {
-		final IPOFile poFile = (IPOFile) RodinCore.valueOf(poResource);
-		final IPSFile psFile = poFile.getPSFile();
-		return psFile.getResource();
+		final IRodinFile poFile = RodinCore.valueOf(poResource);
+		final IPORoot poRoot = (IPORoot) poFile.getRoot();
+		final IPSRoot psRoot = poRoot.getPSRoot();
+		return psRoot.getRodinFile().getResource();
 	}
 
 	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)
 			throws RodinDBException {
-		final IPRFile prFile = pc.getPRFile();
+		final IRodinFile prFile = pc.getPRFile().getRodinFile();
 		if (!prFile.exists()) {
 			prFile.create(true, pm);
 		}

@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.core.tests.model.ModifyingResourceTests
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - fixed expected delta for attribute change
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -30,6 +31,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
  * These test ensure that modifications in Rodin projects are correctly reported as
@@ -386,8 +388,9 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
 							IRodinFile rf = getRodinFile("P/A.test");
-							NamedElement foo = createNEPositive(rf, "foo", null);
-							NamedElement bar = createNEPositive(rf, "bar", foo);
+							RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+							NamedElement foo = createNEPositive(root, "foo", null);
+							NamedElement bar = createNEPositive(root, "bar", foo);
 							createNEPositive(bar, "baz", null);
 						}
 					},
@@ -396,8 +399,9 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" + 
 					"	A.test[*]: {CHILDREN}\n" + 
-					"		foo[org.rodinp.core.tests.namedElement][+]: {}\n" + 
-					"		bar[org.rodinp.core.tests.namedElement][+]: {}"
+					"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" +
+					"			foo[org.rodinp.core.tests.namedElement][+]: {}\n" + 
+					"			bar[org.rodinp.core.tests.namedElement][+]: {}"
 			);
 		} finally {
 			stopDeltas();
@@ -714,7 +718,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNEPositive(rodinFile, "foo", null);
+			RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+			NamedElement ne = createNEPositive(root, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");
@@ -722,7 +727,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
+					"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" +
+					"			foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
@@ -734,7 +740,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNEPositive(rodinFile, "foo", null);
+			RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+			NamedElement ne = createNEPositive(root, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");
@@ -743,7 +750,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
+					"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" +
+					"			foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
@@ -755,7 +763,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		try {
 			createRodinProject("P");
 			IRodinFile rodinFile = createRodinFile("P/A.test");
-			NamedElement ne = createNEPositive(rodinFile, "foo", null);
+			RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+			NamedElement ne = createNEPositive(root, "foo", null);
 			
 			startDeltas();
 			assertContentsChanged(ne, "bar");
@@ -764,7 +773,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 					"Unexpected delta", 
 					"P[*]: {CHILDREN}\n" +
 					"	A.test[*]: {CHILDREN}\n" +
-					"		foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
+					"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" +
+					"			foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
 			);
 		} finally {
 			stopDeltas();
@@ -823,7 +833,8 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 			file.move(project.getFullPath().append("/X.test"), true, null);
 			assertElementDescendants("Unexpected project descendants",
 					"P\n" + 
-					"  X.test",
+					"  X.test\n" +
+					"    X[org.rodinp.core.tests.test]",
 					getRodinProject("P")
 			);
 			assertDeltas(

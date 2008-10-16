@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.pm;
 
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 
 /**
  * The proof manager is the basis for manipulating event-B proofs. There is only
@@ -46,6 +46,6 @@ public interface IProofManager {
 	 *            an event-B file
 	 * @return a proof component for the given file
 	 */
-	IProofComponent getProofComponent(IEventBFile file);
+	IProofComponent getProofComponent(IEventBRoot file);
 
 }

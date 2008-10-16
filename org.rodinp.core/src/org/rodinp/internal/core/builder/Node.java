@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -18,8 +22,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.FileElementType;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -87,7 +92,7 @@ public class Node implements Serializable {
 	
 //	transient private IPath targetPath; // the path corresponding to target name (cache)
 //	transient private IPath sourcePath; // the path corresponding to source name (cache)
-	private transient IFileElementType<?> fileElementType; // the element type of the resource (cache)
+	private transient IInternalElementType<?> rootElementType; // the element type of the resource (cache)
 //	transient private IFile file; // the file corresponding to name (cache)
 	
 	public Node() {
@@ -351,18 +356,19 @@ public class Node implements Serializable {
 	}
 
 	/**
-	 * @return Returns the fileElementType.
+	 * @return Returns the rootElementType.
 	 */
-	public IFileElementType<?> getFileElementType() {
+	public IInternalElementType<?> getRootElementType() {
 		
 		final IFile targetFile = target.getFile();
-		if (fileElementType == null && targetFile != null) {
+		if (rootElementType == null && targetFile != null) {
 			final ElementTypeManager manager = ElementTypeManager.getInstance();
 
-			this.fileElementType = manager.getFileElementType(targetFile);
+			final FileElementType fileElementType = manager.getFileElementType(targetFile);
+			this.rootElementType = fileElementType.getRootElementType();
 		}
 
-		return fileElementType;
+		return rootElementType;
 	}
 
 	public boolean isPreferred() {

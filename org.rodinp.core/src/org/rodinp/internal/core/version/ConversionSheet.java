@@ -1,17 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
 import javax.xml.transform.Transformer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -34,9 +37,9 @@ public abstract class ConversionSheet extends ExtensionDesc {
 
 
 	private final long version;
-	private final IFileElementType<IRodinFile> type;
+	private final IInternalElementType<?> type;
 	
-	public ConversionSheet(IConfigurationElement configElement, IFileElementType<IRodinFile> type) {
+	public ConversionSheet(IConfigurationElement configElement, IInternalElementType<?> type) {
 		super(configElement);
 		this.type = type;
 		String vString = configElement.getAttribute("version");
@@ -69,7 +72,7 @@ public abstract class ConversionSheet extends ExtensionDesc {
 		return version;
 	}
 	
-	public IFileElementType<IRodinFile> getType() {
+	public IInternalElementType<?> getType() {
 		return type;
 	}
 

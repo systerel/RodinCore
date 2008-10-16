@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -11,9 +15,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.Predicate;
@@ -79,7 +83,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 * @throws CoreException if there has been any problem creating the proof obligation
 	 */
 	protected final void createPO(
-			IPOFile target, 
+			IPORoot target, 
 			String name,
 			String desc,
 			IPOPredicateSet globalHypothesis,
@@ -382,7 +386,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 * @param sequentName the name of the sequent
 	 * @return a handle to the predicate set that represents the hypothesis
 	 */
-	protected static final IPOPredicateSet getSequentHypothesis(IPOFile target, String sequentName) {
+	protected static final IPOPredicateSet getSequentHypothesis(IPORoot target, String sequentName) {
 		return target.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
 	}
 

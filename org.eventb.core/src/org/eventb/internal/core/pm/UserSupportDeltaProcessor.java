@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -14,12 +15,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -101,7 +103,7 @@ public class UserSupportDeltaProcessor {
 	public void processDelta(IRodinElementDelta elementChangedDelta,
 			IProgressMonitor monitor) {
 		IRodinElement element = elementChangedDelta.getElement();
-		IPSFile input = userSupport.getInput();
+		IRodinFile input = userSupport.getInput();
 		
 		// Root DB
 		if (element instanceof IRodinDB) {
@@ -123,8 +125,8 @@ public class UserSupportDeltaProcessor {
 			return;
 		}
 
-		// IPSFile
-		if (element instanceof IPSFile) {
+		// IRodinFile
+		if (element instanceof IRodinFile) {
 			if (input.equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
@@ -134,6 +136,19 @@ public class UserSupportDeltaProcessor {
 			return;
 		}
 
+		// IPSRoot
+		if (element instanceof IPSRoot) {
+			if (input.getRoot().equals(element)) {
+				for (IRodinElementDelta d : elementChangedDelta
+						.getAffectedChildren()) {
+					processDelta(d, monitor);
+				}
+				return;
+			}
+		}
+		
+		
+		
 		// IPSStatus has been changed
 		if (element instanceof IPSStatus) {
 			final IPSStatus psStatus = (IPSStatus) element;

@@ -1,14 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
 import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.rodinp.core.IFileElementType;
 import org.rodinp.core.IRodinElement;
@@ -25,6 +30,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Farhad Mehta
  */
+@Deprecated
 public class PSFile extends EventBFile implements IPSFile {
 
 	/**
@@ -35,16 +41,18 @@ public class PSFile extends EventBFile implements IPSFile {
 	}
 
 	@Override
-	public IFileElementType<IPSFile> getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public IPSStatus[] getStatuses() throws RodinDBException {
-		return getChildrenOfType(PSStatus.ELEMENT_TYPE);
+		IPSRoot root = (IPSRoot) getRoot();
+		return root.getStatuses();
 	}
 
 	public IPSStatus getStatus(String name) {
-		return getInternalElement(IPSStatus.ELEMENT_TYPE, name);
+		IPSRoot root = (IPSRoot) getRoot();
+		return root.getStatus(name);
 	}
 
 }

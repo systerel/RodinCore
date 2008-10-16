@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
@@ -13,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.version.conf.AddAttribute;
@@ -90,7 +93,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 		VersionManager vm = VersionManager.getInstance();
 		List<VersionDesc> descs = vm.computeVersionDescs(vElements);
 		try {
-			Map<IFileElementType<IRodinFile>, Converter> cmap = vm.computeConverters(descs, cElements);
+			Map<IInternalElementType<?>, Converter> cmap = vm.computeConverters(descs, cElements);
 			for (Converter converter : cmap.values()) {
 				for (ConversionSheet sheet : converter.getConversionSheets()) {
 					sheet.getTransformer();

@@ -27,7 +27,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * <p>
  * References to predicate sets are stored relative to plain PO files and
- * translated back and forth, see {@link IPOFile}.
+ * translated back and forth, see {@link IPORoot}.
  * </p>
  * 
  * @author Stefan Hallerstede

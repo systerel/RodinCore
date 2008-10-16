@@ -58,41 +58,76 @@
       <fileElementType
             class="org.eventb.core.basis.MachineFile"
             content-type-id="org.eventb.core.machineFile"
-            id="machineFile"
-            name="%eventBMachineFile"/>
+            id="machineFileF"
+            name="%eventBMachineFile"
+            root-element-type="org.eventb.core.machineFile"/>
       <fileElementType
             class="org.eventb.core.basis.ContextFile"
             content-type-id="org.eventb.core.contextFile"
-            id="contextFile"
-            name="%eventBContextFile"/>
+            id="contextFileF"
+            name="%eventBContextFile"
+            root-element-type="org.eventb.core.contextFile"/>
       <fileElementType
             class="org.eventb.core.basis.SCMachineFile"
             content-type-id="org.eventb.core.scMachineFile"
-            id="scMachineFile"
-            name="%eventBSCMachineFile"/>
+            id="scMachineFileF"
+            name="%eventBSCMachineFile"
+            root-element-type="org.eventb.core.scMachineFile"/>
       <fileElementType
             class="org.eventb.core.basis.SCContextFile"
             content-type-id="org.eventb.core.scContextFile"
-            id="scContextFile"
-            name="%eventBSCContextFile"/>
+            id="scContextFileF"
+            name="%eventBSCContextFile"
+            root-element-type="org.eventb.core.scContextFile"/>
       <fileElementType
             class="org.eventb.core.basis.POFile"
             content-type-id="org.eventb.core.poFile"
-            id="poFile"
-            name="%eventBpoFile"/>
+            id="poFileF"
+            name="%eventBpoFile"
+            root-element-type="org.eventb.core.poFile"/>
       <fileElementType
             class="org.eventb.core.basis.PRFile"
             content-type-id="org.eventb.core.prFile"
-            id="prFile"
-            name="%eventBprFile"/>
+            id="prFileF"
+            name="%eventBprFile"
+            root-element-type="org.eventb.core.prFile"/>
       <fileElementType
             class="org.eventb.core.basis.PSFile"
             content-type-id="org.eventb.core.psFile"
-            id="psFile"
-            name="%eventBpsFile"/>
+            id="psFileF"
+            name="%eventBpsFile"
+            root-element-type="org.eventb.core.psFile"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.eventb.core.basis.MachineRoot"
+            id="machineFile"
+            name="%eventBMachineFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.ContextRoot"
+            id="contextFile"
+            name="%eventBContextFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCMachineRoot"
+            id="scMachineFile"
+            name="%eventBSCMachineFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.SCContextRoot"
+            id="scContextFile"
+            name="%eventBSCContextFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.PORoot"
+            id="poFile"
+            name="%eventBpoFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.PRRoot"
+            id="prFile"
+            name="%eventBprFile"/>
+      <internalElementType
+            class="org.eventb.core.basis.PSRoot"
+            id="psFile"
+            name="%eventBpsFile"/>
       <internalElementType
             class="org.eventb.core.basis.CarrierSet"
             id="carrierSet"
@@ -767,7 +802,7 @@
       <rootType
             class="org.eventb.internal.core.sc.modules.ContextModule"
             id="contextModule"
-            input="org.eventb.core.contextFile"
+            input="org.eventb.core.contextFileF"
             name="%scContextModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.ContextExtendsModule"
@@ -827,7 +862,7 @@
       <rootType
             class="org.eventb.internal.core.sc.modules.MachineModule"
             id="machineModule"
-            input="org.eventb.core.machineFile"
+            input="org.eventb.core.machineFileF"
             name="%scMachineModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineRefinesModule"
@@ -1038,7 +1073,7 @@
       <rootType
             class="org.eventb.internal.core.pog.modules.ContextModule"
             id="contextModule"
-            input="org.eventb.core.scContextFile"
+            input="org.eventb.core.scContextFileF"
             name="%pogContextModule"/>
       <processorType
             class="org.eventb.internal.core.pog.modules.ContextHypothesesModule"
@@ -1074,7 +1109,7 @@
       <rootType
             class="org.eventb.internal.core.pog.modules.MachineModule"
             id="machineModule"
-            input="org.eventb.core.scMachineFile"
+            input="org.eventb.core.scMachineFileF"
             name="%pogMachineModule"/>
       <processorType
             class="org.eventb.internal.core.pog.modules.FwdMachineRefinementModule"

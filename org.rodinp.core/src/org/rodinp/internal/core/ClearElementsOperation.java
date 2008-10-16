@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - adapted from delete to clear
  *     Systerel - fixed flag for attribute change
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRegion;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -120,13 +122,13 @@ public class ClearElementsOperation extends MultiOperation {
 		RodinElementDelta delta = newRodinElementDelta();
 		IRodinElement[] rfElements = childrenToClear.get(rf).getElements();
 		for (int i = 0, length = rfElements.length; i < length; i++) {
-			clearElement(rf, delta, (IInternalParent) rfElements[i]);
+			clearElement(rf, delta, (IInternalElement) rfElements[i]);
 		}
 		addDelta(delta);
 	}
 
 	private void clearElement(RodinFile rf, RodinElementDelta delta,
-			IInternalParent e) throws RodinDBException {
+			IInternalElement e) throws RodinDBException {
 		final RodinFileElementInfo fileInfo = (RodinFileElementInfo) rf
 				.getElementInfo();
 		clearElementAttributes(fileInfo, e, delta);
@@ -145,7 +147,7 @@ public class ClearElementsOperation extends MultiOperation {
 	}
 
 	private void clearElementChildren(RodinFileElementInfo fileInfo,
-			IInternalParent e, RodinElementDelta delta) throws RodinDBException {
+			IInternalElement e, RodinElementDelta delta) throws RodinDBException {
 		final IRodinElement[] children = fileInfo.clearChildren(e);
 		for (final IRodinElement child : children) {
 			delta.removed(child);

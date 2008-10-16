@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.rodinp.core.tests;
 
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
  * Tests on Rodin openable elements.
@@ -82,7 +86,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testIsConsistentModifiedFile() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		assertFalse("modified file should not be consistent", 
 				rodinFile.isConsistent());
 
@@ -97,7 +102,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testIsConsistentModifiedFileSave() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		rodinFile.save(null, false);
 		assertTrue("saved file should be consistent", 
 				rodinFile.isConsistent());
@@ -108,7 +114,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testIsConsistentModifiedFileRevert() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		rodinFile.makeConsistent(null);
 		assertTrue("reverted file should be consistent", 
 				rodinFile.isConsistent());
@@ -129,7 +136,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testHasUnsavedChangesModifiedFile() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		assertUnsavedChanges(rodinFile, true);
 
 		// Should report the same after closing the file.
@@ -142,7 +150,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testHasUnsavedChangesModifiedFileSave() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		rodinFile.save(null, false);
 		assertUnsavedChanges(rodinFile, false);
 	}
@@ -153,7 +162,8 @@ public class OpenableTests extends ModifyingResourceTests {
 	 */
 	public void testHasUnsavedChangesModifiedFileRevert() throws Exception {
 		IRodinFile rodinFile = createRodinFile("P/x.test");
-		createNEPositive(rodinFile, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rodinFile.getRoot();
+		createNEPositive(root, "foo", null);
 		rodinFile.makeConsistent(null);
 		assertUnsavedChanges(rodinFile, false);
 	}

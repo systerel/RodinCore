@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.core.tests.model.ModifyingResourceTests
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - moved attribute type declarations to super
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -38,7 +39,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -104,7 +104,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return createFolder(new Path(path));
 	}
 	
-	protected static NamedElement createNEPositive(IInternalParent parent, String name,
+	protected static NamedElement createNEPositive(IInternalElement parent, String name,
 			IInternalElement nextSibling) throws RodinDBException {
 		
 		NamedElement element = getNamedElement(parent, name);
@@ -115,7 +115,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		return (NamedElement) element;
 	}
 
-	protected static void createNENegative(IInternalParent parent, String name,
+	protected static void createNENegative(IInternalElement parent, String name,
 			IInternalElement nextSibling, int failureCode) throws RodinDBException {
 		
 		NamedElement element = getNamedElement(parent, name);

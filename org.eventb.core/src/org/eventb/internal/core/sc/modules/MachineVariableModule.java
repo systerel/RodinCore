@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -11,9 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.IVariable;
 import org.eventb.core.sc.GraphProblem;
@@ -25,6 +29,7 @@ import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -43,9 +48,10 @@ public class MachineVariableModule extends IdentifierModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		IMachineFile machineFile = (IMachineFile) element;
+		IRodinFile machineFile = (IRodinFile) element;
+		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
 
-		IVariable[] variables = machineFile.getVariables();
+		IVariable[] variables = machineRoot.getVariables();
 
 		if (variables.length == 0)
 			return;
@@ -113,7 +119,7 @@ public class MachineVariableModule extends IdentifierModule {
 	@Override
 	protected IIdentifierSymbolInfo createIdentifierSymbolInfo(String name,
 			IIdentifierElement element) {
-		IEventBFile file = (IEventBFile) element.getParent();
+		IEventBRoot file = (IEventBRoot) element.getParent();
 		return SymbolFactory.getInstance().makeLocalVariable(name, true,
 				element, file.getComponentName());
 	}

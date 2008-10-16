@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -12,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -31,6 +35,7 @@ import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -156,8 +161,9 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	protected IVariant[] getFormulaElements(IRodinElement element)
 			throws CoreException {
-		IMachineFile machineFile = (IMachineFile) element;
-		return machineFile.getVariants();
+		IRodinFile machineFile = (IRodinFile) element;
+		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
+		return machineRoot.getVariants();
 	}
 
 	@Override

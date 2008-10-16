@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.tests.model.CopyMoveResourcesTests.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.tests.model.CopyMoveResourcesTests
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -18,6 +21,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 public class CopyMoveResourcesTests extends CopyMoveTests {
 
@@ -60,7 +64,8 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		NamedElement ne = createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 		
 		copyNegative(
@@ -77,17 +82,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		copyPositive(rfSource, rfDest.getParent(), null, null, true);
 		assertElementDescendants("Internal element not copied with its container",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" +
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 	
@@ -97,7 +105,8 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		copyPositive(rfSource, getRodinProject("P2"), null, "Y.test", false);
@@ -153,17 +162,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		copyPositive(rfSource, rfDest.getParent(), null, "Y.test", true);
 		assertElementDescendants("Internal element not copied with its container",
 				"Y.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  Y[org.rodinp.core.tests.test]\n" +
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 
@@ -173,17 +185,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testCopyRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		copyNegative(rfSource, rfDest.getParent(), null, null, false, IRodinDBStatusConstants.NAME_COLLISION);
 		assertElementDescendants("Destination file should not have changed",
 				"X.test\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" +
+				"    bar[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 	
@@ -408,7 +423,8 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		NamedElement ne = createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 		
 		moveNegative(
@@ -425,17 +441,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		movePositive(rfSource, rfDest.getParent(), null, null, true);
 		assertElementDescendants("Internal element not copied with its container",
 				"X.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" +
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 
@@ -454,7 +473,8 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFRename() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		movePositive(rfSource, getRodinProject("P2"), null, "Y.test", false);
@@ -466,17 +486,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFRenameForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/Y.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		movePositive(rfSource, rfDest.getParent(), null, "Y.test", true);
 		assertElementDescendants("Internal element not copied with its container",
 				"Y.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  Y[org.rodinp.core.tests.test]\n" +
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 
@@ -486,17 +509,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testMoveRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P2/X.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		moveNegative(rfSource, rfDest.getParent(), null, null, false, IRodinDBStatusConstants.NAME_COLLISION);
 		assertElementDescendants("Destination file should not have changed",
 				"X.test\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  X[org.rodinp.core.tests.test]\n" +
+				"    bar[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 	
@@ -589,7 +615,8 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFAndInternal() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		NamedElement ne = createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		NamedElement ne = createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 		
 		renameNegative(
@@ -604,17 +631,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFForce() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		renamePositive(rfSource, rfDest.getElementName(), true);
 		assertElementDescendants("Internal element not copied with its container",
 				"Y.test\n" + 
-				"  foo[org.rodinp.core.tests.namedElement]",
+				"  Y[org.rodinp.core.tests.test]\n" +
+				"    foo[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 
@@ -633,17 +663,20 @@ public class CopyMoveResourcesTests extends CopyMoveTests {
 	 */
 	public void testRenameRFWithCollision() throws CoreException {
 		IRodinFile rfSource = createRodinFile("/P/X.test");
-		createNEPositive(rfSource, "foo", null);
+		RodinTestRoot root = (RodinTestRoot) rfSource.getRoot();
+		createNEPositive(root, "foo", null);
 		rfSource.save(null, false);
 
 		IRodinFile rfDest = createRodinFile("P/Y.test");
-		createNEPositive(rfDest, "bar", null);
+		RodinTestRoot rootDest = (RodinTestRoot) rfDest.getRoot();
+		createNEPositive(rootDest, "bar", null);
 		// Destination file is left unsaved
 		
 		renameNegative(rfSource, rfDest.getElementName(), false, IRodinDBStatusConstants.NAME_COLLISION);
 		assertElementDescendants("Destination file should not have changed",
 				"Y.test\n" + 
-				"  bar[org.rodinp.core.tests.namedElement]",
+				"  Y[org.rodinp.core.tests.test]\n" +
+				"    bar[org.rodinp.core.tests.namedElement]",
 				rfDest);
 	}
 	

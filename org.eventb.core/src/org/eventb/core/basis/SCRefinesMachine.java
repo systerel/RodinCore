@@ -1,21 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -52,23 +56,25 @@ public class SCRefinesMachine extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
-	public ISCMachineFile getAbstractSCMachine() throws RodinDBException {
+	public IRodinFile getAbstractSCMachine() throws RodinDBException {
 		IRodinElement target = getAbstractSCMachineHandle();
-		if (! (target instanceof ISCMachineFile)) {
-			throw Util.newRodinDBException(
-					Messages.database_SCRefinesMachineTypeFailure,
-					this);
+		if (target instanceof IRodinFile) {
+			IRodinFile rf = (IRodinFile) target;
+			if (rf.getRoot() instanceof ISCMachineRoot) {
+				return rf;
+			}
 		}
-		return (ISCMachineFile) target;
+		throw Util.newRodinDBException(
+				Messages.database_SCRefinesMachineTypeFailure, this);
 	}
 
-	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) 
+	public void setAbstractSCMachine(IRodinFile abstractSCMachine, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCMachine, monitor);
 	}
 
 	@Deprecated
-	public void setAbstractSCMachine(ISCMachineFile abstractSCMachine) throws RodinDBException {
+	public void setAbstractSCMachine(IRodinFile abstractSCMachine) throws RodinDBException {
 		setAbstractSCMachine(abstractSCMachine, null);
 	}
 }

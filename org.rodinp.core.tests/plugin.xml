@@ -51,41 +51,76 @@
       <fileElementType
             class="org.rodinp.core.tests.basis.RodinTestFile"
             content-type-id="org.rodinp.core.tests.content-type-test"
-            id="test"
-            name="Test Rodin File"/>
+            id="testF"
+            name="Test Rodin File"
+            root-element-type="org.rodinp.core.tests.test"/>
       <fileElementType
             class="org.rodinp.core.tests.basis.RodinTestFile2"
             content-type-id="org.rodinp.core.tests.content-type-test2"
-            id="test2"
-            name="Test2 Rodin File"/>
+            id="test2F"
+            name="Test2 Rodin File"
+            root-element-type="org.rodinp.core.tests.test2"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.Context"
             content-type-id="org.rodinp.core.tests.context"
-            id="context"
-            name="Context"/>
+            id="contextF"
+            name="Context"
+            root-element-type="org.rodinp.core.tests.context"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.SCContext"
             content-type-id="org.rodinp.core.tests.scContext"
-            id="scContext"
-            name="Checked Context"/>
+            id="scContextF"
+            name="Checked Context"
+            root-element-type="org.rodinp.core.tests.scContext"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.POFile"
             content-type-id="org.rodinp.core.tests.poFile"
-            id="poFile"
-            name="PO File"/>
+            id="poFileF"
+            name="PO File"
+            root-element-type="org.rodinp.core.tests.poFile"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.Machine"
             content-type-id="org.rodinp.core.tests.machine"
-            id="machine"
-            name="Machine"/>
+            id="machineF"
+            name="Machine"
+            root-element-type="org.rodinp.core.tests.machine"/>
       <fileElementType
             class="org.rodinp.core.tests.builder.basis.SCMachine"
             content-type-id="org.rodinp.core.tests.scMachine"
-            id="scMachine"
-            name="Checked Machine"/>
+            id="scMachineF"
+            name="Checked Machine"
+            root-element-type="org.rodinp.core.tests.scMachine"/>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.rodinp.core.tests.basis.RodinTestRoot"
+            id="test"
+            name="Test Rodin Root"/>
+      <internalElementType
+            class="org.rodinp.core.tests.basis.RodinTestRoot2"
+            id="test2"
+            name="Test2 Rodin Root"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.ContextRoot"
+            id="context"
+            name="Context"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.SCContextRoot"
+            id="scContext"
+            name="Checked Context"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.PORoot"
+            id="poFile"
+            name="PO File"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.MachineRoot"
+            id="machine"
+            name="Machine"/>
+      <internalElementType
+            class="org.rodinp.core.tests.builder.basis.SCMachineRoot"
+            id="scMachine"
+            name="Checked Machine"/>
       <internalElementType
             class="org.rodinp.core.tests.basis.NamedElement"
             id="namedElement"
@@ -125,7 +160,7 @@
             name="Dumb Machine Static Checker">
          <extractor
                class="org.rodinp.core.tests.builder.MSCTool"
-               name="Dumb Context Static Checker Extractor">
+               name="Dumb Machine Static Checker Extractor">
             <inputType id="org.rodinp.core.tests.machine"/>
          </extractor>
       </tool>
@@ -223,42 +258,78 @@
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileA"
             content-type-id="org.rodinp.core.tests.versionFileA"
-            id="versionFileA"
-            name="Version File A">
+            id="versionFileAF"
+            name="Version File A"
+            root-element-type="org.rodinp.core.tests.versionFileA">
       </fileElementType>
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileB"
             content-type-id="org.rodinp.core.tests.versionFileB"
-            id="versionFileB"
-            name="Version File B">
+            id="versionFileBF"
+            name="Version File B"
+            root-element-type="org.rodinp.core.tests.versionFileB">
       </fileElementType>
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileC"
             content-type-id="org.rodinp.core.tests.versionFileC"
-            id="versionFileC"
-            name="Version File C">
+            id="versionFileCF"
+            name="Version File C"
+            root-element-type="org.rodinp.core.tests.versionFileC">
       </fileElementType>
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileD"
             content-type-id="org.rodinp.core.tests.versionFileD"
-            id="versionFileD"
-            name="Version File D">
+            id="versionFileDF"
+            name="Version File D"
+            root-element-type="org.rodinp.core.tests.versionFileD">
       </fileElementType>
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileE"
             content-type-id="org.rodinp.core.tests.versionFileE"
-            id="versionFileE"
-            name="Version File E">
+            id="versionFileEF"
+            name="Version File E"
+            root-element-type="org.rodinp.core.tests.versionFileE">
       </fileElementType>
       <fileElementType
             class="org.rodinp.core.tests.version.db.basis.VersionFileF"
             content-type-id="org.rodinp.core.tests.versionFileF"
-            id="versionFileF"
-            name="Version File F">
+            id="versionFileFF"
+            name="Version File F"
+            root-element-type="org.rodinp.core.tests.versionFileF">
       </fileElementType>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootA"
+            id="versionFileA"
+            name="Version File A">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootB"
+            id="versionFileB"
+            name="Version File B">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootC"
+            id="versionFileC"
+            name="Version File C">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootD"
+            id="versionFileD"
+            name="Version File D">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootE"
+            id="versionFileE"
+            name="Version File E">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootF"
+            id="versionFileF"
+            name="Version File F">
+      </internalElementType>
       <internalElementType
             class="org.rodinp.core.tests.version.db.basis.VersionEA"
             id="versionEA"

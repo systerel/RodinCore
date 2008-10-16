@@ -1,16 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -41,11 +45,11 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	/**
 	 * Returns the abstract SC machine file introduced by this refines clause.
 	 * 
-	 * @return the abstract SC machine file
+	 * @return the abstract SC machine file ( <code>IRodinFile<ISCMachineRoot></code> )
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	ISCMachineFile getAbstractSCMachine() throws RodinDBException;
+	IRodinFile getAbstractSCMachine() throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.
@@ -57,7 +61,7 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	 * @deprecated use <code>setAbstractSCMachine(ISCMachineFile,IProgressMonitor)</code> instead
 	 */
 	@Deprecated
-	void setAbstractSCMachine(ISCMachineFile abstractSCMachine) throws RodinDBException;
+	void setAbstractSCMachine(IRodinFile abstractSCMachine) throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.
@@ -70,6 +74,6 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	void setAbstractSCMachine(ISCMachineFile abstractSCMachine, IProgressMonitor monitor) throws RodinDBException;
+	void setAbstractSCMachine(IRodinFile abstractSCMachine, IProgressMonitor monitor) throws RodinDBException;
 
 }

@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
@@ -19,7 +22,8 @@ public class SortedConversionSheet extends SimpleConversionSheet {
 	
 	private final String order;
 
-	public SortedConversionSheet(IConfigurationElement configElement, IFileElementType<IRodinFile> type) {
+	public SortedConversionSheet(IConfigurationElement configElement,
+			IInternalElementType<?> type) {
 		super(configElement, type);
 		order = configElement.getAttribute("order");
 	}

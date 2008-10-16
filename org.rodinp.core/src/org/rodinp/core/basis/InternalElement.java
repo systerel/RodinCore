@@ -10,6 +10,7 @@
  *     Systerel - added clear() method
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - added method getNextSibling()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -290,8 +291,14 @@ public abstract class InternalElement extends RodinElement implements
 	}
 
 	public final IInternalElement getSimilarElement(IRodinFile newFile) {
-		final IInternalParent myParent = (IInternalParent) getParent();
-		final IInternalParent newParent = myParent.getSimilarElement(newFile);
+		// Special case for root element
+		if (parent instanceof IRodinFile) {
+			return newFile.getRoot();
+		}
+		
+		final IInternalElement myParent = (IInternalElement) getParent();
+		final IInternalElement newParent = (IInternalElement) myParent
+				.getSimilarElement(newFile);
 		final IInternalElementType<?> newType = getElementType();
 		final String newName = getElementName();
 		return newParent.getInternalElement(newType, newName);

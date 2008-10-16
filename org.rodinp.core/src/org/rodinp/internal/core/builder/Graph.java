@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -363,7 +367,7 @@ public class Graph implements Serializable, Iterable<Node> {
 	
 	private void extract(Node node, GraphModifier handler, ProgressManager manager) {
 		ExtractorDescription[] descriptions = 
-			getManager().getExtractorDescriptions(node.getFileElementType());
+			getManager().getExtractorDescriptions(node.getRootElementType());
 		if(descriptions == null)
 			return;
 		for(int j = 0; j < descriptions.length; j++) {

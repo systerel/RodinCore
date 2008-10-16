@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.sc;
 
 import org.eclipse.core.resources.IFile;
@@ -14,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IConfigurationElement;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.Messages;
 import org.eventb.internal.core.sc.SCStateRepository;
@@ -29,7 +32,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.core.builder.IExtractor;
 
@@ -59,7 +61,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		
 		try {
 			
-			IEventBFile eventbFile = (IEventBFile) RodinCore.valueOf(file);
+			IRodinFile eventbFile = RodinCore.valueOf(file);
 		
 			monitor.beginTask(Messages.bind(Messages.build_cleaning, file.getName()), 1);
 			
@@ -106,10 +108,10 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private IEventBFile getTmpSCFile(IRodinFile scFile) {
+	private IRodinFile getTmpSCFile(IRodinFile scFile) {
 		final IRodinProject project = (IRodinProject) scFile.getParent();
 		final String name = scFile.getElementName();
-		return (IEventBFile) project.getRodinFile(name + "_tmp");
+		return project.getRodinFile(name + "_tmp");
 	}
 
 	// Compare the temporary file with the current statically checked file.
@@ -118,10 +120,12 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	// return true.
 	//
 	// Consumes at most to ticks of the given monitor.
-	private boolean compareAndSave(IEventBFile scFile, IEventBFile scTmpFile,
+	private boolean compareAndSave(IRodinFile scFile, IRodinFile scTmpFile,
 			IProgressMonitor monitor) throws RodinDBException {
-		if (scTmpFile.hasSameAttributes(scFile)
-				&& scTmpFile.hasSameChildren(scFile)) {
+		IEventBRoot scRoot = (IEventBRoot) scFile.getRoot();
+		IEventBRoot scTmpRoot = (IEventBRoot) scTmpFile.getRoot();
+		if (scTmpRoot.hasSameAttributes(scRoot)
+				&& scTmpRoot.hasSameChildren(scRoot)) {
 			scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
 			return false;
 		}
@@ -135,7 +139,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 	private String getConfiguration(final IRodinFile rodinFile) throws CoreException {
 		
-		IConfigurationElement confElement = (IConfigurationElement) rodinFile;
+		IConfigurationElement confElement = (IConfigurationElement) rodinFile.getRoot();
 		
 		if (confElement.hasConfiguration()) {
 	
@@ -144,7 +148,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		} else {
 			SCUtil.createProblemMarker(confElement, 
 					GraphProblem.ConfigurationMissingError, 
-					((RodinFile) confElement).getBareName());
+					rodinFile.getBareName());
 			return null;
 		}
 	}
@@ -163,17 +167,18 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	public final boolean run(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 			
-				final IEventBFile scFile = (IEventBFile) RodinCore.valueOf(file);
+				final IRodinFile scFile = RodinCore.valueOf(file);
 				final IRodinFile sourceFile = RodinCore.valueOf(source).getSnapshot();
-				final IEventBFile scTmpFile = getTmpSCFile(scFile);
+				final IRodinFile scTmpFile = getTmpSCFile(scFile);
 				
-				final int totalWork = sourceFile.getChildren().length + 5;
+				final int totalWork = sourceFile.getRoot().getChildren().length + 5;
 			
 				try {
 			
-					monitor.beginTask(Messages.bind(Messages.build_runningSC,
-							scFile.getComponentName()),
-							totalWork);
+					monitor.beginTask(
+					Messages.bind(Messages.build_runningSC,
+							((IEventBRoot) scFile.getRoot())
+									.getComponentName()), totalWork);
 			
 					scTmpFile.create(true, new SubProgressMonitor(monitor, 1));
 			
@@ -187,11 +192,11 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			
 					if (config != null) {
 						
-						setSCTmpConfiguration(scTmpFile, config);
+						setSCTmpConfiguration((IEventBRoot) scTmpFile.getRoot(), config);
 						
 						final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
 					
-						runProcessorModules(rootModule, sourceFile, scTmpFile,
+						runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(),
 								repository, monitor);
 						
 					}
@@ -204,10 +209,10 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 				}
 			}
 
-	private void setSCTmpConfiguration(final IEventBFile scTmpFile, String config)
+	private void setSCTmpConfiguration(final IEventBRoot scTmpRoot, String config)
 			throws RodinDBException {
 				
-				IConfigurationElement confElement = (IConfigurationElement) scTmpFile;
+				IConfigurationElement confElement = (IConfigurationElement) scTmpRoot;
 				confElement.setConfiguration(config, null);
 			}	
 

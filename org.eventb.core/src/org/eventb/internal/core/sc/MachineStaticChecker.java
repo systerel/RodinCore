@@ -1,21 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISCContextFile;
-import org.eventb.core.ISCMachineFile;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.StaticChecker;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -34,10 +37,11 @@ public class MachineStaticChecker extends StaticChecker {
 			
 			monitor.beginTask(Messages.bind(Messages.build_extracting, file.getName()), 1);
 		
-			IMachineFile source = (IMachineFile) RodinCore.valueOf(file);
-			ISCMachineFile target = source.getSCMachineFile();
-			ISeesContext[] seen = source.getSeesClauses();
-			IRefinesMachine[] abstractMachines = source.getRefinesClauses();
+			IRodinFile source = RodinCore.valueOf(file);
+			IMachineRoot sourceRoot = (IMachineRoot) source.getRoot();
+			IRodinFile target = sourceRoot.getSCMachineRoot().getRodinFile();
+			ISeesContext[] seen = sourceRoot.getSeesClauses();
+			IRefinesMachine[] abstractMachines = sourceRoot.getRefinesClauses();
 
 			graph.addTarget(target.getResource());
 			graph.addToolDependency(
@@ -46,7 +50,7 @@ public class MachineStaticChecker extends StaticChecker {
 		
 			for (ISeesContext seesContext : seen) {
 				if (seesContext.hasSeenContextName()) {
-					ISCContextFile seenSCContext = seesContext.getSeenSCContext();
+					IRodinFile seenSCContext = seesContext.getSeenSCContext();
 					graph.addUserDependency(
 							source.getResource(), 
 							seenSCContext.getResource(), 
@@ -56,7 +60,7 @@ public class MachineStaticChecker extends StaticChecker {
 			}
 		
 			if (abstractMachines.length != 0 && abstractMachines[0].hasAbstractMachineName()) {
-				ISCMachineFile abstractSCMachine = abstractMachines[0].getAbstractSCMachine();
+				IRodinFile abstractSCMachine = abstractMachines[0].getAbstractSCMachine();
 				graph.addUserDependency(
 						source.getResource(), 
 						abstractSCMachine.getResource(), 

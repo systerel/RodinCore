@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - updated Javadoc
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.core;
 
@@ -31,10 +32,11 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Farhad Mehta
  */
+@Deprecated
 public interface IPRFile extends IEventBFile {
 
-	IFileElementType<IPRFile> ELEMENT_TYPE = RodinCore
-			.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFile"); //$NON-NLS-1$
+	IFileElementType ELEMENT_TYPE = RodinCore
+			.getFileElementType(EventBPlugin.PLUGIN_ID + ".prFileF"); //$NON-NLS-1$
 
 	/**
 	 * Returns handles to all proof elements in this PR file in the order in

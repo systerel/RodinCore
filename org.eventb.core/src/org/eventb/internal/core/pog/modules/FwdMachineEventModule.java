@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -11,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.POGCore;
@@ -19,6 +23,7 @@ import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -42,9 +47,10 @@ public class FwdMachineEventModule extends UtilityModule {
 			IProgressMonitor monitor)
 			throws CoreException {
 		
-		ISCMachineFile scMachineFile =  (ISCMachineFile) element;
+		IRodinFile scMachineFile = (IRodinFile)element;
+		ISCMachineRoot scMachineRoot = (ISCMachineRoot) scMachineFile.getRoot();
 		
-		ISCEvent[] events = scMachineFile.getSCEvents();
+		ISCEvent[] events = scMachineRoot.getSCEvents();
 		
 		if (events.length == 0)
 			return;

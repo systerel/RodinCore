@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactoring and various improvements
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -31,7 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.IConversionResult.IEntry;
@@ -115,7 +116,7 @@ public class ConversionEntry implements IEntry {
 
 	public void upgrade(VersionManager vManager, boolean force,
 			IProgressMonitor pm) {
-		final IFileElementType<?> type = file.getElementType();
+		final IInternalElementType<?> type = file.getRoot().getElementType();
 		final SubMonitor sm = SubMonitor.convert(pm, 100);
 		try {
 			version = getFileVersion(sm.newChild(10));

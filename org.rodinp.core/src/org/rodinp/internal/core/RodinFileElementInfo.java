@@ -10,6 +10,7 @@
  *     Systerel - added clearChildren() method
  *     Systerel - removed deprecated methods (contents)
  *     Systerel - added auto-upgrade of file with past version
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -24,10 +25,12 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
@@ -63,7 +66,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		internalElements.put(element, domElement);
 	}
 	
-	public synchronized RodinElement[] clearChildren(IInternalParent element)
+	public synchronized RodinElement[] clearChildren(IInternalElement element)
 			throws RodinDBException {
 
 		if (DEBUG) {
@@ -80,11 +83,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 
 		final Element domElement = getDOMElementCheckExists(element);
 		final RodinElementInfo info;
-		if (element instanceof InternalElement) {
-			info = getElementInfo((InternalElement) element);
-		} else {
-			info = this;
-		}
+		info = getElementInfo((InternalElement) element);
 		final RodinElement[] children = info.getChildren();
 		for (final RodinElement child : children) {
 			removeFromMap((InternalElement) child);
@@ -114,13 +113,15 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	}
 	
 	private void computeChildren() {
-		final RodinFile element = buffer.getOwner();
-		final Element domElement = buffer.getDocumentElement();
-		computeChildren(element, domElement, this);
+		final RodinFile file = buffer.getOwner();
+		final InternalElement root = (InternalElement) file.getRoot();
+		final Element domRoot = buffer.getDocumentElement();
+		internalElements.put(root, domRoot);
+		setChildren(new RodinElement[] {root});
 		childrenUpToDate = true;
 	}
 	
-	private void computeChildren(IInternalParent element,
+	private void computeChildren(IInternalElement element,
 			Element domElement, RodinElementInfo info) {
 		
 		LinkedHashMap<InternalElement, Element> childrenMap = 
@@ -155,7 +156,7 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 		}
 		
 		// TODO fix big mess below.  Should synchronize properly
-		// and distinguish betweem two cases.
+		// and distinguish between two cases.
 		RodinFile rfSource = source.getRodinFile();
 		RodinFileElementInfo rfSourceInfo = 
 			(RodinFileElementInfo) rfSource.getElementInfo(null);
@@ -194,13 +195,20 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			printCaches();
 		}
 
-		IInternalParent parent = (IInternalParent) newElement.getParent();
-		Element domParent = getDOMElementCheckExists(parent);
+		final RodinElement newParent = newElement.getParent();
+		if (newParent instanceof IRodinFile) {
+			throw new IllegalArgumentException("Can't create root element: "
+					+ newElement);
+		}
+		final IInternalElement parent = (IInternalElement) newParent;
+		final Element domParent = getDOMElementCheckExists(parent);
 		checkDOMElementForCollision(newElement);
-		Element domNextSibling = null;
+		final Element domNextSibling;
 		if (nextSibling != null) {
 			domNextSibling = getDOMElementCheckExists(nextSibling);
-		}		
+		} else {
+			domNextSibling = null;
+		}
 		final IInternalElementType<?> type = newElement.getElementType();
 		final String name = newElement.getElementName();
 		final Element domNewElement =

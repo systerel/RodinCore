@@ -1,5 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.rodinp.core.tests.builder;
-
 
 import java.util.HashSet;
 
@@ -7,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.builder.IGraph;
@@ -31,20 +42,21 @@ public class CSCTool extends SCTool {
 		if (SCTool.SHOW_EXTRACT)
 			ToolTrace.addTrace(CSC, "extract", file);
 		
-		IContext ctx = (IContext) RodinCore.valueOf(file);
+		IRodinFile ctxFile = RodinCore.valueOf(file);
+		IContextRoot ctx = (IContextRoot) ctxFile.getRoot();
 		
-		ISCContext sctx = ctx.getCheckedVersion();
-		IFile scFile = sctx.getResource();
+		ISCContextRoot sctx = ctx.getCheckedVersion();
+		IFile scFile = sctx.getRodinFile().getResource();
 		graph.addTarget(scFile);
-		graph.addToolDependency(ctx.getResource(), scFile, true);
+		graph.addToolDependency(ctxFile.getResource(), scFile, true);
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(ctx.getUsedContexts().length * 4 / 3 + 1);
-		for (IContext usedContext: ctx.getUsedContexts()) {
-			IFile source = usedContext.getCheckedVersion().getResource();
+		for (IContextRoot usedContext: ctx.getUsedContexts()) {
+			IFile source = usedContext.getCheckedVersion().getRodinFile().getResource();
 			newSources.add(source);
 		}
 		for (IFile newFile : newSources)
-			graph.addUserDependency(ctx.getResource(), newFile, scFile, false);
+			graph.addUserDependency(ctxFile.getResource(), newFile, scFile, false);
 		
 	}
 	
@@ -52,18 +64,19 @@ public class CSCTool extends SCTool {
 		if (SCTool.SHOW_RUN)
 			ToolTrace.addTrace(CSC, "run", file);
 
-		ISCContext target = (ISCContext) RodinCore.valueOf(file);
-		IContext ctx = target.getUncheckedVersion(); 
+		IRodinFile targetFile = RodinCore.valueOf(file);
+		ISCContextRoot target = (ISCContextRoot) targetFile.getRoot();
+		IContextRoot ctx = target.getUncheckedVersion();
 		
 		// First clean up target
-		target.create(true, null);
+		targetFile.create(true, null);
 		
 		if (FAULTY)
 			target.getInternalElement(RodinCore.getInternalElementType("inexistent"), "X");
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);
-		for (IContext usedContext: ctx.getUsedContexts()) {
+		for (IContextRoot usedContext: ctx.getUsedContexts()) {
 			if (usedContext.getCheckedVersion().exists())
 				copyDataElements(usedContext.getCheckedVersion(), target);
 			else
@@ -72,7 +85,7 @@ public class CSCTool extends SCTool {
 						IMarker.MESSAGE, "ERROR");
 		}
 		
-		target.save(null, true);
+		targetFile.save(null, true);
 		return true;
 	}
 

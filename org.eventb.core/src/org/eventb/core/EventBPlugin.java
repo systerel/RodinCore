@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added as***File()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core;
 
@@ -30,6 +31,7 @@ import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.sc.SCUtil;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -339,8 +341,10 @@ public class EventBPlugin extends Plugin {
 	 * @see #getProofManager()
 	 */
 	@Deprecated
-	public static org.eventb.core.IPSWrapper getPSWrapper(IEventBFile file) {
-		return new org.eventb.internal.core.PSWrapper(file.getPSFile());
+	public static org.eventb.core.IPSWrapper getPSWrapper(IRodinFile file) {
+		IEventBRoot root = (IEventBRoot) file.getRoot();
+		return new org.eventb.internal.core.PSWrapper(root.getPSRoot()
+				.getRodinFile());
 	}
 
 	/**
@@ -367,14 +371,28 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to an event-B file
 	 * @return the given object as an event-B file or <code>null</code>
 	 */
-	public static IEventBFile asEventBFile(Object object) {
+	public static IRodinFile asEventBFile(Object object) {
 		final IRodinElement elem = RodinCore.asRodinElement(object);
-		if (elem instanceof IEventBFile) {
-			return (IEventBFile) elem;
+		if (elem instanceof IRodinFile) {
+			IRodinFile rf = (IRodinFile) elem;
+			if(rf.getRoot() instanceof IEventBRoot){
+				return rf;
+			}
+		} if (elem instanceof IEventBRoot) {
+			IRodinFile rf = ((IEventBRoot) elem).getRodinFile();
+			return rf;
 		}
 		return null;
 	}
 
+	private static IEventBRoot asEventBRoot(Object object) {
+		final IRodinFile elem = asEventBFile(object);
+		if (elem == null) {
+			return null;
+		}
+		return ((IEventBRoot)elem.getRoot());
+	}
+	
 	/**
 	 * Returns the given object as a context file if possible, <code>null</code>
 	 * otherwise.
@@ -391,12 +409,12 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to a context file
 	 * @return the given object as a context file or <code>null</code>
 	 */
-	public static IContextFile asContextFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asContextFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getContextFile();
+		return elem.getContextRoot().getRodinFile();
 	}
 
 	/**
@@ -415,12 +433,12 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to a machine file
 	 * @return the given object as a machine file or <code>null</code>
 	 */
-	public static IMachineFile asMachineFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asMachineFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getMachineFile();
+		return elem.getMachineRoot().getRodinFile();
 	}
 
 	/**
@@ -441,12 +459,12 @@ public class EventBPlugin extends Plugin {
 	 * @return the given object as a statically checked context file or
 	 *         <code>null</code>
 	 */
-	public static ISCContextFile asSCContextFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asSCContextFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getSCContextFile();
+		return elem.getSCContextRoot().getRodinFile();
 	}
 
 	/**
@@ -467,12 +485,12 @@ public class EventBPlugin extends Plugin {
 	 * @return the given object as a statically checked machine file or
 	 *         <code>null</code>
 	 */
-	public static ISCMachineFile asSCMachineFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asSCMachineFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getSCMachineFile();
+		return elem.getSCMachineRoot().getRodinFile();
 	}
 
 	/**
@@ -491,12 +509,12 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to a proof obligation file
 	 * @return the given object as a proof obligation file or <code>null</code>
 	 */
-	public static IPOFile asPOFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asPOFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getPOFile();
+		return elem.getPORoot().getRodinFile();
 	}
 
 	/**
@@ -515,12 +533,12 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to a proof file
 	 * @return the given object as a proof file or <code>null</code>
 	 */
-	public static IPRFile asPRFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asPRFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getPRFile();
+		return elem.getPRRoot().getRodinFile();
 	}
 
 	/**
@@ -539,12 +557,12 @@ public class EventBPlugin extends Plugin {
 	 *            the object to adapt to a proof status file
 	 * @return the given object as a proof status file or <code>null</code>
 	 */
-	public static IPSFile asPSFile(Object object) {
-		final IEventBFile elem = asEventBFile(object);
+	public static IRodinFile asPSFile(Object object) {
+		final IEventBRoot elem = asEventBRoot(object);
 		if (elem == null) {
 			return null;
 		}
-		return elem.getPSFile();
+		return elem.getPSRoot().getRodinFile();
 	}
 
 }

@@ -7,6 +7,7 @@
  * 
  *     ETH Zurich - initial API and implementation
  *     Systerel - added test for invalid version
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
@@ -36,7 +37,7 @@ import org.rodinp.core.tests.ModifyingResourceTests;
 import org.rodinp.core.tests.version.db.IVersionEA;
 import org.rodinp.core.tests.version.db.IVersionEB;
 import org.rodinp.core.tests.version.db.IVersionEC;
-import org.rodinp.core.tests.version.db.IVersionFileF;
+import org.rodinp.core.tests.version.db.IVersionRootF;
 import org.rodinp.core.tests.version.db.VersionAttributes;
 
 /**
@@ -56,7 +57,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		IRodinFile f = project.getRodinFile(fileName);
 		
-		IInternalElement[] elements=f.getChildrenOfType(type);
+		IInternalElement[] elements=f.getRoot().getChildrenOfType(type);
 		
 		assertEquals("should have elements of type " + type, size, elements.length);
 		
@@ -370,8 +371,9 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		project.getRodinFile("gg.tvf").getChildren();
 		
 		// a more complicated conversion:
-		IVersionFileF file = (IVersionFileF) project.getRodinFile("hh.tvf");
-		IVersionEA[] eas = file.getChildrenOfType(IVersionEA.ELEMENT_TYPE);
+		IRodinFile file = project.getRodinFile("hh.tvf");
+		IVersionRootF root = (IVersionRootF) file.getRoot();
+		IVersionEA[] eas = root.getChildrenOfType(IVersionEA.ELEMENT_TYPE);
 		assertEquals("one ea element", 1, eas.length);
 		assertEquals("attribute of ea ok","Hello", 
 				eas[0].getAttributeValue(VersionAttributes.StringAttr));
@@ -382,7 +384,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 				ecs[0].getAttributeValue(VersionAttributes.StringAttr));
 		IVersionEB[] ebs = eas[0].getChildrenOfType(IVersionEB.ELEMENT_TYPE);
 		assertEquals("no eb element in ea", 0, ebs.length);
-		IVersionEB[] eds = file.getChildrenOfType(IVersionEB.ELEMENT_TYPE);
+		IVersionEB[] eds = root.getChildrenOfType(IVersionEB.ELEMENT_TYPE);
 		assertEquals("one eb element on root level", 1, eds.length);
 		assertEquals("eb has proper name", "a", eds[0].getElementName());
 	}

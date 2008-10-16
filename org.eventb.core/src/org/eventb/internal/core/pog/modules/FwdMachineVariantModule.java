@@ -1,18 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -28,6 +32,7 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.MachineVariantInfo;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -50,7 +55,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		if (!variantInfo.machineHasVariant())
 			return;
 		
-		IPOFile target = repository.getTarget();
+		IPORoot target = repository.getTarget();
 		
 		Predicate wdPredicate = variantInfo.getExpression().getWDPredicate(factory);
 		IPOGSource[] sources = new IPOGSource[] {
@@ -110,8 +115,10 @@ public class FwdMachineVariantModule extends UtilityModule {
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
 		
-		ISCMachineFile machineFile = (ISCMachineFile) element;
-		ISCVariant[] variants = machineFile.getSCVariants();
+		IRodinFile machineFile = (IRodinFile) element;
+		ISCMachineRoot machineRoot = (ISCMachineRoot) machineFile.getRoot();
+		
+		ISCVariant[] variants = machineRoot.getSCVariants();
 		if (variants.length == 0) {
 			variantInfo = new MachineVariantInfo(null, null);
 		} else {

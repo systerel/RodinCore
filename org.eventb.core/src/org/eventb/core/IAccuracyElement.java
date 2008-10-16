@@ -12,8 +12,8 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * An accuracy element contains a grade of accuracy: it is accurate or not. This
- * is used by the static checker to annotate statically checked contexts ({@link ISCContextFile}),
- * machines ({@link ISCMachineFile}), and events ({@link ISCEvent}) with
+ * is used by the static checker to annotate statically checked contexts ({@link ISCContextRoot}),
+ * machines ({@link ISCMachineRoot}), and events ({@link ISCEvent}) with
  * information of whether some attribute or child element was added, removed, or
  * modified.
  * <p>
@@ -23,8 +23,8 @@ import org.rodinp.core.RodinDBException;
  * The accuracy is an estimation only. It may be used to inform the user of
  * inaccurate elements in derived files, e.g., proof obligations.
  * 
- * @see ISCContextFile
- * @see ISCMachineFile
+ * @see ISCContextRoot
+ * @see ISCMachineRoot
  * @see ISCEvent
  * @see IPOSequent
  * 

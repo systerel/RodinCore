@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed unnamed internal elements
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -19,6 +20,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.basis.InternalElement;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * @author lvoisin
@@ -39,8 +41,10 @@ public class InternalElementType<T extends IInternalElement> extends
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = (Class<? extends T>) clazz.asSubclass(InternalElement.class);
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Can't find constructor for element type " + getId(), e);
+			String message = "Can't find constructor for element type "
+					+ getId();
+			Util.log(null, message);
+			throw new IllegalStateException(message, e);
 		}
 	}
 
@@ -52,8 +56,10 @@ public class InternalElementType<T extends IInternalElement> extends
 		try {
 			constructor = classObject.getConstructor(String.class, IRodinElement.class);
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Can't find constructor for element type " + getId(), e);
+			String message = "Can't find constructor for element type "
+					+ getId();
+			Util.log(null, message);
+			throw new IllegalStateException(message, e);
 		}
 	}
 
@@ -77,8 +83,9 @@ public class InternalElementType<T extends IInternalElement> extends
 		try {
 			return constructor.newInstance(elementName, parent);
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Can't create an element of type " + getId(), e);
+			String message = "Can't create an element of type " + getId();
+			Util.log(null, message);
+			throw new IllegalStateException(message, e);
 		}
 	}
 	

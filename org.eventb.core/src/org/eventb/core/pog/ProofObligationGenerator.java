@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -19,8 +23,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IConfigurationElement;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -50,7 +54,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	public static String PRD_NAME_PREFIX = "PRD";
 	
 	private IPOGStateRepository createRepository(
-			IPOFile target, 
+			IPORoot target, 
 			IProgressMonitor monitor) throws CoreException {
 		
 		final POGStateRepository repository = new POGStateRepository(target);
@@ -61,10 +65,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		return repository;
 	}
 	
-	private IPOFile getTmpPOFile(IPOFile poFile) {
+	private IRodinFile getTmpPOFile(IRodinFile poFile) {
 		final IRodinProject project = (IRodinProject) poFile.getParent();
 		final String name = poFile.getElementName();
-		return (IPOFile) project.getRodinFile(name + "_tmp");
+		return project.getRodinFile(name + "_tmp");
 	}
 
 	// Compare the temporary file with the current proof obligation file.
@@ -75,30 +79,32 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	//
 	// TODO progress monitor
 	private boolean compareAndSave(
-			IPOFile oldFile, 
-			IPOFile newFile,
+			IRodinFile oldFile, 
+			IRodinFile newFile,
 			IProgressMonitor monitor) throws CoreException {
 		
 		assert oldFile != null;
 		assert newFile != null;
-		
+
+		final IPORoot oldRoot = (IPORoot) oldFile.getRoot();
+		final IPORoot newRoot = (IPORoot) newFile.getRoot();
 		final long freshStamp;
 		final boolean oldExists = oldFile.exists();
 		if (oldExists) {
-			freshStamp = oldFile.getPOStamp() + 1;
+			freshStamp = oldRoot.getPOStamp() + 1;
 		} else {
 			freshStamp = IPOStampedElement.INIT_STAMP;
 		}
 
-		IPOPredicateSet[] predSets = newFile.getPredicateSets();
-		Set<IPOPredicateSet> chPrdSets = comparePredicateSets(oldFile, predSets, freshStamp, null);
+		IPOPredicateSet[] predSets = newRoot.getPredicateSets();
+		Set<IPOPredicateSet> chPrdSets = comparePredicateSets(oldRoot, predSets, freshStamp, null);
 		
-		IPOSequent[] sequents = newFile.getSequents();
-		boolean chSeqs = compareSequents(oldFile, sequents, chPrdSets, freshStamp, null);
+		IPOSequent[] sequents = newRoot.getSequents();
+		boolean chSeqs = compareSequents(oldRoot, sequents, chPrdSets, freshStamp, null);
 		
 		// the delta check is only valid if the PO file only contains predicate sets and sequents
 		// and not any other element types. Predicate sets and sequents themselves can be extended though.
-		if (newFile.getChildren().length != predSets.length + sequents.length) {
+		if (newRoot.getChildren().length != predSets.length + sequents.length) {
 			throw Util.newCoreException(
 					"PO files must only contains elements of type IPOPredicateSet or IPOSequent");
 		}
@@ -106,11 +112,11 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		boolean changed = !oldExists;
 		changed |= chSeqs;
 		changed |= !chPrdSets.isEmpty();
-		changed |= predSets.length != (oldExists ? oldFile.getPredicateSets().length : -1);
-		changed |= sequents.length != (oldExists ? oldFile.getSequents().length : -1);
+		changed |= predSets.length != (oldExists ? oldRoot.getPredicateSets().length : -1);
+		changed |= sequents.length != (oldExists ? oldRoot.getSequents().length : -1);
 		
 		if (changed) {
-			newFile.setPOStamp(freshStamp, null);
+			newRoot.setPOStamp(freshStamp, null);
 			newFile.save(new SubProgressMonitor(monitor, 1), true, false);
 			final IRodinElement project = oldFile.getParent();
 			final String name = oldFile.getElementName();
@@ -124,7 +130,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	}
 	
 	private boolean compareSequents(
-			IPOFile oldFile, 
+			IPORoot oldRoot, 
 			IPOSequent[] sequents, 
 			Set<IPOPredicateSet> chPrdSets,
 			long freshStamp, 
@@ -140,7 +146,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			} else {
 
 				String name = sequent.getElementName();
-				IPOSequent oldSequent = oldFile.getSequent(name);
+				IPOSequent oldSequent = oldRoot.getSequent(name);
 
 				assert oldSequent != null;
 				if (oldSequent.exists()) {
@@ -162,7 +168,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	}
 
 	private Set<IPOPredicateSet> comparePredicateSets(
-			IPOFile oldFile, 
+			IPORoot oldRoot, 
 			IPOPredicateSet[] predSets, 
 			long freshStamp,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -172,7 +178,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		// compute roots of changed and unchanged predicate sets
 		for (IPOPredicateSet newSet : predSets) {
 			String name = newSet.getElementName();
-			IPOPredicateSet oldSet = oldFile.getPredicateSet(name);
+			IPOPredicateSet oldSet = oldRoot.getPredicateSet(name);
 			assert oldSet != null;
 			if (oldSet.exists()) {
 				long oldStamp = oldSet.getPOStamp();
@@ -286,7 +292,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 
 	private IPOGProcessorModule getRootModule(IRodinFile rodinFile) throws CoreException {
 	
-		IConfigurationElement confElement = (IConfigurationElement) rodinFile;
+		IConfigurationElement confElement = (IConfigurationElement) rodinFile.getRoot();
 		
 		if (confElement.hasConfiguration()) {
 	
@@ -310,9 +316,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	public final boolean run(IFile source, IFile target, IProgressMonitor monitor)
 			throws CoreException {
 				
-				IPOFile poFile = (IPOFile) RodinCore.valueOf(target).getMutableCopy();
+				IRodinFile poFile = RodinCore.valueOf(target).getMutableCopy();
 				IRodinFile srcRodinFile = RodinCore.valueOf(source).getSnapshot();
-				final IPOFile poTmpFile = getTmpPOFile(poFile);
+				final IRodinFile poTmpFile = getTmpPOFile(poFile);
+				IPORoot poRoot = (IPORoot) poFile.getRoot();
 				
 				// TODO progress monitor
 				try {
@@ -320,12 +327,12 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 					monitor.beginTask(
 							Messages.bind(
 									Messages.build_runningPO, 
-									poFile.getComponentName()),
+									poRoot.getComponentName()),
 							1);
 					
 					poTmpFile.create(true, monitor);
 				
-					IPOGStateRepository repository = createRepository(poTmpFile, monitor);
+					IPOGStateRepository repository = createRepository((IPORoot) poTmpFile.getRoot(), monitor);
 					
 					IPOGProcessorModule rootModule = getRootModule(srcRodinFile);
 				

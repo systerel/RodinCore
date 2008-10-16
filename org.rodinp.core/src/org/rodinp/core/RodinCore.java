@@ -12,6 +12,7 @@
  *     Systerel - added getRodinDB()
  *     Systerel - removed deprecated methods
  *     Systerel - added asRodinElement()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -294,8 +295,7 @@ public class RodinCore extends Plugin {
 	 * @throws IllegalArgumentException
 	 *             if no such file element type has been contributed
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends IRodinFile> IFileElementType<T> getFileElementType(String id) {
+	public static IFileElementType getFileElementType(String id) {
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		final IFileElementType result = manager.getFileElementType(id);
 		if (result != null) {

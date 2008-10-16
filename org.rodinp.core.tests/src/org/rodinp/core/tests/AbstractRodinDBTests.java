@@ -12,6 +12,7 @@
  *     Systerel - refactored getRodinDB()
  *     Systerel - added assertions for clearing
  *     Systerel - fixed use of pseudo-attribute "contents"
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -448,6 +449,10 @@ public abstract class AbstractRodinDBTests extends TestCase {
 				actual);
 	}
 	
+	protected void assertNoDeltas(String message) {
+		assertDeltas(message, "");
+	}
+
 	protected static void assertStringsEqual(String message, String expected, String[] strings) {
 		String actual = toString(strings, true/*add extra new lines*/);
 		if (!expected.equals(actual)) {
@@ -787,7 +792,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		return getWorkspaceRoot().getFolder(path);
 	}
 	
-	protected static NamedElement getNamedElement(IInternalParent parent, String name) {
+	protected static NamedElement getNamedElement(IInternalElement parent, String name) {
 		return (NamedElement) parent.getInternalElement(NamedElement.ELEMENT_TYPE, name);
 	}
 
@@ -1036,24 +1041,49 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		}
 		return buffer.toString();
 	}
-	
-	protected static void assertErrorFor(RodinDBException exception, int expectedCode,
-			IRodinElement element) {
+
+	protected static void assertError(IWorkspaceRunnable runnable,
+			int expectedCode) throws Exception {
+		assertError(runnable, expectedCode, null);
+	}
+
+	protected static void assertError(IWorkspaceRunnable runnable,
+			int expectedCode, IRodinElement element) throws Exception {
+		try {
+			runnable.run(null);
+			fail("Should have raised an exception");
+		} catch (RodinDBException e) {
+			assertError(e, IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
+		}
+	}
+
+
+	protected static void assertError(RodinDBException exception,
+			int expectedCode) {
+		assertErrorFor(exception, expectedCode, null);
+	}
+
+	protected static void assertErrorFor(RodinDBException exception,
+			int expectedCode, IRodinElement element) {
 
 		final IRodinDBStatus status = exception.getRodinDBStatus();
 		assertEquals("Status should be an error",
 				IRodinDBStatus.ERROR,
 				status.getSeverity());
-		assertEquals("Status code should be a name collision", 
+		assertEquals("Unexpected status code", 
 				expectedCode, 
 				status.getCode());
 		IRodinElement[] elements = status.getElements(); 
-		assertEquals("Status should be related to the given element", 
-				1, 
-				elements.length);
-		assertEquals("Status should be related to the given element", 
-				element, 
-				elements[0]);
+		if (element == null) {
+			assertEquals("Status should have no related element", 0, elements.length);
+		} else {
+			assertEquals("Status should be related to the given element", 
+					1, 
+					elements.length);
+			assertEquals("Status should be related to the given element", 
+					element, 
+					elements[0]);
+		}
 	}
 
 	protected static void assertNameCollisionErrorFor(RodinDBException exception,

@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -13,11 +17,11 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
@@ -32,6 +36,7 @@ import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -58,9 +63,10 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(element, repository, monitor);
 		
-		ISCMachineFile scMachineFile = (ISCMachineFile) element;
+		IRodinFile scMachineFile = (IRodinFile) element;
+		ISCMachineRoot scMachineRoot = (ISCMachineRoot) scMachineFile.getRoot();
 		
-		IPOFile target = repository.getTarget();
+		IPORoot target = repository.getTarget();
 		
 		createContextHypSet(scMachineFile, target, monitor);
 		
@@ -69,12 +75,12 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 		rootSet.setParentPredicateSet(
 				target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME), monitor);
 		
-		fetchVariables(scMachineFile.getSCVariables(), rootSet, repository, monitor);
+		fetchVariables(scMachineRoot.getSCVariables(), rootSet, repository, monitor);
 		
-		ISCInvariant[] invariants = scMachineFile.getSCInvariants();
-		ISCTheorem[] theorems = scMachineFile.getSCTheorems();
+		ISCInvariant[] invariants = scMachineRoot.getSCInvariants();
+		ISCTheorem[] theorems = scMachineRoot.getSCTheorems();
 		
-		String bag = scMachineFile.getMachineFile().getElementName();
+		String bag = scMachineRoot.getMachineRoot().getRodinFile().getElementName();
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		List<ISCInvariant> invPreds = 
@@ -100,7 +106,7 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
 		
-		boolean accuracy = scMachineFile.isAccurate();
+		boolean accuracy = scMachineRoot.isAccurate();
 		
 		hypothesisManager = 
 			new MachineHypothesisManager(scMachineFile, target, predicateElements, accuracy);
@@ -122,13 +128,14 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 	}
 
 	private void createContextHypSet(
-			ISCMachineFile scMachineFile, 
-			IPOFile target, 
+			IRodinFile scMachineFile, 
+			IPORoot target, 
 			IProgressMonitor monitor) throws RodinDBException {
 		IPOPredicateSet ctxRootSet = target.getPredicateSet(MachineHypothesisManager.CTX_HYP_NAME);
 		ctxRootSet.create(null, monitor);
+		ISCMachineRoot scMachineRoot = (ISCMachineRoot) scMachineFile.getRoot();
 		
-		ISCInternalContext[] contexts = scMachineFile.getSCSeenContexts();
+		ISCInternalContext[] contexts = scMachineRoot.getSCSeenContexts();
 		
 		copyContexts(ctxRootSet, contexts, monitor);
 	}

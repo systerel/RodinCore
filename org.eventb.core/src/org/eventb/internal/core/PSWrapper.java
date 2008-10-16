@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -17,9 +21,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IPSWrapper;
 import org.eventb.core.ast.FormulaFactory;
@@ -30,6 +33,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.pom.POLoader;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -52,28 +56,31 @@ public class PSWrapper implements IPSWrapper {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-	final IPSFile psFile;
+	final IRodinFile psFile;
 
-	final IPRFile prFile;
+//	final IPRFile prFile;
+	final IRodinFile prFile;
 	
 	final Map<IPSStatus, StampedProofTree> loadedTrees;
 
-	public PSWrapper(IPSFile psFile) {
+	public PSWrapper(IRodinFile psFile) {
 		this.psFile = psFile;
-		this.prFile = psFile.getPRFile();
+		IPSRoot root = (IPSRoot) psFile.getRoot();
+		this.prFile = root.getPRRoot().getRodinFile();
 		this.loadedTrees = new HashMap<IPSStatus, StampedProofTree>();
 	}
 
-	public IPRFile getPRFile() {
+	public IRodinFile getPRFile() {
 		return prFile;
 	}
 
-	public IPSFile getPSFile() {
+	public IRodinFile getPSFile() {
 		return psFile;
 	}
 
 	public IPSStatus[] getPSStatuses() throws RodinDBException {
-		return psFile.getStatuses();
+		IPSRoot root = (IPSRoot) psFile.getRoot();
+		return root.getStatuses();
 	}
 
 	private IProofTree createFreshProofTree(IPSStatus psStatus)
@@ -132,7 +139,8 @@ public class PSWrapper implements IPSWrapper {
 		if (!psFile.exists())
 			psFile.create(true, monitor);
 		else {
-			IPSStatus[] statuses = psFile.getStatuses();
+			IPSRoot root = (IPSRoot) psFile.getRoot();
+			IPSStatus[] statuses = root.getStatuses();
 			for (IPSStatus status : statuses) {
 				status.delete(true, monitor);
 			}
@@ -160,7 +168,8 @@ public class PSWrapper implements IPSWrapper {
 	}
 
 	public IPSStatus getPSStatus(String name) {
-		return psFile.getStatus(name);
+		IPSRoot root = (IPSRoot) psFile.getRoot();
+		return root.getStatus(name);
 	}
 
 	public void updateStatus(final IPSStatus psStatus,

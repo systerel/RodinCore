@@ -1,20 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IFileElementType;
@@ -31,6 +34,7 @@ import org.rodinp.core.RodinDBException;
  *
  * @author Laurent Voisin
  */
+@Deprecated
 public class ContextFile extends EventBFile implements IContextFile {
 	
 	/**
@@ -41,77 +45,74 @@ public class ContextFile extends EventBFile implements IContextFile {
 	}
 
 	@Override
-	public IFileElementType<IContextFile> getElementType() {
+	public IFileElementType getElementType() {
 		return ELEMENT_TYPE;
 	}
 
 	public ICarrierSet getCarrierSet(String elementName) {
-		return getInternalElement(ICarrierSet.ELEMENT_TYPE, elementName);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getCarrierSet(elementName);
 	}
 
 	public ICarrierSet[] getCarrierSets() throws RodinDBException {
-		return getChildrenOfType(ICarrierSet.ELEMENT_TYPE); 
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getCarrierSets();
 	}
 	
 	public IConstant getConstant(String elementName) {
-		return getInternalElement(IConstant.ELEMENT_TYPE, elementName);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getConstant(elementName);
 	}
 
 	public IConstant[] getConstants() throws RodinDBException {
-		return getChildrenOfType(IConstant.ELEMENT_TYPE); 
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getConstants();
 	}
 	
 	public IAxiom getAxiom(String elementName) {
-		return getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getAxiom(elementName);
 	}
 
 	public IAxiom[] getAxioms() throws RodinDBException {
-		return getChildrenOfType(IAxiom.ELEMENT_TYPE); 
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getAxioms();
 	}
 	
 	public ITheorem getTheorem(String elementName) {
-		return getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getTheorem(elementName);
 	}
 
 	public ITheorem[] getTheorems() throws RodinDBException {
-		return getChildrenOfType(ITheorem.ELEMENT_TYPE); 
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getTheorems();
 	}
 
 	public IExtendsContext getExtendsClause(String elementName) {
-		return getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getExtendsClause(elementName);
 	}
 
 	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
-		return getChildrenOfType(IExtendsContext.ELEMENT_TYPE); 
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getExtendsClauses();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ICommentedElement#setComment(java.lang.String,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void setComment(String comment, IProgressMonitor monitor)
 			throws RodinDBException {
-		setAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE, comment, monitor);
+		final IContextRoot root = (IContextRoot) getRoot();
+		root.setComment(comment, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ICommentedElement#hasComment()
-	 */
 	public boolean hasComment() throws RodinDBException {
-		return hasAttribute(EventBAttributes.COMMENT_ATTRIBUTE);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.hasComment();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ICommentedElement#getComment(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public String getComment() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.COMMENT_ATTRIBUTE);
+		final IContextRoot root = (IContextRoot) getRoot();
+		return root.getComment();
 	}
 
 }

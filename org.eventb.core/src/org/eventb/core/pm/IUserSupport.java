@@ -1,31 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2006,2008 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.pm;
 
 import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for manipulating the state of a proof and its proof tree.
  * <p>
  * A user support instance is associated to a Proof Status file, which is set
- * with the {@link #setInput(IPSFile)} method. This method
+ * with the {@link #setInput(IRodinFile)} method. This method
  * should be called only once, and prior to any other method call (except
  * {@link #dispose()} which can be called at any time).
  * </p>
@@ -57,7 +60,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof state file (IPSFile)
 	 */
 	// TODO check for RodinDBException !
-	void setInput(IPSFile psFile);
+	void setInput(IRodinFile psFile);
 
 	/**
 	 * Disconnects this user support from the Rodin Database and the user
@@ -70,7 +73,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @return the input psFile of this User Support
 	 */
-	IPSFile getInput();
+	IRodinFile getInput();
 	
 	/**
 	 * Loads the proof statuses from the proof status file.

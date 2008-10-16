@@ -10,9 +10,11 @@
  *     		org.eclipse.jdt.core.tests.model.MementoTests
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed occurrence count
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import org.eclipse.core.runtime.IPath;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -20,6 +22,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.util.Util;
 
 public class MementoTests extends ModifyingResourceTests {
@@ -27,7 +30,7 @@ public class MementoTests extends ModifyingResourceTests {
 		super(name);
 	}
 
-	protected void assertMemento(String expected, IRodinElement element) {
+	protected static void assertMemento(String expected, IRodinElement element) {
 		String actual = element.getHandleIdentifier();
 		if (!expected.equals(actual)) {
 			System.out.print(Util.displayString(actual, 2));
@@ -36,6 +39,14 @@ public class MementoTests extends ModifyingResourceTests {
 		assertEquals("Unexpected memento for " + element, expected, actual);
 		IRodinElement restored = RodinCore.valueOf(actual);
 		assertEquals("Unexpected restored element", element, restored);
+	}
+
+	private static String expectedRootMemento(IInternalElement root) {
+		final IRodinFile rf = (IRodinFile) root.getParent();
+		
+		final IPath filePath = rf.getPath();
+		String rootName = filePath.removeFileExtension().lastSegment();
+		return filePath + "|" + root.getElementType().getId() + "#" + rootName;
 	}
 
 	public void setUp() throws Exception {
@@ -127,15 +138,26 @@ public class MementoTests extends ModifyingResourceTests {
 	 * Tests that a top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
+	public void testRootMemento() {
+		IRodinFile rf = getRodinFile("/P/X.test");
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		assertMemento(expectedRootMemento(root), root);
+	}
+
+	/**
+	 * Tests that a top-level internal element can be persisted and
+	 * restored using its memento.
+	 */
 	public void testTopMemento() {
 		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
-		NamedElement ne = rf.getInternalElement(type, "foo");
-		assertMemento("/P/X.test|" + type.getId() + "#foo", ne);
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		NamedElement ne = root.getInternalElement(type, "foo");
+		assertMemento(expectedRootMemento(root) + "|" + type.getId() + "#foo", ne);
 		
 		// Element with empty name
-		ne = rf.getInternalElement(type, "");
-		assertMemento("/P/X.test|" + type.getId() + "#", ne);
+		ne = root.getInternalElement(type, "");
+		assertMemento(expectedRootMemento(root) + "|" + type.getId() + "#", ne);
 	}
 
 	/**
@@ -146,19 +168,20 @@ public class MementoTests extends ModifyingResourceTests {
 		final IInternalElementType<NamedElement> nType = NamedElement.ELEMENT_TYPE;
 		IRodinFile rf = getRodinFile("/P/X.test");
 
-		IInternalElement top = rf.getInternalElement(nType, "foo");
-		String prefix = "/P/X.test|" + nType.getId() + "#foo";
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		IInternalElement top = root.getInternalElement(nType, "foo");
+		String prefix = expectedRootMemento(root) + "|" + nType.getId() + "#foo";
 		IInternalElement ne = top.getInternalElement(nType, "bar");
 		assertMemento(prefix + "|" + nType.getId() + "#bar", ne);
 		
 		
 		// Element with empty name
-		ne = (NamedElement) top.getInternalElement(nType, "");
+		ne = top.getInternalElement(nType, "");
 		assertMemento(prefix + "|" + nType.getId() + "#", ne);
 
 		// Top with empty name
-		top = rf.getInternalElement(nType, "");
-		prefix = "/P/X.test|" + nType.getId() + "#";
+		top = root.getInternalElement(nType, "");
+		prefix = expectedRootMemento(root) + "|" + nType.getId() + "#";
 		ne = top.getInternalElement(nType, "bar");
 		assertMemento(prefix + "|" + nType.getId() + "#bar", ne);
 

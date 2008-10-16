@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -13,18 +17,17 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
- * Unit tests for:
- *    IInternalParent.hasSameContents().
- *    IInternalParent.hasSameAttributes().
- *    IInternalParent.hasSameChildren().
+ * Unit tests for: IInternalParent.hasSameContents().
+ * IInternalParent.hasSameAttributes(). IInternalParent.hasSameChildren().
  * 
  * @author Laurent Voisin
  */
 public class SameContentsTests extends ModifyingResourceTests {
 
-	public static void assertSameContents(IInternalParent left,
+	public static void assertSameContents(IInternalElement left,
 			IInternalParent right, boolean sameContents,
 			boolean sameAttributes, boolean sameChildren)
 			throws RodinDBException {
@@ -38,7 +41,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 		assertEquals(sameChildren, left.hasSameChildren(right));
 		assertEquals(sameChildren, right.hasSameChildren(left));
 	}
-	
+
 	public SameContentsTests(String name) {
 		super(name);
 	}
@@ -48,7 +51,7 @@ public class SameContentsTests extends ModifyingResourceTests {
 		createRodinProject("P");
 		createRodinProject("P2");
 	}
-	
+
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		deleteProject("P2");
@@ -61,20 +64,27 @@ public class SameContentsTests extends ModifyingResourceTests {
 	 */
 	public void testFileNameType() throws Exception {
 		IRodinFile rf1, rf2;
+		IInternalElement root1, root2;
 		
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P2/x.test");
-		assertSameContents(rf1, rf2, true, true, true);
+		root1 = rf1.getRoot();
+		root2 = rf2.getRoot();
+		assertSameContents(root1, root2, true, true, true);
 
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P/x.test2");
-		assertSameContents(rf1, rf2, false, true, true);
-		
+		root1 = rf1.getRoot();
+		root2 = rf2.getRoot();
+		assertSameContents(root1, root2, false, true, true);
+
 		rf1 = getRodinFile("P/x.test");
 		rf2 = getRodinFile("P/y.test");
-		assertSameContents(rf1, rf2, false, true, true);
+		root1 = rf1.getRoot();
+		root2 = rf2.getRoot();
+		assertSameContents(root1, root2, false, true, true);
 	}
-	
+
 	/**
 	 * Ensures that element existence is taken into account when comparing
 	 * files.
@@ -82,59 +92,63 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testFileExistence() throws Exception {
 		final IRodinFile rf1 = getRodinFile("P/x.test");
 		final IRodinFile rf2 = getRodinFile("P2/x.test");
-		assertSameContents(rf1, rf2, true, true, true);
-		
+		final RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		final RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
+		assertSameContents(root1, root2, true, true, true);
+
 		rf1.create(false, null);
-		assertSameContents(rf1, rf2, false, false, false);
+		assertSameContents(root1, root2, false, false, false);
 
 		rf2.create(false, null);
-		assertSameContents(rf1, rf2, true, true, true);
+		assertSameContents(root1, root2, true, true, true);
 	}
-	
+
 	/**
-	 * Ensures that file attributes are taken into account when comparing
-	 * files.
+	 * Ensures that file attributes are taken into account when comparing files.
 	 */
 	public void testFileAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
 
-		rf1.setAttributeValue(fBool, true, null);
-		assertSameContents(rf1, rf2, false, false, true);
-		
-		rf2.setAttributeValue(fBool, true, null);
-		assertSameContents(rf1, rf2, true, true, true);
-		
-		rf2.setAttributeValue(fBool, false, null);
-		assertSameContents(rf1, rf2, false, false, true);
+		root1.setAttributeValue(fBool, true, null);
+		assertSameContents(root1, root2, false, false, true);
 
-		rf2.setAttributeValue(fBool, true, null);
-		createNEPositive(rf2, "foo", null);
-		assertSameContents(rf1, rf2, false, true, false);
+		root2.setAttributeValue(fBool, true, null);
+		assertSameContents(root1, root2, true, true, true);
+
+		root2.setAttributeValue(fBool, false, null);
+		assertSameContents(root1, root2, false, false, true);
+
+		root2.setAttributeValue(fBool, true, null);
+		createNEPositive(root2, "foo", null);
+		assertSameContents(root1, root2, false, true, false);
 	}
-	
+
 	/**
-	 * Ensures that file children are taken into account when comparing
-	 * files.
+	 * Ensures that file children are taken into account when comparing files.
 	 */
 	public void testFileChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
 
-		createNEPositive(rf1, "foo", null);
-		assertSameContents(rf1, rf2, false, true, false);
-		
-		final NamedElement foo2 = createNEPositive(rf2, "foo", null);
-		assertSameContents(rf1, rf2, true, true, true);
-		
-		createNEPositive(rf1, "bar", null);
-		final NamedElement bar2 = createNEPositive(rf2, "bar", foo2);
-		assertSameContents(rf1, rf2, false, true, false);
-		
-		foo2.move(rf2, bar2, null, false, null);
-		assertSameContents(rf1, rf2, true, true, true);
+		createNEPositive(root1, "foo", null);
+		assertSameContents(root1, root2, false, true, false);
+
+		final NamedElement foo2 = createNEPositive(root2, "foo", null);
+		assertSameContents(root1, root2, true, true, true);
+
+		createNEPositive(root1, "bar", null);
+		final NamedElement bar2 = createNEPositive(root2, "bar", foo2);
+		assertSameContents(root1, root2, false, true, false);
+
+		foo2.move(root2, bar2, null, false, null);
+		assertSameContents(root1, root2, true, true, true);
 	}
-	
+
 	/**
 	 * Ensures that element name and types are taken into account when comparing
 	 * internal elements.
@@ -143,20 +157,22 @@ public class SameContentsTests extends ModifyingResourceTests {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
 		IInternalElement ne1, ne2;
-		
-		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
-		ne2 = rf2.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
+
+		ne1 = root1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
+		ne2 = root2.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
 		assertSameContents(ne1, ne2, true, true, true);
 
-		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
-		ne2 = rf2.getInternalElement(NamedElement2.ELEMENT_TYPE, "foo");
+		ne1 = root1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
+		ne2 = root2.getInternalElement(NamedElement2.ELEMENT_TYPE, "foo");
 		assertSameContents(ne1, ne2, false, true, true);
-		
-		ne1 = rf1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
-		ne2 = rf2.getInternalElement(NamedElement.ELEMENT_TYPE, "bar");
+
+		ne1 = root1.getInternalElement(NamedElement.ELEMENT_TYPE, "foo");
+		ne2 = root2.getInternalElement(NamedElement.ELEMENT_TYPE, "bar");
 		assertSameContents(ne1, ne2, false, true, true);
 	}
-	
+
 	/**
 	 * Ensures that element existence is taken into account when comparing
 	 * internal elements.
@@ -164,18 +180,20 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testIntExistence() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
-		final NamedElement ne1 = getNamedElement(rf1, "foo");
-		final NamedElement ne2 = getNamedElement(rf2, "foo");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
+		final NamedElement ne1 = getNamedElement(root1, "foo");
+		final NamedElement ne2 = getNamedElement(root2, "foo");
 
 		assertSameContents(ne1, ne2, true, true, true);
-		
+
 		ne1.create(null, null);
 		assertSameContents(ne1, ne2, false, false, false);
 
 		ne2.create(null, null);
 		assertSameContents(ne1, ne2, true, true, true);
 	}
-	
+
 	/**
 	 * Ensures that file attributes are taken into account when comparing
 	 * internal elements.
@@ -183,15 +201,17 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testIntAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
-		final NamedElement ne1 = createNEPositive(rf1, "foo", null);
-		final NamedElement ne2 = createNEPositive(rf2, "foo", null);
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
+		final NamedElement ne1 = createNEPositive(root1, "foo", null);
+		final NamedElement ne2 = createNEPositive(root2, "foo", null);
 
 		ne1.setAttributeValue(fBool, true, null);
 		assertSameContents(ne1, ne2, false, false, true);
-		
+
 		ne2.setAttributeValue(fBool, true, null);
 		assertSameContents(ne1, ne2, true, true, true);
-		
+
 		ne2.setAttributeValue(fBool, false, null);
 		assertSameContents(ne1, ne2, false, false, true);
 
@@ -199,31 +219,33 @@ public class SameContentsTests extends ModifyingResourceTests {
 		createNEPositive(ne2, "foo", null);
 		assertSameContents(ne1, ne2, false, true, false);
 	}
-	
+
 	/**
-	 * Ensures that file children are taken into account when comparing
-	 * internal elements.
+	 * Ensures that file children are taken into account when comparing internal
+	 * elements.
 	 */
 	public void testIntChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P/y.test");
-		final NamedElement ne1 = createNEPositive(rf1, "root", null);
-		final NamedElement ne2 = createNEPositive(rf2, "root", null);
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
+		final NamedElement ne1 = createNEPositive(root1, "root", null);
+		final NamedElement ne2 = createNEPositive(root2, "root", null);
 
 		createNEPositive(ne1, "foo", null);
 		assertSameContents(ne1, ne2, false, true, false);
-		
+
 		final NamedElement foo2 = createNEPositive(ne2, "foo", null);
 		assertSameContents(ne1, ne2, true, true, true);
-		
+
 		createNEPositive(ne1, "bar", null);
 		final NamedElement bar2 = createNEPositive(ne2, "bar", foo2);
 		assertSameContents(ne1, ne2, false, true, false);
-		
+
 		foo2.move(ne2, bar2, null, false, null);
 		assertSameContents(ne1, ne2, true, true, true);
 	}
-	
+
 	/**
 	 * Ensures that children attributes are taken into account when comparing
 	 * elements.
@@ -231,17 +253,19 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testChildrenAttributes() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
 
-		final NamedElement foo1 = createNEPositive(rf1, "foo", null);
-		final NamedElement foo2 = createNEPositive(rf2, "foo", null);
+		final NamedElement foo1 = createNEPositive(root1, "foo", null);
+		final NamedElement foo2 = createNEPositive(root2, "foo", null);
 		foo1.setAttributeValue(fBool, true, null);
 		foo2.setAttributeValue(fBool, true, null);
-		assertSameContents(rf1, rf2, true, true, true);
-		
+		assertSameContents(root1, root2, true, true, true);
+
 		foo2.setAttributeValue(fBool, false, null);
-		assertSameContents(rf1, rf2, false, true, false);
+		assertSameContents(root1, root2, false, true, false);
 	}
-	
+
 	/**
 	 * Ensures that grand-children are taken into account when comparing
 	 * elements.
@@ -249,13 +273,15 @@ public class SameContentsTests extends ModifyingResourceTests {
 	public void testGrandChildren() throws Exception {
 		final IRodinFile rf1 = createRodinFile("P/x.test");
 		final IRodinFile rf2 = createRodinFile("P2/x.test");
+		RodinTestRoot root1 = (RodinTestRoot) rf1.getRoot();
+		RodinTestRoot root2 = (RodinTestRoot) rf2.getRoot();
 
-		final NamedElement foo1 = createNEPositive(rf1, "foo", null);
-		createNEPositive(rf2, "foo", null);
-		assertSameContents(rf1, rf2, true, true, true);
-		
+		final NamedElement foo1 = createNEPositive(root1, "foo", null);
+		createNEPositive(root2, "foo", null);
+		assertSameContents(root1, root2, true, true, true);
+
 		createNEPositive(foo1, "bar", null);
-		assertSameContents(rf1, rf2, false, true, false);
+		assertSameContents(root1, root2, false, true, false);
 	}
-	
+
 }

@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -16,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IConvergenceElement;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.BecomesEqualTo;
@@ -66,7 +70,7 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 				&& varExpression == null)
 			return;
 		
-		IPOFile target = repository.getTarget();
+		IPORoot target = repository.getTarget();
 		
 		List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getDeltaPrime() != null)

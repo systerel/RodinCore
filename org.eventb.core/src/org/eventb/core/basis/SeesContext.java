@@ -1,19 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ISCContextFile;
 import org.eventb.core.ISeesContext;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -47,11 +51,11 @@ public class SeesContext extends InternalElement implements ISeesContext {
 		return ELEMENT_TYPE;
 	}
 
-	public ISCContextFile getSeenSCContext() throws RodinDBException {
+	public IRodinFile getSeenSCContext() throws RodinDBException {
 		final String bareName = getSeenContextName();
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
-		return (ISCContextFile) project.getRodinFile(scName);
+		return project.getRodinFile(scName);
 	}
 	
 	public boolean hasSeenContextName() throws RodinDBException {

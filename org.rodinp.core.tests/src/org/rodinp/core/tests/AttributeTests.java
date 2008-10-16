@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added checks of generated deltas
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 
 package org.rodinp.core.tests;
@@ -19,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -27,6 +29,7 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
  * Tests about attributes of Rodin internal elements.
@@ -41,10 +44,17 @@ public class AttributeTests extends ModifyingResourceTests {
 	public AttributeTests(String name) {
 		super(name);
 	}
+	
+	private IRodinFile rodinFile;
+	private RodinTestRoot root;
+	private NamedElement ne;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		createRodinProject("P");
+		rodinFile = createRodinFile("P/X.test");
+		root = (RodinTestRoot) rodinFile.getRoot();
+		ne = createNEPositive(root, "foo", null);
 	}
 	
 	protected void tearDown() throws Exception {
@@ -350,28 +360,28 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	private void testGetAttributeNames(IAttributedElement ae)
+	private void assertGetAttributeNames(IInternalElement ie)
 			throws CoreException {
 
-		assertAttributeNames(ae);
+		assertAttributeNames(ie);
 		
-		setBoolAttrPositive(ae, fBool, true);
-		assertAttributeNames(ae, fBool);
+		setBoolAttrPositive(ie, fBool, true);
+		assertAttributeNames(ie, fBool);
 
-		setHandleAttrPositive(ae, fHandle, ae);
-		assertAttributeNames(ae, fBool, fHandle);
+		setHandleAttrPositive(ie, fHandle, ie);
+		assertAttributeNames(ie, fBool, fHandle);
 		
-		setIntAttrPositive(ae, fInt, -55);
-		assertAttributeNames(ae, fBool, fHandle, fInt);
+		setIntAttrPositive(ie, fInt, -55);
+		assertAttributeNames(ie, fBool, fHandle, fInt);
 
-		setLongAttrPositive(ae, fLong, 12345678901L);
-		assertAttributeNames(ae, fBool, fHandle, fInt, fLong);
+		setLongAttrPositive(ie, fLong, 12345678901L);
+		assertAttributeNames(ie, fBool, fHandle, fInt, fLong);
 
-		setStringAttrPositive(ae, fString, "bar");
-		assertAttributeNames(ae, fBool, fHandle, fInt, fLong, fString);
+		setStringAttrPositive(ie, fString, "bar");
+		assertAttributeNames(ie, fBool, fHandle, fInt, fLong, fString);
 		
-		removeAttrPositive(ae, fLong);
-		assertAttributeNames(ae, fBool, fHandle, fInt, fString);
+		removeAttrPositive(ie, fLong);
+		assertAttributeNames(ie, fBool, fHandle, fInt, fString);
 	}
 	
 	/**
@@ -379,8 +389,7 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * properly on Rodin files.
 	 */
 	public void testGetAttributeNamesFile() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		testGetAttributeNames(rf);
+		assertGetAttributeNames(root);
 	}
 
 	/**
@@ -388,27 +397,24 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * properly on internal elements.
 	 */
 	public void testGetAttributeNamesInternal() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		testGetAttributeNames(e1);
+		assertGetAttributeNames(ne);
 	}
 
-	private void testRemoveAttribute(IAttributedElement ae)
+	private void assertRemoveAttribute(IInternalElement ie)
 			throws CoreException {
 
-		setBoolAttrPositive(ae, fBool, true);
-		removeAttrPositive(ae, fBool);
+		setBoolAttrPositive(ie, fBool, true);
+		removeAttrPositive(ie, fBool);
 
 		// Can be done twice
-		removeAttrPositive(ae, fBool);
+		removeAttrPositive(ie, fBool);
 	}
 
 	/**
 	 * Ensures that the removeAttribute() method works properly on Rodin files.
 	 */
 	public void testRemoveAttributeFile() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		testRemoveAttribute(rf);
+		assertRemoveAttribute(root);
 	}
 
 	/**
@@ -416,18 +422,17 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * elements.
 	 */
 	public void testRemoveAttributeInternal() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		testRemoveAttribute(e1);
+		assertRemoveAttribute(ne);
 	}
 
-	private void testRemoveAttributeNoElement(IAttributedElement ae)
+	private void assertRemoveAttributeNoElement(IInternalElement ie)
 			throws CoreException {
+		assertFalse(ie.exists());
 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertNotExists("Element should not exist", ae);
+		assertNotExists("Element should not exist", ie);
 
-		removeAttrNegative(ae, fBool, code);
+		removeAttrNegative(ie, fBool, code);
 	}
 
 	/**
@@ -435,8 +440,8 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * file raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
 	public void testRemoveAttributeNoElementFile() throws CoreException {
-		final IRodinFile rf = getRodinFile("P/X.test");
-		testRemoveAttributeNoElement(rf);
+		rodinFile.delete(false, null);
+		assertRemoveAttributeNoElement(root);
 	}
 
 	/**
@@ -444,32 +449,30 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * element raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
 	public void testRemoveAttributeNoElementInternal() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
-		testRemoveAttributeNoElement(e1);
+		ne.delete(false, null);
+		assertRemoveAttributeNoElement(ne);
 	}
 
-	private void testSetAttributeNoElement(IAttributedElement ae)
+	private void assertSetAttributeNoElement(IInternalElement ie)
 			throws CoreException {
 
 		final int code = IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
-		assertNotExists("Element should not exist", ae);
+		assertNotExists("Element should not exist", ie);
 
-		setBoolAttrNegative(ae, fBool, true, code);
-		setHandleAttrNegative(ae, fHandle, ae, code);
-		setIntAttrNegative(ae, fInt, -55, code);
-		setLongAttrNegative(ae, fLong, 12345678901L, code);
-		setStringAttrNegative(ae, fString, "bar", code);
+		setBoolAttrNegative(ie, fBool, true, code);
+		setHandleAttrNegative(ie, fHandle, ie, code);
+		setIntAttrNegative(ie, fInt, -55, code);
+		setLongAttrNegative(ie, fLong, 12345678901L, code);
+		setStringAttrNegative(ie, fString, "bar", code);
 	}
 
 	/**
 	 * Ensures that attempting to set an attribute on an inexistent Rodin file
 	 * raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
-	public void testSetAttributeNoElementFile() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = getNamedElement(rf, "foo");
-		testSetAttributeNoElement(e1);
+	public void testSetAttributeNoElementRoot() throws CoreException {
+		rodinFile.delete(false, null);
+		assertSetAttributeNoElement(root);
 	}
 
 	/**
@@ -477,71 +480,65 @@ public class AttributeTests extends ModifyingResourceTests {
 	 * element raises an ELEMENT_DOES_NOT_EXIST error.
 	 */
 	public void testSetAttributeNoElementInternal() throws CoreException {
-		final IRodinFile rf = getRodinFile("P/X.test");
-		testSetAttributeNoElement(rf);
+		ne.delete(false, null);
+		assertSetAttributeNoElement(ne);
 	}
 
-	private void testSnapshotAttributeReadOnly(IRodinFile rf, IInternalParent ae)
+	private void assertSnapshotAttributeReadOnly(IInternalElement ie)
 			throws CoreException {
 
 		final int code = IRodinDBStatusConstants.READ_ONLY;
-		rf.save(null, false);
+		rodinFile.save(null, false);
 
-		final IInternalParent snapshot = ae.getSnapshot();
+		final IInternalElement snapshot = (IInternalElement) ie.getSnapshot();
 		removeAttrNegative(snapshot, fBool, code);
 		setBoolAttrNegative(snapshot, fBool, true, code);
-		setHandleAttrNegative(snapshot, fHandle, rf, code);
+		setHandleAttrNegative(snapshot, fHandle, rodinFile, code);
 		setIntAttrNegative(snapshot, fInt, -55, code);
 		setLongAttrNegative(snapshot, fLong, 12345678901L, code);
 		setStringAttrNegative(snapshot, fString, "bar", code);
 	}
 
-	public void testSnapshotAttributeReadOnlyFile() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		testSnapshotAttributeReadOnly(rf, rf);
+	public void testSnapshotAttributeReadOnlyRoot() throws CoreException {
+		assertSnapshotAttributeReadOnly(root);
 	}
 
 	public void testSnapshotAttributeReadOnlyInternal() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		testSnapshotAttributeReadOnly(rf, e1);
+		assertSnapshotAttributeReadOnly(ne);
 	}
 
 	
-	private void testAttributePersistent(IRodinFile rf, IInternalParent ae)
+	private void assertAttributePersistent(IInternalElement ie)
 			throws CoreException {
 
-		setBoolAttrPositive(ae, fBool, true);
-		setHandleAttrPositive(ae, fHandle, rf);
-		setIntAttrPositive(ae, fInt, -55);
-		setLongAttrPositive(ae, fLong, 12345678901L);
-		setStringAttrPositive(ae, fString, "bar");
+		setBoolAttrPositive(ie, fBool, true);
+		setHandleAttrPositive(ie, fHandle, rodinFile);
+		setIntAttrPositive(ie, fInt, -55);
+		setLongAttrPositive(ie, fLong, 12345678901L);
+		setStringAttrPositive(ie, fString, "bar");
 
-		rf.save(null, false);
+		rodinFile.save(null, false);
 
-		final IInternalParent snapshot = ae.getSnapshot();
+		final IInternalParent snapshot = ie.getSnapshot();
 		assertBooleanValue(snapshot, fBool, true);
-		assertHandleValue(snapshot, fHandle, rf);
+		assertHandleValue(snapshot, fHandle, rodinFile);
 		assertIntegerValue(snapshot, fInt, -55);
 		assertLongValue(snapshot, fLong, 12345678901L);
 		assertStringValue(snapshot, fString, "bar");
 
-		assertBooleanValue(ae, fBool, true);
-		assertHandleValue(ae, fHandle, rf);
-		assertIntegerValue(ae, fInt, -55);
-		assertLongValue(ae, fLong, 12345678901L);
-		assertStringValue(ae, fString, "bar");
+		assertBooleanValue(ie, fBool, true);
+		assertHandleValue(ie, fHandle, rodinFile);
+		assertIntegerValue(ie, fInt, -55);
+		assertLongValue(ie, fLong, 12345678901L);
+		assertStringValue(ie, fString, "bar");
 	}
 	
 	public void testAttributePersistentFile() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		testAttributePersistent(rf, rf);
+		assertAttributePersistent(root);
 	}
 
 	public void testAttributePersistentInternal() throws CoreException {
-		final IRodinFile rf = createRodinFile("P/X.test");
-		final NamedElement e1 = createNEPositive(rf, "foo", null);
-		testAttributePersistent(rf, e1);
+		assertAttributePersistent(ne);
 	}
 
 }

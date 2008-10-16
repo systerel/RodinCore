@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -14,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCCarrierSet;
@@ -23,7 +27,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCVariable;
@@ -50,6 +54,7 @@ import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -67,8 +72,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 	private static int ABSEVT_SYMTAB_SIZE = 1013;
 
-	private IMachineFile machineFile;
-	private ISCMachineFile scAbstractMachineFile;
+	private IMachineRoot machineFile;
+	private ISCMachineRoot scAbstractMachineFile;
 	private IRefinesMachine refinesMachine;
 	private AbstractEventTable abstractEventTable;
 	private ITypeEnvironment typeEnvironment;
@@ -87,7 +92,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		monitor.subTask(Messages.bind(Messages.progress_MachineRefines));
 
-		saveRefinesMachine((ISCMachineFile) target, null);
+		saveRefinesMachine((ISCMachineRoot) target, null);
 
 		if (!scAbstractMachineFile.isAccurate())
 			accuracyInfo.setNotAccurate();
@@ -109,12 +114,12 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 	private static final String REFINES_NAME = "REF";
 
-	private void saveRefinesMachine(ISCMachineFile target,
+	private void saveRefinesMachine(ISCMachineRoot target,
 			IProgressMonitor monitor) throws RodinDBException {
 		ISCRefinesMachine scRefinesMachine = target
 				.getSCRefinesClause(REFINES_NAME);
 		scRefinesMachine.create(null, monitor);
-		scRefinesMachine.setAbstractSCMachine(scAbstractMachineFile, null);
+		scRefinesMachine.setAbstractSCMachine(scAbstractMachineFile.getRodinFile(), null);
 		scRefinesMachine.setSource(refinesMachine, null);
 	}
 
@@ -347,7 +352,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		typeEnvironment = repository.getTypeEnvironment();
 
-		machineFile = (IMachineFile) element;
+		IRodinFile rf = (IRodinFile) element;
+		machineFile = (IMachineRoot) rf.getRoot();
 
 		IRefinesMachine[] refinesMachines = machineFile.getRefinesClauses();
 
@@ -365,7 +371,8 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		if (refinesMachine != null) {
 			if (refinesMachine.hasAbstractMachineName()) {
-				scAbstractMachineFile = refinesMachine.getAbstractSCMachine();
+				scAbstractMachineFile = (ISCMachineRoot) refinesMachine
+						.getAbstractSCMachine().getRoot();
 			} else {
 				createProblemMarker(refinesMachine,
 						EventBAttributes.TARGET_ATTRIBUTE,

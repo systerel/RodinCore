@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -17,9 +21,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -31,7 +34,7 @@ public abstract class ConversionSheetWithTransformer extends ConversionSheet {
 	private Transformer transformer;
 
 	public ConversionSheetWithTransformer(IConfigurationElement configElement,
-			IFileElementType<IRodinFile> type) {
+			IInternalElementType<?> type) {
 		super(configElement, type);
 	}
 

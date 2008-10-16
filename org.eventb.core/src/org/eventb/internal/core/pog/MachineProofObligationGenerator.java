@@ -1,19 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.ProofObligationGenerator;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.builder.IGraph;
 
@@ -28,18 +32,19 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 	 */
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
-		ISCMachineFile source = (ISCMachineFile) RodinCore.valueOf(file);
-		IPOFile target = source.getMachineFile().getPOFile();
+		IRodinFile source = RodinCore.valueOf(file);
+		ISCMachineRoot sourceRoot = (ISCMachineRoot) source.getRoot();
+		IRodinFile target = sourceRoot.getMachineRoot().getPORoot().getRodinFile();
 		
 		graph.addTarget(target.getResource());
 		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), true);
 		
-		ISCRefinesMachine[] refinesMachines = source.getSCRefinesClauses();
+		ISCRefinesMachine[] refinesMachines = sourceRoot.getSCRefinesClauses();
 		if (refinesMachines.length != 0) {
 			graph.addUserDependency(
-					source.getMachineFile().getResource(), 
+					sourceRoot.getMachineRoot().getRodinFile().getResource(), 
 					refinesMachines[0].getAbstractSCMachine().getResource(), 
 					target.getResource(), false);
 		}

@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -89,7 +93,7 @@ public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getElementType()
 	 */
-	IFileElementType<? extends IRodinFile> getElementType();
+	IFileElementType getElementType();
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinElement#getResource()
@@ -115,4 +119,15 @@ public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 	 */
 	void revert() throws RodinDBException;
 
+	/**
+	 * Returns the root internal element of this file.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @return the root element of this Rodin file
+	 * 
+	 */
+	IInternalElement getRoot();
+	
 }

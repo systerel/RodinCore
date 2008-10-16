@@ -1,15 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -45,11 +50,14 @@ public abstract class POTool extends SCTool {
 		if (SHOW_EXTRACT)
 			ToolTrace.addTrace(name, "extract", file);
 		
-		ISCProvable prv = (ISCProvable) RodinCore.valueOf(file);
+		final IRodinFile prvFile = RodinCore.valueOf(file);
+		final ISCProvableRoot prv = (ISCProvableRoot) prvFile.getRoot();
 		
-		IPOFile po = prv.getPOFile();
-		graph.addTarget(po.getResource());
-		graph.addToolDependency(prv.getResource(), po.getResource(), true);
+		final IPORoot po = prv.getPORoot();
+		final IRodinFile poFile = po.getRodinFile();
+
+		graph.addTarget(poFile.getResource());
+		graph.addToolDependency(prvFile.getResource(), poFile.getResource(), true);
 				
 	}
 
@@ -57,16 +65,18 @@ public abstract class POTool extends SCTool {
 		if (SHOW_RUN)
 			ToolTrace.addTrace(name, "run", file);
 	
-		IPOFile target = (IPOFile) RodinCore.valueOf(file);
-		IRodinFile src = RodinCore.valueOf(source);
+		IRodinFile targetFile = RodinCore.valueOf(file);
+		IPORoot target = (IPORoot) targetFile.getRoot();
+		IRodinFile srcFile = RodinCore.valueOf(source);
+		IInternalElement src = srcFile.getRoot();
 		
 		// First clean up target
-		target.create(true, null);
+		targetFile.create(true, null);
 		
 		// Populate with a copy of inputs
 		copyDataElements(src, target);
 		
-		target.save(null, true);
+		targetFile.save(null, true);
 	}
 
 }

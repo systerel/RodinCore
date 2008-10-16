@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -16,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ast.FreeIdentifier;
@@ -75,12 +79,12 @@ public class MachineEventRefinesModule extends SCFilterModule {
 		if (eventLabel.equals(IEvent.INITIALISATION)) {
 			return checkInitRefinement(event, symbolInfo, refinesEvents);
 		} else {
-			return fetchRefinement((IMachineFile) event.getParent(), event,
+			return fetchRefinement((IMachineRoot) event.getParent(), event,
 					symbolInfo);
 		}
 	}
 
-	private boolean fetchRefinement(IMachineFile machineFile, IEvent event,
+	private boolean fetchRefinement(IMachineRoot machineFile, IEvent event,
 			ILabelSymbolInfo symbolInfo) throws RodinDBException, CoreException {
 
 		boolean found = fetchRefineData(symbolInfo, event.getRefinesClauses());

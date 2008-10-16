@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.rodinp.internal.core;
 
 import java.util.Arrays;
@@ -23,9 +26,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * Manager for Rodin element types.
@@ -59,14 +60,14 @@ public class ElementTypeManager {
 		// singleton: prevent others from creating a new instance
 	}
 
-	private FileElementType<?> getFileElementType(IContentType contentType) {
+	private FileElementType getFileElementType(IContentType contentType) {
 		if (fileContentTypes == null) {
 			computeFileElementTypes();
 		}
 		return fileContentTypes.get(contentType.getId());
 	}
 	
-	public FileElementType<?> getFileElementTypeFor(String fileName) {
+	public FileElementType getFileElementTypeFor(String fileName) {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType contentType = contentTypeManager.findContentTypeFor(fileName);
 		if (contentType == null) {
@@ -79,22 +80,22 @@ public class ElementTypeManager {
 	private static final String FILE_ELEMENT_TYPES_ID = "fileElementTypes";
 	
 	// Access to file element types using their content type name
-	private HashMap<String, FileElementType<?>> fileContentTypes;
+	private HashMap<String, FileElementType> fileContentTypes;
 
 	// Access to file element types using their unique id
-	private HashMap<String, FileElementType<RodinFile>> fileElementTypeIds;
+	private HashMap<String, FileElementType> fileElementTypeIds;
 
 	private void computeFileElementTypes() {
-		fileElementTypeIds = new HashMap<String, FileElementType<RodinFile>>();
-		fileContentTypes = new HashMap<String, FileElementType<?>>();
-		fileContentTypes = new HashMap<String, FileElementType<?>>();
+		fileElementTypeIds = new HashMap<String, FileElementType>();
+		fileContentTypes = new HashMap<String, FileElementType>();
+		fileContentTypes = new HashMap<String, FileElementType>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			FileElementType<RodinFile> type = new FileElementType<RodinFile>(element);
+			FileElementType type = new FileElementType(element);
 			fileElementTypeIds.put(type.getId(), type);
 			fileContentTypes.put(type.getContentTypeId(), type);
 		}
@@ -103,7 +104,7 @@ public class ElementTypeManager {
 			System.out.println("-----------------------------------------------");
 			System.out.println("File element types known to the Rodin database:");
 			for (String id: getSortedIds(fileElementTypeIds)) {
-				FileElementType<?> type = fileElementTypeIds.get(id);
+				FileElementType type = fileElementTypeIds.get(id);
 				System.out.println("  " + type.getId());
 				System.out.println("    name: " + type.getName());
 				System.out.println("    content-type: " + type.getContentTypeId());
@@ -129,7 +130,7 @@ public class ElementTypeManager {
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, INTERNAL_ELEMENT_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			InternalElementType<? extends IInternalElement> type =
+			InternalElementType<?> type =
 				new InternalElementType<IInternalElement>(element);
 			internalElementTypeIds.put(type.getId(), type);
 		}
@@ -173,7 +174,7 @@ public class ElementTypeManager {
 	 * @return the file element type associated to the file or <code>null</code>
 	 *         if it is not a Rodin file
 	 */
-	public FileElementType<?> getFileElementType(IFile file) {
+	public FileElementType getFileElementType(IFile file) {
 		try {
 			IContentDescription contentDescription = file.getContentDescription();
 			if (contentDescription == null) return null; // Unknown kind of file.
@@ -187,7 +188,8 @@ public class ElementTypeManager {
 		return getFileElementTypeFor(file.getName());
 	}
 
-	public FileElementType<? extends IRodinFile> getFileElementType(String id) {
+	public FileElementType getFileElementType(
+			String id) {
 		if (fileElementTypeIds == null) {
 			computeFileElementTypes();
 		}

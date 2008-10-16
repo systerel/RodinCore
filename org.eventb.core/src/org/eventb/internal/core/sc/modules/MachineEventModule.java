@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added deleteAll() method
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -17,9 +18,9 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -43,6 +44,7 @@ import org.eventb.internal.core.sc.symbolTable.StackedIdentifierSymbolTable;
 import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -74,8 +76,9 @@ public class MachineEventModule extends LabeledElementModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		IMachineFile machineFile = (IMachineFile) element;
-
+		IRodinFile machineFile = (IRodinFile) element;
+		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
+		
 		if (events.length == 0)
 			return;
 
@@ -86,14 +89,14 @@ public class MachineEventModule extends LabeledElementModule {
 
 		ISCEvent[] scEvents = new ISCEvent[events.length];
 
-		commitEvents(machineFile, (ISCMachineFile) target, scEvents,
+		commitEvents(machineRoot, (ISCMachineRoot) target, scEvents,
 				symbolInfos, monitor);
 
 		processEvents(scEvents, repository, symbolInfos, monitor);
 
 	}
 
-	private void commitEvents(IMachineFile machineFile, ISCMachineFile target,
+	private void commitEvents(IMachineRoot machineFile, ISCMachineRoot target,
 			ISCEvent[] scEvents, ILabelSymbolInfo[] symbolInfos,
 			IProgressMonitor monitor) throws CoreException {
 
@@ -110,7 +113,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private static final String EVENT_NAME_PREFIX = "EVT";
 
-	private ISCEvent createSCEvent(ISCMachineFile target, int index,
+	private ISCEvent createSCEvent(ISCMachineRoot target, int index,
 			ILabelSymbolInfo symbolInfo, IEvent event, IProgressMonitor monitor)
 			throws CoreException {
 		ILabeledElement scEvent = symbolInfo.createSCElement(target,
@@ -158,7 +161,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	}
 
-	private ILabelSymbolInfo[] fetchEvents(IMachineFile machineFile,
+	private ILabelSymbolInfo[] fetchEvents(IRodinFile machineFile,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
@@ -238,9 +241,10 @@ public class MachineEventModule extends LabeledElementModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		IMachineFile machineFile = (IMachineFile) element;
+		IRodinFile machineFile = (IRodinFile) element;
+		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
 
-		events = machineFile.getEvents();
+		events = machineRoot.getEvents();
 
 		concreteEventTable = new ConcreteEventTable();
 		repository.setState(concreteEventTable);

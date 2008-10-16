@@ -26,10 +26,10 @@ import org.rodinp.core.RodinDBException;
  * used in the PO file.
  * </p>
  * 
- * @see IPOFile
+ * @see IPORoot
  * @see IPOSequent
  * @see IPOPredicateSet
- * @see IPSFile
+ * @see IPSRoot
  * @see IPSStatus
  * 
  * @author Stefan Hallerstede

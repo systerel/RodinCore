@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -18,7 +22,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
@@ -31,6 +35,7 @@ import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
@@ -100,12 +105,13 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 		for (int index = 0; index < contextPointerArray.size(); index++) {
 
-			ISCContextFile scCF = contextPointerArray.getSCContextFile(index);
-
+			final IRodinFile scCF = contextPointerArray.getSCContextFile(index);
+			
 			if (scCF == null)
 				continue; // the context file has not been found
 
-			String name = scCF.getComponentName();
+			final ISCContextRoot scRoot = (ISCContextRoot) scCF.getRoot();
+			String name = scRoot.getComponentName();
 			if (topNames.contains(name)) {
 				topNames.add(null);
 				createProblemMarker(contextPointerArray
@@ -116,7 +122,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				topNames.add(name);
 			}
 
-			accurate &= scCF.isAccurate();
+			accurate &= scRoot.isAccurate();
 
 			upContexts[index] = createUpContexts(scCF);
 
@@ -175,15 +181,16 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	protected abstract IRodinProblem getRedundantContextWarning();
 
-	private ISCContext[] createUpContexts(ISCContextFile scCF)
+	private ISCContext[] createUpContexts(final IRodinFile scCF)
 			throws RodinDBException {
-		ISCInternalContext[] iscic = scCF.getAbstractSCContexts();
+		final ISCContextRoot root = (ISCContextRoot) scCF.getRoot();
+		ISCInternalContext[] iscic = root.getAbstractSCContexts();
 
 		ISCContext[] upContexts = new ISCContext[iscic.length + 1];
 
 		System.arraycopy(iscic, 0, upContexts, 0, iscic.length);
 
-		upContexts[iscic.length] = scCF;
+		upContexts[iscic.length] = root;
 
 		return upContexts;
 	}
@@ -334,7 +341,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 				internalContext.copy(target, null, null, false, monitor);
 			} else {
 
-				ISCContextFile contextFile = (ISCContextFile) context;
+				ISCContextRoot contextFile = (ISCContextRoot) context;
 
 				ISCInternalContext internalContext = getSCInternalContext(
 						target, contextFile.getComponentName());

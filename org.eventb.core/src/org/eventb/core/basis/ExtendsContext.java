@@ -1,18 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -67,11 +70,11 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.IExtendsContext#getAbstractSCContext()
 	 */
-	public ISCContextFile getAbstractSCContext() throws RodinDBException {
+	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
 		final String bareName = getAbstractContextName();
 		final String scName = EventBPlugin.getSCContextFileName(bareName);
 		final IRodinProject project = getRodinProject();
-		return (ISCContextFile) project.getRodinFile(scName);
+		return (ISCContextRoot) project.getRodinFile(scName).getRoot();
 	}
 
 	/* (non-Javadoc)

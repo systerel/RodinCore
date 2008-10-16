@@ -1,14 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -30,7 +34,6 @@ import org.rodinp.core.IRodinProject;
  * </p>
  * 
  * @author Laurent Voisin
- * @see IEventBFile
  */
 public interface IEventBProject extends IAdaptable {
 
@@ -45,7 +48,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the unchecked version of the context
 	 */
-	IContextFile getContextFile(String componentName);
+	IRodinFile getContextFile(String componentName);
 
 	/**
 	 * Returns a handle to the unchecked version of the machine with the given
@@ -58,7 +61,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the unchecked version of the machine
 	 */
-	IMachineFile getMachineFile(String componentName);
+	IRodinFile getMachineFile(String componentName);
 
 	/**
 	 * Returns a handle to the statically checked version of the context with
@@ -71,7 +74,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the unchecked version of the context
 	 */
-	ISCContextFile getSCContextFile(String componentName);
+	IRodinFile getSCContextFile(String componentName);
 
 	/**
 	 * Returns a handle to the statically checked version of the machine with
@@ -84,7 +87,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the unchecked version of the machine
 	 */
-	ISCMachineFile getSCMachineFile(String componentName);
+	IRodinFile getSCMachineFile(String componentName);
 
 	/**
 	 * Returns a handle to the file containing proof obligations for the
@@ -97,7 +100,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the proof obligation file of this component
 	 */
-	IPOFile getPOFile(String componentName);
+	IRodinFile getPOFile(String componentName);
 
 	/**
 	 * Returns a handle to the file containing proofs for the component with the
@@ -110,7 +113,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the proof file of this component
 	 */
-	IPRFile getPRFile(String componentName);
+	IRodinFile getPRFile(String componentName);
 
 	/**
 	 * Returns a handle to the file containing proof status for the component
@@ -123,7 +126,7 @@ public interface IEventBProject extends IAdaptable {
 	 *            name of the component (i.e, without any extension)
 	 * @return a handle to the proof status file of this component
 	 */
-	IPSFile getPSFile(String componentName);
+	IRodinFile getPSFile(String componentName);
 
 	/**
 	 * Returns the underlying Rodin project.

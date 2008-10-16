@@ -1,18 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -25,8 +30,8 @@ public abstract class EventBPOElement extends EventBElement {
 		super(name, parent);
 	}
 	
-	private boolean isPlainPOFile(IPOFile file) {
-		return file.getPOFile().equals(file);
+	private boolean isPlainPOFile(IPORoot root) {
+		return root.getPORoot().equals(root);
 	}
 
 	protected IRodinElement getTranslatedAttributeValue(IAttributeType.Handle attrType) 
@@ -37,9 +42,10 @@ public abstract class EventBPOElement extends EventBElement {
 			
 			IInternalElement iElement = (IInternalElement) element;
 			
-			IPOFile file = (IPOFile) getRodinFile();
+			IRodinFile file = getRodinFile();
+			IPORoot root = (IPORoot) file.getRoot();
 		
-			if (isPlainPOFile(file)) {
+			if (isPlainPOFile(root)) {
 				return element;
 			} else {
 				return iElement.getSimilarElement(file);
@@ -60,12 +66,14 @@ public abstract class EventBPOElement extends EventBElement {
 		
 			IInternalElement iElement = (IInternalElement) element;
 			
-			IPOFile iFile = (IPOFile) iElement.getRodinFile();
+			IRodinFile iFile = iElement.getRodinFile();
+			IPORoot iRoot= (IPORoot) iFile.getRoot();
 			
-			if (isPlainPOFile(iFile)) {
+			if (isPlainPOFile(iRoot)) {
 				setAttributeValue(attrType, element, monitor);
 			} else {
-				setAttributeValue(attrType, iElement.getSimilarElement(iFile.getPOFile()), monitor);
+				setAttributeValue(attrType, iElement.getSimilarElement(iRoot
+						.getPORoot().getRodinFile()), monitor);
 			}
 			
 		} else
