@@ -55,14 +55,20 @@ public class ContextIndexer extends EventBIndexer {
 
 	private void index(IContextFile file) throws RodinDBException {
 
+		if (index.isCancelled()) return;
+		
 		final SymbolTable imports = new SymbolTable(null);
 		processImports(index.getImports(), imports);
+		if (index.isCancelled()) return;
 
 		final SymbolTable totalST = new SymbolTable(imports);
 		processIdentifierElements(file.getCarrierSets(), totalST);
+		if (index.isCancelled()) return;
 		processIdentifierElements(file.getConstants(), totalST);
+		if (index.isCancelled()) return;
 
 		processPredicateElements(file.getAxioms(), totalST);
+		if (index.isCancelled()) return;
 		processPredicateElements(file.getTheorems(), totalST);
 	}
 
@@ -94,6 +100,8 @@ public class ContextIndexer extends EventBIndexer {
 			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
 					symbolTable);
 			predIndexer.process(index);
+			
+			if (index.isCancelled()) return;
 		}
 	}
 
