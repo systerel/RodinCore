@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
-import org.rodinp.internal.core.index.IndexManager;
 
 /**
  * @author Nicolas Beauger
@@ -25,6 +26,7 @@ public abstract class EventBIndexerTests extends AbstractRodinDBTests {
 	protected static final String VAR1 = "var1";
 	protected static final String PRM1 = "prm1";
 	protected static final String CST1 = "cst1";
+	protected static IRodinProject project;
 
 	/**
 	 * @param name
@@ -32,7 +34,17 @@ public abstract class EventBIndexerTests extends AbstractRodinDBTests {
 	@SuppressWarnings("restriction")
 	public EventBIndexerTests(String name) {
 		super(name);
-		IndexManager.getDefault().disableIndexing();
+		RodinIndexer.disableIndexing();
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		project = createRodinProject("P");
+	}
+
+	protected void tearDown() throws Exception {
+		deleteProject("P");
+		super.tearDown();
 	}
 
 }

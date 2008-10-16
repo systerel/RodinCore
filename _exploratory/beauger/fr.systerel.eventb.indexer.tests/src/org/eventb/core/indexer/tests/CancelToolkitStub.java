@@ -38,6 +38,7 @@ public class CancelToolkitStub implements IIndexingToolkit {
 	private int numExp;
 	
 	private boolean cancel;
+	public static final int NO_LIMIT = Integer.MAX_VALUE;
 
 	/**
 	 * A call to isCancelled returns true when the given number of declarations,

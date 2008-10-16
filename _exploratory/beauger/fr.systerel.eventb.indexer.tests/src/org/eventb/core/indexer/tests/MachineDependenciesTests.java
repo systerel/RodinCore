@@ -21,7 +21,6 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.indexer.MachineIndexer;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 
 /**
  * @author Nicolas Beauger
@@ -33,8 +32,6 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	private static final String C1_NAME = "c1";
 	private static final String M1_NAME = "m1";
 	private static final String M2_NAME = "m2";
-
-	private static IRodinProject project;
 
 	private static void assertDependencies(List<IRodinFile> expected,
 			IRodinFile[] actual) {
@@ -66,16 +63,6 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 */
 	public MachineDependenciesTests(String name) {
 		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createRodinProject("P");
-	}
-
-	protected void tearDown() throws Exception {
-		deleteProject("P");
-		super.tearDown();
 	}
 
 	public void testNoDependencies() throws Exception {
@@ -144,8 +131,12 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		// should not throw an exception
-		indexer.getDependencies(context);
+		try {
+			indexer.getDependencies(context);
+			fail("IllegalArgumentException expected");
+		} catch(IllegalArgumentException e) {
+			// OK
+		}
 	}
 
 	/**

@@ -28,7 +28,6 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.indexer.MachineIndexer;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
@@ -39,12 +38,8 @@ import org.rodinp.core.index.IOccurrence;
  */
 public class MachineIndexerTests extends EventBIndexerTests {
 
-	// TODO test indexing cancellation
-
 	// TODO factorize recurrent processing
 	// TODO factorize files
-
-	private static IRodinProject project;
 
 	private static IDeclaration getDeclVar(IMachineFile machine,
 			String varIntName, String varName) throws RodinDBException {
@@ -58,16 +53,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 */
 	public MachineIndexerTests(String name) {
 		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createRodinProject("P");
-	}
-
-	protected void tearDown() throws Exception {
-		deleteProject("P");
-		super.tearDown();
 	}
 
 	private static final String VAR_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -186,13 +171,13 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertExports(declVar1);
 	}
 
+	private static final String EMPTY_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\"/>";
+	
 	/**
 	 * @throws Exception
 	 */
-	public void testDoNotExportImportedNoDecl() throws Exception {
-
-		final String EMPTY_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\"/>";
+	public void testDoNotExportDisappearingVar() throws Exception {
 
 		final IMachineFile exporter = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
@@ -210,6 +195,40 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		indexer.index(tk);
 
 		tk.assertEmptyExports();
+	}
+	
+	private static final String CST_1DECL_SET_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.contextFile"
+			+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+			+ "		version=\"1\">"
+			+ "<org.eventb.core.carrierSet"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"set1\"/>"
+			+ "<org.eventb.core.constant"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"cst1\"/>"
+			+ "</org.eventb.core.contextFile>";
+
+	public void testExportConstantsAndCarrierSets() throws Exception {
+		final IContextFile context = createContext(project, CTX_BARE_NAME,
+				CST_1DECL_SET_1DECL);
+
+		final ICarrierSet set1 = context.getCarrierSet(INTERNAL_ELEMENT1);
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+
+		final IDeclaration declSet1 = newDecl(set1, "set1");
+		final IDeclaration declCst1 = newDecl(cst1, "cst1");
+
+		final IMachineFile importer = createMachine(project, MCH_BARE_NAME,
+				EMPTY_MACHINE);
+
+		final ToolkitStub tk = new ToolkitStub(importer, declSet1, declCst1);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		indexer.index(tk);
+
+		tk.assertExports(declSet1, declCst1);
 	}
 
 	private static final String VAR_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -317,18 +336,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testRefConstantAndCarrierSet() throws Exception {
-		final String CST_1DECL_SET_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile"
-				+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-				+ "		version=\"1\">"
-				+ "<org.eventb.core.carrierSet"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.identifier=\"set1\"/>"
-				+ "<org.eventb.core.constant"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.identifier=\"cst1\"/>"
-				+ "</org.eventb.core.contextFile>";
-
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_SET_1DECL);
 
@@ -1044,8 +1051,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		// should not throw an exception
-		indexer.index(tk);
+		try {
+			indexer.index(tk);
+			fail("IllegalArgumentException expected");
+		} catch(IllegalArgumentException e) {
+			// OK
+		}
 	}
 
 	/**

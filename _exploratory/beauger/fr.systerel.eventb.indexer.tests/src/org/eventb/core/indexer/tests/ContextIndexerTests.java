@@ -20,7 +20,6 @@ import org.eventb.core.IContextFile;
 import org.eventb.core.IMachineFile;
 import org.eventb.core.ITheorem;
 import org.eventb.core.indexer.ContextIndexer;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
@@ -31,10 +30,7 @@ import org.rodinp.core.index.IOccurrence;
  */
 public class ContextIndexerTests extends EventBIndexerTests {
 
-	// TODO test indexing cancellation
 	// TODO test name conflicts
-
-	private static IRodinProject project;
 
 	private static IDeclaration getDeclCst(IContextFile context,
 			String cstIntName, String cstName) throws RodinDBException {
@@ -56,16 +52,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public ContextIndexerTests(String name) throws Exception {
 		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createRodinProject("P");
-	}
-
-	protected void tearDown() throws Exception {
-		deleteProject("P");
-		super.tearDown();
 	}
 
 	private static final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -369,8 +355,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		// should not throw an exception
-		indexer.index(tk);
+		try {
+			indexer.index(tk);
+			fail("IllegalArgumentException expected");
+		} catch(IllegalArgumentException e) {
+			// OK
+		}
 	}
 
 	/**

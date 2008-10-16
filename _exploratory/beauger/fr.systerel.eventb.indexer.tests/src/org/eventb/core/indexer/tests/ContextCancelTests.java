@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
+import static org.eventb.core.indexer.tests.CancelToolkitStub.NO_LIMIT;
 import static org.eventb.core.indexer.tests.OccUtils.newDecl;
 import static org.eventb.core.indexer.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
@@ -18,7 +19,6 @@ import static org.eventb.core.indexer.tests.ResourceUtils.createContext;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextFile;
 import org.eventb.core.indexer.ContextIndexer;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
 
 /**
@@ -27,25 +27,11 @@ import org.rodinp.core.index.IDeclaration;
  */
 public class ContextCancelTests extends EventBIndexerTests {
 
-	private static IRodinProject project;
-
-	private static final int NO_LIMIT = Integer.MAX_VALUE;
-
 	/**
 	 * @param name
 	 */
 	public ContextCancelTests(String name) {
 		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createRodinProject("P");
-	}
-
-	protected void tearDown() throws Exception {
-		deleteProject("P");
-		super.tearDown();
 	}
 
 	// TODO factorize test Strings with other Context tests
@@ -66,21 +52,12 @@ public class ContextCancelTests extends EventBIndexerTests {
 			+ "		org.eventb.core.predicate=\"cst2 = 2\"/>"
 			+ "</org.eventb.core.contextFile>";
 
-	private static final String CST_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-			+ "<org.eventb.core.axiom"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.comment=\"\""
-			+ "		org.eventb.core.label=\"axm1\""
-			+ "		org.eventb.core.predicate=\"1 = cst1\"/>"
-			+ "</org.eventb.core.contextFile>";
-
 	public void testCancelImmediately() throws Exception {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(0, 0, 0, true,
-				context);
+		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
+				NO_LIMIT, true, context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -97,7 +74,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IDeclaration declCstExp = newDecl(cst, CST1);
 
 		final IContextFile importer = createContext(project, IMPORTER,
-				CST_1REF_AXM);
+				CST_1DECL_1REF_AXM);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
 				1, false, importer, declCstExp);
@@ -114,7 +91,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_AXM);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(1, NO_LIMIT, 1,
+		final CancelToolkitStub tk = new CancelToolkitStub(1, NO_LIMIT, NO_LIMIT,
 				false, context);
 
 		final ContextIndexer indexer = new ContextIndexer();
