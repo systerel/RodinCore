@@ -44,12 +44,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	// TODO factorize recurrent processing
 	// TODO factorize files
 
-	private static final String EVT1 = "evt1";
-	private static final String IMPORTER = "importer";
-	private static final String EXPORTER = "exporter";
-	private static final String VAR1 = "var1";
-	private static final String PRM1 = "prm1";
-
 	private static IRodinProject project;
 
 	private static IDeclaration getDeclVar(IMachineFile machine,

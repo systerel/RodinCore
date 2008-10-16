@@ -34,7 +34,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	// TODO test indexing cancellation
 	// TODO test name conflicts
 
-	private static final String CST1 = "cst1";
 	private static IRodinProject project;
 
 	private static IDeclaration getDeclCst(IContextFile context,
