@@ -186,6 +186,21 @@ public class EventBImage {
 				"icons/full/ctool16/up_edit.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DOWN,
 				"icons/full/ctool16/down_edit.gif");
+		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SET,
+				IEventBSharedImages.IMG_CARRIER_SET_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_VARIABLE,
+				IEventBSharedImages.IMG_VARIABLE_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_INVARIANT,
+				IEventBSharedImages.IMG_INVARIANT_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_AXIOM,
+				IEventBSharedImages.IMG_AXIOM_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_THEOREM,
+				IEventBSharedImages.IMG_THEOREM_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_CONSTANT,
+				IEventBSharedImages.IMG_CONSTANT_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_EVENT,
+				IEventBSharedImages.IMG_EVENT_PATH);
+
 	}
 
 	/**
