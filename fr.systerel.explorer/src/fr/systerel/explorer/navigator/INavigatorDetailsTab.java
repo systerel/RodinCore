@@ -10,7 +10,7 @@
   *******************************************************************************/
 
 
-package fr.systerel.explorer.masterDetails;
+package fr.systerel.explorer.navigator;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.TabFolder;

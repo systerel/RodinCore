@@ -38,6 +38,7 @@ import org.eclipse.ui.forms.IManagedForm;
 
 import fr.systerel.explorer.Activator;
 import fr.systerel.explorer.masterDetails.statistics.StatisticsTab;
+import fr.systerel.explorer.navigator.INavigatorDetailsTab;
 
 /**
  * This is the Details page of the MasterDetails pattern of the Navigator.
