@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Nicolas Beauger
@@ -30,6 +33,13 @@ public class ListAssert {
 		final boolean containsAll = actual.containsAll(expected);
 		TestCase.assertTrue(listEltDesc + ": incorrect items in\n"
 				+ actExpString, containsAll);
+	}
+
+
+	public static void assertSameAsArray(List<IRodinFile> expected,
+			IRodinFile[] actual, String listEltDesc) {
+		final List<IRodinFile> actList = Arrays.asList(actual);
+		assertSameElements(expected, actList, listEltDesc);
 	}
 
 	private static <T> String makeActExpString(List<T> expected, List<T> actual) {

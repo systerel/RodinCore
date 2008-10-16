@@ -52,8 +52,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 
 	private static void assertDependencies(List<IRodinFile> expected,
 			IRodinFile[] actual) {
-		final List<IRodinFile> actList = Arrays.asList(actual);
-		assertSameElements(expected, actList, "dependencies");
+		assertSameAsArray(expected, actual, "dependencies");
 	}
 
 	public static final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

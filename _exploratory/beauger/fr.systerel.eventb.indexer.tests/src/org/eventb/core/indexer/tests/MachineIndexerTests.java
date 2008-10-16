@@ -39,23 +39,18 @@ import org.rodinp.core.index.IOccurrence;
  */
 public class MachineIndexerTests extends EventBIndexerTests {
 
-	/**
-	 * 
-	 */
-	private static final String EVT1 = "evt1";
 	// TODO test indexing cancellation
 
-	/**
-	 * 
-	 */
+	// TODO factorize recurrent processing
+	// TODO factorize files
+
+	private static final String EVT1 = "evt1";
 	private static final String IMPORTER = "importer";
-	/**
-	 * 
-	 */
 	private static final String EXPORTER = "exporter";
-	private static IRodinProject project;
 	private static final String VAR1 = "var1";
 	private static final String PRM1 = "prm1";
+
+	private static IRodinProject project;
 
 	private static IDeclaration getDeclVar(IMachineFile machine,
 			String varIntName, String varName) throws RodinDBException {
@@ -680,141 +675,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
 	}
 
-	public void testPrioritiesParamVsAbsParam() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
-				PRM_1DECL);
-
-		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
-		final IDeclaration declEvExp = newDecl(eventExp, EVT1);
-
-		final IParameter prmExp = eventExp.getParameter(INTERNAL_ELEMENT1);
-		final IDeclaration declPrmExp = newDecl(prmExp, PRM1);
-
-		final IMachineFile importer = createMachine(project, IMPORTER,
-				PRM_1DECL_1REF_GRD);
-
-		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
-		final IParameter prmImp = eventImp.getParameter(INTERNAL_ELEMENT1);
-		final IGuard grdImp = eventImp.getGuard(INTERNAL_ELEMENT1);
-		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4);
-
-		final ToolkitStub tk = new ToolkitStub(importer, declPrmExp, declEvExp);
-
-		final MachineIndexer indexer = new MachineIndexer();
-
-		indexer.index(tk);
-
-		tk.assertOccurrences(prmImp, grdRef);
-	}
-
-	// TODO factorize recurrent processing
-	// TODO factorize files
-
-	public void testPrioritiesAbsParamVsLocalVar() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
-				PRM_1DECL);
-
-		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
-		final IDeclaration declEvExp = newDecl(eventExp, EVT1);
-		
-		final IParameter prmExp = eventExp.getParameter(INTERNAL_ELEMENT1);
-		final IDeclaration declPrmExp = newDecl(prmExp, prmExp
-				.getIdentifierString());
-
-		final String VARPRM_1DECL_PRM_2REF_LBL_PRED_WIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile"
-				+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-				+ "		version=\"3\">"
-				+ "<org.eventb.core.refinesMachine"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.target=\"exporter\"/>"
-				+ "<org.eventb.core.variable"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.identifier=\"prm1\"/>"
-				+ "<org.eventb.core.event"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.convergence=\"0\""
-				+ "		org.eventb.core.extended=\"true\""
-				+ "		org.eventb.core.label=\"evt1\">"
-				+ "		<org.eventb.core.refinesEvent"
-				+ "				name=\"internal_element1\""
-				+ "				org.eventb.core.target=\"evt1\"/>"
-				+ "		<org.eventb.core.witness"
-				+ "				name=\"internal_element1\""
-				+ "				org.eventb.core.label=\"prm1\""
-				+ "				org.eventb.core.predicate=\"prm1 = 0\"/>"
-				+ "	</org.eventb.core.event>"
-				+ "	</org.eventb.core.machineFile>";
-
-		final IMachineFile importer = createMachine(project, IMPORTER,
-				VARPRM_1DECL_PRM_2REF_LBL_PRED_WIT);
-
-		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
-
-		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
-
-		final IWitness witness = eventImp.getWitness(INTERNAL_ELEMENT1);
-		final IOccurrence refLblWitImp = makeRefLabel(witness);
-		final IOccurrence refPredWitImp = makeRefPred(witness, 0, 4);
-
-		final ToolkitStub tk = new ToolkitStub(importer, declEvExp, declPrmExp);
-
-		final MachineIndexer indexer = new MachineIndexer();
-
-		indexer.index(tk);
-
-		tk.assertOccurrencesOtherThanDecl(varImp);
-		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
-	}
-
-	public void testPrioritiesLocalVarVsImport() throws Exception {
-		final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-				+ "		<org.eventb.core.constant"
-				+ "				name=\"internal_element1\""
-				+ "				org.eventb.core.identifier=\"cst1\"/>"
-				+ "</org.eventb.core.contextFile>";
-
-		final IContextFile exporter = createContext(project, EXPORTER,
-				CST_1DECL);
-
-		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
-		final IDeclaration declCstExp = newDecl(cstExp, cstExp
-				.getIdentifierString());
-
-		final String VARCST_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-				+ "<org.eventb.core.seesContext"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.target=\"exporter\"/>"
-				+ "<org.eventb.core.variable"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.identifier=\"cst1\"/>"
-				+ "	<org.eventb.core.invariant"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.label=\"inv1\""
-				+ "		org.eventb.core.predicate=\"cst1 = 0\"/>"
-				+ "</org.eventb.core.machineFile>";
-
-		final IMachineFile importer = createMachine(project, IMPORTER,
-				VARCST_1DECL_1REF_INV);
-
-		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
-		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence refInvImp = makeRefPred(invImp, 0, 4);
-
-		final ToolkitStub tk = new ToolkitStub(importer, declCstExp);
-
-		final MachineIndexer indexer = new MachineIndexer();
-
-		indexer.index(tk);
-
-		tk.assertEmptyOccurrences(cstExp);
-		tk.assertOccurrencesOtherThanDecl(varImp, refInvImp);
-	}
-
-	// TODO rename those _Var_ tests
-	public void testEvent_Var_1Decl_1Ref_Act() throws Exception {
+	public void testEventVarModifInAction() throws Exception {
 
 		final String VAR_1DECL_1REF_ACT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile "
@@ -854,7 +715,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
 
-	public void testEvent_Var_1DeclAbs_1Decl_1Ref_Act() throws Exception {
+	public void testEventVarRedeclared() throws Exception {
 		final IMachineFile exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
@@ -885,25 +746,25 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IMachineFile importer = createMachine(project, IMPORTER,
 				VAR_1DECL_1REF_ACT);
-		final IVariable var1Imp = importer.getVariable(INTERNAL_ELEMENT1);
+		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
 
 		final IEvent event = importer.getEvent(INTERNAL_ELEMENT1);
 		final IAction action = event.getAction(INTERNAL_ELEMENT1);
 
-		final IOccurrence occRef = makeModifAssign(action, 0, 4);
+		final IOccurrence occModif = makeModifAssign(action, 0, 4);
 
-		final IOccurrence refVar1Exp = makeRef(importer);
+		final IOccurrence refVarExp = makeRef(importer);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
 		indexer.index(tk);
-		tk.assertOccurrencesOtherThanDecl(var1Imp, occRef);
-		tk.assertOccurrences(varExp, refVar1Exp);
+		tk.assertOccurrencesOtherThanDecl(varImp, occModif);
+		tk.assertOccurrences(varExp, refVarExp);
 	}
 
-	public void testEvent_Var_1DeclAbs_1Ref_Act() throws Exception {
+	public void testEventVarNotRedeclaredModifInAction() throws Exception {
 		// var1 disappears
 		final IMachineFile exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
@@ -949,7 +810,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, occRef);
 	}
 
-	public void testEvent_Var_1DeclAbs_2RefPrimed_Lbl_Pred_Wit()
+	public void testEventVarRefInWitness()
 			throws Exception {
 		// var1 disappears
 		final IMachineFile exporter = createMachine(project, EXPORTER,
@@ -995,7 +856,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, occRefLblWit, occRefPredWit);
 	}
 
-	public void testEvent_Var_1DeclAbs_1Decl_1Ref_Grd() throws Exception {
+	public void testEventVarRedeclaredRefInGuard() throws Exception {
 		final IMachineFile exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
@@ -1043,7 +904,136 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		indexer.index(tk);
 
 		tk.assertOccurrencesOtherThanDecl(varImp, occRef);
+	}
 
+	public void testPrioritiesParamVsAbsParam() throws Exception {
+		final IMachineFile exporter = createMachine(project, EXPORTER,
+				PRM_1DECL);
+	
+		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declEvExp = newDecl(eventExp, EVT1);
+	
+		final IParameter prmExp = eventExp.getParameter(INTERNAL_ELEMENT1);
+		final IDeclaration declPrmExp = newDecl(prmExp, PRM1);
+	
+		final IMachineFile importer = createMachine(project, IMPORTER,
+				PRM_1DECL_1REF_GRD);
+	
+		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
+		final IParameter prmImp = eventImp.getParameter(INTERNAL_ELEMENT1);
+		final IGuard grdImp = eventImp.getGuard(INTERNAL_ELEMENT1);
+		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4);
+	
+		final ToolkitStub tk = new ToolkitStub(importer, declPrmExp, declEvExp);
+	
+		final MachineIndexer indexer = new MachineIndexer();
+	
+		indexer.index(tk);
+	
+		tk.assertOccurrences(prmImp, grdRef);
+	}
+
+	public void testPrioritiesAbsParamVsLocalVar() throws Exception {
+		final IMachineFile exporter = createMachine(project, EXPORTER,
+				PRM_1DECL);
+	
+		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declEvExp = newDecl(eventExp, EVT1);
+		
+		final IParameter prmExp = eventExp.getParameter(INTERNAL_ELEMENT1);
+		final IDeclaration declPrmExp = newDecl(prmExp, prmExp
+				.getIdentifierString());
+	
+		final String VARPRM_1DECL_PRM_2REF_LBL_PRED_WIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile"
+				+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+				+ "		version=\"3\">"
+				+ "<org.eventb.core.refinesMachine"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.target=\"exporter\"/>"
+				+ "<org.eventb.core.variable"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.identifier=\"prm1\"/>"
+				+ "<org.eventb.core.event"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.convergence=\"0\""
+				+ "		org.eventb.core.extended=\"true\""
+				+ "		org.eventb.core.label=\"evt1\">"
+				+ "		<org.eventb.core.refinesEvent"
+				+ "				name=\"internal_element1\""
+				+ "				org.eventb.core.target=\"evt1\"/>"
+				+ "		<org.eventb.core.witness"
+				+ "				name=\"internal_element1\""
+				+ "				org.eventb.core.label=\"prm1\""
+				+ "				org.eventb.core.predicate=\"prm1 = 0\"/>"
+				+ "	</org.eventb.core.event>"
+				+ "	</org.eventb.core.machineFile>";
+	
+		final IMachineFile importer = createMachine(project, IMPORTER,
+				VARPRM_1DECL_PRM_2REF_LBL_PRED_WIT);
+	
+		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+	
+		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
+	
+		final IWitness witness = eventImp.getWitness(INTERNAL_ELEMENT1);
+		final IOccurrence refLblWitImp = makeRefLabel(witness);
+		final IOccurrence refPredWitImp = makeRefPred(witness, 0, 4);
+	
+		final ToolkitStub tk = new ToolkitStub(importer, declEvExp, declPrmExp);
+	
+		final MachineIndexer indexer = new MachineIndexer();
+	
+		indexer.index(tk);
+	
+		tk.assertOccurrencesOtherThanDecl(varImp);
+		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
+	}
+
+	public void testPrioritiesLocalVarVsImport() throws Exception {
+		final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+				+ "		<org.eventb.core.constant"
+				+ "				name=\"internal_element1\""
+				+ "				org.eventb.core.identifier=\"cst1\"/>"
+				+ "</org.eventb.core.contextFile>";
+	
+		final IContextFile exporter = createContext(project, EXPORTER,
+				CST_1DECL);
+	
+		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCstExp = newDecl(cstExp, cstExp
+				.getIdentifierString());
+	
+		final String VARCST_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.seesContext"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.target=\"exporter\"/>"
+				+ "<org.eventb.core.variable"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.identifier=\"cst1\"/>"
+				+ "	<org.eventb.core.invariant"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.label=\"inv1\""
+				+ "		org.eventb.core.predicate=\"cst1 = 0\"/>"
+				+ "</org.eventb.core.machineFile>";
+	
+		final IMachineFile importer = createMachine(project, IMPORTER,
+				VARCST_1DECL_1REF_INV);
+	
+		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);
+		final IOccurrence refInvImp = makeRefPred(invImp, 0, 4);
+	
+		final ToolkitStub tk = new ToolkitStub(importer, declCstExp);
+	
+		final MachineIndexer indexer = new MachineIndexer();
+	
+		indexer.index(tk);
+	
+		tk.assertEmptyOccurrences(cstExp);
+		tk.assertOccurrencesOtherThanDecl(varImp, refInvImp);
 	}
 
 	public void testBadFileType() throws Exception {
