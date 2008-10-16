@@ -33,7 +33,7 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for carrier sets
-			results[0] = ModelController.getContext((IContextFile) element).nodes[0];
+			results[0] = ModelController.getContext((IContextFile) element).carrierset_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -56,7 +56,7 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
     		IContextFile ctx = (IContextFile) carr.getRodinFile();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
-    			return context.nodes[0];
+    			return context.carrierset_node;
      		}
 		}
     	if (element instanceof IElementNode) {

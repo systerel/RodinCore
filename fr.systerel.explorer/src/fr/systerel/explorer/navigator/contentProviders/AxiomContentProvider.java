@@ -33,7 +33,7 @@ public class AxiomContentProvider implements ITreeContentProvider {
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for axioms
-			results[0] = ModelController.getContext((IContextFile) element).nodes[ModelContext.AXIOM_NODE];
+			results[0] = ModelController.getContext((IContextFile) element).axiom_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -56,7 +56,7 @@ public class AxiomContentProvider implements ITreeContentProvider {
     		IContextFile ctx = (IContextFile) axm.getRodinFile();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
-    			return context.nodes[ModelContext.AXIOM_NODE];
+    			return context.axiom_node;
      		}
 		}
     	if (element instanceof IElementNode) {

@@ -34,7 +34,7 @@ public class VariableContentProvider implements ITreeContentProvider {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for variables
-			results[0] = ModelController.getMachine((IMachineFile) element).nodes[0];
+			results[0] = ModelController.getMachine((IMachineFile) element).variable_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -57,7 +57,7 @@ public class VariableContentProvider implements ITreeContentProvider {
     		IMachineFile mach = (IMachineFile) var.getRodinFile();
      		ModelMachine machine = ModelController.getMachine(mach);
      		if (machine != null) {
-    			return machine.nodes[0];
+    			return machine.variable_node;
      		}
 		}
     	if (element instanceof IElementNode) {

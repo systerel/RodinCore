@@ -33,7 +33,7 @@ public class ConstantsContentProvider implements ITreeContentProvider {
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for constants
-			results[0] = ModelController.getContext((IContextFile) element).nodes[1];
+			results[0] = ModelController.getContext((IContextFile) element).constant_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -56,7 +56,7 @@ public class ConstantsContentProvider implements ITreeContentProvider {
     		IContextFile ctx = (IContextFile) cst.getRodinFile();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
-    			return context.nodes[1];
+    			return context.constant_node;
      		}
 		}
     	if (element instanceof IElementNode) {

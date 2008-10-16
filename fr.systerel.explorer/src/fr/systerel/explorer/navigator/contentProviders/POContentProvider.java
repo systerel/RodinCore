@@ -64,7 +64,7 @@ public class POContentProvider implements ITreeContentProvider {
 	    if (element instanceof IMachineFile) {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getMachine((IMachineFile)element) != null) {
-		    	result[0] =(ModelController.getMachine((IMachineFile)element).nodes[4]);
+		    	result[0] =(ModelController.getMachine((IMachineFile)element).po_node);
 		    	//build the model
 		    	(ModelController.getMachine((IMachineFile)element)).processPOFile();
 		    	(ModelController.getMachine((IMachineFile)element)).processPSFile();
@@ -75,7 +75,7 @@ public class POContentProvider implements ITreeContentProvider {
 	    if (element instanceof IContextFile) {
 	    	Object [] result = new Object[1];
 	    	if (ModelController.getContext((IContextFile)element) != null) {
-		    	result[0] =(ModelController.getContext((IContextFile)element).nodes[4]);
+		    	result[0] =(ModelController.getContext((IContextFile)element).po_node);
 		    	//build the model
 		    	(ModelController.getContext((IContextFile)element)).processPOFile();
 		    	(ModelController.getContext((IContextFile)element)).processPSFile();

@@ -34,7 +34,7 @@ public class InvariantContentProvider implements ITreeContentProvider {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for invariants
-			results[0] = ModelController.getMachine((IMachineFile) element).nodes[1];
+			results[0] = ModelController.getMachine((IMachineFile) element).invariant_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -57,7 +57,7 @@ public class InvariantContentProvider implements ITreeContentProvider {
     		IMachineFile mach = (IMachineFile) inv.getRodinFile();
      		ModelMachine machine = ModelController.getMachine(mach);
      		if (machine != null) {
-    			return machine.nodes[1];
+    			return machine.invariant_node;
      		}
 		}
     	if (element instanceof IElementNode) {

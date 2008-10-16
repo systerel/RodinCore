@@ -37,12 +37,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class ModelContext extends ModelPOContainer implements IModelElement{
 	
-	//The indexes for the IElement nodes in array
-	public static final int CARRIERSET_NODE = 0;
-	public static final int CONSTANT_NODE = 1;
-	public static final int AXIOM_NODE = 2;
-	public static final int THEOREM_NODE = 3;
-	public static final int PO_NODE = 4;
+	/**
+	 * The nodes are used by the ContentProviders to present a node in the tree
+	 * above elements such as Axioms or Theorems.
+	 */
+	public final ModelElementNode carrierset_node;
+	public final ModelElementNode constant_node;
+	public final ModelElementNode axiom_node;
+	public final ModelElementNode theorem_node;
+	public final ModelElementNode po_node;
 
 	/**
 	 * The Contexts that extend this Context (children)
@@ -79,11 +82,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public boolean psNeedsProcessing = true;
 	public boolean poNeedsProcessing = true;
 
-	/**
-	 * The nodes are used by the ContextProviders to present a node in the tree
-	 * above elements such as Axioms or Theorems.
-	 */
-	public ModelElementNode[] nodes;
 	
 	/**
 	 * Creates a ModelContext from a given IContextFile
@@ -91,12 +89,11 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public ModelContext(IContextFile file){
 		internalContext = file;
-		nodes = new ModelElementNode[5];
-		nodes[CARRIERSET_NODE] = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
-		nodes[CONSTANT_NODE] = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
-		nodes[AXIOM_NODE] = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
-		nodes[THEOREM_NODE] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
-		nodes[PO_NODE] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
+		carrierset_node = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
+		constant_node = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
+		axiom_node = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
+		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		po_node = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	public void addAncestor(ModelContext context){

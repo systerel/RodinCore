@@ -32,7 +32,7 @@ public class EventContentProvider implements ITreeContentProvider {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for events
-			results[0] = ModelController.getMachine((IMachineFile) element).nodes[3];
+			results[0] = ModelController.getMachine((IMachineFile) element).event_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -55,7 +55,7 @@ public class EventContentProvider implements ITreeContentProvider {
     		IMachineFile mach = (IMachineFile) evt.getRodinFile();
      		ModelMachine machine = ModelController.getMachine(mach);
      		if (machine != null) {
-    			return machine.nodes[3];
+    			return machine.event_node;
      		}
 		}
     	if (element instanceof IElementNode) {

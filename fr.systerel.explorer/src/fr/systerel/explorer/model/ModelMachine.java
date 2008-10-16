@@ -38,12 +38,15 @@ import org.rodinp.core.RodinDBException;
  */
 public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
-	//The indexes for the IElement nodes in array
-	public static final int VARIABLE_NODE = 0;
-	public static final int INVARIANT_NODE = 1;
-	public static final int THEOREM_NODE = 2;
-	public static final int EVENT_NODE = 3;
-	public static final int PO_NODE = 4;
+	/**
+	 * The nodes are used by the ContentProviders to present a node in the tree
+	 * above elements such as Invariants or Theorems.
+	 */
+	public final ModelElementNode variable_node;
+	public final ModelElementNode invariant_node;
+	public final ModelElementNode theorem_node;
+	public final ModelElementNode event_node;
+	public final ModelElementNode po_node;
 	
 	private List<ModelContext> seesContexts = new LinkedList<ModelContext>();
 	/**
@@ -74,9 +77,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public boolean psNeedsProcessing = true;
 	public boolean poNeedsProcessing = true;
 	
-	public ModelElementNode[] nodes;
-	//TODO add variables etc?
-
 
 	/**
 	 * Creates a ModelMachine from a given IMachineFile
@@ -84,12 +84,11 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	public ModelMachine(IMachineFile file){
 		internalMachine = file;
-		nodes = new ModelElementNode[5];
-		nodes[VARIABLE_NODE] = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
-		nodes[INVARIANT_NODE] = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
-		nodes[THEOREM_NODE] = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
-		nodes[EVENT_NODE] = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
-		nodes[PO_NODE] = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
+		variable_node = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
+		invariant_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
+		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
+		event_node = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
+		po_node = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
 	/**

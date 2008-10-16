@@ -36,13 +36,13 @@ public class TheoremContentProvider implements ITreeContentProvider {
 		if (element instanceof IMachineFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for theorems
-			results[0] = ModelController.getMachine((IMachineFile) element).nodes[2];
+			results[0] = ModelController.getMachine((IMachineFile) element).theorem_node;
 			return results;
 		}
 		if (element instanceof IContextFile) {
 			Object[] results = new Object[1];
 			//get the intermediary node for theorems
-			results[0] = ModelController.getContext((IContextFile) element).nodes[3];
+			results[0] = ModelController.getContext((IContextFile) element).theorem_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -73,14 +73,14 @@ public class TheoremContentProvider implements ITreeContentProvider {
         		IMachineFile mach = (IMachineFile) thm.getRodinFile();
          		ModelMachine machine = ModelController.getMachine(mach);
          		if (machine != null) {
-        			return machine.nodes[2];
+        			return machine.theorem_node;
          		}
     		}
     		if ( thm.getRodinFile() instanceof IContextFile) {
         		IContextFile ctxt = (IContextFile) thm.getRodinFile();
          		ModelContext context = ModelController.getContext(ctxt);
          		if (context != null) {
-        			return context.nodes[3];
+        			return context.theorem_node;
          		}
     		}
 		}
