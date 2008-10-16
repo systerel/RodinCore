@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -12,8 +16,8 @@ import java.util.List;
 
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -172,18 +176,18 @@ public class TestMachineVariant extends EventBPOTest {
 		int index = 0;
 		for (VariantTestItem item : items) {
 			String macName = "mac" + index++;
-			IMachineFile mac = createMachineFragment(macName);
+			IMachineRoot mac = createMachineFragment(macName);
 			addVariant(mac, item.variant);
 			IEvent event = addEvent(mac, "evt", makeSList(), 
 					item.guardLabels, item.guards, 
 					item.actionLabels, item.actions);
 			setConvergence(event, convergence);
 		
-			mac.save(null, true);
+			mac.getRodinFile().save(null, true);
 		
 			runBuilder();
 			
-			IPOFile po = getPOFile(mac);
+			IPORoot po = mac.getPORoot();
 		
 			IPOSequent sequent;
 			
@@ -220,9 +224,8 @@ public class TestMachineVariant extends EventBPOTest {
 		}
 	}
 
-	private IMachineFile createMachineFragment(String macName) throws RodinDBException {
-		IMachineFile mac = createMachine(macName);
-
+	private IMachineRoot createMachineFragment(String macName) throws RodinDBException {
+		IMachineRoot mac = createMachine(macName);
 		addVariables(mac, "A", "x", "y");
 		addInvariants(mac, invLabels, invPredicates);
 		return mac;
@@ -251,15 +254,15 @@ public class TestMachineVariant extends EventBPOTest {
 	 * well-definedness of variants
 	 */
 	public void test_04_wDef() throws Exception {
-		
-		IMachineFile mac = createMachineFragment("mac");
+		IMachineRoot mac = createMachineFragment("mac");
+
 		addVariant(mac, "1÷x");
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 
-		IPOFile po = getPOFile(mac);
+		IPORoot po = mac.getPORoot();
 		
 		IPOSequent sequent = getSequent(po, "VWD");
 	
@@ -271,7 +274,8 @@ public class TestMachineVariant extends EventBPOTest {
 	 * No PO is generated for convergent events refining convergent events
 	 */
 	public void test_05_cvgRefinesCvg() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
+
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		IEvent aev = addEvent(abs, "evt", 
@@ -281,9 +285,9 @@ public class TestMachineVariant extends EventBPOTest {
 		setConvergent(aev);
 		addVariant(abs, "x");
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "x");
 	
@@ -295,11 +299,11 @@ public class TestMachineVariant extends EventBPOTest {
 		setConvergent(evt);
 		addVariant(abs, "x");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		
 		noSequent(po, "evt/VAR");
 	}
@@ -309,16 +313,15 @@ public class TestMachineVariant extends EventBPOTest {
 	 * variant proof obligations
 	 */
 	public void test_06_anticipatedNoVariantNoPO() throws Exception {
-		
-		IMachineFile mac = createMachineFragment("mac");
+		IMachineRoot mac = createMachineFragment("mac");
 		IEvent evt = addEvent(mac, "evt");
 		setAnticipated(evt);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 
-		IPOFile po = getPOFile(mac);
+		IPORoot po = mac.getPORoot();
 		
 		noSequent(po, "evt/VAR");
 	}
@@ -328,7 +331,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * anticipated event: PO for convergence is created for convergent concrete events.
 	 */
 	public void test_07_mergeAntCvg() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		IEvent aev = addEvent(abs, "aev", 
@@ -343,9 +346,9 @@ public class TestMachineVariant extends EventBPOTest {
 		setAnticipated(bev);
 		addVariant(abs, "x");
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "x");
 	
@@ -357,14 +360,14 @@ public class TestMachineVariant extends EventBPOTest {
 		setConvergent(evt);
 		addVariant(ref, "x");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		
 		IPOSequent sequent = getSequent(po, "evt/VAR");
 		sequentHasGoal(sequent, typeEnvironment, "x+2<x");
@@ -375,7 +378,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * anticipated event: PO for anticipation is created for anticipated concrete events.
 	 */
 	public void test_08_mergeAntCvg() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		IEvent aev = addEvent(abs, "aev", 
@@ -390,9 +393,9 @@ public class TestMachineVariant extends EventBPOTest {
 		setAnticipated(bev);
 		addVariant(abs, "x");
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "x");
 	
@@ -404,14 +407,14 @@ public class TestMachineVariant extends EventBPOTest {
 		setAnticipated(evt);
 		addVariant(ref, "x");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		
 		IPOSequent sequent = getSequent(po, "evt/VAR");
 		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");
@@ -423,7 +426,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * property is "forgotten".
 	 */
 	public void test_09_antRefinesCvg() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		IEvent aev = addEvent(abs, "evt", 
@@ -433,9 +436,9 @@ public class TestMachineVariant extends EventBPOTest {
 		setConvergent(aev);
 		addVariant(abs, "x");
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "x");
 	
@@ -447,14 +450,14 @@ public class TestMachineVariant extends EventBPOTest {
 		setAnticipated(evt);
 		addVariant(ref, "x");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		
 		IPOSequent sequent = getSequent(po, "evt/VAR");
 		sequentHasGoal(sequent, typeEnvironment, "x+2≤x");

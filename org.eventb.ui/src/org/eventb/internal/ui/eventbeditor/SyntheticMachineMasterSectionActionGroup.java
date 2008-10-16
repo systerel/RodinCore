@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced local variable by parameter
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -24,7 +25,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBImage;
@@ -32,6 +33,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -213,21 +215,21 @@ public class SyntheticMachineMasterSectionActionGroup extends
 					Object obj = ssel.getFirstElement();
 					IInternalElement event = TreeSupports.getEvent(obj);
 
-					IMachineFile file = editor.getRodinInput();
+					IMachineRoot root = editor.getRodinInput();
 					try {
-						IRodinElement[] refines = file
+						IRodinElement[] refines = root
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 						if (refines.length == 1) {
 							IRefinesMachine refine = (IRefinesMachine) refines[0];
 							String name = refine.getAbstractMachineName();
-							IRodinProject prj = file.getRodinProject();
-							IMachineFile refinedFile = (IMachineFile) prj
+							IRodinProject prj = root.getRodinProject();
+							IRodinFile refinedFile = prj
 									.getRodinFile(EventBPlugin
 											.getMachineFileName(name));
 							if (EventBEditorUtils.DEBUG)
 								EventBEditorUtils.debug("Refined: "
 										+ refinedFile.getElementName());
-							IInternalElement abs_evt = refinedFile
+							IInternalElement abs_evt = refinedFile.getRoot()
 									.getInternalElement(event.getElementType(),
 											event.getElementName());
 							UIUtils.linkToEventBEditor(abs_evt);
@@ -323,9 +325,9 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						|| (obj instanceof IParameter)) {
 
 					IRodinElement[] refines;
-					IMachineFile file = editor.getRodinInput();
+					IMachineRoot root = editor.getRodinInput();
 					try {
-						refines = file
+						refines = root
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 						if (refines.length == 1)
 							menu.add(showAbstraction);

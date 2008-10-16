@@ -10,6 +10,7 @@
  *     Systerel - changed axiom form for enumerated sets
  *     Systerel - replaced inherited by extended, local variable by parameter
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -30,11 +31,11 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ITheorem;
@@ -183,7 +184,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAction(final IEventBEditor<IMachineFile> editor,
+	public static void addAction(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -210,7 +211,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addRefinesEvent(final IEventBEditor<IMachineFile> editor,
+	public static void addRefinesEvent(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -242,7 +243,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addWitness(final IEventBEditor<IMachineFile> editor,
+	public static void addWitness(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -269,7 +270,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addGuard(final IEventBEditor<IMachineFile> editor,
+	public static void addGuard(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -295,7 +296,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addParameter(final IEventBEditor<IMachineFile> editor,
+	public static void addParameter(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -321,7 +322,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addVariable(final IEventBEditor<IMachineFile> editor,
+	public static void addVariable(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
@@ -344,7 +345,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addInvariant(final IEventBEditor<IMachineFile> editor,
+	public static void addInvariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createInvariantWizard(editor,
 				null, EventBUIPlugin.INV_DEFAULT);
@@ -378,7 +379,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addEvent(final IEventBEditor<IMachineFile> editor,
+	public static void addEvent(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 
 		final String name = null ;
@@ -425,7 +426,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addAxiom(final IEventBEditor<IContextFile> editor,
+	public static void addAxiom(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createAxiomWizard(editor, null,
 				EventBUIPlugin.AXM_DEFAULT);
@@ -442,7 +443,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addConstant(final IEventBEditor<IContextFile> editor,
+	public static void addConstant(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createElementGeneric(editor,
 				editor.getRodinInput(), IConstant.ELEMENT_TYPE, null);
@@ -459,7 +460,7 @@ public class EventBEditorUtils {
 	 * @param viewer
 	 *            The current Tree Viewer in the Event-B Editor
 	 */
-	public static void addSet(final IEventBEditor<IContextFile> editor,
+	public static void addSet(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createElementGeneric(editor,
 				editor.getRodinInput(), ICarrierSet.ELEMENT_TYPE, null);
@@ -495,17 +496,17 @@ public class EventBEditorUtils {
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
-	 * @param rodinFile
-	 *            the Rodin file that the variable and its invariant,
+	 * @param root
+	 *            the root element that the variable and its invariant,
 	 *            initialization will be created in
 	 */
-	public static void intelligentNewVariable(final IEventBEditor<IMachineFile> editor,
-			final IRodinFile rodinFile) {
+	public static void intelligentNewVariable(final IEventBEditor<IMachineRoot> editor,
+			final IMachineRoot root) {
 		try {
 
 			String prefix = UIUtils.getPrefix(editor.getRodinInput(),
 					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
-			String index = UIUtils.getFreeElementLabelIndex(editor, rodinFile,
+			String index = UIUtils.getFreeElementLabelIndex(editor, root,
 					IInvariant.ELEMENT_TYPE, prefix);
 
 			final IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
@@ -532,7 +533,7 @@ public class EventBEditorUtils {
 		}
 	}
 
-	static void newVariable(IEventBEditor<IMachineFile> editor, String varName,
+	static void newVariable(IEventBEditor<IMachineRoot> editor, String varName,
 			final Collection<Pair<String, String>> invariant, String actName,
 			String actSub) {
 		final AtomicOperation operation = OperationFactory
@@ -554,7 +555,7 @@ public class EventBEditorUtils {
 	 *            in
 	 */
 	public static void intelligentNewConstant(
-			final IEventBEditor<IContextFile> editor, final IRodinFile rodinFile) {
+			final IEventBEditor<IContextRoot> editor, final IRodinFile rodinFile) {
 
 		final IntelligentNewConstantInputDialog dialog = new IntelligentNewConstantInputDialog(
 				editor, Display.getCurrent().getActiveShell(), "New Constant");
@@ -570,7 +571,7 @@ public class EventBEditorUtils {
 		newConstant(editor, identifier, axmNames, axmSubs);
 	}
 	
-	static void newConstant(IEventBEditor<IContextFile> editor, String identifier,
+	static void newConstant(IEventBEditor<IContextRoot> editor, String identifier,
 			String[] axmNames, String[] axmSubs) {
 		AtomicOperation operation = OperationFactory.createConstantWizard(
 				editor, identifier, axmNames, axmSubs);
@@ -578,9 +579,9 @@ public class EventBEditorUtils {
 		addNewElements(editor, operation);
 	}
 
-	public static IEvent getInitialisation(IRodinFile rodinFile)
+	public static IEvent getInitialisation(IMachineRoot root)
 			throws RodinDBException {
-		final IRodinElement[] events = rodinFile
+		final IRodinElement[] events = root
 				.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		for (IRodinElement element : events) {
 			final IEvent event = (IEvent) element;
@@ -600,14 +601,15 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newInvariants(final IEventBEditor<IMachineFile> editor,
+	public static void newInvariants(final IEventBEditor<IMachineRoot> editor,
 			final IRodinFile rodinFile) {
 		try {
 			String invPrefix = UIUtils.getPrefix(editor.getRodinInput(),
 					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
 
-			String invIndex = UIUtils.getFreeElementLabelIndex(editor, rodinFile,
-					IInvariant.ELEMENT_TYPE, invPrefix);
+			String invIndex = UIUtils.getFreeElementLabelIndex(editor,
+					rodinFile.getRoot(), IInvariant.ELEMENT_TYPE,
+					invPrefix);
 			final ElementNameContentInputDialog<IInvariant> dialog =
 				new ElementNameContentInputDialog<IInvariant>(
 					Display.getCurrent().getActiveShell(), "New Invariants",
@@ -639,7 +641,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new invariants will be created in
 	 */
-	public static void newVariant(final IEventBEditor<IMachineFile> editor,
+	public static void newVariant(final IEventBEditor<IMachineRoot> editor,
 			final IRodinFile rodinFile) {
 		final NewVariantInputDialog dialog = new NewVariantInputDialog(Display
 				.getCurrent().getActiveShell(), "New Variant", "Expression");
@@ -727,7 +729,7 @@ public class EventBEditorUtils {
 
 	}
 
-	public static void newEvent(IEventBEditor<IMachineFile> editor, String name,
+	public static void newEvent(IEventBEditor<IMachineRoot> editor, String name,
 			String[] paramNames, String[] grdNames, String[] grdPredicates,
 			String[] actNames, String[] actSubstitutions) {
 		AtomicOperation operation = OperationFactory
@@ -748,7 +750,7 @@ public class EventBEditorUtils {
 	public static void newCarrierSets(final EventBContextEditor editor,
 			IProgressMonitor monitor) {
 
-		final IContextFile ctxFile = editor.getRodinInput();
+		final IContextRoot ctxFile = editor.getRodinInput();
 		try {
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 			.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
@@ -782,7 +784,7 @@ public class EventBEditorUtils {
 	public static void newEnumeratedSet(final EventBContextEditor editor,
 			IProgressMonitor monitor) {
 
-		final IContextFile ctxFile = editor.getRodinInput();
+		final IContextRoot ctxFile = editor.getRodinInput();
 		try {
 			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
@@ -816,7 +818,7 @@ public class EventBEditorUtils {
 	 * @param rodinFile
 	 *            the Rodin file that the new axioms will be created in
 	 */
-	public static void newAxioms(final IEventBEditor<IContextFile> editor,
+	public static void newAxioms(final IEventBEditor<IContextRoot> editor,
 			final IRodinFile rodinFile) {
 		try {
 			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
@@ -849,11 +851,12 @@ public class EventBEditorUtils {
 
 	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
 			throws RodinDBException {
-		IMachineFile rodinFile = (IMachineFile) concreteElement.getOpenable();
-		IRodinFile abstractFile = EventBUtils.getAbstractMachine(rodinFile);
-		if (abstractFile == null)
+		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
+		IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
+		IMachineRoot abstractRoot = EventBUtils.getAbstractMachine(root);
+		if (abstractRoot == null)
 			return null;
-		if (!abstractFile.exists())
+		if (!abstractRoot.exists())
 			return null;
 
 		IRodinElement abstractElement = null;
@@ -861,11 +864,11 @@ public class EventBEditorUtils {
 			IRodinElement[] abs_evts = ((IEvent) concreteElement)
 					.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
 			if (abs_evts.length == 0) {
-				abstractElement = abstractFile.getInternalElement(
+				abstractElement = abstractRoot.getInternalElement(
 						IEvent.ELEMENT_TYPE, ((IEvent) concreteElement)
 								.getElementName());
 			} else {
-				abstractElement = abstractFile.getInternalElement(
+				abstractElement = abstractRoot.getInternalElement(
 						IEvent.ELEMENT_TYPE, ((IRefinesEvent) abs_evts[0])
 								.getAbstractEventLabel());
 			}
@@ -896,16 +899,16 @@ public class EventBEditorUtils {
 		}
 	}
 	
-	public static String getFreeInitialisationActionName(IEventBEditor<IMachineFile> editor)
+	public static String getFreeInitialisationActionName(IEventBEditor<IMachineRoot> editor)
 			throws RodinDBException {
-		IRodinFile rodinFile = editor.getRodinInput();
+		final IMachineRoot root = editor.getRodinInput();
 
-		IInternalElement initialisation = getInitialisation(rodinFile);
+		IInternalElement initialisation = getInitialisation(root);
 
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 				.getDefaultPrefix("org.eventb.core.actionLabel");
 		if (initialisation == null)
-			return UIUtils.getPrefix(editor.getRodinInput(),
+			return UIUtils.getPrefix(root,
 					IAction.ELEMENT_TYPE, defaultPrefix) + 1;
 		else {
 			return UIUtils.getFreeElementLabel(editor, initialisation,

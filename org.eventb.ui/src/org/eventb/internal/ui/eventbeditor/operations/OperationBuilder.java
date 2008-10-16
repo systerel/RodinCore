@@ -24,11 +24,10 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -65,14 +64,14 @@ class OperationBuilder {
 		return op;
 	}
 
-	public OperationTree createAxiom(IEventBEditor<IContextFile> editor,
-			String[] labels, String[] predicates) {
+	public OperationTree createAxiom(IEventBEditor<?> editor, String[] labels,
+			String[] predicates) {
 		assertLengthEquals(labels, predicates);
 		return createElementLabelPredicate(editor, editor.getRodinInput(),
 				IAxiom.ELEMENT_TYPE, labels, predicates);
 	}
 
-	public OperationTree createConstant(IEventBEditor<IContextFile> editor,
+	public OperationTree createConstant(IEventBEditor<?> editor,
 			String identifier, String[] labels, String[] predicates) {
 		final OperationNode cmd = new OperationNode();
 		cmd.addCommande(createConstant(editor, identifier));
@@ -85,34 +84,33 @@ class OperationBuilder {
 	 *            null to set a default label
 	 * @param predicate
 	 */
-	public OperationTree createAxiom(IEventBEditor<IContextFile> editor,
-			String label, String predicate) {
+	public OperationTree createAxiom(IEventBEditor<?> editor, String label,
+			String predicate) {
 		return createElementLabelPredicate(editor, editor.getRodinInput(),
 				IAxiom.ELEMENT_TYPE, label, predicate);
 	}
 
-	public OperationTree createConstant(IEventBEditor<IContextFile> editor,
+	public OperationTree createConstant(IEventBEditor<?> editor,
 			String identifier) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				IConstant.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
-	public OperationTree createCarrierSet(IEventBEditor<IContextFile> editor,
+	public OperationTree createCarrierSet(IEventBEditor<?> editor,
 			String identifier) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				ICarrierSet.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
 
-	public OperationTree createCarrierSet(IEventBEditor<IContextFile> editor,
+	public OperationTree createCarrierSet(IEventBEditor<?> editor,
 			String[] identifier) {
 		return createElementOneStringAttribute(editor,
 				ICarrierSet.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
-	public OperationTree createEnumeratedSet(
-			IEventBEditor<IContextFile> editor, String identifier,
-			String[] elements) {
+	public OperationTree createEnumeratedSet(IEventBEditor<?> editor,
+			String identifier, String[] elements) {
 		OperationNode cmd = new OperationNode();
 		cmd.addCommande(createCarrierSet(editor, identifier));
 		if (elements.length > 0) {
@@ -125,8 +123,7 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree createVariant(IEventBEditor<IMachineFile> editor,
-			String predicate) {
+	public OperationTree createVariant(IEventBEditor<?> editor, String predicate) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				IVariant.ELEMENT_TYPE, null, EXPRESSION_ATTRIBUTE, predicate);
 	}
@@ -141,8 +138,7 @@ class OperationBuilder {
 	 *            elements in the set
 	 */
 	private OperationTree createAxiomDefinitionOfEnumeratedSet(
-			IEventBEditor<IContextFile> editor, String identifier,
-			String[] elements) {
+			IEventBEditor<?> editor, String identifier, String[] elements) {
 		final StringBuilder axmPred = new StringBuilder(identifier);
 		axmPred.append(" = {");
 		String axmSep = "";
@@ -160,7 +156,7 @@ class OperationBuilder {
 	 * return a command which create a constant for each element in elements
 	 */
 	private OperationTree createElementsOfEnumeratedSet(
-			IEventBEditor<IContextFile> editor, String[] elements) {
+			IEventBEditor<?> editor, String[] elements) {
 		final OperationNode cmd = new OperationNode();
 		for (String element : elements) {
 			cmd.addCommande(createConstant(editor, element));
@@ -173,7 +169,7 @@ class OperationBuilder {
 	 * set are all different
 	 */
 	private OperationTree createAxiomElementsDifferentsOfEnumeratedSet(
-			IEventBEditor<IContextFile> editor, String[] elements) {
+			IEventBEditor<?> editor, String[] elements) {
 		final OperationNode cmd = new OperationNode();
 		for (int i = 0; i < elements.length; ++i) {
 			for (int j = i + 1; j < elements.length; ++j) {
@@ -186,7 +182,7 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree createVariable(IEventBEditor<IMachineFile> editor,
+	public OperationTree createVariable(IEventBEditor<IMachineRoot> editor,
 			String varName, Collection<Pair<String, String>> invariant,
 			String actName, String actSub) {
 		OperationNode cmd = new OperationNode();
@@ -198,12 +194,11 @@ class OperationBuilder {
 
 	// TODO changer par operation multiple event ?
 	private OperationTree createInitialisation(
-			IEventBEditor<IMachineFile> editor, String actName, String actSub) {
+			IEventBEditor<IMachineRoot> editor, String actName, String actSub) {
 		return new CreateInitialisation(editor, actName, actSub);
 	}
 
-	private OperationNode createInvariantList(
-			IEventBEditor<IMachineFile> editor,
+	private OperationNode createInvariantList(IEventBEditor<?> editor,
 			Collection<Pair<String, String>> invariants) {
 		OperationNode cmd = new OperationNode();
 
@@ -218,8 +213,8 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	private OperationCreateElement createVariable(
-			IEventBEditor<IMachineFile> editor, String identifier) {
+	private OperationCreateElement createVariable(IEventBEditor<?> editor,
+			String identifier) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				IVariable.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
@@ -259,21 +254,21 @@ class OperationBuilder {
 		return op;
 	}
 
-	public OperationTree createInvariant(IEventBEditor<IMachineFile> editor,
-			String label, String predicate) {
+	public OperationTree createInvariant(IEventBEditor<?> editor, String label,
+			String predicate) {
 		return createElementLabelPredicate(editor, editor.getRodinInput(),
 				IInvariant.ELEMENT_TYPE, label, predicate);
 	}
 
-	public OperationNode createInvariant(IEventBEditor<IMachineFile> editor,
+	public OperationNode createInvariant(IEventBEditor<?> editor,
 			String[] labels, String[] predicates) {
 		assertLengthEquals(labels, predicates);
 		return createElementLabelPredicate(editor, editor.getRodinInput(),
 				IInvariant.ELEMENT_TYPE, labels, predicates);
 	}
 
-	private OperationCreateElement createEvent(
-			IEventBEditor<IMachineFile> editor, String label) {
+	private OperationCreateElement createEvent(IEventBEditor<?> editor,
+			String label) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				IEvent.ELEMENT_TYPE, null, LABEL_ATTRIBUTE, label);
 
@@ -285,8 +280,8 @@ class OperationBuilder {
 		assert tab1.length == tab2.length;
 	}
 
-	public OperationTree createEvent(IEventBEditor<IMachineFile> editor,
-			String name, String[] varIdentifiers, String[] grdLabels,
+	public OperationTree createEvent(IEventBEditor<?> editor, String name,
+			String[] varIdentifiers, String[] grdLabels,
 			String[] grdPredicates, String[] actLabels,
 			String[] actSubstitutions) {
 		OperationCreateElement op = createEvent(editor, name);
@@ -386,13 +381,13 @@ class OperationBuilder {
 
 	// TODO recuperer les changements avec IParameter ( voir mail de stefan
 	// Hallerstede )
-	private OperationCreateElement createParameter(
-			IEventBEditor<IMachineFile> editor, String identifier) {
+	private OperationCreateElement createParameter(IEventBEditor<?> editor,
+			String identifier) {
 		return createElementOneStringAttribute(editor, editor.getRodinInput(),
 				IParameter.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE, identifier);
 	}
 
-	private OperationNode createParameter(IEventBEditor<IMachineFile> editor,
+	private OperationNode createParameter(IEventBEditor<?> editor,
 			String[] varIdentifiers) {
 		OperationNode op = new OperationNode();
 		for (String identifier : varIdentifiers) {
@@ -471,14 +466,14 @@ class OperationBuilder {
 		return op;
 	}
 
-	public OperationTree createGuard(IEventBEditor<IMachineFile> editor,
+	public OperationTree createGuard(IEventBEditor<?> editor,
 			IInternalElement event, String label, String predicate,
 			IInternalElement sibling) {
 		return createElementLabelPredicate(editor, event, IGuard.ELEMENT_TYPE,
 				label, predicate);
 	}
 
-	public OperationTree createAction(IEventBEditor<IMachineFile> editor,
+	public OperationTree createAction(IEventBEditor<?> editor,
 			IInternalElement event, String label, String assignement,
 			IInternalElement sibling) {
 		return createElementTwoStringAttribute(editor, event,
@@ -486,7 +481,7 @@ class OperationBuilder {
 				EventBAttributes.ASSIGNMENT_ATTRIBUTE, label, assignement);
 	}
 
-	public OperationTree createAction(IEventBEditor<IMachineFile> editor,
+	public OperationTree createAction(IEventBEditor<?> editor,
 			IInternalElement event, String[] label, String[] assignement,
 			IInternalElement sibling) {
 		return createElementTwoStringAttribute(editor, event,
@@ -494,23 +489,16 @@ class OperationBuilder {
 				EventBAttributes.ASSIGNMENT_ATTRIBUTE, label, assignement);
 	}
 
-	private OperationTree copyElement(IRodinFile pasteInto,
-			IRodinElement parent, IInternalElement element) {
-		return new CopyElement(pasteInto, parent, element);
+	private OperationTree copyElement(IInternalElement parent,
+			IInternalElement element) {
+		return new CopyElement(parent, element);
 	}
 
-	public OperationTree copyElements(IRodinFile file, IRodinElement parent,
+	public OperationTree copyElements(IInternalElement parent,
 			IRodinElement[] elements) {
 		OperationNode op = new OperationNode();
 		for (IRodinElement element : elements) {
-			IRodinFile pasteInto;
-			if (parent != null) {
-				pasteInto = (IRodinFile) parent.getOpenable();
-			} else {
-				pasteInto = file;
-			}
-			op.addCommande(copyElement(pasteInto, parent,
-					(IInternalElement) element));
+			op.addCommande(copyElement(parent, (IInternalElement) element));
 		}
 		return op;
 	}
@@ -582,7 +570,7 @@ class OperationBuilder {
 		final OperationNode op = new OperationNode();
 		int counter = 1;
 		try {
-			for (IInternalElement element : file.getChildrenOfType(type)) {
+			for (IInternalElement element : file.getRoot().getChildrenOfType(type)) {
 				op.addCommande(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;

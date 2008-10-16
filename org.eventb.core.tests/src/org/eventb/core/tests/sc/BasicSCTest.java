@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.tests.sc;
 
 import java.util.ArrayList;
@@ -19,24 +22,24 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAccuracyElement;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCAssignmentElement;
 import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesEvent;
@@ -84,19 +87,19 @@ public abstract class BasicSCTest extends EventBTest {
 	private final List<IRodinFile> sourceFiles = new ArrayList<IRodinFile>();
 	
 	@Override
-	protected IContextFile createContext(String bareName) throws RodinDBException {
-		IContextFile file = super.createContext(bareName);
-		sourceFiles.add(file);
-		addFile(file.getSCContextFile());
-		return file;
+	protected IContextRoot createContext(String bareName) throws RodinDBException {
+		IContextRoot root = super.createContext(bareName);
+		sourceFiles.add(root.getRodinFile());
+		addFile(root.getSCContextRoot().getRodinFile());
+		return root;
 	}
 
 	@Override
-	protected IMachineFile createMachine(String bareName) throws RodinDBException {
-		IMachineFile file = super.createMachine(bareName);
-		sourceFiles.add(file);
-		addFile(file.getSCMachineFile());
-		return file;
+	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
+		IMachineRoot root = super.createMachine(bareName);
+		sourceFiles.add(root.getRodinFile());
+		addFile(root.getSCMachineRoot().getRodinFile());
+		return root;
 	}
 
 	public BasicSCTest() {
@@ -269,13 +272,13 @@ public abstract class BasicSCTest extends EventBTest {
 		containsPredicates("axiom", environment, labels, strings, axioms);
 	}
 
-	public void containsTheorems(ISCContextFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCTheorem[] theorems = file.getSCTheorems();
+	public void containsTheorems(ISCContextRoot root, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+		ISCTheorem[] theorems = root.getSCTheorems();
 		
 		containsTheorems(theorems, environment, labels, strings);
 	}
 
-	public void containsTheorems(ISCMachineFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+	public void containsTheorems(ISCMachineRoot file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCTheorem[] theorems = file.getSCTheorems();
 		
 		containsTheorems(theorems, environment, labels, strings);
@@ -285,14 +288,14 @@ public abstract class BasicSCTest extends EventBTest {
 		containsPredicates("theorem", environment, labels, strings, theorems);
 	}
 
-	public void containsInvariants(ISCMachineFile file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCInvariant[] invariants = file.getSCInvariants();
+	public void containsInvariants(ISCMachineRoot root, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+		ISCInvariant[] invariants = root.getSCInvariants();
 		
 		containsPredicates("invariant", environment, labels, strings, invariants);
 	}
-
-	public ISCInternalContext[] getInternalContexts(ISCContextFile file, int num) throws RodinDBException {
-		final ISCInternalContext[] contexts = file.getAbstractSCContexts();
+	
+	public ISCInternalContext[] getInternalContexts(ISCContextRoot root, int num) throws RodinDBException {
+		final ISCInternalContext[] contexts = root.getAbstractSCContexts();
 		checkInternalContexts(num, contexts);
 		return contexts;
 	}
@@ -308,18 +311,18 @@ public abstract class BasicSCTest extends EventBTest {
 		}
 	}
 
-	public ISCEvent getSCEvent(ISCMachineFile file, String label) throws RodinDBException {
-		for (ISCEvent event: file.getSCEvents()) {
+	public ISCEvent getSCEvent(ISCMachineRoot root, String label) throws RodinDBException {
+		for (ISCEvent event: root.getSCEvents()) {
 			if (label.equals(event.getLabel())) {
 				return event;
 			}
 		}
-		fail("No event labelled " + label + " in " + file);
+		fail("No event labelled " + label + " in " + root.getRodinFile());
 		return null;
 	}
 
-	public ISCEvent[] getSCEvents(ISCMachineFile file, String...strings) throws RodinDBException {
-		ISCEvent[] events = file.getSCEvents();
+	public ISCEvent[] getSCEvents(ISCMachineRoot root, String...strings) throws RodinDBException {
+		ISCEvent[] events = root.getSCEvents();
 		
 		assertEquals("wrong number of events", strings.length, events.length);
 		
@@ -334,12 +337,12 @@ public abstract class BasicSCTest extends EventBTest {
 		return events;
 	}
 
-	public ISCInternalContext[] getInternalContexts(ISCMachineFile file, int num) throws RodinDBException {
-		final ISCInternalContext[] contexts = file.getSCSeenContexts();
+	public ISCInternalContext[] getInternalContexts(ISCMachineRoot root, int num) throws RodinDBException {
+		final ISCInternalContext[] contexts = root.getSCSeenContexts();
 		checkInternalContexts(num, contexts);
 		return contexts;
 	}
-
+	
 	public void containsConstants(ISCContext context, String... strings) throws RodinDBException {
 		ISCConstant[] constants = context.getSCConstants();
 		
@@ -354,8 +357,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	public void containsEvents(ISCMachineFile file, String... strings) throws RodinDBException {
-		ISCEvent[] events = file.getSCEvents();
+	public void containsEvents(ISCMachineRoot root, String... strings) throws RodinDBException {
+		ISCEvent[] events = root.getSCEvents();
 		
 		assertEquals("wrong number of events", strings.length, events.length);
 		
@@ -488,8 +491,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	public void extendsContexts(ISCContextFile scContext, String... names) throws RodinDBException {
-		ISCExtendsContext[] scExtends = scContext.getSCExtendsClauses();
+	public void extendsContexts(ISCContextRoot root, String... names) throws RodinDBException {
+		ISCExtendsContext[] scExtends = root.getSCExtendsClauses();
 		
 		assertEquals("wrong number of extends clauses", names.length, scExtends.length);
 		
@@ -501,8 +504,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + name, nameSet.contains(name));
 	}
 
-	public void containsContexts(ISCContextFile scContext, String... names) throws RodinDBException {
-		ISCInternalContext[] contexts = scContext.getAbstractSCContexts();
+	public void containsContexts(ISCContextRoot root, String... names) throws RodinDBException {
+		ISCInternalContext[] contexts = root.getAbstractSCContexts();
 		
 		assertEquals("wrong number of internal contexts", names.length, contexts.length);
 		
@@ -522,8 +525,8 @@ public abstract class BasicSCTest extends EventBTest {
 		assertEquals("Should not contain any internal contexts", 0,
 				children.length);
 	}
-
-	public void seesContexts(ISCMachineFile scMachine, String... names) throws RodinDBException {
+	
+	public void seesContexts(ISCMachineRoot scMachine, String... names) throws RodinDBException {
 		ISCSeesContext[] sees = scMachine.getSCSeesClauses();
 		
 		assertEquals("wrong number of sees clauses", names.length, sees.length);
@@ -536,8 +539,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + name, nameSet.contains(name));
 	}
 
-	public void containsContexts(ISCMachineFile scMachine, String... names) throws RodinDBException {
-		ISCInternalContext[] contexts = scMachine.getSCSeenContexts();
+	public void containsContexts(ISCMachineRoot root, String... names) throws RodinDBException {
+		ISCInternalContext[] contexts = root.getSCSeenContexts();
 		
 		assertEquals("wrong number of internal contexts", names.length, contexts.length);
 		
@@ -549,8 +552,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + name, nameSet.contains(name));
 	}
 
-	public void forbiddenVariables(ISCMachineFile file, String... strings) throws RodinDBException {
-		ISCVariable[] variables = file.getSCVariables();
+	public void forbiddenVariables(ISCMachineRoot root, String... strings) throws RodinDBException {
+		ISCVariable[] variables = root.getSCVariables();
 		
 		for (int i=0; i<variables.length; i++) {
 			if (variables[i].isConcrete())
@@ -563,8 +566,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	public void containsVariables(ISCMachineFile file, String... strings) throws RodinDBException {
-		ISCVariable[] variables = file.getSCVariables();
+	public void containsVariables(ISCMachineRoot root, String... strings) throws RodinDBException {
+		ISCVariable[] variables = root.getSCVariables();
 		
 		assertEquals("wrong number of variables", strings.length, variables.length);
 		
@@ -576,10 +579,10 @@ public abstract class BasicSCTest extends EventBTest {
 		for (String string : strings)
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
-
-	public void containsVariant(ISCMachineFile file, ITypeEnvironment environment, String... strings) throws RodinDBException {
+	
+	public void containsVariant(ISCMachineRoot root, ITypeEnvironment environment, String... strings) throws RodinDBException {
 		assert strings.length <= 1;
-		ISCVariant[] variants = file.getSCVariants();
+		ISCVariant[] variants = root.getSCVariants();
 		
 		
 		

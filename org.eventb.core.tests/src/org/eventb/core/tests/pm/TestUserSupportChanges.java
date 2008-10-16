@@ -1,25 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.tests.pm;
 
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.internal.core.pm.UserSupport;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -32,11 +36,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportChanges extends TestPM {
 
-	IPOFile poFile;
+	IPORoot poFile;
 
-	IPSFile psFile;
+	IPSRoot psFile;
 
-	IPRFile prFile;
+	IPRRoot prFile;
 
 	IUserSupport userSupport;
 
@@ -58,8 +62,8 @@ public class TestUserSupportChanges extends TestPM {
 	protected void setUp() throws Exception {
 		super.setUp();
 		poFile = createPOFile("x");
-		psFile = poFile.getPSFile();
-		prFile = poFile.getPRFile();
+		psFile = poFile.getPSRoot();
+		prFile = poFile.getPRRoot();
 
 		hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null, mTypeEnvironment(
 				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ");
@@ -74,18 +78,18 @@ public class TestUserSupportChanges extends TestPM {
 	}
 
 	@Override
-	IPOFile createPOFile(String fileName) throws RodinDBException {
-		IPOFile poFile = (IPOFile) rodinProject.getRodinFile(fileName + ".bpo");
+	IPORoot createPOFile(String fileName) throws RodinDBException {
+		IRodinFile poFile = rodinProject.getRodinFile(fileName + ".bpo");
 		poFile.create(true, null);
-		return poFile;
+		return (IPORoot) poFile.getRoot();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poFile.delete(true, null);
-		prFile.delete(true, null);
-		psFile.delete(true, null);
+		poFile.getRodinFile().delete(true, null);
+		prFile.getRodinFile().delete(true, null);
+		psFile.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
@@ -95,10 +99,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -137,10 +141,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -182,10 +186,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil
@@ -239,10 +243,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		String original = userSupport.toString();
@@ -265,10 +269,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
@@ -315,10 +319,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -375,10 +379,10 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -446,10 +450,10 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil
 				.addSequent(poFile, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poFile.save(null, true);
+		poFile.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO

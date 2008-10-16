@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -18,11 +19,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeFactory implements
@@ -59,11 +61,12 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 
 		IRefinesEvent refinesEvent = (IRefinesEvent) element;
 		IEvent event = (IEvent) refinesEvent.getParent();
-		IMachineFile file = (IMachineFile) event.getParent();
-		IRefinesMachine[] refinesClauses = file.getRefinesClauses();
+		IMachineRoot root = (IMachineRoot) event.getParent();
+		IRefinesMachine[] refinesClauses = root.getRefinesClauses();
 		if (refinesClauses.length == 1) {
 			IRefinesMachine refinesMachine = refinesClauses[0];
-			IMachineFile abstractMachine = refinesMachine.getAbstractMachine();
+			IRodinFile rf = refinesMachine.getAbstractMachine();
+			IMachineRoot abstractMachine = (IMachineRoot) rf.getRoot();
 			if (abstractMachine.exists()) {
 				IEvent[] events = abstractMachine.getEvents();
 				for (IEvent absEvent : events) {

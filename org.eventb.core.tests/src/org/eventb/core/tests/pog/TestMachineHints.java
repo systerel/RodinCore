@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 
@@ -17,13 +21,13 @@ import org.eventb.core.ast.ITypeEnvironment;
  * @author Stefan Hallerstede
  *
  */
-public class TestMachineHints extends GenericHintTest<IMachineFile> {
+public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	
 	/**
 	 * guard well-definedness hints
 	 */
 	public void testMachineHints_00() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"));
@@ -36,11 +40,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x");
 		
@@ -60,7 +64,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * action well-definedness and feasilibility hints
 	 */
 	public void testMachineHints_01() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
 		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL"));
@@ -74,11 +78,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z");
 		
@@ -99,7 +103,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * invariant preservation hints
 	 */
 	public void testMachineHints_02() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
 		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
@@ -113,11 +117,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z");
 		
@@ -138,8 +142,9 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * guard strengthening hints in refinement
 	 */
 	public void testMachineHints_03() throws Exception {
-		IMachineFile abs = createMachine("abs");
-
+		IMachineRoot abs = createMachine("abs");
+		
+		
 		addVariables(abs, "x", "z");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
 		addEvent(abs, "evt", 
@@ -147,9 +152,9 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList(), makeSList());
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "x", "z");
 		IEvent event = addEvent(mac, "evt", 
@@ -164,11 +169,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z");
 		
@@ -189,8 +194,8 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * simulation hints in refinement
 	 */
 	public void testMachineHints_04() throws Exception {
-		IMachineFile abs = createMachine("abs");
-
+		IMachineRoot abs = createMachine("abs");
+		
 		addVariables(abs, "x", "z");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
 		addEvent(abs, "evt", 
@@ -198,9 +203,9 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, "x", "zc");
@@ -221,11 +226,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("z'", boolType);
 		typeEnvironment.addName("zc'", boolType);
 	
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z", "zc");
 		
@@ -250,8 +255,8 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * invariant preservation hints in refinement
 	 */
 	public void testMachineHints_05() throws Exception {
-		IMachineFile abs = createMachine("abs");
-
+		IMachineRoot abs = createMachine("abs");
+		
 		addVariables(abs, "x", "z");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
 		addEvent(abs, "evt", 
@@ -259,9 +264,9 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, "x", "zc");
@@ -282,11 +287,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("z'", boolType);
 		typeEnvironment.addName("zc'", boolType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z", "zc");
 		
@@ -311,7 +316,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * invariant preservation hints
 	 */
 	public void testMachineHints_06() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
 		addInvariants(mac, makeSList("I", "J", "K"), makeSList("x=min(0‥4)", "z∈ℕ→ℕ", "x≤z(x)"));
@@ -324,11 +329,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("z", relIntType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x", "z");
 		
@@ -355,7 +360,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	 * variant hints for progress proof obligation
 	 */
 	public void testMachineHints_07() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"));
@@ -370,11 +375,11 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "x");
 		
@@ -392,7 +397,7 @@ public class TestMachineHints extends GenericHintTest<IMachineFile> {
 	}
 
 	@Override
-	protected IGenericPOTest<IMachineFile> newGeneric() {
+	protected IGenericPOTest<IMachineRoot> newGeneric() {
 		return new GenericMachinePOTest(this);
 	}
 

@@ -1,14 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -20,17 +24,18 @@ public abstract class BasicSCTestWithFwdConfig extends BasicSCTest {
 	private static final String FWD_CONFIG = "org.eventb.core.fwd";
 
 	@Override
-	protected IContextFile createContext(String bareName)
+	protected IContextRoot createContext(String bareName)
 			throws RodinDBException {
-		IContextFile ctx = super.createContext(bareName);
+		IContextRoot ctx = super.createContext(bareName);
 		ctx.setConfiguration(FWD_CONFIG, null);
 		return ctx;
 	}
 
+
 	@Override
-	protected IMachineFile createMachine(String bareName)
+	protected IMachineRoot createMachine(String bareName)
 			throws RodinDBException {
-		IMachineFile mac = super.createMachine(bareName);
+		IMachineRoot mac = super.createMachine(bareName);
 		mac.setConfiguration(FWD_CONFIG, null);
 		return mac;
 	}

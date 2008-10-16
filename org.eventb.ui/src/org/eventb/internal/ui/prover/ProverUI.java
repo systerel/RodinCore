@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -33,7 +34,6 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPSFile;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -58,6 +58,7 @@ import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
 import org.eventb.internal.ui.searchhypothesis.ISearchHypothesisPage;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisPage;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -101,7 +102,7 @@ public class ProverUI extends FormEditor implements
 	IUserSupport userSupport;
 
 	// The associated Rodin file handle
-	IPSFile psFile = null;
+	IRodinFile psFile = null;
 
 	private ProofStatusLineManager statusManager = null;
 	
@@ -127,9 +128,9 @@ public class ProverUI extends FormEditor implements
 		super.setInput(input);
 		if (input instanceof IFileEditorInput) {
 			final IFile inputFile = ((IFileEditorInput) input).getFile();
-			psFile = (IPSFile) RodinCore.valueOf(inputFile);
+			psFile = RodinCore.valueOf(inputFile);
 			userSupport.setInput(psFile);
-			this.setPartName(psFile.getComponentName());
+			this.setPartName(psFile.getBareName());
 		}
 		editorDirtyStateChanged();
 	}
@@ -449,14 +450,14 @@ public class ProverUI extends FormEditor implements
 	 * 
 	 * @return a handle to a Rodin file
 	 */
-	public IPSFile getRodinInput() {
+	public IRodinFile getRodinInput() {
 		if (psFile == null) {
 			FileEditorInput editorInput = (FileEditorInput) this
 					.getEditorInput();
 
 			IFile inputFile = editorInput.getFile();
 
-			psFile = (IPSFile) RodinCore.valueOf(inputFile);
+			psFile = RodinCore.valueOf(inputFile);
 		}
 		return psFile;
 	}

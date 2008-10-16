@@ -14,8 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -56,8 +55,8 @@ public class OperationFactory {
 	 *            null to set a default label
 	 * @param predicate
 	 */
-	public static AtomicOperation createAxiomWizard(
-			IEventBEditor<IContextFile> editor, String label, String predicate) {
+	public static AtomicOperation createAxiomWizard(IEventBEditor<?> editor,
+			String label, String predicate) {
 		final OperationBuilder builder = new OperationBuilder();
 		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(editor,
 				label, predicate));
@@ -65,9 +64,8 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation createAxiomWizard(
-			IEventBEditor<IContextFile> editor, String[] labels,
-			String[] predicates) {
+	public static AtomicOperation createAxiomWizard(IEventBEditor<?> editor,
+			String[] labels, String[] predicates) {
 		final OperationBuilder builder = new OperationBuilder();
 		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(editor,
 				labels, predicates));
@@ -75,9 +73,8 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation createConstantWizard(
-			IEventBEditor<IContextFile> editor, String identifier,
-			String[] labels, String[] predicates) {
+	public static AtomicOperation createConstantWizard(IEventBEditor<?> editor,
+			String identifier, String[] labels, String[] predicates) {
 		final AtomicOperation cmd;
 		final OperationBuilder builder = new OperationBuilder();
 		cmd = new AtomicOperation(builder.createConstant(editor, identifier,
@@ -87,8 +84,7 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createEnumeratedSetWizard(
-			IEventBEditor<IContextFile> editor, String identifier,
-			String[] elements) {
+			IEventBEditor<?> editor, String identifier, String[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.createEnumeratedSet(editor, identifier, elements));
@@ -97,8 +93,8 @@ public class OperationFactory {
 
 	}
 
-	public static AtomicOperation createVariantWizard(
-			IEventBEditor<IMachineFile> editor, String predicate) {
+	public static AtomicOperation createVariantWizard(IEventBEditor<?> editor,
+			String predicate) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createVariant(
 				editor, predicate));
@@ -107,7 +103,7 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createVariableWizard(
-			final IEventBEditor<IMachineFile> editor, final String varName,
+			final IEventBEditor<IMachineRoot> editor, final String varName,
 			final Collection<Pair<String, String>> invariant,
 			final String actName, final String actSub) {
 		final OperationBuilder builder = new OperationBuilder();
@@ -122,7 +118,7 @@ public class OperationFactory {
 	 *            if null the label of created element is the next free label.
 	 */
 	public static AtomicOperation createInvariantWizard(
-			IEventBEditor<IMachineFile> editor, String label, String content) {
+			IEventBEditor<?> editor, String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.createInvariant(editor, label, content));
@@ -131,8 +127,7 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createInvariantWizard(
-			IEventBEditor<IMachineFile> editor, String[] labels,
-			String[] contents) {
+			IEventBEditor<?> editor, String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.createInvariant(editor, labels, contents));
@@ -141,7 +136,7 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createCarrierSetWizard(
-			IEventBEditor<IContextFile> editor, String identifier) {
+			IEventBEditor<?> editor, String identifier) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.createCarrierSet(editor, identifier));
@@ -150,7 +145,7 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createCarrierSetWizard(
-			IEventBEditor<IContextFile> editor, String[] identifier) {
+			IEventBEditor<?> editor, String[] identifier) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.createCarrierSet(editor, identifier));
@@ -189,10 +184,9 @@ public class OperationFactory {
 	 * @param actSubstitutions
 	 *            actions substitution
 	 */
-	public static AtomicOperation createEvent(
-			IEventBEditor<IMachineFile> editor, String name, String[] varNames,
-			String[] grdNames, String[] grdPredicates, String[] actNames,
-			String[] actSubstitutions) {
+	public static AtomicOperation createEvent(IEventBEditor<?> editor,
+			String name, String[] varNames, String[] grdNames,
+			String[] grdPredicates, String[] actNames, String[] actSubstitutions) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createEvent(
 				editor, name, varNames, grdNames, grdPredicates, actNames,
@@ -233,7 +227,7 @@ public class OperationFactory {
 	}
 
 	private static IUndoContext getContext(IEventBEditor<?> editor) {
-		return getContext(editor.getRodinInput());
+		return getContext(editor.getRodinInput().getRodinFile());
 	}
 
 	public static IUndoContext getContext(IRodinFile rodinFile) {
@@ -250,6 +244,10 @@ public class OperationFactory {
 			}
 
 		};
+	}
+
+	public static IUndoContext getContext(IInternalElement root) {
+		return getContext(root.getRodinFile());
 	}
 
 	public static AtomicOperation changeAttribute(IRodinFile file,
@@ -286,9 +284,9 @@ public class OperationFactory {
 		return op;
 	}
 
-	public static AtomicOperation createGuard(
-			IEventBEditor<IMachineFile> editor, IInternalElement event,
-			String label, String predicate, IInternalElement sibling) {
+	public static AtomicOperation createGuard(IEventBEditor<?> editor,
+			IInternalElement event, String label, String predicate,
+			IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createGuard(
 				editor, event, label, predicate, sibling));
@@ -296,9 +294,9 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation createAction(
-			IEventBEditor<IMachineFile> editor, IInternalElement event,
-			String label, String assignement, IInternalElement sibling) {
+	public static AtomicOperation createAction(IEventBEditor<?> editor,
+			IInternalElement event, String label, String assignement,
+			IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
 				editor, event, label, assignement, sibling));
@@ -306,9 +304,9 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation createAction(
-			IEventBEditor<IMachineFile> editor, IInternalElement event,
-			String label[], String predicate[], IInternalElement sibling) {
+	public static AtomicOperation createAction(IEventBEditor<?> editor,
+			IInternalElement event, String label[], String predicate[],
+			IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
 				editor, event, label, predicate, sibling));
@@ -316,12 +314,15 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation copyElements(IRodinFile pasteInto,
-			IRodinElement parent, IRodinElement[] elements) {
+	/**
+	 * If all the element into parent
+	 */
+	public static AtomicOperation copyElements(IInternalElement parent,
+			IRodinElement[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.copyElements(
-				pasteInto, parent, elements));
-		cmd.addContext(getContext(pasteInto));
+				parent, elements));
+		cmd.addContext(getContext(parent));
 		return cmd;
 	}
 

@@ -32,9 +32,9 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.basis.EventBElement;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
@@ -58,12 +58,11 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.ModifyingResourceTests;
 
-
 // TODO remove dependency on ModifyingResourceTests
 public class TestOperation2 extends ModifyingResourceTests {
 
 	private ArrayList<Element> list;
-	
+
 	/**
 	 * The pointer to the test Rodin project.
 	 */
@@ -74,10 +73,10 @@ public class TestOperation2 extends ModifyingResourceTests {
 	 */
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	protected IMachineFile mch;
-	protected IEventBEditor<IMachineFile> machineEditor;
-	protected IContextFile ctx;
-	protected IEventBEditor<IContextFile> contextEditor;
+	protected IMachineRoot mch;
+	protected IEventBEditor<IMachineRoot> machineEditor;
+	protected IContextRoot ctx;
+	protected IEventBEditor<IContextRoot> contextEditor;
 
 	public TestOperation2() {
 		super("org.eventb.ui.eventbeditor.commands.tests.TestOperation2");
@@ -106,10 +105,10 @@ public class TestOperation2 extends ModifyingResourceTests {
 		rodinProject = RodinCore.valueOf(project);
 
 		mch = createMachine("mch0");
-		machineEditor = (IEventBEditor<IMachineFile>) openEditor(mch);
+		machineEditor = (IEventBEditor<IMachineRoot>) openEditor(mch);
 
 		ctx = createContext("ctx0");
-		contextEditor = (IEventBEditor<IContextFile>) openEditor(ctx);
+		contextEditor = (IEventBEditor<IContextRoot>) openEditor(ctx);
 
 	}
 
@@ -123,22 +122,23 @@ public class TestOperation2 extends ModifyingResourceTests {
 
 	/**
 	 * Open the an Event-B Editor ({@link IEventBEditor}) for a given
-	 * component. Assuming that the component is either a machine ({@link IMachineFile})
-	 * or a context ({@link IContextFile}).
+	 * component. Assuming that the component is either a machine ({@link IMachineRoot})
+	 * or a context ({@link IContextRoot}).
 	 * 
-	 * @param component
-	 *            the input component
+	 * @param root
+	 *            the root of input component
 	 * @return the Event-B Editor for the input component.
 	 * @throws PartInitException
 	 *             if some problems occur when open the editor.
 	 */
-	protected IEventBEditor<?> openEditor(IRodinFile component)
+	protected IEventBEditor<?> openEditor(IInternalElement root)
 			throws PartInitException {
-		IEditorInput fileInput = new FileEditorInput(component.getResource());
+		IEditorInput fileInput = new FileEditorInput(root.getRodinFile()
+				.getResource());
 		String editorId = ""; //$NON-NLS-1$
-		if (component instanceof IMachineFile) {
+		if (root instanceof IMachineRoot) {
 			editorId = EventBMachineEditor.EDITOR_ID;
-		} else if (component instanceof IContextFile) {
+		} else if (root instanceof IContextRoot) {
 			editorId = EventBContextEditor.EDITOR_ID;
 		}
 		return (IEventBEditor<?>) EventBUIPlugin.getActivePage().openEditor(
@@ -155,22 +155,20 @@ public class TestOperation2 extends ModifyingResourceTests {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IContextFile createContext(String bareName)
+	protected IContextRoot createContext(String bareName)
 			throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IContextFile result = (IContextFile) rodinProject
-				.getRodinFile(fileName);
-		result.create(true, null);
-		return result;
+		IRodinFile rf = rodinProject.getRodinFile(fileName);
+		rf.create(true, null);
+		return (IContextRoot) rf.getRoot();
 	}
 
-	protected IMachineFile createMachine(String bareName)
+	protected IMachineRoot createMachine(String bareName)
 			throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IMachineFile result = (IMachineFile) rodinProject
-				.getRodinFile(fileName);
-		result.create(true, null);
-		return result;
+		IRodinFile rf = rodinProject.getRodinFile(fileName);
+		rf.create(true, null);
+		return (IMachineRoot) rf.getRoot();
 	}
 
 	/**
@@ -485,8 +483,8 @@ public class TestOperation2 extends ModifyingResourceTests {
 		executeOperation(op);
 		IRodinElementDelta delta = getDeltaFor(event);
 
-		assertEquals("Tout les √©l√©ments n'ont pas √©t√© ajout√©", true, isAdd(
-				delta, list));
+		assertEquals("Tout les √©l√©ments n'ont pas √©t√© ajout√©", true,
+				isAdd(delta, list));
 		assertEquals("D'autres √©l√©ments on √©t√© ajout√©", list.size(),
 				numberOfAddedElement(delta));
 
@@ -573,8 +571,8 @@ public class TestOperation2 extends ModifyingResourceTests {
 	 */
 	private void assertCreateAxiom(IRodinElementDelta delta)
 			throws RodinDBException {
-		assertEquals("Tout les √©l√©ments n'ont pas √©t√© ajout√©", true, isAdd(
-				delta, list));
+		assertEquals("Tout les √©l√©ments n'ont pas √©t√© ajout√©", true,
+				isAdd(delta, list));
 		assertEquals("Plus d'un √©lement ajout√©", numberOfNewElement(delta), 2);
 
 	}
@@ -619,7 +617,6 @@ public class TestOperation2 extends ModifyingResourceTests {
 		op.addAll(getUndoOperation(op));
 		assertUndoOperation(op, ctx);
 	}
-
 
 	private void helpTestCreateAxiomRedo(boolean simple) throws Exception {
 		final ArrayList<AtomicOperation> op = getOperationTestCreateAxiom(simple);
@@ -677,16 +674,13 @@ public class TestOperation2 extends ModifyingResourceTests {
 		}
 		return op;
 	}
-	
-	
-	
-	
-	public ArrayList<AtomicOperation> getOperationCreateCarrierSet(boolean simple){
+
+	public ArrayList<AtomicOperation> getOperationCreateCarrierSet(
+			boolean simple) {
 		list = new ArrayList<Element>();
 		final ArrayList<AtomicOperation> op = new ArrayList<AtomicOperation>();
 		final ArrayList<String> label = new ArrayList<String>();
 
-		
 		label.add("mySet1");
 		label.add("mySet2");
 		label.add("mySet3");
@@ -711,14 +705,14 @@ public class TestOperation2 extends ModifyingResourceTests {
 		}
 		return op;
 	}
-	
+
 	private Element getCarrierSet(String string) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Test
-	public void testCreateCarrierSetSimple(){
+	public void testCreateCarrierSetSimple() {
 		// TODO Auto-generated method stub
 	}
 

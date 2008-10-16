@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -26,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -59,7 +60,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	
 	private Collection<Pair<IEventBInputText, IEventBInputText>> axiomPairTexts;
 
-	IEventBEditor<IContextFile> editor;
+	IEventBEditor<IContextRoot> editor;
 
 	private Composite composite;
 	
@@ -72,7 +73,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public IntelligentNewConstantInputDialog(IEventBEditor<IContextFile> editor,
+	public IntelligentNewConstantInputDialog(IEventBEditor<IContextRoot> editor,
 			Shell parentShell, String title) {
 		super(parentShell, title);
 		this.editor = editor;

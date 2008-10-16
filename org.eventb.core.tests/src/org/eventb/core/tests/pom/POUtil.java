@@ -1,19 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.tests.pom;
 
 import java.util.NoSuchElementException;
 
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
 import org.eventb.core.ast.FormulaFactory;
@@ -71,11 +74,11 @@ public class POUtil {
 	 * @return a handle to the created set
 	 * @throws RodinDBException
 	 */
-	public static IPOPredicateSet addPredicateSet(IPOFile poFile, String setName,
+	public static IPOPredicateSet addPredicateSet(IPORoot poRoot, String setName,
 			IPOPredicateSet parentSet, ITypeEnvironment typEnv,
 			String... predStrings) throws RodinDBException {
 
-		IPOPredicateSet poSet = poFile.getPredicateSet(setName);
+		IPOPredicateSet poSet = poRoot.getPredicateSet(setName);
 		createPredicateSet(poSet, parentSet, typEnv, predStrings);
 		return poSet;
 	}
@@ -97,11 +100,11 @@ public class POUtil {
 	 *            local hypotheses as strings
 	 * @throws RodinDBException
 	 */
-	public static void addSequent(IPOFile poFile, String poName, long poStamp,
+	public static void addSequent(IPORoot poRoot, String poName, long poStamp,
 			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
 			String... localHypStrings) throws RodinDBException {
 		
-		IPOSequent poSeq = poFile.getSequent(poName);
+		IPOSequent poSeq = poRoot.getSequent(poName);
 		poSeq.create(null, null);
 		poSeq.setPOStamp(poStamp, null);
 		IPOPredicate poGoal = poSeq.getGoal("goal");
@@ -129,10 +132,10 @@ public class POUtil {
 	 *            local hypotheses as strings
 	 * @throws RodinDBException
 	 */
-	public static void addSequent(IPOFile poFile, String poName,
+	public static void addSequent(IPORoot poRoot, String poName,
 			String goalString, IPOPredicateSet globalSet, ITypeEnvironment typEnv,
 			String... localHypStrings) throws RodinDBException {
-		addSequent(poFile, poName, IPOStampedElement.INIT_STAMP, goalString, globalSet, typEnv, localHypStrings);
+		addSequent(poRoot, poName, IPOStampedElement.INIT_STAMP, goalString, globalSet, typEnv, localHypStrings);
 	}
 
 

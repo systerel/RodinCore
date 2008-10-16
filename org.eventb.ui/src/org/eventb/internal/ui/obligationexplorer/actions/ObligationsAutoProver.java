@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer.actions;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,16 +26,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IEventBFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -68,21 +81,22 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 					if (obj instanceof IRodinProject) {
 						// Run the Auto Prover on all IPSFile in this project
 						IRodinProject rodinPrj = (IRodinProject) obj;
-						IPSFile[] psFiles;
+						final IPSRoot[] psRoot;
 						try {
-							psFiles = rodinPrj
-									.getChildrenOfType(IPSFile.ELEMENT_TYPE);
+//							psFiles = rodinPrj
+//									.getChildrenOfType(IPSFile.ELEMENT_TYPE);
+							psRoot = UIUtils.getPSRootChildren(rodinPrj);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,
 											UserAwareness.IGNORE);
 							continue;
 						}
-						for (IPSFile psFile : psFiles) {
-							IProofComponent pc = pm.getProofComponent(psFile);
+						for (IPSRoot root: psRoot) {
+							IProofComponent pc = pm.getProofComponent(root);
 							IPSStatus[] statuses;
 							try {
-								statuses = psFile.getStatuses();
+								statuses = root.getStatuses();
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler
 										.handleGetChildrenException(e,
@@ -98,9 +112,10 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 							}							
 						}
 					}
-					if (obj instanceof IEventBFile) {
-						final IEventBFile file = (IEventBFile) obj;
-						final IProofComponent pc = pm.getProofComponent(file);
+					if (obj instanceof IRodinFile) {
+						final IRodinFile file = (IRodinFile) obj;
+						final IEventBRoot root = (IEventBRoot) file.getRoot();
+						final IProofComponent pc = pm.getProofComponent(root);
 						IPSStatus[] statuses;
 						try {
 							statuses = pc.getPSFile().getStatuses();
@@ -123,8 +138,9 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 					if (obj instanceof IPSStatus) {
 						
 						IPSStatus status = (IPSStatus)obj;
-						IPSFile psFile = (IPSFile) status.getOpenable();
-						final IProofComponent pc = pm.getProofComponent(psFile);
+						IRodinFile psFile = (IRodinFile) status.getOpenable();
+						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+						final IProofComponent pc = pm.getProofComponent(psRoot);
 						IPSStatus[] statuses = new IPSStatus[]{status};
 						try {
 							AutoProver.run(pc, statuses, monitor);

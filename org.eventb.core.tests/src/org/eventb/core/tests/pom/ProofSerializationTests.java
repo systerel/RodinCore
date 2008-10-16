@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import java.util.Collections;
@@ -10,8 +21,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -24,6 +35,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -54,7 +66,7 @@ public class ProofSerializationTests extends TestCase {
 
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	private IRodinProject rodinProject;
-	private IPRFile prFile;
+	private IPRRoot prRoot;
 	
 	private Predicate getFirstUnivHyp(IProverSequent seq) {
 		for (Predicate pred: seq.selectedHypIterable()) {
@@ -86,11 +98,11 @@ public class ProofSerializationTests extends TestCase {
 		rodinProject = RodinCore.valueOf(project);
 		
 		// Create a new proof file
-		prFile = (IPRFile) rodinProject.getRodinFile("x.bpr");
+		IRodinFile prFile = rodinProject.getRodinFile("x.bpr");
 		prFile.create(true, null);
-		
-		assertTrue(prFile.exists());
-		assertEquals(0, prFile.getProofs().length);
+		prRoot = (IPRRoot) prFile.getRoot();
+		assertTrue(prRoot.exists());
+		assertEquals(0, prRoot.getProofs().length);
 	}
 
 	@Override
@@ -100,12 +112,12 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	public final void test() throws RodinDBException{
-		IPRProof proof1 = prFile.getProof("proof1");
+		IPRProof proof1 = prRoot.getProof("proof1");
 		proof1.create(null, null);
 
-		assertEquals(1, prFile.getProofs().length);
+		assertEquals(1, prRoot.getProofs().length);
 		assertTrue(proof1.exists());
-		assertEquals(proof1, prFile.getProof("proof1"));
+		assertEquals(proof1, prRoot.getProof("proof1"));
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
 		assertFalse(proof1.getProofDependencies(ff, null).hasDeps());
 		
@@ -166,7 +178,7 @@ public class ProofSerializationTests extends TestCase {
 	 * serialized and deserialized.
 	 */
 	public final void testPartialInstantiation() throws RodinDBException {
-		final IPRProof proof = prFile.getProof("P2");
+		final IPRProof proof = prRoot.getProof("P2");
 		proof.create(null, null);
 
 		final IProverSequent seq = TestLib.genSeq(

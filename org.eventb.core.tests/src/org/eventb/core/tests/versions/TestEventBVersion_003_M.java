@@ -1,15 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -39,9 +44,10 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 		String name = "mac.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		IEvent[] events = file.getEvents();
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
+
+		IEvent[] events = root.getEvents();
 		assertEquals("4 events expected", 4, events.length);
 		
 		String[] labels = new String[] {IEvent.INITIALISATION, "e", "f", "g"};
@@ -82,9 +88,10 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 		String name = "mac.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
 		
-		IEvent[] events = file.getEvents();
+		IEvent[] events = root.getEvents();
 		assertEquals("1 event expected", 1, events.length);
 
 		IRefinesEvent[] refinesEvents = events[0].getRefinesClauses();

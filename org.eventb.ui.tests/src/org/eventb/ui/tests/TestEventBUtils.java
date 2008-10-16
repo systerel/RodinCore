@@ -12,6 +12,7 @@
  *     Systerel - replaced inherited by extended
  *     Systerel - refactored all tests to make them unit tests
  *     Systerel - added tests for getImplicitChildren()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.ui.tests;
 
@@ -21,7 +22,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
@@ -29,6 +30,7 @@ import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -39,9 +41,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestEventBUtils extends EventBUITest {
 
-	private void assertAbstractMachine(IMachineFile machine,
-			IMachineFile expected) throws RodinDBException {
-		final IMachineFile actual = EventBUtils.getAbstractMachine(machine);
+	private void assertAbstractMachine(IMachineRoot machine,
+			IMachineRoot expected) throws RodinDBException {
+		final IMachineRoot actual = EventBUtils.getAbstractMachine(machine);
 		assertEquals("Unexpected abstract machine", //$NON-NLS-1$
 				expected, actual);
 	}
@@ -49,27 +51,27 @@ public class TestEventBUtils extends EventBUITest {
 	/**
 	 * Ensures that a machine without a refines clause has no abstract machine.
 	 * 
-	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 * @see EventBUtils#getAbstractMachine(IMachineRoot)
 	 */
 	@Test
 	public void testAbstractMachineNoRefinesClause() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
 		assertAbstractMachine(m0, null);
 	}
 
 	/**
 	 * Ensures that a machine with a refines clause has an abstract machine.
 	 * 
-	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 * @see EventBUtils#getAbstractMachine(IMachineRoot)
 	 */
 	@Test
 	public void testAbstractMachineWithRefinesClause() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractMachine(m1, m0);
 	}
 
@@ -77,49 +79,48 @@ public class TestEventBUtils extends EventBUITest {
 	 * Ensures that a machine with a refines clause has an abstract machine,
 	 * even when the file doesn't exist.
 	 * 
-	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 * @see EventBUtils#getAbstractMachine(IMachineRoot)
 	 */
 	@Test
 	public void testAbstractMachineWithRefinesClauseToInexistent()
 			throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		createRefinesMachineClause(m0, "inexistent"); //$NON-NLS-1$
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		final String expName = EventBPlugin.getMachineFileName("inexistent"); //$NON-NLS-1$
-		final IMachineFile expected = (IMachineFile) rodinProject
-				.getRodinFile(expName);
-		assertAbstractMachine(m0, expected);
+		final IRodinFile expected = rodinProject.getRodinFile(expName);
+		assertAbstractMachine(m0, (IMachineRoot) expected.getRoot());
 	}
 
 	/**
 	 * Ensures that a machine with a refines clause has an abstract machine that
 	 * can be itself.
 	 * 
-	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 * @see EventBUtils#getAbstractMachine(IMachineRoot)
 	 */
 	@Test
 	public void testAbstractMachineWithRefinesClauseToItself() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		createRefinesMachineClause(m0, "m0"); //$NON-NLS-1$
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertAbstractMachine(m0, m0);
 	}
 
 	/**
 	 * Ensures that a machine with two refines clauses has no abstract machine.
 	 * 
-	 * @see EventBUtils#getAbstractMachine(IMachineFile)
+	 * @see EventBUtils#getAbstractMachine(IMachineRoot)
 	 */
 	@Test
 	public void testAbstractMachineTwoRefinesClause() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
-		m1.save(null, true);
-		final IMachineFile m2 = createMachine("m2"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
+		m1.getRodinFile().save(null, true);
+		final IMachineRoot m2 = createMachine("m2"); //$NON-NLS-1$
 		createRefinesMachineClause(m2, "m0"); //$NON-NLS-1$
 		createRefinesMachineClause(m2, "m1"); //$NON-NLS-1$
-		m2.save(null, true);
+		m2.getRodinFile().save(null, true);
 		assertAbstractMachine(m2, null);
 	}
 
@@ -138,10 +139,10 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventNoRefinesMachine() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m0Event, "event"); //$NON-NLS-1$
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertAbstractEvent(m0Event, null);
 	}
 
@@ -154,11 +155,11 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventNoAbstractMachine() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		createRefinesMachineClause(m0, "inexistent"); //$NON-NLS-1$
 		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m0Event, "event"); //$NON-NLS-1$
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertAbstractEvent(m0Event, null);
 	}
 
@@ -170,13 +171,13 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventNoRefinesEvent() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		createEvent(m0, "event"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, null);
 	}
 
@@ -189,13 +190,13 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventInexistent() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m1Event, "event"); //$NON-NLS-1$
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, null);
 	}
 
@@ -208,14 +209,14 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventSameName() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		final IEvent m0Event = createEvent(m0, "event"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m1Event, "event"); //$NON-NLS-1$
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, m0Event);
 	}
 
@@ -228,14 +229,14 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventDifferentName() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		final IEvent m0Event = createEvent(m0, "abstract_event"); //$NON-NLS-1$
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		final IEvent m1Event = createEvent(m1, "event"); //$NON-NLS-1$
 		createRefinesEventClause(m1Event, "abstract_event"); //$NON-NLS-1$
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, m0Event);
 	}
 
@@ -246,13 +247,13 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testAbstractEventINITIALISATION() throws Exception {
-		final IMachineFile m0 = createMachine("m0"); //$NON-NLS-1$
+		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
 		final IEvent m0Event = createEvent(m0, "foo", IEvent.INITIALISATION);
-		m0.save(null, true);
-		final IMachineFile m1 = createMachine("m1"); //$NON-NLS-1$
+		m0.getRodinFile().save(null, true);
+		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
 		final IEvent m1Event = createEvent(m1, "bar", IEvent.INITIALISATION);
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, m0Event);
 	}
 
@@ -277,8 +278,8 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testGetFreeChildNameNone() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
-		m0.save(null, true);
+		final IMachineRoot m0 = createMachine("m0");
+		m0.getRodinFile().save(null, true);
 		assertFreeChildName(1, m0, IEvent.ELEMENT_TYPE, "event");
 	}
 
@@ -292,9 +293,9 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testGetFreeChildNameOne() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		createEvent(m0, "event1", "label1");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertFreeChildName(2, m0, IEvent.ELEMENT_TYPE, "event");
 	}
 
@@ -309,10 +310,10 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testGetFreeChildNameNth() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		createEvent(m0, "event1", "label1");
 		createEvent(m0, "event3", "label2");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertFreeChildName(4, m0, IEvent.ELEMENT_TYPE, "event");
 	}
 
@@ -333,9 +334,9 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testImplicitChildrenTop() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		final IEvent m0Event = createEvent(m0, "event");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertImplicitChildren(m0Event);
 	}
 
@@ -346,19 +347,19 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testImplicitChildrenNotExtended() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		final IEvent m0Event = createEvent(m0, "event");
 		createParameter(m0Event, "p");
 		createGuard(m0Event, "grd1", "foo");
 		createWitness(m0Event, "wit1", "bar");
 		createAction(m0Event, "act1", "baz");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 
-		final IMachineFile m1 = createMachine("m1");
+		final IMachineRoot m1 = createMachine("m1");
 		createRefinesMachineClause(m1, "m0");
 		final IEvent m1Event = createEvent(m1, "event");
 		createRefinesEventClause(m1Event, "event");
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 
 		assertImplicitChildren(m1Event);
 	}
@@ -371,19 +372,19 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testImplicitChildrenNoAbstraction() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		final IEvent m0Event = createEvent(m0, "event");
 		createParameter(m0Event, "p");
 		createGuard(m0Event, "grd1", "foo");
 		createWitness(m0Event, "wit1", "bar");
 		createAction(m0Event, "act1", "baz");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 
-		final IMachineFile m1 = createMachine("m1");
+		final IMachineRoot m1 = createMachine("m1");
 		createRefinesMachineClause(m1, "m0");
 		final IEvent m1Event = createEvent(m1, "event");
 		m1Event.setExtended(true, null);
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 
 		assertAbstractEvent(m1Event, null);
 		assertImplicitChildren(m1Event);
@@ -397,20 +398,20 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testImplicitChildrenSimple() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		final IEvent m0Event = createEvent(m0, "event");
 		final IParameter p = createParameter(m0Event, "p");
 		final IGuard grd1 = createGuard(m0Event, "grd1", "foo");
 		createWitness(m0Event, "wit1", "bar");
 		final IAction act1 = createAction(m0Event, "act1", "baz");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 
-		final IMachineFile m1 = createMachine("m1");
+		final IMachineRoot m1 = createMachine("m1");
 		createRefinesMachineClause(m1, "m0");
 		final IEvent m1Event = createEvent(m1, "event");
 		createRefinesEventClause(m1Event, "event");
 		m1Event.setExtended(true, null);
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 
 		assertImplicitChildren(m1Event, p, grd1, act1);
 	}
@@ -423,15 +424,15 @@ public class TestEventBUtils extends EventBUITest {
 	 */
 	@Test
 	public void testImplicitChildrenMultiple() throws Exception {
-		final IMachineFile m0 = createMachine("m0");
+		final IMachineRoot m0 = createMachine("m0");
 		final IEvent m0Event = createEvent(m0, "event");
 		final IParameter p = createParameter(m0Event, "p");
 		final IGuard grd1 = createGuard(m0Event, "grd1", "foo");
 		createWitness(m0Event, "wit1", "bar");
 		final IAction act1 = createAction(m0Event, "act1", "baz");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 
-		final IMachineFile m1 = createMachine("m1");
+		final IMachineRoot m1 = createMachine("m1");
 		createRefinesMachineClause(m1, "m0");
 		final IEvent m1Event = createEvent(m1, "event");
 		m1Event.setExtended(true, null);
@@ -440,14 +441,14 @@ public class TestEventBUtils extends EventBUITest {
 		final IGuard grd2 = createGuard(m1Event, "grd2", "foo");
 		createWitness(m1Event, "wit2", "bar");
 		final IAction act2 = createAction(m1Event, "act2", "baz");
-		m1.save(null, true);
+		m1.getRodinFile().save(null, true);
 
-		final IMachineFile m2 = createMachine("m2");
+		final IMachineRoot m2 = createMachine("m2");
 		createRefinesMachineClause(m2, "m1");
 		final IEvent m2Event = createEvent(m2, "event");
 		createRefinesEventClause(m2Event, "event");
 		m2Event.setExtended(true, null);
-		m2.save(null, true);
+		m2.getRodinFile().save(null, true);
 
 		assertImplicitChildren(m2Event, p, grd1, act1, q, grd2, act2);
 	}

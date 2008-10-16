@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended, event variable by parameter
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -21,12 +22,12 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -40,8 +41,8 @@ import org.eventb.core.basis.SeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -173,22 +174,24 @@ public abstract class AstConverter {
 	}
 	
 	
-	public String getText(IProgressMonitor monitor, IRodinFile rodinFile) {
+	public String getText(IProgressMonitor monitor, IInternalElement root) {
 		htmlString.setLength(0);
 		htmlString.append(HEADER);
-		addDeclaration(rodinFile);
-		addDependencies(rodinFile, monitor);
-		if (rodinFile instanceof IMachineFile) {
-			addVariables(rodinFile, monitor);
-			addInvariants(rodinFile, monitor);
-			addTheorems(rodinFile, monitor);
-			addEvents(rodinFile, monitor);
-			addVariant(rodinFile, monitor);
-		} else if (rodinFile instanceof IContextFile) {
-			addCarrierSets(rodinFile, monitor);
-			addConstants(rodinFile, monitor);
-			addAxioms(rodinFile, monitor);
-			addTheorems(rodinFile, monitor);
+		addDeclaration(root);
+		addDependencies(root, monitor);
+		if (root instanceof IMachineRoot) {
+			IMachineRoot mch = (IMachineRoot) root ;
+			addVariables(mch, monitor);
+			addInvariants(mch, monitor);
+			addTheorems(mch, monitor);
+			addEvents(mch, monitor);
+			addVariant(mch, monitor);
+		} else if (root instanceof IContextRoot) {
+			IContextRoot ctx = (IContextRoot) root;
+			addCarrierSets(ctx, monitor);
+			addConstants(ctx, monitor);
+			addAxioms(ctx, monitor);
+			addTheorems(ctx, monitor);
 		}
 		masterKeyword("END");
 		htmlString.append(FOOTER);
@@ -201,24 +204,24 @@ public abstract class AstConverter {
 	 * This private helper method adds the component name to the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 */
-	private void addDeclaration(IRodinFile rodinFile) {
+	private void addDeclaration(IInternalElement root) {
 		// Print the Machine/Context name
 		beginLevel0();
-		if (rodinFile instanceof IMachineFile) {
+		if (root instanceof IMachineRoot) {
 			masterKeyword("MACHINE");
-		} else if (rodinFile instanceof IContextFile) {
+		} else if (root instanceof IContextRoot) {
 			masterKeyword("CONTEXT");
 		}
 		endLevel0();
 		beginLevel1();
-		final String handle = rodinFile.getHandleIdentifier();
-		final String bareName = rodinFile.getBareName();
+		final String handle = root.getHandleIdentifier();
+		final String bareName = root.getRodinFile().getBareName();
 		appendComponentName(makeHyperlink(handle, wrapString(bareName)));
-		if (rodinFile instanceof ICommentedElement) {
-			addComment((ICommentedElement) rodinFile);
+		if (root instanceof ICommentedElement) {
+			addComment((ICommentedElement) root);
 		}
 		endLevel1();
 		return;
@@ -229,18 +232,18 @@ public abstract class AstConverter {
 	 * content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addDependencies(IRodinFile rodinFile,
+	private void addDependencies(IInternalElement root,
 			IProgressMonitor monitor) {
-		if (rodinFile instanceof IMachineFile) {
+		if (root instanceof IMachineRoot) {
 			// REFINES clause
 			IRodinElement[] refines;
 			try {
-				refines = rodinFile
+				refines = root
 						.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 				if (refines.length != 0) {
 					IRefinesMachine refine = (IRefinesMachine) refines[0];
@@ -254,14 +257,14 @@ public abstract class AstConverter {
 			} catch (RodinDBException e) {
 				EventBEditorUtils.debugAndLogError(e,
 						"Cannot get refines machine of "
-								+ rodinFile.getElementName());
+								+ root.getRodinFile().getElementName());
 			}
 
-		} else if (rodinFile instanceof IContextFile) {
+		} else if (root instanceof IContextRoot) {
 			// EXTENDS clause
 			IRodinElement[] extendz;
 			try {
-				extendz = rodinFile
+				extendz = root
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				if (extendz.length != 0) {
 					IExtendsContext extend = (IExtendsContext) extendz[0];
@@ -275,7 +278,7 @@ public abstract class AstConverter {
 			} catch (RodinDBException e) {
 				EventBEditorUtils.debugAndLogError(e,
 						"Cannot get extends context of "
-								+ rodinFile.getElementName());
+								+ root.getRodinFile().getElementName());
 			}
 
 		}
@@ -283,11 +286,11 @@ public abstract class AstConverter {
 		// SEES clause for both context and machine
 		IRodinElement[] seeContexts;
 		try {
-			seeContexts = rodinFile
+			seeContexts = root
 					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get sees machine of "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 
@@ -298,7 +301,7 @@ public abstract class AstConverter {
 				try {
 					beginLevel1();
 					appendComponentName(
-							makeHyperlink(rodinFile.getHandleIdentifier(),
+							makeHyperlink(root.getHandleIdentifier(),
 									wrapString(((SeesContext) seeContexts[i])
 											.getSeenContextName())));
 					endLevel1();
@@ -316,18 +319,18 @@ public abstract class AstConverter {
 	 * to the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addVariables(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addVariables(IMachineRoot root, IProgressMonitor monitor) {
 		IVariable[] vars;
 		try {
-			vars = rodinFile.getChildrenOfType(IVariable.ELEMENT_TYPE);
+			vars = root.getChildrenOfType(IVariable.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get variables for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (vars.length != 0) {
@@ -354,18 +357,18 @@ public abstract class AstConverter {
 	 * to the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addInvariants(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addInvariants(IMachineRoot root, IProgressMonitor monitor) {
 		IInvariant[] invs;
 		try {
-			invs = rodinFile.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+			invs = root.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get invariants for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (invs.length != 0) {
@@ -392,19 +395,19 @@ public abstract class AstConverter {
 	 * sets to the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addCarrierSets(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addCarrierSets(IContextRoot root, IProgressMonitor monitor) {
 		ICarrierSet[] sets;
 		try {
-			sets = rodinFile.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
+			sets = root.getChildrenOfType(ICarrierSet.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils
 					.debugAndLogError(e, "Cannot get carrier sets for "
-							+ rodinFile.getElementName());
+							+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (sets.length != 0) {
@@ -432,18 +435,18 @@ public abstract class AstConverter {
 	 * to the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addConstants(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addConstants(IContextRoot root, IProgressMonitor monitor) {
 		IConstant[] csts;
 		try {
-			csts = rodinFile.getChildrenOfType(IConstant.ELEMENT_TYPE);
+			csts = root.getChildrenOfType(IConstant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get constants for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (csts.length != 0) {
@@ -470,18 +473,18 @@ public abstract class AstConverter {
 	 * the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addAxioms(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addAxioms(IContextRoot root, IProgressMonitor monitor) {
 		IAxiom[] axms;
 		try {
-			axms = rodinFile.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+			axms = root.getChildrenOfType(IAxiom.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get axioms for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (axms.length != 0) {
@@ -509,18 +512,18 @@ public abstract class AstConverter {
 	 * the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addTheorems(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addTheorems(IInternalElement root, IProgressMonitor monitor) {
 		ITheorem[] thms;
 		try {
-			thms = rodinFile.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+			thms = root.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get theorems for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (thms.length != 0) {
@@ -547,18 +550,18 @@ public abstract class AstConverter {
 	 * the content string
 	 * <p>
 	 * 
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addEvents(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addEvents(IMachineRoot root, IProgressMonitor monitor) {
 		IEvent[] evts;
 		try {
-			evts = rodinFile.getChildrenOfType(IEvent.ELEMENT_TYPE);
+			evts = root.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get events for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 
@@ -740,18 +743,18 @@ public abstract class AstConverter {
 	 * the content string
 	 * <p>
 	 * public static String makeHyperlink(String link, String text) {
-	 * @param rodinFile
-	 *            the rodin input file
+	 * @param root
+	 *            the root of rodin input file
 	 * @param monitor
 	 *            a progress monitor
 	 */
-	private void addVariant(IRodinFile rodinFile, IProgressMonitor monitor) {
+	private void addVariant(IMachineRoot root, IProgressMonitor monitor) {
 		IVariant[] variants;
 		try {
-			variants = rodinFile.getChildrenOfType(IVariant.ELEMENT_TYPE);
+			variants = root.getChildrenOfType(IVariant.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get variants for "
-					+ rodinFile.getElementName());
+					+ root.getRodinFile().getElementName());
 			return;
 		}
 		if (variants.length != 0) {

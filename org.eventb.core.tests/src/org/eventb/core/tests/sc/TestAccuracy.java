@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 
 /**
  * @author Stefan Hallerstede
@@ -21,129 +25,129 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous axioms should make an sc context inaccurate
 	 */
 	public void testAcc_01() throws Exception {
-		IContextFile con = createContext("con");
+		IContextRoot root = createContext("con");
 
-		addAxioms(con, makeSList("A"), makeSList("x∈ℕ"));
+		addAxioms(root, makeSList("A"), makeSList("x∈ℕ"));
 		
-		con.save(null, true);
+		root.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isNotAccurate(con.getSCContextFile());
+		isNotAccurate(root.getSCContextRoot());
 	}
 
 	/**
 	 * erroneous theorems should make an sc context inaccurate
 	 */
 	public void testAcc_02() throws Exception {
-		IContextFile con = createContext("con");
+		IContextRoot root = createContext("con");
 
-		addTheorems(con, makeSList("T"), makeSList("x∈ℕ"));
+		addTheorems(root, makeSList("T"), makeSList("x∈ℕ"));
 		
-		con.save(null, true);
+		root.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isNotAccurate(con.getSCContextFile());
+		isNotAccurate(root.getSCContextRoot());
 	}
 
 	/**
 	 * inaccurate abstract contexts should make an sc context inaccurate
 	 */
 	public void testAcc_03() throws Exception {
-		IContextFile abs = createContext("abs");
-		
+		IContextRoot abs = createContext("abs");
+
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		containsMarkers(con, false);
-		isNotAccurate(con.getSCContextFile());
+		containsMarkers(con.getRodinFile(), false);
+		isNotAccurate(abs.getSCContextRoot());
 	}
 
 	/**
 	 * erroneous invariants should make an sc machine inaccurate
 	 */
 	public void testAcc_04() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addInvariants(con, makeSList("I"), makeSList("x∈ℕ"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isNotAccurate(con.getSCMachineFile());
+		isNotAccurate(con.getSCMachineRoot());
 	}
 
 	/**
 	 * erroneous theorems should make an sc machine inaccurate
 	 */
 	public void testAcc_05() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addTheorems(con, makeSList("T"), makeSList("x∈ℕ"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isNotAccurate(con.getSCMachineFile());
+		isNotAccurate(con.getSCMachineRoot());
 	}
 
 	/**
 	 * inaccurate seen contexts should make an sc machine inaccurate
 	 */
 	public void testAcc_06() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineSees(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		containsMarkers(con, false);
-		isNotAccurate(con.getSCMachineFile());
+		containsMarkers(con.getRodinFile(), false);
+		isNotAccurate(con.getSCMachineRoot());
 	}
 
 	/**
 	 * inaccurate abstract machines should make an sc machine inaccurate
 	 */
 	public void testAcc_07() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		containsMarkers(con, false);
-		isNotAccurate(con.getSCMachineFile());
+		containsMarkers(con.getRodinFile(), false);
+		isNotAccurate(con.getSCMachineRoot());
 	}
 
 	/**
@@ -151,19 +155,19 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_08() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addInitialisation(con, makeSList());
 		addEvent(con, "evt", makeSList(), 
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
@@ -179,16 +183,16 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_10() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addInitialisation(abs, makeSList());
 		addEvent(abs, "evt", makeSList("x"), 
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -198,12 +202,12 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("x"), makeSList("y"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
@@ -211,16 +215,16 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_11() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addInitialisation(abs, makeSList());
 		addEvent(abs, "evt", makeSList("x"), 
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -229,12 +233,12 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
@@ -242,19 +246,19 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_12() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addInitialisation(con, makeSList());
 		addEvent(con, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("x≔0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
@@ -262,25 +266,25 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_13() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
 		addInitialisation(con);
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[0]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[0]);
 	}
 
 	/**
 	 * inherited events inherit accuracy
 	 */
 	public void testAcc_14() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addInitialisation(abs, makeSList());
 		addEvent(abs, "evt", makeSList("x"), 
@@ -290,9 +294,9 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -301,13 +305,13 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addExtendedEvent(con, "fvt");
 		addEventRefines(fvt, "fvt");
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[2]);
+		isAccurate(con.getSCMachineRoot());
+		isAccurate(con.getSCMachineRoot().getSCEvents()[1]);
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[2]);
 	}
 
 	/**
@@ -316,30 +320,30 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * sc context to be inaccurate)
 	 */
 	public void testAcc_15() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		
 		addTheorems(abs, makeSList("T"), makeSList("1<0"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IContextFile bbs = createContext("bbs");
+		IContextRoot bbs = createContext("bbs");
 		
 		addTheorems(bbs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		bbs.save(null, true);
+		bbs.getRodinFile().save(null, true);
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		addContextExtends(con, "bbs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		containsMarkers(con, false);
-		isNotAccurate(con.getSCContextFile());
+		containsMarkers(con.getRodinFile(), false);
+		isNotAccurate(con.getSCContextRoot());
 	}
 
 	/**
@@ -348,30 +352,30 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * sc context to be inaccurate, also if automatically added by the static checker)
 	 */
 	public void testAcc_16() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IContextFile bbs = createContext("bbs");
+		IContextRoot bbs = createContext("bbs");
 		addContextExtends(bbs, "abs");
 	
 		addTheorems(bbs, makeSList("T"), makeSList("1<0"));
 		
-		bbs.save(null, true);
+		bbs.getRodinFile().save(null, true);
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "bbs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		containsMarkers(con, false);
-		isNotAccurate(con.getSCContextFile());
+		containsMarkers(con.getRodinFile(), false);
+		isNotAccurate(abs.getSCContextRoot());
 	}
 
 	/**
@@ -379,7 +383,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_17() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
@@ -394,13 +398,13 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		addVariant(con, "x");
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
-		isAccurate(con.getSCMachineFile().getSCEvents()[2]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot().getSCEvents()[2]);
 	}
 
 	/**
@@ -408,7 +412,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_18() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
@@ -422,13 +426,13 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		setAnticipated(fvt);
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
-		isAccurate(con.getSCMachineFile().getSCEvents()[2]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot().getSCEvents()[2]);
 	}
 
 	/**
@@ -436,7 +440,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_19() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addInitialisation(abs);
 		IEvent evt = addEvent(abs, "evt", makeSList("x"), 
@@ -445,9 +449,9 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		setOrdinary(evt);
 		addVariant(abs, "1");
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con);
@@ -457,12 +461,12 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		setConvergent(fvt);
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isNotAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isNotAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
@@ -471,16 +475,16 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * should make the concrete sc event and the sc machine accurate
 	 */
 	public void testAcc_20() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addInitialisation(abs);
 		addEvent(abs, "evt", makeSList(), 
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con);
@@ -489,19 +493,19 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		addEventRefines(fvt, "evt");
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isAccurate(con.getSCMachineFile());
-		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isAccurate(con.getSCMachineRoot());
+		isAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 	/**
 	 * an inaccurate sc machine does not automatically make contained sc events inaccurate
 	 */
 	public void testAcc_21() throws Exception {
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 
 		addInvariants(con, makeSList("I"), makeSList("p>0"));
 		addInitialisation(con);
@@ -509,12 +513,12 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 	
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		isNotAccurate(con.getSCMachineFile());
-		isAccurate(con.getSCMachineFile().getSCEvents()[1]);
+		isNotAccurate(con.getSCMachineRoot());
+		isAccurate(con.getSCMachineRoot().getSCEvents()[1]);
 	}
 
 }

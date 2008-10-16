@@ -25,9 +25,10 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariant;
 import org.eventb.core.basis.EventBElement;
@@ -62,10 +63,10 @@ public class TestOperation extends ModifyingResourceTests {
 	 */
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	protected IMachineFile mch;
-	protected IEventBEditor<IMachineFile> machineEditor;
-	protected IContextFile ctx;
-	protected IEventBEditor<IContextFile> contextEditor;
+	protected IMachineRoot mch;
+	protected IEventBEditor<IMachineRoot> machineEditor;
+	protected IContextRoot ctx;
+	protected IEventBEditor<IContextRoot> contextEditor;
 
 	public TestOperation() {
 		super("org.eventb.ui.eventbeditor.commands.tests.TestOperation");
@@ -94,10 +95,10 @@ public class TestOperation extends ModifyingResourceTests {
 		rodinProject = RodinCore.valueOf(project);
 
 		mch = createMachine("mch0");
-		machineEditor = (IEventBEditor<IMachineFile>) openEditor(mch);
+		machineEditor = (IEventBEditor<IMachineRoot>) openEditor(mch);
 
 		ctx = createContext("ctx0");
-		contextEditor = (IEventBEditor<IContextFile>) openEditor(ctx);
+		contextEditor = (IEventBEditor<IContextRoot>) openEditor(ctx);
 
 	}
 
@@ -144,7 +145,7 @@ public class TestOperation extends ModifyingResourceTests {
 		cmd = OperationFactory.createConstantWizard(contextEditor, identifier,
 				getStringTabFromList(labels), getStringTabFromList(predicates));
 
-		assertExists("RodinFile should exist", ctx);
+		assertExists("Root element should exist", ctx);
 		startDeltas();
 		cmd.execute(null, null);
 		deltaAffected = getDeltaFor(ctx, true).getAffectedChildren();
@@ -191,7 +192,7 @@ public class TestOperation extends ModifyingResourceTests {
 		final AtomicOperation cmd = OperationFactory.createEnumeratedSetWizard(
 				contextEditor, identifier, getStringTabFromList(elements));
 
-		assertExists("RodinFile should exist", ctx);
+		assertExists("Rodin element should exist", ctx);
 		startDeltas();
 		cmd.execute(null, null);
 		deltaAffected = getDeltaFor(ctx, true).getAffectedChildren();
@@ -271,7 +272,7 @@ public class TestOperation extends ModifyingResourceTests {
 
 		final AtomicOperation cmd = OperationFactory.createVariableWizard(
 				machineEditor, varName, invariants, actName, actSub);
-		assertExists("RodinFile should exist", ctx);
+		assertExists("Rodin element should exist", ctx);
 
 		startDeltas();
 		cmd.execute(null, null);
@@ -380,14 +381,14 @@ public class TestOperation extends ModifyingResourceTests {
 	 * is only one added element - the type of element is type - the label of
 	 * element is label
 	 */
-	private void executeAddOneElementWithAttributs(final IRodinFile rf,
+	private void executeAddOneElementWithAttributs(final IEventBRoot rf,
 			final AtomicOperation cmd,
 			final IElementType<? extends IRodinElement> type,
 			final String label, final String content)
 			throws ExecutionException, RodinDBException {
 		final IRodinElementDelta delta;
 
-		assertExists("RodinFile should exist", rf);
+		assertExists("Rodin element should exist", rf);
 
 		cmd.execute(null, null);
 		delta = getDeltaFor(rf, true);
@@ -407,11 +408,11 @@ public class TestOperation extends ModifyingResourceTests {
 	 * <p>
 	 * Ensures : all added elements do not exist
 	 */
-	private void executeAddAndUndo(final IRodinFile rf, final AtomicOperation cmd)
+	private void executeAddAndUndo(final IEventBRoot rf, final AtomicOperation cmd)
 			throws ExecutionException, RodinDBException {
 		final IRodinElementDelta delta;
 
-		assertExists("RodinFile should exist", rf);
+		assertExists("Rodin element should exist", rf);
 
 		startDeltas();
 		cmd.execute(null, null);
@@ -510,8 +511,8 @@ public class TestOperation extends ModifyingResourceTests {
 
 	/**
 	 * Open the an Event-B Editor ({@link IEventBEditor}) for a given
-	 * component. Assuming that the component is either a machine ({@link IMachineFile})
-	 * or a context ({@link IContextFile}).
+	 * component. Assuming that the component is either a machine ({@link IMachineRoot})
+	 * or a context ({@link IContextRoot}).
 	 * 
 	 * @param component
 	 *            the input component
@@ -519,13 +520,13 @@ public class TestOperation extends ModifyingResourceTests {
 	 * @throws PartInitException
 	 *             if some problems occur when open the editor.
 	 */
-	protected IEventBEditor<?> openEditor(IRodinFile component)
+	protected IEventBEditor<?> openEditor(IEventBRoot component)
 			throws PartInitException {
-		IEditorInput fileInput = new FileEditorInput(component.getResource());
+		IEditorInput fileInput = new FileEditorInput(component.getRodinFile().getResource());
 		String editorId = ""; //$NON-NLS-1$
-		if (component instanceof IMachineFile) {
+		if (component instanceof IMachineRoot) {
 			editorId = EventBMachineEditor.EDITOR_ID;
-		} else if (component instanceof IContextFile) {
+		} else if (component instanceof IContextRoot) {
 			editorId = EventBContextEditor.EDITOR_ID;
 		}
 		return (IEventBEditor<?>) EventBUIPlugin.getActivePage().openEditor(
@@ -542,22 +543,20 @@ public class TestOperation extends ModifyingResourceTests {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IContextFile createContext(String bareName)
+	protected IContextRoot createContext(String bareName)
 			throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IContextFile result = (IContextFile) rodinProject
-				.getRodinFile(fileName);
-		result.create(true, null);
-		return result;
+		IRodinFile file = rodinProject.getRodinFile(fileName);
+		file.create(true, null);
+		return (IContextRoot) file.getRoot();
 	}
 
-	protected IMachineFile createMachine(String bareName)
+	protected IMachineRoot createMachine(String bareName)
 			throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IMachineFile result = (IMachineFile) rodinProject
-				.getRodinFile(fileName);
-		result.create(true, null);
-		return result;
+		IRodinFile file = rodinProject.getRodinFile(fileName);
+		file.create(true, null);
+		return (IMachineRoot) file.getRoot();
 	}
 
 	private String[] getStringTabFromList(ArrayList<String> list) {

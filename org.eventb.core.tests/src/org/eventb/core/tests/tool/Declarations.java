@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
@@ -15,7 +19,6 @@ import org.eventb.internal.core.tool.RootModuleDesc;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -89,7 +92,7 @@ public abstract class Declarations extends TestCase {
 	
 	protected static class RootDesc extends RootModuleDesc<IProcessorModule> {
 
-		public RootDesc(String name, IProcessorModule module, IFileElementType<? extends IRodinFile> type) {
+		public RootDesc(String name, IProcessorModule module, IFileElementType type) {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.type = type;
@@ -97,7 +100,7 @@ public abstract class Declarations extends TestCase {
 		}
 
 		private final String name;
-		private final IFileElementType<? extends IRodinFile> type;
+		private final IFileElementType type;
 		private final IProcessorModule module;
 		
 		@Override
@@ -151,7 +154,7 @@ public abstract class Declarations extends TestCase {
 		}
 
 		@Override
-		public IFileElementType<? extends IRodinFile> getElementType() {
+		public IFileElementType getElementType() {
 			return type;
 		}
 

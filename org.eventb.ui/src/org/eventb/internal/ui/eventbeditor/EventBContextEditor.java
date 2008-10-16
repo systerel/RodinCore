@@ -1,34 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.ContextEditorPagesPreference;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
  *         <p>
  *         Event-B specific form editor for machines.
  */
-public class EventBContextEditor extends EventBEditor<IContextFile> {
+public class EventBContextEditor extends EventBEditor<IContextRoot> {
 
 	/**
 	 * The plug-in identifier of the Event-B Context Editor (value
@@ -65,13 +60,6 @@ public class EventBContextEditor extends EventBEditor<IContextFile> {
 				UIUtils.log(e, "Failed to initialise page " + page.getId());
 			}
 		}
-	}
-
-	@Override
-	protected IContextFile getRodinFile(IEditorInput input) {
-		FileEditorInput editorInput = (FileEditorInput) input;
-		IFile inputFile = editorInput.getFile();
-		return (IContextFile) RodinCore.valueOf(inputFile);
 	}
 
 	@Override

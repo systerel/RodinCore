@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer;
 
 import java.util.ArrayList;
@@ -237,8 +236,10 @@ public class ProjectExplorerContentProvider implements
 				ArrayList<IRodinElement> results = new ArrayList<IRodinElement>();
 				IRodinElement[] rodinElements = prj.getChildren();
 				for (IRodinElement rodinElement : rodinElements) {
-					if (hasProvider(rodinElement)) {
-						results.add(rodinElement);
+					final IInternalElement root = ((IRodinFile) rodinElement)
+							.getRoot();
+					if (hasProvider(root)) {
+						results.add(root);
 					}
 				}
 

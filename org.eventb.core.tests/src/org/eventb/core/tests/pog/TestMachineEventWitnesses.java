@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 
@@ -23,8 +27,8 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 * deterministic witnesses for invariants and simulation
 	 */
 	public void test_00() throws Exception {
-		IMachineFile abs = createMachine("abs");
-
+		IMachineRoot abs = createMachine("abs");
+		
 		addVariables(abs, "ax", "ay");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"));
 		addEvent(abs, IEvent.INITIALISATION, 
@@ -32,11 +36,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("ax,ay :∣ ax'>ay' ∧ ax'=5 ∧ ay'=7"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "ay");
@@ -47,13 +51,13 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("A1", "A2"), makeSList("cx≔8", "ay ≔ 7"));
 		addEventWitnesses(event, makeSList("ax'"), makeSList("ax'=cx'+4"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = makeTypeEnvironment();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		IPOSequent sequent;
 		
@@ -73,7 +77,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 * well-definedness and feasibility of nondeterministic witnesses
 	 */
 	public void test_01() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax", "ay");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"));
@@ -82,11 +86,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("pp⊆ℕ∖{0}"), 
 				makeSList("A1", "A2"), makeSList("ax:∈pp", "ay≔7"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "ay");
@@ -98,13 +102,13 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("pp", "ax'"), makeSList("cx÷qq∈pp", "ax'=qq÷ay'"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = makeTypeEnvironment();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "ax", "ay", "cx");
 		
@@ -150,7 +154,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 * categorisation of witnesses: deterministic or nondeterministic
 	 */
 	public void test_02() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax", "ay", "az");
 		addInvariants(abs, makeSList("I1", "I2", "I3"), makeSList("ax>0", "ay>0", "az>0"));
@@ -159,11 +163,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("pp⊆ℕ"), 
 				makeSList("A1", "A2"), makeSList("ax:∈pp", "ay,az :∣ ay'=az'"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "cy", "cz");
@@ -177,13 +181,13 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("pp", "ax'", "ay'", "az'"), 
 				makeSList("qq∈pp∪{0}", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = makeTypeEnvironment();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "ax", "ay", "az", "cx", "cy", "cz");
 		
@@ -224,7 +228,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 */
 	public void test_03() throws Exception {
 		
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax");
 		addInvariants(abs, makeSList("I1"), makeSList("ax>0"));
@@ -233,11 +237,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("ax:∈{0,1}"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "qq", "cy");
@@ -251,13 +255,13 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("ax'"), 
 				makeSList("(qq=0 ⇒ ax'=cy') ∧ (qq'=1 ⇒ ax'=cy'+1)"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = makeTypeEnvironment();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "ax", "qq", "cy");
 		
@@ -276,7 +280,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 */
 	public void test_04() throws Exception {
 		
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax", "ay", "az");
 		addInvariants(abs, 
@@ -287,11 +291,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("az>0"), 
 				makeSList("A1", "A2"), makeSList("ax:∈{0,1}", "ay≔1"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "ay", "az", "cz");
@@ -307,11 +311,11 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				// important: the types of cz' and az' cannot be inferred
 				makeSList("(cz'=az' ⇒ ax'=1) ∧ (cz'≠az' ⇒ ax'=0)"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "ax", "ay", "az", "cz");
 		

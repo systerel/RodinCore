@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -16,8 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.ISeesContext;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinProject;
@@ -75,10 +77,9 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory {
 		List<String> results = new ArrayList<String>();
 		ISeesContext seesContext = (ISeesContext) element;
 		IRodinProject rodinProject = seesContext.getRodinProject();
-		IContextFile[] contextFiles = rodinProject
-				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-		for (IContextFile contextFile : contextFiles) {
-			String bareName = contextFile.getBareName();
+		IContextRoot[] contextRoot = UIUtils.getContextRootChildren(rodinProject);
+		for (IContextRoot context : contextRoot) {
+			String bareName = context.getComponentName();
 			results.add(bareName);
 		}
 		return results.toArray(new String[results.size()]);

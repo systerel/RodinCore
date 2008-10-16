@@ -1,6 +1,14 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import java.util.ArrayList;
@@ -12,8 +20,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
@@ -21,6 +29,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -49,15 +58,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testSetInput() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -75,36 +84,36 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testGetInput() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
-		IPSFile input = userSupport.getInput();
+		IRodinFile input = userSupport.getInput();
 
 		assertNull("Input for user support has not been set ", input);
 
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 
 		input = userSupport.getInput();
 
-		assertEquals("Input for user support has been set ", psFile, input);
+		assertEquals("Input for user support has been set ", psFile, input.getRoot());
 
 		userSupport.dispose();
 	}
 
 	public void testNextUndischargedPOUnforce() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		userSupport.loadProofStates();
 
 		// Checks that all POs are discharged except the last one.
@@ -134,15 +143,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testNextUndischargedPOForce() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -185,15 +194,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testPrevUndischargedPOUnforce() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		userSupport.loadProofStates();
 
 		IProofState[] states = userSupport.getPOs();
@@ -221,15 +230,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testPrevUndischargedPOForce() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -276,15 +285,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testSetAndGetCurrentPO() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -310,14 +319,14 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testGetPOs() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		
 		// Check that the POs are not yet loaded
 		assertEquals("There should be no PO loaded ", 0,
@@ -333,15 +342,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testHasUnsavedChanges() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -374,15 +383,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testGetUnsavedPOs() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -439,15 +448,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testRemoveCachedHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -495,15 +504,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testSearchHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -523,15 +532,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -567,15 +576,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testSelectNode() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -614,15 +623,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testApplyTactic() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -640,15 +649,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testApplyTacticToHypothesis() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -675,15 +684,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testBack() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psFile = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 

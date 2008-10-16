@@ -1,15 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.tests.BuilderTest;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -24,17 +36,23 @@ public class PSUpdateTests extends BuilderTest {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	private static Predicate BTRUE = ff.makeLiteralPredicate(Formula.BTRUE, null);
-	
-	private IPOFile getPOFile() {
-		return (IPOFile) rodinProject.getRodinFile("x.bpo");
+
+	private IPORoot getPORoot() {
+		return (IPORoot) getPOFile().getRoot();
 	}
+	
+
+	private IRodinFile getPOFile() {
+		return rodinProject.getRodinFile("x.bpo");
+	}
+	
 	
 	private IPOSequent getPOSequent(String name) {
-		return getPOFile().getSequent(name);
+		return getPORoot().getSequent(name);
 	}
 	
-	private IPSFile getPSFile() {
-		return (IPSFile) rodinProject.getRodinFile("x.bps");
+	private IRodinFile getPSFile() {
+		return rodinProject.getRodinFile("x.bps");
 	}
 	
 	private void createPOFile() throws RodinDBException {
@@ -48,7 +66,7 @@ public class PSUpdateTests extends BuilderTest {
 		} else {
 			names = nameList.split(",");
 		}
-		final IPOSequent[] poSequents = getPOFile().getSequents();
+		final IPOSequent[] poSequents = getPORoot().getSequents();
 		final int length = names.length;
 		assertEquals(length, poSequents.length);
 		for (int i = 0; i < length; ++ i) {
@@ -59,7 +77,7 @@ public class PSUpdateTests extends BuilderTest {
 
 	private void addPO(String name, IPOSequent nextSibling)
 			throws RodinDBException {
-		final IPOFile poFile = getPOFile();
+		final IPORoot poFile = getPORoot();
 		final IPOSequent poSequent = poFile.getSequent(name);
 		poSequent.create(nextSibling, null);
 		poSequent.setAccuracy(true, null);
@@ -70,13 +88,13 @@ public class PSUpdateTests extends BuilderTest {
 	}
 
 	private void deletePO(String name) throws RodinDBException {
-		final IPOFile poFile = getPOFile();
+		final IPORoot poFile = getPORoot();
 		final IPOSequent poSequent = poFile.getSequent(name);
 		poSequent.delete(false, null);
 	}
 
 	private void movePO(String name, String nextName) throws RodinDBException {
-		final IPOFile poFile = getPOFile();
+		final IPORoot poFile = getPORoot();
 		final IPOSequent poSequent = poFile.getSequent(name);
 		final IPOSequent nextSibling;
 		if (nextName == null) {
@@ -93,12 +111,13 @@ public class PSUpdateTests extends BuilderTest {
 	 * order as POs.
 	 */
 	private void checkPSFile() throws RodinDBException {
-		final IPOFile poFile = getPOFile();
-		final IPSFile psFile = getPSFile();
+		final IPORoot poFile = getPORoot();
+		final IRodinFile psFile = getPSFile();
+		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 		assertTrue(poFile.exists());
 		assertTrue(psFile.exists());
 		final IPOSequent[] poSequents = poFile.getSequents();
-		final IPSStatus[] psStatuses = psFile.getStatuses();
+		final IPSStatus[] psStatuses = psRoot.getStatuses();
 		final int length = poSequents.length;
 		assertEquals(length, psStatuses.length);
 		for (int i = 0; i < length; i++) {
@@ -119,7 +138,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * the generated / modified PS file.
 	 */
 	protected void runBuilder(String poNameList) throws CoreException {
-		final IPOFile poFile = getPOFile();
+		final IRodinFile poFile = getPOFile();
 		if (poFile.hasUnsavedChanges()) {
 			poFile.save(null, false, false);
 		}

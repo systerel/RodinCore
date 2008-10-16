@@ -13,17 +13,17 @@ package org.eventb.ui.tests;
 
 import java.math.BigInteger;
 
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
+import org.eventb.core.IConstant;
+import org.eventb.core.IEvent;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBUtils;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.ui.tests.utils.EventBUITest;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IEvent;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IAxiom;
-import org.eventb.core.IConstant;
-import org.eventb.core.EventBAttributes;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
@@ -44,13 +44,13 @@ public class TestUIUtils extends EventBUITest {
 	private static final String constantNamePrefix = "constant";
 	private static final String constantIdentifierPrefix = "cst";
 
-	protected static IMachineFile m0;
+	protected static IMachineRoot m0;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		m0 = createMachine("m0");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		assertNotNull("m0 should be created successfully ", m0);
 	}
 

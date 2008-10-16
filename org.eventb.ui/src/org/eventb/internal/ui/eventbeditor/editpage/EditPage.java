@@ -10,6 +10,7 @@
  *     Systerel - added "show borders" preference
  *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -53,17 +54,17 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICommentedElement;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -245,11 +246,11 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
-		final IRodinFile rodinInput = editor.getRodinInput();
+		final IInternalElement rodinInput = editor.getRodinInput();
 		String declaration = "";
-		if (rodinInput instanceof IMachineFile)
+		if (rodinInput instanceof IMachineRoot)
 			declaration = "MACHINE";
-		else if (rodinInput instanceof IContextFile)
+		else if (rodinInput instanceof IContextRoot)
 			declaration = "CONTEXT";
 
 		Label label = toolkit.createLabel(comp, "//");
@@ -257,7 +258,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		
 		String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
 				+ declaration + "</b> "
-				+ EventBPlugin.getComponentName(rodinInput.getElementName())
+				+ EventBPlugin.getComponentName(rodinInput.getRodinFile().getElementName())
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
@@ -267,27 +268,14 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		commentWidget.setForeground(EventBPreferenceStore
 				.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND));
 		commentText = new EventBText(commentWidget);
-		final IEventBEditor<?> fEditor = editor;
 		new TimerText(commentWidget, 1000) {
 
 			@Override
 			protected void response() {
 				if (rodinInput instanceof ICommentedElement) {
-					ICommentedElement cElement = (ICommentedElement) rodinInput;
-					try {
-						if (!cElement.hasComment()
-								|| !cElement.getComment().equals(
-										commentWidget.getText())) {
-							History.getInstance().addOperation(
-									OperationFactory.changeAttribute(fEditor
-											.getRodinInput(), cElement,
-											EventBAttributes.COMMENT_ATTRIBUTE,
-											commentWidget.getText()));
-						}
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+						UIUtils.setStringAttribute(rodinInput,
+								new CommentAttributeFactory(), commentWidget
+										.getText(), null);
 				}
 			}
 		};
@@ -317,7 +305,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 */
 	private void createSections(final Composite parent) {
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
-		IRodinFile rodinInput = editor.getRodinInput();
+		IInternalElement rodinInput = editor.getRodinInput();
 		IElementRelUISpecRegistry editSectionRegistry = ElementRelUISpecRegistry
 				.getDefault();
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
@@ -403,7 +391,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
 			public void run() {
 				String text = commentWidget.getText();
-				IRodinFile rodinInput = EditPage.this.getEventBEditor()
+				IInternalElement rodinInput = EditPage.this.getEventBEditor()
 						.getRodinInput();
 				if (rodinInput instanceof ICommentedElement) {
 					final ICommentedElement cElement = (ICommentedElement) rodinInput;
@@ -770,7 +758,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	public void resourceChanged(IResourceChangeEvent event) {
 		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		IFile rodinInput = editor.getRodinInput().getResource();
+		IFile rodinInput = editor.getRodinInput().getRodinFile().getResource();
 		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
 			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
 		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
@@ -835,7 +823,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 
  private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		final IRodinFile rodinInput = editor.getRodinInput();
+		final IRodinFile rodinInput = editor.getRodinInput().getRodinFile();
 		Display display = this.getSite().getShell().getDisplay();
 		display.syncExec(new Runnable() {
 

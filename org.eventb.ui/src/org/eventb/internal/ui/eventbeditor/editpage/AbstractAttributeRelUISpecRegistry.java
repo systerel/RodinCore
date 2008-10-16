@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -393,7 +394,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		if (attributeRelationships == null)
 			loadRegistry();
 
-		String newName = UIUtils.getFreeChildName(editor, parent, type);
+		String newName = UIUtils.getFreeChildName(editor.getRodinInput(), parent, type);
 		final T newElement = parent.getInternalElement(type, newName);
 		RodinCore.run(new IWorkspaceRunnable() {
 

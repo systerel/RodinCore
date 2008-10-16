@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
-import org.eventb.core.ISCContextFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
 
 
@@ -23,84 +27,85 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * a carrier set should be copied into internal contexts
 	 */
 	public void testExtendsContext_01_createCarrierSet() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+		ISCContextRoot file = con.getSCContextRoot();
 		
 		extendsContexts(file, "abs");
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S");
 		
-		containsMarkers(con, false);
+		containsMarkers(con.getRodinFile(), false);
 	}
 
 	/**
 	 * two carrier sets should be copied into internal contexts
 	 */
 	public void testExtendsContext_02_twoCarrierSets() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1", "S2"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+		ISCContextRoot file = con.getSCContextRoot();
 		
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
 		containsCarrierSets(contexts[0], "S1", "S2");
 		
-		containsMarkers(con, false);
+		containsMarkers(con.getRodinFile(), false);
 	}
 	
 	/**
 	 * internal contexts that would introduce name conflicts must be removed
 	 */
 	public void testExtendsContext_03_extendsConflict() throws Exception {
-		IContextFile abs1 = createContext("abs1");
+		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.save(null, true);
+		abs1.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile abs2 = createContext("abs2");
+		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
-		abs2.save(null, true);
+		abs2.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+
+		ISCContextRoot file = con.getSCContextRoot();
 		extendsContexts(file);
 		getInternalContexts(file, 0);
 		
@@ -113,29 +118,30 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * carrier sets from different contexts should be copied into corresponding internal contexts
 	 */
 	public void testExtendsContext_04_extendsNoConflict() throws Exception {
-		IContextFile abs1 = createContext("abs1");
+		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.save(null, true);
+		abs1.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile abs2 = createContext("abs2");
+		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S21", "S22"));
 		
-		abs2.save(null, true);
+		abs2.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+
+		ISCContextRoot file = con.getSCContextRoot();
 
 		extendsContexts(file, "abs1", "abs2");
 		containsContexts(file, "abs1", "abs2");
@@ -146,7 +152,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 
 		containsCarrierSets(contexts[1], "S21", "S22");
 		
-		containsMarkers(con, false);
+		containsMarkers(con.getRodinFile(), false);
 	}
 	
 	/**
@@ -154,35 +160,36 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * but contexts untouched should be kept.
 	 */
 	public void testExtendsContext_05_extendsPartialConflict() throws Exception {
-		IContextFile abs1 = createContext("abs1");
+		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.save(null, true);
+		abs1.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile abs2 = createContext("abs2");
+		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
-		abs2.save(null, true);
+		abs2.getRodinFile().save(null, true);
 		
-		IContextFile abs3 = createContext("abs3");
+		IContextRoot abs3 = createContext("abs3");
 		addCarrierSets(abs3, makeSList("S31", "S32"));
 		
-		abs3.save(null, true);
+		abs3.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		addContextExtends(con, "abs3");
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+
+		ISCContextRoot file = con.getSCContextRoot();
 		
 		extendsContexts(file, "abs3");
 		containsContexts(file, "abs3");
@@ -199,26 +206,27 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * Contexts should be included transitively.
 	 */
 	public void testExtendsContext_06_transitive() throws Exception {
-		IContextFile abs1 = createContext("abs1");
+		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S1"));
-		abs1.save(null, true);
+		abs1.getRodinFile().save(null, true);
 		
-		IContextFile abs2 = createContext("abs2");
+		IContextRoot abs2 = createContext("abs2");
 		addContextExtends(abs2, "abs1");
 		addCarrierSets(abs2, makeSList("S2"));
-		abs2.save(null, true);
+		abs2.getRodinFile().save(null, true);
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs2");
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+
+		ISCContextRoot file = con.getSCContextRoot();
 		extendsContexts(file, "abs2");
 		containsContexts(file, "abs1", "abs2");
 		
-		containsMarkers(con, false);
+		containsMarkers(con.getRodinFile(), false);
 	}
 
 	/**
@@ -227,18 +235,18 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * (This should be a warning not an error)
 	 */
 	public void testExtendsContext_07_redundant() throws Exception {
-		IContextFile cab = createContext("cab");
+		IContextRoot cab = createContext("cab");
 		
-		cab.save(null, true);
+		cab.getRodinFile().save(null, true);
 		
-		IContextFile cco = createContext("cco");
+		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cab");
 
-		cco.save(null, true);
-		con.save(null, true);
+		cco.getRodinFile().save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -250,13 +258,13 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * (This should be a warning not an error)
 	 */
 	public void testExtendsContext_08_redundant() throws Exception {
-		IContextFile cco = createContext("cco");
-		IContextFile con = createContext("con");
+		IContextRoot cco = createContext("cco");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cco");
 
-		cco.save(null, true);
-		con.save(null, true);
+		cco.getRodinFile().save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -267,21 +275,22 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * abstract context not saved!
 	 */
 	public void testExtendsContext_09_abstractContextNotSaved() throws Exception {
-		IContextFile abs = createContext("abs");
+		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
 		
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		addCarrierSets(con, makeSList("T"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile file = con.getSCContextFile();
+
+		ISCContextRoot file = con.getSCContextRoot();
 		
-		containsMarkers(abs, true);
-		containsMarkers(con, true);
+		containsMarkers(abs.getRodinFile(), true);
+		containsMarkers(con.getRodinFile(), true);
 		
 		containsCarrierSets(file, "T");
 		

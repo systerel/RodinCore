@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -28,8 +29,9 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -37,6 +39,7 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -313,7 +316,7 @@ public class RefinesSection extends SectionPart implements
 				if (!(refined.getAbstractMachineName().equals(machine))) {
 					AtomicOperation operation = OperationFactory
 							.changeAttribute(
-									editor.getRodinInput(),
+									editor.getRodinInput().getRodinFile(),
 									new RefinesMachineAbstractMachineNameAttributeFactory(),
 									refined, machine);
 					History.getInstance().addOperation(operation);
@@ -382,14 +385,13 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	private void initCombo() {
-		final IRodinFile rodinFile = editor.getRodinInput();
-		final IRodinProject rodinProject = rodinFile.getRodinProject();
+		final IInternalElement rodinRoot = editor.getRodinInput();
+		final IRodinProject rodinProject = rodinRoot.getRodinProject();
 		machineCombo.add(NULL_VALUE);
 		try {
-			final IMachineFile[] machines = rodinProject
-					.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-			for (IMachineFile machine : machines) {
-				if (!rodinFile.equals(machine)) {
+			final IMachineRoot[] machines = UIUtils.getMachineRootChildren(rodinProject);
+			for (IMachineRoot machine : machines) {
+				if (!rodinRoot.equals(machine)) {
 					if (EventBEditorUtils.DEBUG)
 						EventBEditorUtils.debug("Add to Combo: "
 								+ machine.getElementName());
@@ -404,9 +406,9 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	private void setComboValue() {
-		IRodinFile rodinFile = editor.getRodinInput();
+		IInternalElement root = editor.getRodinInput();
 		try {
-			IRodinElement[] refinedMachines = rodinFile
+			IRodinElement[] refinedMachines = root
 					.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 			if (refinedMachines.length != 0) {
 				refined = (IRefinesMachine) refinedMachines[0];
@@ -438,10 +440,10 @@ public class RefinesSection extends SectionPart implements
 	}
 
 	void updateCombo() {
-		IRodinFile rodinFile = editor.getRodinInput();
+		IInternalElement root = editor.getRodinInput();
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("Update Combo: "
-					+ rodinFile.getElementName() + " --- " + refreshCombo);
+					+ root.getRodinFile().getElementName() + " --- " + refreshCombo);
 		if (refreshCombo) {
 			String oldText = machineCombo.getText();
 			machineCombo.removeAll();
@@ -471,9 +473,9 @@ public class RefinesSection extends SectionPart implements
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) element;
-			IRodinFile rodinFile = editor.getRodinInput();
+			IInternalElement root = editor.getRodinInput();
 
-			if (!rodinFile.getParent().equals(prj)) {
+			if (!root.getRodinProject().equals(prj)) {
 				return;
 			}
 			IRodinElementDelta[] deltas = delta.getAffectedChildren();
@@ -486,11 +488,20 @@ public class RefinesSection extends SectionPart implements
 		if (element instanceof IRodinFile) {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Refines Section: file" + element);
-			if (!(element instanceof IMachineFile)) {
+			IInternalElement root = editor.getRodinInput();
+			if (!root.getRodinFile().equals(element)) {
 				return;
 			}
-			IRodinFile rodinFile = editor.getRodinInput();
-			if (rodinFile.equals(element)) {
+			IRodinElementDelta[] deltas = delta.getAffectedChildren();
+			for (int i = 0; i < deltas.length; i++) {
+				processDelta(deltas[i]);
+			}
+			return;
+		}
+
+		if (element instanceof IMachineRoot) {
+			IInternalElement root = editor.getRodinInput();
+			if (root.equals(element)) {
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (int i = 0; i < deltas.length; i++) {
 					processDelta(deltas[i]);
@@ -501,9 +512,9 @@ public class RefinesSection extends SectionPart implements
 					refreshCombo = true;
 				}
 			}
-			return;
-		}
 
+			
+		}
 		if (element instanceof IRefinesMachine) {
 			int kind = delta.getKind();
 			if ((kind & IRodinElementDelta.REMOVED) != 0) {

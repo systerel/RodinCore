@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 
 /**
  * @author Stefan Hallerstede
@@ -23,7 +27,7 @@ public class TestPOFilter extends EventBPOTest {
 	 * stop machine theorem POs from being generated
 	 */
 	public void test_01_filterTheorems() throws Exception {
-		IPOFile po = createMachineWithTheorem(false);
+		IPORoot po = createMachineWithTheorem(false);
 		
 		getSequent(po, "T1/THM");
 		getSequent(po, "T2/THM");
@@ -36,40 +40,39 @@ public class TestPOFilter extends EventBPOTest {
 		getSequent(po, "T2/WD");
 	}
 
-	private IPOFile createMachineWithTheorem(boolean filter) throws CoreException {
-		IMachineFile mac = createMachine("mac");
+	private IPORoot createMachineWithTheorem(boolean filter) throws CoreException {
+		IMachineRoot mac = createMachine("mac");
 		if (filter)
 			mac.setConfiguration(ORG_EVENTB_CORE_TESTS_FILTER, null);
 
 		addTheorems(mac, makeSList("T1", "T2"), makeSList("∀x·x>1", "∃x·1÷x>0"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getPOFile(mac);
-		return po;
+		return mac.getPORoot();
 	}
 
 	/**
 	 * stop action feasibility POs from being generated
 	 */
 	public void test_02_filterActionFIS() throws Exception {
-		IPOFile po = createMachineWithEventAction(false);
+		IPORoot po = createMachineWithEventAction(false);
 		
 		getSequent(po, "evt/A1/FIS");
 		getSequent(po, "evt/A1/WD");
 		getSequent(po, "evt/I1/INV");
 		
 		po = createMachineWithEventAction(true);
-				
+		
 		noSequent(po, "evt/A1/FIS");
 		getSequent(po, "evt/A1/WD");
 		getSequent(po, "evt/I1/INV");
 	}
 
-	private IPOFile createMachineWithEventAction(boolean filter) throws CoreException {
-		IMachineFile mac = createMachine("mac");
+	private IPORoot createMachineWithEventAction(boolean filter) throws CoreException {
+		IMachineRoot mac = createMachine("mac");
 		if (filter)
 			mac.setConfiguration(ORG_EVENTB_CORE_TESTS_FILTER, null);
 
@@ -80,11 +83,11 @@ public class TestPOFilter extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1 :∣ V1'÷V1>0"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		return getPOFile(mac);
+		return mac.getPORoot();
 	}
 
 }

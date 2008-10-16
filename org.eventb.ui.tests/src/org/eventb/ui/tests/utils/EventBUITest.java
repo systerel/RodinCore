@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added methods for creating elements
  *     Systerel - replaced inherited by extended, added tool configuration
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 
 package org.eventb.ui.tests.utils;
@@ -29,10 +30,11 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -98,10 +100,11 @@ public abstract class EventBUITest extends TestCase {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IContextFile createContext(String bareName) throws RodinDBException {
+	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IContextFile result = (IContextFile) rodinProject.getRodinFile(fileName);
-		result.create(true, null);
+		IRodinFile file = rodinProject.getRodinFile(fileName);
+		file.create(true, null);
+		IContextRoot result = (IContextRoot) file.getRoot();
 		result.setConfiguration(DEFAULT_CONFIGURATION, null);
 		return result;
 	}
@@ -116,10 +119,11 @@ public abstract class EventBUITest extends TestCase {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IMachineFile createMachine(String bareName) throws RodinDBException {
+	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IMachineFile result = (IMachineFile) rodinProject.getRodinFile(fileName);
-		result.create(true, null);
+		final IRodinFile file = rodinProject.getRodinFile(fileName);
+		file.create(true, null);
+		final IMachineRoot result = (IMachineRoot) file.getRoot();
 		result.setConfiguration(DEFAULT_CONFIGURATION, null);
 		return result;
 	}
@@ -135,7 +139,7 @@ public abstract class EventBUITest extends TestCase {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IRefinesMachine createRefinesMachineClause(IMachineFile machine,
+	protected IRefinesMachine createRefinesMachineClause(IMachineRoot machine,
 			String abstractMachineName) throws RodinDBException {
 		String childName = EventBUtils.getFreeChildName(machine,
 				IRefinesMachine.ELEMENT_TYPE, "refines_machine"); //$NON-NLS-1$
@@ -151,15 +155,15 @@ public abstract class EventBUITest extends TestCase {
 	 * given label. The new event is non-extended.
 	 * 
 	 * @param machine
-	 *            a machine file.
+	 *            a machine root.
 	 * @param eventLabel
 	 *            the label of the new event.
 	 * @return the newly created event.
 	 * @throws RodinDBException
 	 *             if some problems occur.
-	 * @see #createEvent(IMachineFile, String, String)
+	 * @see #createEvent(IMachineRoot, String, String)
 	 */
-	protected IEvent createEvent(IMachineFile machine, String eventLabel)
+	protected IEvent createEvent(IMachineRoot machine, String eventLabel)
 			throws RodinDBException {
 		String childName = EventBUtils.getFreeChildName(machine,
 				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
@@ -172,15 +176,15 @@ public abstract class EventBUITest extends TestCase {
 	 * event is also specified.
 	 * 
 	 * @param machine
-	 *            a machine file.
+	 *            a machine root.
 	 * @param eventLabel
 	 *            the label of the new event.
 	 * @return the newly created event.
 	 * @throws RodinDBException
 	 *             if some problems occur.
-	 * @see #createEvent(IMachineFile, String)
+	 * @see #createEvent(IMachineRoot, String)
 	 */
-	protected IEvent createEvent(IMachineFile machine, String internalName,
+	protected IEvent createEvent(IMachineRoot machine, String internalName,
 			String eventLabel) throws RodinDBException {
 		IEvent event = machine.getEvent(internalName);
 		event.create(null, null);
@@ -346,13 +350,15 @@ public abstract class EventBUITest extends TestCase {
 	 * @throws PartInitException
 	 *             if some problems occur when open the editor.
 	 */
-	protected IEventBEditor<?> openEditor(IRodinFile component)
+	protected IEventBEditor<?> openEditor(IEventBRoot component)
 			throws PartInitException {
-		IEditorInput fileInput = new FileEditorInput(component.getResource());
+		
+		IEditorInput fileInput = new FileEditorInput(component.getRodinFile()
+				.getResource());
 		String editorId = ""; //$NON-NLS-1$
-		if (component instanceof IMachineFile) {
+		if (component instanceof IMachineRoot) {
 			editorId = EventBMachineEditor.EDITOR_ID;
-		} else if (component instanceof IContextFile) {
+		} else if (component instanceof IContextRoot) {
 			editorId = EventBContextEditor.EDITOR_ID;
 		}
 		return (IEventBEditor<?>) EventBUIPlugin.getActivePage().openEditor(
@@ -389,7 +395,7 @@ public abstract class EventBUITest extends TestCase {
 		}
 	}
 
-	protected void createNEvents(IMachineFile machine,
+	protected void createNEvents(IMachineRoot machine,
 			String internalNamePrefix, String eventLabelPrefix, long n,
 			long beginIndex) throws RodinDBException {
 

@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -10,8 +21,9 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -45,9 +57,12 @@ public class Renames implements IObjectActionDelegate {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
-				if (!(obj instanceof IRodinFile))
+				if(!(obj instanceof IInternalElement))
 					return;
-				final IRodinFile file = (IRodinFile) obj;
+				final IInternalElement root = (IInternalElement) obj;
+				if (!(root.getParent() instanceof IRodinFile))
+					return;
+				final IRodinFile file = root.getRodinFile();
 				final IRodinProject prj = file.getRodinProject();
 
 				InputDialog dialog = new InputDialog(part.getSite().getShell(),
@@ -70,10 +85,10 @@ public class Renames implements IObjectActionDelegate {
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
 							String newName = null;
-							if (file instanceof IContextFile)
+							if (root instanceof IContextRoot)
 								newName = EventBPlugin
 										.getContextFileName(bareName);
-							else if (file instanceof IMachineFile)
+							else if (root instanceof IMachineRoot)
 								newName = EventBPlugin
 										.getMachineFileName(bareName);
 

@@ -1,34 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
-import org.rodinp.core.RodinCore;
 
 /**
  * @author htson
  *         <p>
  *         A subclass of Event-B Editor for editting Event-B machines.
  */
-public class EventBMachineEditor extends EventBEditor<IMachineFile> {
+public class EventBMachineEditor extends EventBEditor<IMachineRoot> {
 
 	/**
 	 * The plug-in identifier of the Event-B Machine Editor (value
@@ -65,13 +60,6 @@ public class EventBMachineEditor extends EventBEditor<IMachineFile> {
 				UIUtils.log(e, "Failed to initialise page " + page.getId());
 			}
 		}
-	}
-
-	@Override
-	protected IMachineFile getRodinFile(IEditorInput input) {
-		FileEditorInput editorInput = (FileEditorInput) input;
-		IFile inputFile = editorInput.getFile();
-		return (IMachineFile) RodinCore.valueOf(inputFile);
 	}
 
 	@Override

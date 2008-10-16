@@ -1,19 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.sc.GraphProblem;
 
@@ -27,7 +31,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * All kinds of convergence can be refined by the same kind.
 	 */
 	public void testCvg_00_AllThreeKindsOK() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addInitialisation(mac);
 		addVariant(mac, "1");
@@ -37,11 +41,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		IEvent gvt = addEvent(mac, "gvt");
 		setConvergent(gvt);
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
 				"fvt", "gvt");
@@ -49,7 +53,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		isAnticipated(events[2]);
 		isConvergent(events[3]);
 
-		containsMarkers(mac, false);
+		containsMarkers(mac.getRodinFile(), false);
 	}
 
 	/**
@@ -57,7 +61,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * testCvg_09
 	 */
 	public void testCvg_01_NoVariantConvergentSetToOrdinary() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		IEvent evt = addEvent(mac, "evt");
 		setOrdinary(evt);
@@ -65,11 +69,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		IEvent gvt = addEvent(mac, "gvt");
 		setConvergent(gvt);
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
@@ -84,7 +88,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * events.
 	 */
 	public void testCvg_02_AllRefinedByOrdinary() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
 		addInitialisation(abs);
 		IEvent evt = addEvent(abs, "evt");
@@ -94,11 +98,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		addVariant(mac, "1");
@@ -112,11 +116,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setOrdinary(mgvt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
 				"fvt", "gvt");
@@ -124,7 +128,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		isOrdinary(events[2]);
 		isOrdinary(events[3]);
 
-		containsMarkers(mac, false);
+		containsMarkers(mac.getRodinFile(), false);
 	}
 
 	/**
@@ -132,7 +136,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * set to ordinary.
 	 */
 	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -141,11 +145,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
@@ -158,11 +162,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setAnticipated(mgvt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
@@ -177,7 +181,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * concrete event is set to ordinary.
 	 */
 	public void testCvg_04_AllRefinedByConvergent() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -186,11 +190,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
@@ -203,11 +207,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setConvergent(mgvt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, "evt", "fvt", "gvt");
 		isOrdinary(events[0]);
@@ -222,7 +226,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * is issued and the refining event set to ordinary.
 	 */
 	public void testCvg_05_mergeFaultySetToOrdinary() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setOrdinary(evt);
@@ -231,11 +235,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
@@ -244,11 +248,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mevt, "gvt");
 		setConvergent(mevt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, "evt");
 		isOrdinary(events[0]);
@@ -261,21 +265,21 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 */
 	public void testCvg_06_InitialisationIsOrdinary() throws Exception {
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setOrdinary(init);
 		addVariant(mac, "1");
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
 
-		containsMarkers(mac, false);
+		containsMarkers(mac.getRodinFile(), false);
 	}
 
 	/**
@@ -283,16 +287,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 */
 	public void testCvg_07_InitialisationIsNotAnticipated() throws Exception {
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setAnticipated(init);
 		addVariant(mac, "1");
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
@@ -305,16 +309,16 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 */
 	public void testCvg_08_InitialisationIsNotConvergent() throws Exception {
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setConvergent(init);
 		addVariant(mac, "1");
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
@@ -328,33 +332,33 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 */
 	public void testCvg_09_refinedByConvergentNoVariantNeeded()
 			throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
 		addInitialisation(abs);
 		IEvent evt = addEvent(abs, "evt");
 		setConvergent(evt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		IEvent mevt = addEvent(mac, "evt");
 		addEventRefines(mevt, "evt");
 		setConvergent(mevt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		isConvergent(events[1]);
 
-		containsMarkers(mac, false);
+		containsMarkers(mac.getRodinFile(), false);
 	}
 
 	/**
@@ -362,19 +366,19 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * variant in the refined machine what concerns the convergent event.
 	 */
 	public void testCvg_10_convergentEventNoVariant() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
 		addVariant(abs, "1");
 		IEvent evt = addEvent(abs, "evt");
 		setConvergent(evt);
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		containsMarkers(abs, false);
+		containsMarkers(abs.getRodinFile(), false);
 
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 		IEvent mevt = addEvent(mac, "evt");
@@ -383,11 +387,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent mfvt = addEvent(mac, "fvt");
 		setConvergent(mfvt);
 
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 
 		runBuilder();
 
-		ISCMachineFile file = mac.getSCMachineFile();
+		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
 				"fvt");
@@ -428,7 +432,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 						Convergence.CONVERGENT) };
 
 		for (IConvergenceElement.Convergence[] cvgs : cvgMatrix) {
-			IMachineFile abs = createMachine("abs");
+			IMachineRoot abs = createMachine("abs");
 			addInitialisation(abs);
 			if (cvgs[0] == Convergence.CONVERGENT
 					|| cvgs[1] == Convergence.CONVERGENT)
@@ -438,13 +442,13 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 			IEvent fvt = addEvent(abs, "fvt");
 			fvt.setConvergence(cvgs[1], null);
 
-			abs.save(null, true);
+			abs.getRodinFile().save(null, true);
 
 			runBuilder();
 
-			containsMarkers(abs, false);
+			containsMarkers(abs.getRodinFile(), false);
 
-			IMachineFile mac = createMachine("mac");
+			IMachineRoot mac = createMachine("mac");
 			addMachineRefines(mac, "abs");
 			addInitialisation(mac);
 			if (cvgs[2] == Convergence.CONVERGENT)
@@ -453,11 +457,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 			addEventRefines(mevt, "evt", "fvt");
 			mevt.setConvergence(cvgs[2], null);
 
-			mac.save(null, true);
+			mac.getRodinFile().save(null, true);
 
 			runBuilder();
 
-			ISCMachineFile file = mac.getSCMachineFile();
+			ISCMachineRoot file = mac.getSCMachineRoot();
 
 			ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 			if (cvgs[2] == Convergence.CONVERGENT) {
@@ -468,7 +472,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 				isOrdinary(events[1]);
 			}
 			if (cvgs[0] == cvgs[2] && cvgs[1] == cvgs[2]) {
-				containsMarkers(mac, false);			
+				containsMarkers(mac.getRodinFile(), false);			
 			} else {
 				IRefinesEvent[] refinesClauses = mevt.getRefinesClauses();
 				hasMarker(refinesClauses[0], EventBAttributes.TARGET_ATTRIBUTE);

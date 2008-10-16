@@ -15,9 +15,9 @@ import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import java.util.Collection;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IUserSupport;
@@ -26,6 +26,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.tests.pom.POUtil;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -66,8 +67,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 				|| status.isBroken());
 	}
 
-	private IPOFile poFile;
-	private IPSFile psFile;
+	private IPORoot poRoot;
+	private IPSRoot psFile;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -75,17 +76,18 @@ public class FunOvrGoalTacTests extends BasicTest {
 		disableAutoProver();
 		disablePostTactic();
 		createPOFile();
-		psFile = poFile.getPSFile();
+		psFile = poRoot.getPSRoot();
 	}
 	
 	private void createPOFile() throws RodinDBException {
-		poFile = (IPOFile) rodinProject.getRodinFile("po.bpo");
+		IRodinFile poFile = rodinProject.getRodinFile("po.bpo");
 		poFile.create(true, null);
+		poRoot = (IPORoot) poFile.getRoot();
 		final ITypeEnvironment typenv = mTypeEnvironment(//
 				"f", "ℙ(ℤ×ℤ)", //
 				"g", "ℙ(ℤ×ℤ)", //
 				"x", "ℤ");
-		final IPOPredicateSet h0 = POUtil.addPredicateSet(poFile, "h0", null,
+		final IPOPredicateSet h0 = POUtil.addPredicateSet(poRoot, "h0", null,
 				typenv, //
 				"f ∈ ℤ → ℤ", //
 				"g ∈ ℤ → ℤ", //
@@ -93,7 +95,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 				"  x ∈ dom(g) ⇒ g(x) ∈ ℕ", //
 				"¬ x ∈ dom(g) ⇒ f(x) ∈ ℕ");
 		final ITypeEnvironment empty = mTypeEnvironment();
-		POUtil.addSequent(poFile, PO1, "(fg)(x) ∈ ℕ", h0, empty);
+		POUtil.addSequent(poRoot, PO1, "(fg)(x) ∈ ℕ", h0, empty);
 		poFile.save(null, true);
 	}
 
@@ -141,7 +143,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
 		final IUserSupport us = usm.newUserSupport();
 		try {
-			us.setInput(psFile);
+			us.setInput(psFile.getRodinFile());
 			us.setCurrentPO(status, null);
 			assertTrue(us.getCurrentPO().isClosed());
 		} finally {

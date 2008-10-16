@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.rodinp.core.RodinDBException;
 
@@ -18,8 +22,7 @@ import org.rodinp.core.RodinDBException;
  *
  */
 public class GenericEventTest<T extends EventBTest> 
-extends GenericTest<T> 
-implements IGenericElementTest<IEvent> {
+extends GenericTest<T>  {
 
 	public GenericEventTest(T test) {
 		super(test);
@@ -54,9 +57,9 @@ implements IGenericElementTest<IEvent> {
 	}
 
 	public IEvent createElement(String bareName) throws RodinDBException {
-		IMachineFile file = test.createMachine("mch");
-		test.addInitialisation(file);
-		IEvent event = test.addEvent(file, bareName);
+		IMachineRoot root = test.createMachine("mch");
+		test.addInitialisation(root);
+		IEvent event = test.addEvent(root, bareName);
 		return event;
 	}
 

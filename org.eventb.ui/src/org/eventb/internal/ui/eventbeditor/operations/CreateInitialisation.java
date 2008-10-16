@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eventb.core.IAction;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
@@ -29,7 +29,7 @@ import org.rodinp.core.RodinDBException;
 
 class CreateInitialisation extends OperationLeaf {
 
-	private IEventBEditor<IMachineFile> editor;
+	private IEventBEditor<IMachineRoot> editor;
 	private String actLabel;
 	private String actSub;
 
@@ -38,9 +38,8 @@ class CreateInitialisation extends OperationLeaf {
 
 	private IAction action;
 
-
 	// TODO a retravailler en utilisant les autres Operation
-	CreateInitialisation(final IEventBEditor<IMachineFile> editor,
+	CreateInitialisation(final IEventBEditor<IMachineRoot> editor,
 			final String actLabel, final String actSub) {
 		super("CreateInitialisation");
 		this.editor = editor;
@@ -63,15 +62,14 @@ class CreateInitialisation extends OperationLeaf {
 			name = UIUtils.getFreeElementName(editor, event,
 					IAction.ELEMENT_TYPE, defaultPrefix);
 			action = event.getInternalElement(IAction.ELEMENT_TYPE, name);
-			assert !action.exists();
+
 			action.create(null, monitor);
 			action.setLabel(actLabel, monitor);
 			action.setAssignmentString(actSub, monitor);
 			editor.addNewElement(action);
 
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return e.getStatus();
 		}
 		return Status.OK_STATUS;
 	}
@@ -95,24 +93,25 @@ class CreateInitialisation extends OperationLeaf {
 			e.printStackTrace();
 		}
 
-		return Status.OK_STATUS ;
+		return Status.OK_STATUS;
 	}
 
 	private IEvent getInitialisationEvent(IProgressMonitor monitor)
 			throws RodinDBException {
-		final IMachineFile rodinFile = editor.getRodinInput();
-		IEvent result = EventBEditorUtils.getInitialisation(rodinFile);
+		final IMachineRoot root = editor.getRodinInput();
+		IEvent result = EventBEditorUtils.getInitialisation(root);
 		if (result != null) {
 			return result;
 		}
-		
-		final String evtName = UIUtils.getFreeElementName(editor, rodinFile,
+
+		final String evtName = UIUtils.getFreeElementName(editor, root,
 				IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
-		result = rodinFile.getEvent(evtName);
-		assert !result.exists();
+		result = root.getEvent(evtName);
+
 		result.create(null, monitor);
 		result.setLabel(IEvent.INITIALISATION, monitor);
-		result.setConvergence(IConvergenceElement.Convergence.ORDINARY,
+		result
+				.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 						monitor);
 		result.setExtended(false, monitor);
 		editor.addNewElement(result);
@@ -121,6 +120,6 @@ class CreateInitialisation extends OperationLeaf {
 
 	public void setParent(IInternalElement element) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

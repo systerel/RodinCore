@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -31,7 +32,7 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editting Sees
  *         clause.
  */
-public class ExtendsSection extends AbstractContextsSection<IContextFile> {
+public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Abstract Contexts";
@@ -48,7 +49,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 	 * @param parent
 	 *            The composite parent
 	 */
-	public ExtendsSection(IEventBEditor<IContextFile> editor,
+	public ExtendsSection(IEventBEditor<IContextRoot> editor,
 			FormToolkit toolkit, Composite parent) {
 
 		super(editor, toolkit, parent);
@@ -65,7 +66,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 	@Override
 	protected IExtendsContext[] getClauses() {
 		try {
-			return rodinFile.getExtendsClauses();
+			return rodinRoot.getExtendsClauses();
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when reading the extends clauses");
 			return new IExtendsContext[0];
@@ -87,7 +88,7 @@ public class ExtendsSection extends AbstractContextsSection<IContextFile> {
 		Set<String> usedNames = new HashSet<String>();
 
 		// First add myself
-		usedNames.add(rodinFile.getBareName());
+		usedNames.add(rodinRoot.getRodinFile().getBareName());
 
 		// Then, all contexts already extended
 		for (IExtendsContext clause : getClauses()) {

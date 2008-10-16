@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added getFreeIndex method to factor several methods
  *     Systerel - added methods indicateUser() and showUnexpectedError()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -43,11 +44,13 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IParameter;
 import org.eventb.core.ITheorem;
@@ -86,6 +89,7 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -229,7 +233,7 @@ public class UIUtils {
 	 *            the object (e.g. a proof obligation or a Rodin file)
 	 */
 	public static void linkToProverUI(final Object obj) {
-		final IPSFile psFile = getPSFileFor(obj);
+		final IRodinFile psFile = getPSFileFor(obj);
 		if (psFile == null) {
 			// Not a PS file element
 			// TODO log error here ?
@@ -257,17 +261,19 @@ public class UIUtils {
 		}
 	}
 
-	private static IPSFile getPSFileFor(Object obj) {
+	private static IRodinFile getPSFileFor(Object obj) {
 		if (!(obj instanceof IRodinElement)) {
 			return null;
 		}
 
 		final IOpenable file = ((IRodinElement) obj).getOpenable();
-		if (file instanceof IPSFile) {
-			return (IPSFile) file;
-		}
-		if (file instanceof IEventBFile) {
-			return ((IEventBFile) file).getPSFile();
+		if (file instanceof IRodinFile) {
+			IInternalElement root = ((IRodinFile) file).getRoot();
+			if(root instanceof IPSRoot){
+				return root.getRodinFile();
+			} else if(root instanceof IEventBRoot){
+				return ((IEventBRoot) root).getPSRoot().getRodinFile();
+			}				
 		}
 		return null;
 	}
@@ -441,6 +447,11 @@ public class UIUtils {
 		return "internal_" + getPrefix(rodinFile, type, defaultPrefix); //$NON-NLS-1$
 	}
 
+	public static String getNamePrefix(IInternalElement root,
+			IInternalElementType<?> type, String defaultPrefix) {
+		return getNamePrefix(root.getRodinFile(), type, defaultPrefix);
+	}
+
 	public static String getPrefix(IRodinFile inputFile,
 			IInternalElementType<?> type, String defaultPrefix) {
 		String prefix = null;
@@ -455,6 +466,11 @@ public class UIUtils {
 		if (prefix == null)
 			prefix = defaultPrefix;
 		return prefix;
+	}
+	
+	public static String getPrefix(IInternalElement root,
+			IInternalElementType<?> type, String defaultPrefix) {
+		return getPrefix(root.getRodinFile(), type, defaultPrefix);
 	}
 
 	public static <T extends IInternalElement> String getFreeElementName(
@@ -687,13 +703,19 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
-			IEventBEditor<?> editor, IInternalParent parent,
+			IRodinFile file, IInternalParent parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
-		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
+		String prefix = getNamePrefix(file, type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
+	public static <T extends IInternalElement> String getFreeChildName(
+			IInternalElement root, IInternalParent parent,
+			IInternalElementType<T> type) throws RodinDBException {
+		return getFreeChildName(root.getRodinFile(), parent, type);
+	}
+	
 	public static QualifiedName getQualifiedName(IInternalElementType<?> type) {
 		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
 	}
@@ -835,5 +857,49 @@ public class UIUtils {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
+
+	
+	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
+			throws RodinDBException {
+		ArrayList<IMachineRoot> result = new ArrayList<IMachineRoot>();
+		for (IRodinElement element : project.getChildren()) {
+			if (element instanceof IRodinFile) {
+				IInternalElement root = ((IRodinFile) element)
+						.getRoot();
+				if (root instanceof IMachineRoot)
+					result.add((IMachineRoot) root);
+			}
+		}
+		return result.toArray(new IMachineRoot[result.size()]);
+	}
+	
+	
+	public static IContextRoot[] getContextRootChildren(IRodinProject project)
+			throws RodinDBException {
+		ArrayList<IContextRoot> result = new ArrayList<IContextRoot>();
+		for (IRodinElement element : project.getChildren()) {
+			if (element instanceof IRodinFile) {
+				IInternalElement root = ((IRodinFile) element)
+						.getRoot();
+				if (root instanceof IContextRoot)
+					result.add((IContextRoot) root);
+			}
+		}
+		return result.toArray(new IContextRoot[result.size()]);
+	}
+
+	public static IPSRoot[] getPSRootChildren(IRodinProject project)
+			throws RodinDBException {
+		ArrayList<IPSRoot> result = new ArrayList<IPSRoot>();
+		for (IRodinElement element : project.getChildren()) {
+			if (element instanceof IRodinFile) {
+				IInternalElement root = ((IRodinFile) element)
+						.getRoot();
+				if (root instanceof IPSRoot)
+					result.add((IPSRoot) root);
+			}
+		}
+		return result.toArray(new IPSRoot[result.size()]);
+}
 	
 }

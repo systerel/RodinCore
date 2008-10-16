@@ -1,17 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.ISCContextFile;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.ISCContextRoot;
+import org.eventb.core.ISCMachineRoot;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Version 1 of the machine and context database introduces configurations
@@ -37,9 +42,9 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 		String name = "ctx.buc";
 		createFile(name, contents);
 		
-		IContextFile file = (IContextFile) rodinProject.getRodinFile(name);
-		
-		String config = file.getConfiguration();
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IContextRoot root = (IContextRoot)file.getRoot();
+		String config = root.getConfiguration();
 		
 		assertEquals("wrong configuration", ORG_EVENTB_CORE_FWD, config);
 		
@@ -61,9 +66,9 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 		String name = "mch.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		String config = file.getConfiguration();
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
+		String config = root.getConfiguration();
 		
 		assertEquals("wrong configuration", ORG_EVENTB_CORE_FWD, config);
 		
@@ -74,15 +79,15 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	 * the new attribute is added
 	 */
 	public void testVersion_03_contextSC() throws Exception {
-		IContextFile file = createContext("ctx");
-		file.setConfiguration(ORG_EVENTB_CORE_FWD, null);
-		file.save(null, true);
+		IContextRoot root = createContext("ctx");
+		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);
+		root.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCContextFile scFile = file.getSCContextFile();
+		ISCContextRoot scRoot = root.getSCContextRoot();
 		
-		assertEquals("attribute missing in SC context", ORG_EVENTB_CORE_FWD, scFile.getConfiguration());
+		assertEquals("attribute missing in SC context", ORG_EVENTB_CORE_FWD, scRoot.getConfiguration());
 	}
 
 	
@@ -91,15 +96,15 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	 * the new attribute is added
 	 */
 	public void testVersion_04_machineSC() throws Exception {
-		IMachineFile file = createMachine("mch");
-		file.setConfiguration(ORG_EVENTB_CORE_FWD, null);
-		file.save(null, true);
+		IMachineRoot root = createMachine("mch");
+		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);
+		root.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		ISCMachineFile scFile = file.getSCMachineFile();
+		ISCMachineRoot scRoot = root.getSCMachineRoot();
 		
-		assertEquals("attribute missing in SC machine", ORG_EVENTB_CORE_FWD, scFile.getConfiguration());
+		assertEquals("attribute missing in SC machine", ORG_EVENTB_CORE_FWD, scRoot.getConfiguration());
 	}
 
 }

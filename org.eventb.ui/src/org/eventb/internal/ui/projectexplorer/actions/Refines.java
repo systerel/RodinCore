@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fully rewritten the run() method
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
@@ -25,7 +26,8 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -44,22 +46,22 @@ public class Refines implements IObjectActionDelegate {
 
 	private static final class CreateRefinement implements IWorkspaceRunnable {
 
-		private final IMachineFile abs;
-		private final IMachineFile con;
+		private final IMachineRoot abs;
+		private final IMachineRoot con;
 
-		public CreateRefinement(IMachineFile abs, IMachineFile con) {
+		public CreateRefinement(IMachineRoot abs, IMachineRoot con) {
 			this.abs = abs;
 			this.con = con;
 		}
 
 		public void run(IProgressMonitor monitor) throws RodinDBException {
-			con.create(false, monitor);
+			con.getRodinFile().create(false, monitor);
 			con.setConfiguration(abs.getConfiguration(), null);
 			createRefinesMachineClause(monitor);
 			copyChildrenOfType(con, abs, ISeesContext.ELEMENT_TYPE, monitor);
 			copyChildrenOfType(con, abs, IVariable.ELEMENT_TYPE, monitor);
 			createEvents(monitor);
-			con.save(null, false);
+			con.getRodinFile().save(null, false);
 		}
 
 		private void createRefinesMachineClause(IProgressMonitor monitor)
@@ -71,14 +73,14 @@ public class Refines implements IObjectActionDelegate {
 		}
 
 		private <T extends IInternalElement> void copyChildrenOfType(
-				IRodinFile destination, IRodinFile original,
+				IEventBRoot destination, IEventBRoot original,
 				IInternalElementType<T> type, IProgressMonitor monitor)
 				throws RodinDBException {
 
 			final T[] elements = original.getChildrenOfType(type);
 			if (elements.length == 0)
 				return;
-			final IRodinFile[] containers = new IRodinFile[] { destination };
+			final IEventBRoot[] containers = new IEventBRoot[] { destination };
 			final IRodinDB rodinDB = destination.getRodinDB();
 			rodinDB.copy(elements, containers, null, null, false, monitor);
 		}
@@ -152,15 +154,17 @@ public class Refines implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
-		final IMachineFile abs = getSelectedMachine();
+		final IRodinFile abs = getSelectedMachine();
 		if (abs == null) {
 			return;
 		}
-		final IMachineFile con = askRefinementMachineFor(abs);
+		final IRodinFile con = askRefinementMachineFor(abs);
 		if (con == null) {
 			return;
 		}
-		final CreateRefinement op = new CreateRefinement(abs, con);
+		final IMachineRoot absRoot = (IMachineRoot) abs.getRoot();
+		final IMachineRoot conRoot = (IMachineRoot) con.getRoot();
+		final CreateRefinement op = new CreateRefinement(absRoot, conRoot);
 		try {
 			RodinCore.run(op, null);
 		} catch (RodinDBException e) {
@@ -182,7 +186,7 @@ public class Refines implements IObjectActionDelegate {
 	 * 
 	 * @return the selected machine or <code>null</code>
 	 */
-	private IMachineFile getSelectedMachine() {
+	private IRodinFile getSelectedMachine() {
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() == 1) {
@@ -200,7 +204,7 @@ public class Refines implements IObjectActionDelegate {
 	 * @return the concrete machine entered by the user or <code>null</code>
 	 *         if canceled.
 	 */
-	private IMachineFile askRefinementMachineFor(IMachineFile abs) {
+	private IRodinFile askRefinementMachineFor(IRodinFile abs) {
 		final IRodinProject prj = abs.getRodinProject();
 		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
 				"New REFINES Clause",
@@ -213,7 +217,7 @@ public class Refines implements IObjectActionDelegate {
 			return null;
 		}
 		final String fileName = EventBPlugin.getMachineFileName(name);
-		return (IMachineFile) prj.getRodinFile(fileName);
+		return prj.getRodinFile(fileName);
 	}
 
 }

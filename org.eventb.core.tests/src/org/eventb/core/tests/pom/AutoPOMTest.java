@@ -1,13 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -21,6 +32,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class AutoPOMTest extends BuilderTest {
@@ -49,43 +61,44 @@ public class AutoPOMTest extends BuilderTest {
 		return result;
 	}
 
-	private IPOFile createPOFile() throws RodinDBException {
-		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");
+	private IPORoot createPOFile() throws RodinDBException {
+		IRodinFile poFile = rodinProject.getRodinFile("x.bpo");
+		IPORoot root = (IPORoot) poFile.getRoot();
 		poFile.create(true, null);
-		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
+		IPOPredicateSet hyp0 = POUtil.addPredicateSet(root, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"),
 				"1=1", "2=2", "x∈ℕ"
 		);
-		POUtil.addSequent(poFile, "PO1", 
+		POUtil.addSequent(root, "PO1", 
 				"1=1 ∧2=2 ∧x ∈ℕ",
 				hyp0, 
 				mTypeEnvironment()
 		);
-		POUtil.addSequent(poFile, "PO2", 
+		POUtil.addSequent(root, "PO2", 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ",
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"y∈ℕ" 
 		);
-		POUtil.addSequent(poFile, "PO3", 
+		POUtil.addSequent(root, "PO3", 
 				"3=3", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"
 		);
-		POUtil.addSequent(poFile, "PO4", 
+		POUtil.addSequent(root, "PO4", 
 				"1=1 ∧2=2 ∧x ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"
 		);
-		POUtil.addSequent(poFile, "PO5", 
+		POUtil.addSequent(root, "PO5", 
 				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"y∈ℕ"
 		);
-		POUtil.addSequent(poFile, "PO6", 
+		POUtil.addSequent(root, "PO6", 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment(
@@ -94,14 +107,14 @@ public class AutoPOMTest extends BuilderTest {
 				), 
 				"y∈ℕ"
 		);
-		POUtil.addSequent(poFile, "PO7", 
+		POUtil.addSequent(root, "PO7", 
 				"y∈ℕ", 
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"x=x"
 		);
 		poFile.save(null, true);
-		return poFile;
+		return root;
 	}
 
 	/*
@@ -109,9 +122,9 @@ public class AutoPOMTest extends BuilderTest {
 	 */
 	public final void testAutoPOM() throws CoreException {
 		
-		IPOFile poFile = createPOFile();
-		IPSFile psFile = poFile.getPSFile();
-		IPRFile prFile = poFile.getPRFile();
+		IPORoot poFile = createPOFile();
+		IPSRoot psFile = poFile.getPSRoot();
+		IPRRoot prFile = poFile.getPRRoot();
 		
 		enableAutoProver();
 		runBuilder();
@@ -148,7 +161,7 @@ public class AutoPOMTest extends BuilderTest {
 	}
 	
 
-	private void checkProofsConsistent(IPRFile prFile, IPSFile psFile) throws RodinDBException {
+	private void checkProofsConsistent(IPRRoot prRoot, IPSRoot psFile) throws RodinDBException {
 		IPSStatus[] statuses = psFile.getStatuses();
 		for (IPSStatus status : statuses) {
 			IPRProof prProofTree = status.getProof();
@@ -164,7 +177,7 @@ public class AutoPOMTest extends BuilderTest {
 			IInternalParent poElement,
 			IInternalParent prElement) throws RodinDBException {
 		
-		if (poElement instanceof IPOFile) {
+		if (poElement instanceof IPORoot) {
 			// No comparison to do
 		} else if (poElement instanceof IPOSequent) {
 			assertEquals("PO names differ",

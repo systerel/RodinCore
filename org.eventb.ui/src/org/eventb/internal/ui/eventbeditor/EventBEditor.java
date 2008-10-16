@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,10 +41,13 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.eventbeditor.actions.RedoAction;
 import org.eventb.internal.ui.eventbeditor.actions.UndoAction;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
@@ -66,8 +71,8 @@ import org.rodinp.core.RodinMarkerUtil;
  *         <p>
  *         Abstract Event-B specific form editor for machines, contexts.
  */
-public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
-		implements IElementChangedListener, IEventBEditor<F>,
+public abstract class EventBEditor<R extends IInternalElement> extends FormEditor
+		implements IElementChangedListener, IEventBEditor<R>,
 		ITabbedPropertySheetPageContributor {
 
 	// The last active page id before closing.
@@ -178,7 +183,10 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	private EventBContentOutlinePage fOutlinePage;
 
 	// The associated rodin file handle
-	private F rodinFile;
+	private IRodinFile rodinFile;
+
+	// The associated rodin file handle
+	private R rodinRoot;
 
 	// List of Element Changed listeners for the editor.
 	private Collection<IElementChangedListener> listeners;
@@ -305,11 +313,15 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
+		final IInternalElement root ;
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
 		RodinCore.addElementChangedListener(this);
 		rodinFile = getRodinFile(input);
+		root = rodinFile.getRoot();
+		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
+		rodinRoot = (R) root;
 		setPartName(rodinFile.getBareName());
 		
 		// Activate Event-B Editor Context
@@ -330,8 +342,15 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		getEditorSite().getActionBars().setGlobalActionHandler(
 				ActionFactory.REDO.getId(), new RedoAction(this));
 	}
-	protected abstract F getRodinFile(IEditorInput input);
+	
+//	protected abstract IRodinFile getRodinFile(IEditorInput input);
 
+	protected IRodinFile getRodinFile(IEditorInput input) {
+		FileEditorInput editorInput = (FileEditorInput) input;
+		IFile inputFile = editorInput.getFile();
+		return RodinCore.valueOf(inputFile);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -340,7 +359,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	@Override
 	public boolean isDirty() {
 		try {
-			return this.getRodinInput().hasUnsavedChanges();
+			return this.getRodinInputFile().hasUnsavedChanges();
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -369,7 +388,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 
 		try { // Make the associated RodinFile consistent if it is has some
 			// unsaved change
-			IRodinFile rodinInput = this.getRodinInput();
+			IRodinFile rodinInput = this.getRodinInputFile();
 			if (rodinInput.hasUnsavedChanges())
 				rodinInput.makeConsistent(new NullProgressMonitor());
 		} catch (RodinDBException e) {
@@ -384,7 +403,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * Saving the default page for the next open.
 	 */
 	private void saveDefaultPage() {
-		IRodinFile inputFile = this.getRodinInput();
+		IRodinFile inputFile = this.getRodinInputFile();
 		try {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Save Page: " + lastActivePageID);
@@ -414,7 +433,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 	 * <code>default-editor-page</code>.
 	 */
 	protected void loadDefaultPage() {
-		IRodinFile inputFile = this.getRodinInput();
+		IRodinFile inputFile = this.getRodinInputFile();
 		try {
 			String pageID = inputFile.getResource().getPersistentProperty(
 					new QualifiedName(EventBUIPlugin.PLUGIN_ID,
@@ -508,7 +527,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 				}
 			}
 
-			IRodinFile inputFile = this.getRodinInput();
+			IRodinFile inputFile = this.getRodinInputFile();
 			inputFile.save(monitor, true);
 
 			while (!newElements.isEmpty()) {
@@ -535,13 +554,21 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		return;
 	}
 
-	public F getRodinInput() {
+	private IRodinFile getRodinInputFile() {
 		if (rodinFile == null)
 			throw new IllegalStateException(
 					"Editor hasn't been initialized yet");
 		return rodinFile;
 	}
 
+	public R getRodinInput() {
+		if (rodinRoot == null)
+			throw new IllegalStateException(
+					"Editor hasn't been initialized yet");
+		return rodinRoot;
+	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -572,7 +599,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		}
 		if (element instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) element;
-			if (!this.getRodinInput().getParent().equals(prj)) {
+			if (!this.getRodinInput().getRodinProject().equals(prj)) {
 				return;
 			}
 			IRodinElementDelta[] deltas = delta.getAffectedChildren();
@@ -583,7 +610,7 @@ public abstract class EventBEditor<F extends IRodinFile> extends FormEditor
 		}
 
 		if (element instanceof IRodinFile) {
-			if (!this.getRodinInput().equals(element)) {
+			if (!this.getRodinInput().getParent().equals(element)) {
 				return;
 			}
 			notifyElementChangedListeners(delta);

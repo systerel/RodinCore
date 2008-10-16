@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBSharedColor
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
@@ -36,9 +37,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
@@ -52,6 +53,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
@@ -148,22 +150,25 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 
 	@Override
 	public String getText(Object obj) {
-//		if (ObligationExplorerUtils.DEBUG)
-//			ObligationExplorerUtils.debug("Label for: " + obj);
+		// if (ObligationExplorerUtils.DEBUG)
+		// ObligationExplorerUtils.debug("Label for: " + obj);
 		if (obj instanceof IRodinProject) {
 			if (ObligationExplorerUtils.DEBUG)
 				ObligationExplorerUtils.debug("Project: "
 						+ ((IRodinProject) obj).getElementName());
 			return ((IRodinProject) obj).getElementName();
-		} else if (obj instanceof IMachineFile) {
-			IPSFile psFile = ((IMachineFile) obj).getPSFile();
-			String bareName = psFile.getBareName();
-			ProofStatus proofStatus = new ProofStatus(psFile, false);
+		} else if (obj instanceof IRodinFile) {
+			IRodinFile rf = (IRodinFile) obj;
+			return getText(rf.getRoot());
+		} else if (obj instanceof IMachineRoot) {
+			IPSRoot psRoot = ((IMachineRoot) obj).getPSRoot();
+			String bareName = psRoot.getRodinFile().getBareName();
+			ProofStatus proofStatus = new ProofStatus(psRoot, false);
 			return bareName + proofStatus;
-		} else if (obj instanceof IContextFile) {
-			IPSFile psFile = ((IContextFile) obj).getPSFile();
-			String bareName = psFile.getBareName();
-			ProofStatus proofStatus = new ProofStatus(psFile, false);
+		} else if (obj instanceof IContextRoot) {
+			IPSRoot psRoot = ((IContextRoot) obj).getPSRoot();
+			String bareName = psRoot.getRodinFile().getBareName();
+			ProofStatus proofStatus = new ProofStatus(psRoot, false);
 			return bareName + proofStatus;
 		} else if (obj instanceof IPSStatus) {
 			final IPSStatus psStatus = (IPSStatus) obj;
@@ -238,13 +243,17 @@ public class ObligationExplorerLabelProvider extends LabelProvider implements
 		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
 			IRodinElement element = RodinMarkerUtil.getElement(delta);
 			IOpenable openable = element.getOpenable();
-			if (openable instanceof IMachineFile) {
+			if(openable instanceof IRodinFile){
 				elements.add(openable);
-				elements.add(((IMachineFile) openable).getRodinProject());
-			} else if (openable instanceof IMachineFile) {
-				elements.add(openable);
-				elements.add(((IMachineFile) openable).getRodinProject());
+				elements.add(((IRodinFile)openable).getRodinProject());
 			}
+//			if (openable instanceof IMachineFile) {
+//				elements.add(openable);
+//				elements.add(((IMachineFile) openable).getRodinProject());
+//			} else if (openable instanceof IMachineFile) {
+//				elements.add(openable);
+//				elements.add(((IMachineFile) openable).getRodinProject());
+//			}
 		}
 		return elements;
 	}

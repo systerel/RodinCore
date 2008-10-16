@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
@@ -24,7 +28,6 @@ import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
 import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -102,7 +105,7 @@ public class ModuleGraphTest extends Declarations {
 
 		AbstractCompleteTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType<? extends IRodinFile>[] types) {
+				IFileElementType[] types) {
 			super(items);
 			this.types = types;
 			map = new HashMap<String, ModuleDesc<? extends IModule>>();
@@ -112,14 +115,14 @@ public class ModuleGraphTest extends Declarations {
 		}
 		
 		private final Map<String, ModuleDesc<? extends IModule>> map;		
-		private final IFileElementType<? extends IRodinFile>[] types;
+		private final IFileElementType[] types;
 		
 		protected IModule[] run() {
 			ModuleGraph graph = getAnalysedGraph();
 			ModuleFactory factory = new ModuleFactory(graph, map);
 			IModule[] modules = new IModule[types.length];
 			for (int i=0; i< types.length; i++) {
-				IFileElementType<? extends IRodinFile> type = types[i];
+				IFileElementType type = types[i];
 				modules[i] = factory.getRootModule(type);
 			}
 			return modules;
@@ -133,7 +136,7 @@ public class ModuleGraphTest extends Declarations {
 		
 		GetRootTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType<? extends IRodinFile>[] types,
+				IFileElementType[] types,
 				IModuleType<? extends IModule>[] mTypes) {
 			super(items, types);
 			this.mTypes = mTypes;
@@ -154,7 +157,7 @@ public class ModuleGraphTest extends Declarations {
 
 		FailingRootTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType<? extends IRodinFile>[] types) {
+				IFileElementType[] types) {
 			super(items, types);
 		}
 
@@ -170,7 +173,7 @@ public class ModuleGraphTest extends Declarations {
 		
 	}
 	
-	private static final IFileElementType<?>[][] types = 
+	private static final IFileElementType[][] types = 
 		new IFileElementType[][] {
 			new IFileElementType[] {
 			},

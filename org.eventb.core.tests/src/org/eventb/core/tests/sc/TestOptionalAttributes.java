@@ -1,17 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.rodinp.core.IRodinFile;
+import org.eventb.core.IMachineRoot;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
@@ -19,17 +23,17 @@ import org.rodinp.core.IRodinFile;
  */
 public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	
-	private abstract class OptAttrTest<F extends IRodinFile> {
+	private abstract class OptAttrTest<F extends IInternalElement> {
 		protected F f;
 		public abstract void createFile() throws Exception;
 		public abstract void removeAttr() throws Exception;
 		public void saveFile() throws Exception {
-			f.save(null, true);
+			f.getRodinFile().save(null, true);
 		}
 		public abstract void checkAttr() throws Exception;
 	}
 	
-	private abstract class MachineOptAttrTest extends OptAttrTest<IMachineFile> {
+	private abstract class MachineOptAttrTest extends OptAttrTest<IMachineRoot> {
 
 		@Override
 		public void createFile() throws Exception {
@@ -43,7 +47,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	}
 	
 	
-	private abstract class ContextOptAttrTest extends OptAttrTest<IContextFile> {
+	private abstract class ContextOptAttrTest extends OptAttrTest<IContextRoot> {
 
 		@Override
 		public void createFile() throws Exception {
@@ -52,15 +56,15 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		
 	}
 
-	private IMachineFile createMachine() throws Exception {
-		IMachineFile a = createMachine("abs");
+	private IMachineRoot createMachine() throws Exception {
+		IMachineRoot a = createMachine("abs");
 		addInitialisation(a);
 		addEvent(a, "e", 
 				makeSList("a"), 
 				makeSList("G"), makeSList("a∈ℤ"), 
 				makeSList(), makeSList());
-		IContextFile c = createContext("con");
-		IMachineFile m = createMachine("mch");
+		IContextRoot c = createContext("con");
+		IMachineRoot m = createMachine("mch");
 		addMachineRefines(m, "abs");
 		addMachineSees(m, "con");
 		addVariables(m, "v");
@@ -75,24 +79,24 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(e, makeSList("a"), makeSList("⊤"));
 		addInitialisation(m, "v");
 		
-		a.save(null, true);
-		c.save(null, true);
-		m.save(null, true);
+		a.getRodinFile().save(null, true);
+		c.getRodinFile().save(null, true);
+		m.getRodinFile().save(null, true);
 		
 		return m;
 	}
 	
-	private IContextFile createContext() throws Exception {
-		IContextFile a = createContext("abs");
-		IContextFile c = createContext("con");
+	private IContextRoot createContext() throws Exception {
+		IContextRoot a = createContext("abs");
+		IContextRoot c = createContext("con");
 		addContextExtends(c, "abs");
 		addCarrierSets(c, "S");
 		addConstants(c, "C");
 		addAxioms(c, makeSList("A"), makeSList("C∈S"));
 		addTheorems(c, makeSList("T"), makeSList("⊤"));
 		
-		a.save(null, true);
-		c.save(null, true);
+		a.getRodinFile().save(null, true);
+		c.getRodinFile().save(null, true);
 		
 		return c;
 	}
@@ -102,11 +106,11 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 * check if machine is ok
 	 */
 	public void testMachine() throws Exception {
-		IMachineFile m = createMachine();
+		IMachineRoot m = createMachine();
 		
 		runBuilder();
 		
-		containsMarkers(m, false);
+		containsMarkers(m.getRodinFile(), false);
 	}
 	
 	/**
@@ -114,11 +118,11 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 * check if context is ok
 	 */
 	public void testContext() throws Exception {
-		IContextFile c = createContext();
+		IContextRoot c = createContext();
 		
 		runBuilder();
 		
-		containsMarkers(c, false);
+		containsMarkers(c.getRodinFile(), false);
 	}
 	
 	private OptAttrTest<?>[] tests = new OptAttrTest[] {
@@ -392,13 +396,16 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getExtendsClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
+					hasMarker(f.getExtendsClauses()[0],
+							EventBAttributes.TARGET_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getExtendsClauses()[0].hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
-					f.getExtendsClauses()[0].removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, null);
+					assertTrue(f.getExtendsClauses()[0]
+							.hasAttribute(EventBAttributes.TARGET_ATTRIBUTE));
+					f.getExtendsClauses()[0].removeAttribute(
+							EventBAttributes.TARGET_ATTRIBUTE, null);
 				}
 				
 			},
@@ -406,13 +413,16 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getCarrierSets()[0], EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					hasMarker(f.getCarrierSets()[0],
+							EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getCarrierSets()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
-					f.getCarrierSets()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
+					assertTrue(f.getCarrierSets()[0]
+							.hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
+					f.getCarrierSets()[0].removeAttribute(
+							EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
 				}
 				
 			},
@@ -420,13 +430,32 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getConstants()[0], EventBAttributes.IDENTIFIER_ATTRIBUTE);
+					hasMarker(f.getConstants()[0],
+							EventBAttributes.IDENTIFIER_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getConstants()[0].hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
-					f.getConstants()[0].removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
+					assertTrue(f.getConstants()[0]
+							.hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE));
+					f.getConstants()[0].removeAttribute(
+							EventBAttributes.IDENTIFIER_ATTRIBUTE, null);
+				}
+
+			}, new ContextOptAttrTest() {
+
+				@Override
+				public void checkAttr() throws Exception {
+					hasMarker(f.getAxioms()[0],
+							EventBAttributes.LABEL_ATTRIBUTE);
+				}
+
+				@Override
+				public void removeAttr() throws Exception {
+					assertTrue(f.getAxioms()[0]
+							.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
+					f.getAxioms()[0].removeAttribute(
+							EventBAttributes.LABEL_ATTRIBUTE, null);
 				}
 				
 			},
@@ -434,27 +463,16 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getAxioms()[0], EventBAttributes.LABEL_ATTRIBUTE);
+					hasMarker(f.getAxioms()[0],
+							EventBAttributes.PREDICATE_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
-					f.getAxioms()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
-				}
-				
-			},
-			new ContextOptAttrTest() {
-
-				@Override
-				public void checkAttr() throws Exception {
-					hasMarker(f.getAxioms()[0], EventBAttributes.PREDICATE_ATTRIBUTE);
-				}
-
-				@Override
-				public void removeAttr() throws Exception {
-					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
-					f.getAxioms()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
+					assertTrue(f.getAxioms()[0]
+							.hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
+					f.getAxioms()[0].removeAttribute(
+							EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
 				
 			},
@@ -476,15 +494,18 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getTheorems()[0], EventBAttributes.PREDICATE_ATTRIBUTE);
+					hasMarker(f.getTheorems()[0],
+							EventBAttributes.PREDICATE_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
-					f.getTheorems()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
+					assertTrue(f.getTheorems()[0]
+							.hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
+					f.getTheorems()[0].removeAttribute(
+							EventBAttributes.PREDICATE_ATTRIBUTE, null);
 				}
-				
+
 			}
 	};
 	

@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 
@@ -23,7 +27,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * simple case of invariant preservation
 	 */
 	public void testEvents_00_invariantPreservation() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -35,14 +39,14 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
-		
+				
 		IPOSequent sequent = getSequent(po, "evt/I1/INV");
 		
 		sequentHasIdentifiers(sequent, "V1'");
@@ -55,7 +59,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation with local variable
 	 */
 	public void testEvents_01_invPresWParameter() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -68,11 +72,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -88,7 +92,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation with non-deterministic assignment
 	 */
 	public void testEvents_03_invPresNonDet() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -101,11 +105,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -121,7 +125,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * no PO for invariants outside frame
 	 */
 	public void testEvents_04_invPresNonFrame() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2∈{TRUE}"));
@@ -134,11 +138,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1", "V2");
 		
@@ -156,7 +160,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation for simultaneous non-deterministic assignment
 	 */
 	public void testEvents_05_invPresSimNondetAssgn() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
 		addInvariants(mac, 
@@ -172,11 +176,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1", "V2");
 		
@@ -200,7 +204,8 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation for simultaneous assignment containing local variables
 	 */
 	public void testEvents_06_invPresSimAssgnWParam() throws Exception {
-		IMachineFile mac = createMachine("mac");
+
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V0", "V1", "V2");
 		addInvariants(mac, 
@@ -218,11 +223,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("L1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V0", "V1", "V2");
 		
@@ -246,7 +251,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * two invariant preservation POs
 	 */
 	public void testEvents_07_twoInvPresPOs() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -262,11 +267,11 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -288,7 +293,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * two invariant preservation POs with differently typed local variables
 	 */
 	public void testEvents_08_invPresParamTyping() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -301,11 +306,11 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
 				makeSList("A1"), makeSList("V1 :∈ L1"));
 	
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -335,17 +340,17 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation: context in hypothesis
 	 */
 	public void testEvents_09_invPresContextInHyp() throws Exception {
-		IContextFile con = createContext("con");
+		IContextRoot con = createContext("con");
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
 		
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineSees(mac, "con");
 		
@@ -361,11 +366,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("C1", given("S1"));
 		typeEnvironment.addName("V1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1", "C1", "S1");
 		
@@ -381,7 +386,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * no PO for NOT generated trivial invariants
 	 */
 	public void testEvents_10_invPresTriv() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2", "V3");
 		addInvariants(mac, 
@@ -401,11 +406,11 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("V3", powIntType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1", "V2", "V3");
 		
@@ -452,21 +457,21 @@ public class TestMachineEvents extends EventBPOTest {
 		final String i1 = "x ∈ {0}";
 		final String g1 = "v = min({0})";
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("i1"), makeSList(i1));
 		addEvent(mac, "evt1", 
 				makeSList("v"), 
 				makeSList("g1"), makeSList(g1), 
 				makeSList("a1"), makeSList("x ≔ x + v"));
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 	
 		runBuilder();
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
 		
 		IPOSequent sequent;
@@ -492,21 +497,21 @@ public class TestMachineEvents extends EventBPOTest {
 		final String g1 = "x = min({0})";
 		final String g2 = "x = min({0,1})";
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac =  createMachine("mac");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("i1"), makeSList(i1));
 		addEvent(mac, "evt1", 
 				makeSList(), 
 				makeSList("g1", "g2"), makeSList(g1, g2), 
 				makeSList("a1"), makeSList("x ≔ x + 1"));
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 	
 		runBuilder();
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
 		
 		IPOSequent sequent;
@@ -540,21 +545,21 @@ public class TestMachineEvents extends EventBPOTest {
 		final String g2 = "x = min({0})";
 		final String g3 = "x = min({0,1})";
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac =  createMachine("mac");
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("i1"), makeSList(i1));
 		addEvent(mac, "evt1", 
 				makeSList(), 
 				makeSList("g1", "g2", "g3"), makeSList(g1, g2, g3), 
 				makeSList("a1"), makeSList("x ≔ x + 1"));
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 	
 		runBuilder();
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
 		
 		IPOSequent sequent;
@@ -582,7 +587,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * feasibility of nondeterministic event
 	 */
 	public void testEvents_14_eventFeasibility() throws Exception {
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -594,11 +599,11 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		

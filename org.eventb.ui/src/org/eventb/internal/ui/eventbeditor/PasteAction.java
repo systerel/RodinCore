@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -31,9 +32,9 @@ import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -59,15 +60,15 @@ public class PasteAction extends SelectionListenerAction {
 	 */
 	Clipboard clipboard;
 
-	IRodinFile file;
+	IInternalElement root;
 
-	protected PasteAction(Shell shell, Clipboard clipboard, IRodinFile file) {
+	protected PasteAction(Shell shell, Clipboard clipboard, IInternalElement root) {
 		super(Messages.editorAction_paste_title);
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		this.file = file;
+		this.root = root;
 		// setToolTipText(ProjectExplorerMessages.PasteAction_toolTip);
 		setId(CopyAction.ID);
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
@@ -138,9 +139,14 @@ public class PasteAction extends SelectionListenerAction {
 		}
 		// enablement should ensure that we always have access to a
 		// parent element
-		final IRodinElement parent = getTarget(getStructuredSelection());
-
-		History.getInstance().addOperation(OperationFactory.copyElements(file, parent, handleData));
+		final IRodinElement target = getTarget(getStructuredSelection());
+		final IInternalElement pasteInto;
+		if(target instanceof IInternalElement){
+			pasteInto = (IInternalElement) target;
+		}else{
+			pasteInto = root.getRodinFile().getRoot();
+		}
+		History.getInstance().addOperation(OperationFactory.copyElements(pasteInto, handleData));
 
 	}
 

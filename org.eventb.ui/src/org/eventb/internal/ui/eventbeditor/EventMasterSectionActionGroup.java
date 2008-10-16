@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced local variable by parameter
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -22,13 +23,13 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IEvent;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractEventContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowAbstractInvariantContribution;
 import org.eventb.internal.ui.eventbeditor.actions.ShowSeesContextContribution;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -190,7 +191,7 @@ public class EventMasterSectionActionGroup extends
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		menu.add(addEvent);
-		IRodinFile file = editor.getRodinInput();
+		IMachineRoot root = editor.getRodinInput();
 
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -214,7 +215,7 @@ public class EventMasterSectionActionGroup extends
 			// Contexts
 			MenuManager submenu = new MenuManager("Sees Contexts");
 			menu.add(submenu);
-			submenu.add(new ShowSeesContextContribution(file));
+			submenu.add(new ShowSeesContextContribution(root));
 
 			// Abstract event
 			submenu = new MenuManager("Abstract Event");
@@ -228,7 +229,7 @@ public class EventMasterSectionActionGroup extends
 			// Abstract invariants
 			submenu = new MenuManager("Abstract Invariant");
 			menu.add(submenu);
-			submenu.add(new ShowAbstractInvariantContribution(file));
+			submenu.add(new ShowAbstractInvariantContribution(root));
 
 			if (!sel.isEmpty()) {
 				menu.add(new Separator());

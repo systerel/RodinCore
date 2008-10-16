@@ -8,7 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored enableAutoProver
- *                added post-tactic manipulation
+ *     Systerel - added post-tactic manipulation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
@@ -28,13 +29,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -81,16 +83,17 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	private void checkPSFiles() throws RodinDBException {
-		IRodinFile[] files = rodinProject.getRodinFiles(); 
+		IRodinFile[] files = rodinProject.getRodinFiles();
 		for (IRodinFile file: files) {
-			if (file instanceof IPSFile) {
-				checkPSFile((IPSFile) file);
+			IInternalElement root = file.getRoot();
+			if (root instanceof IPSRoot) {
+				checkPSFile((IPSRoot) root);
 			}
 		}
 	}
 
-	private void checkPSFile(IPSFile file) throws RodinDBException {
-		for (IPSStatus psStatus: file.getStatuses()) {
+	private void checkPSFile(IPSRoot root) throws RodinDBException {
+		for (IPSStatus psStatus: root.getStatuses()) {
 			final IPOSequent poSequent = psStatus.getPOSequent();
 			assertEquals("PS file not in sync with PO file",
 					poSequent.getPOStamp(), psStatus.getPOStamp());

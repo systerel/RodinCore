@@ -9,8 +9,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended, added tool configuration
+ *     Systerel - separation of file and root element
  ******************************************************************************/
-
 package org.eventb.internal.ui.wizards;
 
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
@@ -37,10 +37,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eventb.core.IConfigurationElement;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -163,10 +164,11 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 				final IRodinFile rodinFile = rodinProject
 						.getRodinFile(fileName);
 				rodinFile.create(false, pMonitor);
-				((IConfigurationElement) rodinFile).setConfiguration(
+				final IInternalElement rodinRoot = rodinFile.getRoot();
+				((IConfigurationElement) rodinRoot).setConfiguration(
 						DEFAULT_CONFIGURATION, pMonitor);
-				if (rodinFile instanceof IMachineFile) {
-					IEvent init = rodinFile.getInternalElement(
+				if (rodinRoot instanceof IMachineRoot) {
+					IEvent init = rodinRoot.getInternalElement(
 							IEvent.ELEMENT_TYPE, "internal_"
 									+ PrefixEvtName.DEFAULT_PREFIX + 1);
 					init.create(null, pMonitor);

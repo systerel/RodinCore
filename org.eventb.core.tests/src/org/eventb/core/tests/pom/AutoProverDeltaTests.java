@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import static org.eventb.core.ast.Formula.BFALSE;
@@ -15,10 +25,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicate;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -33,6 +43,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -59,12 +70,12 @@ public class AutoProverDeltaTests extends BuilderTest {
 	private static final Predicate ATTEMPTABLE = ff.makeAssociativePredicate(
 			LAND, new Predicate[] { PROVABLE, UNPROVABLE }, null);
 
-	private IPOFile getPOFile() {
-		return (IPOFile) rodinProject.getRodinFile("x.bpo");
+	private IRodinFile getPOFile() {
+		return rodinProject.getRodinFile("x.bpo");
 	}
 
-	private IPSFile getPSFile() {
-		return (IPSFile) rodinProject.getRodinFile("x.bps");
+	private IRodinFile getPSFile() {
+		return rodinProject.getRodinFile("x.bps");
 	}
 
 	private void createPOFile() throws RodinDBException {
@@ -72,8 +83,9 @@ public class AutoProverDeltaTests extends BuilderTest {
 	}
 
 	private void setPO(Predicate goal, int stamp) throws RodinDBException {
-		final IPOFile poFile = getPOFile();
-		final IPOSequent poSequent = poFile.getSequent(PO_NAME);
+		final IRodinFile poFile = getPOFile();
+		final IPORoot poRoot = (IPORoot) poFile.getRoot();
+		final IPOSequent poSequent = poRoot.getSequent(PO_NAME);
 		if (!poSequent.exists()) {
 			poSequent.create(null, null);
 		}
@@ -86,8 +98,8 @@ public class AutoProverDeltaTests extends BuilderTest {
 		poGoal.setPredicate(goal, null);
 		
 		// Update the stamp of the file, if necessary
-		if (! poFile.hasPOStamp() || stamp > poFile.getPOStamp()) {
-			poFile.setPOStamp(stamp, null);
+		if (! poRoot.hasPOStamp() || stamp > poRoot.getPOStamp()) {
+			poRoot.setPOStamp(stamp, null);
 		}
 	}
 
@@ -95,9 +107,9 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Creates a proof of the PO making it reviewed.
 	 */
 	private void setReviewed() throws RodinDBException {
-		final IPSFile psFile = getPSFile();
+		final IRodinFile psFile = getPSFile();
 		final IProofManager pm = EventBPlugin.getProofManager();
-		final IProofComponent pc = pm.getProofComponent(psFile);
+		final IProofComponent pc = pm.getProofComponent((IPSRoot) psFile.getRoot());
 		final IProofAttempt pa = pc.createProofAttempt(PO_NAME, "test", null);
 		final IProofTree proofTree = pa.getProofTree();
 		final IProofTreeNode root = proofTree.getRoot();
@@ -113,9 +125,10 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	private void checkPSFile(int confidence, boolean manualProof, boolean broken)
 			throws RodinDBException {
-		final IPSFile psFile = getPSFile();
+		final IRodinFile psFile = getPSFile();
+		final IPSRoot root = (IPSRoot) psFile.getRoot();
 		assertTrue(psFile.exists());
-		final IPSStatus[] psStatuses = psFile.getStatuses();
+		final IPSStatus[] psStatuses = root.getStatuses();
 		assertEquals(1, psStatuses.length);
 		final IPSStatus psStatus = psStatuses[0];
 		assertEquals(confidence, psStatus.getConfidence());
@@ -129,7 +142,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	protected void runBuilder(boolean attempted, int confidence,
 			boolean manualProof, boolean broken) throws CoreException {
-		final IPOFile poFile = getPOFile();
+		final IRodinFile poFile = getPOFile();
 		if (poFile.hasUnsavedChanges()) {
 			poFile.save(null, false, false);
 		}

@@ -27,24 +27,20 @@ import org.eventb.internal.ui.EventBUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
 public class CopyElement extends OperationLeaf {
 
-	private final IRodinFile pasteInto;
-	private final IRodinElement defaultParent;
+	private final IInternalElement defaultParent;
 	private IInternalElement source;
 	private boolean first;
 	// Operation to delete the copy. Use in undo
 	private OperationTree operationDelete;
 
-	public CopyElement(IRodinFile pasteInto, IRodinElement parent,
+	public CopyElement(IInternalElement parent,
 			IInternalElement source) {
 		super("CopyElement");
-		this.pasteInto = pasteInto;
 		this.defaultParent = parent;
 		this.source = source;
 		first = true;
@@ -61,7 +57,7 @@ public class CopyElement extends OperationLeaf {
 		final IInternalElementType<?> copyType;
 
 		try {
-			copyParent = pasteInto;
+			copyParent = defaultParent.getRodinFile().getRoot();
 			if (source instanceof IEvent) {
 				copyId = "evt";
 				copyType = IEvent.ELEMENT_TYPE;
@@ -90,7 +86,7 @@ public class CopyElement extends OperationLeaf {
 			} else {
 				copyId = "element";
 				copyType = ((InternalElement) source).getElementType();
-				copyParent = (IInternalParent) defaultParent;
+				copyParent = defaultParent;
 			}
 
 			nameCopy = copyId

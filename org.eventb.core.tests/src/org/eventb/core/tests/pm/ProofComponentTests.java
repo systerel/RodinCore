@@ -18,15 +18,16 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -42,13 +43,14 @@ public class ProofComponentTests extends AbstractProofTests {
 
 	protected static final String NO_PO = "NO_PO"; //$NON-NLS-1$
 
-	private IMachineFile mchFile;
+	private IRodinFile mchFile;
 	private IProofComponent pc;
-	private IPOFile poFile;
-	private IPRFile prFile;
-	private IPSFile psFile;
+	private IPORoot poRoot;
+	private IRodinFile poFile;
+	private IPRRoot prRoot;
+	private IPSRoot psRoot;
 
-	private ISCMachineFile scFile;
+	private ISCMachineRoot scFile;
 
 	private void assertEquals(Set<IProofAttempt> expSet, IProofAttempt[] actual) {
 		assertEquals(expSet, mSet(actual));
@@ -66,8 +68,9 @@ public class ProofComponentTests extends AbstractProofTests {
 
 	private void createPOFile() throws RodinDBException {
 		poFile.create(true, null);
-		addSequent(poFile, PO1, "⊤", null, mTypeEnvironment()); //$NON-NLS-1$
-		addSequent(poFile, PO2, "⊥", null, mTypeEnvironment()); //$NON-NLS-1$
+		poRoot = (IPORoot) poFile.getRoot();
+		addSequent(poRoot, PO1, "⊤", null, mTypeEnvironment()); //$NON-NLS-1$
+		addSequent(poRoot, PO2, "⊥", null, mTypeEnvironment()); //$NON-NLS-1$
 		poFile.save(null, true);
 	}
 
@@ -85,12 +88,14 @@ public class ProofComponentTests extends AbstractProofTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		mchFile = (IMachineFile) rodinProject.getRodinFile("m.bum");
-		scFile = mchFile.getSCMachineFile();
-		poFile = mchFile.getPOFile();
-		prFile = mchFile.getPRFile();
-		psFile = mchFile.getPSFile();
-		pc = pm.getProofComponent(mchFile);
+		mchFile = rodinProject.getRodinFile("m.bum");
+		IMachineRoot root = (IMachineRoot) mchFile.getRoot();
+		scFile = root.getSCMachineRoot();
+		poRoot = root.getPORoot();
+		poFile = root.getPORoot().getRodinFile();
+		prRoot = root.getPRRoot();
+		psRoot = root.getPSRoot();
+		pc = pm.getProofComponent(root);
 	}
 
 	@Override
@@ -135,7 +140,7 @@ public class ProofComponentTests extends AbstractProofTests {
 		} catch (RodinDBException e) {
 			assertTrue(e.isDoesNotExist());
 			final IRodinElement[] elems = e.getRodinDBStatus().getElements();
-			assertEquals(mSet(poFile), mSet(elems));
+			assertEquals(mSet(poRoot.getRodinFile()), mSet(elems));
 		}
 	}
 
@@ -152,7 +157,7 @@ public class ProofComponentTests extends AbstractProofTests {
 		} catch (RodinDBException e) {
 			assertTrue(e.isDoesNotExist());
 			final IRodinElement[] elems = e.getRodinDBStatus().getElements();
-			assertEquals(mSet(poFile.getSequent(NO_PO)), mSet(elems));
+			assertEquals(mSet(poRoot.getSequent(NO_PO)), mSet(elems));
 		}
 	}
 
@@ -166,8 +171,8 @@ public class ProofComponentTests extends AbstractProofTests {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		assertLivePAs(pa);
 
-		poFile.getSequent(PO1).delete(false, null);
-		poFile.save(null, false);
+		poRoot.getSequent(PO1).delete(false, null);
+		poRoot.getRodinFile().save(null, false);
 		runBuilder();
 		assertLivePAs(pa);
 	}
@@ -221,9 +226,9 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * retrieved.
 	 */
 	public void testProofFiles() throws Exception {
-		assertEquals(psFile, pc.getPSFile());
-		assertEquals(poFile, pc.getPOFile());
-		assertEquals(prFile, pc.getPRFile());
+		assertEquals(psRoot, pc.getPSFile());
+		assertEquals(poRoot, pc.getPOFile());
+		assertEquals(prRoot, pc.getPRFile());
 	}
 
 	/**
@@ -243,7 +248,7 @@ public class ProofComponentTests extends AbstractProofTests {
 		runBuilder();
 		final String anyPO = "anyPO";
 		final IPSStatus status = pc.getStatus(anyPO);
-		assertEquals(psFile.getStatus(anyPO), status);
+		assertEquals(psRoot.getStatus(anyPO), status);
 	}
 
 	/**
@@ -254,9 +259,9 @@ public class ProofComponentTests extends AbstractProofTests {
 		final ISchedulingRule rule = pc.getSchedulingRule();
 		assertFalse(rule.contains(mchFile.getSchedulingRule()));
 		assertFalse(rule.contains(scFile.getSchedulingRule()));
-		assertTrue(rule.contains(poFile.getSchedulingRule()));
-		assertTrue(rule.contains(prFile.getSchedulingRule()));
-		assertTrue(rule.contains(psFile.getSchedulingRule()));
+		assertTrue(rule.contains(poRoot.getSchedulingRule()));
+		assertTrue(rule.contains(prRoot.getSchedulingRule()));
+		assertTrue(rule.contains(psRoot.getSchedulingRule()));
 	}
 
 	/**
@@ -352,34 +357,34 @@ public class ProofComponentTests extends AbstractProofTests {
 	}
 
 	private void modifyPRFile() throws RodinDBException {
-		prFile.getProof(PO3).create(null, null);
+		prRoot.getProof(PO3).create(null, null);
 	}
 
 	private void modifyPSFile() throws RodinDBException {
-		psFile.getStatus(PO3).create(null, null);
+		psRoot.getStatus(PO3).create(null, null);
 	}
 
 	private void assertSavedPRFile() {
-		assertTrue(prFile.getProof(PO3).exists());
-		final IPRFile snapshot = (IPRFile) prFile.getSnapshot();
+		assertTrue(prRoot.getProof(PO3).exists());
+		final IPRRoot snapshot = (IPRRoot) prRoot.getSnapshot();
 		assertTrue(snapshot.getProof(PO3).exists());
 	}
 
 	private void assertRevertedPRFile() {
-		assertFalse(prFile.getProof(PO3).exists());
-		final IPRFile snapshot = (IPRFile) prFile.getSnapshot();
+		assertFalse(prRoot.getProof(PO3).exists());
+		final IPRRoot snapshot = (IPRRoot) prRoot.getSnapshot();
 		assertFalse(snapshot.getProof(PO3).exists());
 	}
 
 	private void assertSavedPSFile() {
-		assertTrue(psFile.getStatus(PO3).exists());
-		final IPSFile snapshot = (IPSFile) psFile.getSnapshot();
+		assertTrue(psRoot.getStatus(PO3).exists());
+		final IPSRoot snapshot = (IPSRoot) psRoot.getSnapshot();
 		assertTrue(snapshot.getStatus(PO3).exists());
 	}
 
 	private void assertRevertedPSFile() {
-		assertFalse(psFile.getStatus(PO3).exists());
-		final IPSFile snapshot = (IPSFile) psFile.getSnapshot();
+		assertFalse(psRoot.getStatus(PO3).exists());
+		final IPSRoot snapshot = (IPSRoot) psRoot.getSnapshot();
 		assertFalse(snapshot.getStatus(PO3).exists());
 	}
 

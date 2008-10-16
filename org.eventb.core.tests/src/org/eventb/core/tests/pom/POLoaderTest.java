@@ -1,8 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -10,6 +21,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.POLoader;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -55,53 +67,54 @@ public class POLoaderTest extends BuilderTest {
 		return result;
 	}
 
-	private IPOFile createPOFile() throws RodinDBException {
-		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");
+	private IPORoot createPOFile() throws RodinDBException {
+		IRodinFile poFile = rodinProject.getRodinFile("x.bpo");
+		IPORoot poRoot = (IPORoot) poFile.getRoot();
 		poFile.create(true, null);
-		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
+		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"),
 				"1=1", "2=2", "x∈ℕ"
 		);
-		IPOPredicateSet hyp1 = POUtil.addPredicateSet(poFile, "hyp1", hyp0,
+		IPOPredicateSet hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", hyp0,
 				mTypeEnvironment("y", "ℤ"),
 				"1=1", "2=2", "y∈ℕ", "x÷x = 1"
 		);
 		// Empty local type environment and local hyps
-		POUtil.addSequent(poFile, "PO1", 
+		POUtil.addSequent(poRoot, "PO1", 
 				"x ≠ 0",
 				hyp0, 
 				mTypeEnvironment()
 		);
 		// With local type environment and local hyps
-		POUtil.addSequent(poFile, "PO2", 
+		POUtil.addSequent(poRoot, "PO2", 
 				"x ≠ 0",
 				hyp0, 
 				mTypeEnvironment("z", "ℤ"),
 				"z=3"
 		);
 		// With goal with implicit WD asumption
-		POUtil.addSequent(poFile, "PO3", 
+		POUtil.addSequent(poRoot, "PO3", 
 				"x÷x = 1",
 				hyp0, 
 				mTypeEnvironment()
 		);
 		// With goal, global hyp & local hyp with implicit WD assumption
 		// WD assumption for goal contains a conjunction that needs to be split
-		POUtil.addSequent(poFile, "PO4", 
+		POUtil.addSequent(poRoot, "PO4", 
 				"x÷(x+y) = 1 ∧ x÷(y+x) = 1", 
 				hyp1, 
 				mTypeEnvironment(),
 				"y÷y = 1"
 		);
 		poFile.save(null, true);
-		return poFile;
+		return poRoot;
 	}
 
 	
 	
 	public final void testReadPO() throws CoreException {
 		
-		IPOFile poFile = createPOFile();
+		IPORoot poFile = createPOFile();
 		
 		final IPOSequent[] poSequents = poFile.getSequents();
 				

@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -19,8 +18,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -44,7 +44,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 			ITreeContentProvider {
 
 		// The invisible root
-		private IMachineFile invisibleRoot = null;
+		private IRodinFile invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -63,12 +63,15 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IMachineFile) {
-				try {
-					return ((IMachineFile) parent)
-							.getChildrenOfType(IEvent.ELEMENT_TYPE);
-				} catch (RodinDBException e) {
-					e.printStackTrace();
+			if (parent instanceof IRodinFile) {
+				IRodinFile rf = (IRodinFile) parent;
+				if (rf.getRoot() instanceof IContextRoot) {
+					IMachineRoot root = (IMachineRoot) rf.getRoot();
+					try {
+						return root.getChildrenOfType(IEvent.ELEMENT_TYPE);
+					} catch (RodinDBException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -101,7 +104,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IMachineFile) parent;
+					invisibleRoot = (IRodinFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

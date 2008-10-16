@@ -1,17 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -27,7 +31,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * rewriting of deterministic action simulation POs
 	 */
 	public void testRefines_00() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -39,11 +43,11 @@ public class TestMachineRefines extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
@@ -53,11 +57,11 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("A1"), makeSList("V1≔V1+2"));
 		addEventRefines(event, "evt");
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -73,7 +77,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * rewriting of action frame simulation POs
 	 */
 	public void testRefines_01() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -85,11 +89,11 @@ public class TestMachineRefines extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
@@ -99,11 +103,11 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("A1"), makeSList("V1≔V1+2"));
 		addEventRefines(event, "evt");
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1");
 		
@@ -119,7 +123,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * simulation and invariant preservation using global witnesses
 	 */
 	public void testRefines_02() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
@@ -131,11 +135,11 @@ public class TestMachineRefines extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
@@ -147,11 +151,11 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("V1'"), makeSList("V1'≥V2'"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		containsIdentifiers(po, "V1", "V2");
 		
@@ -179,7 +183,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * simulation and invariant preservation using local witnesses
 	 */
 	public void testRefines_03() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1", "V2");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2≥6"));
@@ -188,11 +192,11 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G1"), makeSList("L1∈ℕ∖{0}"), 
 				makeSList("A1", "A2"), makeSList("V1≔L1", "V2≔7"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IMachineFile mac = createMachine("mac");
+		IMachineRoot mac = createMachine("mac");
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1X", "V2");
@@ -204,11 +208,11 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("L1"), makeSList("L1=L2−1"));
 		
-		mac.save(null, true);
+		mac.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = mac.getPOFile();
+		IPORoot po = mac.getPORoot();
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
@@ -233,24 +237,24 @@ public class TestMachineRefines extends EventBPOTest {
 	 * machine.
 	 */
 	public void testRefines_04() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList(), makeSList());
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		IEvent event = addEvent(ref, "evt", 
 				makeSList(), 
 				makeSList("G"), makeSList("0 ≤ min({0})"), 
 				makeSList(), makeSList());
 		addEventRefines(event, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
 		getSequent(po, "evt/G/WD");
 	}
@@ -260,27 +264,27 @@ public class TestMachineRefines extends EventBPOTest {
 	 * conditions have already been proved for the abstract event
 	 */
 	public void testRefines_05() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1", "G2", "G3"), makeSList("x ÷ x > x", "1 ÷ x > 1", "2÷x = x"), 
 				makeSList(), makeSList());
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
 				makeSList("G1", "G2", "G3", "G4"), makeSList("5 ÷ (x+x) = −1", "1 ÷ x > 1", "x ÷ x > x", "2÷x = x"), 
 				makeSList(), makeSList());
 		addEventRefines(event, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
 		
 		IPOSequent sequent;
@@ -302,27 +306,27 @@ public class TestMachineRefines extends EventBPOTest {
 	 * in the concrete guards
 	 */
 	public void testRefines_06() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA1", "GA2", "GA3"), makeSList("x > x", "1 > 1", "x−1∈ℕ"), 
 				makeSList(), makeSList());
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
 				makeSList("G1", "G2", "G3"), makeSList("1 > 1", "x > x", "x = x"), 
 				makeSList(), makeSList());
 		addEventRefines(event, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
 		
 		IPOSequent sequent;
@@ -339,22 +343,22 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: inherited events should only produce invariant preservation POs
 	 */
 	public void testRefines_07() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A");
 		addInvariants(abs, makeSList("I"), makeSList("A∈ℕ"));
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1", "G2"), makeSList("1 > x", "x−1∈ℕ"), 
 				makeSList("S"), makeSList("A≔A+1"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		addInvariants(ref, makeSList("J"), makeSList("A=B"));
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -362,7 +366,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("B", intType);
 		environment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
 		
 		IPOSequent sequent;
@@ -380,16 +384,16 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: do not produce WD and FIS POs for repeated actions
 	 */
 	public void testRefines_08() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA"), makeSList("x−1∈ℕ"), 
 				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x÷x"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B", "C");
 		addInvariants(ref, makeSList("J"), makeSList("C=B"));
@@ -398,7 +402,7 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("GC"), makeSList("x>0"), 
 				makeSList("SC1", "SC2", "SC3"), makeSList("A :∣ A'>x", "B ≔ x÷x", "C :∈ {1÷x}"));
 		addEventRefines(event, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -407,7 +411,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("C", intType);
 		environment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B", "C");
 		
 		IPOSequent sequent;
@@ -434,7 +438,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * create event merge POs (simple)
 	 */
 	public void testRefines_09() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA"), makeSList("x−1∈ℕ"), 
@@ -443,9 +447,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("x"), 
 				makeSList("HA"), makeSList("x+1∈ℕ"), 
 				makeSList(), makeSList());
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
@@ -453,13 +457,13 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList());
 		addEventRefines(event, "evt");
 		addEventRefines(event, "fvt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
 		
 		IPOSequent sequent;
@@ -473,7 +477,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * create event merge POs (complicated)
 	 */
 	public void testRefines_10() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
 		addEvent(abs, "evt", 
@@ -484,9 +488,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("x", "y"), 
 				makeSList("HA1", "HA2"), makeSList("x+1∈ℕ", "x=y+y"), 
 				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B", "C");
 		addInvariants(ref, makeSList("J"), makeSList("C=B"));
@@ -496,7 +500,7 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("SC1", "SC2", "SC3"), makeSList("A :∣ A'>x", "B ≔ x+1", "C :∈ {x+1}"));
 		addEventRefines(event, "evt");
 		addEventRefines(event, "fvt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -506,7 +510,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B", "C");
 		
 		IPOSequent sequent;
@@ -524,7 +528,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * filter repeated guards from event merge POs
 	 */
 	public void testRefines_11() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
 		addEvent(abs, "evt", 
@@ -539,9 +543,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("x", "y"), 
 				makeSList("IA1", "IA2"), makeSList("x=y+y", "A>1"), 
 				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		IEvent event = addEvent(ref, "evt", 
@@ -551,7 +555,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventRefines(event, "fvt");
 		addEventRefines(event, "gvt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -561,7 +565,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
 		
 		IPOSequent sequent;
@@ -579,7 +583,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * filter event merge POs entirely if one of the disjuncts is true
 	 */
 	public void testRefines_12() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
 		addEvent(abs, "evt", 
@@ -590,9 +594,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("x", "y"), 
 				makeSList("HA1", "HA2"), makeSList("x=y+y"), 
 				makeSList("SA1", "SA2"), makeSList("A :∣ A'>x", "B ≔ x"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		IEvent event = addEvent(ref, "evt", 
@@ -602,7 +606,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventRefines(event, "fvt");
 		addEventRefines(event, "gvt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -612,7 +616,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
 		
 		noSequent(po, "evt/MRG");
@@ -625,23 +629,23 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: do not produce any POs in identical refinements
 	 */
 	public void testRefines_13() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA", "HA"), makeSList("x>0", "B÷x>0"), 
 				makeSList("SA", "TA"), makeSList("A :∣ A'>x", "B ≔ x÷x"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
 		addExtendedEvent(ref, "evt");
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		runBuilder();
 		
-		IPOFile apo = abs.getPOFile();
+		IPORoot apo = abs.getPORoot();
 		containsIdentifiers(apo, "A", "B");
 		
 		getSequent(apo, "evt/HA/WD");
@@ -650,7 +654,7 @@ public class TestMachineRefines extends EventBPOTest {
 		getSequent(apo, "evt/I1/INV");
 		getSequent(apo, "evt/I2/INV");
 		
-		IPOFile cpo = ref.getPOFile();
+		IPORoot cpo = ref.getPORoot();
 		containsIdentifiers(cpo, "A", "B");
 		
 		// no sequents!
@@ -666,14 +670,14 @@ public class TestMachineRefines extends EventBPOTest {
 	 * (POs should be identical!)
 	 */
 	public void testRefines_14() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
 		addEvent(abs, "fvt");
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "p");
 		addEvent(ref, "evt", 
@@ -686,11 +690,11 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("A"), makeSList("p≔TRUE"));
 		addEventRefines(fvt, "fvt");
 	
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p");
 		
 		getSequent(po, "evt/p/EQL");
@@ -702,7 +706,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Proper naming in goals with nondeterministic witnesses
 	 */
 	public void testRefines_15() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
 		addEvent(abs, "evt", 
@@ -710,9 +714,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("p :∣ p'≠p"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "q");
 		addInvariants(ref, makeSList("J"), makeSList("q∈BOOL"));
@@ -723,7 +727,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("p'"), makeSList("p'≠q'"));
 	
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -733,7 +737,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("p'", boolType);
 		environment.addName("q'", boolType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
 		
 		IPOSequent sequent = getSequent(po, "evt/A/SIM");
@@ -750,7 +754,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * hypothesis of the concrete /FIS.
 	 */
 	public void testRefines_16() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
 		addEvent(abs, "evt", 
@@ -758,9 +762,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G"), makeSList("x≠p"), 
 				makeSList("A"), makeSList("p :∣ p'≠x"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "p");
 		
@@ -778,7 +782,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(fvt, "evt");
 		addEventWitnesses(fvt, makeSList("x"), makeSList("y=x"));
 	
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -788,7 +792,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", boolType);
 		environment.addName("y", boolType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p");
 		
 		IPOSequent sequent = getSequent(po, "evt/G/GRD");
@@ -820,7 +824,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * added to the hypothesis of /GRD
 	 */
 	public void testRefines_17() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p", "q");
 		addInvariants(abs, makeSList("I", "J"), makeSList("p∈BOOL", "q∈BOOL"));
 		addEvent(abs, "evt", 
@@ -828,9 +832,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G"), makeSList("x≠p"), 
 				makeSList("A", "B"), makeSList("p :∣ p'≠x", "q :∣ q'≠p"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "p", "q");
 		
@@ -841,7 +845,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("x"), makeSList("p'=x"));
 	
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -851,7 +855,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", boolType);
 		environment.addName("y'", boolType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
 		
 		IPOSequent sequent = getSequent(po, "evt/G/GRD");
@@ -866,7 +870,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * be correctly rewritten using the witnesses (all witnesses!)
 	 */
 	public void testRefines_18() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
 		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
 		addEvent(abs, "evt", 
@@ -874,9 +878,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G"), makeSList("x≠p"), 
 				makeSList("A"), makeSList("p :∣ p'≠x"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "q");
 		addInvariants(ref, makeSList("J"), makeSList("p∈{q}"));
@@ -909,7 +913,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(hvt, "evt");
 		addEventWitnesses(hvt, makeSList("x", "p'"), makeSList("q'=x", "q'=p'"));
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -921,7 +925,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("x", boolType);
 		environment.addName("y", boolType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
 		
 		IPOSequent sequent = getSequent(po, "evt/G/GRD");
@@ -975,7 +979,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * multiple assignments!
 	 */
 	public void testRefines_19() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
 		addEvent(abs, "evt", 
@@ -983,9 +987,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("x,y ≔ y,x"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y", "z");
 		addInvariants(ref, makeSList("K", "L"), makeSList("z∈ℤ", "y≤x"));
@@ -996,7 +1000,7 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("B"), makeSList("y,z ≔ z,y"));
 		addEventRefines(evt, "evt");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -1005,7 +1009,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("y", intType);
 		environment.addName("z", intType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y", "z");
 		
 		IPOSequent 
@@ -1024,7 +1028,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Check if types of local variables of abstract event are added to type environment
 	 */
 	public void testRefines_20() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
 		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
 		addEvent(abs, "evt", 
@@ -1032,9 +1036,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G", "H"), makeSList("a ∈ ℕ", "b ∈ {a}"), 
 				makeSList("A"), makeSList("x,y ≔ a,b"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "x", "y");
 	
@@ -1044,7 +1048,7 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("B"), makeSList("x,y ≔ c,c"));
 		addEventRefines(evt, "evt");
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -1055,7 +1059,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("b", intType);
 		environment.addName("c", intType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y");
 		
 		IPOSequent 
@@ -1069,7 +1073,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * empty list of actions (i.e. the concrete action is skip)
 	 */
 	public void testRefines_21() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		addEvent(abs, "evt", 
@@ -1077,9 +1081,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G"), makeSList("a ∈ ℕ"), 
 				makeSList("A"), makeSList("x ≔ a"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y");
 		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
@@ -1091,7 +1095,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("a"), makeSList("a=y'"));
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
@@ -1100,7 +1104,7 @@ public class TestMachineRefines extends EventBPOTest {
 		environment.addName("y", intType);
 		environment.addName("a", intType);
 
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y");
 		
 		IPOSequent 
@@ -1114,7 +1118,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Check that there are no witness-related POs (WFIS, WWD) for an inherited event.
 	 */
 	public void testRefines_22() throws Exception {
-		IMachineFile abs = createMachine("abs");
+		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
 		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
 		addInitialisation(abs, "x");
@@ -1123,9 +1127,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("G"), makeSList("a ∈ ℕ"), 
 				makeSList("A"), makeSList("x ≔ a"));
 
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		IMachineFile ref = createMachine("ref");
+		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y");
 		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
@@ -1139,27 +1143,27 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("a"), makeSList("a÷1=y'"));
 
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
-		IMachineFile con = createMachine("con");
+		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 	
 		addExtendedEvent(con, IEvent.INITIALISATION);
 		addExtendedEvent(con, "evt");
 
-		con.save(null, true);
+		con.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = ref.getPOFile();
+		IPORoot po = ref.getPORoot();
 		
 		getSequent(po, IEvent.INITIALISATION + "/x'/WFIS");
 		getSequent(po, IEvent.INITIALISATION + "/x'/WWD");
 		getSequent(po, "evt/a/WFIS");
 		getSequent(po, "evt/a/WWD");
 
-		po = con.getPOFile();
+		po = con.getPORoot();
 		
 		noSequent(po, IEvent.INITIALISATION + "/x'/WFIS");
 		noSequent(po, IEvent.INITIALISATION + "/x'/WWD");
@@ -1171,7 +1175,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Check that there are no witness-related POs (WFIS, WWD) for an inherited event.
 	 */
 	public void testBug_1920752() throws Exception {
-		final IMachineFile abs = createMachine("abs");
+		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "v1", "v2");
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("v1∈ℤ", "v2∈ℤ"));
 		addInitialisation(abs, "v1", "v2");
@@ -1179,9 +1183,9 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1", "A2"), makeSList("v1 :∈ ℤ", "v2 ≔ v1"));
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
-		final IMachineFile ref = createMachine("ref");
+		final IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "v3");
 		addInvariants(ref, makeSList("J"), makeSList("v3 = v1 ↦ v2"));
@@ -1197,11 +1201,11 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList("B"), makeSList("v3 :∈ ℤ×dom({v3})"));
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("v1'"), makeSList("v1' ∈ dom({v3'})"));
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		final IPOFile po = ref.getPOFile();
+		final IPORoot po = ref.getPORoot();
 		final IPOSequent sequent = getSequent(po, "evt/J/INV");
 		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
 		typenv.addName("v1", intType);
@@ -1215,7 +1219,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_23() throws Exception {
 		
 		// Context
-		final IContextFile ctx = createContext("con");
+		final IContextRoot ctx = createContext("con");
 		addConstants(ctx, "gp", "fvdd", "fvdn", "fvd", "ga",
 				"glue", "ip", "fpwd", "gpwn", "fvnwd", "gvnwn",
 				"hvdd", "hvnd", "hvrd", "ia");
@@ -1236,11 +1240,11 @@ public class TestMachineRefines extends EventBPOTest {
 				"hvrd", "hvrd ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ → ℤ",
 				"ia", "ia ⊆ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ"
 		);
-		ctx.save(null, true);
+		ctx.getRodinFile().save(null, true);
 		
 		// Abstract machine
-		final IMachineFile abs = createMachine("abs");
-		addMachineSees(abs, ctx.getBareName());
+		final IMachineRoot abs = createMachine("abs");
+		addMachineSees(abs, ctx.getRodinFile().getBareName());
 
 		final String[] absVars = makeSList("vdd", "vdn", "vd", "vnd", "vnn",
 				"vnwd", "vnwn");
@@ -1264,12 +1268,12 @@ public class TestMachineRefines extends EventBPOTest {
 						"vnd, vnn, vnwd, vnwn :∣ " + absFullMaplet + " ↦ vnd' ↦ vnn' ↦ vnwd' ↦ vnwn' ∈ ga"
 				)
 		);
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		// Concrete machine
-		final IMachineFile ref = createMachine("ref");
-		addMachineRefines(ref, abs.getBareName());
-		addMachineSees(ref, ctx.getBareName());
+		final IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, abs.getRodinFile().getBareName());
+		addMachineSees(ref, ctx.getRodinFile().getBareName());
 
 		final String[] refVars = makeSList("vdd", "vdn", "vnd", "vnn", "vrd",
 				"vrn");
@@ -1306,7 +1310,7 @@ public class TestMachineRefines extends EventBPOTest {
 				"vnwd'", "vnwd' = fvnwd(" + bothFullMapletPlusPost + ")", 
 				"vnwn'", bothFullMapletPlusPost + " ↦ vnwn' ∈ gvnwn"
 		);
-		ref.save(null, true);
+		ref.getRodinFile().save(null, true);
 		
 		/////////////
 		runBuilder();
@@ -1347,7 +1351,7 @@ public class TestMachineRefines extends EventBPOTest {
 		);
 		
 		// evt/J/INV
-		final IPOFile po = ref.getPOFile();
+		final IPORoot po = ref.getPORoot();
 		final IPOSequent inv = getSequent(po, "evt/J/INV");
 		sequentHasGoal(inv, typenv, bothVarMaplet_p + " ∈ glue");
 

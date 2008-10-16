@@ -1,22 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElement;
 
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericHintTest<F extends IRodinFile> 
+public abstract class GenericHintTest<F extends IInternalElement> 
 extends GenericEventBPOTest<F> {
 
 	/**
@@ -27,11 +31,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T2/THM");
 		
@@ -58,11 +62,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addNonTheorems(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N3/WD");
 		

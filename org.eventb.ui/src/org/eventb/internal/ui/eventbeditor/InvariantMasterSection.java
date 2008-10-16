@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.TreeViewer;
@@ -21,7 +20,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IRodinElement;
@@ -88,7 +87,7 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	@SuppressWarnings("unchecked")
 	protected EventBEditableTreeViewer createTreeViewer(
 			IManagedForm managedForm, FormToolkit toolkit, Composite parent) {
-		return new InvariantEditableTreeViewer((IEventBEditor<IMachineFile>) editor, parent, SWT.MULTI
+		return new InvariantEditableTreeViewer((IEventBEditor<IMachineRoot>) editor, parent, SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	}
 
@@ -193,7 +192,7 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected ActionGroup createActionGroup() {
-		return new InvariantMasterSectionActionGroup((IEventBEditor<IMachineFile>) editor, (TreeViewer) this
+		return new InvariantMasterSectionActionGroup((IEventBEditor<IMachineRoot>) editor, (TreeViewer) this
 				.getViewer());
 	}
 

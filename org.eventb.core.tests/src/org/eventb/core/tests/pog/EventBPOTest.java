@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -12,12 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
@@ -26,6 +30,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -37,19 +42,19 @@ public abstract class EventBPOTest extends EventBTest {
 	private static final String FWD_CONFIG = "org.eventb.core.fwd";
 
 	@Override
-	protected IContextFile createContext(String bareName) throws RodinDBException {
-		IContextFile file = super.createContext(bareName);
-		file.setConfiguration(FWD_CONFIG, null);
-		addFile(file.getPOFile());
-		return file;
+	protected IContextRoot createContext(String bareName) throws RodinDBException {
+		IContextRoot root = super.createContext(bareName);
+		root.setConfiguration(FWD_CONFIG, null);
+		addFile(root.getPORoot().getRodinFile());
+		return root;
 	}
 
 	@Override
-	protected IMachineFile createMachine(String bareName) throws RodinDBException {
-		IMachineFile file = super.createMachine(bareName);
-		file.setConfiguration(FWD_CONFIG, null);
-		addFile(file.getPOFile());
-		return file;
+	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
+		IMachineRoot root = super.createMachine(bareName);
+		root.setConfiguration(FWD_CONFIG, null);
+		addFile(root.getPORoot().getRodinFile());
+		return root;
 	}
 
 	public Set<String> getElementNameSet(IRodinElement[] elements) throws RodinDBException {
@@ -63,7 +68,7 @@ public abstract class EventBPOTest extends EventBTest {
 	
 	public void getIdentifiersFromPredSets(
 			Set<String> nameSet, 
-			IPOFile file, 
+			IPORoot root, 
 			IPOPredicateSet predicateSet, 
 			boolean forSequent) throws RodinDBException {
 
@@ -78,14 +83,14 @@ public abstract class EventBPOTest extends EventBTest {
 		if (parentPredicateSet == null)
 			return;
 		else
-			getIdentifiersFromPredSets(nameSet, file, parentPredicateSet, forSequent);
+			getIdentifiersFromPredSets(nameSet, root, parentPredicateSet, forSequent);
 	}
 	
-	public void containsIdentifiers(IPOFile file, String... strings) throws RodinDBException {
+	public void containsIdentifiers(IPORoot root, String... strings) throws RodinDBException {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
-		getIdentifiersFromPredSets(nameSet, file, file.getPredicateSet(ALLHYP_NAME), false);
+		getIdentifiersFromPredSets(nameSet, root, root.getPredicateSet(ALLHYP_NAME), false);
 		
 		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		if (strings.length == 0)
@@ -102,9 +107,10 @@ public abstract class EventBPOTest extends EventBTest {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
-		IPOFile file = (IPOFile) sequent.getOpenable();
+		IRodinFile file = sequent.getRodinFile();
+		IPORoot root = (IPORoot) file.getRoot();
 		
-		getIdentifiersFromPredSets(nameSet, file, predicateSet, true);
+		getIdentifiersFromPredSets(nameSet, root, predicateSet, true);
 		
 		assertEquals("wrong number of identifiers", strings.length, nameSet.size());
 		
@@ -115,25 +121,26 @@ public abstract class EventBPOTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 
-	public List<IPOSequent> getSequents(IPOFile file, String... strings) {
+	public List<IPOSequent> getSequents(IPORoot root, String... strings) {
 		LinkedList<IPOSequent> sequents = new LinkedList<IPOSequent>();
 		
 		for (String string : strings)
-			sequents.add(getSequent(file, string));
+			sequents.add(getSequent(root, string));
 		
 		return sequents;
 	}
 	
-	public IPOSequent getSequent(IPOFile file, String name) {
-		IPOSequent sequent = (IPOSequent) file.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
+	public IPOSequent getSequent(IPORoot root, String name) {
+		IPOSequent sequent = (IPOSequent) root.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
 		
 		assertTrue("sequent should exist: " + name, sequent.exists());
 		
 		return sequent;
 	}
 	
-	public void noSequent(IPOFile file, String name) {
-		IPOSequent sequent = (IPOSequent) file.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
+		
+	public void noSequent(IPORoot root, String name) {
+		IPOSequent sequent = root.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
 		
 		assertFalse("sequent should not exist", sequent.exists());
 	}
@@ -250,24 +257,20 @@ public abstract class EventBPOTest extends EventBTest {
 		
 	}
 
-	public IPOFile getPOFile(IContextFile rodinFile) throws RodinDBException {
-		return rodinFile.getPOFile();
-	}
-	
-	public IPOFile getPOFile(IMachineFile rodinFile) throws RodinDBException {
-		return rodinFile.getPOFile();
+	public IPORoot getPOFile(IMachineRoot root) throws RodinDBException {
+		return root.getPORoot();
 	}
 
 	public Type given(String s) {
 		return factory.makeGivenType(s);
 	}
 
-	public void sequentIsAccurate(IPOFile po, String name) throws Exception {
+	public void sequentIsAccurate(IPORoot po, String name) throws Exception {
 		IPOSequent seq = getSequent(po, name);
 		assertTrue("sequent should be accurate", seq.isAccurate());
 	}
 
-	public void sequentIsNotAccurate(IPOFile po, String name) throws Exception {
+	public void sequentIsNotAccurate(IPORoot po, String name) throws Exception {
 		IPOSequent seq = getSequent(po, name);
 		assertFalse("sequent should not be accurate", seq.isAccurate());
 	}
@@ -278,7 +281,7 @@ public abstract class EventBPOTest extends EventBTest {
 	}
 	
 	public void hasNewStamp(IInternalElement stampedElem) throws Exception {
-		long value = ((IPOFile) stampedElem.getRodinFile()).getPOStamp();
+		long value = ((IPORoot) stampedElem.getRodinFile().getRoot()).getPOStamp();
 		hasStamp((IPOStampedElement) stampedElem, value);
 	}
 

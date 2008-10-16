@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -20,7 +21,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -34,7 +35,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 public class InvariantMasterSectionActionGroup extends ActionGroup {
 
 	// The Event-B Editor.
-	IEventBEditor<IMachineFile> editor;
+	IEventBEditor<IMachineRoot> editor;
 
 	// The tree viewer in the master section
 	TreeViewer viewer;
@@ -57,7 +58,7 @@ public class InvariantMasterSectionActionGroup extends ActionGroup {
 	 * @param treeViewer
 	 *            The tree viewer associated with this action group
 	 */
-	public InvariantMasterSectionActionGroup(IEventBEditor<IMachineFile> eventBEditor,
+	public InvariantMasterSectionActionGroup(IEventBEditor<IMachineRoot> eventBEditor,
 			TreeViewer treeViewer) {
 		this.editor = eventBEditor;
 		this.viewer = treeViewer;

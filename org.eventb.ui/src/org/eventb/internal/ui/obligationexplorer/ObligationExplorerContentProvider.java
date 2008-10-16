@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
 import java.util.ArrayList;
@@ -23,16 +22,17 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEventBFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerActionGroup;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
@@ -151,18 +151,24 @@ public class ObligationExplorerContentProvider implements
 		if (kind == IRodinElementDelta.ADDED) {
 			// Convert from IPSFile to IMachineFile or IContextFile the add to
 			// the view.
-			if (element instanceof IPSFile) {
-				IPSFile psFile = (IPSFile) element;
-				// ASSUMPTION: psFile must correspond to either machineFile or
-				// contextFile
-				IMachineFile machineFile = psFile.getMachineFile();
-				if (machineFile.exists())
-					element = machineFile;
-				else
-					element = psFile.getContextFile();
-				Object parent = psFile.getRodinProject();
-				postAdd(parent, element, runnables);
-				return false;
+			if (element instanceof IRodinFile) {
+				IRodinFile psFile = (IRodinFile) element;
+				
+				if (psFile.getRoot() instanceof IPSRoot) {
+					IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+					// ASSUMPTION: psFile must correspond to either machineFile
+					// or
+					// contextFile
+					IRodinFile machineFile = psRoot.getMachineRoot()
+							.getRodinFile();
+					if (machineFile.exists())
+						element = machineFile;
+					else
+						element = psRoot.getContextRoot().getRodinFile();
+					Object parent = psFile.getRodinProject();
+					postAdd(parent, element, runnables);
+					return false;
+				}
 			}
 			
 			if (element instanceof IPSStatus
@@ -186,13 +192,21 @@ public class ObligationExplorerContentProvider implements
 					postUpdateLabel(parent, runnables);
 				}
 			}
-			if (element instanceof IPSFile) {
-				IPSFile psFile = (IPSFile) element;
-				// ASSUMPTION: psFile must correspond to either machineFile or
-				// contextFile
-				IMachineFile machineFile = psFile.getMachineFile();
-				IContextFile contextFile = psFile.getContextFile();
-				postRemove(new Object[] { machineFile, contextFile }, runnables);
+			if (element instanceof IRodinFile) {
+				IRodinFile psFile = (IRodinFile) element;
+
+				if (psFile.getRoot() instanceof IPSRoot) {
+					IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+					// ASSUMPTION: psFile must correspond to either machineFile
+					// or
+					// contextFile
+					IRodinFile machineFile = psRoot.getMachineRoot()
+							.getRodinFile();
+					IRodinFile contextFile = psRoot.getContextRoot()
+							.getRodinFile();
+					postRemove(new Object[] { machineFile, contextFile },
+							runnables);
+				}
 			}
 			return false;
 		}
@@ -201,16 +215,23 @@ public class ObligationExplorerContentProvider implements
 
 			// The label for IMachineFile or IContextFile might change, refresh
 			// the label only.
-			if (element instanceof IMachineFile
-					|| element instanceof IContextFile) {
-				postUpdateLabel(element, runnables);
-				return false;
+			if (element instanceof IRodinFile) {
+				IRodinFile file = (IRodinFile) element;
+				IInternalElement root = file.getRoot();
+				if (root instanceof IMachineRoot
+						|| root instanceof IContextRoot) {
+
+					postUpdateLabel(element, runnables);
+					return false;
+				}
 			}
 
 			// Ignore changes to irrelevant elements.
 			if (!(element instanceof IRodinDB
 					|| element instanceof IRodinProject
-					|| element instanceof IPSFile || element instanceof IPSStatus)) {
+					|| ((element instanceof IRodinFile) && (((IRodinFile) element)
+							.getRoot() instanceof IPSRoot))
+					|| element instanceof IPSStatus)) {
 				return false;
 			}
 			
@@ -330,18 +351,25 @@ public class ObligationExplorerContentProvider implements
 			return null;
 		if (child instanceof IRodinProject)
 			return invisibleRoot;
-		
+
 		IRodinElement element = (IRodinElement) child;
 		IRodinElement parent = element.getParent();
-		if (parent instanceof IPSFile) {
-			IPSFile psFile = (IPSFile) parent;
-			IMachineFile machineFile = psFile.getMachineFile();
-			if (machineFile.exists()) {
-				return machineFile;
-			}
-			IContextFile contextFile = psFile.getContextFile();
-			if (contextFile.exists()) {
-				return contextFile;
+		if (parent instanceof IRodinFile) {
+			IRodinFile psFile = (IRodinFile) parent;
+			if (psFile.getRoot() instanceof IPSRoot) {
+
+				IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+
+				IRodinFile machineFile = psRoot.getMachineRoot()
+						.getRodinFile();
+				if (machineFile.exists()) {
+					return machineFile;
+				}
+				IRodinFile contextFile = psRoot.getContextRoot()
+						.getRodinFile();
+				if (contextFile.exists()) {
+					return contextFile;
+				}
 			}
 		}
 		return parent;
@@ -354,10 +382,12 @@ public class ObligationExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-				IRodinElement[] machines = prj
-						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-				IRodinElement[] contexts = prj
-						.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+//				IRodinElement[] machines = prj
+//						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+//				IRodinElement[] contexts = prj
+//				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+				IRodinElement[] machines = UIUtils.getMachineRootChildren(prj);
+				IRodinElement[] contexts = UIUtils.getContextRootChildren(prj);
 
 				IRodinElement[] results = new IRodinElement[machines.length
 						+ contexts.length];
@@ -389,10 +419,10 @@ public class ObligationExplorerContentProvider implements
 		}
 
 		try {
-			if (parent instanceof IEventBFile) {
-				IPSFile psFile = ((IEventBFile) parent).getPSFile();
-				if (psFile.exists())
-					return psFile.getStatuses();
+			if (parent instanceof IEventBRoot) {
+				IPSRoot psRoot = ((IEventBRoot) parent).getPSRoot();
+				if (psRoot.exists())
+					return psRoot.getStatuses();
 			}
 			if (parent instanceof IRodinDB) {
 				return ((IRodinDB) parent).getChildren();

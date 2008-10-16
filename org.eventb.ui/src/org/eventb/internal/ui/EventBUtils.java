@@ -11,6 +11,7 @@
  *     Systerel - used getFreeIndex to factorize several methods
  *     Systerel - replaced inherited by extended
  *     Systerel - added getImplicitChildren(), refactored getAbstractEvent()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -23,7 +24,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -61,7 +62,7 @@ public class EventBUtils {
 	 *             if there are some problems in reading the refines machine
 	 *             clause or in getting the abstract machine.
 	 */
-	public static IMachineFile getAbstractMachine(IMachineFile concrete)
+	public static IMachineRoot getAbstractMachine(IMachineRoot concrete)
 			throws RodinDBException {
 		assert concrete != null;
 		IRodinElement[] refines = concrete
@@ -71,7 +72,7 @@ public class EventBUtils {
 			String name = refine.getAbstractMachineName();
 			IEventBProject prj = (IEventBProject) concrete.getRodinProject()
 					.getAdapter(IEventBProject.class);
-			return prj.getMachineFile(name);
+			return (IMachineRoot) prj.getMachineFile(name).getRoot();
 		}
 		return null;
 	}
@@ -124,16 +125,16 @@ public class EventBUtils {
 	 *         <li>if there is no abstract event corresponding to the refines
 	 *         event clause.
 	 *         </ul>
-	 * @see #getAbstractMachine(IMachineFile)
+	 * @see #getAbstractMachine(IMachineRoot)
 	 * @throws RodinDBException
 	 *             if some problems occur in getting the abstract file or
 	 *             reading the refines event child.
 	 */
 	public static IEvent getAbstractEvent(IEvent event) throws RodinDBException {
 		final IRodinElement parent = event.getParent();
-		assert parent instanceof IMachineFile;
+		assert parent instanceof IMachineRoot;
 
-		final IMachineFile abs = getAbstractMachine((IMachineFile) parent);
+		final IMachineRoot abs = getAbstractMachine((IMachineRoot) parent);
 		if (abs == null || !abs.exists()) {
 			return null;
 		}

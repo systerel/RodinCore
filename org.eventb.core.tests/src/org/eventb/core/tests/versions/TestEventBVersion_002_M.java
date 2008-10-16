@@ -1,15 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Soton - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Version 2 of machine database renames event variables into event parameters
@@ -32,9 +37,10 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		String name = "mac.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
 		
-		IVariable[] variables = file.getVariables();
+		IVariable[] variables = root.getVariables();
 		
 		assertEquals("machine variables modified", 1, variables.length);
 		
@@ -57,9 +63,10 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		String name = "mac.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
 		
-		IParameter[] parameters = file.getEvents()[1].getParameters();
+		IParameter[] parameters = root.getEvents()[1].getParameters();
 		
 		assertEquals("no event parameters", 1, parameters.length);
 		
@@ -83,13 +90,14 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 		String name = "mac.bum";
 		createFile(name, contents);
 		
-		IMachineFile file = (IMachineFile) rodinProject.getRodinFile(name);
-		
-		IVariable[] variables = file.getVariables();
+		IRodinFile file = rodinProject.getRodinFile(name);
+		IMachineRoot root = (IMachineRoot) file.getRoot();
+
+		IVariable[] variables = root.getVariables();
 		
 		assertEquals("variables not preserved", 1, variables.length);
 		
-		IParameter[] parameters = file.getEvents()[1].getParameters();
+		IParameter[] parameters = root.getEvents()[1].getParameters();
 		
 		assertEquals("no event parameters", 2, parameters.length);
 	}

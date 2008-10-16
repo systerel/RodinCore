@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -41,7 +42,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -50,16 +51,15 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class AbstractContextsSection<F extends IRodinFile> extends
+public abstract class AbstractContextsSection<R extends IInternalElement> extends
 		SectionPart implements IElementChangedListener,
 		ISelectionChangedListener {
 
-	protected IEventBEditor<F> editor;
+	protected IEventBEditor<R> editor;
 
 	private Button removeButton;
 
@@ -69,15 +69,15 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 
 	Combo contextCombo;
 
-	protected F rodinFile;
+	protected R rodinRoot;
 
-	public AbstractContextsSection(IEventBEditor<F> editor,
+	public AbstractContextsSection(IEventBEditor<R> editor,
 			FormToolkit toolkit, Composite parent) {
 
 		super(parent, toolkit, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		this.editor = editor;
-		rodinFile = editor.getRodinInput();
+		rodinRoot = editor.getRodinInput();
 		createClient(getSection(), toolkit);
 		RodinCore.addElementChangedListener(this);
 	}
@@ -158,7 +158,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 			}
 		});
 		viewer.setLabelProvider(new RodinElementTableLabelProvider(viewer));
-		viewer.setInput(rodinFile);
+		viewer.setInput(rodinRoot);
 		viewer.addSelectionChangedListener(this);
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -254,7 +254,7 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				viewer.setInput(rodinFile);
+				viewer.setInput(rodinRoot);
 				initContextCombo();
 				updateButtons();
 			}
@@ -301,16 +301,16 @@ public abstract class AbstractContextsSection<F extends IRodinFile> extends
 
 	final void initContextCombo() {
 		contextCombo.removeAll();
-		final IRodinProject project = rodinFile.getRodinProject();
-		final IContextFile[] contexts;
+		final IRodinProject project = rodinRoot.getRodinProject();
+		final IContextRoot[] contexts;
 		try {
-			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+			contexts = UIUtils.getContextRootChildren(project);
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when listing the contexts of " + project);
 			return;
 		}
 		final Set<String> usedNames = getUsedContextNames();
-		for (IContextFile context : contexts) {
+		for (IContextRoot context : contexts) {
 			final String bareName = context.getComponentName();
 			if (!usedNames.contains(bareName)) {
 				contextCombo.add(bareName);

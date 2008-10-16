@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
 import java.util.ArrayList;
@@ -18,6 +29,9 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
@@ -94,40 +108,49 @@ public class Delete implements IViewActionDelegate {
 							e.printStackTrace();
 						}
 					}
-				}
-
-				else if (element instanceof IRodinFile) {
-					if (answer != YesToAllMessageDialog.YES_TO_ALL) {
-						answer = YesToAllMessageDialog.openYesNoToAllQuestion(
-								part.getSite().getShell(),
-								"Confirm File Delete",
-								"Are you sure you want to delete file '"
-										+ ((IRodinFile) element)
-												.getElementName()
-										+ "' in project '"
-										+ element.getParent().getElementName()
-										+ "' ?");
-					}
-					if (answer == YesToAllMessageDialog.NO_TO_ALL)
+				} else if (element instanceof IRodinFile) {
+					answer = deleteRodinFile(answer, (IRodinFile) element);
+					if(answer == YesToAllMessageDialog.NO_TO_ALL)
 						break;
-
-					if (answer != YesToAllMessageDialog.NO) {
-						try {
-							closeOpenedEditor((IRodinFile) element);
-							((IRodinFile) element).delete(true,
-									new NullProgressMonitor());
-						} catch (PartInitException e) {
-							e.printStackTrace();
-						} catch (RodinDBException e) {
-							e.printStackTrace();
-						}
-					}
+				} else if (element instanceof IContextRoot || element instanceof IMachineRoot) {
+					answer = deleteRodinFile(answer, ((IEventBRoot) element).getRodinFile());
+					if(answer == YesToAllMessageDialog.NO_TO_ALL)
+						break;
 				}
 			}
 
 		}
 	}
 
+	
+	/**
+	 * if answer is not YesToAllMessageDialog.YES_TO_ALL, open a dialogue to ask
+	 * user to delete rodinFile. Delete the file as the answer and return answer
+	 */
+	private int deleteRodinFile(int delete, IRodinFile rf) {
+		int answer = delete ;
+		if (answer != YesToAllMessageDialog.YES_TO_ALL) {
+			answer = YesToAllMessageDialog.openYesNoToAllQuestion(part
+					.getSite().getShell(), "Confirm File Delete",
+					"Are you sure you want to delete file '"
+							+ rf.getElementName() + "' in project '"
+							+ rf.getParent().getElementName() + "' ?");
+		}
+		if ((answer != YesToAllMessageDialog.NO_TO_ALL)
+				&& (answer != YesToAllMessageDialog.NO)) {
+			try {
+				closeOpenedEditor(rf);
+				(rf).delete(true, new NullProgressMonitor());
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+		}
+		return answer;
+	}
+	
+	
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}

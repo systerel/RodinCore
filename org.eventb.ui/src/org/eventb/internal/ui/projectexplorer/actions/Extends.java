@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fully rewritten the run() method
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
@@ -21,9 +22,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -32,19 +34,19 @@ public class Extends implements IObjectActionDelegate {
 
 	private static final class CreateRefinement implements IWorkspaceRunnable {
 
-		private final IContextFile abs;
-		private final IContextFile con;
+		private final IContextRoot abs;
+		private final IContextRoot con;
 
-		public CreateRefinement(IContextFile abs, IContextFile con) {
+		public CreateRefinement(IContextRoot abs, IContextRoot con) {
 			this.abs = abs;
 			this.con = con;
 		}
 
 		public void run(IProgressMonitor monitor) throws RodinDBException {
-			con.create(false, monitor);
+			con.getRodinFile().create(false, monitor);
 			con.setConfiguration(abs.getConfiguration(), null);
 			createExtendsContextClause(monitor);
-			con.save(null, false);
+			con.getRodinFile().save(null, false);
 		}
 
 		private void createExtendsContextClause(IProgressMonitor monitor)
@@ -62,15 +64,17 @@ public class Extends implements IObjectActionDelegate {
 	private ISelection selection;
 	
 	public void run(IAction action) {
-		final IContextFile abs = getSelectedContext();
+		final IRodinFile abs = getSelectedContext();
+		final IContextRoot absRoot = (IContextRoot) abs.getRoot();
 		if (abs == null) {
 			return;
 		}
-		final IContextFile con = askRefinementContextFor(abs);
+		final IRodinFile con = askRefinementContextFor(abs);
+		final IContextRoot conRoot = (IContextRoot) con.getRoot();
 		if (con == null) {
 			return;
 		}
-		final CreateRefinement op = new CreateRefinement(abs, con);
+		final CreateRefinement op = new CreateRefinement(absRoot, conRoot);
 		try {
 			RodinCore.run(op, null);
 		} catch (RodinDBException e) {
@@ -96,7 +100,7 @@ public class Extends implements IObjectActionDelegate {
 	 * 
 	 * @return the selected machine or <code>null</code>
 	 */
-	private IContextFile getSelectedContext() {
+	private IRodinFile getSelectedContext() {
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() == 1) {
@@ -114,7 +118,7 @@ public class Extends implements IObjectActionDelegate {
 	 * @return the concrete machine entered by the user or <code>null</code>
 	 *         if canceled.
 	 */
-	private IContextFile askRefinementContextFor(IContextFile abs) {
+	private IRodinFile askRefinementContextFor(IRodinFile abs) {
 		final IRodinProject prj = abs.getRodinProject();
 		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
 				"New EXTENDS Clause",
@@ -127,7 +131,7 @@ public class Extends implements IObjectActionDelegate {
 			return null;
 		}
 		final String fileName = EventBPlugin.getContextFileName(name);
-		return (IContextFile) prj.getRodinFile(fileName);
+		return prj.getRodinFile(fileName);
 	}
 
 }

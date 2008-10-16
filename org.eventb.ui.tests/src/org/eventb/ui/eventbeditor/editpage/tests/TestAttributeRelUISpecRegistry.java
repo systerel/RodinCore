@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.ui.eventbeditor.editpage.tests;
 
@@ -16,7 +17,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.internal.ui.eventbeditor.editpage.CComboEditComposite;
@@ -45,7 +46,7 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	private static final IAttributeRelUISpecRegistry registry = AttributeRelUISpecTestRegistry
 			.getDefault();
 
-	private IMachineFile m0;
+	private IMachineRoot m0;
 
 	private IEventBEditor<?> editor;
 
@@ -54,7 +55,7 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 	public void setUp() throws Exception {
 		super.setUp();
 		m0 = createMachine("m0");
-		m0.save(null, true);
+		m0.getRodinFile().save(null, true);
 		editor = openEditor(m0);
 	}
 

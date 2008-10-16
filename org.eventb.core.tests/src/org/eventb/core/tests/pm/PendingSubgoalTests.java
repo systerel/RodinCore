@@ -1,6 +1,14 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -13,10 +21,10 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -29,6 +37,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.internal.core.pm.UserSupport;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -98,21 +107,22 @@ public class PendingSubgoalTests extends TestPM {
 	}
 	
 	// Handles to the proof files
-	IPOFile poFile;
-	IPSFile psFile;
-	IPRFile prFile;
+	IPORoot poFile;
+	IPSRoot psFile;
+	IPRRoot prFile;
 
 	// UserSupport for the proof files
 	IUserSupport userSupport;
 	
-	private IPOFile createPOFile() throws RodinDBException {
-		IPOFile poFile = (IPOFile) rodinProject.getRodinFile("x.bpo");
-		poFile.create(true, null);
+	private IPORoot createPOFile() throws RodinDBException {
+		IRodinFile file = rodinProject.getRodinFile("x.bpo");
+		file.create(true, null);
+		poFile = (IPORoot) file.getRoot();
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"));
 		POUtil.addSequent(poFile, "PO1", G.toString(), hyp0,
 				mTypeEnvironment());
-		poFile.save(null, true);
+		file.save(null, true);
 		return poFile;
 	}
 	
@@ -129,22 +139,22 @@ public class PendingSubgoalTests extends TestPM {
 //						new String[] { "org.eventb.core.seqprover.normTac" });
 
 		poFile = createPOFile();
-		prFile = poFile.getPRFile();
-		psFile = poFile.getPSFile();
+		prFile = poFile.getPRRoot();
+		psFile = poFile.getPSRoot();
 
 		enableAutoProver(true);
 		runBuilder();
 
 		userSupport = new UserSupport();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psFile.getRodinFile());
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poFile.delete(true, null);
-		prFile.delete(true, null);
-		psFile.delete(true, null);
+		poFile.getRodinFile().delete(true, null);
+		prFile.getRodinFile().delete(true, null);
+		psFile.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 

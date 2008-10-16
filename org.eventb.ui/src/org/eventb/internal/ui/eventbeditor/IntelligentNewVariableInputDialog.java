@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
@@ -66,7 +67,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 	private IEventBInputText initSubstitutionText;
 
-	IEventBEditor<IMachineFile> editor;
+	IEventBEditor<IMachineRoot> editor;
 
 	/**
 	 * Constructor.
@@ -77,7 +78,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public IntelligentNewVariableInputDialog(IEventBEditor<IMachineFile> editor,
+	public IntelligentNewVariableInputDialog(IEventBEditor<IMachineRoot> editor,
 			Shell parentShell, String title,
 			String invPrefix, String invIndex) {
 		super(parentShell, title);

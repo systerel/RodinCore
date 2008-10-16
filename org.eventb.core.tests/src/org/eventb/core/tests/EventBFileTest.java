@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added test for as***File()
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -17,15 +18,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IEventBFile;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
-import org.eventb.core.ISCContextFile;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -56,16 +50,17 @@ public class EventBFileTest extends TestCase {
 	 * @param file
 	 *            an event-B file
 	 */
-	private void checkFileConversions(IEventBFile file) {
+	private void checkFileConversions(IRodinFile file) {
+		IEventBRoot root = (IEventBRoot)file.getRoot();
 		final String bareName = file.getBareName();
-		assertEquals(bareName, file.getComponentName());
-		assertFileName(bareName + ".buc", file.getContextFile());
-		assertFileName(bareName + ".bum", file.getMachineFile());
-		assertFileName(bareName + ".bcc", file.getSCContextFile());
-		assertFileName(bareName + ".bcm", file.getSCMachineFile());
-		assertFileName(bareName + ".bpo", file.getPOFile());
-		assertFileName(bareName + ".bpr", file.getPRFile());
-		assertFileName(bareName + ".bps", file.getPSFile());
+		assertEquals(bareName, root.getComponentName());
+		assertFileName(bareName + ".buc", root.getContextRoot().getRodinFile());
+		assertFileName(bareName + ".bum", root.getMachineRoot().getRodinFile());
+		assertFileName(bareName + ".bcc", root.getSCContextRoot().getRodinFile());
+		assertFileName(bareName + ".bcm", root.getSCMachineRoot().getRodinFile());
+		assertFileName(bareName + ".bpo", root.getPORoot().getRodinFile());
+		assertFileName(bareName + ".bpr", root.getPRRoot().getRodinFile());
+		assertFileName(bareName + ".bps", root.getPSRoot().getRodinFile());
 	}
 
 	/**
@@ -81,7 +76,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that an unchecked context can be created from an event-B project.
 	 */
 	public void testContextFile() throws Exception {
-		IContextFile file = evbProject.getContextFile("foo");
+		IRodinFile file = evbProject.getContextFile("foo");
 		assertFileName("foo.buc", file);
 		checkFileConversions(file);
 	}
@@ -90,7 +85,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that an unchecked machine can be created from an event-B project.
 	 */
 	public void testMachineFile() throws Exception {
-		IMachineFile file = evbProject.getMachineFile("foo");
+		IRodinFile file = evbProject.getMachineFile("foo");
 		assertFileName("foo.bum", file);
 		checkFileConversions(file);
 	}
@@ -99,7 +94,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that a checked context can be created from an event-B project.
 	 */
 	public void testSCContextFile() throws Exception {
-		ISCContextFile file = evbProject.getSCContextFile("foo");
+		IRodinFile file = evbProject.getSCContextFile("foo");
 		assertFileName("foo.bcc", file);
 		checkFileConversions(file);
 	}
@@ -108,7 +103,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that a checked machine can be created from an event-B project.
 	 */
 	public void testSCMachineFile() throws Exception {
-		ISCMachineFile file = evbProject.getSCMachineFile("foo");
+		IRodinFile file = evbProject.getSCMachineFile("foo");
 		assertFileName("foo.bcm", file);
 		checkFileConversions(file);
 	}
@@ -117,7 +112,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that a PO file can be created from an event-B project.
 	 */
 	public void testPOFile() throws Exception {
-		IPOFile file = evbProject.getPOFile("foo");
+		IRodinFile file = evbProject.getPOFile("foo");
 		assertFileName("foo.bpo", file);
 		checkFileConversions(file);
 	}
@@ -126,7 +121,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that a proof file can be created from an event-B project.
 	 */
 	public void testPRFile() throws Exception {
-		IPRFile file = evbProject.getPRFile("foo");
+		IRodinFile file = evbProject.getPRFile("foo");
 		assertFileName("foo.bpr", file);
 		checkFileConversions(file);
 	}
@@ -135,7 +130,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that a proof status file can be created from an event-B project.
 	 */
 	public void testPSFile() throws Exception {
-		IPSFile file = evbProject.getPSFile("foo");
+		IRodinFile file = evbProject.getPSFile("foo");
 		assertFileName("foo.bps", file);
 		checkFileConversions(file);
 	}
@@ -153,13 +148,13 @@ public class EventBFileTest extends TestCase {
 	 * event-B files.
 	 */
 	public void testFileAdaptation() throws Exception {
-		final IContextFile buc = evbProject.getContextFile("foo");
-		final IMachineFile bum = evbProject.getMachineFile("foo");
-		final ISCContextFile bcc = evbProject.getSCContextFile("foo");
-		final ISCMachineFile bcm = evbProject.getSCMachineFile("foo");
-		final IPOFile bpo = evbProject.getPOFile("foo");
-		final IPRFile bpr = evbProject.getPRFile("foo");
-		final IPSFile bps = evbProject.getPSFile("foo");
+		final IRodinFile buc = evbProject.getContextFile("foo");
+		final IRodinFile bum = evbProject.getMachineFile("foo");
+		final IRodinFile bcc = evbProject.getSCContextFile("foo");
+		final IRodinFile bcm = evbProject.getSCMachineFile("foo");
+		final IRodinFile bpo = evbProject.getPOFile("foo");
+		final IRodinFile bpr = evbProject.getPRFile("foo");
+		final IRodinFile bps = evbProject.getPSFile("foo");
 		final IRodinFile[] files = new IRodinFile[] { buc, bum, bcc, bcm, bpo,
 				bpr, bps };
 

@@ -1,22 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import org.eventb.core.IPOFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
  *
  */
-public abstract class GenericPredicateTest <F extends IRodinFile> 
+public abstract class GenericPredicateTest <F extends IInternalElement> 
 extends GenericEventBPOTest<F> {
 
 	/*
@@ -27,11 +31,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("∀x·x>1"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -49,11 +53,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1÷0=0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -73,11 +77,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("T1", "T2"), makeSList("∀x·x>1", "∀x·x>2"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -101,11 +105,11 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x∈ℤ"));
 		getGeneric().addTheorems(cmp, makeSList("T1","T2", "T3"), makeSList("x∈ℤ", "x>1", "⊤"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		noSequent(po, "T1/THM");
 		
@@ -124,11 +128,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("N1"), makeSList("∀x·x>1"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		noSequent(po, "N1/WD");
 		
@@ -142,11 +146,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1÷0=0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -162,11 +166,11 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addNonTheorems(cmp, makeSList("N0", "N1"), makeSList("1<0", "1÷0=0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -184,11 +188,11 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1=0"));
 		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -205,7 +209,7 @@ extends GenericEventBPOTest<F> {
 		
 		getGeneric().addNonTheorems(abs, makeSList("N0"), makeSList("2>9"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		F cmp = getGeneric().createElement("cmp");
 
@@ -213,11 +217,11 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("7<1"));
 		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -235,14 +239,14 @@ extends GenericEventBPOTest<F> {
 		
 		getGeneric().addTheorems(f0, makeSList("T0"), makeSList("5>9"));	
 		
-		f0.save(null, true);
+		f0.getRodinFile().save(null, true);
 
 		F f1 = getGeneric().createElement("f1");
 		
 		getGeneric().addSuper(f1, "f0");
 		getGeneric().addTheorems(f1, makeSList("N0"), makeSList("2>9"));
 		
-		f1.save(null, true);
+		f1.getRodinFile().save(null, true);
 		
 		F f2 = getGeneric().createElement("f2");
 
@@ -250,11 +254,11 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addNonTheorems(f2, makeSList("N1"), makeSList("7<1"));
 		getGeneric().addTheorems(f2, makeSList("T1"), makeSList("1<0"));
 		
-		f2.save(null, true);
+		f2.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
-		IPOFile po = getGeneric().getPOFile(f2);
+		IPORoot po = getGeneric().getPOFile(f2);
 		
 		IPOSequent sequent = getSequent(po, "T1/THM");
 		
@@ -272,14 +276,14 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addIdents(cmp, "x");
 		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N1/WD");
 		
@@ -298,19 +302,19 @@ extends GenericEventBPOTest<F> {
 		getGeneric().addIdents(abs, "x");
 		getGeneric().addNonTheorems(abs, makeSList("N1"), makeSList("x ∈ ℕ"));
 		
-		abs.save(null, true);
+		abs.getRodinFile().save(null, true);
 		
 		F cmp = getGeneric().createElement("cmp");
 		getGeneric().addSuper(cmp, "abs");
 		getGeneric().addTheorems(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"));
 		
-		cmp.save(null, true);
+		cmp.getRodinFile().save(null, true);
 		runBuilder();
 		
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		
-		IPOFile po = getGeneric().getPOFile(cmp);
+		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, "N2/WD");
 		

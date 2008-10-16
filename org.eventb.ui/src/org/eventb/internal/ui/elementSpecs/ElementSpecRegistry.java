@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended, added parameters
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.elementSpecs;
 
@@ -17,12 +18,12 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
@@ -79,67 +80,67 @@ public class ElementSpecRegistry implements IElementSpecRegistry {
 
 	public IElementRelationship getElementRelationship(String id)
 			throws IllegalArgumentException {
-		// IMachineFile
+		// IMachineRoot
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".refinesMachine")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".refinesMachine", IMachineFile.ELEMENT_TYPE,
+					+ ".refinesMachine", IMachineRoot.ELEMENT_TYPE,
 					IRefinesMachine.ELEMENT_TYPE);
 		}
 
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".seesContext")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".seesContext", IMachineFile.ELEMENT_TYPE,
+					+ ".seesContext", IMachineRoot.ELEMENT_TYPE,
 					ISeesContext.ELEMENT_TYPE);
 		}
 
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variable")) {
 			return new ElementRelationship(
 					EventBPlugin.PLUGIN_ID + ".variable",
-					IMachineFile.ELEMENT_TYPE, IVariable.ELEMENT_TYPE);
+					IMachineRoot.ELEMENT_TYPE, IVariable.ELEMENT_TYPE);
 		}
 
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".invariant")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".invariant", IMachineFile.ELEMENT_TYPE,
+					+ ".invariant", IMachineRoot.ELEMENT_TYPE,
 					IInvariant.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".machineTheorem")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".machineTheorem", IMachineFile.ELEMENT_TYPE,
+					+ ".machineTheorem", IMachineRoot.ELEMENT_TYPE,
 					ITheorem.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".event")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID + ".event",
-					IMachineFile.ELEMENT_TYPE, IEvent.ELEMENT_TYPE);
+					IMachineRoot.ELEMENT_TYPE, IEvent.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".variant")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID + ".variant",
-					IMachineFile.ELEMENT_TYPE, IVariant.ELEMENT_TYPE);
+					IMachineRoot.ELEMENT_TYPE, IVariant.ELEMENT_TYPE);
 		}
 
-		// IContextFile
+		// IContextRoot
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".extendsContext")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".extendsContext", IContextFile.ELEMENT_TYPE,
+					+ ".extendsContext", IContextRoot.ELEMENT_TYPE,
 					IExtendsContext.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".carrierSet")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".carrierSet", IContextFile.ELEMENT_TYPE,
+					+ ".carrierSet", IContextRoot.ELEMENT_TYPE,
 					ICarrierSet.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".constant")) {
 			return new ElementRelationship(
 					EventBPlugin.PLUGIN_ID + ".constant",
-					IContextFile.ELEMENT_TYPE, IConstant.ELEMENT_TYPE);
+					IContextRoot.ELEMENT_TYPE, IConstant.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".axiom")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID + ".axiom",
-					IContextFile.ELEMENT_TYPE, IAxiom.ELEMENT_TYPE);
+					IContextRoot.ELEMENT_TYPE, IAxiom.ELEMENT_TYPE);
 		}
 		if (id.equals(EventBPlugin.PLUGIN_ID + ".contextTheorem")) {
 			return new ElementRelationship(EventBPlugin.PLUGIN_ID
-					+ ".contextTheorem", IContextFile.ELEMENT_TYPE,
+					+ ".contextTheorem", IContextRoot.ELEMENT_TYPE,
 					ITheorem.ELEMENT_TYPE);
 		}
 

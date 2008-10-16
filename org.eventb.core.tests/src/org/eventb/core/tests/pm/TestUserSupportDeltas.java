@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import java.util.ArrayList;
@@ -9,8 +20,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
@@ -20,6 +31,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,15 +50,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSetInput() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IPSRoot psRoot = poFile.getPSRoot();
 
 		runBuilder();
 
 		IUserSupport userSupport = new UserSupport();
 
 		startDeltas();
-		userSupport.setInput(psFile);
+		userSupport.setInput(psRoot.getRodinFile());
 		assertDeltas("No deltas should have been produced", "");
 		
 		// The proof states has been created but not initialized for all POs.
@@ -66,8 +78,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testNextUndischargedPOUnforce() throws RodinDBException,
 			CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -107,8 +119,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testNextUndischargedPOForce() throws RodinDBException,
 			CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -162,8 +174,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testUserSupportPrevUndischargedPOUnforce()
 			throws RodinDBException, CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -202,8 +214,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testUserSupportPrevUndischargedPOForce()
 			throws RodinDBException, CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -255,8 +267,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSetAndGetCurrentPO() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -299,8 +311,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testRemoveCachedHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -356,8 +368,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSearchHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -386,8 +398,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -433,8 +445,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSelectNode() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -494,8 +506,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testApplyTactic() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -519,8 +531,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testApplyTacticHypothesis() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -558,8 +570,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testBacktrack() throws CoreException {
-		IPOFile poFile = createPOFile("x");
-		IPSFile psFile = poFile.getPSFile();
+		IPORoot poFile = createPOFile("x");
+		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
 
 		runBuilder();
 

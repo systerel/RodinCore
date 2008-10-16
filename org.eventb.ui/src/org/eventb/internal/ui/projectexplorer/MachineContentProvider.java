@@ -4,6 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Duesseldorf - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer;
 
@@ -11,7 +15,7 @@ import java.util.ArrayList;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.ui.projectexplorer.AbstractRodinContentProvider;
@@ -21,11 +25,14 @@ public class MachineContentProvider extends AbstractRodinContentProvider {
 
 	@Override
 	public Object[] getChildren(final Object parentElement) {
-		if (!(parentElement instanceof IMachineFile)) {
+//		if (!(parentElement instanceof IRodinFile)) {
+//			return new Object[] {};
+//		}
+//		final IRodinFile rf = (IRodinFile) parentElement;
+		if (!(parentElement instanceof IMachineRoot)) {
 			return new Object[] {};
 		}
-		IMachineFile mch = (IMachineFile) parentElement;
-
+		IMachineRoot mch = (IMachineRoot) parentElement;
 		ArrayList<TreeNode<?>> list = new ArrayList<TreeNode<?>>();
 		list.add(new TreeNode<IVariable>("Variables", mch,
 				IVariable.ELEMENT_TYPE));

@@ -11,10 +11,11 @@
 package org.eventb.core.tests.pm;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Unit tests for the Proof Manager.
@@ -43,14 +44,15 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * context.
 	 */
 	public void testContextProofComponent() throws Exception {
-		final IContextFile ctx = (IContextFile) rodinProject
-				.getRodinFile("c.buc");
-		final IProofComponent pc = pm.getProofComponent(ctx);
+		final IRodinFile ctx = rodinProject.getRodinFile("c.buc");
+		IContextRoot root = (IContextRoot) ctx.getRoot();
+		final IProofComponent pc = pm.getProofComponent((IContextRoot) ctx
+				.getRoot());
 		assertNotNull(pc);
-		assertEquals(pc, pm.getProofComponent(ctx.getSCContextFile()));
-		assertEquals(pc, pm.getProofComponent(ctx.getPOFile()));
-		assertEquals(pc, pm.getProofComponent(ctx.getPRFile()));
-		assertEquals(pc, pm.getProofComponent(ctx.getPSFile()));
+		assertEquals(pc, pm.getProofComponent(root.getSCContextRoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPORoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPRRoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPSRoot()));
 	}
 
 	/**
@@ -58,14 +60,15 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * machine.
 	 */
 	public void testMachineProofComponent() throws Exception {
-		final IMachineFile mch = (IMachineFile) rodinProject
+		final IRodinFile mch = rodinProject
 				.getRodinFile("m.bum");
-		final IProofComponent pc = pm.getProofComponent(mch);
+		final IMachineRoot root = (IMachineRoot)mch.getRoot();
+		final IProofComponent pc = pm.getProofComponent((IMachineRoot) mch.getRoot());
 		assertNotNull(pc);
-		assertEquals(pc, pm.getProofComponent(mch.getSCMachineFile()));
-		assertEquals(pc, pm.getProofComponent(mch.getPOFile()));
-		assertEquals(pc, pm.getProofComponent(mch.getPRFile()));
-		assertEquals(pc, pm.getProofComponent(mch.getPSFile()));
+		assertEquals(pc, pm.getProofComponent(root.getSCMachineRoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPORoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPRRoot()));
+		assertEquals(pc, pm.getProofComponent(root.getPSRoot()));
 	}
 
 }

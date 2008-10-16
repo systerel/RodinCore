@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.wizards;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -26,15 +25,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.core.IContextFile;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IMachineFile;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
 /**
@@ -304,8 +302,8 @@ public class NewComponentWizardPage extends WizardPage {
 		
 		final IEventBProject evbProject = (IEventBProject) rodinProject
 				.getAdapter(IEventBProject.class);
-		final IMachineFile machineFile = evbProject.getMachineFile(componentName);
-		final IContextFile contextFile = evbProject.getContextFile(componentName);
+		final IRodinFile machineFile = evbProject.getMachineFile(componentName);
+		final IRodinFile contextFile = evbProject.getContextFile(componentName);
 		if (machineFile == null || contextFile == null) {
 			updateStatus("Component name must be valid");
 			return;

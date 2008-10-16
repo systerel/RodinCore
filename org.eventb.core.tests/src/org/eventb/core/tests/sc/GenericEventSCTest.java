@@ -1,17 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericEventTest;
 import org.rodinp.core.IRodinElement;
@@ -48,9 +52,9 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public ISCEvent getSCElement(IEvent element) throws RodinDBException {
-		ISCMachineFile scFile = ((IMachineFile) element.getRodinFile()).getSCMachineFile();
+		ISCMachineRoot scRoot = ((IMachineRoot) element.getRodinFile().getRoot()).getSCMachineRoot();
 		ISCEvent[] events = 
-			test.getSCEvents(scFile, IEvent.INITIALISATION, element.getLabel());
+			test.getSCEvents(scRoot, IEvent.INITIALISATION, element.getLabel());
 		return events[1];
 	}
 

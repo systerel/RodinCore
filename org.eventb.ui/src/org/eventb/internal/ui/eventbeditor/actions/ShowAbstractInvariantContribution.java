@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Rodin @ ETH Zurich
-******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.ContributionItem;
@@ -19,7 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUtils;
@@ -27,7 +26,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -42,7 +40,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 	/**
 	 * The concrete machine.
 	 */
-	private IMachineFile file;
+	private IMachineRoot file;
 
 	/**
 	 * Constructor.
@@ -52,9 +50,8 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 	 * @param file
 	 *            the concrete machine.
 	 */
-	public ShowAbstractInvariantContribution(IRodinFile file) {
-		assert file instanceof IMachineFile;
-		this.file = (IMachineFile) file;
+	public ShowAbstractInvariantContribution(IMachineRoot file) {
+		this.file = file;
 	}
 
 	/**
@@ -67,10 +64,10 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 	@Override
 	public void fill(Menu menu, int index) {
 		try {
-			IMachineFile abstractFile = EventBUtils.getAbstractMachine(file);
-			while (abstractFile != null && abstractFile.exists()) {
-				createMenuItem(menu, abstractFile);
-				abstractFile = EventBUtils.getAbstractMachine(abstractFile);
+			IMachineRoot abstractRoot = EventBUtils.getAbstractMachine(file);
+			while (abstractRoot != null && abstractRoot.exists()) {
+				createMenuItem(menu, abstractRoot);
+				abstractRoot = EventBUtils.getAbstractMachine(abstractRoot);
 			}
 
 		} catch (RodinDBException e) {
@@ -88,15 +85,15 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 	 * @param abstractFile the abstract machine
 	 * @throws RodinDBException if some problems occur.
 	 */
-	private void createMenuItem(Menu menu, final IRodinFile abstractFile)
+	private void createMenuItem(Menu menu, final IMachineRoot abstractRoot)
 			throws RodinDBException {
 		final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-		menuItem.setText(abstractFile.getBareName());
+		menuItem.setText(abstractRoot.getRodinFile().getBareName());
 		menuItem
 				.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REFINES));
 
 		final IRodinElement inv;
-		IRodinElement[] invs = abstractFile
+		IRodinElement[] invs = abstractRoot
 				.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 		if (invs.length != 0)
 			inv = invs[0];
@@ -109,7 +106,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 					if (inv != null)
 						UIUtils.linkToEventBEditor(inv);
 					else
-						UIUtils.linkToEventBEditor(abstractFile);
+						UIUtils.linkToEventBEditor(abstractRoot.getRodinFile());
 					break;
 				}
 			}

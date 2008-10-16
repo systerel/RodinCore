@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -31,7 +32,7 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editing Sees
  *         clause.
  */
-public class SeesSection extends AbstractContextsSection<IMachineFile> {
+public class SeesSection extends AbstractContextsSection<IMachineRoot> {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Seen Contexts";
@@ -39,7 +40,7 @@ public class SeesSection extends AbstractContextsSection<IMachineFile> {
 	private static final String SECTION_DESCRIPTION =
 		"Select the seen contexts of this machine";
 
-	public SeesSection(IEventBEditor<IMachineFile> editor, FormToolkit toolkit,
+	public SeesSection(IEventBEditor<IMachineRoot> editor, FormToolkit toolkit,
 			Composite parent) {
 		super(editor, toolkit, parent);
 	}
@@ -55,7 +56,7 @@ public class SeesSection extends AbstractContextsSection<IMachineFile> {
 	@Override
 	protected ISeesContext[] getClauses() {
 		try {
-			return rodinFile.getSeesClauses();
+			return rodinRoot.getSeesClauses();
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when reading the sees clauses");
 			return new ISeesContext[0];

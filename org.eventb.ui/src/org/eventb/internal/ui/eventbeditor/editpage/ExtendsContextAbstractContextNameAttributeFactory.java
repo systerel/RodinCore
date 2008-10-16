@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -17,9 +18,10 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinProject;
@@ -54,13 +56,14 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 		List<String> results = new ArrayList<String>();
 		IExtendsContext extendsContext = (IExtendsContext) element;
 		IRodinProject rodinProject = extendsContext.getRodinProject();
-		IContextFile[] contextFiles = rodinProject
-				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-		IContextFile context = (IContextFile) extendsContext.getParent();
-		String contextName = context.getBareName();
+//		IContextFile[] contextFiles = rodinProject
+//				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+		IContextRoot[] contextRoot = UIUtils.getContextRootChildren(rodinProject);
+		IContextRoot context = (IContextRoot) extendsContext.getParent();
+		String contextName = context.getRodinFile().getBareName();
 
-		for (IContextFile contextFile : contextFiles) {
-			String bareName = contextFile.getBareName();
+		for (IContextRoot root: contextRoot) {
+			String bareName = root.getRodinFile().getBareName();
 			if (!contextName.equals(bareName))
 				results.add(bareName);
 		}

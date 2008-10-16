@@ -23,7 +23,7 @@ public class UndoAction extends HistoryAction {
 
 	@Override
 	public void run() {
-		IUndoContext context = OperationFactory.getContext(file);
+		IUndoContext context = OperationFactory.getContext(root);
 		History.getInstance().undo(context);
 		
 	}

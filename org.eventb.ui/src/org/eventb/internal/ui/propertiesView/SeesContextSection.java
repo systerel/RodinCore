@@ -8,11 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
@@ -36,14 +37,14 @@ public class SeesContextSection extends CComboSection {
 	@Override
 	void setData() {
 		final IRodinProject project = element.getRodinProject();
-		final IContextFile[] contexts;
+		final IContextRoot[] contexts;
 		try {
-			contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
+			contexts = UIUtils.getContextRootChildren(project);
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;
 		}
-		for (IContextFile context : contexts) {
+		for (IContextRoot context : contexts) {
 			final String bareName = context.getComponentName();
 			comboWidget.add(bareName);
 		}

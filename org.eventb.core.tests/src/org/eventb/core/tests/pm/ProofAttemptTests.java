@@ -21,8 +21,8 @@ import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import java.math.BigInteger;
 
-import org.eventb.core.IPOFile;
 import org.eventb.core.IPOPredicateSet;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -35,6 +35,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.tests.DeltaListener;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -56,14 +57,13 @@ public class ProofAttemptTests extends AbstractProofTests {
 		LHYP = ff.makeRelationalPredicate(EQUAL, one, one, null);
 	}
 
-	private IPOFile poFile;
+	private IPORoot poFile;
 
 	private IProofComponent pc;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		poFile = (IPOFile) rodinProject.getRodinFile("m.bpo");
 		createPOFile();
 		runBuilder();
 		pc = pm.getProofComponent(poFile);
@@ -160,7 +160,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	public void testBrokenNoPO() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		poFile.getSequent(PO1).delete(false, null);
-		poFile.save(null, false);
+		poFile.getRodinFile().save(null, false);
 		runBuilder();
 		assertTrue(pa.isBroken());
 	}
@@ -186,11 +186,13 @@ public class ProofAttemptTests extends AbstractProofTests {
 			final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 			pa.commit(true, null);
 			dl.assertDeltas("Unexpected deltas for proof commit",
-					"P[*]: {CHILDREN}\n" + "	m.bpr[*]: {CHILDREN}\n"
-							+ "		PO1[org.eventb.core.prProof][*]: {ATTRIBUTE}\n"
-							+ "	m.bps[*]: {CHILDREN}\n"
-							+ "		PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}"
-
+					"P[*]: {CHILDREN}\n" + 
+					"	m.bpr[*]: {CHILDREN}\n" + 
+					"		m[org.eventb.core.prFile][*]: {CHILDREN}\n" + 
+					"			PO1[org.eventb.core.prProof][*]: {ATTRIBUTE}\n" + 
+					"	m.bps[*]: {CHILDREN}\n" + 
+					"		m[org.eventb.core.psFile][*]: {CHILDREN}\n" + 
+					"			PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}"
 			);
 			assertEmptyProof(pc.getProofSkeleton(PO1, ff, null));
 			assertStatus(UNATTEMPTED, false, true, pc.getStatus(PO1));
@@ -209,16 +211,17 @@ public class ProofAttemptTests extends AbstractProofTests {
 			final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 			dischargeTrueGoal(pa);
 			pa.commit(true, null);
-			dl
-					.assertDeltas(
-							"Unexpected deltas for proof commit",
-							"P[*]: {CHILDREN}\n"
-									+ "	m.bpr[*]: {CHILDREN}\n"
-									+ "		PO1[org.eventb.core.prProof][*]: {CHILDREN | ATTRIBUTE}\n"
-									+ "			org.eventb.core.seqprover.trueGoal[org.eventb.core.prRule][+]: {}\n"
-									+ "			p0[org.eventb.core.prPred][+]: {}\n"
-									+ "	m.bps[*]: {CHILDREN}\n"
-									+ "		PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}");
+			dl.assertDeltas(
+					"Unexpected deltas for proof commit",
+					"P[*]: {CHILDREN}\n" + 
+					"	m.bpr[*]: {CHILDREN}\n" + 
+					"		m[org.eventb.core.prFile][*]: {CHILDREN}\n" + 
+					"			PO1[org.eventb.core.prProof][*]: {CHILDREN | ATTRIBUTE}\n" + 
+					"				org.eventb.core.seqprover.trueGoal[org.eventb.core.prRule][+]: {}\n" + 
+					"				p0[org.eventb.core.prPred][+]: {}\n" + 
+					"	m.bps[*]: {CHILDREN}\n" + 
+					"		m[org.eventb.core.psFile][*]: {CHILDREN}\n" + 
+					"			PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}");
 			assertNonEmptyProof(pc.getProofSkeleton(PO1, ff, null));
 			assertStatus(DISCHARGED_MAX, false, true, pc.getStatus(PO1));
 		} finally {
@@ -253,13 +256,15 @@ public class ProofAttemptTests extends AbstractProofTests {
 	}
 
 	private void createPOFile() throws RodinDBException {
-		poFile.create(true, null);
+		IRodinFile file = rodinProject.getRodinFile("m.bpo");
+		file.create(true, null);
+		poFile = (IPORoot) file.getRoot();
 		final ITypeEnvironment typenv = mTypeEnvironment();
 		final IPOPredicateSet hyp = addPredicateSet(poFile, "hyp", null,
 				typenv, GHYP.toString());
 		addSequent(poFile, PO1, GOAL.toString(), hyp, typenv, LHYP.toString());
 		addSequent(poFile, PO2, GOAL.toString(), hyp, typenv, LHYP.toString());
-		poFile.save(null, true);
+		file.save(null, true);
 	}
 
 	private void dischargeTrueGoal(final IProofAttempt pa) {

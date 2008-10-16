@@ -1,13 +1,21 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.rodinp.core.RodinDBException;
@@ -20,11 +28,11 @@ import org.rodinp.core.RodinDBException;
 public class TestUserSupportManagers extends TestPM {
 
 	public void testUserSupportManager() throws RodinDBException, CoreException {
-		IPOFile poFile1 = createPOFile("x");
-		IPSFile psFile1 = poFile1.getPSFile();
+		IPORoot poFile1 = createPOFile("x");
+		IPSRoot psFile1 = poFile1.getPSRoot();
 
-		IPOFile poFile2 = createPOFile("y");
-		IPSFile psFile2 = poFile2.getPSFile();
+		IPORoot poFile2 = createPOFile("y");
+		IPSRoot psFile2 = poFile2.getPSRoot();
 
 		runBuilder();
 
@@ -42,11 +50,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
-		userSupport1.setInput(psFile1);
+		userSupport1.setInput(psFile1.getRodinFile());
 
 		assertEquals(
 				"The input for first user support has been set correctly ",
-				psFile1, userSupport1.getInput());
+				psFile1.getRodinFile(), userSupport1.getInput());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -62,11 +70,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The second user support is stored ", userSupports
 				.contains(userSupport2));
 
-		userSupport2.setInput(psFile2);
+		userSupport2.setInput(psFile2.getRodinFile());
 
 		assertEquals(
 				"The input for second user support has been set correctly ",
-				psFile2, userSupport2.getInput());
+				psFile2.getRodinFile(), userSupport2.getInput());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();

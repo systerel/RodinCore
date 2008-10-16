@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.layout.GridData;
@@ -19,13 +18,13 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author htson
@@ -70,24 +69,24 @@ public class DependenciesPage extends EventBEditorPage {
 		body.setLayout(layout);
 
 		final IEventBEditor<?> eventBEditor = getEventBEditor();
-		final IRodinFile rodinFile = eventBEditor.getRodinInput();
+		final IInternalElement rodinRoot = eventBEditor.getRodinInput();
 		final FormToolkit toolkit = getManagedForm().getToolkit();
-		if (rodinFile instanceof IMachineFile) {
+		if (rodinRoot instanceof IMachineRoot) {
 			SectionPart part = new RefinesSection(eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 150;
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-			part = new SeesSection((IEventBEditor<IMachineFile>) eventBEditor, toolkit, body);
+			part = new SeesSection((IEventBEditor<IMachineRoot>) eventBEditor, toolkit, body);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 
 			part.getSection().setLayoutData(gd);
 			managedForm.addPart(part);
 
-		} else if (rodinFile instanceof IContextFile) {
-			SectionPart part = new ExtendsSection((IEventBEditor<IContextFile>) eventBEditor, toolkit, body);
+		} else if (rodinRoot instanceof IContextRoot) {
+			SectionPart part = new ExtendsSection((IEventBEditor<IContextRoot>) eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 250;
 

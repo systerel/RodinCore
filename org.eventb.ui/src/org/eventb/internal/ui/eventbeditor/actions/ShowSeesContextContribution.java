@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.ContributionItem;
@@ -7,6 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.IEventBProject;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
@@ -20,13 +32,13 @@ import org.rodinp.core.RodinDBException;
 
 public class ShowSeesContextContribution extends ContributionItem {
 
-	private IRodinFile file;
+	private IMachineRoot root;
 
 	private IEventBProject evbProject;
 
-	public ShowSeesContextContribution(IRodinFile file) {
-		this.file = file;
-		IRodinProject rp = file.getRodinProject();
+	public ShowSeesContextContribution(IMachineRoot root) {
+		this.root = root;
+		IRodinProject rp = root.getRodinProject();
 		evbProject = (IEventBProject) rp.getAdapter(IEventBProject.class);
 	}
 
@@ -34,7 +46,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 	public void fill(Menu menu, int index) {
 		IRodinElement[] elements;
 		try {
-			elements = file.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+			elements = root.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;

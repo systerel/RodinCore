@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.prettyprint;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,8 +32,8 @@ import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -132,8 +131,8 @@ public class PrettyPrintPage extends EventBEditorPage implements
 	 *            a progress monitor
 	 */
 	void setFormText(IProgressMonitor monitor) {
-		IRodinFile rodinFile = getEventBEditor().getRodinInput();
-		String text = astConverter.getText(monitor, rodinFile);
+		IInternalElement root = getEventBEditor().getRodinInput();
+		String text = astConverter.getText(monitor, root);
 		formText.getFormText().setText(text, true, true);
 		form.reflow(true);
 	}

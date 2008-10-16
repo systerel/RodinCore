@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +33,7 @@ import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IInternalElement;
 
 public class HTMLPage extends EventBEditorPage implements
 		IElementChangedListener {
@@ -119,8 +130,8 @@ public class HTMLPage extends EventBEditorPage implements
 	 *            a progress monitor
 	 */
 	void setFormText(IProgressMonitor monitor) {
-		IRodinFile rodinFile = getEventBEditor().getRodinInput();
-		String text = astConverter.getText(monitor, rodinFile);
+		IInternalElement root = getEventBEditor().getRodinInput();
+		String text = astConverter.getText(monitor, root);
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug(text);
 		browser.setText(text);

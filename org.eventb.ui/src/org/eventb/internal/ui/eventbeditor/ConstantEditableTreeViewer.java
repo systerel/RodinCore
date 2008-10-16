@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -20,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
@@ -44,7 +43,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 	class CarrierSetContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root of the tree.
-		private IContextFile invisibleRoot = null;
+		private IRodinFile invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -63,13 +62,16 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IContextFile) {
-				try {
-					return ((IContextFile) parent)
-							.getChildrenOfType(IConstant.ELEMENT_TYPE);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if (parent instanceof IRodinFile) {
+				IRodinFile rf = (IRodinFile) parent;
+				if (rf.getRoot() instanceof IContextRoot) {
+					IContextRoot root = (IContextRoot) rf.getRoot();
+					try {
+						return root.getChildrenOfType(IConstant.ELEMENT_TYPE);
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -102,7 +104,7 @@ public class ConstantEditableTreeViewer extends EventBEditableTreeViewer {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IContextFile) parent;
+					invisibleRoot = (IRodinFile) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

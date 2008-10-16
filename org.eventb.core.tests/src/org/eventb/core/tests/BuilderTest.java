@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.core.tests;
 
 import java.util.ArrayList;
@@ -23,17 +26,18 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.ISCContextFile;
-import org.eventb.core.ISCMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
+import org.eventb.core.ISCContextRoot;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -60,39 +64,39 @@ public abstract class BuilderTest extends TestCase {
 		super(name);
 	}
 	
-	protected IContextFile createContext(String bareName) throws RodinDBException {
+	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IContextFile result = (IContextFile) rodinProject.getRodinFile(fileName);
+		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return result;
+		return (IContextRoot) result.getRoot();
 	}
 
-	protected IMachineFile createMachine(String bareName) throws RodinDBException {
+	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IMachineFile result = (IMachineFile) rodinProject.getRodinFile(fileName);
+		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return result;
+		return (IMachineRoot) result.getRoot();
 	}
 
-	protected IPOFile createPOFile(String bareName) throws RodinDBException {
+	protected IPORoot createPOFile(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
-		IPOFile result = (IPOFile) rodinProject.getRodinFile(fileName);
+		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return result;
+		return (IPORoot) result;
 	}
 
-	protected ISCContextFile createSCContext(String bareName) throws RodinDBException {
+	protected ISCContextRoot createSCContext(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-		ISCContextFile result = (ISCContextFile) rodinProject.getRodinFile(fileName);
+		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return result;
+		return (ISCContextRoot) result.getRoot();
 	}
 
-	protected ISCMachineFile createSCMachine(String bareName) throws RodinDBException {
+	protected ISCMachineRoot createSCMachine(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-		ISCMachineFile result = (ISCMachineFile) rodinProject.getRodinFile(fileName);
+		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return result;
+		return (ISCMachineRoot) result;
 	}
 	
 	protected void runBuilder() throws CoreException {

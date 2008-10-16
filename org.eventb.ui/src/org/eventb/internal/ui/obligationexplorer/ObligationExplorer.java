@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
@@ -52,10 +53,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRProof;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.basis.PSStatus;
 import org.eventb.core.pm.IProofState;
@@ -395,7 +396,7 @@ public class ObligationExplorer extends ViewPart implements
 		if (prSequent != null) {
 			return prSequent;
 		}
-		return proverUI.getRodinInput();
+		return proverUI.getRodinInput().getRoot();
 	}
 
 	/**
@@ -565,15 +566,16 @@ public class ObligationExplorer extends ViewPart implements
 
 				IUserSupportDelta[] affectedUserSupports = delta.getAffectedUserSupports();
 				for (IUserSupportDelta affectedUserSupport : affectedUserSupports) {
-					IPSFile psFile = affectedUserSupport.getUserSupport().getInput();
+					IRodinFile psFile = affectedUserSupport.getUserSupport().getInput();
+					IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 					if (psFile != null) {
-						IMachineFile machineFile = psFile.getMachineFile();
-						if (machineFile.exists()) {
-							fViewer.refresh(machineFile);
+						IMachineRoot machineRoot = psRoot.getMachineRoot();
+						if (machineRoot.exists()) {
+							fViewer.refresh(machineRoot);
 						} else {
-							IContextFile contextFile = psFile.getContextFile();
-							if (contextFile.exists()) {
-								fViewer.refresh(contextFile);
+							IContextRoot contextRoot = psRoot.getContextRoot();
+							if (contextRoot.exists()) {
+								fViewer.refresh(contextRoot);
 							}
 						}
 					}

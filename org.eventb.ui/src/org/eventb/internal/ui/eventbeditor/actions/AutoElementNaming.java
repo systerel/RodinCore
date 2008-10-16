@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
@@ -23,6 +24,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 
@@ -38,7 +40,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 	public abstract String getAttributeID();
 	
 	private void rename(final String prefix, final String attributeID) {
-		IRodinFile file = editor.getRodinInput();
+		IInternalElement root = editor.getRodinInput();
 		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
 				.getType(attributeID);
 		IAttributeFactory factory = null;
@@ -50,7 +52,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 		if (factory != null) {
 			History.getInstance().addOperation(
 					OperationFactory
-							.renameElements(file, type, factory, prefix));
+							.renameElements(root.getRodinFile(), type, factory, prefix));
 		}
 	}
 
@@ -93,7 +95,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 		String attributeID = getAttributeID();
 		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
 				.getType(attributeID);
-		IRodinFile inputFile = editor.getRodinInput();
+		IRodinFile inputFile = editor.getRodinInput().getRodinFile();
 		String prefix = null;
 		try {
 			prefix = inputFile.getResource().getPersistentProperty(

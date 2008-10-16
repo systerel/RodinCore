@@ -1,13 +1,21 @@
-/**
- * 
- */
+/*******************************************************************************
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -19,11 +27,11 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 
 	public void testUserSupportManagerDeltas() throws RodinDBException,
 			CoreException {
-		IPOFile poFile1 = createPOFile("x");
-		IPSFile psFile1 = poFile1.getPSFile();
+		IPORoot poFile1 = createPOFile("x");
+		IRodinFile psFile1 = poFile1.getPSRoot().getRodinFile();
 
-		IPOFile poFile2 = createPOFile("y");
-		IPSFile psFile2 = poFile2.getPSFile();
+		IPORoot poFile2 = createPOFile("y");
+		IRodinFile psFile2 = poFile2.getPSRoot().getRodinFile();
 
 		enableAutoProver(true);
 		runBuilder();
@@ -35,18 +43,18 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		clearDeltas();
 		userSupport1.setInput(psFile1);
 		assertDeltas("No deltas should have been produced", "");
-		
+
 		clearDeltas();
 		userSupport1.loadProofStates();
 		assertDeltas("Set input for the first user support",
-				"[*] x.bps [STATE]\n" + 
-				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO3[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO4[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO7[org.eventb.core.psStatus] []");
+				"[*] x.bps [STATE]\n"
+						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO3[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO4[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO5[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO6[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO7[org.eventb.core.psStatus] []");
 
 		clearDeltas();
 		IUserSupport userSupport2 = manager.newUserSupport();
@@ -56,18 +64,18 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		clearDeltas();
 		userSupport2.setInput(psFile2);
 		assertDeltas("No deltas should have been produced", "");
-		
+
 		clearDeltas();
 		userSupport2.loadProofStates();
 		assertDeltas("Set input for the second user support",
-				"[*] y.bps [STATE]\n" + 
-				"  [+] PO1[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO2[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO3[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO4[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
-				"  [+] PO7[org.eventb.core.psStatus] []");
+				"[*] y.bps [STATE]\n"
+						+ "  [+] PO1[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO2[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO3[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO4[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO5[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO6[org.eventb.core.psStatus] []\n"
+						+ "  [+] PO7[org.eventb.core.psStatus] []");
 
 		clearDeltas();
 		userSupport1.dispose();
@@ -80,6 +88,5 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 
 		stopDeltas();
 	}
-
 
 }

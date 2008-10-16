@@ -1,6 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
@@ -9,11 +20,11 @@ import org.rodinp.core.RodinDBException;
 
 public class ProofStatus {
 
-	IPSFile psFile;
+	IPSRoot psFile;
 	
 	boolean fullStatistics;
 	
-	public ProofStatus(IPSFile psFile, boolean fullStatistics) {
+	public ProofStatus(IPSRoot psFile, boolean fullStatistics) {
 		this.psFile = psFile;
 		this.fullStatistics = fullStatistics;
 	}

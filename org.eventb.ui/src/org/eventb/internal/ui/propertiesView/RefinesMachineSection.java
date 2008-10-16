@@ -8,11 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
@@ -35,14 +36,14 @@ public class RefinesMachineSection extends CComboSection {
 	@Override
 	void setData() {
 		final IRodinProject project = element.getRodinProject();
-		final IMachineFile[] machines;
+		final IMachineRoot[] machines;
 		try {
-			machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+			machines = UIUtils.getMachineRootChildren(project);
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when listing the machines of " + project);
 			return;
 		}
-		for (IMachineFile machine : machines) {
+		for (IMachineRoot machine : machines) {
 			final String bareName = machine.getComponentName();
 			comboWidget.add(bareName);
 		}

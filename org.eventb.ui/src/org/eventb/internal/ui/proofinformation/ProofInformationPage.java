@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - replaced variable by parameter
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.proofinformation;
 
@@ -30,7 +31,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSource;
@@ -153,7 +154,7 @@ public class ProofInformationPage extends Page implements
 				if (element instanceof ITheorem) {
 					final ITheorem thm = (ITheorem) element;
 					formBuilder.append("<li style=\"bullet\">Theorem in ");
-					formBuilder.append(((IEventBFile) thm.getParent()).getComponentName());
+					formBuilder.append(((IEventBRoot) thm.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, thm.getLabel()));
@@ -165,7 +166,7 @@ public class ProofInformationPage extends Page implements
 				if (element instanceof IAxiom) {
 					IAxiom axm = (IAxiom) element;
 					formBuilder.append("<li style=\"bullet\">Axiom in ");
-					formBuilder.append(((IEventBFile) axm.getParent()).getComponentName());
+					formBuilder.append(((IEventBRoot) axm.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, axm.getLabel()));
@@ -176,7 +177,7 @@ public class ProofInformationPage extends Page implements
 				} else if (element instanceof IInvariant) {
 					IInvariant inv = (IInvariant) element;
 					formBuilder.append("<li style=\"bullet\">Invariant in ");
-					formBuilder.append(((IEventBFile) inv.getParent()).getComponentName());
+					formBuilder.append(((IEventBRoot) inv.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, inv.getLabel()));
@@ -187,7 +188,7 @@ public class ProofInformationPage extends Page implements
 				} else if (element instanceof IEvent) {
 					IEvent evt = (IEvent) element;
 					formBuilder.append("<li style=\"bullet\">Event in ");
-					formBuilder.append(((IEventBFile) evt.getParent()).getComponentName());
+					formBuilder.append(((IEventBRoot) evt.getParent()).getComponentName());
 					formBuilder.append("</li><li style=\"text\" value=\"\">");
 					formBuilder.append(UIUtils
 							.makeHyperlink(id, evt.getLabel()));

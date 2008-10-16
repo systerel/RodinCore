@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - separation of file and root element
  ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
@@ -32,11 +33,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 
 public class ProofStatusToolTip {
 	Shell parentShell;
@@ -82,8 +86,8 @@ public class ProofStatusToolTip {
 		};
 	}
 
-	protected String getToolTipText(IPSFile psFile) {
-		ProofStatus proofStatus = new ProofStatus(psFile, true);
+	protected String getToolTipText(IPSRoot psRoot) {
+		ProofStatus proofStatus = new ProofStatus(psRoot, true);
 		return proofStatus.toString();
 	}
 
@@ -166,7 +170,14 @@ public class ProofStatusToolTip {
 				}
 				
 				Object obj = tipWidget.getData();
-				if (!(obj instanceof IMachineFile || obj instanceof IContextFile)) {
+				if(!(obj instanceof IRodinFile)) {
+					tipWidget = null;
+					return;
+				}
+
+				IRodinFile rf = (IRodinFile) obj;
+				IInternalElement root = rf.getRoot();
+				if (!(root instanceof IMachineRoot || root instanceof IContextRoot)) {
 					tipWidget = null;
 					return;
 				}
@@ -199,14 +210,9 @@ public class ProofStatusToolTip {
 						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 				tipLabel.setFont(font);
 
-				if (obj instanceof IMachineFile) {
-					IPSFile psFile = ((IMachineFile) obj).getPSFile();
-					tipLabel.setText(getToolTipText(psFile));
-				}
-				else {
-					IPSFile psFile = ((IContextFile) obj).getPSFile();
-					tipLabel.setText(getToolTipText(psFile));
-				}
+				IPSRoot psRoot= ((IEventBRoot) obj).getPSRoot();
+				tipLabel.setText(getToolTipText(psRoot));
+
 
 				tipLabel.addListener(SWT.MouseExit, labelListener);
 				tipLabel.addListener(SWT.MouseDown, labelListener);
