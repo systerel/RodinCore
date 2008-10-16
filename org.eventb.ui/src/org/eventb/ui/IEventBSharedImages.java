@@ -110,6 +110,8 @@ public interface IEventBSharedImages {
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
+	public static final String IMG_DELETE_PATH = "icons/delete.gif";
+
 	public static final String IMG_NEW_PROJECT_PATH = "icons/full/clcl16/newprj_wiz.gif";
 
 	public static final String IMG_NEW_COMPONENT_PATH = "icons/full/clcl16/newcomp_wiz.gif";
