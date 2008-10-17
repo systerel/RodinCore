@@ -13,8 +13,8 @@ package org.eventb.core.indexer;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.Predicate;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingToolkit;
 
@@ -34,16 +34,22 @@ public class PredicateIndexer extends ElementIndexer {
 	}
 
 	public void process() throws RodinDBException {
-		if (!isValid(element, PREDICATE_ATTRIBUTE)) {
-			return;
-		}
-		final String predicateString = element.getPredicateString();
-		IParseResult result = ff.parsePredicate(predicateString);
-		if (!result.isSuccess()) {
-			return;
-		}
-		final Predicate pred = result.getParsedPredicate();
-		visitAndIndex(element, PREDICATE_ATTRIBUTE, pred);
+		process(element, PREDICATE_ATTRIBUTE);
+	}
+
+	@Override
+	protected String getFormulaString() throws RodinDBException {
+		return element.getPredicateString();
+	}
+
+	@Override
+	protected Formula<?> getParsedFormula(IParseResult result) {
+		return result.getParsedPredicate();
+	}
+
+	@Override
+	protected IParseResult parseFormula(String formulaString) {
+		return ff.parsePredicate(formulaString);
 	}
 
 

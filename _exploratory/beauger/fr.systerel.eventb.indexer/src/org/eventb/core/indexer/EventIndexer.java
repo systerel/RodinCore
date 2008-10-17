@@ -11,8 +11,8 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.core.indexer.EventBIndexUtil.*;
-import static org.rodinp.core.index.RodinIndexer.*;
+import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
 
 import java.util.Map;
 
@@ -37,7 +37,7 @@ import org.rodinp.core.index.IIndexingToolkit;
  * @author Nicolas Beauger
  * 
  */
-public class EventIndexer {
+public class EventIndexer extends Cancellable{
 
 	private final IEvent event;
 	private final Map<IEvent, SymbolTable> absParamTables;
@@ -71,18 +71,23 @@ public class EventIndexer {
 	}
 
 	public void process() throws RodinDBException {
-
+		checkCancel();
 		processEventLabel();
-
+		
+		checkCancel();
 		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
 		processRefines(event.getRefinesClauses(), absPrmDeclImpST);
 
+		checkCancel();
 		final SymbolTable totalST = new SymbolTable(absPrmDeclImpST);
 		processParameters(event.getParameters(), totalST);
 
+		checkCancel();
 		processPredicateElements(event.getGuards(), totalST);
+		checkCancel();
 		processActions(event.getActions(), totalST);
 
+		checkCancel();
 		processWitnesses(event.getWitnesses(), totalST);
 	}
 
@@ -105,7 +110,7 @@ public class EventIndexer {
 					addAbstractParams((IEvent) element, absParamDeclImportST);
 				}
 			}
-
+			checkCancel();
 		}
 
 	}
@@ -180,6 +185,7 @@ public class EventIndexer {
 					addRefAttribute(declAbs, label, LABEL_ATTRIBUTE);
 				}
 			}
+			checkCancel();
 		}
 	}
 
@@ -245,6 +251,8 @@ public class EventIndexer {
 			final AssignmentIndexer assignIndexer = new AssignmentIndexer(
 					action, eventTable, index);
 			assignIndexer.process();
+			
+			checkCancel();
 		}
 	}
 
@@ -254,7 +262,13 @@ public class EventIndexer {
 			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
 					symbolTable, index);
 			predIndexer.process();
+
+			checkCancel();
 		}
+	}
+	
+	protected void checkCancel() {
+		checkCancel(index);
 	}
 
 }

@@ -3,13 +3,14 @@ package org.eventb.core.indexer;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingToolkit;
 
-public abstract class ElementIndexer {
+public abstract class ElementIndexer extends Cancellable {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -21,9 +22,33 @@ public abstract class ElementIndexer {
 		this.index = index;
 	}
 
+	/**
+	 * Actually performs the indexing.
+	 * 
+	 * @throws RodinDBException
+	 */
 	public abstract void process() throws RodinDBException;
 
-	protected void visitAndIndex(IInternalElement element,
+	protected final void process(IInternalElement element, IAttributeType.String attribute) throws RodinDBException {
+		if (!isValid(element, attribute)) {
+			return;
+		}
+		final String formulaString = getFormulaString();
+		checkCancel();
+		IParseResult result = parseFormula(formulaString);
+		checkCancel();
+		if (!result.isSuccess()) {
+			return;
+		}
+		final Formula<?> formula = getParsedFormula(result);
+		visitAndIndex(element, attribute, formula);
+	}
+	
+	protected abstract String getFormulaString() throws RodinDBException;
+	protected abstract IParseResult parseFormula(String formulaString);
+	protected abstract Formula<?> getParsedFormula(IParseResult result);
+	
+	private void visitAndIndex(IInternalElement element,
 			IAttributeType.String attribute, Formula<?> formula) {
 		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
 
@@ -36,19 +61,22 @@ public abstract class ElementIndexer {
 		symbolTable.addToIdentTable(idents, identTable);
 
 		if (!identTable.isEmpty()) {
-			final FormulaIndexer formulaIndexer = new FormulaIndexer(element,
-					attribute, identTable, index);
+			final FormulaIndexer formulaIndexer = 
+				new FormulaIndexer(element, attribute, identTable, index);
 
 			formula.accept(formulaIndexer);
 		}
 	}
 
-	protected boolean isValid(IAttributedElement elem,
+	private boolean isValid(IAttributedElement elem,
 			IAttributeType.String attribute) throws RodinDBException {
 		if (!elem.exists()) {
 			return false;
 		}
 		return elem.hasAttribute(attribute);
 	}
-
+	
+	private void checkCancel() {
+		checkCancel(index);
+	}
 }

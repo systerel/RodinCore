@@ -77,7 +77,7 @@ public class FormulaIndexer extends DefaultVisitor {
 
 	/**
 	 * @param ident
-	 * @param kind TODO
+	 * @param kind
 	 */
 	private void index(FreeIdentifier ident, IOccurrenceKind kind) {
 		if (ident.isPrimed()) {

@@ -155,15 +155,15 @@ public class MachineIndexer extends EventBIndexer {
 		}
 		final IMachineFile machine = (IMachineFile) file;
 	
-		final List<IRodinFile> extendedFiles = new ArrayList<IRodinFile>();
+		final List<IRodinFile> dependFiles = new ArrayList<IRodinFile>();
 	
 		final IRefinesMachine[] refines = machine.getRefinesClauses();
 		final ISeesContext[] sees = machine.getSeesClauses();
 	
-		addRefinedFiles(refines, extendedFiles);
-		addSeenFiles(sees, extendedFiles);
+		addRefinedFiles(refines, dependFiles);
+		addSeenFiles(sees, dependFiles);
 	
-		return extendedFiles.toArray(new IRodinFile[extendedFiles.size()]);
+		return dependFiles.toArray(new IRodinFile[dependFiles.size()]);
 	}
 
 	/**

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import org.eventb.core.EventBAttributes;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+
 import org.eventb.core.IAssignmentElement;
-import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingToolkit;
@@ -33,16 +34,22 @@ public class AssignmentIndexer extends ElementIndexer {
 	}
 
 	public void process() throws RodinDBException {
-		if (!isValid(element, EventBAttributes.ASSIGNMENT_ATTRIBUTE)) {
-			return;
-		}
-		final String assignmentString = element.getAssignmentString();
-		IParseResult result = ff.parseAssignment(assignmentString);
-		if (!result.isSuccess()) {
-			return;
-		}
-		final Assignment assign = result.getParsedAssignment();
-		visitAndIndex(element, EventBAttributes.ASSIGNMENT_ATTRIBUTE, assign);
+		process(element, ASSIGNMENT_ATTRIBUTE);
+	}
+
+	@Override
+	protected String getFormulaString() throws RodinDBException {
+		return element.getAssignmentString();
+	}
+
+	@Override
+	protected Formula<?> getParsedFormula(IParseResult result) {
+		return result.getParsedAssignment();
+	}
+
+	@Override
+	protected IParseResult parseFormula(String formulaString) {
+		return ff.parseAssignment(formulaString);
 	}
 
 }

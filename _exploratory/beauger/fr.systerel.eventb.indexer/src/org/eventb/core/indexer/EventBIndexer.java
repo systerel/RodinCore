@@ -14,7 +14,7 @@ import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IRodinLocation;
 
-public abstract class EventBIndexer implements IIndexer {
+public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 	private static final boolean DEBUG = false;
 	// FIXME manage exceptions and remove
@@ -31,10 +31,10 @@ public abstract class EventBIndexer implements IIndexer {
 		try {
 			index(file);
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
 			if (DEBUG) {
 				e.printStackTrace();
 			}
+			// just return immediately
 		} catch (CancellationException e) {
 			if (DEBUG) {
 				e.printStackTrace();
@@ -78,14 +78,8 @@ public abstract class EventBIndexer implements IIndexer {
 		index.export(declaration);
 	}
 
-	/**
-	 * 
-	 */
 	protected void checkCancel() {
-		if (index.isCancelled()) {
-			throw new CancellationException(getClass().getSimpleName()
-					+ ": cancelled !");
-		}
+		checkCancel(index);
 	}
 
 	protected void processPredicateElements(IPredicateElement[] preds,
@@ -106,5 +100,5 @@ public abstract class EventBIndexer implements IIndexer {
 		throw new IllegalArgumentException("Cannot index " + file
 				+ ": bad file type");
 	}
-
+	
 }

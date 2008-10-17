@@ -13,7 +13,7 @@ package org.eventb.core.indexer;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 
 import org.eventb.core.IExpressionElement;
-import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexingToolkit;
@@ -33,17 +33,21 @@ public class ExpressionIndexer extends ElementIndexer {
 	}
 
 	public void process() throws RodinDBException {
-		if (!isValid(element, EXPRESSION_ATTRIBUTE)) {
-			return;
-		}
-		final String expressionString = element.getExpressionString();
-		// TODO checkCancel()
-		IParseResult result = ff.parseExpression(expressionString);
-		// TODO checkCancel()
-		if (!result.isSuccess()) {
-			return;
-		}
-		final Expression expr = result.getParsedExpression();
-		visitAndIndex(element, EXPRESSION_ATTRIBUTE, expr);
+		process(element, EXPRESSION_ATTRIBUTE);
+	}
+
+	@Override
+	protected String getFormulaString() throws RodinDBException {
+		return element.getExpressionString();
+	}
+
+	@Override
+	protected Formula<?> getParsedFormula(IParseResult result) {
+		return result.getParsedExpression();
+	}
+
+	@Override
+	protected IParseResult parseFormula(String formulaString) {
+		return ff.parseExpression(formulaString);
 	}
 }
