@@ -1,5 +1,3 @@
-package org.rodinp.internal.core.index.tests;
-
 /*******************************************************************************
  * Copyright (c) 2008 Systerel and others.
  * All rights reserved. This program and the accompanying materials
@@ -10,6 +8,8 @@ package org.rodinp.internal.core.index.tests;
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
+package org.rodinp.internal.core.index.tests;
+
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContains;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContainsNot;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;

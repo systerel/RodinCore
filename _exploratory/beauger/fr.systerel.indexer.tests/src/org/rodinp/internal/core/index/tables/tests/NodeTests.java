@@ -1,13 +1,3 @@
-package org.rodinp.internal.core.index.tables.tests;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.rodinp.internal.core.index.tables.Node;
-
-import junit.framework.TestCase;
-
 /*******************************************************************************
  * Copyright (c) 2008 Systerel and others.
  * All rights reserved. This program and the accompanying materials
@@ -18,6 +8,16 @@ import junit.framework.TestCase;
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
+package org.rodinp.internal.core.index.tables.tests;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.rodinp.internal.core.index.tables.Node;
+
+import junit.framework.TestCase;
+
 public class NodeTests extends TestCase {
 
 	private static final Integer ONE = new Integer(1);
