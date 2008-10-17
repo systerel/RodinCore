@@ -95,7 +95,7 @@ public class CancelToolkitStub implements IIndexingToolkit {
 		return imports;
 	}
 
-	public IInternalElement getIndexedRoot() {
+	public IInternalElement getRootToIndex() {
 		return root;
 	}
 

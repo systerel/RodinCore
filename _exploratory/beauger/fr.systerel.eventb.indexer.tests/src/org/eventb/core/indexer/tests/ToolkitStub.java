@@ -80,7 +80,7 @@ public class ToolkitStub implements IIndexingToolkit {
 		return imports.toArray(new IDeclaration[imports.size()]);
 	}
 
-	public IInternalElement getIndexedRoot() {
+	public IInternalElement getRootToIndex() {
 		return root;
 	}
 
