@@ -26,7 +26,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	// TODO change return type to boolean meaning indexing success
 	public void index(IIndexingToolkit index) {
 		this.index = index;
-		final IInternalElement root = index.getIndexedRoot();
+		final IInternalElement root = index.getRootToIndex();
 
 		try {
 			index(root);

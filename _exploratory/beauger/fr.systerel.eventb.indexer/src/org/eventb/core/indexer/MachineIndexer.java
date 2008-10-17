@@ -120,7 +120,7 @@ public class MachineIndexer extends EventBIndexer {
 				final IInternalElement element = previousDecl.getElement();
 				if (element instanceof IVariable) {
 					// re-declaration of abstract variable
-					final IInternalElement root = index.getIndexedRoot();
+					final IInternalElement root = index.getRootToIndex();
 					indexReference(previousDecl, getRodinLocation(root));
 				}
 			}
