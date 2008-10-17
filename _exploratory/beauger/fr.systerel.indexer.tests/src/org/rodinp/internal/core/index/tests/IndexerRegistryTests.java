@@ -55,8 +55,7 @@ public class IndexerRegistryTests extends IndexTests {
 		final IndexerRegistry indMan = new IndexerRegistry();
 
 		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		final IIndexer actual = indMan.getIndexerFor(file1.getRoot()
-				.getElementType());
+		final IIndexer actual = indMan.getIndexerFor(file1);
 
 		assertEquals("Bad indexer", indexer, actual);
 	}
@@ -67,10 +66,8 @@ public class IndexerRegistryTests extends IndexTests {
 		indMan.addIndexer(indexer, file1.getRoot().getElementType());
 		indMan.addIndexer(indexer, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indMan.getIndexerFor(file1.getRoot()
-				.getElementType());
-		final IIndexer actual2 = indMan.getIndexerFor(file2.getRoot()
-				.getElementType());
+		final IIndexer actual1 = indMan.getIndexerFor(file1);
+		final IIndexer actual2 = indMan.getIndexerFor(file2);
 
 		assertEquals("Bad indexer", indexer, actual1);
 		assertEquals("Bad indexer", indexer, actual2);
@@ -83,10 +80,8 @@ public class IndexerRegistryTests extends IndexTests {
 		indMan.addIndexer(indexer, file1.getRoot().getElementType());
 		indMan.addIndexer(indexer2, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indMan.getIndexerFor(file1.getRoot()
-				.getElementType());
-		final IIndexer actual2 = indMan.getIndexerFor(file2.getRoot()
-				.getElementType());
+		final IIndexer actual1 = indMan.getIndexerFor(file1);
+		final IIndexer actual2 = indMan.getIndexerFor(file2);
 
 		assertEquals("Bad indexer", indexer, actual1);
 		assertEquals("Bad indexer", indexer2, actual2);
@@ -96,7 +91,7 @@ public class IndexerRegistryTests extends IndexTests {
 		final IndexerRegistry indMan = new IndexerRegistry();
 
 		try {
-			indMan.getIndexerFor(file1.getRoot().getElementType());
+			indMan.getIndexerFor(file1);
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// pass
@@ -105,14 +100,13 @@ public class IndexerRegistryTests extends IndexTests {
 
 	/**
 	 * Test method for
-	 * {@link org.rodinp.internal.core.index.IndexerRegistry#isIndexable(org.rodinp.core.IInternalElementType)}.
+	 * {@link org.rodinp.internal.core.index.IndexerRegistry#isIndexable(IRodinFile)}.
 	 */
 	public void testIsIndexableTrue() {
 		final IndexerRegistry indMan = new IndexerRegistry();
 
 		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		final boolean indexable = indMan.isIndexable(file1.getRoot()
-				.getElementType());
+		final boolean indexable = indMan.isIndexable(file1);
 
 		assertTrue("File type " + file1.getElementType()
 				+ " should be indexable", indexable);
@@ -121,8 +115,7 @@ public class IndexerRegistryTests extends IndexTests {
 	public void testIsIndexableFalse() {
 		final IndexerRegistry indMan = new IndexerRegistry();
 
-		final boolean indexable = indMan.isIndexable(file1.getRoot()
-				.getElementType());
+		final boolean indexable = indMan.isIndexable(file1);
 
 		assertFalse("File type " + file1.getElementType()
 				+ " should NOT be indexable", indexable);
@@ -134,8 +127,7 @@ public class IndexerRegistryTests extends IndexTests {
 		indMan.addIndexer(indexer, file1.getRoot().getElementType());
 		indMan.clear();
 
-		final boolean indexable = indMan.isIndexable(file1.getRoot()
-				.getElementType());
+		final boolean indexable = indMan.isIndexable(file1);
 		assertFalse("File type " + file1.getElementType()
 				+ " should NOT be indexable", indexable);
 	}

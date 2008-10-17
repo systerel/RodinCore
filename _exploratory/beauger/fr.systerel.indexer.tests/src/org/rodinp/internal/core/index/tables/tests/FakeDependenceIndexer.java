@@ -39,7 +39,7 @@ public class FakeDependenceIndexer extends FakeExportIndexer {
 	@Override
 	public void index(IIndexingToolkit index) {
 		super.index(index);
-		final IRodinFile file = index.getIndexedRoot().getRodinFile();
+		final IRodinFile file = index.getRootToIndex().getRodinFile();
 		indexingOrder.add(file);
 	}
 

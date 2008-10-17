@@ -37,7 +37,7 @@ public class FakeIndexer implements IIndexer {
 	}
 
 	public void index(IIndexingToolkit index) {
-		final IRodinFile file = index.getIndexedRoot().getRodinFile();
+		final IRodinFile file = index.getRootToIndex().getRodinFile();
 		final IDeclaration[] imports = index.getImports();
 
 		for (Descriptor desc : localIndex.getDescriptors()) {

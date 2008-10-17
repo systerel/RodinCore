@@ -52,7 +52,7 @@ public class FakeNameIndexer implements IIndexer {
 	public void index(IIndexingToolkit index) {
 		indexedElements.clear();
 		
-		IRodinFile rodinFile = index.getIndexedRoot().getRodinFile(); 
+		IRodinFile rodinFile = index.getRootToIndex().getRodinFile(); 
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
