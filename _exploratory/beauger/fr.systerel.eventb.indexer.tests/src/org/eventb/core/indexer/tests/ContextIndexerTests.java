@@ -30,8 +30,6 @@ import org.rodinp.core.index.IOccurrence;
  */
 public class ContextIndexerTests extends EventBIndexerTests {
 
-	// TODO test name conflicts
-
 	private static IDeclaration getDeclCst(IContextFile context,
 			String cstIntName, String cstName) throws RodinDBException {
 		final IConstant cst = context.getConstant(cstIntName);
@@ -53,11 +51,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public ContextIndexerTests(String name) throws Exception {
 		super(name);
 	}
-
-	private static final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-			+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-			+ "</org.eventb.core.contextFile>";
 
 	/**
 	 * @throws Exception
@@ -103,13 +96,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testOccurrenceOtherThanDecl() throws Exception {
-		final String CST_1DECL_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-				+ "<org.eventb.core.carrierSet name=\"internal_element1\" org.eventb.core.identifier=\"set1\"/>"
-				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-				+ "<org.eventb.core.axiom name=\"internal_element1\" org.eventb.core.label=\"axm1\" org.eventb.core.predicate=\"cst1 ∈ set1\"/>"
-				+ "</org.eventb.core.contextFile>";
-
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_AXM);
 
@@ -178,8 +164,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testExportImported() throws Exception {
-		final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
 
 		final IContextFile exporter = createContext(project, "exporter",
 				CST_1DECL);
@@ -308,7 +292,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		tk.assertDeclarations(declSet1);
 	}
-
+	
 	/**
 	 * All other tests only check for occurrences in axioms. This test checks a
 	 * simple occurrence in a theorem. According to code structure, theorems are
@@ -318,11 +302,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testOccThm() throws Exception {
-		final String CST_1DECL_1REF_THM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-				+ "<org.eventb.core.theorem name=\"internal_element1\" org.eventb.core.label=\"thm1\" org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
-				+ "</org.eventb.core.contextFile>";
 
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
@@ -342,12 +321,6 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testBadFileType() throws Exception {
-		final String VAR_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-				+ "<org.eventb.core.variable name=\"internal_element1\" org.eventb.core.identifier=\"var1\"/>"
-				+ "<org.eventb.core.invariant name=\"internal_element1\" org.eventb.core.label=\"inv1\" org.eventb.core.predicate=\"var1 &gt; 1\"/>"
-				+ "</org.eventb.core.machineFile>";
-
 		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
@@ -367,7 +340,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testMalformedXML() throws Exception {
-		// constant node is not closed
+		// constant node is not closed with a /
 		final String MALFORMED_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
 				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\">"

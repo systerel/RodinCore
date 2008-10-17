@@ -35,23 +35,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 	}
 
 	// TODO factorize test Strings with other Context tests
-
-	private static final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-			+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-			+ "</org.eventb.core.contextFile>";
-
-	private static final String CST_1DECL_1REF_AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-			+ "<org.eventb.core.constant"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.identifier=\"cst2\"/>"
-			+ "<org.eventb.core.axiom"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.label=\"axm1\""
-			+ "		org.eventb.core.predicate=\"cst2 = 2\"/>"
-			+ "</org.eventb.core.contextFile>";
-
+	// TODO test cancel inside loops
+	
 	public void testCancelImmediately() throws Exception {
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
@@ -103,7 +88,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelInPredicates() throws Exception {
-		final String CST_1DECL_3REF_2AXM_1THM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		final String CST_1DECL_2REF_2AXM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
 				+ "<org.eventb.core.constant"
 				+ "		name=\"internal_element1\""
@@ -116,14 +101,10 @@ public class ContextCancelTests extends EventBIndexerTests {
 				+ "		name=\"internal_element2\""
 				+ "		org.eventb.core.label=\"axm2\""
 				+ "		org.eventb.core.predicate=\"cst1 = 2\"/>"
-				+ "<org.eventb.core.theorem"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.label=\"thm1\""
-				+ "		org.eventb.core.predicate=\"cst1 = 3\"/>"
 				+ "</org.eventb.core.contextFile>";
 
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
-				CST_1DECL_3REF_2AXM_1THM);
+				CST_1DECL_2REF_2AXM);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
 				NO_LIMIT, false, context);

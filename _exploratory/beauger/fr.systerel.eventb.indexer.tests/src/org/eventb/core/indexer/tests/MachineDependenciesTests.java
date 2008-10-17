@@ -38,9 +38,6 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 		assertSameAsArray(expected, actual, "dependencies");
 	}
 
-	private static final String EMPTY_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\"/>";
-
 	private static final String MCH_1REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "	<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 			+ "	<org.eventb.core.refinesMachine"
@@ -54,9 +51,6 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"c1\"/>"
 			+ "</org.eventb.core.machineFile>";
-
-	public static final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
 
 	/**
 	 * @param name
@@ -120,11 +114,6 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	}
 
 	public void testBadFileType() throws Exception {
-		final String CST_1DECL_1REF_THM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-				+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-				+ "<org.eventb.core.theorem name=\"internal_element1\" org.eventb.core.label=\"thm1\" org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
-				+ "</org.eventb.core.contextFile>";
 
 		final IContextFile context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
@@ -134,7 +123,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 		try {
 			indexer.getDependencies(context);
 			fail("IllegalArgumentException expected");
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			// OK
 		}
 	}
@@ -143,10 +132,12 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testMalformedXML() throws Exception {
-		// missing closing " after internal_element1 in variable node
+		// missing = at internal_element1 in variable node
 		final String MALFORMED_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-				+ "<org.eventb.core.variable name=\"internal_element1 org.eventb.core.identifier=\"var1\"/>"
+				+ "<org.eventb.core.seesContext"
+				+ "		name\"internal_element1\""
+				+ "		org.eventb.core.target=\"exporter\"/>"
 				+ "</org.eventb.core.machineFile>";
 
 		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,

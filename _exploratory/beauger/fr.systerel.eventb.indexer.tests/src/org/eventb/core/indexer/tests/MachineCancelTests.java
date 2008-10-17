@@ -32,24 +32,6 @@ public class MachineCancelTests extends EventBIndexerTests {
 		super(name);
 	}
 
-	private static final String VAR_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-			+ "<org.eventb.core.variable"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.identifier=\"var1\"/>"
-			+ "</org.eventb.core.machineFile>";
-
-	private static final String VAR_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-			+ "<org.eventb.core.variable"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.identifier=\"var1\"/>"
-			+ "<org.eventb.core.invariant"
-			+ "		name=\"internal_element1\""
-			+ "		org.eventb.core.label=\"inv1\""
-			+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
-			+ "</org.eventb.core.machineFile>";
-
 	public void testCancelImmediately() throws Exception {
 		final IMachineFile context = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
@@ -66,11 +48,6 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterImports() throws Exception {
-		final String CST_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-			+ "<org.eventb.core.constant name=\"internal_element1\" org.eventb.core.identifier=\"cst1\"/>"
-			+ "</org.eventb.core.contextFile>";
-
 		final IContextFile exporter = createContext(project, EXPORTER,
 				CST_1DECL);
 		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
@@ -106,7 +83,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelInPredicates() throws Exception {
-		final String VAR_1DECL_3REF_2INV_1THM = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		final String VAR_1DECL_2REF_2INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 				+ "<org.eventb.core.variable"
 				+ "		name=\"internal_element1\""
@@ -119,14 +96,10 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		name=\"internal_element2\""
 				+ "		org.eventb.core.label=\"inv2\""
 				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
-				+ "<org.eventb.core.theorem"
-				+ "		name=\"internal_element1\""
-				+ "		org.eventb.core.label=\"thm1\""
-				+ "		org.eventb.core.predicate=\"var1 = 2\"/>"
 				+ "</org.eventb.core.machineFile>";
 
 		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
-				VAR_1DECL_3REF_2INV_1THM);
+				VAR_1DECL_2REF_2INV);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);
@@ -141,11 +114,17 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelInExpressions() throws Exception {
 		final String VAR_1DECL_2REF_2VRT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "		<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-				+ "		<org.eventb.core.variable name=\"internal_element1\" org.eventb.core.identifier=\"var1\"/>"
-				+ "		<org.eventb.core.variant name=\"internal_element1\" org.eventb.core.expression=\"1 + var1 ∗ 2\"/>"
-				+ "		<org.eventb.core.variant name=\"internal_element2\" org.eventb.core.expression=\"5 − var1\"/>"
-				+ "		</org.eventb.core.machineFile>";
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.variable"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.identifier=\"var1\"/>"
+				+ "<org.eventb.core.variant"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.expression=\"1 + var1 ∗ 2\"/>"
+				+ "<org.eventb.core.variant"
+				+ "		name=\"internal_element2\""
+				+ "		org.eventb.core.expression=\"5 − var1\"/>"
+				+ "</org.eventb.core.machineFile>";
 
 		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2VRT);
@@ -161,9 +140,39 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(2);
 	}
 
-	// TODO maybe refine to event elements
-	public void testCancelInEvents() throws Exception {
+	public void testCancelEventsInActions() throws Exception {
+		final String VAR_4OCC = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.refinesMachine name=\"internal_element1\" org.eventb.core.target=\"exporter\"/>"
+				+ "		<org.eventb.core.variable"
+				+ "				name=\"internal_element1\""
+				+ "				org.eventb.core.identifier=\"var1\"/>"
+				+ "		<org.eventb.core.event" + "				name=\"internal_element1\""
+				+ "				org.eventb.core.convergence=\"0\""
+				+ "				org.eventb.core.extended=\"true\""
+				+ "				org.eventb.core.label=\"evt1\">"
+				+ "				<org.eventb.core.action"
+				+ "						name=\"internal_element1\""
+				+ "						org.eventb.core.assignment=\"var1 ≔ 1\""
+				+ "						org.eventb.core.label=\"act1\"/>"
+				+ "				<org.eventb.core.action"
+				+ "						name=\"internal_element2\""
+				+ "						org.eventb.core.assignment=\"var1 ≔ var1 + 1\""
+				+ "						org.eventb.core.label=\"act2\"/>"
+				+ "		</org.eventb.core.event>"
+				+ "</org.eventb.core.machineFile>";
 
+		final IMachineFile machine = createMachine(project, IMPORTER, VAR_4OCC);
+
+		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
+				NO_LIMIT, false, machine);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		indexer.index(tk);
+
+		// only 1 DECLARATION and 1 ASSIGNMENT occurrences
+		tk.assertNumOcc(2);
 	}
 
 }

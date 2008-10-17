@@ -42,9 +42,6 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		assertSameAsArray(expected, actual, "dependencies");
 	}
 
-	public static final String EMPTY_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\"/>";
-
 	private static final String CTX_1EXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
 		+ "<org.eventb.core.extendsContext name=\"internal_element1\" org.eventb.core.target=\"c1\"/>"
@@ -102,12 +99,6 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	}
 
 	public void testBadFileType() throws Exception {
-		final String VAR_1DECL_1REF_INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-				+ "<org.eventb.core.variable name=\"internal_element1\" org.eventb.core.identifier=\"var1\"/>"
-				+ "<org.eventb.core.invariant name=\"internal_element1\" org.eventb.core.label=\"inv1\" org.eventb.core.predicate=\"var1 &gt; 1\"/>"
-				+ "</org.eventb.core.machineFile>";
-
 		final IMachineFile machine = createMachine(project, "file.bum",
 				VAR_1DECL_1REF_INV);
 
