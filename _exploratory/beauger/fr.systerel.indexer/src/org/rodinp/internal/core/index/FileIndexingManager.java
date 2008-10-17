@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -27,11 +28,12 @@ public class FileIndexingManager {
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		final IFileElementType<?> fileType = file.getElementType();
+		final IInternalElementType<?> fileType = file.getRoot()
+				.getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
 		try {
-			final IRodinFile[] result = indexer.getDependencies(file);
+			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
 			if (IndexManager.DEBUG) {
 				System.out.println("INDEXER: Dependencies for file "
 						+ file.getPath() + " are:");
@@ -53,12 +55,13 @@ public class FileIndexingManager {
 
 	public IIndexingResult doIndexing(IndexingToolkit indexingToolkit) {
 		final IRodinFile file = indexingToolkit.getRodinFile();
-		
+
 		if (!file.exists()) {
 			return IndexingResult.failed(file);
 		}
 
-		final IFileElementType<?> fileType = file.getElementType();
+		final IInternalElementType<? extends IInternalElement> fileType = file
+				.getRoot().getElementType();
 		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
 
 		printVerbose(makeMessage("indexing", file, indexer));

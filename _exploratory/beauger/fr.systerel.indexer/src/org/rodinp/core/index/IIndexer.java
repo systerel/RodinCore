@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -61,10 +62,10 @@ public interface IIndexer {
 	 * call to getDependencies(file1) will return { file2, file3 }.
 	 * </p>
 	 * 
-	 * @param file
+	 * @param root
 	 * @return an array containing the file dependencies.
 	 */
-	public IRodinFile[] getDependencies(IRodinFile file);
+	public IRodinFile[] getDependencies(IInternalElement root);
 
 	/**
 	 * Returns the unique id of this indexer. The string returned must be the

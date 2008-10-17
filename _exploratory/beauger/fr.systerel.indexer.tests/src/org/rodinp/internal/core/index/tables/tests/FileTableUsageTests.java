@@ -63,7 +63,7 @@ public class FileTableUsageTests extends IndexTests {
 		rodinIndex.makeDescriptor(declElt2);
 
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 	}
 
 	@Override

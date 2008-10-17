@@ -41,7 +41,7 @@ public class NameTableUsageTests extends IndexTests {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "nameInd.test");
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class NameTableUsageTests extends IndexTests {
 		// changing the indexer
 		manager.clearIndexers();
 		indexer = new FakeNameIndexer(1, name1);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 
 		// second indexing with 1 element for name1 only
 		manager.scheduleIndexing(file);

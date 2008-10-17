@@ -13,6 +13,7 @@ package org.rodinp.internal.core.index.tables.tests;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.internal.core.index.tables.ExportTable;
@@ -31,14 +32,14 @@ public class FakeDependenceIndexer extends FakeExportIndexer {
 	}
 
 	@Override
-	public IRodinFile[] getDependencies(IRodinFile file) {
-		return dependencies.get(file);
+	public IRodinFile[] getDependencies(IInternalElement root) {
+		return dependencies.get(root.getRodinFile());
 	}
 
 	@Override
 	public void index(IIndexingToolkit index) {
 		super.index(index);
-		final IRodinFile file = index.getRodinFile();
+		final IRodinFile file = index.getIndexedRoot().getRodinFile();
 		indexingOrder.add(file);
 	}
 

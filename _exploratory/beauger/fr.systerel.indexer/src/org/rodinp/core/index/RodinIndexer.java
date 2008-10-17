@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -46,11 +46,11 @@ public class RodinIndexer extends Plugin {
 
 	/** To be moved to {@link IRodinDBStatusConstants} */
 	public static final int INDEXER_ERROR = 1100;
-	
+
 	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
 
 	/** To be moved to {@link RodinCore} */
-	public static void register(IIndexer indexer, IFileElementType<?> fileType) {
+	public static void register(IIndexer indexer, IInternalElementType<?> fileType) {
 		IndexManager.getDefault().addIndexer(indexer, fileType);
 	}
 
@@ -123,13 +123,14 @@ public class RodinIndexer extends Plugin {
 	 */
 	public static IRodinLocation getRodinLocation(IAttributedElement element,
 			IAttributeType.String attributeType, int start, int end) {
-		return new AttributeSubstringLocation(element, attributeType, start, end);
+		return new AttributeSubstringLocation(element, attributeType, start,
+				end);
 	}
 
 	public static IIndexRequester getIndexRequester() {
 		return new IndexRequester();
 	}
-	
+
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.indexer";
 
@@ -156,14 +157,14 @@ public class RodinIndexer extends Plugin {
 
 	};
 
-	public void disableIndexing() {
+	public static void disableIndexing() {
 		IndexManager.getDefault().disableIndexing();
 	}
-	
-	public void enableIndexing() {
+
+	public static void enableIndexing() {
 		IndexManager.getDefault().enableIndexing();
 	}
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -190,14 +191,18 @@ public class RodinIndexer extends Plugin {
 		return plugin;
 	}
 
-    // To be integrated with RodinCore option processing
-	public void configurePluginDebugOptions(){
-		if (plugin.isDebugging()){
-			String option = Platform.getDebugOption("fr.systerel.indexer/debug/indexer");
-			if(option != null) IndexManager.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+	// To be integrated with RodinCore option processing
+	public void configurePluginDebugOptions() {
+		if (plugin.isDebugging()) {
+			String option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer");
+			if (option != null)
+				IndexManager.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option = Platform.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
-			if(option != null) IndexManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
+			if (option != null)
+				IndexManager.VERBOSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 
 	}

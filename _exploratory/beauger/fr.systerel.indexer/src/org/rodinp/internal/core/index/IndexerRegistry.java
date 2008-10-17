@@ -15,18 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.index.IIndexer;
 
 public class IndexerRegistry {
 
-	private final Map<IFileElementType<?>, List<IIndexer>> indexers;
+	private final Map<IInternalElementType<?>, List<IIndexer>> indexers;
 
 	public IndexerRegistry() {
-		this.indexers = new HashMap<IFileElementType<?>, List<IIndexer>>();
+		this.indexers = new HashMap<IInternalElementType<?>, List<IIndexer>>();
 	}
 
-	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
+	public void addIndexer(IIndexer indexer, IInternalElementType<?> fileType) {
 		List<IIndexer> list = indexers.get(fileType);
 		if (list == null) {
 			list = new ArrayList<IIndexer>();
@@ -35,7 +35,7 @@ public class IndexerRegistry {
 		list.add(indexer);
 	}
 
-	public IIndexer getIndexerFor(IFileElementType<?> fileType) {
+	public IIndexer getIndexerFor(IInternalElementType<?> fileType) {
 		final List<IIndexer> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {
@@ -46,7 +46,7 @@ public class IndexerRegistry {
 		return list.get(0);
 	}
 
-	public boolean isIndexable( IFileElementType<?> fileType) {
+	public boolean isIndexable(IInternalElementType<?> fileType) {
 		return indexers.containsKey(fileType);
 	}
 	

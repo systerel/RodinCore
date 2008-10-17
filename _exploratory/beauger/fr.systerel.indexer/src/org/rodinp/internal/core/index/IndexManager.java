@@ -18,11 +18,10 @@ import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -102,7 +101,7 @@ public final class IndexManager {
 	 * @param fileType
 	 *            the associated file type.
 	 */
-	public void addIndexer(IIndexer indexer, IFileElementType<?> fileType) {
+	public void addIndexer(IIndexer indexer, IInternalElementType<?> fileType) {
 		indexersManager.addIndexer(indexer, fileType);
 	}
 
@@ -272,8 +271,14 @@ public final class IndexManager {
 						final IRodinProject project = file.getRodinProject();
 						final ProjectIndexManager pim = fetchPIM(project);
 
-						pim.setToIndex(file);
+//						pim.setToIndex(file);
 						if (ENABLE_INDEXING) {
+							pim.setToIndex(file);
+							// FIXME remove above line (temp fix for tests)
+							// but setToIndex should not do anything else;
+							// resolving dependencies should be done at the
+							// beginning of the indexing phase
+							
 							indexing.schedule();//(500);
 							// TODO define scheduling policies
 						}

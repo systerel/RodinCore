@@ -64,7 +64,7 @@ public class ExportTableUsageTests extends IndexTests {
 		rodinIndex.makeDescriptor(declElt2);
 
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class ExportTableUsageTests extends IndexTests {
 		exportTable.get(file).add(new Declaration(elt1, "expRenName1"));
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 		
 		// then index again file
 		manager.scheduleIndexing(file);
@@ -116,7 +116,7 @@ public class ExportTableUsageTests extends IndexTests {
 		exportTable.add(file, declElt1Name1);
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 
 		// then index again file
 		manager.scheduleIndexing(file);
@@ -141,7 +141,7 @@ public class ExportTableUsageTests extends IndexTests {
 		rodinIndex.makeDescriptor(declEltAdd);
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 
 		// then index again file
 		manager.scheduleIndexing(file);

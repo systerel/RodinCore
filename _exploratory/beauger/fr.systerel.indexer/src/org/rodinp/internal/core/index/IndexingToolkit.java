@@ -114,6 +114,10 @@ public class IndexingToolkit implements IIndexingToolkit {
 	public IRodinFile getRodinFile() {
 		return file;
 	}
+	
+	public IInternalElement getIndexedRoot() {
+		return file.getRoot();
+	}
 
 	public IDeclaration[] getImports() {
 		return imports.values().toArray(new IDeclaration[imports.size()]);

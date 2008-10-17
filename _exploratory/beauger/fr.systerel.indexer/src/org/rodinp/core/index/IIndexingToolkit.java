@@ -11,7 +11,6 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinFile;
 
 /**
  * Common protocol for reporting the result of indexing a Rodin file.
@@ -47,11 +46,11 @@ import org.rodinp.core.IRodinFile;
 public interface IIndexingToolkit {
 
 	/**
-	 * Returns the Rodin file which is currently being indexed.
+	 * Returns the root element of the file which is to be indexed.
 	 * 
-	 * @return the Rodin file to index
+	 * @return the root element of the file to index
 	 */
-	IRodinFile getRodinFile();
+	IInternalElement getIndexedRoot();
 
 	/**
 	 * Returns the declarations visible from files on which the current file

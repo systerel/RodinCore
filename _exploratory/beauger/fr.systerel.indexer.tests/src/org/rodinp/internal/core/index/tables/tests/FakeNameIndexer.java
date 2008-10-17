@@ -52,7 +52,7 @@ public class FakeNameIndexer implements IIndexer {
 	public void index(IIndexingToolkit index) {
 		indexedElements.clear();
 		
-		IRodinFile rodinFile = index.getRodinFile(); 
+		IRodinFile rodinFile = index.getIndexedRoot().getRodinFile(); 
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
@@ -89,7 +89,7 @@ public class FakeNameIndexer implements IIndexer {
 		return elements.toArray(new IInternalElement[elements.size()]);
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
+	public IRodinFile[] getDependencies(IInternalElement root) {
 		return new IRodinFile[0];
 	}
 

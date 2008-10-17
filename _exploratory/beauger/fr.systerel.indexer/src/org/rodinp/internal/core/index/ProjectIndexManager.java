@@ -203,7 +203,7 @@ public class ProjectIndexManager {
 					+ " should be indexed in project " + project);
 		}
 
-		if (!indexersRegistry.isIndexable(file.getElementType())) {
+		if (!indexersRegistry.isIndexable(file.getRoot().getElementType())) {
 			return;
 		}
 		final IRodinFile[] dependFiles = fim.getDependencies(file);
