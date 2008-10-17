@@ -14,8 +14,8 @@ import static org.eventb.core.indexer.tests.CancelToolkitStub.*;
 import static org.eventb.core.indexer.tests.ResourceUtils.*;
 
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.indexer.MachineIndexer;
 import org.rodinp.core.index.IDeclaration;
 
@@ -33,7 +33,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelImmediately() throws Exception {
-		final IMachineFile context = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot context = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
@@ -48,12 +48,12 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterImports() throws Exception {
-		final IContextFile exporter = createContext(project, EXPORTER,
+		final IContextRoot exporter = createContext(project, EXPORTER,
 				CST_1DECL);
 		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCstExp = OccUtils.newDecl(cstExp, CST1);
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1DECL_1REF_INV);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
@@ -68,7 +68,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterDecl() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(1, NO_LIMIT,
@@ -98,7 +98,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2INV);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
@@ -126,7 +126,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		org.eventb.core.expression=\"5 − var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2VRT);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
@@ -162,7 +162,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		</org.eventb.core.event>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, IMPORTER, VAR_4OCC);
+		final IMachineRoot machine = createMachine(project, IMPORTER, VAR_4OCC);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);

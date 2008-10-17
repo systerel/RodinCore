@@ -21,7 +21,7 @@ import java.util.Map;
 import org.eventb.core.IEvent;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
@@ -41,14 +41,14 @@ public class MachineIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.machine";
 
-	protected void index(IRodinFile file) throws RodinDBException {
-		if (!(file instanceof IMachineFile)) {
-			throwIllArgException(file);
+	protected void index(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IMachineRoot)) {
+			throwIllArgException(root);
 		}
-		index((IMachineFile) file);
+		index((IMachineRoot) root);
 	}
 
-	private void index(IMachineFile file) throws RodinDBException {
+	private void index(IMachineRoot root) throws RodinDBException {
 		checkCancel();
 
 		final SymbolTable importST = new SymbolTable(null);
@@ -58,17 +58,17 @@ public class MachineIndexer extends EventBIndexer {
 		checkCancel();
 
 		final SymbolTable declImportST = new SymbolTable(importST);
-		processVariables(file.getVariables(), declImportST);
+		processVariables(root.getVariables(), declImportST);
 		checkCancel();
 
-		processPredicateElements(file.getInvariants(), declImportST);
+		processPredicateElements(root.getInvariants(), declImportST);
 		checkCancel();
-		processPredicateElements(file.getTheorems(), declImportST);
+		processPredicateElements(root.getTheorems(), declImportST);
 		checkCancel();
-		processExpressionElements(file.getVariants(), declImportST);
+		processExpressionElements(root.getVariants(), declImportST);
 		checkCancel();
 
-		processEvents(file.getEvents(), absParamTables, eventST, declImportST);
+		processEvents(root.getEvents(), absParamTables, eventST, declImportST);
 	}
 
 	private void processImports(IDeclaration[] imports,
@@ -120,8 +120,8 @@ public class MachineIndexer extends EventBIndexer {
 				final IInternalElement element = previousDecl.getElement();
 				if (element instanceof IVariable) {
 					// re-declaration of abstract variable
-					final IRodinFile file = index.getRodinFile();
-					indexReference(previousDecl, getRodinLocation(file));
+					final IInternalElement root = index.getIndexedRoot();
+					indexReference(previousDecl, getRodinLocation(root));
 				}
 			}
 			declImports.put(declaration);
@@ -149,11 +149,11 @@ public class MachineIndexer extends EventBIndexer {
 		}
 	}
 
-	public IRodinFile[] getDeps(IRodinFile file) throws RodinDBException {
-		if (!(file instanceof IMachineFile)) {
-			throwIllArgException(file);
+	public IRodinFile[] getDeps(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IMachineRoot)) {
+			throwIllArgException(root);
 		}
-		final IMachineFile machine = (IMachineFile) file;
+		final IMachineRoot machine = (IMachineRoot) root;
 	
 		final List<IRodinFile> dependFiles = new ArrayList<IRodinFile>();
 	
@@ -205,7 +205,7 @@ public class MachineIndexer extends EventBIndexer {
 	private void addRefinedFiles(IRefinesMachine[] refines,
 			List<IRodinFile> extendedFiles) throws RodinDBException {
 		for (IRefinesMachine refinesMachine : refines) {
-			final IMachineFile absMachine = refinesMachine.getAbstractMachine();
+			final IRodinFile absMachine = refinesMachine.getAbstractMachine();
 			extendedFiles.add(absMachine);
 		}
 	}

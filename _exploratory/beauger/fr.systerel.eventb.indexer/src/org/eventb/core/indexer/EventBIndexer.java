@@ -26,10 +26,10 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	// TODO change return type to boolean meaning indexing success
 	public void index(IIndexingToolkit index) {
 		this.index = index;
-		final IRodinFile file = index.getRodinFile();
+		final IInternalElement root = index.getIndexedRoot();
 
 		try {
-			index(file);
+			index(root);
 		} catch (RodinDBException e) {
 			if (DEBUG) {
 				e.printStackTrace();
@@ -43,11 +43,11 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		}
 	}
 
-	protected abstract void index(IRodinFile file) throws RodinDBException;
+	protected abstract void index(IInternalElement root) throws RodinDBException;
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
+	public IRodinFile[] getDependencies(IInternalElement root) {
 		try {
-			return getDeps(file);
+			return getDeps(root);
 		} catch (RodinDBException e) {
 			if (DEBUG) {
 				e.printStackTrace();
@@ -56,7 +56,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		}
 	}
 		
-	protected abstract IRodinFile[] getDeps(IRodinFile file) throws RodinDBException;
+	protected abstract IRodinFile[] getDeps(IInternalElement root) throws RodinDBException;
 	
 	protected IDeclaration indexDeclaration(IInternalElement element,
 			String name) {
@@ -96,9 +96,9 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	/**
 	 * @param file
 	 */
-	protected void throwIllArgException(IRodinFile file) {
-		throw new IllegalArgumentException("Cannot index " + file
-				+ ": bad file type");
+	protected void throwIllArgException(IInternalElement root) {
+		throw new IllegalArgumentException("Cannot index " + root
+				+ ": bad element type");
 	}
 	
 }

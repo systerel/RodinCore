@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static junit.framework.Assert.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
@@ -20,8 +18,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -53,36 +51,20 @@ public class ResourceUtils {
 		setContents(resource, contents);
 	}
 
-	public static IContextFile createContext(IRodinProject project,
+	public static IContextRoot createContext(IRodinProject project,
 			String bareName, String contents) throws Exception {
 		final String contextName = EventBPlugin.getContextFileName(bareName);
 		final IRodinFile rFile = createRodinFile(project, contextName);
 		initFile(rFile, contents);
-		return adaptContext(rFile);
+		return (IContextRoot) rFile.getRoot();
 	}
 
-	private static IContextFile adaptContext(final IRodinFile rFile) {
-		final IContextFile context = (IContextFile) rFile
-				.getAdapter(IContextFile.class);
-		assertNotNull("could not get adapter to IContextFile", context);
-
-		return context;
-	}
-
-	public static IMachineFile createMachine(IRodinProject project,
+	public static IMachineRoot createMachine(IRodinProject project,
 			String bareName, String contents) throws Exception {
 		final String machineName = EventBPlugin.getMachineFileName(bareName);
 		final IRodinFile rFile = createRodinFile(project, machineName);
 		initFile(rFile, contents);
-		return adaptMachine(rFile);
-	}
-
-	private static IMachineFile adaptMachine(final IRodinFile rFile) {
-		final IMachineFile machine = (IMachineFile) rFile
-				.getAdapter(IMachineFile.class);
-		assertNotNull("could not get adapter to IMachineFile", machine);
-
-		return machine;
+		return (IMachineRoot) rFile.getRoot();
 	}
 
 	public static final String MCH_BARE_NAME = "machine";

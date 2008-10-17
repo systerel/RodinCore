@@ -10,17 +10,29 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.tests.OccUtils.*;
-import static org.eventb.core.indexer.tests.ResourceUtils.*;
+import static org.eventb.core.indexer.tests.OccUtils.makeDecl;
+import static org.eventb.core.indexer.tests.OccUtils.makeModifAssign;
+import static org.eventb.core.indexer.tests.OccUtils.makeRef;
+import static org.eventb.core.indexer.tests.OccUtils.makeRefExpr;
+import static org.eventb.core.indexer.tests.OccUtils.makeRefIdent;
+import static org.eventb.core.indexer.tests.OccUtils.makeRefLabel;
+import static org.eventb.core.indexer.tests.OccUtils.makeRefPred;
+import static org.eventb.core.indexer.tests.OccUtils.makeRefTarget;
+import static org.eventb.core.indexer.tests.OccUtils.newDecl;
+import static org.eventb.core.indexer.tests.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.indexer.tests.ResourceUtils.MCH_BARE_NAME;
+import static org.eventb.core.indexer.tests.ResourceUtils.createContext;
+import static org.eventb.core.indexer.tests.ResourceUtils.createMachine;
 
 import org.eventb.core.IAction;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ITheorem;
@@ -38,7 +50,7 @@ import org.rodinp.core.index.IOccurrence;
  */
 public class MachineIndexerTests extends EventBIndexerTests {
 
-	private static IDeclaration getDeclVar(IMachineFile machine,
+	private static IDeclaration getDeclVar(IMachineRoot machine,
 			String varIntName, String varName) throws RodinDBException {
 		final IVariable var = machine.getVariable(varIntName);
 
@@ -54,7 +66,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	public void testDeclaration() throws Exception {
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
 		final IDeclaration declVar1 = getDeclVar(machine, INTERNAL_ELEMENT1,
@@ -72,11 +84,11 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
-	public void testOccurrence() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+	public void testRefDeclaration() throws Exception {
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
-		final IOccurrence occDecl = makeDecl(machine);
+		final IOccurrence occDecl = makeDecl(machine.getRodinFile());
 
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
 
@@ -93,7 +105,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testOccurrenceOtherThanDecl() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
@@ -120,7 +132,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "<org.eventb.core.invariant name=\"internal_element1\" org.eventb.core.label=\"inv1\" org.eventb.core.predicate=\"var1 ≥ var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2OCC_SAME_INV);
 
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
@@ -142,7 +154,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testExportLocal() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
 		final IDeclaration declVar1 = getDeclVar(machine, INTERNAL_ELEMENT1,
@@ -162,13 +174,13 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 */
 	public void testDoNotExportDisappearingVar() throws Exception {
 
-		final IMachineFile exporter = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot exporter = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
 		final IDeclaration declVar1 = getDeclVar(exporter, INTERNAL_ELEMENT1,
 				VAR1);
 
-		final IMachineFile importer = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot importer = createMachine(project, MCH_BARE_NAME,
 				EMPTY_MACHINE);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVar1);
@@ -193,7 +205,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			+ "</org.eventb.core.contextFile>";
 
 	public void testExportConstantsAndCarrierSets() throws Exception {
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_SET_1DECL);
 
 		final ICarrierSet set1 = context.getCarrierSet(INTERNAL_ELEMENT1);
@@ -202,7 +214,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declSet1 = newDecl(set1, "set1");
 		final IDeclaration declCst1 = newDecl(cst1, "cst1");
 
-		final IMachineFile importer = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot importer = createMachine(project, MCH_BARE_NAME,
 				EMPTY_MACHINE);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declSet1, declCst1);
@@ -228,13 +240,13 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testImportedOccurrence() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
 		final IDeclaration declVar1 = getDeclVar(exporter, INTERNAL_ELEMENT1,
 				VAR1);
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1REF_INV);
 
 		final IInvariant invariant = importer.getInvariant(INTERNAL_ELEMENT1);
@@ -250,12 +262,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testImportedRedeclaration() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
 		final IDeclaration declVarExp = newDecl(varExp, VAR1);
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1DECL);
 
 		final IOccurrence occDecl = makeRef(importer);
@@ -273,12 +285,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testUnknownElement() throws Exception {
-		final IMachineFile independent = createMachine(project, "independent",
+		final IMachineRoot independent = createMachine(project, "independent",
 				VAR_1DECL);
 		final IDeclaration declVar1 = getDeclVar(independent,
 				INTERNAL_ELEMENT1, VAR1);
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1REF_INV);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
@@ -294,17 +306,17 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	 * @throws Exception
 	 */
 	public void testTwoImportsSameName() throws Exception {
-		final IMachineFile exporter1 = createMachine(project, "exporter1",
+		final IMachineRoot exporter1 = createMachine(project, "exporter1",
 				VAR_1DECL);
 		final IDeclaration declVarExp1 = getDeclVar(exporter1,
 				INTERNAL_ELEMENT1, VAR1);
 
-		final IMachineFile exporter2 = createMachine(project, "exporter2",
+		final IMachineRoot exporter2 = createMachine(project, "exporter2",
 				VAR_1DECL);
 		final IDeclaration declVarExp2 = getDeclVar(exporter2,
 				INTERNAL_ELEMENT1, VAR1);
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1REF_INV);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp1,
@@ -319,7 +331,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testRefConstantAndCarrierSet() throws Exception {
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_SET_1DECL);
 
 		final ICarrierSet set1 = context.getCarrierSet(INTERNAL_ELEMENT1);
@@ -341,7 +353,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"cst1 ∈ set1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				CST_1REF_SET_1REF);
 
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
@@ -372,7 +384,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_THM);
 
 		final ITheorem theorem = machine.getTheorem(INTERNAL_ELEMENT1);
@@ -402,7 +414,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.expression=\"10 + var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_VRT);
 
 		final IVariant variant = machine.getVariant(INTERNAL_ELEMENT1);
@@ -432,7 +444,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	public void testEventDeclAndExport() throws Exception {
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				EVT_1DECL);
 
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
@@ -450,7 +462,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventRefInRefinesClauses() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				EVT_1DECL);
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
@@ -471,7 +483,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "				org.eventb.core.target=\"evt1\"/>"
 				+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				EVT_1REF_REFINES);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
@@ -528,7 +540,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
 	public void testEventParamDeclAndExport() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				PRM_1DECL);
 
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
@@ -546,7 +558,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventParamRef() throws Exception {
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				PRM_1DECL_1REF_GRD);
 
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
@@ -565,7 +577,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventParamAbstractRefInExtendedDecl() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				PRM_1DECL);
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
@@ -575,7 +587,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declPrmExp = newDecl(prmExp, prmExp
 				.getIdentifierString());
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				PRM_1DECL_1REF_GRD);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
@@ -593,7 +605,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventParamAbstractRefInExtendedWit() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				PRM_1DECL);
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
@@ -620,7 +632,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "				org.eventb.core.predicate=\"prm1 = 0\"/>"
 				+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				PRM_2REF_LBL_PRED_WIT);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
@@ -640,7 +652,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventVarRedeclared() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
 		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
@@ -668,7 +680,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.identifier=\"var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1DECL_1REF_ACT);
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
 
@@ -690,7 +702,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	public void testEventVarNotRedeclaredModifInAction() throws Exception {
 		// var1 disappears
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
 		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
@@ -713,7 +725,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "				org.eventb.core.label=\"act1\"/>"
 				+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1REF_ACT);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
@@ -736,7 +748,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	public void testEventVarRefInWitness() throws Exception {
 		// var1 disappears
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
 		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
@@ -760,7 +772,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "				org.eventb.core.predicate=\"var1' = 1\"/>"
 				+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_2REF_PRIMED_WIT);
 
 		final IEvent event = importer.getEvent(INTERNAL_ELEMENT1);
@@ -780,7 +792,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventVarRedeclaredRefInGuard() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				VAR_1DECL);
 
 		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
@@ -810,7 +822,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "				org.eventb.core.predicate=\"prm1 = var1\"/>"
 				+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1DECL_1REF_GRD);
 
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
@@ -830,7 +842,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testPrioritiesParamVsAbsParam() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				PRM_1DECL);
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
@@ -839,7 +851,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IParameter prmExp = eventExp.getParameter(INTERNAL_ELEMENT1);
 		final IDeclaration declPrmExp = newDecl(prmExp, PRM1);
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				PRM_1DECL_1REF_GRD);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
@@ -857,7 +869,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testPrioritiesAbsParamVsLocalVar() throws Exception {
-		final IMachineFile exporter = createMachine(project, EXPORTER,
+		final IMachineRoot exporter = createMachine(project, EXPORTER,
 				PRM_1DECL);
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
@@ -892,7 +904,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "	</org.eventb.core.event>"
 				+ "	</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VARPRM_1DECL_PRM_2REF_LBL_PRED_WIT);
 
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
@@ -914,7 +926,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testPrioritiesLocalVarVsImport() throws Exception {
-		final IContextFile exporter = createContext(project, EXPORTER,
+		final IContextRoot exporter = createContext(project, EXPORTER,
 				CST_1DECL);
 
 		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
@@ -935,7 +947,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"cst1 = 0\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VARCST_1DECL_1REF_INV);
 
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
@@ -964,7 +976,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
 
 		final ToolkitStub tk = new ToolkitStub(context);
@@ -991,7 +1003,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.identifier=\"var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				MALFORMED_MACHINE);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
@@ -1012,7 +1024,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		name=\"internal_element1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_NO_IDENT_ATT);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
@@ -1038,7 +1050,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"∃ s · var1 &lt; 1 ∧ ¬\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_INV_DOES_NOT_PARSE);
 
 		final ToolkitStub tk = new ToolkitStub(machine);

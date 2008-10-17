@@ -13,8 +13,8 @@ package org.eventb.core.indexer.tests;
 import static org.eventb.core.indexer.tests.OccUtils.newDecl;
 import junit.framework.TestCase;
 
+import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
@@ -26,7 +26,7 @@ import org.rodinp.core.index.IRodinLocation;
  */
 public class CancelToolkitStub implements IIndexingToolkit {
 
-	private final IRodinFile file;
+	private final IEventBRoot root;
 	private final IDeclaration[] imports;
 
 	private final int maxDecl;
@@ -48,13 +48,13 @@ public class CancelToolkitStub implements IIndexingToolkit {
 	 * @param maxOcc
 	 * @param maxExp
 	 * @param cancel 
-	 * @param file 
+	 * @param root 
 	 * @param imports 
 	 */
 	public CancelToolkitStub(int maxDecl, int maxOcc, int maxExp,
-			boolean cancel, IRodinFile file, IDeclaration... imports) {
+			boolean cancel, IEventBRoot root, IDeclaration... imports) {
 
-		this.file = file;
+		this.root = root;
 		this.imports = imports;
 		
 		this.maxDecl = maxDecl;
@@ -95,8 +95,8 @@ public class CancelToolkitStub implements IIndexingToolkit {
 		return imports;
 	}
 
-	public IRodinFile getRodinFile() {
-		return file;
+	public IInternalElement getIndexedRoot() {
+		return root;
 	}
 
 	public boolean isCancelled() {

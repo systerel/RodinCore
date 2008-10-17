@@ -11,7 +11,8 @@
 package org.eventb.core.indexer;
 
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.index.RodinIndexer;
 
@@ -30,20 +31,13 @@ public class EventBIndexerPlugin extends Plugin {
 	public EventBIndexerPlugin() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		RodinIndexer.register(new ContextIndexer(), IContextFile.ELEMENT_TYPE);
+		RodinIndexer.register(new ContextIndexer(),IContextRoot.ELEMENT_TYPE);
+		RodinIndexer.register(new MachineIndexer(),IMachineRoot.ELEMENT_TYPE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

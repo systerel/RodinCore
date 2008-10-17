@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.indexer.MachineIndexer;
 import org.rodinp.core.IRodinFile;
 
@@ -61,7 +61,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testNoDependencies() throws Exception {
 
-		final IMachineFile file = createMachine(project, M1_NAME, EMPTY_MACHINE);
+		final IMachineRoot file = createMachine(project, M1_NAME, EMPTY_MACHINE);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -72,11 +72,11 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testOneRefines() throws Exception {
 
-		final IRodinFile parent = createMachine(project, M1_NAME, EMPTY_MACHINE);
+		final IMachineRoot parent = createMachine(project, M1_NAME, EMPTY_MACHINE);
 
-		final IMachineFile child = createMachine(project, M2_NAME, MCH_1REFINES);
+		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1REFINES);
 
-		final List<IRodinFile> expected = Arrays.asList(parent);
+		final List<IRodinFile> expected = Arrays.asList(parent.getRodinFile());
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -87,11 +87,11 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testOneSees() throws Exception {
 
-		final IRodinFile parent = createContext(project, C1_NAME, EMPTY_CONTEXT);
+		final IContextRoot parent = createContext(project, C1_NAME, EMPTY_CONTEXT);
 
-		final IMachineFile child = createMachine(project, M2_NAME, MCH_1SEES);
+		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1SEES);
 
-		final List<IRodinFile> expected = Arrays.asList(parent);
+		final List<IRodinFile> expected = Arrays.asList(parent.getRodinFile());
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -105,7 +105,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 */
 	public void testFileDoesNotExist() throws Exception {
 
-		final IMachineFile child = createMachine(project, M2_NAME, MCH_1REFINES);
+		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1REFINES);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -115,7 +115,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testBadFileType() throws Exception {
 
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -140,7 +140,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 				+ "		org.eventb.core.target=\"exporter\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				MALFORMED_MACHINE);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -159,7 +159,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 				+ "		name=\"internal_element1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineFile machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				MCH_1REFINES_NO_TARGET_ATT);
 
 		final MachineIndexer indexer = new MachineIndexer();

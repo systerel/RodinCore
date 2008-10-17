@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.indexer.EventBIndexUtil;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
@@ -29,7 +29,7 @@ import org.rodinp.core.index.IRodinLocation;
  */
 public class ToolkitStub implements IIndexingToolkit {
 
-	private final IRodinFile file;
+	private final IEventBRoot root;
 	private final List<IDeclaration> imports;
 	private final List<IDeclaration> declarations;
 	private final Map<IInternalElement, List<IOccurrence>> occurrences;
@@ -39,13 +39,13 @@ public class ToolkitStub implements IIndexingToolkit {
 	/**
 	 * Constructor.
 	 * 
-	 * @param file
-	 *            the file to index.
+	 * @param root
+	 *            the root to index.
 	 * @param imports
-	 *            imports for the current file.
+	 *            imports for the current root.
 	 */
-	public ToolkitStub(IRodinFile file, IDeclaration... imports) {
-		this.file = file;
+	public ToolkitStub(IEventBRoot root, IDeclaration... imports) {
+		this.root = root;
 		this.imports = Arrays.asList(imports);
 		this.declarations = new ArrayList<IDeclaration>();
 		this.occurrences = new HashMap<IInternalElement, List<IOccurrence>>();
@@ -80,8 +80,8 @@ public class ToolkitStub implements IIndexingToolkit {
 		return imports.toArray(new IDeclaration[imports.size()]);
 	}
 
-	public IRodinFile getRodinFile() {
-		return file;
+	public IInternalElement getIndexedRoot() {
+		return root;
 	}
 
 	public boolean isCancelled() {

@@ -15,9 +15,10 @@ import static org.eventb.core.EventBPlugin.getContextFileName;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IIdentifierElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -31,14 +32,14 @@ public class ContextIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.context";
 
-	protected void index(IRodinFile file) throws RodinDBException {
-		if (!(file instanceof IContextFile)) {
-			throwIllArgException(file);
+	protected void index(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IContextRoot)) {
+			throwIllArgException(root);
 		}
-		index((IContextFile) file);
+		index((IContextRoot) root);
 	}
 
-	private void index(IContextFile file) throws RodinDBException {
+	private void index(IContextRoot root) throws RodinDBException {
 		checkCancel();
 
 		final SymbolTable importST = new SymbolTable(null);
@@ -46,14 +47,14 @@ public class ContextIndexer extends EventBIndexer {
 		checkCancel();
 
 		final SymbolTable totalST = new SymbolTable(importST);
-		processIdentifierElements(file.getCarrierSets(), totalST);
+		processIdentifierElements(root.getCarrierSets(), totalST);
 		checkCancel();
-		processIdentifierElements(file.getConstants(), totalST);
+		processIdentifierElements(root.getConstants(), totalST);
 		checkCancel();
 
-		processPredicateElements(file.getAxioms(), totalST);
+		processPredicateElements(root.getAxioms(), totalST);
 		checkCancel();
-		processPredicateElements(file.getTheorems(), totalST);
+		processPredicateElements(root.getTheorems(), totalST);
 	}
 
 	private void processImports(IDeclaration[] imports, SymbolTable importST) {
@@ -78,11 +79,11 @@ public class ContextIndexer extends EventBIndexer {
 		}
 	}
 
-	public IRodinFile[] getDeps(IRodinFile file) throws RodinDBException {
-		if (!(file instanceof IContextFile)) {
-			throwIllArgException(file);
+	public IRodinFile[] getDeps(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IContextRoot)) {
+			throwIllArgException(root);
 		}
-		final IContextFile context = (IContextFile) file;
+		final IContextRoot context = (IContextRoot) root;
 
 		final List<IRodinFile> extFiles = new ArrayList<IRodinFile>();
 

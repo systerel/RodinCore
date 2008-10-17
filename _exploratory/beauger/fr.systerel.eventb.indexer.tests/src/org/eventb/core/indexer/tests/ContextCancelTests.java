@@ -17,7 +17,7 @@ import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.indexer.tests.ResourceUtils.createContext;
 
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.indexer.ContextIndexer;
 import org.rodinp.core.index.IDeclaration;
 
@@ -38,7 +38,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 	// TODO test cancel inside loops
 	
 	public void testCancelImmediately() throws Exception {
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
@@ -53,12 +53,12 @@ public class ContextCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterImports() throws Exception {
-		final IContextFile exporter = createContext(project, EXPORTER,
+		final IContextRoot exporter = createContext(project, EXPORTER,
 				CST_1DECL);
 		final IConstant cst = exporter.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCstExp = newDecl(cst, CST1);
 
-		final IContextFile importer = createContext(project, IMPORTER,
+		final IContextRoot importer = createContext(project, IMPORTER,
 				CST_1DECL_1REF_AXM);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
@@ -73,7 +73,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterDecl() throws Exception {
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_1REF_AXM);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(1, NO_LIMIT, NO_LIMIT,
@@ -103,7 +103,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"cst1 = 2\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL_2REF_2AXM);
 
 		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,

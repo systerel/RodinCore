@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.indexer.ContextIndexer;
 import org.rodinp.core.IRodinFile;
 
@@ -43,13 +43,13 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	}
 
 	private static final String CTX_1EXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
-		+ "<org.eventb.core.extendsContext name=\"internal_element1\" org.eventb.core.target=\"c1\"/>"
-		+ "</org.eventb.core.contextFile>";
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "<org.eventb.core.extendsContext name=\"internal_element1\" org.eventb.core.target=\"c1\"/>"
+			+ "</org.eventb.core.contextFile>";
 
 	public void testNoDependencies() throws Exception {
 
-		final IContextFile file = createContext(project, C1_NAME, EMPTY_CONTEXT);
+		final IContextRoot file = createContext(project, C1_NAME, EMPTY_CONTEXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -60,25 +60,26 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 
 	public void testOneDependence() throws Exception {
 
-		final IRodinFile parent = createContext(project, C1_NAME, EMPTY_CONTEXT);
+		final IContextRoot parent = createContext(project, C1_NAME,
+				EMPTY_CONTEXT);
 
-		final IContextFile child = createContext(project, C2_NAME, CTX_1EXT);
+		final IContextRoot child = createContext(project, C2_NAME, CTX_1EXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		final IRodinFile[] actual = indexer.getDependencies(child);
 
-		final List<IRodinFile> expected = Arrays.asList(parent);
+		final List<IRodinFile> expected = Arrays.asList(parent.getRodinFile());
 
 		assertDependencies(expected, actual);
 	}
 
 	public void testTwoDependencies() throws Exception {
 
-		final IRodinFile parentC1 = createContext(project, C1_NAME,
+		final IContextRoot parentC1 = createContext(project, C1_NAME,
 				EMPTY_CONTEXT);
 
-		final IRodinFile parentC2 = createContext(project, C2_NAME,
+		final IContextRoot parentC2 = createContext(project, C2_NAME,
 				EMPTY_CONTEXT);
 
 		final String CTX_2EXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -87,19 +88,20 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 				+ "<org.eventb.core.extendsContext name=\"internal_element2\" org.eventb.core.target=\"c2\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile child = createContext(project, C3_NAME, CTX_2EXT);
+		final IContextRoot child = createContext(project, C3_NAME, CTX_2EXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
 		final IRodinFile[] actual = indexer.getDependencies(child);
 
-		final List<IRodinFile> expected = Arrays.asList(parentC1, parentC2);
+		final List<IRodinFile> expected = Arrays.asList(
+				parentC1.getRodinFile(), parentC2.getRodinFile());
 
 		assertDependencies(expected, actual);
 	}
 
 	public void testBadFileType() throws Exception {
-		final IMachineFile machine = createMachine(project, "file.bum",
+		final IMachineRoot machine = createMachine(project, "file.bum",
 				VAR_1DECL_1REF_INV);
 
 		final ContextIndexer indexer = new ContextIndexer();
@@ -107,7 +109,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		try {
 			indexer.getDependencies(machine);
 			fail("IllegalArgumentException expected");
-		} catch(IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			// OK
 		}
 	}
@@ -122,7 +124,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 				+ "<org.eventb.core.extendsContext name=\"internal_element1 org.eventb.core.target=\"c1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project,
+		final IContextRoot context = createContext(project,
 				ResourceUtils.CTX_BARE_NAME, MALFORMED_CONTEXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
@@ -140,7 +142,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 				+ "<org.eventb.core.extendsContext name=\"internal_element1\"/>"
 				+ "</org.eventb.core.contextFile>";
 
-		final IContextFile context = createContext(project,
+		final IContextRoot context = createContext(project,
 				ResourceUtils.CTX_BARE_NAME, CTX_1EXT_NO_TARGET_ATT);
 
 		final ContextIndexer indexer = new ContextIndexer();
@@ -154,7 +156,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	 */
 	public void testFileDoesNotExist() throws Exception {
 
-		final IContextFile child = createContext(project, C2_NAME, CTX_1EXT);
+		final IContextRoot child = createContext(project, C2_NAME, CTX_1EXT);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
