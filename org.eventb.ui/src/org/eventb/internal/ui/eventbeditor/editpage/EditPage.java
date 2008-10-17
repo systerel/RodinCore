@@ -29,13 +29,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -92,7 +86,13 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
-public class EditPage extends EventBEditorPage implements ISelectionProvider,
+/**
+ * @author htson
+ *         <p>
+ *         This is the implementation of the Edit Page in Event-B editor.
+ *         Basically, this contains several {@link ISectionComposite}.
+ */
+public class EditPage extends EventBEditorPage implements
 		IElementChangedListener, IResourceChangeListener {
 
 	// Title, tab title and ID of the page.
@@ -117,7 +117,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 */
 	public EditPage() {
 		super(PAGE_ID, PAGE_TAB_TITLE, PAGE_TITLE);
-		listenerList = new ListenerList();
 	}
 
 	/*
@@ -170,18 +169,18 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	}
 
 	/**
-	 * Utility method for moving elements up and down.
+	 * Utility method for moving elements up and down. An important assumption
+	 * here is that the current selection contain the list of consecutive
+	 * elements of the same type and has the same parent.
 	 * 
 	 * @param up
 	 *            <code>true</code> for moving up, <code>false</code> for
 	 *            moving down.
 	 */
 	protected void move(boolean up) {
-		// Assume that the global selection contain the list of element of the
-		// same type and has the same parent
-		if (globalSelection instanceof StructuredSelection
-				&& !globalSelection.isEmpty()) {
-			StructuredSelection ssel = (StructuredSelection) globalSelection;
+		if (currentSelection instanceof StructuredSelection
+				&& !currentSelection.isEmpty()) {
+			StructuredSelection ssel = (StructuredSelection) currentSelection;
 			Object[] elements = ssel.toArray();
 			IInternalElement firstElement = (IInternalElement) elements[0];
 			IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
@@ -290,7 +289,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				e.printStackTrace();
 			}
 		}
-		if (EventBPreferenceStore.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
+		if (EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
 			toolkit.paintBordersFor(comp);
 		}
 	}
@@ -451,26 +451,24 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 				// Do not redraw the page.
 				form.getBody().setRedraw(false);
 
-				// Process the removed element first.
+				// Process the removed element
 				for (IRodinElement element : isRemoved) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.elementRemoved(element);
 					}
 					if (isSelected(element)) {
-//						deselect(globalSelection);
-//						setSelection(new StructuredSelection());
 						setEditorSelection(new StructuredSelection());
 					}
 				}
 
-				// Process the added element second.
+				// Process the added element
 				for (IRodinElement element : isAdded) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.elementAdded(element);
 					}
 				}
 
-				// Process the changed element third.
+				// Process the changed element
 				for (IRodinElement element : isChanged) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.refresh(element);
@@ -502,8 +500,8 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 	 *         <code>false<code> otherwise.
 	 */
 	protected boolean isSelected(IRodinElement element) {
-		if (globalSelection instanceof StructuredSelection) {
-			StructuredSelection ssel = (StructuredSelection) globalSelection;
+		if (currentSelection instanceof StructuredSelection) {
+			StructuredSelection ssel = (StructuredSelection) currentSelection;
 			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
 				if (it.next().equals(element))
 					return true;
@@ -575,92 +573,48 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		super.dispose();
 	}
 
-	// This part to make this page to be a selection provider.
-	// TODO Make this as a separate class?
+	// The maintain the current selection.
+	private ISelection currentSelection = new StructuredSelection();
 
-	// A list of listener.
-	private ListenerList listenerList;
-
-	// The global selection.
-	ISelection globalSelection;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		listenerList.add(listener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-		listenerList.remove(listener);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-	 */
-	public ISelection getSelection() {
-		return globalSelection;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-	 */
 	// This should be called from Event-B Editor only.
 	public void setSelection(ISelection selection) {
-		select(globalSelection, false);
-		this.globalSelection = selection;
-		if (!globalSelection.isEmpty())
-			select(globalSelection, true);
-		fireSelectionChanged(new SelectionChangedEvent(this, globalSelection));
-	}
+		// TODO Should try to compare the selection first ?
+		// De-select the current selection
+		deselect(currentSelection);
 
-	/**
-	 * Notifies all registered selection changed listeners that the editor's
-	 * selection has changed. Only listeners registered at the time this method
-	 * is called are notified.
-	 * 
-	 * @param event
-	 *            the selection changed event
-	 */
-	private void fireSelectionChanged(final SelectionChangedEvent event) {
-		Object[] listeners = this.listenerList.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-			SafeRunner.run(new SafeRunnable() {
-				public void run() {
-					l.selectionChanged(event);
+		List<IRodinElement> elements = new ArrayList<IRodinElement>();
+		
+		if (selection instanceof StructuredSelection) {
+			for (Iterator<?> it = ((StructuredSelection) selection).iterator(); it
+					.hasNext();) {
+				Object obj = it.next();
+				if (obj instanceof IRodinElement) {
+					if (select((IRodinElement) obj, true)) {
+						elements.add((IRodinElement) obj);
+					}
 				}
-			});
+			}
 		}
+
+		// Create a new selection with the set of selected elements.
+		currentSelection = new StructuredSelection(elements);			
 	}
 
+	// The last selected element (from ButtonComposite).
 	private IRodinElement lastSelectedElement;
 
+	// This is the callback from ButtonComposite for selecting an element with
+	// the input specifies if Shift is pressed.
 	public void selectionChanges(IRodinElement element, boolean shiftPressed) {
 		long beginTime = System.currentTimeMillis();
-		if (globalSelection instanceof StructuredSelection
-				&& ((StructuredSelection) globalSelection).size() == 1
-				&& ((StructuredSelection) globalSelection).getFirstElement()
+		if (currentSelection instanceof StructuredSelection
+				&& ((StructuredSelection) currentSelection).size() == 1
+				&& ((StructuredSelection) currentSelection).getFirstElement()
 						.equals(element)) {
 			setEditorSelection(new StructuredSelection());
-//			select(element, false);
-//			setSelection(new StructuredSelection());
 			return;
 
 		} else {
-//			deselect(globalSelection);
 			if (shiftPressed
 					&& lastSelectedElement != null
 					&& element.getParent().equals(
@@ -669,8 +623,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 							lastSelectedElement.getElementType())) {
 				selectRange(lastSelectedElement, element);
 			} else {
-//				select(element, true);
-//				setSelection(new StructuredSelection(element));
 				lastSelectedElement = element;
 				setEditorSelection(new StructuredSelection(element));
 			}
@@ -703,7 +655,6 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 			List<IRodinElement> selected = new ArrayList<IRodinElement>();
 			for (IRodinElement child : children) {
 				if (child.equals(firstElement) || child.equals(secondElement)) {
-//					select(child, true);
 					selected.add(child);
 					if (found)
 						break;
@@ -711,12 +662,10 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 						found = true;
 				} else {
 					if (found) {
-//						select(child, true);
 						selected.add(child);
 					}
 				}
 			}
-//			setSelection(new StructuredSelection(selected));
 			setEditorSelection(new StructuredSelection(selected));
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -724,22 +673,25 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
-	void select(ISelection ssel, boolean select) {
+	private void deselect(ISelection ssel) {
+		
 		if (ssel instanceof StructuredSelection) {
 			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
 					.hasNext();) {
 				Object obj = it.next();
 				if (obj instanceof IRodinElement) {
-					select((IRodinElement) obj, select);
+					select((IRodinElement) obj, false);
 				}
 			}
 		}
 	}
 
-	public void select(IRodinElement element, boolean select) {
+	public boolean select(IRodinElement element, boolean select) {
 		for (ISectionComposite sectionComp : sectionComps) {
-			sectionComp.select(element, select);
+			if (sectionComp.select(element, select))
+				return true;
 		}
+		return false;
 	}
 
 	public void recursiveExpand(IRodinElement element) {
@@ -821,7 +773,7 @@ public class EditPage extends EventBEditorPage implements ISelectionProvider,
 		}
 	}
 
- private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
+	private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		final IRodinFile rodinInput = editor.getRodinInput().getRodinFile();
 		Display display = this.getSite().getShell().getDisplay();

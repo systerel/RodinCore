@@ -91,9 +91,13 @@ public interface ISectionComposite {
 	 *            a Rodin element
 	 * @param selected
 	 *            <code>true</code> if the element is selected.
-	 *            <code>false</code> if the element is deselected.
+	 *            <code>false</code> if the element is de-selected.
+	 * @return <code>true</code> if the operation is successful, i.e. if the
+	 *         element is indeed selected or de-selected accordingly to the
+	 *         input <code>selected</code>value. Return <code>false</code>
+	 *         otherwise.
 	 */
-	void select(IRodinElement element, boolean selected);
+	boolean select(IRodinElement element, boolean selected);
 
 	/**
 	 * Recursively expand the editing composite for the input element

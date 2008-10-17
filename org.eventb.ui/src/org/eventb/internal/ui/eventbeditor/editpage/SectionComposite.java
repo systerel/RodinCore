@@ -451,15 +451,17 @@ public class SectionComposite implements ISectionComposite {
 		return -1;
 	}
 
-	public void select(IRodinElement element, boolean selected) {
+	public boolean select(IRodinElement element, boolean selected) {
 		if (contain(element)) {
 			if (selected)
 				setExpand(true);
 			if (elementComps != null)
 				for (IElementComposite elementComp : elementComps) {
-					elementComp.select(element, selected);
+					if (elementComp.select(element, selected))
+						return true;
 				}
 		}
+		return false;
 	}
 
 	private boolean contain(IRodinElement element) {

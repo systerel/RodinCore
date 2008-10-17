@@ -265,21 +265,25 @@ public class ElementComposite implements IElementComposite {
 		return composite;
 	}
 
-	public void select(IRodinElement element, boolean selected) {
+	public boolean select(IRodinElement element, boolean selected) {
 		if (!rElement.exists())
-			return;
+			return false;
 
 		if (rElement.equals(element)) {
 			row.setSelected(selected);
+			return true;
 		}
 
 		if (rElement.isAncestorOf(element)) {
 			if (selected)
 				setExpand(true);
 			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.select(element, selected);
+				if (sectionComp.select(element, selected))
+					return true;
 			}
 		}
+		
+		return false;
 	}
 
 	public void recursiveExpand(IRodinElement element) {
