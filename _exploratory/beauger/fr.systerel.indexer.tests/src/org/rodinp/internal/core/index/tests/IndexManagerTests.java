@@ -43,7 +43,7 @@ public class IndexManagerTests extends IndexTests {
 
 	public IndexManagerTests(String name) {
 		super(name, true);
-		RodinIndexer.getDefault().disableIndexing();
+		RodinIndexer.disableIndexing();
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class IndexManagerTests extends IndexTests {
 		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
 
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getElementType());
+		RodinIndexer.register(indexer, file.getRoot().getElementType());
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class IndexManagerTests extends IndexTests {
 		
 		manager.clearIndexers();
 		
-		RodinIndexer.register(exceptionIndexer, file.getElementType());
+		RodinIndexer.register(exceptionIndexer, file.getRoot().getElementType());
 		
 		// should not throw an exception
 		manager.scheduleIndexing(file);

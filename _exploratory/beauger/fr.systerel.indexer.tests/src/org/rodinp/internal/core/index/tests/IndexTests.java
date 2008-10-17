@@ -18,7 +18,7 @@ public abstract class IndexTests extends AbstractRodinDBTests {
 	public IndexTests(String name, boolean disableIndexing) {
 		super(name);
 		if (disableIndexing) {
-			RodinIndexer.getDefault().disableIndexing();
+			RodinIndexer.disableIndexing();
 		}
 	}
 

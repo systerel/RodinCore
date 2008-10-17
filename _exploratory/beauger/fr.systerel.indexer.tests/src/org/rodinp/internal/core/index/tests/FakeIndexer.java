@@ -32,12 +32,12 @@ public class FakeIndexer implements IIndexer {
 		this.localIndex = index;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
+	public IRodinFile[] getDependencies(IInternalElement root) {
 		return NO_FILES;
 	}
 
 	public void index(IIndexingToolkit index) {
-		final IRodinFile file = index.getRodinFile();
+		final IRodinFile file = index.getIndexedRoot().getRodinFile();
 		final IDeclaration[] imports = index.getImports();
 
 		for (Descriptor desc : localIndex.getDescriptors()) {

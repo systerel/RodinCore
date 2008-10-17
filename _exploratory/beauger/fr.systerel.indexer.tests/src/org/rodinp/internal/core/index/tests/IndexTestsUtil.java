@@ -59,7 +59,7 @@ public class IndexTestsUtil {
 
 	public static NamedElement createNamedElement(IRodinFile file,
 			String elementName) throws CoreException {
-		NamedElement el = new NamedElement(elementName, file);
+		NamedElement el = new NamedElement(elementName, file.getRoot());
 		el.create(null, null);
 		return el;
 	}
