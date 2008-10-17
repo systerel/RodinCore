@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 
 public class IndexerRegistry {
@@ -35,21 +37,23 @@ public class IndexerRegistry {
 		list.add(indexer);
 	}
 
-	public IIndexer getIndexerFor(IInternalElementType<?> fileType) {
+	public IIndexer getIndexerFor(IRodinFile file) {
+		final IInternalElementType<? extends IInternalElement> fileType = file
+				.getRoot().getElementType();
 		final List<IIndexer> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {
-			throw new IllegalArgumentException("No known indexers for file type: "
-					+ fileType);
+			throw new IllegalArgumentException(
+					"No known indexers for file type: " + fileType);
 		}
 		// TODO manage indexers priorities
 		return list.get(0);
 	}
 
-	public boolean isIndexable(IInternalElementType<?> fileType) {
-		return indexers.containsKey(fileType);
+	public boolean isIndexable(IRodinFile file) {
+		return indexers.containsKey(file.getRoot().getElementType());
 	}
-	
+
 	public void clear() {
 		indexers.clear();
 	}

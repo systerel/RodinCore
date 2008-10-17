@@ -115,7 +115,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 		return file;
 	}
 	
-	public IInternalElement getIndexedRoot() {
+	public IInternalElement getRootToIndex() {
 		return file.getRoot();
 	}
 

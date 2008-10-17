@@ -50,7 +50,7 @@ public interface IIndexingToolkit {
 	 * 
 	 * @return the root element of the file to index
 	 */
-	IInternalElement getIndexedRoot();
+	IInternalElement getRootToIndex();
 
 	/**
 	 * Returns the declarations visible from files on which the current file

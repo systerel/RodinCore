@@ -37,7 +37,7 @@ public class ProjectIndexManager {
 
 	private final FileIndexingManager fim;
 
-	private final IndexerRegistry indexersRegistry;
+	private final IndexerRegistry indexerRegistry;
 
 	private final RodinIndex index;
 
@@ -53,7 +53,7 @@ public class ProjectIndexManager {
 			IndexerRegistry indManager) {
 		this.project = project;
 		this.fim = fim;
-		this.indexersRegistry = indManager;
+		this.indexerRegistry = indManager;
 		this.index = new RodinIndex();
 		this.fileTable = new FileTable();
 		this.nameTable = new NameTable();
@@ -203,7 +203,7 @@ public class ProjectIndexManager {
 					+ " should be indexed in project " + project);
 		}
 
-		if (!indexersRegistry.isIndexable(file.getRoot().getElementType())) {
+		if (!indexerRegistry.isIndexable(file)) {
 			return;
 		}
 		final IRodinFile[] dependFiles = fim.getDependencies(file);

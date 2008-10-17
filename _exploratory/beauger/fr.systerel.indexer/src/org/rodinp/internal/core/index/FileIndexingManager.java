@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -28,9 +26,7 @@ public class FileIndexingManager {
 	}
 
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		final IInternalElementType<?> fileType = file.getRoot()
-				.getElementType();
-		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
+		final IIndexer indexer = indexersRegistry.getIndexerFor(file);
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
@@ -60,9 +56,7 @@ public class FileIndexingManager {
 			return IndexingResult.failed(file);
 		}
 
-		final IInternalElementType<? extends IInternalElement> fileType = file
-				.getRoot().getElementType();
-		final IIndexer indexer = indexersRegistry.getIndexerFor(fileType);
+		final IIndexer indexer = indexersRegistry.getIndexerFor(file);
 
 		printVerbose(makeMessage("indexing", file, indexer));
 
