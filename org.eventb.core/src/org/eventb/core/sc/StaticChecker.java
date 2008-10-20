@@ -100,10 +100,10 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 		if (SCUtil.DEBUG_MODULECONF) {
 			System.out.println("+++ STATIC CHECKER MODULES +++");
 			System.out.println("INPUT " + file.getPath());
-			System.out.println("      " + file.getElementType());
+			System.out.println("      " + file.getRoot().getElementType());
 			System.out.println("CONFIG " + config);
 			System.out.print(moduleFactory
-					.printModuleTree(file.getElementType()));
+					.printModuleTree(file.getRoot().getElementType()));
 			System.out.println("++++++++++++++++++++++++++++++++++++++");
 		}
 	}
@@ -159,7 +159,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 		printModuleTree(config, rodinFile, moduleFactory);
 	
-		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory.getRootModule(rodinFile.getElementType());
+		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory.getRootModule(rodinFile.getRoot().getElementType());
 		
 		return rootModule;
 	}

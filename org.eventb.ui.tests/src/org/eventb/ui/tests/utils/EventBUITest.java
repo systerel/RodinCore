@@ -132,7 +132,7 @@ public abstract class EventBUITest extends TestCase {
 	 * Utility method to create a new refines machine clause for a machine.
 	 * 
 	 * @param machine
-	 *            the input machine {@link IMachineFile}.
+	 *            the input machine {@link IMachineRoot}.
 	 * @param abstractMachineName
 	 *            the name of the abstract machine.
 	 * @return the newly created refines machine clause
@@ -341,8 +341,8 @@ public abstract class EventBUITest extends TestCase {
 
 	/**
 	 * Open the an Event-B Editor ({@link IEventBEditor}) for a given
-	 * component. Assuming that the component is either a machine ({@link IMachineFile})
-	 * or a context ({@link IContextFile}).
+	 * component. Assuming that the component is either a machine ({@link IMachineRoot})
+	 * or a context ({@link IContextRoot}).
 	 * 
 	 * @param component
 	 *            the input component

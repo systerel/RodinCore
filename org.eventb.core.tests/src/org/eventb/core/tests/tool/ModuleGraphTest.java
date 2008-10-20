@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.ContextModule;
 import org.eventb.internal.core.sc.modules.MachineModule;
@@ -27,7 +27,7 @@ import org.eventb.internal.core.tool.ModuleManager;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
@@ -105,7 +105,7 @@ public class ModuleGraphTest extends Declarations {
 
 		AbstractCompleteTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType[] types) {
+				IInternalElementType<?>[] types) {
 			super(items);
 			this.types = types;
 			map = new HashMap<String, ModuleDesc<? extends IModule>>();
@@ -115,14 +115,14 @@ public class ModuleGraphTest extends Declarations {
 		}
 		
 		private final Map<String, ModuleDesc<? extends IModule>> map;		
-		private final IFileElementType[] types;
+		private final IInternalElementType<?>[] types;
 		
 		protected IModule[] run() {
 			ModuleGraph graph = getAnalysedGraph();
 			ModuleFactory factory = new ModuleFactory(graph, map);
 			IModule[] modules = new IModule[types.length];
 			for (int i=0; i< types.length; i++) {
-				IFileElementType type = types[i];
+				IInternalElementType<?> type = types[i];
 				modules[i] = factory.getRootModule(type);
 			}
 			return modules;
@@ -136,7 +136,7 @@ public class ModuleGraphTest extends Declarations {
 		
 		GetRootTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType[] types,
+				IInternalElementType<?>[] types,
 				IModuleType<? extends IModule>[] mTypes) {
 			super(items, types);
 			this.mTypes = mTypes;
@@ -157,7 +157,7 @@ public class ModuleGraphTest extends Declarations {
 
 		FailingRootTest(
 				ModuleDesc<? extends IModule>[] items, 
-				IFileElementType[] types) {
+				IInternalElementType<?>[] types) {
 			super(items, types);
 		}
 
@@ -173,16 +173,16 @@ public class ModuleGraphTest extends Declarations {
 		
 	}
 	
-	private static final IFileElementType[][] types = 
-		new IFileElementType[][] {
-			new IFileElementType[] {
+	private static final IInternalElementType<?>[][] types = 
+		new IInternalElementType<?>[][] {
+			new IInternalElementType<?>[] {
 			},
-			new IFileElementType[] {
-					IContextFile.ELEMENT_TYPE
+			new IInternalElementType<?>[] {
+					IContextRoot.ELEMENT_TYPE
 			},
-			new IFileElementType[] {
-					IContextFile.ELEMENT_TYPE,
-					IMachineFile.ELEMENT_TYPE
+			new IInternalElementType<?>[] {
+					IContextRoot.ELEMENT_TYPE,
+					IMachineRoot.ELEMENT_TYPE
 			}
 	};
 	
@@ -275,18 +275,18 @@ public class ModuleGraphTest extends Declarations {
 				new ProcDesc("X", "org.m.A")
 		},
 		new ModuleDesc[] {
-				new RootDesc("X", null, IContextFile.ELEMENT_TYPE),
-				new RootDesc("Y", null, IContextFile.ELEMENT_TYPE)
+				new RootDesc("X", null, IContextRoot.ELEMENT_TYPE),
+				new RootDesc("Y", null, IContextRoot.ELEMENT_TYPE)
 		},
 		new ModuleDesc[] {
-				new RootDesc("X", cProcessor, IContextFile.ELEMENT_TYPE)
+				new RootDesc("X", cProcessor, IContextRoot.ELEMENT_TYPE)
 		},
 		new ModuleDesc[] {
-				new RootDesc("X", cProcessor, IContextFile.ELEMENT_TYPE),
-				new RootDesc("X", mProcessor, IMachineFile.ELEMENT_TYPE)
+				new RootDesc("X", cProcessor, IContextRoot.ELEMENT_TYPE),
+				new RootDesc("X", mProcessor, IMachineRoot.ELEMENT_TYPE)
 		},
 		new ModuleDesc[] {
-				new RootDesc("C", cProcessor, IContextFile.ELEMENT_TYPE),
+				new RootDesc("C", cProcessor, IContextRoot.ELEMENT_TYPE),
 				new ProcDesc("B", "org.m.C"),
 				new FilterDesc("A", "org.m.B")
 		}

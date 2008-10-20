@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 
 /**
  * This is a dummy implementation of configuration elements.
@@ -37,7 +37,7 @@ public class DummyConfigurationElement implements IConfigurationElement {
 	public String getAttribute(String name)
 			throws InvalidRegistryObjectException {
 		if (name.equals("input"))
-			return IContextFile.ELEMENT_TYPE.getId();
+			return IContextRoot.ELEMENT_TYPE.getId();
 		else
 			return name;
 	}

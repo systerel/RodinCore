@@ -23,7 +23,7 @@ import org.eventb.internal.core.tool.graph.Node;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
@@ -33,7 +33,7 @@ public class ModuleFactory implements IModuleFactory {
 	
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> filterMap;
 	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> processorMap;
-	private Map<IFileElementType, ModuleDesc<? extends IModule>> rootMap;
+	private Map<IInternalElementType<?>, ModuleDesc<? extends IModule>> rootMap;
 
 	protected void addFilterToFactory(
 			ModuleDesc<? extends IModule> key, 
@@ -58,7 +58,7 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	protected void addRootToFactory(
-			IFileElementType key, 
+			IInternalElementType<?> key, 
 			ModuleDesc<? extends IModule> root) {
 		ModuleDesc<? extends IModule> oldRoot = rootMap.put(key, root);
 		if (oldRoot != null)
@@ -71,7 +71,7 @@ public class ModuleFactory implements IModuleFactory {
 		processorMap = 
 			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
 		rootMap = 
-			new HashMap<IFileElementType, ModuleDesc<? extends IModule>>();
+			new HashMap<IInternalElementType<?>, ModuleDesc<? extends IModule>>();
 		for (Node<ModuleDesc<? extends IModule>> node : graph.getSorted())
 			node.getObject().addToModuleFactory(this, modules);
 	}
@@ -112,7 +112,7 @@ public class ModuleFactory implements IModuleFactory {
 		}
 	}
 
-	public IProcessorModule getRootModule(IFileElementType type) {
+	public IProcessorModule getRootModule(IInternalElementType<?> type) {
 		ModuleDesc<? extends IModule> desc = rootMap.get(type);
 		if (desc == null)
 			throw new IllegalArgumentException("No root module for " + type.getId());
@@ -148,7 +148,7 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	// debugging support
-	public String printModuleTree(IFileElementType type) {
+	public String printModuleTree(IInternalElementType<?> type) {
 		StringBuffer buffer = new StringBuffer();
 		ModuleDesc<? extends IModule> desc = rootMap.get(type);
 		if (desc == null) {

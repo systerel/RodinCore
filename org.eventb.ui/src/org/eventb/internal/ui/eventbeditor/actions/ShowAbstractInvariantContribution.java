@@ -82,7 +82,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 	 * 
 	 * @param menu
 	 *            the parent menu
-	 * @param abstractFile the abstract machine
+	 * @param abstractRoot the abstract machine
 	 * @throws RodinDBException if some problems occur.
 	 */
 	private void createMenuItem(Menu menu, final IMachineRoot abstractRoot)

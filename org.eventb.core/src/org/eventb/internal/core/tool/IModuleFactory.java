@@ -15,7 +15,7 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
@@ -27,8 +27,8 @@ public interface IModuleFactory {
 	
 	IProcessorModule[] getProcessorModules(IModuleType<? extends IModule> parentType);
 	
-	IProcessorModule getRootModule(IFileElementType type);
+	IProcessorModule getRootModule(IInternalElementType<?> type);
 	
-	String printModuleTree(IFileElementType type);
+	String printModuleTree(IInternalElementType<?> type);
 
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -32,16 +32,16 @@ public class RootModuleDesc<T extends IProcessorModule> extends ProcessorModuleD
 		factory.addRootToFactory(getElementType(), this);
 	}
 
-	private final IFileElementType fileElementType;
+	private final IInternalElementType<?> rootElementType;
 	
 	public RootModuleDesc(IConfigurationElement configElement) {
 		super(configElement);
 		String fetId = configElement.getAttribute("input");
-		fileElementType = RodinCore.getFileElementType(fetId);
+		rootElementType = RodinCore.getInternalElementType(fetId);
 	}
 	
-	public IFileElementType getElementType() {
-		return fileElementType;
+	public IInternalElementType<?> getElementType() {
+		return rootElementType;
 	}
 
 }

@@ -18,7 +18,7 @@ import org.eventb.internal.core.tool.ProcessorModuleDesc;
 import org.eventb.internal.core.tool.RootModuleDesc;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author Stefan Hallerstede
@@ -92,7 +92,7 @@ public abstract class Declarations extends TestCase {
 	
 	protected static class RootDesc extends RootModuleDesc<IProcessorModule> {
 
-		public RootDesc(String name, IProcessorModule module, IFileElementType type) {
+		public RootDesc(String name, IProcessorModule module, IInternalElementType<?> type) {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.type = type;
@@ -100,7 +100,7 @@ public abstract class Declarations extends TestCase {
 		}
 
 		private final String name;
-		private final IFileElementType type;
+		private final IInternalElementType<?> type;
 		private final IProcessorModule module;
 		
 		@Override
@@ -154,7 +154,7 @@ public abstract class Declarations extends TestCase {
 		}
 
 		@Override
-		public IFileElementType getElementType() {
+		public IInternalElementType<?> getElementType() {
 			return type;
 		}
 

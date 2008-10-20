@@ -282,10 +282,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		if (POGUtil.DEBUG_MODULECONF) {
 			System.out.println("+++ PROOF OBLIGATION GENERATOR MODULES +++");
 			System.out.println("INPUT " + file.getPath());
-			System.out.println("      " + file.getElementType());
+			System.out.println("      " + file.getRoot().getElementType());
 			System.out.println("CONFIG " + config);
 			System.out.print(moduleFactory
-					.printModuleTree(file.getElementType()));
+					.printModuleTree(file.getRoot().getElementType()));
 			System.out.println("++++++++++++++++++++++++++++++++++++++");
 		}
 	}
@@ -304,7 +304,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			printModuleTree(config, rodinFile, moduleFactory);
 	
 			IPOGProcessorModule rootModule = (IPOGProcessorModule) moduleFactory
-					.getRootModule(rodinFile.getElementType());
+					.getRootModule(rodinFile.getRoot().getElementType());
 			return rootModule;
 	
 		} else {

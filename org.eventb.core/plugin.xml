@@ -802,7 +802,7 @@
       <rootType
             class="org.eventb.internal.core.sc.modules.ContextModule"
             id="contextModule"
-            input="org.eventb.core.contextFileF"
+            input="org.eventb.core.contextFile"
             name="%scContextModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.ContextExtendsModule"
@@ -862,7 +862,7 @@
       <rootType
             class="org.eventb.internal.core.sc.modules.MachineModule"
             id="machineModule"
-            input="org.eventb.core.machineFileF"
+            input="org.eventb.core.machineFile"
             name="%scMachineModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineRefinesModule"
@@ -1073,7 +1073,7 @@
       <rootType
             class="org.eventb.internal.core.pog.modules.ContextModule"
             id="contextModule"
-            input="org.eventb.core.scContextFileF"
+            input="org.eventb.core.scContextFile"
             name="%pogContextModule"/>
       <processorType
             class="org.eventb.internal.core.pog.modules.ContextHypothesesModule"
@@ -1109,7 +1109,7 @@
       <rootType
             class="org.eventb.internal.core.pog.modules.MachineModule"
             id="machineModule"
-            input="org.eventb.core.scMachineFileF"
+            input="org.eventb.core.scMachineFile"
             name="%pogMachineModule"/>
       <processorType
             class="org.eventb.internal.core.pog.modules.FwdMachineRefinementModule"

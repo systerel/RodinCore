@@ -21,7 +21,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
@@ -68,7 +68,7 @@ public class TestElementRelUISpecRegistry {
 
 	@Test
 	public void machineRelationships() {
-		assertRelationships(IMachineFile.ELEMENT_TYPE,
+		assertRelationships(IMachineRoot.ELEMENT_TYPE,
 				rel("variable", "VARIABLES", null),
 				rel("invariant", "INVARIANTS", null),
 				rel("event", "EVENTS", "END"),
