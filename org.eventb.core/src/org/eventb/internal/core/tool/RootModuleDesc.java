@@ -36,8 +36,8 @@ public class RootModuleDesc<T extends IProcessorModule> extends ProcessorModuleD
 	
 	public RootModuleDesc(IConfigurationElement configElement) {
 		super(configElement);
-		String fetId = configElement.getAttribute("input");
-		rootElementType = RodinCore.getInternalElementType(fetId);
+		String retId = configElement.getAttribute("input");
+		rootElementType = RodinCore.getInternalElementType(retId);
 	}
 	
 	public IInternalElementType<?> getElementType() {
