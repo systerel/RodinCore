@@ -30,8 +30,7 @@ public class FakeExceptionIndexer implements IIndexer {
 	}
 
 	public void index(IIndexingToolkit index) {
-		int z = 1 / 0;
-		z++;
+		throw new NullPointerException();
 	}
 
 }
