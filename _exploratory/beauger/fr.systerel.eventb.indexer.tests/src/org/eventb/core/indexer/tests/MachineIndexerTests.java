@@ -88,7 +88,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
-		final IOccurrence occDecl = makeDecl(machine.getRodinFile());
+		final IOccurrence occDecl = makeDecl(machine);
 
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
 

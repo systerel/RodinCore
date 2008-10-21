@@ -80,7 +80,6 @@ public abstract class EventBIndexerTests extends AbstractRodinDBTests {
 	/**
 	 * @param name
 	 */
-	@SuppressWarnings("restriction")
 	public EventBIndexerTests(String name) {
 		super(name);
 		RodinIndexer.disableIndexing();

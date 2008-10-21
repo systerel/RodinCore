@@ -78,7 +78,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context = createContext(project, CTX_BARE_NAME,
 				CST_1DECL);
 
-		final IOccurrence occDecl = makeDecl(context.getRodinFile());
+		final IOccurrence occDecl = makeDecl(context);
 
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 

@@ -15,8 +15,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.rodinp.core.IRodinFile;
-
 /**
  * @author Nicolas Beauger
  * 
@@ -35,16 +33,14 @@ public class ListAssert {
 				+ actExpString, containsAll);
 	}
 
-
-	public static void assertSameAsArray(List<IRodinFile> expected,
-			IRodinFile[] actual, String listEltDesc) {
-		final List<IRodinFile> actList = Arrays.asList(actual);
+	public static <T> void assertSameAsArray(List<T> expected,
+			T[] actual, String listEltDesc) {
+		final List<T> actList = Arrays.asList(actual);
 		assertSameElements(expected, actList, listEltDesc);
 	}
 
 	private static <T> String makeActExpString(List<T> expected, List<T> actual) {
-		return ListAssert.makeString("act", actual)
-				+ ListAssert.makeString("exp", expected);
+		return makeString("act", actual) + makeString("exp", expected);
 	}
 
 	private static <T> String makeString(String listDesc, List<T> list) {
