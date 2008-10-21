@@ -74,7 +74,7 @@ public class FileTableUsageTests extends IndexTests {
 	}
 
 	private void assertFileTable(IRodinFile rodinFile,
-			IInternalElement[] expectedElements, String message) {
+			IInternalElement[] expectedElements, String message) throws InterruptedException {
 
 		final FileTable fileTable = manager.getFileTable(rodinFile
 				.getRodinProject());

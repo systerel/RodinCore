@@ -52,7 +52,7 @@ public class NameTableUsageTests extends IndexTests {
 	}
 
 	private void assertNameTable(IRodinFile rodinFile, String name,
-			IInternalElement[] expectedElements, String message) {
+			IInternalElement[] expectedElements, String message) throws InterruptedException {
 
 		final NameTable table = manager.getNameTable(rodinFile
 				.getRodinProject());
