@@ -31,6 +31,7 @@ import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.IndexRequester;
 import org.rodinp.internal.core.index.OccurrenceKind;
+import org.rodinp.internal.core.index.RodinDBChangeListener;
 import org.rodinp.internal.core.index.RodinLocation;
 
 /**
@@ -203,6 +204,11 @@ public class RodinIndexer extends Plugin {
 					.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
 			if (option != null)
 				IndexManager.VERBOSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
+			if (option != null)
+				RodinDBChangeListener.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 
 	}

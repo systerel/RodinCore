@@ -12,9 +12,8 @@ package org.rodinp.internal.core.index;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,12 +53,15 @@ public final class IndexManager {
 
 	private static final int eventMask = ElementChangedEvent.POST_CHANGE;
 
-	private static final int QUEUE_CAPACITY = 10;
-	private final BlockingQueue<IRodinFile> queue;
+	private final FileQueue queue;
+
 	private final RodinDBChangeListener listener;
 	// private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean ENABLE_INDEXING = true;
+
+	private final ReentrantReadWriteLock initSaveLock = new ReentrantReadWriteLock();
+
 	/** Lock guarding table access during indexing */
 	private final Object indexingLock;
 
@@ -67,9 +69,10 @@ public final class IndexManager {
 		pims = new HashMap<IRodinProject, ProjectIndexManager>();
 		indexersManager = new IndexerRegistry();
 		fim = new FileIndexingManager(indexersManager);
-		queue = new ArrayBlockingQueue<IRodinFile>(QUEUE_CAPACITY);
+		queue = new FileQueue();
 		listener = new RodinDBChangeListener(queue);
 		indexingLock = new Object();
+		initSaveLock.writeLock().lock();
 	}
 
 	/**
@@ -124,7 +127,7 @@ public final class IndexManager {
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
 			final ProjectIndexManager pim = fetchPIM(project);
-			pim.setToIndex(file);
+			pim.fileChanged(file);
 		}
 
 		doIndexing(null);
@@ -148,11 +151,22 @@ public final class IndexManager {
 				if (monitor != null) {
 					monitor.done();
 					if (monitor.isCanceled()) {
-						return;
+						throw new CancellationException();
 					}
 				}
 			}
 		}
+	}
+
+	private void lockReadInitAndPIM(ProjectIndexManager pim)
+			throws InterruptedException {
+		initSaveLock.readLock().lockInterruptibly();
+		pim.lockRead();
+	}
+
+	private void unlockReadInitAndPIM(ProjectIndexManager pim) {
+		pim.unlockRead();
+		initSaveLock.readLock().unlock();
 	}
 
 	/**
@@ -164,10 +178,16 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested index.
 	 * @return the current index of the given project.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public RodinIndex getIndex(IRodinProject project) {
-		return fetchPIM(project).getIndex();
+	public RodinIndex getIndex(IRodinProject project)
+			throws InterruptedException {
+		final ProjectIndexManager pim = fetchPIM(project);
+		lockReadInitAndPIM(pim);
+		final RodinIndex index = pim.getIndex();
+		unlockReadInitAndPIM(pim);
+		return index;
 	}
 
 	/**
@@ -179,10 +199,16 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested file table.
 	 * @return the current file table of the given project.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public FileTable getFileTable(IRodinProject project) {
-		return fetchPIM(project).getFileTable();
+	public FileTable getFileTable(IRodinProject project)
+			throws InterruptedException {
+		final ProjectIndexManager pim = fetchPIM(project);
+		lockReadInitAndPIM(pim);
+		final FileTable fileTable = pim.getFileTable();
+		unlockReadInitAndPIM(pim);
+		return fileTable;
 	}
 
 	/**
@@ -194,10 +220,16 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested name table.
 	 * @return the current name table of the given project.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public NameTable getNameTable(IRodinProject project) {
-		return fetchPIM(project).getNameTable();
+	public NameTable getNameTable(IRodinProject project)
+			throws InterruptedException {
+		final ProjectIndexManager pim = fetchPIM(project);
+		lockReadInitAndPIM(pim);
+		final NameTable nameTable = pim.getNameTable();
+		unlockReadInitAndPIM(pim);
+		return nameTable;
 	}
 
 	/**
@@ -209,10 +241,16 @@ public final class IndexManager {
 	 * @param project
 	 *            the project of the requested export table.
 	 * @return the current export table of the given project.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public ExportTable getExportTable(IRodinProject project) {
-		return fetchPIM(project).getExportTable();
+	public ExportTable getExportTable(IRodinProject project)
+			throws InterruptedException {
+		final ProjectIndexManager pim = fetchPIM(project);
+		lockReadInitAndPIM(pim);
+		final ExportTable exportTable = pim.getExportTable();
+		unlockReadInitAndPIM(pim);
+		return exportTable;
 	}
 
 	private ProjectIndexManager fetchPIM(IRodinProject project) {
@@ -225,7 +263,9 @@ public final class IndexManager {
 	}
 
 	public void save() {
+		initSaveLock.writeLock().lock();
 		// TODO
+		initSaveLock.writeLock().unlock();
 	}
 
 	private final Job indexing = new Job("indexing") {
@@ -267,20 +307,17 @@ public final class IndexManager {
 					boolean cancel = false;
 					while (!cancel) { // !startMonitor.isCanceled()) {
 						final IRodinFile file = queue.take();
-						
+
 						final IRodinProject project = file.getRodinProject();
 						final ProjectIndexManager pim = fetchPIM(project);
 
-//						pim.setToIndex(file);
+						pim.fileChanged(file);
 						if (ENABLE_INDEXING) {
-							pim.setToIndex(file);
-							// FIXME remove above line (temp fix for tests)
-							// but setToIndex should not do anything else;
-							// resolving dependencies should be done at the
-							// beginning of the indexing phase
-							
-							indexing.schedule();//(500);
-							// TODO define scheduling policies
+
+							indexing.schedule();
+							indexing.join();
+							queue.fileProcessed();
+							// TODO define scheduling policies ?
 						}
 						cancel = startMonitor.isCanceled()
 								|| Status.CANCEL_STATUS.equals(indexing
@@ -293,6 +330,7 @@ public final class IndexManager {
 			}
 		} finally {
 			if (interrupted) {
+				save();
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -305,18 +343,19 @@ public final class IndexManager {
 		// TODO recover from previous save
 
 		RodinCore.addElementChangedListener(listener, eventMask);
+		initSaveLock.writeLock().unlock();
 	}
 
 	/**
 	 * Returns <code>true</code> when the indexing system is up to date, else
 	 * blocks until it becomes up to date.
 	 * 
+	 * @throws InterruptedException
+	 * 
 	 */
-	public void waitUpToDate() throws CancellationException {
+	public void waitUpToDate() throws InterruptedException {
 		// TODO use 1 lock per project
-		synchronized (indexingLock) {
-			return; // indexing.getState() == Job.NONE;
-		}
+		queue.awaitEmptyQueue();
 	}
 
 	/**
@@ -329,12 +368,18 @@ public final class IndexManager {
 		}
 	}
 
+	// For testing purpose only, do not call in operational code
 	public void enableIndexing() {
+		RodinCore.addElementChangedListener(listener, eventMask);
 		ENABLE_INDEXING = true;
+		indexing.schedule();
 	}
 
+	// For testing purpose only, do not call in operational code
 	public void disableIndexing() {
+		RodinCore.removeElementChangedListener(listener);
 		ENABLE_INDEXING = false;
+
 	}
 
 }

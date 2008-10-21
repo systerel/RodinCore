@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.concurrent.CancellationException;
-
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
@@ -28,7 +26,8 @@ public class IndexRequester implements IIndexRequester {
 
 	private static final IOccurrence[] EMPTY_OCCURRENCES = new IOccurrence[] {};
 
-	public IDeclaration getDeclaration(IInternalElement element) {
+	public IDeclaration getDeclaration(IInternalElement element)
+			throws InterruptedException {
 		final IRodinProject project = element.getRodinProject();
 		final RodinIndex index = IndexManager.getDefault().getIndex(project);
 
@@ -41,7 +40,8 @@ public class IndexRequester implements IIndexRequester {
 		return descriptor.getDeclaration();
 	}
 
-	public IOccurrence[] getOccurrences(IDeclaration declaration) {
+	public IOccurrence[] getOccurrences(IDeclaration declaration)
+			throws InterruptedException {
 		final IInternalElement element = declaration.getElement();
 		final IRodinProject project = element.getRodinProject();
 		final RodinIndex index = IndexManager.getDefault().getIndex(project);
@@ -54,14 +54,15 @@ public class IndexRequester implements IIndexRequester {
 		return descriptor.getOccurrences();
 	}
 
-	public IInternalElement[] getElements(IRodinProject project, String name) {
+	public IInternalElement[] getElements(IRodinProject project, String name)
+			throws InterruptedException {
 		final NameTable nameTable = IndexManager.getDefault().getNameTable(
 				project);
 
 		return nameTable.getElements(name);
 	}
 
-	public void waitUpToDate() throws CancellationException {
+	public void waitUpToDate() throws InterruptedException {
 		IndexManager.getDefault().waitUpToDate();
 	}
 

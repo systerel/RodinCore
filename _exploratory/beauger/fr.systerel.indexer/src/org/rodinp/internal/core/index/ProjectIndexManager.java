@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
@@ -49,6 +51,8 @@ public class ProjectIndexManager {
 
 	private final TotalOrder<IRodinFile> order;
 
+	private final ReentrantReadWriteLock tableRWL;
+
 	public ProjectIndexManager(IRodinProject project, FileIndexingManager fim,
 			IndexerRegistry indManager) {
 		this.project = project;
@@ -59,8 +63,18 @@ public class ProjectIndexManager {
 		this.nameTable = new NameTable();
 		this.exportTable = new ExportTable();
 		this.order = new TotalOrder<IRodinFile>();
+		this.tableRWL = new ReentrantReadWriteLock();
 	}
 
+	public void lockRead() throws InterruptedException {
+		tableRWL.readLock().lockInterruptibly();
+	}
+	
+	public void unlockRead() {
+		tableRWL.readLock().unlock();
+	}
+	
+	
 	public void doIndexing(IProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.beginTask("indexing project " + project,
@@ -76,9 +90,7 @@ public class ProjectIndexManager {
 			final IIndexingResult result = fim
 					.doIndexing(indexingToolkit);
 
-			if (indexingToolkit.isCancelled()) {
-				break;
-			}
+			checkCancel(indexingToolkit);
 			if (result.isSuccess()) {
 				if (mustReindexDependents(result)) {
 					order.setToIterSuccessors();
@@ -94,6 +106,24 @@ public class ProjectIndexManager {
 		order.end();
 	}
 
+	/**
+	 * @param indexingToolkit
+	 */
+	private void checkCancel(IndexingToolkit indexingToolkit) {
+		if (indexingToolkit.isCancelled()) {
+			saveCurrentState();
+			throw new CancellationException();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void saveCurrentState() {
+//		final List<IRodinFile> toIndexLater = order.getMarkedNodes();
+		// TODO record the list (or record the whole object including order)
+	}
+
 	public boolean mustReindexDependents(IIndexingResult result) {
 		// FIXME costly (?)
 		final Set<IDeclaration> currentExports = exportTable.get(result
@@ -103,6 +133,8 @@ public class ProjectIndexManager {
 	}
 
 	private void updateTables(IIndexingResult result) {
+		tableRWL.writeLock().lock();
+		
 		clean(result.getFile());
 
 		updateDeclarations(result);
@@ -110,6 +142,8 @@ public class ProjectIndexManager {
 		updateOccurrences(result);
 
 		updateExports(result);
+		
+		tableRWL.writeLock().unlock();
 	}
 
 	private void updateExports(IIndexingResult result) {
@@ -196,8 +230,7 @@ public class ProjectIndexManager {
 	 * 
 	 * @param file
 	 */
-	// TODO rename to fileChanged() ?
-	public void setToIndex(IRodinFile file) {
+	public void fileChanged(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
 					+ " should be indexed in project " + project);

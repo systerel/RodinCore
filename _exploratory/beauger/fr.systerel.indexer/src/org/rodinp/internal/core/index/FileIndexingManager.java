@@ -77,8 +77,7 @@ public class FileIndexingManager {
 
 			return IndexingResult.failed(file);
 		}
-		printVerbose(makeMessage("indexing successfully completed", file,
-				indexer));
+		printVerbose(makeMessage("indexing complete", file, indexer));
 		printVerbose("result:\n" + result);
 		return result;
 	}

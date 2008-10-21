@@ -1,3 +1,4 @@
 fr.systerel.indexer/debug = true
 fr.systerel.indexer/debug/indexer = false
 fr.systerel.indexer/debug/indexer/verbose = false
+fr.systerel.indexer/debug/indexer/delta = false

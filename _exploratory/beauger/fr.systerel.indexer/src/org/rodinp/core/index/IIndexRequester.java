@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
-import java.util.concurrent.CancellationException;
-
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 
@@ -32,16 +30,18 @@ import org.rodinp.core.IRodinProject;
 public interface IIndexRequester {
 
 	/**
-	 * Returns the user-visible name for the given element.
+	 * Returns the declaration for the given element.
 	 * 
 	 * @param element
 	 *            the element for which to get the declaration.
 	 * @return the declaration of the element if it was found in the index.
+	 * @throws InterruptedException
 	 * @throws IllegalArgumentException
 	 *             if the element is not known by the indexing system.
 	 * @see #waitUpToDate()
 	 */
-	IDeclaration getDeclaration(IInternalElement element);
+	IDeclaration getDeclaration(IInternalElement element)
+			throws InterruptedException;
 
 	/**
 	 * Returns the occurrences of the given element.
@@ -50,31 +50,35 @@ public interface IIndexRequester {
 	 *            the declaration of the element for which to get the
 	 *            occurrences.
 	 * @return the indexed occurrences of the element.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	IOccurrence[] getOccurrences(IDeclaration declaration);
+	IOccurrence[] getOccurrences(IDeclaration declaration)
+			throws InterruptedException;
 
 	/**
-	 * Returns all the elements that have been declared with the given
-	 * user-visible name.
+	 * Returns all elements declared with the given user-visible name.
 	 * 
 	 * @param project
 	 *            the project in which to search.
 	 * @param name
 	 *            the researched name.
 	 * @return the found elements with the given name.
+	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	IInternalElement[] getElements(IRodinProject project, String name);
+	IInternalElement[] getElements(IRodinProject project, String name)
+			throws InterruptedException;
 
 	/**
 	 * Returns when the indexing system is up to date, else blocks until it
-	 * becomes up to date. Throws a CancellationException if the indexing has
+	 * becomes up to date. Throws a InterruptedException if the indexing has
 	 * been canceled.
 	 * 
 	 * Calling this method before any other request makes the result valid.
+	 * 
+	 * @throws InterruptedException
 	 */
-	// TODO What's the point in always returning true ?
-	void waitUpToDate() throws CancellationException;
+	void waitUpToDate() throws InterruptedException;
 
 }
