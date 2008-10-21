@@ -127,7 +127,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -157,7 +157,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -186,7 +186,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -216,10 +216,10 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -249,7 +249,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -279,7 +279,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -309,7 +309,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
                      value="fr.systerel.explorer.navigator.IElementNode">
@@ -353,10 +353,10 @@
                      value="fr.systerel.explorer.navigator.IElementNode">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
             </or>
          </triggerPoints>
@@ -378,10 +378,10 @@
          <enablement>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
             </or>
          </enablement>
@@ -441,7 +441,7 @@
          <possibleChildren>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
             </or>
          </possibleChildren>
@@ -464,7 +464,7 @@
          <possibleChildren>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
             </or>
          </possibleChildren>
@@ -484,16 +484,16 @@
                      value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IContextFile">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
-                  value="org.eventb.core.IContextFile">
+                  value="org.eventb.core.IContextRoot">
             </instanceof>
          </possibleChildren>
          <commonSorter
@@ -512,13 +512,13 @@
                      value="org.eclipse.core.resources.IProject">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.IMachineFile">
+                     value="org.eventb.core.IMachineRoot">
                </instanceof>
             </or>
          </triggerPoints>
          <possibleChildren>
             <instanceof
-                  value="org.eventb.core.IMachineFile">
+                  value="org.eventb.core.IMachineRoot">
             </instanceof>
          </possibleChildren>
          <commonSorter

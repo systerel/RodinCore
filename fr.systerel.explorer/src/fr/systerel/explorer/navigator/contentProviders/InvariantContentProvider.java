@@ -15,7 +15,7 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -31,16 +31,16 @@ import fr.systerel.explorer.navigator.IElementNode;
 public class InvariantContentProvider implements ITreeContentProvider {
 	
 	public Object[] getChildren(Object element) {
-		if (element instanceof IMachineFile) {
+		if (element instanceof IMachineRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for invariants
-			results[0] = ModelController.getMachine((IMachineFile) element).invariant_node;
+			results[0] = ModelController.getMachine((IMachineRoot) element).invariant_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
 			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(IInvariant.ELEMENT_TYPE)) {
-				IMachineFile machine = (IMachineFile) ((IElementNode) element).getParent();
+				IMachineRoot machine = (IMachineRoot) ((IElementNode) element).getParent();
 				try {
 					return machine.getInvariants();
 				} catch (RodinDBException e) {
@@ -54,7 +54,7 @@ public class InvariantContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
     	if (element instanceof IInvariant) {
     		IInvariant inv =  (IInvariant) element;
-    		IMachineFile mach = (IMachineFile) inv.getRodinFile();
+    		IMachineRoot mach = (IMachineRoot) inv.getRodinFile().getRoot();
      		ModelMachine machine = ModelController.getMachine(mach);
      		if (machine != null) {
     			return machine.invariant_node;

@@ -15,7 +15,7 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -30,16 +30,16 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class AxiomContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IContextFile) {
+		if (element instanceof IContextRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for axioms
-			results[0] = ModelController.getContext((IContextFile) element).axiom_node;
+			results[0] = ModelController.getContext((IContextRoot) element).axiom_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
 			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(IAxiom.ELEMENT_TYPE)) {
-				IContextFile context = (IContextFile) ((IElementNode) element).getParent();
+				IContextRoot context = (IContextRoot) ((IElementNode) element).getParent();
 				try {
 					return context.getAxioms();
 				} catch (RodinDBException e) {
@@ -53,7 +53,7 @@ public class AxiomContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
     	if (element instanceof IAxiom) {
     		IAxiom axm =  (IAxiom) element;
-    		IContextFile ctx = (IContextFile) axm.getRodinFile();
+    		IContextRoot ctx = (IContextRoot) axm.getRodinFile().getRoot();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
     			return context.axiom_node;

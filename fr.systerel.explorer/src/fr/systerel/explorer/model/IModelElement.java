@@ -38,7 +38,7 @@ public interface IModelElement {
 	/**
 	 * 
 	 * @return The RodinElement that this ModelElement is based on
-	 * 			 (e.g. an IMachineFile for ModelMachine)
+	 * 			 (e.g. an IMachineRoot for ModelMachine)
 	 * 			or <code>null</code> if there is none.
 	 */	
 	public IRodinElement getInternalElement();

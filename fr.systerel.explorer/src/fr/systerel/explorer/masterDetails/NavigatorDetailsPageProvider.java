@@ -14,7 +14,6 @@ package fr.systerel.explorer.masterDetails;
 
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
-import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
  * The is the DetailsPageProvider for the MasterDetails pattern.

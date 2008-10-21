@@ -20,12 +20,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
@@ -44,7 +45,7 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 				try {
 					//if it is a RodinProject return the IRodinProject from the DB.
 					if (project.hasNature(RodinCore.NATURE_ID)) {
-						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						IRodinProject proj = ExplorerUtils.getRodinProject(project);
 						if (proj != null) {
 			            	ModelController.processProject(proj);
 				        	ModelProject prj= ModelController.getProject(proj);
@@ -59,29 +60,34 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 				}
 			}
 	    }
-        if (element instanceof IMachineFile) {
-        	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
-        	return ModelController.convertToIContext(machine.getSeesContexts()).toArray();
+        if (element instanceof IMachineRoot) {
+        	ModelMachine machine = ModelController.getMachine(((IMachineRoot) element));
+        	if (machine != null) {
+        		return ModelController.convertToIContext(machine.getSeesContexts()).toArray();
+        	}
         } 
-        if (element instanceof IContextFile) {
-        	ModelContext context = ModelController.getContext(((IContextFile) element));
-        	List<ModelContext> rest = context.getRestContexts();
-        	List<ModelContext> result = new LinkedList<ModelContext>();
-        	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
-				ModelContext ctx = iterator.next();
-				result.addAll(ctx.getLongestBranch());
-			}
-        	return ModelController.convertToIContext(result).toArray();
+        if (element instanceof IContextRoot) {
+        	ModelContext context = ModelController.getContext(((IContextRoot) element));
+        	if (context != null) {
+	        	List<ModelContext> rest = context.getRestContexts();
+	        	List<ModelContext> result = new LinkedList<ModelContext>();
+	        	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
+					ModelContext ctx = iterator.next();
+					result.addAll(ctx.getLongestBranch());
+				}
+	        	return ModelController.convertToIContext(result).toArray();
+        	}
         } 
         return new Object[0];
 	}
 
 	public Object getParent(Object element) {
-        if (element instanceof IMachineFile) {
-			return ((IMachineFile) element).getParent();
+		// this always returns the project that the context belongs to.
+        if (element instanceof IMachineRoot) {
+			return ((IMachineRoot) element).getRodinFile().getParent();
 		}
-        if (element instanceof IContextFile) {
-			return ((IContextFile) element).getParent();
+        if (element instanceof IContextRoot) {
+			return ((IContextRoot) element).getRodinFile().getParent();
 		}
         return null;
 	}
@@ -92,7 +98,7 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 			//if it is a RodinProject return the IRodinProject from the DB.
 			try {
 				if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
-					return (RodinCore.getRodinDB().getRodinProject(project.getName())).getChildrenOfType(IContextFile.ELEMENT_TYPE).length >0;
+					return ExplorerUtils.getContextRootChildren(ExplorerUtils.getRodinProject(project)).length >0;
 				}
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -103,7 +109,7 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 			}
 			
 		}
-        return false;
+        return getChildren(element).length >0;
 	}
 
 	public Object[] getElements(Object inputElement) {

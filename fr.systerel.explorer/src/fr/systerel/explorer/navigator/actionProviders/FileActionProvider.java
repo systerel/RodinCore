@@ -19,7 +19,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.ICommonActionConstants;
 
 /**
- * The Action Provider for <code>IMachineFile</code>s and <code>IContextFile</code>s 
+ * The Action Provider for <code>IMachineRoot</code>s and <code>IContextRoot</code>s 
  * @author Maria Husmann
  *
  */

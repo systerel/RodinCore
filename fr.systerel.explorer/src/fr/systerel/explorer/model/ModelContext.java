@@ -20,11 +20,11 @@ import java.util.List;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
@@ -60,9 +60,11 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
 	
-	private IContextFile internalContext;
+	private IContextRoot internalContext;
 	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
 	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	// CarrierSets and Constants are not taken into the model
+	// because the don't have any proof obligations.
 	
 	/**
 	 * All contexts that are above this context in the extends tree. 
@@ -78,17 +80,17 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	private ArrayList<ModelContext> longestExtendsBranch =  new ArrayList<ModelContext>();
 
-	//indicate whether the poFile or the psFile should be processed freshly
+	//indicate whether the poRoot or the psRoot should be processed freshly
 	public boolean psNeedsProcessing = true;
 	public boolean poNeedsProcessing = true;
 
 	
 	/**
-	 * Creates a ModelContext from a given IContextFile
-	 * @param file	The ContextFile that this ModelContext is based on.
+	 * Creates a ModelContext from a given IContextRoot
+	 * @param root	The ContextRoot that this ModelContext is based on.
 	 */
-	public ModelContext(IContextFile file){
-		internalContext = file;
+	public ModelContext(IContextRoot root){
+		internalContext = root;
 		carrierset_node = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
 		constant_node = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
 		axiom_node = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
@@ -142,7 +144,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	/**
 	 * Processes the children of this Context:
 	 * Clears existing axioms and theorems.
-	 * Adds all axioms and theorems found in the internalContext file.
+	 * Adds all axioms and theorems found in the internalContext root.
 	 */
 	public void processChildren(){
 		axioms.clear();
@@ -163,19 +165,19 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 	
 	/**
-	 * Processes the POFile that belongs to this context.
+	 * Processes the PORoot that belongs to this context.
 	 * It creates a ModelProofObligation for each sequent
 	 * and adds it to this context as well as to the
 	 * concerned Theorems and Axioms.
 	 */
-	public void processPOFile() {
+	public void processPORoot() {
 		if (poNeedsProcessing) {
 			try {
 				//clear old POs
 				proofObligations.clear();
-				IPOFile file = internalContext.getPOFile();
-				if (file.exists()) {
-					IPOSequent[] sequents = file.getSequents();
+				IPORoot root = internalContext.getPORoot();
+				if (root.exists()) {
+					IPOSequent[] sequents = root.getSequents();
 					for (IPOSequent sequent : sequents) {
 						ModelProofObligation po = new ModelProofObligation(sequent);
 						po.setContext(this);
@@ -185,7 +187,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this context.
-							if (internalContext.equals(source.getAncestor(IContextFile.ELEMENT_TYPE))) {
+							if (internalContext.getRodinFile().isAncestorOf(source)) {
 								if (source instanceof IWitness ) {
 									source = source.getParent();
 								}
@@ -216,16 +218,16 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 	
 	/**
-	 * Processes the PSFile that belongs to this Context
+	 * Processes the PSRoot that belongs to this Context
 	 * Each status is added to the corresponding Proof Obligation,
 	 * if that ProofObligation is present.
 	 */
-	public void processPSFile(){
+	public void processPSRoot(){
 		if (psNeedsProcessing) {
 			try {
-				IPSFile file = internalContext.getPSFile();
-				if (file.exists()) {
-					IPSStatus[] stats = file.getStatuses();
+				IPSRoot root = internalContext.getPSRoot();
+				if (root.exists()) {
+					IPSStatus[] stats = root.getStatuses();
 					for (IPSStatus status : stats) {
 						IPOSequent sequent = status.getPOSequent();
 						// check if there is a ProofObligation for this status (there should be one!)
@@ -360,7 +362,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 
 
-	public IContextFile getInternalContext(){
+	public IContextRoot getInternalContext(){
 		return internalContext;
 	}
 
@@ -388,8 +390,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	@Override
 	public int getPOcount(){
 		if (poNeedsProcessing || psNeedsProcessing) {
-			processPOFile();
-			processPSFile();
+			processPORoot();
+			processPSRoot();
 		}
 		return proofObligations.size();
 	}
@@ -401,8 +403,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	@Override
 	public int getUndischargedPOcount() {
 		if (poNeedsProcessing || psNeedsProcessing) {
-			processPOFile();
-			processPSFile();
+			processPORoot();
+			processPSRoot();
 		}
 		int result = 0;
 		for (ModelProofObligation po : proofObligations.values()) {
@@ -416,7 +418,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	@Override
 	public String getLabel() {
-		return "Context " +internalContext.getBareName();
+		return "Context " +internalContext.getComponentName();
 	}
 
 	public IRodinElement getInternalElement() {

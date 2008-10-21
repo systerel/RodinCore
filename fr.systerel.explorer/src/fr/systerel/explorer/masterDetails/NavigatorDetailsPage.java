@@ -37,7 +37,6 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 
 import fr.systerel.explorer.Activator;
-import fr.systerel.explorer.masterDetails.statistics.StatisticsTab;
 import fr.systerel.explorer.navigator.INavigatorDetailsTab;
 
 /**

@@ -15,8 +15,8 @@ package fr.systerel.explorer.navigator.filters;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 
 /**
  * This class filters out all contexts that have a machine as grandparent
@@ -30,12 +30,12 @@ public class ContextFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if(element instanceof IContextFile) {
+		if(element instanceof IContextRoot) {
 			if(parentElement instanceof TreePath) {
 				TreePath path = (TreePath) parentElement;
 				// if the "grandparent" of this context is a machine, don't show it.
 				if (path.getSegmentCount() >= 2) {
-					if (path.getSegment(path.getSegmentCount() -2) instanceof IMachineFile) {
+					if (path.getSegment(path.getSegmentCount() -2) instanceof IMachineRoot) {
 						return false;
 					}
 				}

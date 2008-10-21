@@ -15,7 +15,7 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -30,16 +30,16 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class ConstantsContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IContextFile) {
+		if (element instanceof IContextRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for constants
-			results[0] = ModelController.getContext((IContextFile) element).constant_node;
+			results[0] = ModelController.getContext((IContextRoot) element).constant_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
 			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(IConstant.ELEMENT_TYPE)) {
-				IContextFile context = (IContextFile) ((IElementNode) element).getParent();
+				IContextRoot context = (IContextRoot) ((IElementNode) element).getParent();
 				try {
 					return context.getConstants();
 				} catch (RodinDBException e) {
@@ -53,7 +53,7 @@ public class ConstantsContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
     	if (element instanceof IConstant) {
     		IConstant cst =  (IConstant) element;
-    		IContextFile ctx = (IContextFile) cst.getRodinFile();
+    		IContextRoot ctx = (IContextRoot) cst.getRodinFile().getRoot();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
     			return context.constant_node;

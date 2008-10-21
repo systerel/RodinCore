@@ -14,8 +14,8 @@ package fr.systerel.explorer.navigator.contentProviders;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
@@ -33,16 +33,16 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class TheoremContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IMachineFile) {
+		if (element instanceof IMachineRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for theorems
-			results[0] = ModelController.getMachine((IMachineFile) element).theorem_node;
+			results[0] = ModelController.getMachine((IMachineRoot) element).theorem_node;
 			return results;
 		}
-		if (element instanceof IContextFile) {
+		if (element instanceof IContextRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for theorems
-			results[0] = ModelController.getContext((IContextFile) element).theorem_node;
+			results[0] = ModelController.getContext((IContextRoot) element).theorem_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
@@ -50,12 +50,12 @@ public class TheoremContentProvider implements ITreeContentProvider {
 			IInternalElementType<?> type = node.getChildrenType();
 			if (type.equals(ITheorem.ELEMENT_TYPE)) {
 				try {
-					if (node.getParent() instanceof IMachineFile) {
-						IMachineFile machine = (IMachineFile) node.getParent();
+					if (node.getParent() instanceof IMachineRoot) {
+						IMachineRoot machine = (IMachineRoot) node.getParent();
 						return machine.getTheorems();
 					}
-					if (node.getParent() instanceof IContextFile) {
-						IContextFile context = (IContextFile) node.getParent();
+					if (node.getParent() instanceof IContextRoot) {
+						IContextRoot context = (IContextRoot) node.getParent();
 						return context.getTheorems();
 					}
 				} catch (RodinDBException e) {
@@ -69,15 +69,15 @@ public class TheoremContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
     	if (element instanceof ITheorem) {
     		ITheorem thm =  (ITheorem) element;
-    		if ( thm.getRodinFile() instanceof IMachineFile) {
-        		IMachineFile mach = (IMachineFile) thm.getRodinFile();
+    		if ( thm.getRodinFile().getRoot() instanceof IMachineRoot) {
+        		IMachineRoot mach = (IMachineRoot) thm.getRodinFile().getRoot();
          		ModelMachine machine = ModelController.getMachine(mach);
          		if (machine != null) {
         			return machine.theorem_node;
          		}
     		}
-    		if ( thm.getRodinFile() instanceof IContextFile) {
-        		IContextFile ctxt = (IContextFile) thm.getRodinFile();
+    		if ( thm.getRodinFile().getRoot() instanceof IContextRoot) {
+        		IContextRoot ctxt = (IContextRoot) thm.getRodinFile().getRoot();
          		ModelContext context = ModelController.getContext(ctxt);
          		if (context != null) {
         			return context.theorem_node;

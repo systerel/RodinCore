@@ -20,12 +20,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
@@ -43,7 +44,7 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 				try {
 					//if it is a RodinProject return the IRodinProject from the DB.
 					if (project.hasNature(RodinCore.NATURE_ID)) {
-						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						IRodinProject proj = ExplorerUtils.getRodinProject(project);
 						if (proj != null) {
 			            	ModelController.processProject(proj);
 				        	ModelProject prj= ModelController.getProject(proj);
@@ -58,29 +59,32 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 				}
 			}
 	    }
-        if (element instanceof IMachineFile) {
-        	ModelMachine machine = ModelController.getMachine(((IMachineFile) element));
-        	List<ModelMachine> rest = machine.getRestMachines();
-        	List<ModelMachine> machines = new LinkedList<ModelMachine>();
-        	List<Object> result = new LinkedList<Object>();
+        if (element instanceof IMachineRoot) {
+        	ModelMachine machine = ModelController.getMachine(((IMachineRoot) element));
+        	if (machine != null) {
+            	List<ModelMachine> rest = machine.getRestMachines();
+            	List<ModelMachine> machines = new LinkedList<ModelMachine>();
+            	List<Object> result = new LinkedList<Object>();
 
-        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
-				machines.addAll(mach.getLongestBranch());
-			}
-        	result.addAll(ModelController.convertToIMachine(machines));
-        	
-        	return result.toArray();
+            	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
+    				ModelMachine mach = iterator.next();
+    				machines.addAll(mach.getLongestBranch());
+    			}
+            	result.addAll(ModelController.convertToIMachine(machines));
+            	
+            	return result.toArray();
+        	}
         } 
         return new Object[0];
 	}
 
 	public Object getParent(Object element) {
-        if (element instanceof IMachineFile) {
-			return ((IMachineFile) element).getParent();
+		//this always returns the project that contain the machine
+        if (element instanceof IMachineRoot) {
+			return ((IMachineRoot) element).getRodinFile().getParent();
 		}
-        if (element instanceof IContextFile) {
-			return ((IContextFile) element).getParent();
+        if (element instanceof IContextRoot) {
+			return ((IContextRoot) element).getRodinFile().getParent();
 		}
         return null;
 	}
@@ -91,7 +95,7 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 			//if it is a RodinProject return the IRodinProject from the DB.
 			try {
 				if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
-					return (RodinCore.getRodinDB().getRodinProject(project.getName())).getChildrenOfType(IMachineFile.ELEMENT_TYPE).length >0;
+					return ExplorerUtils.getMachineRootChildren(ExplorerUtils.getRodinProject(project)).length >0;
 				}
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -102,7 +106,7 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 			}
 			
 		}
-        return false;
+        return getChildren(element).length >0;
 	}
 
 	public Object[] getElements(Object inputElement) {

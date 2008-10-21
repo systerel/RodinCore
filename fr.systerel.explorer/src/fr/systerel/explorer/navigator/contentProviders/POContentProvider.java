@@ -13,10 +13,10 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 
@@ -61,24 +61,24 @@ public class POContentProvider implements ITreeContentProvider {
 	    	}
 	    } 
 	
-	    if (element instanceof IMachineFile) {
+	    if (element instanceof IMachineRoot) {
 	    	Object [] result = new Object[1];
-	    	if (ModelController.getMachine((IMachineFile)element) != null) {
-		    	result[0] =(ModelController.getMachine((IMachineFile)element).po_node);
+	    	if (ModelController.getMachine((IMachineRoot)element) != null) {
+		    	result[0] =(ModelController.getMachine((IMachineRoot)element).po_node);
 		    	//build the model
-		    	(ModelController.getMachine((IMachineFile)element)).processPOFile();
-		    	(ModelController.getMachine((IMachineFile)element)).processPSFile();
+		    	(ModelController.getMachine((IMachineRoot)element)).processPORoot();
+		    	(ModelController.getMachine((IMachineRoot)element)).processPSRoot();
 		    	return result;
 	    	}
 	    } 
 
-	    if (element instanceof IContextFile) {
+	    if (element instanceof IContextRoot) {
 	    	Object [] result = new Object[1];
-	    	if (ModelController.getContext((IContextFile)element) != null) {
-		    	result[0] =(ModelController.getContext((IContextFile)element).po_node);
+	    	if (ModelController.getContext((IContextRoot)element) != null) {
+		    	result[0] =(ModelController.getContext((IContextRoot)element).po_node);
 		    	//build the model
-		    	(ModelController.getContext((IContextFile)element)).processPOFile();
-		    	(ModelController.getContext((IContextFile)element)).processPSFile();
+		    	(ModelController.getContext((IContextRoot)element)).processPORoot();
+		    	(ModelController.getContext((IContextRoot)element)).processPSRoot();
 		    	return result;
 	    	}
 	    } 
@@ -86,11 +86,11 @@ public class POContentProvider implements ITreeContentProvider {
 	    if (element instanceof IElementNode) {
 	    	IElementNode node = (IElementNode) element;
 	    	if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
-		    	if (node.getParent() instanceof IMachineFile) {
-		    		return ModelController.getMachine((IMachineFile)node.getParent()).getIPSStatuses();
+		    	if (node.getParent() instanceof IMachineRoot) {
+		    		return ModelController.getMachine((IMachineRoot)node.getParent()).getIPSStatuses();
 		    	}
-		    	if (node.getParent() instanceof IContextFile) {
-		    		return ModelController.getContext((IContextFile)node.getParent()).getIPSStatuses();
+		    	if (node.getParent() instanceof IContextRoot) {
+		    		return ModelController.getContext((IContextRoot)node.getParent()).getIPSStatuses();
 
 		    	}
 	    	}
@@ -98,6 +98,7 @@ public class POContentProvider implements ITreeContentProvider {
         return new Object[0];
 	}
 
+	// proof obligations can have multiple parents. return none at all.
 	public Object getParent(Object element) {
 		return null;
 	}

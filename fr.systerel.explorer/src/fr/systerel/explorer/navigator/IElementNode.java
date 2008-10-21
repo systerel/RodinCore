@@ -12,7 +12,7 @@
 
 package fr.systerel.explorer.navigator;
 
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -23,11 +23,11 @@ import org.rodinp.core.IInternalElementType;
 public interface IElementNode {
 	/**
 	 * Returns the parent node of this node in the navigator tree.
-	 * The result is either of type IMachineFile or IContextFile.
+	 * The result is either of type IMachineRoot or IContextRoot.
 	 * 
 	 * @return The parent of this node in the navigator tree.
 	 */
-	public IEventBFile getParent();
+	public IEventBRoot getParent();
 	
 	/**
 	 * Returns the type of the children of this node.

@@ -21,7 +21,6 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBFile;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
@@ -107,10 +106,7 @@ public class RodinLabelProvider implements
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object obj) {
-		if (obj instanceof IEventBFile) {
-			return ((IEventBFile) obj).getBareName();
-		
-		} else if (obj instanceof ILabeledElement) {
+		if (obj instanceof ILabeledElement) {
 			try {
 				return ((ILabeledElement) obj).getLabel();
 			} catch (RodinDBException e) {

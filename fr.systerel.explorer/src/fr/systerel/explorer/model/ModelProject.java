@@ -17,15 +17,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
@@ -52,19 +55,19 @@ public class ModelProject implements IModelElement {
 	}
 	
 	/**
-	 * Process an IMachineFile. Creates an ModelMachine for this IMachineFile
+	 * Process an IMachineRoot. Creates an ModelMachine for this IMachineRoot
 	 * Creates dependencies between ModelMachines (refines) and ModelContexts (sees)
 	 * May recursively call processMachine(), if a machine in dependency was not processed yet.
 	 * Cycles in the dependencies are not taken into the Model!
-	 * @param machine	The IMachineFile to process.
+	 * @param machine	The IMachineRoot to process.
 	 */
-	public void processMachine(IMachineFile machine) {
+	public void processMachine(IMachineRoot machine) {
 		ModelMachine mach;
-		if (!machines.containsKey(machine.getBareName())) {
+		if (!machines.containsKey(machine.getElementName())) {
 			mach =  new ModelMachine(machine);
-			machines.put(machine.getBareName(), mach);
+			machines.put(machine.getElementName(), mach);
 		} else {
-			mach = machines.get(machine.getBareName());
+			mach = machines.get(machine.getElementName());
 			//remove existing dependencies. They will be calculated here freshly
 			removeMachineDependencies(mach);
 			mach.resetRefinesMachine();
@@ -78,13 +81,13 @@ public class ModelProject implements IModelElement {
 		try {
 			// get all machines, that this machine refines (all abstract machines, usually just 1)
 			for (IRefinesMachine refine : machine.getRefinesClauses()){
-				final IMachineFile abst = refine.getAbstractMachine();
+				final IMachineRoot abst = (IMachineRoot) refine.getAbstractMachine().getRoot();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
 				if (abst.exists()) {
-					if (!machines.containsKey(abst.getBareName())) {
+					if (!machines.containsKey(abst.getElementName())) {
 						processMachine(abst);
 					}
-					ModelMachine abstMach = machines.get(abst.getBareName());
+					ModelMachine abstMach = machines.get(abst.getElementName());
 					// don't allow cycles
 					if (!abstMach.getAncestors().contains(mach)) {
 						abstMach.addRefinedByMachine(mach);
@@ -99,13 +102,13 @@ public class ModelProject implements IModelElement {
 			ISeesContext[] sees =  machine.getSeesClauses();
 			for (int j = 0; j < sees.length; j++) {
 				ISeesContext see = sees[j];
-				IContextFile ctx = see.getSeenSCContext().getContextFile();
+				IContextRoot ctx = ((ISCContextRoot) see.getSeenSCContext().getRoot()).getContextRoot();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
 				if (ctx.exists()) {
-					if (!contexts.containsKey(ctx.getBareName())) {
+					if (!contexts.containsKey(ctx.getElementName())) {
 						processContext(ctx);
 					}
-					ModelContext cplxCtxt = contexts.get(ctx.getBareName());
+					ModelContext cplxCtxt = contexts.get(ctx.getElementName());
 					cplxCtxt.addSeenByMachine(mach);
 					mach.addSeesContext(cplxCtxt);
 				}
@@ -149,19 +152,19 @@ public class ModelProject implements IModelElement {
 	
 
 	/**
-	 * Process an IContextFile. Creates an ModelContext for this IContextFile
+	 * Process an IContextRoot. Creates an ModelContext for this IContextRoot
 	 * Creates dependencies betweenModelContexts (extends)
 	 * May recursively call processContext(), if a context in dependency was not processed yet.
 	 * Cycles in the dependencies are not taken into the Model!
-	 * @param context	The IContextFile to process.
+	 * @param context	The IContextRoot to process.
 	 */
-	public void processContext(IContextFile context) {
+	public void processContext(IContextRoot context) {
 		ModelContext ctx;
-		if (!contexts.containsKey(context.getBareName())) {
+		if (!contexts.containsKey(context.getElementName())) {
 			ctx =  new ModelContext(context);
-			contexts.put(context.getBareName(), ctx);
+			contexts.put(context.getElementName(), ctx);
 		} else {
-			ctx = contexts.get(context.getBareName());
+			ctx = contexts.get(context.getElementName());
 			//remove existing dependencies. They will be calculated here freshly
 			removeContextDependencies(ctx);
 			ctx.resetExtendsContexts();
@@ -177,13 +180,15 @@ public class ModelProject implements IModelElement {
 			for (int j = 0; j < exts.length; j++) {
 				IExtendsContext ext = exts[j];
 				if (ext.getAbstractSCContext() != null) {
-					IContextFile extCtx = ext.getAbstractSCContext().getContextFile();
+					IRodinFile file = internalProject.getRodinFile(EventBPlugin.getContextFileName(ext.getAbstractContextName()));
+					IContextRoot extCtx =  (IContextRoot) file.getRoot();
+//					IContextRoot extCtx = ext.getAbstractSCContext().getContextRoot();
 					// May not exist, if there are some errors in the project (e.g. was deleted)
 					if (extCtx.exists()) {
-						if (!contexts.containsKey(extCtx.getBareName())) {
+						if (!contexts.containsKey(extCtx.getContextRoot())) {
 							processContext(extCtx);
 						}
-						ModelContext exendsCtx = contexts.get(extCtx.getBareName());
+						ModelContext exendsCtx = contexts.get(extCtx.getElementName());
 						// don't allow cycles!
 						if (!exendsCtx.getAncestors().contains(ctx)) {
 							exendsCtx.addExtendedByContext(ctx);
@@ -371,9 +376,9 @@ public class ModelProject implements IModelElement {
 	
 	
 	public ModelInvariant getInvariant(IInvariant invariant){
-		IRodinFile file = invariant.getRodinFile();
-		if (file instanceof IMachineFile) {
-			ModelMachine machine = machines.get(file.getBareName());
+		IEventBRoot root = (IEventBRoot) invariant.getRodinFile().getRoot();
+		if (root instanceof IMachineRoot) {
+			ModelMachine machine = machines.get(root.getElementName());
 			if (machine != null) {
 				return machine.getInvariant(invariant);
 			}
@@ -382,9 +387,9 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelEvent getEvent(IEvent event){
-		IRodinFile file = event.getRodinFile();
-		if (file instanceof IMachineFile) {
-			ModelMachine machine = machines.get(file.getBareName());
+		IEventBRoot root = (IEventBRoot) event.getRodinFile().getRoot();
+		if (root instanceof IMachineRoot) {
+			ModelMachine machine = machines.get(root.getElementName());
 			if (machine != null) {
 				return machine.getEvent(event);
 			}
@@ -393,15 +398,15 @@ public class ModelProject implements IModelElement {
 	}
 
 	public ModelTheorem getTheorem(ITheorem theorem){
-		IRodinFile file = theorem.getRodinFile();
-		if (file instanceof IMachineFile) {
-			ModelMachine machine = machines.get(file.getBareName());
+		IEventBRoot root = (IEventBRoot) theorem.getRodinFile().getRoot();
+		if (root instanceof IMachineRoot) {
+			ModelMachine machine = machines.get(root.getElementName());
 			if (machine != null) {
 				return machine.getTheorem(theorem);
 			}
 		}
-		if (file instanceof IContextFile) {
-			ModelContext context = contexts.get(file.getBareName());
+		if (root instanceof IContextRoot) {
+			ModelContext context = contexts.get(root.getElementName());
 			if (context != null) {
 				return context.getTheorem(theorem);
 			}
@@ -410,9 +415,9 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelAxiom getAxiom(IAxiom axiom){
-		IRodinFile file = axiom.getRodinFile();
-		if (file instanceof IContextFile) {
-			ModelContext context = contexts.get(file.getBareName());
+		IEventBRoot root = (IEventBRoot) axiom.getRodinFile().getRoot();
+		if (root instanceof IContextRoot) {
+			ModelContext context = contexts.get(root.getElementName());
 			if (context != null) {
 				return context.getAxiom(axiom);
 			}
@@ -421,14 +426,14 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelProofObligation getProofObligation(IPSStatus status){
-		IRodinFile file = status.getRodinFile();
-		if (file instanceof IPSFile) {
-			ModelMachine machine = machines.get(file.getBareName());
+		IEventBRoot root = (IEventBRoot) status.getRodinFile().getRoot();
+		if (root instanceof IPSRoot) {
+			ModelMachine machine = machines.get(root.getElementName());
 			if (machine != null) {
 				return machine.getProofObligation(status);
 			}
 			
-			ModelContext context = contexts.get(file.getBareName());
+			ModelContext context = contexts.get(root.getElementName());
 			if (context != null) {
 				return context.getProofObligation(status);
 			}

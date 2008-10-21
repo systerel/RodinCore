@@ -24,10 +24,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPRFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.core.pom.RecalculateAutoStatus;
 import org.eventb.internal.ui.EventBImage;
@@ -35,6 +36,8 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -72,23 +75,23 @@ public class RecalculateAutoStatusAction extends Action {
 					throws InvocationTargetException, InterruptedException {
 				for (Object obj : objects) {
 					if (obj instanceof IRodinProject) {
-						// Run the Auto Prover on all IPSFile in this project
+						// Run the Auto Prover on all IPSRoot in this project
 						IRodinProject rodinPrj = (IRodinProject) obj;
-						IPSFile[] psFiles;
+						IPSRoot[] psRoot;
 						try {
-							psFiles = rodinPrj
-									.getChildrenOfType(IPSFile.ELEMENT_TYPE);
+							psRoot = rodinPrj
+									.getChildrenOfType(IPSRoot.ELEMENT_TYPE);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,
 											UserAwareness.IGNORE);
 							continue;
 						}
-						for (IPSFile psFile : psFiles) {
-							IPRFile prFile = psFile.getPRFile();
+						for (IPSRoot root : psRoot) {
+							IPRRoot prRoot = root.getPRRoot();
 							IPSStatus[] statuses;
 							try {
-								statuses = psFile.getStatuses();
+								statuses = root.getStatuses();
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler
 										.handleGetChildrenException(e,
@@ -97,7 +100,7 @@ public class RecalculateAutoStatusAction extends Action {
 							}
 							try {
 								// AutoProver.run(prFile, psFile, statuses, monitor);
-								RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+								RecalculateAutoStatus.run(prRoot.getRodinFile(), root.getRodinFile(), statuses, monitor);
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler.handleRodinException(
 										e, UserAwareness.IGNORE);
@@ -105,38 +108,43 @@ public class RecalculateAutoStatusAction extends Action {
 							}							
 						}
 					}
-					if (obj instanceof IMachineFile || obj instanceof IContextFile) {
-						IPSFile psFile;
-						if (obj instanceof IMachineFile)
-							psFile = ((IMachineFile) obj).getPSFile();
-						else {
-							psFile = ((IContextFile) obj).getPSFile();
-						}
-						IPRFile prFile = psFile.getPRFile();
-						IPSStatus[] statuses;
-						try {
-							statuses = psFile.getStatuses();
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler
-									.handleGetChildrenException(e,
-											UserAwareness.IGNORE);
-							continue;
-						}
-						try {
-							// AutoProver.run(prFile, psFile, statuses, monitor);
-							RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler.handleRodinException(
-									e, UserAwareness.IGNORE);
-							continue;
+					if (obj instanceof IRodinFile) {
+						IRodinFile rf = (IRodinFile) obj;
+						IInternalElement root = rf.getRoot();
+						if (root instanceof IMachineRoot
+								|| root instanceof IContextRoot) {
+							IPSRoot psRoot = ((IEventBRoot) root).getPSRoot();
+							IRodinFile psFile = psRoot.getRodinFile();
+							IRodinFile prFile = psRoot.getPRRoot()
+									.getRodinFile();
+							IPSStatus[] statuses;
+							try {
+								statuses = psRoot.getStatuses();
+							} catch (RodinDBException e) {
+								EventBUIExceptionHandler
+										.handleGetChildrenException(e,
+												UserAwareness.IGNORE);
+								continue;
+							}
+							try {
+								// AutoProver.run(prFile, psFile, statuses,
+								// monitor);
+								RecalculateAutoStatus.run(prFile, psFile,
+										statuses, monitor);
+							} catch (RodinDBException e) {
+								EventBUIExceptionHandler.handleRodinException(
+										e, UserAwareness.IGNORE);
+								continue;
+							}
 						}
 					}
 					
 					if (obj instanceof IPSStatus) {
 						
 						IPSStatus status = (IPSStatus)obj;
-						IPSFile psFile = (IPSFile) status.getOpenable();
-						IPRFile prFile = psFile.getPRFile();
+						IRodinFile psFile = (IRodinFile) status.getOpenable();
+						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+						IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 						IPSStatus[] statuses = new IPSStatus[]{status};
 						try {
 							// AutoProver.run(prFile, psFile, statuses, monitor);

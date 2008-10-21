@@ -37,6 +37,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -198,7 +199,7 @@ public class ActionCollection {
 	/**
 	 * 
 	 * @param site
-	 * @return An action for deleting projects
+	 * @return An action for deleting rodin project or rodin files
 	 */
 	public static Action getDeleteAction(final ICommonActionExtensionSite site) {
 		Action deleteAction = new Action() {
@@ -217,8 +218,12 @@ public class ActionCollection {
 						// Ignore element which is not Rodin Element
 						if (!(obj instanceof IRodinElement))
 							continue;
-						else
+						else {
+							if (obj instanceof IEventBRoot) {
+								obj = ((IEventBRoot) obj).getRodinFile();
+							}
 							set = UIUtils.addToTreeSet(set, (IRodinElement) obj);
+						}
 					}
 		
 					int answer = YesToAllMessageDialog.YES;

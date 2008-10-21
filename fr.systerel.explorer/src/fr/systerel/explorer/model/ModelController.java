@@ -21,12 +21,12 @@ import java.util.List;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.ElementChangedEvent;
@@ -38,6 +38,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.RodinNavigator;
 
 /**
@@ -78,13 +79,13 @@ public class ModelController implements IElementChangedListener {
 			prj =  projects.get(project.getHandleIdentifier());
 			//only process if really needed
 			if (prj.needsProcessing) {
-				IContextFile[] contexts = project.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-				for (IContextFile context : contexts) {
+				IContextRoot[] contexts = ExplorerUtils.getContextRootChildren(project);
+				for (IContextRoot context : contexts) {
 					prj.processContext(context);
 				}
 				prj.calculateContextBranches();
-				IMachineFile[] machines = project.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-				for (IMachineFile machine : machines) {
+				IMachineRoot[] machines = ExplorerUtils.getMachineRootChildren(project);
+				for (IMachineRoot machine : machines) {
 					prj.processMachine(machine);
 				}
 				prj.calculateMachineBranches();
@@ -150,26 +151,26 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	/**
-	 * Gets the ModelMachine for a given MachineFile
-	 * @param machineFile	The  MachineFile to look for
+	 * Gets the ModelMachine for a given MachineRoot
+	 * @param machineRoot	The  MachineRoot to look for
 	 * @return	The corresponding ModelMachine, if there exists one, <code>null</code> otherwise
 	 */
-	public static ModelMachine getMachine(IMachineFile machineFile){
-		ModelProject project = projects.get(machineFile.getRodinProject().getHandleIdentifier());
+	public static ModelMachine getMachine(IMachineRoot machineRoot){
+		ModelProject project = projects.get(machineRoot.getRodinProject().getHandleIdentifier());
 		if (project != null) {
-				return project.getMachine(machineFile.getBareName());
+				return project.getMachine(machineRoot.getElementName());
 		}
 		return null;
 	}
 	
 	/**
-	 * Removes a ModelMachine from the Model for a given MachineFile. Also removes dependencies
-	 * @param machineFile	The  MachineFile to look for
+	 * Removes a ModelMachine from the Model for a given MachineRoot. Also removes dependencies
+	 * @param machineRoot	The  MachineRoot to look for
 	 */
-	public static void removeMachine(IMachineFile machineFile){
-		ModelProject project = projects.get(machineFile.getRodinProject().getHandleIdentifier());
+	public static void removeMachine(IMachineRoot machineRoot){
+		ModelProject project = projects.get(machineRoot.getRodinProject().getHandleIdentifier());
 		if (project != null ) {
-				project.removeMachine(machineFile.getBareName());
+				project.removeMachine(machineRoot.getElementName());
 		}
 	}
 	
@@ -189,26 +190,26 @@ public class ModelController implements IElementChangedListener {
 	
 	
 	/**
-	 * Gets the ModelContext for a given ContextFile
-	 * @param contextFile	The ContextFile to look for
+	 * Gets the ModelContext for a given ContextRoot
+	 * @param contextRoot	The ContextRoot to look for
 	 * @return	The corresponding ModelContext, if there exists one, <code>null</code> otherwise
 	 */
-	public static ModelContext getContext(IContextFile contextFile){
-		ModelProject project = projects.get(contextFile.getRodinProject().getHandleIdentifier());
+	public static ModelContext getContext(IContextRoot contextRoot){
+		ModelProject project = projects.get(contextRoot.getRodinProject().getHandleIdentifier());
 		if (project != null) {
-				return project.getContext(contextFile.getBareName());
+				return project.getContext(contextRoot.getElementName());
 		}
 		return null;
 	}
 	
 	/**
-	 * Removes a ModelContext from the Model for a given ContextFile
-	 * @param contextFile	The  ContextFile to remove
+	 * Removes a ModelContext from the Model for a given ContextRoot
+	 * @param contextRoot	The  ContextRoot to remove
 	 */
-	public static void removeContext(IContextFile contextFile){
-		ModelProject project = projects.get(contextFile.getRodinProject().getHandleIdentifier());
+	public static void removeContext(IContextRoot contextRoot){
+		ModelProject project = projects.get(contextRoot.getRodinProject().getHandleIdentifier());
 		if (project != null) {
-				project.removeContext(contextFile.getBareName());
+				project.removeContext(contextRoot.getElementName());
 		}
 	}
 	/**
@@ -230,12 +231,12 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	/**
-	 * Gets the corresponding IMachineFiles for a set of ModelMachines
+	 * Gets the corresponding IMachineRoots for a set of ModelMachines
 	 * @param machs	The ModelMachines to convert	
-	 * @return	The corresponding IMachineFiles
+	 * @return	The corresponding IMachineRoots
 	 */
-	public static IMachineFile[] convertToIMachine(ModelMachine[] machs) {
-		IMachineFile[] results = new IMachineFile[machs.length];
+	public static IMachineRoot[] convertToIMachine(ModelMachine[] machs) {
+		IMachineRoot[] results = new IMachineRoot[machs.length];
 		for (int i = 0; i < machs.length; i++) {
 			results[i] = machs[i].getInternalMachine();
 			
@@ -244,12 +245,12 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	/**
-	 * Gets the corresponding IMachineFiles for a set of ModelMachines
+	 * Gets the corresponding IMachineRoots for a set of ModelMachines
 	 * @param machs	The ModelMachines to convert	
-	 * @return	The corresponding IMachineFiles
+	 * @return	The corresponding IMachineRoots
 	 */
-	public static List<IMachineFile> convertToIMachine(List<ModelMachine> machs) {
-		List<IMachineFile> results = new LinkedList<IMachineFile>();
+	public static List<IMachineRoot> convertToIMachine(List<ModelMachine> machs) {
+		List<IMachineRoot> results = new LinkedList<IMachineRoot>();
 		for (Iterator<ModelMachine> iterator = machs.iterator(); iterator.hasNext();) {
 			 results.add(iterator.next().getInternalMachine());
 		}
@@ -257,12 +258,12 @@ public class ModelController implements IElementChangedListener {
 	}
 
 	/**
-	 * Gets the corresponding IContextFiles for a set of ModelContexts
+	 * Gets the corresponding IContextRoots for a set of ModelContexts
 	 * @param conts	The ModelContexts to convert	
-	 * @return	The corresponding IContextFiles
+	 * @return	The corresponding IContextRoots
 	 */
-	public static IContextFile[] convertToIContext(ModelContext[] conts) {
-		IContextFile[] results = new IContextFile[conts.length];
+	public static IContextRoot[] convertToIContext(ModelContext[] conts) {
+		IContextRoot[] results = new IContextRoot[conts.length];
 		for (int i = 0; i < conts.length; i++) {
 			results[i] = conts[i].getInternalContext();
 			
@@ -271,12 +272,12 @@ public class ModelController implements IElementChangedListener {
 	}
 
 	/**
-	 * Gets the corresponding IContextFiles for a set of ModelContexts
+	 * Gets the corresponding IContextRoots for a set of ModelContexts
 	 * @param conts	The ModelContexts to convert	
-	 * @return	The corresponding IContextFiles
+	 * @return	The corresponding IContextRoots
 	 */
-	public static List<IContextFile> convertToIContext(List<ModelContext> conts) {
-		List<IContextFile> results = new LinkedList<IContextFile>();
+	public static List<IContextRoot> convertToIContext(List<ModelContext> conts) {
+		List<IContextRoot> results = new LinkedList<IContextRoot>();
 		for (Iterator<ModelContext> iterator = conts.iterator(); iterator.hasNext();) {
 			 results.add(iterator.next().getInternalContext());
 		}
@@ -330,38 +331,38 @@ public class ModelController implements IElementChangedListener {
 //				processProject((IRodinProject)element);
 			}
 			
-			if (element instanceof IMachineFile) {
-				project.processMachine((IMachineFile)element);
+			if (element instanceof IMachineRoot) {
+				project.processMachine((IMachineRoot)element);
 			}
-			if (element instanceof IContextFile) {
-				project.processContext((IContextFile)element);
+			if (element instanceof IContextRoot) {
+				project.processContext((IContextRoot)element);
 			}
-			if (element instanceof IPOFile) {
-				IPOFile file = (IPOFile) element;
+			if (element instanceof IPORoot) {
+				IPORoot root = (IPORoot) element;
 				//get corresponding machine or context
-				if (file.getMachineFile() != null) {
-					ModelMachine machine = getMachine(file.getMachineFile());
+				if (root.getMachineRoot() != null) {
+					ModelMachine machine = getMachine(root.getMachineRoot());
 					machine.poNeedsProcessing = true;
-					machine.processPOFile();
+					machine.processPORoot();
 				}
-				if (file.getContextFile() != null) {
-					ModelContext context = getContext(file.getContextFile());
+				if (root.getContextRoot() != null) {
+					ModelContext context = getContext(root.getContextRoot());
 					context.poNeedsProcessing = true;
-					context.processPOFile();
+					context.processPORoot();
 				}
 			}
-			if (element instanceof IPSFile) {
-				IPSFile file = (IPSFile) element;
+			if (element instanceof IPSRoot) {
+				IPSRoot root = (IPSRoot) element;
 				//get corresponding machine or context
-				if (file.getMachineFile() != null) {
-					ModelMachine machine = getMachine(file.getMachineFile());
+				if (root.getMachineRoot() != null) {
+					ModelMachine machine = getMachine(root.getMachineRoot());
 					machine.psNeedsProcessing = true;
-					machine.processPSFile();
+					machine.processPSRoot();
 				}
-				if (file.getContextFile() != null) {
-					ModelContext context = getContext(file.getContextFile());
+				if (root.getContextRoot() != null) {
+					ModelContext context = getContext(root.getContextRoot());
 					context.psNeedsProcessing = true;
-					context.processPSFile();
+					context.processPSRoot();
 				}
 			}
 			if (element instanceof IInvariant) {
@@ -426,11 +427,11 @@ public class ModelController implements IElementChangedListener {
 				// This only works if the DB was used as input.
 				addToRefresh(element.getRodinDB());
 			} else {
-				if (element instanceof IContextFile) {
-					removeContext((IContextFile)element);
+				if (element instanceof IContextRoot) {
+					removeContext((IContextRoot)element);
 				}
-				if (element instanceof IMachineFile) {
-					removeMachine((IMachineFile)element);
+				if (element instanceof IMachineRoot) {
+					removeMachine((IMachineRoot)element);
 				}
 				addToRefresh(element.getParent());
 			}

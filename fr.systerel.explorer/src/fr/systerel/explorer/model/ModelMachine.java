@@ -19,11 +19,11 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPOFile;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
-import org.eventb.core.IPSFile;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
@@ -57,10 +57,12 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * Machines that this Machine refines.
 	 */
 	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
-	private IMachineFile internalMachine ;
+	private IMachineRoot internalMachine ;
 	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
 	private HashMap<String, ModelEvent> events = new HashMap<String, ModelEvent>();
 	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	//Variables are not taken into the model, because they don't have any proof obligations
+	
 	/**
 	 * All machines that are above this machine in the refinement tree. 
 	 * (= machines that are refined by this machines)
@@ -79,11 +81,11 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 
 	/**
-	 * Creates a ModelMachine from a given IMachineFile
-	 * @param file	The MachineFile that this ModelMachine is based on.
+	 * Creates a ModelMachine from a given IMachineRoot
+	 * @param root	The MachineRoot that this ModelMachine is based on.
 	 */
-	public ModelMachine(IMachineFile file){
-		internalMachine = file;
+	public ModelMachine(IMachineRoot root){
+		internalMachine = root;
 		variable_node = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
 		invariant_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
 		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
@@ -174,19 +176,19 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	
 	/**
-	 * Processes the POFile that belongs to this machine.
+	 * Processes the PORoot that belongs to this machine.
 	 * It creates a ModelProofObligation for each sequent
 	 * and adds it to this machines as well as to the
 	 * concerned Invariants, Theorems and Events.
 	 */
-	public void processPOFile() {
+	public void processPORoot() {
 		if (poNeedsProcessing) {
 			try {
 				//clear old POs
 				proofObligations.clear();
-				IPOFile file = internalMachine.getPOFile();
-				if (file.exists()) {
-					IPOSequent[] sequents = file.getSequents();
+				IPORoot root = internalMachine.getPORoot();
+				if (root.exists()) {
+					IPOSequent[] sequents = root.getSequents();
 					for (IPOSequent sequent : sequents) {
 						ModelProofObligation po = new ModelProofObligation(sequent);
 						po.setMachine(this);
@@ -195,7 +197,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this machine.
-							if (internalMachine.equals(source.getAncestor(IMachineFile.ELEMENT_TYPE))) {
+							if (internalMachine.getRodinFile().isAncestorOf(source) ){
 								if (source instanceof IAction) {
 									source =source.getParent();
 								}
@@ -239,16 +241,16 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 
 	/**
-	 * Processes the PSFile that belongs to this Machine.
+	 * Processes the PSRoot that belongs to this Machine.
 	 * Each status is added to the corresponding Proof Obligation,
 	 * if that ProofObligation is present.
 	 */
-	public void processPSFile() {
+	public void processPSRoot() {
 		if (psNeedsProcessing) {
 			try {
-				IPSFile file = internalMachine.getPSFile();
-				if (file.exists()) {
-					IPSStatus[] stats = file.getStatuses();
+				IPSRoot root = internalMachine.getPSRoot();
+				if (root.exists()) {
+					IPSStatus[] stats = root.getStatuses();
 					for (int i = 0; i < stats.length; i++) {
 						IPSStatus status = stats[i];
 						IPOSequent sequent = status.getPOSequent();
@@ -368,7 +370,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		seesContexts  = new LinkedList<ModelContext>();
 	}
 
-	public IMachineFile getInternalMachine() {
+	public IMachineRoot getInternalMachine() {
 		return internalMachine;
 	}
 
@@ -391,7 +393,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	@Override
 	public String toString(){
-		return ("ModelMachine: "+internalMachine.getBareName());
+		return ("ModelMachine: "+internalMachine.getComponentName());
 	}
 	
 	/**
@@ -401,8 +403,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	@Override
 	public int getPOcount(){
 		if (poNeedsProcessing || psNeedsProcessing) {
-			processPOFile();
-			processPSFile();
+			processPORoot();
+			processPSRoot();
 		}
 		return proofObligations.size();
 	}
@@ -414,8 +416,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	@Override
 	public int getUndischargedPOcount() {
 		if (poNeedsProcessing || psNeedsProcessing) {
-			processPOFile();
-			processPSFile();
+			processPORoot();
+			processPSRoot();
 		}
 		int result = 0;
 		for (ModelProofObligation po : proofObligations.values()) {
@@ -429,7 +431,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	@Override
 	public String getLabel() {
-		return "Machine " +internalMachine.getBareName();
+		return "Machine " +internalMachine.getComponentName();
 	}
 
 	public IRodinElement getInternalElement() {

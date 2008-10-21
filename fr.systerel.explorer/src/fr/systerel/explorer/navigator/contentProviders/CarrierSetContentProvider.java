@@ -15,7 +15,7 @@ package fr.systerel.explorer.navigator.contentProviders;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.IContextFile;
+import org.eventb.core.IContextRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -30,16 +30,16 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class CarrierSetContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IContextFile) {
+		if (element instanceof IContextRoot) {
 			Object[] results = new Object[1];
 			//get the intermediary node for carrier sets
-			results[0] = ModelController.getContext((IContextFile) element).carrierset_node;
+			results[0] = ModelController.getContext((IContextRoot) element).carrierset_node;
 			return results;
 		}
 		if (element instanceof IElementNode){
 			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
 			if (type.equals(ICarrierSet.ELEMENT_TYPE)) {
-				IContextFile context = (IContextFile) ((IElementNode) element).getParent();
+				IContextRoot context = (IContextRoot) ((IElementNode) element).getParent();
 				try {
 					return context.getCarrierSets();
 				} catch (RodinDBException e) {
@@ -53,7 +53,7 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {
     	if (element instanceof ICarrierSet) {
     		ICarrierSet carr =  (ICarrierSet) element;
-    		IContextFile ctx = (IContextFile) carr.getRodinFile();
+    		IContextRoot ctx = (IContextRoot) carr.getRodinFile().getRoot();
      		ModelContext context = ModelController.getContext(ctx);
      		if (context != null) {
     			return context.carrierset_node;

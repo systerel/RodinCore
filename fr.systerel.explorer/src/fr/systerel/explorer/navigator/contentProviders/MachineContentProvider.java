@@ -16,16 +16,17 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.IContextFile;
-import org.eventb.core.IMachineFile;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.model.ModelController;
 
 /**
- * The content provider for Machine elements.
+ * The simple content provider for Machine elements.
  *
  */
 public class MachineContentProvider implements ITreeContentProvider {
@@ -37,10 +38,10 @@ public class MachineContentProvider implements ITreeContentProvider {
 				try {
 					//if it is a RodinProject return the IRodinProject from the DB.
 					if (project.hasNature(RodinCore.NATURE_ID)) {
-						IRodinProject proj = (RodinCore.getRodinDB().getRodinProject(project.getName()));
+						IRodinProject proj = ExplorerUtils.getRodinProject(project);
 						if (proj != null) {
 			            	ModelController.processProject(proj);
-							return proj.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
+							return ExplorerUtils.getMachineRootChildren(proj);
 						}
 					} 
 				} catch (CoreException e) {
@@ -53,11 +54,11 @@ public class MachineContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-        if (element instanceof IMachineFile) {
-			return ((IMachineFile) element).getParent();
+        if (element instanceof IMachineRoot) {
+			return ((IMachineRoot) element).getRodinFile().getParent();
 		}
-        if (element instanceof IContextFile) {
-			return ((IContextFile) element).getParent();
+        if (element instanceof IContextRoot) {
+			return ((IContextRoot) element).getRodinFile().getParent();
 		}
         return null;
 	}
@@ -68,7 +69,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 			//if it is a RodinProject return the IRodinProject from the DB.
 			try {
 				if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
-					return (RodinCore.getRodinDB().getRodinProject(project.getName())).getChildrenOfType(IContextFile.ELEMENT_TYPE).length >0;
+					return ExplorerUtils.getMachineRootChildren(ExplorerUtils.getRodinProject(project)).length >0;
 				}
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block

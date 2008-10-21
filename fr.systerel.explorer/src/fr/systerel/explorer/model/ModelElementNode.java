@@ -16,7 +16,7 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
@@ -36,16 +36,16 @@ public class ModelElementNode implements IModelElement, IElementNode{
 		this.type = type;
 		this.parent = parent;
 		if (parent instanceof ModelMachine) {
-			this.parentFile = ((ModelMachine) parent).getInternalMachine();
+			this.parentRoot = ((ModelMachine) parent).getInternalMachine();
 		}
 		if (parent instanceof ModelContext) {
-			this.parentFile = ((ModelContext) parent).getInternalContext();
+			this.parentRoot = ((ModelContext) parent).getInternalContext();
 		}
 	}
 	
 	private IInternalElementType<?> type;
 	private IModelElement parent;
-	private IEventBFile parentFile;	
+	private IEventBRoot parentRoot;	
 
 	public IModelElement getModelParent() {
 		return parent;
@@ -95,8 +95,8 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	private static String PO_TYPE = "Proof Obligations";
 
 
-	public IEventBFile getParent() {
-		return parentFile;
+	public IEventBRoot getParent() {
+		return parentRoot;
 	}
 
 	/**
