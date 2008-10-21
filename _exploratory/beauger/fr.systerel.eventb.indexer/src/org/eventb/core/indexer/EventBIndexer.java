@@ -72,7 +72,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 			String name) {
 
 		final IDeclaration declaration = index.declare(element, name);
-		final IRodinLocation loc = getRodinLocation(element.getRodinFile());
+		final IRodinLocation loc = getRodinLocation(element.getRodinFile().getRoot());
 
 		index.addOccurrence(declaration, DECLARATION, loc);
 
