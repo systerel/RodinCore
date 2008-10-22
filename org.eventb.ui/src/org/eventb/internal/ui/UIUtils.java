@@ -170,7 +170,15 @@ public class UIUtils {
 		final String regex = Pattern.quote(prefix) + "(\\d+)"; //$NON-NLS-1$
 		final Pattern prefixDigits = Pattern.compile(regex);
 		final MaxFinder maxFinder = new BigMaxFinder();
-		for (IInternalElement element : parent.getChildrenOfType(type)) {
+		IInternalElement[] childrens = parent.getChildrenOfType(type);
+		if (parent instanceof IEvent) {
+			final IInternalElement[] implicitChildren = EventBUtils
+					.getImplicitChildren((IEvent) parent);
+			if (implicitChildren.length > 0)
+				childrens = appendTab(type, implicitChildren, childrens);
+		}
+		
+		for (IInternalElement element : childrens) {
 			final String elementString;
 			if (attributeType == null) {
 				// name research
@@ -190,6 +198,17 @@ public class UIUtils {
 			}
 		}
 		return maxFinder.getAvailable();
+	}
+
+	private static IInternalElement[] appendTab(IInternalElementType<?> type,IInternalElement[]... childrens) {
+		final ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
+		for(IInternalElement[] elements : childrens){
+			for(IInternalElement element : elements){
+				if(element.getElementType() == type)
+					result.add(element);
+			}
+		}
+		return result.toArray(new IInternalElement[result.size()]);
 	}
 
 	public static void log(Throwable exc, String message) {
