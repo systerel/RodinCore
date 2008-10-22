@@ -53,7 +53,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified identifier of a type of file elements to which this version applies
+                  the fully qualified identifier of a type of root elements to which this version applies
                </documentation>
             </annotation>
          </attribute>
@@ -93,13 +93,13 @@
          &lt;p&gt;Version management is almost completely hidden inside the Rodin core plug-in. Conversions, i.e. transformations between versions are declared exlusively in extensions. There is no need to implement any line of code in Java.&lt;/p&gt;
 &lt;p&gt;Conversions can be carried out per project using method
 &lt;pre&gt;
-	IConversionResult RodinCore.convert(IRodinProject project, boolean force, IProgressMonitor monitor)
+ IConversionResult RodinCore.convert(IRodinProject project, boolean force, IProgressMonitor monitor)
 &lt;/pre&gt;
 The parameter &lt;code&gt;force&lt;/code&gt; is used to express whether synchrony with the file system is wanted or not. See &lt;code&gt;org.eclipse.core.resources.IFile&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;Method &lt;code&gt;RodinCore.convert()&lt;/code&gt; does not modify files. It converts all files in memory and produces an &lt;code&gt;IConversionResult&lt;/code&gt;. The conversion result can be queried to find out about the status of the conversion of an entire project. Only if the conversion result is accepted
 &lt;pre&gt;
-	void accept(boolean force, boolean keepHistory, IProgressMonitor monitor)
+ void accept(boolean force, boolean keepHistory, IProgressMonitor monitor)
 &lt;/pre&gt;
 the files of the project a manipulated, i.e., the updated files are written to disk.
 &lt;/p&gt;
