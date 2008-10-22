@@ -44,7 +44,7 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.falseHypTac",
 	            "org.eventb.core.seqprover.goalInHypTac",
 	            "org.eventb.core.seqprover.funGoalTac",
-	            "com.b4free.rodin.core.ml",
+	            "com.clearsy.atelierb.provers.core.ml",
 	            "org.eventb.core.seqprover.autoRewriteTac",
 	            "org.eventb.core.seqprover.typeRewriteTac",
 	            "org.eventb.core.seqprover.findContrHypsTac",
