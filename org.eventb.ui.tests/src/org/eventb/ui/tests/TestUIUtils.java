@@ -11,9 +11,12 @@
 
 package org.eventb.ui.tests;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+
 import java.math.BigInteger;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -36,7 +39,7 @@ import org.rodinp.core.RodinDBException;
  * Tests on UI utils
  * 
  * @author Nicolas Beauger
- * @author Aurélien Gilles 
+ * @author Aurélien Gilles
  */
 
 public class TestUIUtils extends EventBUITest {
@@ -78,7 +81,7 @@ public class TestUIUtils extends EventBUITest {
 					freeIndexExpected, freeIndexActual);
 		}
 	}
-	
+
 	private IEvent createRefiningEvent() throws RodinDBException {
 		final IEvent e1 = createEvent(m0, eventLabelPrefix);
 
@@ -88,7 +91,6 @@ public class TestUIUtils extends EventBUITest {
 		createRefinesEventClause(e2, e1.getLabel());
 		return e2;
 	}
-	
 
 	public void testGetFreeIndexNameFirst() throws RodinDBException {
 		// Currently, there are no elements, so the free index for a name
@@ -121,7 +123,7 @@ public class TestUIUtils extends EventBUITest {
 
 	public void testGetFreeIndexAttributeFirst() throws RodinDBException {
 		// no axiom has been created yet so it should return index 1
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "1");
 	}
 
@@ -132,7 +134,7 @@ public class TestUIUtils extends EventBUITest {
 
 		// as axioms are of a different type, the research for axioms
 		// with the same label prefix should return index 1
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				eventLabelPrefix, "1");
 
 	}
@@ -142,7 +144,7 @@ public class TestUIUtils extends EventBUITest {
 
 		// an axiom has been created with label index 1
 		// so next available index should be 2
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "2");
 	}
 
@@ -151,7 +153,7 @@ public class TestUIUtils extends EventBUITest {
 
 		// many axioms have been created up to label index 130
 		// so next available index should be 131
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, EventBAttributes.LABEL_ATTRIBUTE,
+		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "131");
 	}
 
@@ -162,27 +164,27 @@ public class TestUIUtils extends EventBUITest {
 	public void testGetFreeIndexLabelGuardExtended() throws Exception {
 		final IEvent con = createRefiningEvent();
 		con.setExtended(true, null);
-		
-		final IEvent abs = EventBUtils.getAbstractEvent(con); 
+
+		final IEvent abs = EventBUtils.getAbstractEvent(con);
 		createGuard(abs, guardLabelPrefix + 1, "");
 
-		assertFreeIndex(con, IGuard.ELEMENT_TYPE,
-				EventBAttributes.LABEL_ATTRIBUTE, guardLabelPrefix, "2");
+		assertFreeIndex(con, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+				guardLabelPrefix, "2");
 	}
 
 	/**
-	 * Ensures that abstract guards are ignored when computing a free
-	 * label for a guard in a non-extended concrete event.
+	 * Ensures that abstract guards are ignored when computing a free label for
+	 * a guard in a non-extended concrete event.
 	 */
 	public void testGetFreeIndexLabelGuardNotExtended() throws Exception {
 		final IEvent con = createRefiningEvent();
 		con.setExtended(false, null);
-		
-		final IEvent abs = EventBUtils.getAbstractEvent(con); 
+
+		final IEvent abs = EventBUtils.getAbstractEvent(con);
 		createGuard(abs, guardLabelPrefix + 1, "");
 
-		assertFreeIndex(con, IGuard.ELEMENT_TYPE,
-				EventBAttributes.LABEL_ATTRIBUTE, guardLabelPrefix, "1");
+		assertFreeIndex(con, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+				guardLabelPrefix, "1");
 	}
 
 	private IInternalElement createChildrenOfType(IEvent parent,
@@ -213,17 +215,15 @@ public class TestUIUtils extends EventBUITest {
 		// many axioms have been created up to label index 130
 		// but no predicate attribute has been set
 		// so next available predicate index
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE,
-				EventBAttributes.PREDICATE_ATTRIBUTE, "this axiom is false",
-				"1");
+		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE,
+				"this axiom is false", "1");
 	}
 
 	public void testConstantIdentifier() throws Exception {
 		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE,
 				constantNamePrefix);
 		cst.setIdentifierString(constantIdentifierPrefix + "1", null);
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE,
-				EventBAttributes.IDENTIFIER_ATTRIBUTE,
+		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE,
 				constantIdentifierPrefix, "2");
 	}
 
@@ -307,7 +307,7 @@ public class TestUIUtils extends EventBUITest {
 	 */
 	public void testInexistentLabel() throws Exception {
 		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst1");
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE,
-				EventBAttributes.LABEL_ATTRIBUTE, "constant", "1");
+		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+				"constant", "1");
 	}
 }
