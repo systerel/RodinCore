@@ -583,7 +583,7 @@ public abstract class AstConverter {
 				}
 				
 				try {
-					if (evt.isExtended()) {
+					if (evt.hasExtended() && evt.isExtended()) {
 						beginLevel2();
 						appendExtended();
 						endLevel2();

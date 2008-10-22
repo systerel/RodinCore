@@ -32,7 +32,8 @@ public class ExtendsEventSection extends CComboSection {
 
 	@Override
 	String getText() throws RodinDBException {
-		if (((IEvent) element).isExtended())
+		IEvent event = (IEvent) element;
+		if (event.hasExtended() && event.isExtended())
 			return TRUE;
 		else {
 			return FALSE;

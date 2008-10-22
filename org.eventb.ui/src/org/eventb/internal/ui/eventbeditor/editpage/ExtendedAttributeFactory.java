@@ -146,7 +146,7 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	public String getValue(IAttributedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IEvent event = (IEvent) element;
-		return event.isExtended() ? TRUE : FALSE;
+		return (event.hasExtended() && event.isExtended()) ? TRUE : FALSE;
 	}
 
 	/**
