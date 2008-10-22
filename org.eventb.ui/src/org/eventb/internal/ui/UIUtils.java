@@ -11,13 +11,16 @@
  *     Systerel - added getFreeIndex method to factor several methods
  *     Systerel - added methods indicateUser() and showUnexpectedError()
  *     Systerel - separation of file and root element
+ *     Systerel - take into account implicit children when computing a free index
  *******************************************************************************/
 package org.eventb.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,15 +173,7 @@ public class UIUtils {
 		final String regex = Pattern.quote(prefix) + "(\\d+)"; //$NON-NLS-1$
 		final Pattern prefixDigits = Pattern.compile(regex);
 		final MaxFinder maxFinder = new BigMaxFinder();
-		IInternalElement[] childrens = parent.getChildrenOfType(type);
-		if (parent instanceof IEvent) {
-			final IInternalElement[] implicitChildren = EventBUtils
-					.getImplicitChildren((IEvent) parent);
-			if (implicitChildren.length > 0)
-				childrens = appendTab(type, implicitChildren, childrens);
-		}
-		
-		for (IInternalElement element : childrens) {
+		for (IInternalElement element : getVisibleChildrenOfType(parent, type)) {
 			final String elementString;
 			if (attributeType == null) {
 				// name research
@@ -200,15 +195,27 @@ public class UIUtils {
 		return maxFinder.getAvailable();
 	}
 
-	private static IInternalElement[] appendTab(IInternalElementType<?> type,IInternalElement[]... childrens) {
-		final ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
-		for(IInternalElement[] elements : childrens){
-			for(IInternalElement element : elements){
-				if(element.getElementType() == type)
-					result.add(element);
+	private static List<IInternalElement> getVisibleChildrenOfType(
+			IInternalParent parent, IInternalElementType<?> type)
+			throws RodinDBException {
+		final List<IInternalElement> result = new ArrayList<IInternalElement>();
+		addImplicitChildrenOfType(result, parent, type);
+		result.addAll(Arrays.asList(parent.getChildrenOfType(type)));
+		return result;
+	}
+
+	private static void addImplicitChildrenOfType(
+			List<IInternalElement> result, IInternalParent parent,
+			IInternalElementType<?> type) throws RodinDBException {
+		if (parent instanceof IEvent) {
+			final IInternalElement[] implicitChildren = EventBUtils
+					.getImplicitChildren((IEvent) parent);
+			for (IInternalElement child : implicitChildren) {
+				if (child.getElementType() == type) {
+					result.add(child);
+				}
 			}
 		}
-		return result.toArray(new IInternalElement[result.size()]);
 	}
 
 	public static void log(Throwable exc, String message) {
