@@ -32,14 +32,14 @@ public class WorkingSetSelection {
 	
 	@Override
 	public String toString() {
-		String result =  new String();
+		StringBuilder result =  new StringBuilder();
+		String sep = "";
 		for (IWorkingSet set : workingSets) {
-			if (!result.isEmpty()){
-				 result = result +", " ;
-			}
-			result =  result + set.getLabel();
+			result.append(sep);
+			sep = ", ";
+			result.append(set.getLabel());
 		}
-		return result;
+		return result.toString();
 	}
 	
 	public IWorkingSet[] getWorkingSets() {
@@ -47,17 +47,31 @@ public class WorkingSetSelection {
 	}
 	
 	/**
-	 * Two WorkingSetSelection are considered equal, if the contain the same workingSets in the same order
-	 * @param selection
-	 * @return true if they are equal according to the above description, false otherwise
+	 * Two <code>WorkingSetSelection</code> are considered equal, if they
+	 * contain the same workingSets in the same order
+	 * 
+	 * @param other
+	 *            other object to compare with
+	 * @return <code>true</code> iff they are equal according to the above
+	 *         description, false otherwise
 	 */
-	public boolean equals(WorkingSetSelection selection){
-		if (this == selection) {
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
 			return true;
 		}
+		if (! (other instanceof WorkingSetSelection))
+			return false;
+		WorkingSetSelection selection = (WorkingSetSelection) other;
 		if (Arrays.equals(workingSets, selection.getWorkingSets())){
 			return true;
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return workingSets.hashCode();
+	}
+	
 }
