@@ -567,8 +567,8 @@ public class ObligationExplorer extends ViewPart implements
 				IUserSupportDelta[] affectedUserSupports = delta.getAffectedUserSupports();
 				for (IUserSupportDelta affectedUserSupport : affectedUserSupports) {
 					IRodinFile psFile = affectedUserSupport.getUserSupport().getInput();
-					IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 					if (psFile != null) {
+						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 						IMachineRoot machineRoot = psRoot.getMachineRoot();
 						if (machineRoot.exists()) {
 							fViewer.refresh(machineRoot);
