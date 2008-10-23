@@ -11,38 +11,14 @@
 
 package fr.systerel.explorer;
 
-import java.awt.FlowLayout;
-
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.navigator.CommonNavigator;
-import org.eclipse.ui.navigator.CommonViewer;
-import org.eventb.internal.ui.TimerText;
-import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.IEventBSharedImages;
 
 import fr.systerel.explorer.masterDetails.NavigatorMasterDetailsBlock;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.navigator.filters.DischargedFilter;
-import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
 
 /**
  * The Navigator for the CommonNavigator framework.

@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -34,6 +35,7 @@ import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -63,7 +65,14 @@ public class ModelController implements IElementChangedListener {
 		RodinCore.addElementChangedListener(this);
 		this.navigator = navigator;
 	}
-	
+
+	/**
+	 * No arguments constructor for testing purpose
+	 */
+	public ModelController() {
+		// do nothing
+	}
+
 	/**
 	 * Processes a RodinProject. Creates a model for this project (Machines,
 	 * Contexts, Invariants etc.). Proof Obligations are not included in
@@ -330,7 +339,7 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
-		toRefresh = new ArrayList<IRodinElement>();
+		toRefresh.clear();
 		processDelta(event.getDelta());
 		for (IRodinElement elem : toRefresh) {
 			refreshModel(elem);
@@ -346,7 +355,11 @@ public class ModelController implements IElementChangedListener {
 						viewer.refresh();
 					} else {
 						for (Object elem : toRefresh) {
-							viewer.refresh();
+							if (elem instanceof IRodinProject) {
+								viewer.refresh(((IRodinProject)elem).getProject());
+							} else {
+								viewer.refresh(elem);
+							}
 						}
 					}
 				}
@@ -430,7 +443,7 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	// List of elements need that to be refreshed in the viewer (when processing Delta of changes).
-	ArrayList<IRodinElement> toRefresh;
+	ArrayList<IRodinElement> toRefresh =new ArrayList<IRodinElement>();
 	
 	// this getter is for testing purpose
 	public ArrayList<IRodinElement> getToRefresh() {
@@ -470,13 +483,37 @@ public class ModelController implements IElementChangedListener {
 				// This will update everything.
 				addToRefresh(element.getRodinDB());
 			} else {
+				if (element instanceof IRodinFile)  {
+					IRodinFile file = (IRodinFile) element;
+					//remove the context from the model
+					if (file.getRoot() instanceof IContextRoot) {
+						removeContext((IContextRoot)file.getRoot());
+						addToRefresh(element.getRodinProject());
+					}
+					//remove the machine from the model
+					if (file.getRoot() instanceof IMachineRoot) {
+						removeMachine((IMachineRoot)file.getRoot());
+						addToRefresh(element.getRodinProject());
+					}
+				}
+				//remove the context from the model
 				if (element instanceof IContextRoot) {
 					removeContext((IContextRoot)element);
 				}
+				//remove the machine from the model
 				if (element instanceof IMachineRoot) {
 					removeMachine((IMachineRoot)element);
 				}
-				addToRefresh(element.getParent());
+
+				
+				//add the containing project to refresh.
+				// if it is a root 
+				if (element instanceof IEventBRoot) {
+					addToRefresh(element.getRodinProject());
+				//otherwise add the parent to refresh
+				} else {
+					addToRefresh(element.getParent());
+				}
 			}
 			return;
 		}
