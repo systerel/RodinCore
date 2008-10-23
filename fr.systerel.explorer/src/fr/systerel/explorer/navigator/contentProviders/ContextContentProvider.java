@@ -34,7 +34,7 @@ public class ContextContentProvider implements ITreeContentProvider {
 	    	   IProject project = (IProject) element;
 	    	   if (project.isAccessible()) {
 					try {
-						//if it is a RodinProject return the IRodinProject from the DB.
+						//if it is a RodinProject get the IRodinProject from the DB.
 						if (project.hasNature(RodinCore.NATURE_ID)) {
 							IRodinProject proj = ExplorerUtils.getRodinProject(project);
 							if (proj != null) {

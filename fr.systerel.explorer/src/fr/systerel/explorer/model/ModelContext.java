@@ -178,8 +178,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 				IPORoot root = internalContext.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
+					int pos = 1;
 					for (IPOSequent sequent : sequents) {
-						ModelProofObligation po = new ModelProofObligation(sequent);
+						ModelProofObligation po = new ModelProofObligation(sequent, pos);
+						pos++;
 						po.setContext(this);
 						proofObligations.put(sequent, po);
 			

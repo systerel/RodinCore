@@ -189,8 +189,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				IPORoot root = internalMachine.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
+					int pos = 1;
 					for (IPOSequent sequent : sequents) {
-						ModelProofObligation po = new ModelProofObligation(sequent);
+						ModelProofObligation po = new ModelProofObligation(sequent, pos);
+						pos++;
 						po.setMachine(this);
 						proofObligations.put(sequent, po);
 						IPOSource[] sources = sequent.getSources();

@@ -11,6 +11,7 @@
 
 package fr.systerel.explorer.model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,13 +55,15 @@ public abstract class ModelPOContainer implements IModelElement {
 	}
 
 	/**
-	 * 
-	 * @return The IPSStatuses of the ProofObligations in this container It is
-	 *         possible that some ProofObligatiosn don't have a status
+	 * @return The IPSStatuses of the ProofObligations in this container in the
+	 *         same order they appear in the file. It is possible that some
+	 *         ProofObligatiosn don't have a status
 	 */
 	public IPSStatus[] getIPSStatuses() {
 		List<IPSStatus> statuses = new LinkedList<IPSStatus>();
-		for (ModelProofObligation po : proofObligations.values()) {
+		ModelProofObligation[] sorted = proofObligations.values().toArray(new ModelProofObligation[proofObligations.size()]);
+		Arrays.sort(sorted);
+		for (ModelProofObligation po : sorted) {
 			if (po.getIPSStatus() != null) {
 				statuses.add(po.getIPSStatus());
 			}
