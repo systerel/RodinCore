@@ -395,11 +395,17 @@ public class ModelController implements IElementChangedListener {
 					ModelMachine machine = getMachine(root.getMachineRoot());
 					machine.poNeedsProcessing = true;
 					machine.processPORoot();
+					//process the statuses as well
+					machine.psNeedsProcessing = true;
+					machine.processPSRoot();
 				}
 				if (root.getContextRoot().exists()) {
 					ModelContext context = getContext(root.getContextRoot());
 					context.poNeedsProcessing = true;
 					context.processPORoot();
+					//process the statuses as well
+					context.psNeedsProcessing = true;
+					context.processPSRoot();
 				}
 			}
 			if (element instanceof IPSRoot) {
@@ -416,29 +422,30 @@ public class ModelController implements IElementChangedListener {
 					context.processPSRoot();
 				}
 			}
-			if (element instanceof IInvariant) {
-				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getModelParent();
-				mach.addInvariant((IInvariant) element);
-			}
-			if (element instanceof IEvent) {
-				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getModelParent();
-				mach.addEvent((IEvent) element);
-			}
-			if (element instanceof ITheorem) {
-				ModelTheorem thm = getTheorem((ITheorem) element);
-				if (thm.getModelParent() instanceof ModelMachine) {
-					ModelMachine mach = (ModelMachine) thm.getModelParent();
-					mach.addTheorem((ITheorem) element);
-				}
-				if (thm.getModelParent() instanceof ModelContext) {
-					ModelContext ctx = (ModelContext) thm.getModelParent();
-					ctx.addTheorem((ITheorem) element);
-				}
-			}
-			if (element instanceof IAxiom) {
-				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getModelParent();
-				ctx.addAxiom((IAxiom) element);
-			}
+//			if (element instanceof IInvariant) {
+//				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getModelParent();
+//				mach.addInvariant((IInvariant) element);
+//			}
+//			if (element instanceof IEvent) {
+//				System.out.println("event");
+//				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getModelParent();
+//				mach.addEvent((IEvent) element);
+//			}
+//			if (element instanceof ITheorem) {
+//				ModelTheorem thm = getTheorem((ITheorem) element);
+//				if (thm.getModelParent() instanceof ModelMachine) {
+//					ModelMachine mach = (ModelMachine) thm.getModelParent();
+//					mach.addTheorem((ITheorem) element);
+//				}
+//				if (thm.getModelParent() instanceof ModelContext) {
+//					ModelContext ctx = (ModelContext) thm.getModelParent();
+//					ctx.addTheorem((ITheorem) element);
+//				}
+//			}
+//			if (element instanceof IAxiom) {
+//				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getModelParent();
+//				ctx.addAxiom((IAxiom) element);
+//			}
 		}
 	}
 	
@@ -454,6 +461,10 @@ public class ModelController implements IElementChangedListener {
 	
 	private void addToRefresh(IRodinElement o) {
 		if (!toRefresh.contains(o)) {
+			//add the root and not the file
+			if (o instanceof IRodinFile) {
+				o = ((IRodinFile) o).getRoot();
+			}
 			toRefresh.add(o);
 		}
 	}
@@ -466,6 +477,7 @@ public class ModelController implements IElementChangedListener {
 	 *            The Delta from the Rodin Database
 	 */
 	public void processDelta(final IRodinElementDelta delta) {
+//		System.out.println(delta);
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
@@ -480,6 +492,7 @@ public class ModelController implements IElementChangedListener {
 
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinProject) {
+				removeProject((IRodinProject) element);
 				// This will update everything.
 				addToRefresh(element.getRodinDB());
 			} else {
@@ -530,29 +543,49 @@ public class ModelController implements IElementChangedListener {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				addToRefresh(element.getParent());
+				if (element.getParent() != null) {
+					addToRefresh(element.getParent());
+				} else {
+					addToRefresh(element);
+				}
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				addToRefresh(element.getParent());
+				if (element.getParent() != null) {
+					addToRefresh(element.getParent());
+				} else {
+					addToRefresh(element);
+				}
 				return;
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				addToRefresh(element.getParent());
+				if (element.getParent() != null) {
+					addToRefresh(element.getParent());
+				} else {
+					addToRefresh(element);
+				}
 				return;
 			}
 			if ((flags & IRodinElementDelta.F_OPENED) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				addToRefresh(element.getParent());
+				if (element.getParent() != null) {
+					addToRefresh(element.getParent());
+				} else {
+					addToRefresh(element);
+				}
 				return;
 			}
 			if ((flags & IRodinElementDelta.F_CLOSED) != 0) {
 				//refresh parent for safety (e.g. dependencies between machines)
-				addToRefresh(element.getParent());
+				if (element.getParent() != null) {
+					addToRefresh(element.getParent());
+				} else {
+					addToRefresh(element);
+				}
 				return;
 			}
 			
