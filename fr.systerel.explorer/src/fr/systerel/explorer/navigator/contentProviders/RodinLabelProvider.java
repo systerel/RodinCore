@@ -27,6 +27,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -85,11 +86,16 @@ public class RodinLabelProvider implements
 			}
 			if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
 				ModelPOContainer parent = (ModelPOContainer) ((ModelElementNode) node).getModelParent();
-				boolean discharged = !parent.hasUndischargedPOs();
+				boolean discharged = parent.getMinConfidence() > IConfidence.REVIEWED_MAX;
+				boolean reviewed = parent.getMinConfidence() > IConfidence.PENDING;
 				
 				if (discharged) {
 					return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
-				} else{
+				} 
+				else if (reviewed){
+					return EventBImage.getImage(IEventBSharedImages.IMG_REVIEWED);
+				}
+				else {
 					return EventBImage.getImage(IEventBSharedImages.IMG_PENDING);
 				}
 			}
