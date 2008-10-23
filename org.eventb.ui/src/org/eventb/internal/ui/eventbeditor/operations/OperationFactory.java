@@ -250,15 +250,6 @@ public class OperationFactory {
 		return getContext(root.getRodinFile());
 	}
 
-	public static AtomicOperation changeAttribute(IRodinFile file,
-			IAttributedElement element, EventBAttributesManager manager) {
-		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
-				.changeAttribute(element, manager));
-		cmd.addContext(getContext(file));
-		return cmd;
-	}
-
 	/**
 	 * Change the attribute of a element with a factory
 	 * 
@@ -362,21 +353,4 @@ public class OperationFactory {
 			return null;
 		}
 	}
-
-	public static AtomicOperation changeAttribute(IRodinFile file,
-			IAttributedElement element, IAttributeType.String type, String value) {
-		EventBAttributesManager manager = new EventBAttributesManager();
-		manager.addAttribute(type, value);
-		return changeAttribute(file, element, manager);
-	}
-
-	// public static AtomicOperation removeAttribute(IRodinFile file,
-	// IAttributeFactory factory, IAttributedElement element) {
-	// final OperationBuilder builder = new OperationBuilder();
-	// final AtomicOperation op = new AtomicOperation(builder.changeAttribute(
-	// factory, element, null));
-	// op.addContext(getContext(file));
-	// return op;
-	// }
-
 }

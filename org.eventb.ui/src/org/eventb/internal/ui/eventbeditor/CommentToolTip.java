@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -44,6 +43,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
@@ -137,7 +137,7 @@ public class CommentToolTip {
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
 					UIUtils.setStringAttribute(element,
-							EventBAttributes.COMMENT_ATTRIBUTE, original, false, null);
+							new CommentAttributeFactory(), original, null);
 					text.dispose();
 					helpShell.dispose();
 					break;
@@ -151,8 +151,8 @@ public class CommentToolTip {
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
 			UIUtils.setStringAttribute(element,
-					EventBAttributes.COMMENT_ATTRIBUTE, text.getTextWidget()
-							.getText(), true, null);
+					new CommentAttributeFactory(), text.getTextWidget()
+							.getText(), null);
 		}
 
 	}

@@ -312,18 +312,9 @@ public class RefinesSection extends SectionPart implements
 			History.getInstance().addOperation(operation);
 			refined = (IRefinesMachine) operation.getCreatedElement();
 		} else { // Change the element
-			try {
-				if (!(refined.getAbstractMachineName().equals(machine))) {
-					AtomicOperation operation = OperationFactory
-							.changeAttribute(
-									editor.getRodinInput().getRodinFile(),
-									new RefinesMachineAbstractMachineNameAttributeFactory(),
-									refined, machine);
-					History.getInstance().addOperation(operation);
-				}
-			} catch (RodinDBException exception) {
-				exception.printStackTrace();
-			}
+			UIUtils.setStringAttribute(refined,
+					new RefinesMachineAbstractMachineNameAttributeFactory(),
+					machine, null);
 		}
 	}
 

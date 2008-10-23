@@ -14,16 +14,12 @@
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
-import org.eventb.core.IEvent;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class ExtendsEventSection extends CComboSection {
-
-	private static final String TRUE = "true";
-
-	private static final String FALSE = "false";
 
 	@Override
 	String getLabel() {
@@ -32,25 +28,23 @@ public class ExtendsEventSection extends CComboSection {
 
 	@Override
 	String getText() throws RodinDBException {
-		IEvent event = (IEvent) element;
-		if (event.hasExtended() && event.isExtended())
-			return TRUE;
-		else {
-			return FALSE;
-		}
+		ExtendedAttributeFactory factory = new ExtendedAttributeFactory();
+		return factory.getValue(element, null);
+
 	}
 
 	@Override
 	void setData() {
-		comboWidget.add(TRUE);
-		comboWidget.add(FALSE);
+		ExtendedAttributeFactory factory = new ExtendedAttributeFactory();
+		for(String value : factory.getPossibleValues(null, null))
+			comboWidget.add(value);
+
 	}
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		boolean extend = (text.equalsIgnoreCase(TRUE));
-		UIUtils.setBooleanAttribute(element,
-				EventBAttributes.EXTENDED_ATTRIBUTE, extend, monitor);
+		IAttributeFactory factory = new ExtendedAttributeFactory();
+		UIUtils.setStringAttribute(element, factory, text, null);
 	}
 
 }

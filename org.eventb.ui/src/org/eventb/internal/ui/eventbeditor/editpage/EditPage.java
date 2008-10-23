@@ -545,11 +545,13 @@ public class EditPage extends EventBEditorPage implements
 				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 						element.getParent(), element.getElementType()));
 				return;
-			} else if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
+			} 
+			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
 				for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
 					processDelta(subDelta);
 				}
-			} else if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+			}
+			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				isChanged.add(element);
 				childrenHasChanged.add(new Pair<IRodinElement, IElementType<?>>(
 						element.getParent(), element.getElementType()));

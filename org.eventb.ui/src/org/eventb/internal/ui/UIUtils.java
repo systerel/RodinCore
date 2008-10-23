@@ -12,6 +12,7 @@
  *     Systerel - added methods indicateUser() and showUnexpectedError()
  *     Systerel - separation of file and root element
  *     Systerel - take into account implicit children when computing a free index
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -73,7 +74,6 @@ import org.eventb.internal.ui.eventbeditor.editpage.ParameterIdentifierAttribute
 import org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.operations.EventBAttributesManager;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -571,60 +571,6 @@ public class UIUtils {
 		set.removeAll(delete);
 		set.add(element);
 		return set;
-	}
-
-	/**
-	 * Sets the given string attribute of the given Rodin element to the given
-	 * new value, if it is not already set. In case the new value is empty, the
-	 * attribute is removed.
-	 * 
-	 * @param element
-	 * @param attrType
-	 * @param newValue
-	 * @param pm
-	 */
-	public static void setStringAttribute(IAttributedElement element,
-			IAttributeType.String attrType, String newValue, boolean undoable,
-			IProgressMonitor pm) {
-		try {
-			if (!element.hasAttribute(attrType)
-					|| !newValue.equals(element.getAttributeValue(attrType))) {
-				if (undoable && element instanceof IInternalElement) {
-					IInternalElement iiElement = (IInternalElement) element;
-					History.getInstance().addOperation(
-							OperationFactory.changeAttribute(iiElement
-									.getRodinFile(), element, attrType,
-									newValue));
-				} else {
-					element.setAttributeValue(attrType, newValue, pm);
-				}
-			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "Error changing attribute " + attrType.getId() //$NON-NLS-1$
-					+ " for element " + element.getElementName()); //$NON-NLS-1$
-			if (UIUtils.DEBUG)
-				e.printStackTrace();
-		}
-	}
-	
-	
-	public static void setBooleanAttribute(IInternalElement element,
-			IAttributeType.Boolean type, boolean value, IProgressMonitor pm) {
-		try {
-			if (!element.hasAttribute(type)
-					|| value != element.getAttributeValue(type)) {
-				EventBAttributesManager manager = new EventBAttributesManager();
-				manager.addAttribute(type, value);
-				History.getInstance().addOperation(
-						OperationFactory.changeAttribute(
-								element.getRodinFile(), element, manager));
-			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "Error changing attribute " + type.getId() //$NON-NLS-1$
-					+ " for element " + element.getElementName()); //$NON-NLS-1$
-			if (UIUtils.DEBUG)
-				e.printStackTrace();
-		}
 	}
 
 	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
