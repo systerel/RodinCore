@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 
 package fr.systerel.explorer.model;
 
@@ -22,22 +21,23 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * Represents a Proof Obligation in the Model.
- *
+ * 
  */
 public class ModelProofObligation implements Comparable<ModelProofObligation> {
-	public ModelProofObligation (IPOSequent sequent, int position) {
+	public ModelProofObligation(IPOSequent sequent, int position) {
 		this.internal_sequent = sequent;
 		this.position = position;
 	}
-	
+
 	private IPOSequent internal_sequent;
 	private IPSStatus internal_status;
-	
+
 	private List<ModelInvariant> invariants = new LinkedList<ModelInvariant>();
 	private List<ModelEvent> events = new LinkedList<ModelEvent>();
-	private List<ModelTheorem> theorems= new LinkedList<ModelTheorem>();
+	private List<ModelTheorem> theorems = new LinkedList<ModelTheorem>();
 	private List<ModelAxiom> axioms = new LinkedList<ModelAxiom>();
-	private ModelMachine machine; // A proof obligation can either belong to a context or a machine
+	private ModelMachine machine; // A proof obligation can either belong to a
+									// context or a machine
 	private ModelContext context;
 	private boolean discharged = false;
 	private boolean broken = false;
@@ -55,13 +55,13 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	}
 
 	public void setMachine(ModelMachine machine) {
-		this.machine = machine;		
+		this.machine = machine;
 	}
-	
+
 	public ModelMachine getMachine() {
 		return machine;
 	}
-	
+
 	/**
 	 * Set the status of this proof obligation. Updates stored attributes such
 	 * as discharged or reviewed
@@ -73,7 +73,8 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 		internal_status = status;
 		try {
 			int confidence = status.getConfidence();
-			discharged =  (status.getConfidence() > IConfidence.REVIEWED_MAX) && !status.isBroken() ;
+			discharged = (status.getConfidence() > IConfidence.REVIEWED_MAX)
+					&& !status.isBroken();
 			reviewed = (confidence > IConfidence.PENDING && confidence <= IConfidence.REVIEWED_MAX);
 			broken = status.isBroken();
 			manual = status.getHasManualProof();
@@ -82,7 +83,7 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public IPSStatus getIPSStatus() {
 		return internal_status;
 	}
@@ -90,15 +91,15 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	public IPOSequent getIPOSequent() {
 		return internal_sequent;
 	}
-	
+
 	public ModelInvariant[] getInvariants() {
 		return invariants.toArray(new ModelInvariant[invariants.size()]);
 	}
-	
+
 	public void addInvariant(ModelInvariant inv) {
 		invariants.add(inv);
 	}
-	
+
 	public void removeInvariants(ModelInvariant inv) {
 		invariants.remove(inv);
 	}
@@ -106,11 +107,11 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	public ModelEvent[] getEvents() {
 		return events.toArray(new ModelEvent[events.size()]);
 	}
-	
+
 	public void addEvent(ModelEvent event) {
 		events.add(event);
 	}
-	
+
 	public void removeEvents(ModelEvent event) {
 		events.remove(event);
 	}
@@ -129,13 +130,13 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 
 	public void addAxiom(ModelAxiom ax) {
 		axioms.add(ax);
-		
+
 	}
 
 	public ModelAxiom[] getAxioms() {
 		return axioms.toArray(new ModelAxiom[axioms.size()]);
 	}
-	
+
 	public ModelContext getContext() {
 		return context;
 	}
@@ -143,43 +144,37 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	public void setContext(ModelContext ctx) {
 		context = ctx;
 	}
-	
-	public String getElementName(){
+
+	public String getElementName() {
 		return internal_sequent.getElementName();
 	}
-	
+
 	/**
 	 * 
-	 * @return <code>true</code> if this PO is discharged
-	 * <code>false</code> otherwise.
+	 * @return <code>true</code> if this PO is discharged <code>false</code>
+	 *         otherwise.
 	 */
-	public boolean isDischarged(){
+	public boolean isDischarged() {
 		return discharged;
 	}
 
-	public boolean isBroken(){
+	public boolean isBroken() {
 		return broken;
 	}
 
-	public boolean isReviewed(){
+	public boolean isReviewed() {
 		return reviewed;
 	}
 
-	public boolean isManual(){
+	public boolean isManual() {
 		return manual;
 	}
 
 	/**
-	 * compare according to the <code>position</code> of the proof obligations
+	 * Compare according to the <code>position</code> of the proof obligations
 	 */
 	public int compareTo(ModelProofObligation o) {
-		if (getPosition() < o.getPosition()) {
-			return -1;
-		}
-		if (getPosition() > o.getPosition()) {
-			return 1;
-		}
-		return 0;
+		return getPosition() - o.getPosition();
 	}
 
 }
