@@ -98,8 +98,9 @@ public class ComplexContextContentProviderTest extends ExplorerTest {
 		ModelController.processProject(rodinProject);
 
 		assertEquals(contentProvider.getParent(c0), rodinProject);
-		assertEquals(contentProvider.getParent(c1), rodinProject);
-		assertEquals(contentProvider.getParent(c2), rodinProject);
+		assertEquals(contentProvider.getParent(c1), c0);
+		assertEquals(contentProvider.getParent(c2), c1);
+		assertEquals(contentProvider.getParent(c3), c0);
 
 	}
 

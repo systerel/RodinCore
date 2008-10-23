@@ -84,8 +84,9 @@ public class ComplexMachineContentProviderTest extends ExplorerTest {
 		ModelController.processProject(rodinProject);
 
 		assertEquals(contentProvider.getParent(m0), rodinProject);
-		assertEquals(contentProvider.getParent(m1), rodinProject);
-		assertEquals(contentProvider.getParent(m2), rodinProject);
+		assertEquals(contentProvider.getParent(m1), m0);
+		assertEquals(contentProvider.getParent(m2), m1);
+		assertEquals(contentProvider.getParent(m3), m0);
 
 	}
 
