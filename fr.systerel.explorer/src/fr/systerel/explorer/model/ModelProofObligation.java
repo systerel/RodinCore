@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
  * Represents a Proof Obligation in the Model.
  *
  */
-public class ModelProofObligation implements Comparable {
+public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	public ModelProofObligation (IPOSequent sequent, int position) {
 		this.internal_sequent = sequent;
 		this.position = position;
@@ -169,15 +169,15 @@ public class ModelProofObligation implements Comparable {
 		return manual;
 	}
 
-	public int compareTo(Object arg0) {
-		if (arg0 instanceof ModelProofObligation) {
-			ModelProofObligation other = (ModelProofObligation) arg0;
-			if (getPosition() < other.getPosition()) {
-				return -1;
-			}
-			if (getPosition() > other.getPosition()) {
-				return 1;
-			}
+	/**
+	 * compare according to the <code>position</code> of the proof obligations
+	 */
+	public int compareTo(ModelProofObligation o) {
+		if (getPosition() < o.getPosition()) {
+			return -1;
+		}
+		if (getPosition() > o.getPosition()) {
+			return 1;
 		}
 		return 0;
 	}
