@@ -13,10 +13,12 @@ package fr.systerel.explorer.tests.model;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -38,7 +40,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -61,6 +66,7 @@ import fr.systerel.explorer.tests.ExplorerTest;
 public class ModelControllerTest extends ExplorerTest {
 	
 	protected static ModelProject project;
+	protected static ModelController controller;
 	protected static IMachineRoot m0;
 	protected static IMachineRoot m1;
 	protected static IMachineRoot m2;
@@ -123,22 +129,230 @@ public class ModelControllerTest extends ExplorerTest {
 	}
 
 	@Test
-	public void processDelta() throws RodinDBException {
-		//process the project
-		ModelController.processProject(rodinProject);
-		project = ModelController.getProject(rodinProject);
+	public void processDeltaAddMachine() throws RodinDBException {
+		setUpSubscription();
 
-		//subscribe for changes
-		RodinCore.addElementChangedListener(listener);
+		//add a machine
+		createMachine("m5");
 		
-		//change some stuff in the database
-		IMachineRoot m5 = createMachine("m5");
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//the project should get refreshed.
+		assertArray(controller.getToRefresh().toArray(), rodinProject);
+	}
+
+	@Test
+	public void processDeltaRemoveMachine() throws RodinDBException {
 		
-		System.out.println(deltas.size());
-		//process the deltas
+		setUpSubscription();
 		
+		//remove a machine
+		m4.getRodinFile().delete(true, null);
+		
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//the project should get refreshed.
+		assertArray(controller.getToRefresh().toArray(), rodinProject);
+		//the machine should be removed from the model
+		assertNull(ModelController.getMachine(m4));
 	}
 	
+	@Test
+	public void processDeltaAddContext() throws RodinDBException {
+		setUpSubscription();
+
+		//add a context
+		createContext("c5");
+		
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//the project should get refreshed.
+		assertArray(controller.getToRefresh().toArray(), rodinProject);
+	}
+
+	@Test
+	public void processDeltaRemoveContext() throws RodinDBException {
+		
+		setUpSubscription();
+		
+		//remove a context
+		c4.getRodinFile().delete(true, null);
+		
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//the project should get refreshed.
+		assertArray(controller.getToRefresh().toArray(), rodinProject);
+		//the context should be removed from the model
+		assertNull(ModelController.getContext(c4));
+	}
+	
+	@Test
+	public void processDeltaAddProject() throws CoreException {
+		setUpSubscription();
+
+		//add a project
+		createProject("newProject");
+		
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//everything should be refreshed, this is done when the RodinDB is added to refresh.
+		assertArray(controller.getToRefresh().toArray(), RodinCore.getRodinDB());
+	}
+
+	@Test
+	public void processDeltaRemoveProject() throws CoreException {
+		
+		setUpSubscription();
+		
+		//remove a project
+		rodinProject.getProject().delete(true, null);
+		
+		//there should be one delta.
+		assertEquals(1, deltas.size());
+		
+		//process the delta
+		controller.processDelta(deltas.get(0));
+		//everything should be refreshed, this is done when the RodinDB is added to refresh.
+		assertArray(controller.getToRefresh().toArray(), RodinCore.getRodinDB());
+		//the machine should be removed from the model
+		assertNull(ModelController.getProject(rodinProject));
+	}
+
+	@Test
+	public void processDeltaAddInvariant() throws CoreException {
+		setUpSubscription();
+
+		//add an invariant
+		createInvariant(m0, "inv1");
+		
+		//there should be some deltas.
+		assertTrue(deltas.size() >0);
+		
+		//process the deltas
+		for (IRodinElementDelta delta : deltas) {
+			controller.processDelta(delta);
+		}
+		//the parent machine should get refreshed
+		assertArray(controller.getToRefresh().toArray(), m0);
+	}
+
+	@Test
+	public void processDeltaRemoveInvariant() throws CoreException {
+		
+		setUpSubscription();
+		
+		//add an invariant (to remove it afterwards)
+		IInvariant inv = createInvariant(m0, "inv1");
+		
+		//clear the deltas that were created while adding the invariant
+		deltas.clear();
+		
+		//remove the invariant
+		inv.delete(true, null);
+		
+		//there should be some deltas.
+		assertTrue(deltas.size() >0);
+		
+		//process the deltas
+		for (IRodinElementDelta delta : deltas) {
+			controller.processDelta(delta);
+		}
+		//the parent machine should get refreshed
+		assertArray(controller.getToRefresh().toArray(), m0);
+	}
+
+	@Test
+	public void processDeltaAddPOSequent() throws CoreException {
+		setUpSubscription();
+
+		// create a PORoot
+		 IPORoot ipo = createIPORoot("mo");
+		
+		//clear the deltas that were created while adding the root
+		deltas.clear();
+		 
+		//add a sequent
+		createSequent(ipo, "sequent");
+		
+		//there should be some deltas.
+		assertTrue(deltas.size() >0);
+		
+		//process the deltas
+		for (IRodinElementDelta delta : deltas) {
+			controller.processDelta(delta);
+		}
+		//the parent PORoot should get refreshed
+		assertArray(controller.getToRefresh().toArray(), ipo);
+	}
+	
+	@Test
+	public void processDeltaAddPSStatus() throws CoreException {
+		
+		setUpSubscription();
+
+		// create a PSRoot
+		 IPSRoot ips = createIPSRoot("mo");
+		
+		//clear the deltas that were created while adding the root
+		deltas.clear();
+		 
+		//add a status
+		createPSStatus(ips, "status");
+		
+		//there should be some deltas.
+		assertTrue(deltas.size() >0);
+		
+		//process the deltas
+		for (IRodinElementDelta delta : deltas) {
+			controller.processDelta(delta);
+		}
+		//the parent PSRoot should get refreshed
+		assertArray(controller.getToRefresh().toArray(), ips);
+	}
+
+	@Test
+	public void processDeltaChangePSStatus() throws CoreException {
+		
+		setUpSubscription();
+
+		// create a PSRoot
+		 IPSRoot ips = createIPSRoot("mo");
+		
+		//add a status
+		IPSStatus status = createPSStatus(ips, "status");
+
+		//set the confidence
+		status.setConfidence(IConfidence.UNATTEMPTED, null);
+
+		//clear the deltas that were created before
+		deltas.clear();
+		
+		//change the confidence
+		status.setConfidence(IConfidence.DISCHARGED_MAX, null);
+		 
+		
+		//there should be some deltas.
+		assertTrue(deltas.size() >0);
+		
+		//process the deltas
+		for (IRodinElementDelta delta : deltas) {
+			controller.processDelta(delta);
+		}
+		//the parent PSRoot should get refreshed
+		assertArray(controller.getToRefresh().toArray(), ips);
+	}
 	
 	
 	protected void setUpContexts() throws RodinDBException {
@@ -197,6 +411,18 @@ public class ModelControllerTest extends ExplorerTest {
 		//create a sees clause
 		createSeesContextClause(m0, c0, "sees1");
 		assertTrue(m0.getSeesClause("sees1").exists());
+		
+	}
+	
+	protected void setUpSubscription() {
+		//process the project
+		ModelController.processProject(rodinProject);
+		project = ModelController.getProject(rodinProject);
+
+		controller = new ModelController();
+		
+		//subscribe for changes
+		RodinCore.addElementChangedListener(listener);
 		
 	}
 }
