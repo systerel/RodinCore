@@ -27,6 +27,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.ExplorerUtils;
+import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
@@ -79,12 +80,16 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-		//this always returns the project that contain the machine
         if (element instanceof IMachineRoot) {
+        	ModelMachine machine = ModelController.getMachine((IMachineRoot) element);
+        	if (machine != null) {
+        		//return the first machineRoot that is refined by this machine, if one exists.
+        		if (machine.getRefinesMachines().size() >0) {
+        			return machine.getRefinesMachines().get(0).getInternalMachine();
+        		}
+        	}
+        	//this returns the project
 			return ((IMachineRoot) element).getRodinFile().getParent();
-		}
-        if (element instanceof IContextRoot) {
-			return ((IContextRoot) element).getRodinFile().getParent();
 		}
         return null;
 	}

@@ -52,9 +52,6 @@ public class ContextContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-        if (element instanceof IMachineRoot) {
-			return ((IMachineRoot) element).getRodinFile().getParent();
-		}
         if (element instanceof IContextRoot) {
 			return ((IContextRoot) element).getRodinFile().getParent();
 		}

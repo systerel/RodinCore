@@ -57,9 +57,6 @@ public class MachineContentProvider implements ITreeContentProvider {
         if (element instanceof IMachineRoot) {
 			return ((IMachineRoot) element).getRodinFile().getParent();
 		}
-        if (element instanceof IContextRoot) {
-			return ((IContextRoot) element).getRodinFile().getParent();
-		}
         return null;
 	}
 

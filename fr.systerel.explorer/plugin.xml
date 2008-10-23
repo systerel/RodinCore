@@ -464,7 +464,7 @@
          <possibleChildren>
             <or>
                <instanceof
-                     value="org.eventb.core.IMachineRoot">
+                     value="org.eventb.core.IContextRoot">
                </instanceof>
             </or>
          </possibleChildren>

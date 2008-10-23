@@ -82,11 +82,16 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-		// this always returns the project that the context belongs to.
-        if (element instanceof IMachineRoot) {
-			return ((IMachineRoot) element).getRodinFile().getParent();
-		}
+		// Context can have more than one parent. Return just one of them.
         if (element instanceof IContextRoot) {
+        	ModelContext context = ModelController.getContext((IContextRoot) element);
+        	if (context != null) {
+        		//return the first contextRoot that is extended by this context, if one exists.
+        		if (context.getExtendsContexts().size() >0) {
+        			return context.getExtendsContexts().get(0).getInternalContext();
+        		}
+        	}
+        	//this returns the project
 			return ((IContextRoot) element).getRodinFile().getParent();
 		}
         return null;
