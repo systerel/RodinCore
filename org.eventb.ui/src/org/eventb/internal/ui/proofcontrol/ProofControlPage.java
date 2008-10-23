@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBPreferenceStore
+ *     Systerel - added direct access to preference pages
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -18,12 +19,14 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -65,6 +68,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -113,6 +117,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	boolean share;
 
 	Action expertMode;
+	
+	Action openPreferences;
 
 	IEventBInputText textInput;
 
@@ -754,6 +760,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(expertMode);
+		manager.add(openPreferences);
 		manager.add(new Separator());
 	}
 
@@ -788,7 +795,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		final IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 
-		expertMode = new Action("Disable post-tactic", SWT.CHECK) {
+		expertMode = new Action("Disable post-tactic", IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
 				boolean checked = !expertMode.isChecked();
@@ -810,6 +817,22 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		expertMode
 				.setImageDescriptor(EventBImage
 						.getImageDescriptor(IEventBSharedImages.IMG_DISABLE_POST_TACTIC_PATH));
+		
+		openPreferences = new Action("Preferences...", IAction.AS_PUSH_BUTTON) {
+			
+			@Override
+			public void run() {
+				final String pageId = PreferenceConstants.POST_TACTIC_PAGE_ID;
+				final String[] displayedIds = new String[] {
+						PreferenceConstants.POST_TACTIC_PAGE_ID,
+						PreferenceConstants.AUTO_TACTIC_PAGE_ID,
+				};
+				final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
+						null, pageId, displayedIds, null);
+				dialog.open();
+			}
+			
+		};
 	}
 
 	/**
