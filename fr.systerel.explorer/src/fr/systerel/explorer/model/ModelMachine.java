@@ -58,9 +58,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
 	private IMachineRoot internalMachine ;
-	private HashMap<String, ModelInvariant> invariants = new HashMap<String, ModelInvariant>();
-	private HashMap<String, ModelEvent> events = new HashMap<String, ModelEvent>();
-	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	private HashMap<IInvariant, ModelInvariant> invariants = new HashMap<IInvariant, ModelInvariant>();
+	private HashMap<IEvent, ModelEvent> events = new HashMap<IEvent, ModelEvent>();
+	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	//Variables are not taken into the model, because they don't have any proof obligations
 	
 	/**
@@ -192,7 +192,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 					for (IPOSequent sequent : sequents) {
 						ModelProofObligation po = new ModelProofObligation(sequent);
 						po.setMachine(this);
-						proofObligations.put(sequent.getElementName(), po);
+						proofObligations.put(sequent, po);
 						IPOSource[] sources = sequent.getSources();
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
@@ -208,22 +208,22 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 									source = source.getParent();
 								}
 								if (source instanceof IInvariant) {
-									if (invariants.containsKey(((IInvariant) source).getElementName())) {
-										ModelInvariant inv = invariants.get(((IInvariant) source).getElementName());
+									if (invariants.containsKey(source)) {
+										ModelInvariant inv = invariants.get(source);
 										po.addInvariant(inv);
 										inv.addProofObligation(po);
 									}
 								}
 								if (source instanceof ITheorem) {
-									if (theorems.containsKey(((ITheorem) source).getElementName())) {
-										ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
+									if (theorems.containsKey(source)) {
+										ModelTheorem thm = theorems.get(source);
 										po.addTheorem(thm);
 										thm.addProofObligation(po);
 									}
 								}
 								if (source instanceof IEvent) {
-									if (events.containsKey(((IEvent) source).getElementName())) {
-										ModelEvent evt = events.get(((IEvent) source).getElementName());
+									if (events.containsKey(source) ){
+										ModelEvent evt = events.get(source);
 										po.addEvent(evt);
 										evt.addProofObligation(po);
 									}
@@ -255,8 +255,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 						IPSStatus status = stats[i];
 						IPOSequent sequent = status.getPOSequent();
 						// check if there is a ProofObligation for this status (there should be one!)
-						if (proofObligations.containsKey(sequent.getElementName())) {
-							proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+						if (proofObligations.containsKey(sequent)) {
+							proofObligations.get(sequent).setIPSStatus(status);
 						}
 					}
 				}
@@ -270,18 +270,22 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * Adds a new ModelInvariant to this Machine.
-	 * @param invariant The Invariant to add.
+	 * 
+	 * @param invariant
+	 *            The Invariant to add.
 	 */
 	public void addInvariant(IInvariant invariant) {
-		invariants.put(invariant.getElementName(), new ModelInvariant(invariant, this));
+		invariants.put(invariant, new ModelInvariant(invariant, this));
 	}
 
 	/**
 	 * Adds a new ModelEvent to this Machine.
-	 * @param event The Event to add.
+	 * 
+	 * @param event
+	 *            The Event to add.
 	 */
 	public void addEvent(IEvent event) {
-		events.put(event.getElementName(), new ModelEvent(event, this));
+		events.put(event, new ModelEvent(event, this));
 	}
 	
 	/**
@@ -289,7 +293,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * @param theorem The Theorem to add.
 	 */
 	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
+		theorems.put(theorem, new ModelTheorem(theorem, this));
 	}
 
 	/**
@@ -379,16 +383,16 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 
 	public ModelInvariant getInvariant(IInvariant invariant){
-		return invariants.get(invariant.getElementName());
+		return invariants.get(invariant);
 	}
 	
 	public ModelEvent getEvent(IEvent event){
-		return events.get(event.getElementName());
+		return events.get(event);
 	}
 	
 
 	public ModelTheorem getTheorem(ITheorem theorem){
-		return theorems.get(theorem.getElementName());
+		return theorems.get(theorem);
 	}
 
 	@Override

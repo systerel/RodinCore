@@ -53,9 +53,11 @@ public class ModelProofObligation {
 	}
 	
 	/**
-	 * Set the status of this proof obligation.
-	 * Updates stored attributes such as discharged or reviewed
-	 * @param status The new status of this proof obligation
+	 * Set the status of this proof obligation. Updates stored attributes such
+	 * as discharged or reviewed
+	 * 
+	 * @param status
+	 *            The new status of this proof obligation
 	 */
 	public void setIPSStatus(IPSStatus status) {
 		internal_status = status;
@@ -73,6 +75,10 @@ public class ModelProofObligation {
 	
 	public IPSStatus getIPSStatus() {
 		return internal_status;
+	}
+
+	public IPOSequent getIPOSequent() {
+		return internal_sequent;
 	}
 	
 	public ModelInvariant[] getInvariants() {

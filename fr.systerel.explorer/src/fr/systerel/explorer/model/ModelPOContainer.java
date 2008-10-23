@@ -19,6 +19,7 @@ import java.util.List;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
+import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
@@ -34,7 +35,7 @@ public abstract class ModelPOContainer implements IModelElement{
 	
 	protected IModelElement parent;
 	
-	protected HashMap<String, ModelProofObligation> proofObligations = new HashMap<String, ModelProofObligation>();
+	protected HashMap<IPOSequent, ModelProofObligation> proofObligations = new HashMap<IPOSequent, ModelProofObligation>();
 
 	public ModelProofObligation[] getProofObligations() {
 		ModelProofObligation[] proofs = new ModelProofObligation[proofObligations.values().size()];
@@ -42,12 +43,12 @@ public abstract class ModelPOContainer implements IModelElement{
 	}
 	
 	public void addProofObligation(ModelProofObligation po){
-		proofObligations.put(po.getElementName(), po);
+		proofObligations.put(po.getIPOSequent(), po);
 	}
 
 	
 	public ModelProofObligation getProofObligation(IPSStatus status){
-		return proofObligations.get(status.getElementName());
+		return proofObligations.get(status.getPOSequent());
 	}
 	
 	/**

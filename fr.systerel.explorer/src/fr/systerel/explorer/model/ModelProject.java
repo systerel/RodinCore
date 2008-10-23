@@ -37,14 +37,13 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
- * Represents a RodinProject in the Model.
- * Contains Machines and Context.
- *
+ * Represents a RodinProject in the Model. Contains Machines and Context.
+ * 
  */
 public class ModelProject implements IModelElement {
 	
-	private HashMap<String, ModelMachine> machines = new HashMap<String, ModelMachine>();
-	private HashMap<String, ModelContext> contexts = new HashMap<String, ModelContext>();
+	private HashMap<IMachineRoot, ModelMachine> machines = new HashMap<IMachineRoot, ModelMachine>();
+	private HashMap<IContextRoot, ModelContext> contexts = new HashMap<IContextRoot, ModelContext>();
 	private IRodinProject internalProject;
 	//indicates whether to projects needs to be processed freshly (process Machines etc.)
 	public boolean needsProcessing =  true;
@@ -56,18 +55,21 @@ public class ModelProject implements IModelElement {
 	
 	/**
 	 * Process an IMachineRoot. Creates an ModelMachine for this IMachineRoot
-	 * Creates dependencies between ModelMachines (refines) and ModelContexts (sees)
-	 * May recursively call processMachine(), if a machine in dependency was not processed yet.
-	 * Cycles in the dependencies are not taken into the Model!
-	 * @param machine	The IMachineRoot to process.
+	 * Creates dependencies between ModelMachines (refines) and ModelContexts
+	 * (sees) May recursively call processMachine(), if a machine in dependency
+	 * was not processed yet. Cycles in the dependencies are not taken into the
+	 * Model!
+	 * 
+	 * @param machine
+	 *            The IMachineRoot to process.
 	 */
 	public void processMachine(IMachineRoot machine) {
 		ModelMachine mach;
-		if (!machines.containsKey(machine.getElementName())) {
+		if (!machines.containsKey(machine)) {
 			mach =  new ModelMachine(machine);
-			machines.put(machine.getElementName(), mach);
+			machines.put(machine, mach);
 		} else {
-			mach = machines.get(machine.getElementName());
+			mach = machines.get(machine);
 			//remove existing dependencies. They will be calculated here freshly
 			removeMachineDependencies(mach);
 			mach.resetRefinesMachine();
@@ -84,10 +86,10 @@ public class ModelProject implements IModelElement {
 				final IMachineRoot abst = (IMachineRoot) refine.getAbstractMachine().getRoot();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
 				if (abst.exists()) {
-					if (!machines.containsKey(abst.getElementName())) {
+					if (!machines.containsKey(abst)) {
 						processMachine(abst);
 					}
-					ModelMachine abstMach = machines.get(abst.getElementName());
+					ModelMachine abstMach = machines.get(abst);
 					// don't allow cycles
 					if (!abstMach.getAncestors().contains(mach)) {
 						abstMach.addRefinedByMachine(mach);
@@ -105,10 +107,10 @@ public class ModelProject implements IModelElement {
 				IContextRoot ctx = ((ISCContextRoot) see.getSeenSCContext().getRoot()).getContextRoot();
 				// May not exist, if there are some errors in the project (e.g. was deleted)
 				if (ctx.exists()) {
-					if (!contexts.containsKey(ctx.getElementName())) {
+					if (!contexts.containsKey(ctx)) {
 						processContext(ctx);
 					}
-					ModelContext cplxCtxt = contexts.get(ctx.getElementName());
+					ModelContext cplxCtxt = contexts.get(ctx);
 					cplxCtxt.addSeenByMachine(mach);
 					mach.addSeesContext(cplxCtxt);
 				}
@@ -153,18 +155,20 @@ public class ModelProject implements IModelElement {
 
 	/**
 	 * Process an IContextRoot. Creates an ModelContext for this IContextRoot
-	 * Creates dependencies betweenModelContexts (extends)
-	 * May recursively call processContext(), if a context in dependency was not processed yet.
+	 * Creates dependencies betweenModelContexts (extends) May recursively call
+	 * processContext(), if a context in dependency was not processed yet.
 	 * Cycles in the dependencies are not taken into the Model!
-	 * @param context	The IContextRoot to process.
+	 * 
+	 * @param context
+	 *            The IContextRoot to process.
 	 */
 	public void processContext(IContextRoot context) {
 		ModelContext ctx;
-		if (!contexts.containsKey(context.getElementName())) {
+		if (!contexts.containsKey(context)) {
 			ctx =  new ModelContext(context);
-			contexts.put(context.getElementName(), ctx);
+			contexts.put(context, ctx);
 		} else {
-			ctx = contexts.get(context.getElementName());
+			ctx = contexts.get(context);
 			//remove existing dependencies. They will be calculated here freshly
 			removeContextDependencies(ctx);
 			ctx.resetExtendsContexts();
@@ -185,10 +189,10 @@ public class ModelProject implements IModelElement {
 //					IContextRoot extCtx = ext.getAbstractSCContext().getContextRoot();
 					// May not exist, if there are some errors in the project (e.g. was deleted)
 					if (extCtx.exists()) {
-						if (!contexts.containsKey(extCtx.getContextRoot())) {
+						if (!contexts.containsKey(extCtx)) {
 							processContext(extCtx);
 						}
-						ModelContext exendsCtx = contexts.get(extCtx.getElementName());
+						ModelContext exendsCtx = contexts.get(extCtx);
 						// don't allow cycles!
 						if (!exendsCtx.getAncestors().contains(ctx)) {
 							exendsCtx.addExtendedByContext(ctx);
@@ -241,7 +245,8 @@ public class ModelProject implements IModelElement {
 	
 	/**
 	 * 
-	 * @return 	all machines of this project marked as root plus for each their longest branch.
+	 * @return all machines of this project marked as root plus for each their
+	 *         longest branch.
 	 */
 	public ModelMachine[] getRootMachines(){
 		List<ModelMachine> results = new LinkedList<ModelMachine>();
@@ -257,7 +262,8 @@ public class ModelProject implements IModelElement {
 
 	/**
 	 * 
-	 * @return 	all contexts of this project marked as root plus for each their longest branch.
+	 * @return all contexts of this project marked as root plus for each their
+	 *         longest branch.
 	 */
 	public ModelContext[] getRootContexts(){
 		List<ModelContext> results = new LinkedList<ModelContext>();
@@ -272,55 +278,39 @@ public class ModelProject implements IModelElement {
 	}
 	
 	
+	public ModelMachine getMachine(IMachineRoot machine) {
+		return machines.get(machine);
+	}
+
+	public void putMachine(IMachineRoot root, ModelMachine machine) {
+		machines.put(root, machine);
+	}
+	
+	public boolean hasMachine(IMachineRoot machineRoot) {
+		return machines.containsKey(machineRoot);
+	}
+	
 	/**
+	 * Removes a machine from this project. Also removes dependencies
 	 * 
-	 * @return 	all contexts of this project that are not connected to a machine.
+	 * @param machineRoot
+	 *            An identifier for the machine to remove
 	 */
-	public ModelContext[] getDisconnectedContexts(){
-		List<ModelContext> results = new LinkedList<ModelContext>();
-
-		for (ModelContext context : contexts.values()) {
-			if (context.isNotSeen() && context.isRoot()){
-				results.addAll(context.getLongestBranch());
-			}
-			
-		}
-		return results.toArray(new ModelContext[results.size()]);
-	}
-	
-	
-	public ModelMachine getMachine(String identifier) {
-		return machines.get(identifier);
-	}
-
-	public void putMachine(String identifier, ModelMachine machine) {
-		machines.put(identifier, machine);
-	}
-	
-	public boolean hasMachine(String identifier) {
-		return machines.containsKey(identifier);
-	}
-	
-	/**
-	 * Removes a machine from this project.
-	 * Also removes dependencies
-	 * @param identifier	An identifier for the machine to remove
-	 */
-	public void removeMachine(String identifier) {
-		ModelMachine machine = machines.get(identifier);
+	public void removeMachine(IMachineRoot machineRoot) {
+		ModelMachine machine = machines.get(machineRoot);
 		if (machine != null) {
 			removeMachineDependencies(machine);
 			//other machines also can't refine this machine anymore, because it won't exist any longer
 			for(ModelMachine mach : machine.getRefinedByMachines()) {
 				mach.removeRefinesMachine(machine);
 			}
-			machines.remove(identifier);
+			machines.remove(machineRoot);
 		}
 	}
 	
 	/**
-	 * Removes dependencies of this machine:
-	 * Removes this machine from all contexts that it sees and all machine that it refines
+	 * Removes dependencies of this machine: Removes this machine from all
+	 * contexts that it sees and all machine that it refines
 	 */
 	public void removeMachineDependencies(ModelMachine machine){
 		for(ModelContext ctx : machine.getSeesContexts()) {
@@ -331,25 +321,23 @@ public class ModelProject implements IModelElement {
 		}
 	}
 
-	public ModelContext getContext(String identifier) {
-		return contexts.get(identifier);
+	public ModelContext getContext(IContextRoot context) {
+		return contexts.get(context);
 	}
 
-	public void putContext(String identifier, ModelContext context) {
-		contexts.put(identifier, context);
+	public void putContext(IContextRoot contextRoot, ModelContext context) {
+		contexts.put(contextRoot, context);
 	}
 	
-	public boolean hasContext(String identifier) {
-		return contexts.containsKey(identifier);
-	}
 	
 	/**
-	 * Removes a context from this project.
-	 * Also removes dependencies
-	 * @param identifier	An identifier for the context to remove
+	 * Removes a context from this project. Also removes dependencies
+	 * 
+	 * @param contextRoot
+	 *            The contextRoot corresponding to the context to be removed
 	 */
-	public void removeContext(String identifier) {
-		ModelContext context =  contexts.get(identifier);
+	public void removeContext(IContextRoot contextRoot) {
+		ModelContext context =  contexts.get(contextRoot);
 		if (context != null) {
 			removeContextDependencies(context);
 			//other contexts also can't extend this context anymore, because it won't exist any longer
@@ -360,13 +348,13 @@ public class ModelProject implements IModelElement {
 			for(ModelMachine mach : context.getSeenByMachines()) {
 				mach.removeSeesContext(context);
 			}
-			contexts.remove(identifier);
+			contexts.remove(contextRoot);
 		}
 	}
 	
 	/**
-	 * Removes dependencies of this context:
-	 * Removes this machine from all contexts that it extends
+	 * Removes dependencies of this context: Removes this machine from all
+	 * contexts that it extends
 	 */
 	public void removeContextDependencies(ModelContext context){
 		for(ModelContext ctx : context.getExtendsContexts()) {
@@ -378,7 +366,7 @@ public class ModelProject implements IModelElement {
 	public ModelInvariant getInvariant(IInvariant invariant){
 		IEventBRoot root = (IEventBRoot) invariant.getRodinFile().getRoot();
 		if (root instanceof IMachineRoot) {
-			ModelMachine machine = machines.get(root.getElementName());
+			ModelMachine machine = machines.get(root);
 			if (machine != null) {
 				return machine.getInvariant(invariant);
 			}
@@ -389,7 +377,7 @@ public class ModelProject implements IModelElement {
 	public ModelEvent getEvent(IEvent event){
 		IEventBRoot root = (IEventBRoot) event.getRodinFile().getRoot();
 		if (root instanceof IMachineRoot) {
-			ModelMachine machine = machines.get(root.getElementName());
+			ModelMachine machine = machines.get(root);
 			if (machine != null) {
 				return machine.getEvent(event);
 			}
@@ -400,13 +388,13 @@ public class ModelProject implements IModelElement {
 	public ModelTheorem getTheorem(ITheorem theorem){
 		IEventBRoot root = (IEventBRoot) theorem.getRodinFile().getRoot();
 		if (root instanceof IMachineRoot) {
-			ModelMachine machine = machines.get(root.getElementName());
+			ModelMachine machine = machines.get(root);
 			if (machine != null) {
 				return machine.getTheorem(theorem);
 			}
 		}
 		if (root instanceof IContextRoot) {
-			ModelContext context = contexts.get(root.getElementName());
+			ModelContext context = contexts.get(root);
 			if (context != null) {
 				return context.getTheorem(theorem);
 			}
@@ -417,7 +405,7 @@ public class ModelProject implements IModelElement {
 	public ModelAxiom getAxiom(IAxiom axiom){
 		IEventBRoot root = (IEventBRoot) axiom.getRodinFile().getRoot();
 		if (root instanceof IContextRoot) {
-			ModelContext context = contexts.get(root.getElementName());
+			ModelContext context = contexts.get(root);
 			if (context != null) {
 				return context.getAxiom(axiom);
 			}
@@ -428,12 +416,13 @@ public class ModelProject implements IModelElement {
 	public ModelProofObligation getProofObligation(IPSStatus status){
 		IEventBRoot root = (IEventBRoot) status.getRodinFile().getRoot();
 		if (root instanceof IPSRoot) {
-			ModelMachine machine = machines.get(root.getElementName());
+			
+			ModelMachine machine = machines.get(root.getMachineRoot());
 			if (machine != null) {
 				return machine.getProofObligation(status);
 			}
 			
-			ModelContext context = contexts.get(root.getElementName());
+			ModelContext context = contexts.get(root.getContextRoot());
 			if (context != null) {
 				return context.getProofObligation(status);
 			}

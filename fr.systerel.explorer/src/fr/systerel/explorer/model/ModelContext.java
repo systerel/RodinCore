@@ -61,8 +61,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
 	
 	private IContextRoot internalContext;
-	private HashMap<String, ModelAxiom> axioms = new HashMap<String, ModelAxiom>();
-	private HashMap<String, ModelTheorem> theorems = new HashMap<String, ModelTheorem>();
+	private HashMap<IAxiom, ModelAxiom> axioms = new HashMap<IAxiom, ModelAxiom>();
+	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	// CarrierSets and Constants are not taken into the model
 	// because the don't have any proof obligations.
 	
@@ -181,7 +181,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					for (IPOSequent sequent : sequents) {
 						ModelProofObligation po = new ModelProofObligation(sequent);
 						po.setContext(this);
-						proofObligations.put(sequent.getElementName(), po);
+						proofObligations.put(sequent, po);
 			
 						IPOSource[] sources = sequent.getSources();
 						for (int j = 0; j < sources.length; j++) {
@@ -192,15 +192,15 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 									source = source.getParent();
 								}
 								if (source instanceof ITheorem) {
-									if (theorems.containsKey(((ITheorem) source).getElementName())) {
-										ModelTheorem thm = theorems.get(((ITheorem) source).getElementName());
+									if (theorems.containsKey(source)) {
+										ModelTheorem thm = theorems.get(source);
 										po.addTheorem(thm);
 										thm.addProofObligation(po);
 									}
 								}
 								if (source instanceof IAxiom) {
-									if (axioms.containsKey(((IAxiom) source).getElementName())) {
-										ModelAxiom axm = axioms.get(((IAxiom) source).getElementName());
+									if (axioms.containsKey(source)) {
+										ModelAxiom axm = axioms.get(source);
 										po.addAxiom(axm);
 										axm.addProofObligation(po);
 									}
@@ -231,8 +231,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					for (IPSStatus status : stats) {
 						IPOSequent sequent = status.getPOSequent();
 						// check if there is a ProofObligation for this status (there should be one!)
-						if (proofObligations.containsKey(sequent.getElementName())) {
-							proofObligations.get(sequent.getElementName()).setIPSStatus(status);
+						if (proofObligations.containsKey(sequent)) {
+							proofObligations.get(sequent).setIPSStatus(status);
 						}
 					}
 				}
@@ -249,7 +249,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @param axiom The axiom to add.
 	 */
 	public void addAxiom(IAxiom axiom) {
-		axioms.put(axiom.getElementName(), new ModelAxiom(axiom, this));
+		axioms.put(axiom, new ModelAxiom(axiom, this));
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @param theorem The Theorem to add.
 	 */
 	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem.getElementName(), new ModelTheorem(theorem, this));
+		theorems.put(theorem, new ModelTheorem(theorem, this));
 	}
 	
 	/**
@@ -367,11 +367,11 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 
 	public ModelTheorem getTheorem(ITheorem theorem){
-		return theorems.get(theorem.getElementName());
+		return theorems.get(theorem);
 	}
 
 	public ModelAxiom getAxiom(IAxiom axiom){
-		return axioms.get(axiom.getElementName());
+		return axioms.get(axiom);
 	}
 
 	/**
