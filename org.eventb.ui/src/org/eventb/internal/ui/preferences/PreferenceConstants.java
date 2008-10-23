@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - added new options
+ *     Systerel - added constants for preference page ids
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -19,6 +20,57 @@ package org.eventb.internal.ui.preferences;
  */
 public class PreferenceConstants {
 
+	/**
+	 * Unique identifier of the preference page for event-B
+	 */
+	public static final String EVENTB_PAGE_ID = "org.eventb.ui.preferences.eventB";
+
+	/**
+	 * Unique identifier of the preference page for the proving GUI.
+	 */
+	public static final String PROVING_UI_PAGE_ID = "org.eventb.ui.preferences.provingUI";
+
+	/**
+	 * Unique identifier of the preference page for appearance.
+	 */
+	public static final String APPEARANCE_PAGE_ID = "org.eventb.ui.preferences.appearance";
+
+	/**
+	 * Unique identifier of the preference page for colors and fonts.
+	 */
+	public static final String COLORS_AND_FONTS_PAGE_ID = "org.eventb.ui.colorsAndFonts";
+
+	/**
+	 * Unique identifier of the preference page for the sequent prover.
+	 */
+	public static final String SEQUENT_PROVER_PAGE_ID = "org.eventb.ui.preferences.seqProver";
+
+	/**
+	 * Unique identifier of the preference page for the auto tactic.
+	 */
+	public static final String AUTO_TACTIC_PAGE_ID = "org.eventb.ui.preferences.autoTactic";
+
+	/**
+	 * Unique identifier of the preference page for the post tactic.
+	 */
+	public static final String POST_TACTIC_PAGE_ID = "org.eventb.ui.preferences.postTactic";
+
+	/**
+	 * Unique identifier of the preference page for the modeling GUI.
+	 */
+	public static final String MODELLING_UI_PAGE_ID = "org.eventb.ui.preferences.modellingUI";
+
+	/**
+	 * Unique identifier of the preference page for the machine editor.
+	 */
+	public static final String MACHINE_EDITOR_PAGE_ID = "org.eventb.ui.preferences.machineEditor";
+
+	/**
+	 * Unique identifier of the preference page for the context editor.
+	 */
+	public static final String CONTEXT_EDITOR_PAGE_ID = "org.eventb.ui.preferences.contextEditor";
+	
+	
 	/**
 	 * Preference key for the enablement of Post-Tactics. 
 	 */
