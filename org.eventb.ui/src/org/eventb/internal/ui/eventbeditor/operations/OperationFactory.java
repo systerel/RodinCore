@@ -203,17 +203,6 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation deleteElement(IInternalElement[] elements) {
-		assert elements != null;
-		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
-				.deleteElement(elements));
-		if (elements.length > 0) {
-			cmd.addContext(getContext(elements[0].getRodinFile()));
-		}
-		return cmd;
-	}
-
 	public static AtomicOperation deleteElement(IInternalElement[] elements,
 			boolean force) {
 		assert elements != null;

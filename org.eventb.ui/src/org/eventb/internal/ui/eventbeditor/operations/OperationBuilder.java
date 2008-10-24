@@ -51,10 +51,6 @@ class OperationBuilder {
 		return new DeleteElementLeaf(element, cmdCreate, force);
 	}
 
-	public OperationTree deleteElement(IInternalElement[] elements) {
-		return deleteElement(elements, true);
-	}
-
 	public OperationTree deleteElement(IInternalElement[] elements,
 			boolean force) {
 		OperationNode op = new OperationNode();
@@ -501,13 +497,6 @@ class OperationBuilder {
 			op.addCommande(copyElement(parent, (IInternalElement) element));
 		}
 		return op;
-	}
-
-	public <T extends IInternalElement> CreateElementGeneric<T> createElement(
-			IEventBEditor<?> editor, IInternalParent parent,
-			IInternalElementType<T> elementType, IInternalElement sibling,
-			IAttributeType.String attribute, String value) {
-		return new CreateElementGeneric<T>(editor, parent, elementType, sibling);
 	}
 
 	public OperationTree handle(TreeViewer viewer, boolean up) {

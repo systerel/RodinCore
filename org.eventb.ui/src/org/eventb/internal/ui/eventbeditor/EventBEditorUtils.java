@@ -117,7 +117,7 @@ public class EventBEditorUtils {
 					elements[i] = (IInternalElement) it.next();
 				}
 				AtomicOperation operation = OperationFactory
-						.deleteElement(elements);
+						.deleteElement(elements, true);
 				History.getInstance().addOperation(operation);
 			}
 		});
