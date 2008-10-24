@@ -21,6 +21,9 @@ import org.rodinp.core.RodinDBException;
 
 public class ExtendsEventSection extends CComboSection {
 
+	private static final IAttributeFactory factory = new ExtendedAttributeFactory();
+
+	
 	@Override
 	String getLabel() {
 		return "Extended";
@@ -28,22 +31,18 @@ public class ExtendsEventSection extends CComboSection {
 
 	@Override
 	String getText() throws RodinDBException {
-		ExtendedAttributeFactory factory = new ExtendedAttributeFactory();
 		return factory.getValue(element, null);
 
 	}
 
 	@Override
 	void setData() {
-		ExtendedAttributeFactory factory = new ExtendedAttributeFactory();
 		for(String value : factory.getPossibleValues(null, null))
 			comboWidget.add(value);
-
 	}
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		IAttributeFactory factory = new ExtendedAttributeFactory();
 		UIUtils.setStringAttribute(element, factory, text, null);
 	}
 
