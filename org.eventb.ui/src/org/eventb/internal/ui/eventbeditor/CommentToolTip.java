@@ -44,6 +44,7 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
@@ -68,6 +69,8 @@ public class CommentToolTip {
 	private final static int MAX_HEIGHT = 120;
 
 	Listener labelListener;
+
+	static final IAttributeFactory FACTORY = new CommentAttributeFactory();
 
 	/**
 	 * Creates a new tooltip handler
@@ -116,17 +119,13 @@ public class CommentToolTip {
 			this.text = text;
 			this.element = element;
 			try {
-				if (element.hasComment())
-					original = element.getComment();
-				else
-					original = "";
+				this.original = FACTORY.getValue(element, null);
 			} catch (RodinDBException e) {
-				original = "";
+				this.original = "";
 			}
 		}
 
 		public void handleEvent(Event event) {
-			// TODO Auto-generated method stub
 			switch (event.type) {
 			case SWT.FocusOut:
 				response();
@@ -136,8 +135,7 @@ public class CommentToolTip {
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
-					UIUtils.setStringAttribute(element,
-							new CommentAttributeFactory(), original, null);
+					UIUtils.setStringAttribute(element, FACTORY, original, null);
 					text.dispose();
 					helpShell.dispose();
 					break;
@@ -150,9 +148,8 @@ public class CommentToolTip {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
-			UIUtils.setStringAttribute(element,
-					new CommentAttributeFactory(), text.getTextWidget()
-							.getText(), null);
+			final String value = text.getTextWidget().getText();
+			UIUtils.setStringAttribute(element, FACTORY, value, null);
 		}
 
 	}
