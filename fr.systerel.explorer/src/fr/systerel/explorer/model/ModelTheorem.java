@@ -33,17 +33,6 @@ public class ModelTheorem extends ModelPOContainer {
 		return internalTheorem;
 	}
 
-	@Override
-	public String getLabel() {
-		try {
-			return "Theorem " +internalTheorem.getLabel();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Theorem ??";
-	}
-
 	public IRodinElement getInternalElement() {
 		return internalTheorem;
 	}

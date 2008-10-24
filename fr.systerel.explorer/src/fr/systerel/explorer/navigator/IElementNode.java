@@ -16,25 +16,25 @@ import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElementType;
 
 /**
- * An element node is a node in the navigator tree that is in between a machine/context
- * and its invariants, theorems, proof obligations etc.
- *
+ * An element node is a node in the navigator tree that is in between a
+ * machine/context and its invariants, theorems, proof obligations etc.
+ * 
  */
 public interface IElementNode {
 	/**
-	 * Returns the parent node of this node in the navigator tree.
-	 * The result is either of type IMachineRoot or IContextRoot.
+	 * Returns the parent node of this node in the navigator tree. The result is
+	 * either of type IMachineRoot or IContextRoot.
 	 * 
 	 * @return The parent of this node in the navigator tree.
 	 */
 	public IEventBRoot getParent();
 	
 	/**
-	 * Returns the type of the children of this node.
-	 * This describes what children are attached to this node.
-	 * For Proof Obligations this is <code>IPSStatus.ELEMENT_TYPE</code>.
-	 * For Invariants it is <code>IInvariant.ELEMENT_TYPE</code>
-	 * and similarly for the other elements (theorems, events etc.).
+	 * Returns the type of the children of this node. This describes what
+	 * children are attached to this node. For Proof Obligations this is
+	 * <code>IPSStatus.ELEMENT_TYPE</code>. For Invariants it is
+	 * <code>IInvariant.ELEMENT_TYPE</code> and similarly for the other
+	 * elements (theorems, events etc.).
 	 * 
 	 * @return the type of the children of this node.
 	 */

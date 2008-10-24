@@ -33,19 +33,6 @@ public class ModelAxiom extends ModelPOContainer {
 		return internalAxiom;
 	}
 
-
-	@Override
-	public String getLabel() {
-		try {
-			return "Axiom " +internalAxiom.getLabel();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Axiom ??";
-	}
-
-
 	public IRodinElement getInternalElement() {
 		// TODO Auto-generated method stub
 		return internalAxiom;

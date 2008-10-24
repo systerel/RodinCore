@@ -32,16 +32,6 @@ public class ModelInvariant extends ModelPOContainer{
 		return internalInvariant;
 	}
 
-	@Override
-	public String getLabel() {
-		try {
-			return "Invariant " +internalInvariant.getLabel();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Invariant ??";
-	}
 
 	public IRodinElement getInternalElement() {
 		return internalInvariant;

@@ -370,6 +370,6 @@ public abstract class ModelPOContainer implements IModelElement {
 		return result;
 	}
 
-	public abstract String getLabel();
+//	public abstract String getLabel();
 
 }

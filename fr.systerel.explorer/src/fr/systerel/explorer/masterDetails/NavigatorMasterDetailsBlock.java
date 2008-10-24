@@ -62,9 +62,5 @@ public class NavigatorMasterDetailsBlock extends MasterDetailsBlock {
 
 	}
 	
-	public NavigatorMasterPart getMasterPart() {
-		return masterPart;
-	}
-	
 
 }

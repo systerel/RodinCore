@@ -33,17 +33,6 @@ public class ModelEvent extends ModelPOContainer {
 		return internalEvent;
 	}
 
-	@Override
-	public String getLabel() {
-		try {
-			return "Event " +internalEvent.getLabel();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Eventt ??";
-	}
-
 	public IRodinElement getInternalElement() {
 		return internalEvent;
 	}

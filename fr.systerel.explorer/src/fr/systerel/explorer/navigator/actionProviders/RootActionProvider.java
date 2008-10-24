@@ -23,7 +23,7 @@ import org.eclipse.ui.navigator.ICommonActionConstants;
  * @author Maria Husmann
  *
  */
-public class FileActionProvider extends NavigatorActionProvider {
+public class RootActionProvider extends NavigatorActionProvider {
 
 	/**
 	 * Create the actions.

@@ -56,9 +56,11 @@ public class ModelProject implements IModelElement {
 	/**
 	 * Process an IMachineRoot. Creates an ModelMachine for this IMachineRoot
 	 * Creates dependencies between ModelMachines (refines) and ModelContexts
-	 * (sees) May recursively call processMachine(), if a machine in dependency
-	 * was not processed yet. Cycles in the dependencies are not taken into the
-	 * Model!
+	 * (sees) May recursively call <code>processMachine()</code>, if a
+	 * machine in dependency was not processed yet. Similarly it may call
+	 * <code>processContext()</code> for contexts that are seen by this
+	 * machine, but not processed yet. Cycles in the dependencies are not taken
+	 * into the Model!
 	 * 
 	 * @param machine
 	 *            The IMachineRoot to process.
@@ -286,9 +288,6 @@ public class ModelProject implements IModelElement {
 		machines.put(root, machine);
 	}
 	
-	public boolean hasMachine(IMachineRoot machineRoot) {
-		return machines.containsKey(machineRoot);
-	}
 	
 	/**
 	 * Removes a machine from this project. Also removes dependencies

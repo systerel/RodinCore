@@ -64,8 +64,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	//Variables are not taken into the model, because they don't have any proof obligations
 	
 	/**
-	 * All machines that are above this machine in the refinement tree. 
-	 * (= machines that are refined by this machines)
+	 * All machines that are above this machine in the refinement tree. (=
+	 * machines that are refined by this machines). This is computed by the
+	 * ModelProject.
 	 */
 	private ArrayList<ModelMachine> ancestors =  new ArrayList<ModelMachine>();
 	/**
@@ -119,19 +120,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return ancestors;
 	}
 
-	public void addToLongestBranch(ModelMachine machine){
-		if (!longestRefineBranch.contains(machine)) {
-			longestRefineBranch.add(machine);
-		}
-	}
-	
-	public void addToLongestBranch(ArrayList<ModelMachine> machines){
-		longestRefineBranch.addAll(machines);
-	}
-
-	public void removeFromLongestBranch(ModelMachine machine){
-		longestRefineBranch.remove(machine);
-	}
 
 	/**
 	 * <code>calculateMachineBranches()</code> has to be called before this, 
@@ -319,7 +307,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * 
-	 * @return All the refinedByMachines, that are not returned by getLongestBranch
+	 * @return All the refinedByMachines, that are not returned by
+	 *         getLongestBranch. They will be added as children to this machine
+	 *         by the <code>ComplexMachineContentProvider</code> in the
+	 *         navigator tree.
 	 */
 	public List<ModelMachine> getRestMachines(){
 		List<ModelMachine> copy = new LinkedList<ModelMachine>(refinedByMachines);
@@ -435,10 +426,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		
 	}
 
-	@Override
-	public String getLabel() {
-		return "Machine " +internalMachine.getComponentName();
-	}
 
 	public IRodinElement getInternalElement() {
 		return internalMachine;

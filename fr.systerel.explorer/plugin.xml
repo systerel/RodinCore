@@ -373,7 +373,7 @@
          </commonSorter>
       </navigatorContent>
       <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.FileActionProvider"
+            class="fr.systerel.explorer.navigator.actionProviders.RootActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.file">
          <enablement>
             <or>

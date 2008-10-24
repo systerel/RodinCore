@@ -264,7 +264,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * 
-	 * @return All the extenedByContexts, that are not returned by getLongestContextBranch
+	 * @return All the extenedByContexts, that are not returned by
+	 *         getLongestContextBranch. They will be added as children to this
+	 *         context by the <code>ComplexContentContentProvider</code> in
+	 *         the navigator tree.
 	 */
 	public List<ModelContext> getRestContexts(){
 		List<ModelContext> copy = new LinkedList<ModelContext>(extendedByContexts);
@@ -418,10 +421,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		
 	}
 	
-	@Override
-	public String getLabel() {
-		return "Context " +internalContext.getComponentName();
-	}
 
 	public IRodinElement getInternalElement() {
 		return internalContext;

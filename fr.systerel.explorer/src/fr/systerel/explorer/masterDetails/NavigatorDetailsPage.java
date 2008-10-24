@@ -40,11 +40,11 @@ import fr.systerel.explorer.Activator;
 import fr.systerel.explorer.navigator.INavigatorDetailsTab;
 
 /**
- * This is the Details page of the MasterDetails pattern of the Navigator.
- * There is just one details page (this one), not matter what was selected in the master part.
- * Content can be added to the details page by implementing a new <code>INavigatorDetailsTab</code>
- * and adding it via the extension point.
- *
+ * This is the Details page of the MasterDetails pattern of the Navigator. There
+ * is just one details page (this one), no matter what was selected in the
+ * master part. Content can be added to the details page by implementing a new
+ * <code>INavigatorDetailsTab</code> and adding it via the extension point.
+ * 
  */
 public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 
@@ -61,11 +61,13 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 		if (tabFolder == null ) {
 			tabFolder = new TabFolder(parent, SWT.NONE);
 			parent.setLayout(new FillLayout());
+			//load all tabs
 			INavigatorDetailsTab[] tabs = loadTabs();
 			for (INavigatorDetailsTab tab : tabs) {
 				TabItem tabItem = tab.createTabItem(tabFolder);
 				assert (tabItem != null);
 				assert (tabItem.getParent() == tabFolder);
+				//register all tabs as listener of this selection provider
 				tab.registerAsListener(this);
 			}
 		}
@@ -189,7 +191,11 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 			});
 		}
 	}
-
+	
+	/**
+	 * Tries to load all tabs that are defined via the extension point.
+	 * @return all loaded tabs
+	 */
 	private INavigatorDetailsTab[] loadTabs() {
 		ArrayList<INavigatorDetailsTab> results = new ArrayList<INavigatorDetailsTab>();
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -201,7 +207,7 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 				INavigatorDetailsTab tab =  (INavigatorDetailsTab) configuration.createExecutableExtension(DETAILS_TAB_CLASS);
 				results.add(tab);
 			} catch (CoreException e) {
-				System.out.println("Unable to instanatiate details tab class for " +configuration.getAttribute("id"));
+				System.out.println("Unable to instantiate details tab class for " +configuration.getAttribute("id"));
 			}		
 		}
 		
