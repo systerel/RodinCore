@@ -40,11 +40,11 @@ import org.rodinp.core.RodinDBException;
 
 public abstract class CComboSection extends AbstractPropertySection implements
 		IElementChangedListener {
-	
+
 	CCombo comboWidget;
 
 	private IAttributeFactory factory = null;
-	
+
 	IInternalElement element;
 
 	public CComboSection() {
@@ -60,8 +60,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 				.createFlatFormComposite(parent);
 		FormData data;
 
-		comboWidget = getWidgetFactory().createCCombo(composite,
-				SWT.DEFAULT);
+		comboWidget = getWidgetFactory().createCCombo(composite, SWT.DEFAULT);
 
 		data = new FormData();
 		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
@@ -98,9 +97,8 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	void setText(String text, IProgressMonitor monitor)
-			throws RodinDBException{
-		UIUtils.setStringAttribute(element, getFactory(), text, null);	
+	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
+		UIUtils.setStringAttribute(element, getFactory(), text, null);
 	}
 
 	void setData() {
@@ -108,7 +106,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 			comboWidget.add(value);
 	}
 
-	String getText() throws RodinDBException{
+	String getText() throws RodinDBException {
 		return getFactory().getValue(element, null);
 	}
 
@@ -116,7 +114,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 	public void refresh() {
 		if (comboWidget.isDisposed())
 			return;
-		
+
 		try {
 			comboWidget.removeAll();
 			setData();
@@ -164,13 +162,13 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		RodinCore.addElementChangedListener(this);
 		super.aboutToBeShown();
 	}
-	
-	private IAttributeFactory getFactory(){
-		if(factory == null)
+
+	private IAttributeFactory getFactory() {
+		if (factory == null)
 			factory = createFactory();
 		return factory;
 	}
-	
+
 	abstract protected IAttributeFactory createFactory();
 
 }
