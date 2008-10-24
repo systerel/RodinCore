@@ -24,7 +24,7 @@ public class RefinesMachineModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IRefinesMachine) {
 			IRefinesMachine aElement = (IRefinesMachine) element;
-			IAttributeFactory factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+			IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;

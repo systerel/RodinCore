@@ -32,7 +32,7 @@ public class AssignmentModifier implements IElementModifier {
 		// Try to set the assignment string if element is an assignment element.
 		if (element instanceof IAssignmentElement) {
 			IAssignmentElement aElement = (IAssignmentElement) element;
-			IAttributeFactory factory = new AssignmentAttributeFactory() ;
+			IAttributeFactory<IAssignmentElement> factory = new AssignmentAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		// Do nothing if the element is not an assignment element.

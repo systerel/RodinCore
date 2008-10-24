@@ -31,7 +31,7 @@ public class ExpressionModifier implements IElementModifier {
 		// Try to set the assignment string if element is an assignment element.
 		if (element instanceof IExpressionElement) {
 			IExpressionElement aElement = (IExpressionElement) element;
-			IAttributeFactory factory = new ExpressionAttributeFactory();
+			IAttributeFactory<IExpressionElement> factory = new ExpressionAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		// Do nothing if the element is not an assignment element.

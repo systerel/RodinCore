@@ -31,7 +31,7 @@ public class ExtendsContextModifier implements IElementModifier {
 		// Try to set the name string if element is a IExtendsContext element.
 		if (element instanceof IExtendsContext) {
 			IExtendsContext aElement = (IExtendsContext) element;
-			IAttributeFactory factory = new ExtendsContextAbstractContextNameAttributeFactory();
+			IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		// Do nothing if the element is not a IExtendsContext element.

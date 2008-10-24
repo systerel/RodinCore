@@ -24,7 +24,7 @@ public class RefinesEventModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IRefinesEvent) {
 			IRefinesEvent aElement = (IRefinesEvent) element;
-			IAttributeFactory factory = new RefinesEventAbstractEventLabelAttributeFactory();
+			IAttributeFactory<IRefinesEvent> factory = new RefinesEventAbstractEventLabelAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;

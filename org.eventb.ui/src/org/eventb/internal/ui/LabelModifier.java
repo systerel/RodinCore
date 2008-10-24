@@ -24,7 +24,7 @@ public class LabelModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof ILabeledElement) {
 			ILabeledElement aElement = (ILabeledElement) element;
-			IAttributeFactory factory = new ActionLabelAttributeFactory();
+			IAttributeFactory<ILabeledElement> factory = new ActionLabelAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;

@@ -646,14 +646,16 @@ public class UIUtils {
 		}
 	}
 
-	public static void setStringAttribute(IAttributedElement element,
-			IAttributeFactory factory, String value, IProgressMonitor monitor) {
+	public static <E extends IAttributedElement> void setStringAttribute(
+			E element, IAttributeFactory<E> factory, String value,
+			IProgressMonitor monitor) {
 		try {
 			if (attributeHasChanged(element, factory, value, monitor)) {
-				IInternalElement iElement = (IInternalElement) element;
+				final IRodinFile rodinFile = ((IInternalElement) element)
+						.getRodinFile();
 				History.getInstance().addOperation(
-						OperationFactory.changeAttribute(iElement
-								.getRodinFile(), factory, iElement, value));
+						OperationFactory.changeAttribute(rodinFile, factory,
+								element, value));
 			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "Error changing attribute for element "
@@ -663,9 +665,9 @@ public class UIUtils {
 		}
 	}
 
-	private static boolean attributeHasChanged(IAttributedElement element,
-			IAttributeFactory factory, String value, IProgressMonitor monitor)
-			throws RodinDBException {
+	private static <E extends IAttributedElement> boolean attributeHasChanged(
+			E element, IAttributeFactory<E> factory, String value,
+			IProgressMonitor monitor) throws RodinDBException {
 		if (value == null) {
 			return factory.hasValue(element, monitor);
 		}

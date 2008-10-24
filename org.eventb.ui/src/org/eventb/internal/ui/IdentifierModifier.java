@@ -24,7 +24,7 @@ public class IdentifierModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IIdentifierElement) {
 			IIdentifierElement aElement = (IIdentifierElement) element;
-			IAttributeFactory factory = new VariableIdentifierAttributeFactory();
+			IAttributeFactory<IIdentifierElement> factory = new VariableIdentifierAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;

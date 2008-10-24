@@ -24,7 +24,7 @@ public class SeesContextModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof ISeesContext) {
 			ISeesContext aElement = (ISeesContext) element;
-			IAttributeFactory factory = new SeesContextNameAttributeFactory();
+			IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;

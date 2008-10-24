@@ -24,7 +24,7 @@ public class PredicateModifier implements IElementModifier {
 			throws RodinDBException {
 		if (element instanceof IPredicateElement) {
 			IPredicateElement aElement = (IPredicateElement) element;
-			IAttributeFactory factory = new PredicateAttributeFactory();
+			IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
 			UIUtils.setStringAttribute(aElement, factory, text, null);
 		}
 		return;
