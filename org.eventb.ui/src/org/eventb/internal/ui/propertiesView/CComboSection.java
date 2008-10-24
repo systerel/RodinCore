@@ -33,19 +33,20 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class CComboSection extends AbstractPropertySection implements
-		IElementChangedListener {
+public abstract class CComboSection<E extends IAttributedElement> extends
+		AbstractPropertySection implements IElementChangedListener {
 
 	CCombo comboWidget;
 
-	private IAttributeFactory factory = null;
+	private IAttributeFactory<E> factory = null;
 
-	IInternalElement element;
+	E element;
 
 	public CComboSection() {
 		// Do nothing
@@ -131,7 +132,8 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		if (selection instanceof IStructuredSelection) {
 			Object input = ((IStructuredSelection) selection).getFirstElement();
 			if (input instanceof IInternalElement) {
-				this.element = (IInternalElement) input;
+				// TODO should check compatibility from the factory.
+				this.element = (E) input;
 			}
 		}
 		refresh();
@@ -163,12 +165,12 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		super.aboutToBeShown();
 	}
 
-	private IAttributeFactory getFactory() {
+	private IAttributeFactory<E> getFactory() {
 		if (factory == null)
 			factory = createFactory();
 		return factory;
 	}
 
-	abstract protected IAttributeFactory createFactory();
+	abstract protected IAttributeFactory<E> createFactory();
 
 }

@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - made IAttributeFactory generic
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.Set;
@@ -32,7 +31,7 @@ import org.rodinp.core.IAttributedElement;
  *         </p>
  * 
  */
-public interface IEditComposite {
+public interface IEditComposite<E extends IAttributedElement> {
 
 	/**
 	 * Refresh the information display within this edit composite.
@@ -74,7 +73,7 @@ public interface IEditComposite {
 	 */
 	// TODO To see if this should be set as part of the constructor and since
 	// the element should not be changed after initialising.
-	public abstract void setElement(IAttributedElement element);
+	public abstract void setElement(E element);
 
 	/**
 	 * Set the scrolled form of the main edit page. This should be called after

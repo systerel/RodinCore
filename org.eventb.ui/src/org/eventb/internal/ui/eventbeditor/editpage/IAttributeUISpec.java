@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - made IAttributeFactory generic
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributedElement;
 
 /**
  * @author htson
@@ -23,7 +23,7 @@ import org.rodinp.core.IAttributeType;
  *         This interface is NOT intended for clients to implement.
  *         </p>
  */
-public interface IAttributeUISpec {
+public interface IAttributeUISpec<E extends IAttributedElement> {
 	
 	/**
 	 * Get the prefix for the attribute.
@@ -55,7 +55,7 @@ public interface IAttributeUISpec {
 	 * 
 	 * @return an attribute factory {@link IAttributeFactory}.
 	 */
-	public IAttributeFactory getAttributeFactory();
+	public IAttributeFactory<E> getAttributeFactory();
 
 	/**
 	 * Get the corresponding attribute type.

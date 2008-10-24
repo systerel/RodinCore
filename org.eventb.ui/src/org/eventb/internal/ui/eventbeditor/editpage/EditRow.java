@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -33,7 +34,7 @@ public class EditRow {
 
 	ScrolledForm form;
 
-	IEditComposite[] editComposites;
+	IEditComposite<?>[] editComposites;
 
 	IElementComposite elementComp;
 

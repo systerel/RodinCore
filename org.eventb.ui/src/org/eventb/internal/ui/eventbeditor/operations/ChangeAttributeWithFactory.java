@@ -20,15 +20,16 @@ import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-class ChangeAttributeWithFactory extends OperationLeaf {
+class ChangeAttributeWithFactory<E extends IAttributedElement> extends
+		OperationLeaf {
 
-	private final IAttributeFactory factory;
-	private final IAttributedElement element;
+	private final IAttributeFactory<E> factory;
+	private final E element;
 	private String valueDo;
 	private String valueUndo;
 
-	public ChangeAttributeWithFactory(IAttributeFactory factory,
-			IAttributedElement element, String value) {
+	public ChangeAttributeWithFactory(IAttributeFactory<E> factory, E element,
+			String value) {
 		super("ChangeAttibuteWithFactory");
 		this.factory = factory;
 		this.element = element;

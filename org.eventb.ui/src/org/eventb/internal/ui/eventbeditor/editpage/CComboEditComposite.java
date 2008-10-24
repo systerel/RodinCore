@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -29,16 +30,18 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class CComboEditComposite extends AbstractEditComposite {
+public class CComboEditComposite<E extends IAttributedElement> extends
+		AbstractEditComposite<E> {
 
 	protected final String UNDEFINED = "--undef--";
 	
 	protected CCombo combo;
 	protected Button undefinedButton;
 
-	public CComboEditComposite(IAttributeUISpec uiSpec) {
+	public CComboEditComposite(IAttributeUISpec<E> uiSpec) {
 		super(uiSpec);
 	}
 	

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -36,16 +37,17 @@ import org.rodinp.core.IAttributedElement;
  *         attribute of a particular element.
  *         </p>
  */
-public abstract class AbstractEditComposite implements IEditComposite {
+public abstract class AbstractEditComposite<E extends IAttributedElement>
+		implements IEditComposite<E> {
 
 	// The Event-B Editor.
 	IEventBEditor<?> fEditor;
 	
 	// The attributed element to edit.
-	IAttributedElement element;
+	E element;
 
 	// The UI information on how this attribute is displayed and/or edited.
-	protected IAttributeUISpec uiSpec;
+	protected IAttributeUISpec<E> uiSpec;
 	
 	// The main scrolled form of the edit page.
 	ScrolledForm form;
@@ -74,7 +76,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 	 * @param uiSpec
 	 *            a UI Spec for an attribute.
 	 */
-	public AbstractEditComposite(IAttributeUISpec uiSpec) {
+	public AbstractEditComposite(IAttributeUISpec<E> uiSpec) {
 		this.uiSpec = uiSpec;
 	}
 	
@@ -94,7 +96,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		internalPack();
 	}
 
-	public void setElement(IAttributedElement element) {
+	public void setElement(E element) {
 		this.element = element;
 	}
 

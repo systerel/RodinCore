@@ -284,9 +284,10 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 *         does nothing
 		 *         </p>
 		 */
-		private class DummyEditComposite extends AbstractEditComposite {
+		private class DummyEditComposite<E extends IAttributedElement> extends
+				AbstractEditComposite<E> {
 
-			public DummyEditComposite(IAttributeUISpec uiSpec) {
+			public DummyEditComposite(IAttributeUISpec<E> uiSpec) {
 				super(uiSpec);
 			}
 

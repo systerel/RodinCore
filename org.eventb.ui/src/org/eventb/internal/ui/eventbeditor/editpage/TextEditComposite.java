@@ -10,6 +10,7 @@
  *     Systerel - added "show borders" preference
  *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -41,10 +42,12 @@ import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
-public class TextEditComposite extends AbstractEditComposite {
+public class TextEditComposite<E extends IAttributedElement> extends
+		AbstractEditComposite<E> {
 
 	protected StyledText text;
 	private Button undefinedButton;
@@ -53,7 +56,7 @@ public class TextEditComposite extends AbstractEditComposite {
 	
 	IContextActivation contextActivation; 
 
-	public TextEditComposite(IAttributeUISpec uiSpec, boolean isMath) {
+	public TextEditComposite(IAttributeUISpec<E> uiSpec, boolean isMath) {
 		super(uiSpec);
 		this.isMath = isMath;
 		// TODO implement a listener on the preference store
