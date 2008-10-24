@@ -18,7 +18,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
-public class ExpressionSection extends TextSection {
+public class ExpressionSection extends TextSection<IExpressionElement> {
 
 	@Override
 	String getLabel() {
@@ -29,13 +29,9 @@ public class ExpressionSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof IExpressionElement) {
-			IExpressionElement eElement = (IExpressionElement) element;
-			if (eElement == null)
-				return null;
-			return eElement.getExpressionString();
-		}
-		return null;
+		if (element == null)
+			return null;
+		return element.getExpressionString();
 	}
 
 	@Override

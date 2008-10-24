@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
+import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
 
-public class RefinesMachineSection extends CComboSection {
+public class RefinesMachineSection extends CComboSection<IRefinesMachine> {
 
 	@Override
 	String getLabel() {
@@ -24,7 +25,7 @@ public class RefinesMachineSection extends CComboSection {
 	}
 
 	@Override
-	protected IAttributeFactory createFactory() {
+	protected IAttributeFactory<IRefinesMachine> createFactory() {
 		return new RefinesMachineAbstractMachineNameAttributeFactory();
 	}
 

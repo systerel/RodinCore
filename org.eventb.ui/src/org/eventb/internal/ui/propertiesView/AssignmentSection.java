@@ -18,7 +18,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
-public class AssignmentSection extends TextSection {
+public class AssignmentSection extends TextSection<IAssignmentElement> {
 
 	@Override
 	String getLabel() {
@@ -29,11 +29,7 @@ public class AssignmentSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof IAssignmentElement) {
-			IAssignmentElement aElement = (IAssignmentElement) element;
-			return aElement.getAssignmentString();
-		}
-		return null;
+		return element.getAssignmentString();
 	}
 
 	@Override

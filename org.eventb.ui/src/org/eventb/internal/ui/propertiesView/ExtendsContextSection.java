@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
+import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 
-public class ExtendsContextSection extends CComboSection {
+public class ExtendsContextSection extends CComboSection<IExtendsContext> {
 
 	@Override
 	String getLabel() {
@@ -24,7 +25,7 @@ public class ExtendsContextSection extends CComboSection {
 	}
 
 	@Override
-	protected IAttributeFactory createFactory() {
+	protected IAttributeFactory<IExtendsContext> createFactory() {
 		return new ExtendsContextAbstractContextNameAttributeFactory();
 	}
 

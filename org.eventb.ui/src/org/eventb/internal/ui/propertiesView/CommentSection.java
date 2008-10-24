@@ -18,7 +18,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
-public class CommentSection extends TextSection {
+public class CommentSection extends TextSection<ICommentedElement> {
 
 	@Override
 	String getLabel() {
@@ -29,13 +29,9 @@ public class CommentSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof ICommentedElement) {
-			ICommentedElement cElement = (ICommentedElement) element;
-			if (cElement.exists() && cElement.hasComment())
-				return cElement.getComment();
-			return "";
-		}
-		return null;
+		if (element.exists() && element.hasComment())
+			return element.getComment();
+		return "";
 	}
 
 	@Override

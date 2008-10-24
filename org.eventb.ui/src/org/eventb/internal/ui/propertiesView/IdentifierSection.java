@@ -17,7 +17,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
-public class IdentifierSection extends TextSection {
+public class IdentifierSection extends TextSection<IIdentifierElement> {
 
 	@Override
 	String getLabel() {
@@ -28,19 +28,15 @@ public class IdentifierSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof IIdentifierElement) {
-			return ((IIdentifierElement) element).getIdentifierString();
-		}
-		return null;
+		return element.getIdentifierString();
 	}
-
 
 	@Override
 	void setStyle() {
 		style = SWT.SINGLE;
 		math = true;
 	}
-	
+
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
 		UIUtils.setStringAttribute(element, UIUtils

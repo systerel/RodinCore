@@ -13,16 +13,17 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributedElement;
 
-public class AttributeUISpec implements IAttributeUISpec {
+public class AttributeUISpec<E extends IAttributedElement> implements IAttributeUISpec<E> {
 
-	private IAttributeFactory factory;
+	private IAttributeFactory<E> factory;
 	private String prefix;
 	private String postfix;
 	private boolean fillHorzontal;
 	private IAttributeType type;
 	
-	public AttributeUISpec(IAttributeFactory factory, IAttributeType type, String prefix,
+	public AttributeUISpec(IAttributeFactory<E> factory, IAttributeType type, String prefix,
 			String postfix, boolean fillHorizontal) {
 		assert factory != null;
 		assert type != null;
@@ -33,7 +34,7 @@ public class AttributeUISpec implements IAttributeUISpec {
 		this.fillHorzontal = fillHorizontal;
 	}
 
-	public IAttributeFactory getAttributeFactory() {
+	public IAttributeFactory<E> getAttributeFactory() {
 		return factory;
 	}
 

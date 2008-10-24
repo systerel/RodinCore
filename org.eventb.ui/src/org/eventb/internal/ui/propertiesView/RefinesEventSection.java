@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
+import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
 
-public class RefinesEventSection extends CComboSection {
+public class RefinesEventSection extends CComboSection<IRefinesEvent> {
 
 	@Override
 	String getLabel() {
@@ -24,7 +25,7 @@ public class RefinesEventSection extends CComboSection {
 	}
 
 	@Override
-	protected IAttributeFactory createFactory() {
+	protected IAttributeFactory<IRefinesEvent> createFactory() {
 		return new RefinesEventAbstractEventLabelAttributeFactory();
 	}
 

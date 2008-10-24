@@ -16,7 +16,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
-public class LabelSection extends TextSection {
+public class LabelSection extends TextSection<ILabeledElement> {
 
 	@Override
 	String getLabel() {
@@ -27,11 +27,7 @@ public class LabelSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof ILabeledElement) {
-			ILabeledElement lElement = (ILabeledElement) element;
-			return lElement.getLabel();
-		}
-		return null;
+		return element.getLabel();
 	}
 
 	@Override

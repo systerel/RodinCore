@@ -18,7 +18,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
 import org.rodinp.core.RodinDBException;
 
-public class PredicateSection extends TextSection {
+public class PredicateSection extends TextSection<IPredicateElement> {
 
 	@Override
 	String getLabel() {
@@ -29,11 +29,7 @@ public class PredicateSection extends TextSection {
 	String getText() throws RodinDBException {
 		if (element == null)
 			return null;
-		if (element instanceof IPredicateElement) {
-			IPredicateElement pElement = (IPredicateElement) element;
-			return pElement.getPredicateString();
-		}
-		return null;
+		return element.getPredicateString();
 	}
 
 	@Override
@@ -44,7 +40,8 @@ public class PredicateSection extends TextSection {
 
 	@Override
 	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, new PredicateAttributeFactory(), text, monitor);
+		UIUtils.setStringAttribute(element, new PredicateAttributeFactory(),
+				text, monitor);
 	}
 
 }
