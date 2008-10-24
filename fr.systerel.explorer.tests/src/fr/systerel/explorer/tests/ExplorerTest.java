@@ -12,8 +12,8 @@
 package fr.systerel.explorer.tests;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,7 +46,6 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.internal.ui.EventBUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
@@ -58,7 +57,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.masterDetails.statistics.IStatistics;
 import fr.systerel.explorer.model.IModelElement;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelProofObligation;

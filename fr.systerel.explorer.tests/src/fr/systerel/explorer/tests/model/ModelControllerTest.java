@@ -20,44 +20,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
-import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
-import org.eventb.core.IPOSequent;
-import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.masterDetails.statistics.Statistics;
-import fr.systerel.explorer.model.ModelAxiom;
-import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelEvent;
-import fr.systerel.explorer.model.ModelInvariant;
-import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
-import fr.systerel.explorer.model.ModelTheorem;
-import fr.systerel.explorer.navigator.IElementNode;
 import fr.systerel.explorer.tests.ExplorerTest;
 
 /**
@@ -107,6 +87,7 @@ public class ModelControllerTest extends ExplorerTest {
 		//make sure the listener is always removed
 		RodinCore.removeElementChangedListener(listener);
 		deltas.clear();
+		ModelController.removeProject(rodinProject);
 		
 	}
 
@@ -129,6 +110,8 @@ public class ModelControllerTest extends ExplorerTest {
 		assertNotNull(project.getContext(c4));
 	}
 
+	
+	
 	@Test
 	public void processDeltaAddMachine() throws RodinDBException {
 		setUpSubscription();

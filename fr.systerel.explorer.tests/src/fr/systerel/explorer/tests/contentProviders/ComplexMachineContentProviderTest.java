@@ -17,6 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IMachineRoot;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
@@ -64,6 +65,15 @@ public class ComplexMachineContentProviderTest extends ExplorerTest {
 		createRefinesMachineClause(m3, m0, "refines3");
 		assertTrue(m3.getRefinesClause("refines3").exists());
 	}
+	
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		ModelController.removeProject(rodinProject);
+		
+	}
+
 	
 	@Test
 	public void getChildrenProject() throws RodinDBException {

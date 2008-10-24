@@ -32,23 +32,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.masterDetails.statistics.AggregateStatistics;
-import fr.systerel.explorer.masterDetails.statistics.IStatistics;
 import fr.systerel.explorer.masterDetails.statistics.Statistics;
-import fr.systerel.explorer.masterDetails.statistics.StatisticsContentProvider;
-import fr.systerel.explorer.masterDetails.statistics.StatisticsDetailsContentProvider;
-import fr.systerel.explorer.model.ModelAxiom;
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelEvent;
-import fr.systerel.explorer.model.ModelInvariant;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
-import fr.systerel.explorer.model.ModelTheorem;
 import fr.systerel.explorer.navigator.IElementNode;
-import fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider;
 import fr.systerel.explorer.tests.ExplorerTest;
 
 /**

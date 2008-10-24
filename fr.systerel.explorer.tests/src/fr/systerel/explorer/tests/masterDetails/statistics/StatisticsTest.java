@@ -29,6 +29,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.Before;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.masterDetails.statistics.Statistics;
 import fr.systerel.explorer.model.ModelAxiom;
@@ -225,9 +226,45 @@ public class StatisticsTest extends ExplorerTest {
 		Statistics stats2 = new Statistics(project);
 		
 		assertTrue(stats1.equals(stats2));
-		
 	}
 
+	@Test
+	public void getParentLabelProject() {
+		Statistics stats1 = new Statistics(project);
+		
+		assertEquals("P", stats1.getParentLabel());
+	}
+
+	@Test
+	public void getParentLabelMachine() {
+		Statistics stats1 = new Statistics(mach);
+		
+		assertEquals("m0", stats1.getParentLabel());
+	}
+	
+	@Test
+	public void getParentLabelContext() {
+		Statistics stats1 = new Statistics(ctx);
+		
+		assertEquals("c0", stats1.getParentLabel());
+	}
+
+	@Test
+	public void getParentLabelInvariant() throws RodinDBException {
+		ModelInvariant inv = ModelController.getInvariant(inv1);
+		Statistics stats = new Statistics(inv);
+
+		assertEquals("inv1", stats.getParentLabel());
+	}
+
+	@Test
+	public void getParentLabelAxiomNode() {
+		Statistics stats1 = new Statistics(axiom_node);
+		
+		assertEquals("Axioms", stats1.getParentLabel());
+	}
+	
+	
 	@Test
 	public void getTotalProject() {
 		Statistics stats = new Statistics(project);

@@ -13,6 +13,7 @@ package fr.systerel.explorer.tests.model;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IContextRoot;
@@ -79,6 +80,50 @@ public class ModelProjectTest extends ExplorerTest {
 		assertArray(mc0.getExtendedByContexts().toArray(), mc1);		
 	}
 	
+	@Test
+	public void processContextCycle() throws RodinDBException {
+		//introduce a cycle in context extends
+		//now c0 extends c1 and c1 extends c0
+		createExtendsContextClause(c0, c1, "extend4");
+		
+		//process the contexts
+		project.processContext(c0);
+		ModelContext mc0 = project.getContext(c0);
+		ModelContext mc1 = project.getContext(c1);
+		
+		//both contexts should have been taken into the model
+		assertEquals(mc0.getInternalContext(), c0);
+		assertEquals(mc1.getInternalContext(), c1);
+		
+		// there should be no extends cycle in the model
+		assertFalse(mc0.getExtendsContexts().contains(mc1) && mc1.getExtendsContexts().contains(mc0));		
+		assertFalse(mc0.getExtendedByContexts().contains(mc1) && mc1.getExtendedByContexts().contains(mc0));		
+	}
+
+	@Test
+	public void processContextLongCycle() throws RodinDBException {
+		//introduce a cycle in context extends
+		//now c2 extends c1, c1 extends c0 and c0 extends c2.
+		createExtendsContextClause(c0, c2, "extend4");
+		
+		//process the contexts
+		project.processContext(c0);
+		ModelContext mc0 = project.getContext(c0);
+		ModelContext mc1 = project.getContext(c1);
+		ModelContext mc2 = project.getContext(c2);
+		
+		//all contexts should have been taken into the model
+		assertEquals(mc0.getInternalContext(), c0);
+		assertEquals(mc1.getInternalContext(), c1);
+		assertEquals(mc2.getInternalContext(), c2);
+		
+		// there should be no extends cycle in the model
+		assertFalse(mc0.getExtendsContexts().contains(mc2) && mc1.getExtendsContexts().contains(mc0)
+				&& mc2.getExtendsContexts().contains(mc1));		
+		assertFalse(mc0.getExtendedByContexts().contains(mc2) && mc1.getExtendedByContexts().contains(mc0)
+				&& mc2.getExtendedByContexts().contains(mc1));		
+	}
+	
 	
 	@Test
 	public void processMachineSimple() {
@@ -111,6 +156,50 @@ public class ModelProjectTest extends ExplorerTest {
 		// check that the dependencies have been taken into the model
 		assertArray(mm0.getSeesContexts().toArray(), mc0);
 		assertArray(mc0.getSeenByMachines().toArray(), mm0);		
+	}
+
+	@Test
+	public void processMachineCycle() throws RodinDBException {
+		//introduce a cycle in machine refinement
+		//now m0 refines m1 and m1 refines m0
+		createRefinesMachineClause(m0, m1, "refines4");
+		
+		//process the machines
+		project.processMachine(m0);
+		ModelMachine mm0 = project.getMachine(m0);
+		ModelMachine mm1 = project.getMachine(m1);
+		
+		//both machines should have been taken into the model
+		assertEquals(mm0.getInternalMachine(), m0);
+		assertEquals(mm1.getInternalMachine(), m1);
+		
+		// there should be no refinement cycle in the model
+		assertFalse(mm0.getRefinesMachines().contains(mm1) && mm1.getRefinesMachines().contains(mm0));		
+		assertFalse(mm0.getRefinedByMachines().contains(mm1) && mm1.getRefinedByMachines().contains(mm0));		
+	}
+
+	@Test
+	public void processMachineLongCycle() throws RodinDBException {
+		//introduce a cycle in machine refinement
+		//now m2 refines m1, m1 refines m0 and m0 refines m2
+		createRefinesMachineClause(m0, m2, "refines4");
+		
+		//process the machines
+		project.processMachine(m0);
+		ModelMachine mm0 = project.getMachine(m0);
+		ModelMachine mm1 = project.getMachine(m1);
+		ModelMachine mm2 = project.getMachine(m2);
+		
+		//all machines should have been taken into the model
+		assertEquals(mm0.getInternalMachine(), m0);
+		assertEquals(mm1.getInternalMachine(), m1);
+		assertEquals(mm2.getInternalMachine(), m2);
+		
+		// there should be no refinement cycle in the model
+		assertFalse(mm0.getRefinesMachines().contains(mm2) && mm1.getRefinesMachines().contains(mm0)
+				&&mm2.getRefinesMachines().contains(mm1));		
+		assertFalse(mm0.getRefinedByMachines().contains(mm2) && mm1.getRefinedByMachines().contains(mm0)
+				 && mm2.getRefinedByMachines().contains(mm1));		
 	}
 	
 	@Test

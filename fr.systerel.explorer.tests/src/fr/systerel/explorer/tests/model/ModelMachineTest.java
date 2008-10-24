@@ -14,6 +14,8 @@ package fr.systerel.explorer.tests.model;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
+import java.util.ArrayList;
+
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -26,8 +28,10 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
@@ -126,6 +130,14 @@ public class ModelMachineTest extends ExplorerTest {
 		source6.setSource(thm1, null);
 	}
 	
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		ModelController.removeProject(rodinProject);
+		
+	}
+	
 
 	@Test
 	public void getModelParent() {
@@ -169,5 +181,37 @@ public class ModelMachineTest extends ExplorerTest {
 		assertModelPSStatus(machine.getProofObligations(), status3, status4, status1, status2, status5);
 
 	}
+	
+	@Test
+	public void getRestMachines() throws RodinDBException {
+		
+		IMachineRoot m1 = createMachine("m1");
+		ModelMachine mm1=  new ModelMachine(m1);
+
+		IMachineRoot m2 = createMachine("m2");
+		ModelMachine mm2=  new ModelMachine(m2);
+		
+		IMachineRoot m3 = createMachine("m3");
+		ModelMachine mm3=  new ModelMachine(m3);
+
+		IMachineRoot m4 = createMachine("m4");
+		ModelMachine mm4=  new ModelMachine(m4);
+		
+		//add some refinements to the model.
+		machine.addRefinedByMachine(mm1);
+		machine.addRefinedByMachine(mm3);
+		machine.addRefinedByMachine(mm4);
+		
+		//set the longest branch
+		ArrayList<ModelMachine> branch = new ArrayList<ModelMachine>();
+		branch.add(mm1);
+		branch.add(mm2);
+		machine.setLongestBranch(branch);
+		
+		//check the rest machines
+		assertArray(machine.getRestMachines().toArray(), mm3, mm4);
+		
+	}
+	
 	
 }

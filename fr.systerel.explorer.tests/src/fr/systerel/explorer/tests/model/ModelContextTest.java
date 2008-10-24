@@ -14,6 +14,8 @@ package fr.systerel.explorer.tests.model;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
+import java.util.ArrayList;
+
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IPORoot;
@@ -22,8 +24,10 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
@@ -96,6 +100,13 @@ public class ModelContextTest extends ExplorerTest {
 		
 	}
 	
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		ModelController.removeProject(rodinProject);
+		
+	}
 
 	@Test
 	public void getModelParent() {
@@ -136,5 +147,37 @@ public class ModelContextTest extends ExplorerTest {
 		assertModelPSStatus(context.getProofObligations(), status1, status2);
 
 	}
+	
+	@Test
+	public void getRestMachines() throws RodinDBException {
+		
+		IContextRoot c1 = createContext("c1");
+		ModelContext mc1=  new ModelContext(c1);
+
+		IContextRoot c2 = createContext("c2");
+		ModelContext mc2=  new ModelContext(c2);
+		
+		IContextRoot c3 = createContext("c3");
+		ModelContext mc3=  new ModelContext(c3);
+
+		IContextRoot c4 = createContext("c4");
+		ModelContext mc4=  new ModelContext(c4);
+		
+		//add some refinements to the model.
+		context.addExtendedByContext(mc1);
+		context.addExtendedByContext(mc3);
+		context.addExtendedByContext(mc4);
+		
+		//set the longest branch
+		ArrayList<ModelContext> branch = new ArrayList<ModelContext>();
+		branch.add(mc1);
+		branch.add(mc2);
+		context.setLongestBranch(branch);
+		
+		//check the rest machines
+		assertArray(context.getRestContexts().toArray(), mc3, mc4);
+		
+	}
+	
 	
 }

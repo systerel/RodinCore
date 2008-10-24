@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
@@ -70,6 +71,15 @@ public class ComplexContextContentProviderTest extends ExplorerTest {
 		assertTrue(m0.getSeesClause("sees1").exists());
 		
 	}
+	
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		ModelController.removeProject(rodinProject);
+		
+	}
+	
 	
 	@Test
 	public void getChildrenProject() throws RodinDBException {
