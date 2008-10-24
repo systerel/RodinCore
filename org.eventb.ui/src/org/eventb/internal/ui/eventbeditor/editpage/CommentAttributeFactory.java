@@ -22,15 +22,12 @@ import org.rodinp.core.RodinDBException;
 public class CommentAttributeFactory implements
 		IAttributeFactory<ICommentedElement> {
 
-	public String getValue(ICommentedElement element, IProgressMonitor monitor) {
-		try {
-			if (element.hasComment())
-				return element.getComment();
-			else
-				return "";
-		} catch (RodinDBException e) {
+	public String getValue(ICommentedElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (element.hasComment())
+			return element.getComment();
+		else
 			return "";
-		}
 	}
 
 	public void setValue(ICommentedElement element, String newValue,
