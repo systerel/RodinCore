@@ -48,7 +48,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
@@ -256,8 +255,7 @@ public class EditPage extends EventBEditorPage implements
 		label.setLayoutData(new GridData());
 		
 		String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
-				+ declaration + "</b> "
-				+ EventBPlugin.getComponentName(rodinInput.getRodinFile().getElementName())
+				+ declaration + "</b> " + rodinInput.getElementName()
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
@@ -272,9 +270,10 @@ public class EditPage extends EventBEditorPage implements
 			@Override
 			protected void response() {
 				if (rodinInput instanceof ICommentedElement) {
-						UIUtils.setStringAttribute(rodinInput,
-								new CommentAttributeFactory(), commentWidget
-										.getText(), null);
+					ICommentedElement ce = (ICommentedElement) rodinInput;
+					UIUtils.setStringAttribute(ce,
+							new CommentAttributeFactory(), commentWidget
+									.getText(), null);
 				}
 			}
 		};

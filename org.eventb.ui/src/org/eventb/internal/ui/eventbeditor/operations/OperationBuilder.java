@@ -455,9 +455,9 @@ class OperationBuilder {
 		return op;
 	}
 
-	public OperationTree changeAttribute(IAttributeFactory factory,
-			IAttributedElement element, String value) {
-		final ChangeAttributeWithFactory op = new ChangeAttributeWithFactory(
+	public <E extends IAttributedElement> OperationTree changeAttribute(
+			IAttributeFactory<E> factory, E element, String value) {
+		final ChangeAttributeWithFactory<E> op = new ChangeAttributeWithFactory<E>(
 				factory, element, value);
 		return op;
 	}

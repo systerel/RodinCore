@@ -245,8 +245,9 @@ public class OperationFactory {
 	 * @param value
 	 *            if value is null, the attribute is removed. Else it is changed
 	 */
-	public static AtomicOperation changeAttribute(IRodinFile file,
-			IAttributeFactory factory, IAttributedElement element, String value) {
+	public static <E extends IAttributedElement> AtomicOperation changeAttribute(
+			IRodinFile file, IAttributeFactory<E> factory, E element,
+			String value) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
 				.changeAttribute(factory, element, value));
