@@ -8,15 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IConvergenceElement;
-import org.eventb.core.IConvergenceElement.Convergence;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 
 public class ConvergenceSection extends CComboSection {
 
@@ -26,40 +23,7 @@ public class ConvergenceSection extends CComboSection {
 	}
 
 	@Override
-	String getText() throws RodinDBException {
-		IConvergenceElement cElement = (IConvergenceElement) element;
-		String defaultConv = ConvergenceAttributeFactory.ORDINARY;
-		try {
-			if (!cElement.hasConvergence())
-				return defaultConv;
-			Convergence convergence = cElement.getConvergence();
-			if (convergence == Convergence.ORDINARY)
-				return ConvergenceAttributeFactory.ORDINARY;
-			if (convergence == Convergence.CONVERGENT)
-				return ConvergenceAttributeFactory.CONVERGENT;
-			if (convergence == Convergence.ANTICIPATED)
-				return ConvergenceAttributeFactory.ANTICIPATED;
-			return defaultConv;
-		} catch (RodinDBException e) {
-			return defaultConv;
-		}
-
-	}
-
-	@Override
-	void setData() {
-		ConvergenceAttributeFactory factory = new ConvergenceAttributeFactory();
-		for(String value : factory.getPossibleValues(element, null)){
-			comboWidget.add(value);
-		}
-//		comboWidget.add(ORDINARY);
-//		comboWidget.add(CONVERGENT);
-//		comboWidget.add(ANTICIPATED);
-	}
-
-	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, new ConvergenceAttributeFactory(),
-				text, monitor);
+	protected IAttributeFactory createFactory() {
+		return new ConvergenceAttributeFactory();
 	}
 }

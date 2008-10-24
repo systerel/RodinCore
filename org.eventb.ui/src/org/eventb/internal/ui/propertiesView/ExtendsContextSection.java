@@ -9,16 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IContextRoot;
-import org.eventb.core.IExtendsContext;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 
 public class ExtendsContextSection extends CComboSection {
 
@@ -28,32 +24,8 @@ public class ExtendsContextSection extends CComboSection {
 	}
 
 	@Override
-	String getText() throws RodinDBException {
-		IExtendsContext eElement = (IExtendsContext) element;
-		return eElement.getAbstractContextName();
-	}
-
-	@Override
-	void setData() {
-		final IRodinProject project = element.getRodinProject();
-		final IContextRoot[] contexts;
-		try {
-			contexts = UIUtils.getContextRootChildren(project);
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the contexts of " + project);
-			return;
-		}
-		for (IContextRoot context : contexts) {
-			final String bareName = context.getComponentName();
-			comboWidget.add(bareName);
-		}
-	}
-
-	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element,
-				new ExtendsContextAbstractContextNameAttributeFactory(), text,
-				monitor);
+	protected IAttributeFactory createFactory() {
+		return new ExtendsContextAbstractContextNameAttributeFactory();
 	}
 
 }

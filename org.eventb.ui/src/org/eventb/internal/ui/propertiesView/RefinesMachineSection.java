@@ -9,16 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IMachineRoot;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinDBException;
 
 public class RefinesMachineSection extends CComboSection {
 
@@ -28,32 +24,8 @@ public class RefinesMachineSection extends CComboSection {
 	}
 
 	@Override
-	String getText() throws RodinDBException {
-		IRefinesMachine rElement = (IRefinesMachine) element;
-		return rElement.getAbstractMachineName();
-	}
-
-	@Override
-	void setData() {
-		final IRodinProject project = element.getRodinProject();
-		final IMachineRoot[] machines;
-		try {
-			machines = UIUtils.getMachineRootChildren(project);
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the machines of " + project);
-			return;
-		}
-		for (IMachineRoot machine : machines) {
-			final String bareName = machine.getComponentName();
-			comboWidget.add(bareName);
-		}
-	}
-
-	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element,
-				new RefinesMachineAbstractMachineNameAttributeFactory(), text,
-				monitor);
+	protected IAttributeFactory createFactory() {
+		return new RefinesMachineAbstractMachineNameAttributeFactory();
 	}
 
 }

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added history support
+ *     Systerel - used IAttributeFactory
+ *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +30,8 @@ import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -26,9 +40,11 @@ import org.rodinp.core.RodinDBException;
 
 public abstract class CComboSection extends AbstractPropertySection implements
 		IElementChangedListener {
-
+	
 	CCombo comboWidget;
 
+	private IAttributeFactory factory = null;
+	
 	IInternalElement element;
 
 	public CComboSection() {
@@ -82,12 +98,19 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	abstract void setText(String text, IProgressMonitor monitor)
-			throws RodinDBException;
+	void setText(String text, IProgressMonitor monitor)
+			throws RodinDBException{
+		UIUtils.setStringAttribute(element, getFactory(), text, null);	
+	}
 
-	abstract void setData();
+	void setData() {
+		for (String value : getFactory().getPossibleValues(element, null))
+			comboWidget.add(value);
+	}
 
-	abstract String getText() throws RodinDBException;
+	String getText() throws RodinDBException{
+		return getFactory().getValue(element, null);
+	}
 
 	@Override
 	public void refresh() {
@@ -141,5 +164,13 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		RodinCore.addElementChangedListener(this);
 		super.aboutToBeShown();
 	}
+	
+	private IAttributeFactory getFactory(){
+		if(factory == null)
+			factory = createFactory();
+		return factory;
+	}
+	
+	abstract protected IAttributeFactory createFactory();
 
 }
