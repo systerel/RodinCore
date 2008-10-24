@@ -47,7 +47,7 @@ public class ExpressionAttributeFactory implements IAttributeFactory {
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		// Not applicable for Expression Element.
 		return null;
 	}

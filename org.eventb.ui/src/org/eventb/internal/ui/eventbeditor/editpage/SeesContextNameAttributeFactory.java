@@ -22,6 +22,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -73,16 +74,26 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory {
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
 		ISeesContext seesContext = (ISeesContext) element;
-		IRodinProject rodinProject = seesContext.getRodinProject();
-		IContextRoot[] contextRoot = UIUtils.getContextRootChildren(rodinProject);
+		IContextRoot[] contextRoot = getContextRoots(seesContext);
 		for (IContextRoot context : contextRoot) {
 			String bareName = context.getComponentName();
 			results.add(bareName);
 		}
 		return results.toArray(new String[results.size()]);
+	}
+
+	private IContextRoot[] getContextRoots(IInternalElement element) {
+		final IRodinProject rodinProject = element.getRodinProject();
+		try {
+			return UIUtils.getContextRootChildren(rodinProject);
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "When computing the list of contexts of project "
+					+ rodinProject);
+			return new IContextRoot[0];
+		}
 	}
 
 	/*

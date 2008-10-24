@@ -24,6 +24,7 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -52,22 +53,30 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
 		IExtendsContext extendsContext = (IExtendsContext) element;
-		IRodinProject rodinProject = extendsContext.getRodinProject();
-//		IContextFile[] contextFiles = rodinProject
-//				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-		IContextRoot[] contextRoot = UIUtils.getContextRootChildren(rodinProject);
 		IContextRoot context = (IContextRoot) extendsContext.getParent();
-		String contextName = context.getRodinFile().getBareName();
+		String contextName = context.getElementName();
 
-		for (IContextRoot root: contextRoot) {
-			String bareName = root.getRodinFile().getBareName();
+		IContextRoot[] contextRoots = getContextRoots(extendsContext);
+		for (IContextRoot root : contextRoots) {
+			String bareName = root.getElementName();
 			if (!contextName.equals(bareName))
 				results.add(bareName);
 		}
 		return results.toArray(new String[results.size()]);
+	}
+
+	private IContextRoot[] getContextRoots(IInternalElement element) {
+		final IRodinProject rodinProject = element.getRodinProject();
+		try {
+			return UIUtils.getContextRootChildren(rodinProject);
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "When computing the list of contexts of project "
+					+ rodinProject);
+			return new IContextRoot[0];
+		}
 	}
 
 	public void removeAttribute(IAttributedElement element,

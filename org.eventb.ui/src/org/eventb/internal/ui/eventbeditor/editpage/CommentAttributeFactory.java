@@ -25,7 +25,10 @@ public class CommentAttributeFactory implements IAttributeFactory {
 		assert element instanceof ICommentedElement;
 		final ICommentedElement cElement = (ICommentedElement) element;
 		try {
-			return cElement.getComment();
+			if (cElement.hasComment())
+				return cElement.getComment();
+			else
+				return "";
 		} catch (RodinDBException e) {
 			return "";
 		}
@@ -51,7 +54,7 @@ public class CommentAttributeFactory implements IAttributeFactory {
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		// Not applicable for Commented Element.
 		return null;
 	}

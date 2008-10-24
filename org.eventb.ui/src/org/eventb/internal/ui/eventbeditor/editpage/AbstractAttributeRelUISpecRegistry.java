@@ -205,7 +205,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		class DummyAttributeFactory implements IAttributeFactory {
 
 			public String[] getPossibleValues(IAttributedElement element,
-					IProgressMonitor monitor) throws RodinDBException {
+					IProgressMonitor monitor) {
 				// Not applicable to dummy factory
 				return null;
 			}

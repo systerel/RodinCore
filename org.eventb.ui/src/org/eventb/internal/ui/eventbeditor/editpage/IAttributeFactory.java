@@ -117,6 +117,6 @@ public interface IAttributeFactory {
 	 *         possible values.
 	 */
 	public abstract String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor);
 
 }

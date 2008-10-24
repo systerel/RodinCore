@@ -20,10 +20,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -76,39 +75,29 @@ public class RefinesMachineAbstractMachineNameAttributeFactory implements
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
 		IRefinesMachine refinesMachine = (IRefinesMachine) element;
 		IMachineRoot machine = (IMachineRoot) refinesMachine.getParent();
 		String machineName = machine.getRodinFile().getBareName();
-		IRodinProject rodinProject = refinesMachine.getRodinProject();
-//		IRodinFile[] machineFiles = rodinProject
-//				.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-		IRodinFile[] machineFiles = getMachineFile(rodinProject);
-		for (IRodinFile machineFile : machineFiles) {
-			String bareName = machineFile.getBareName();
+		IMachineRoot[] machineRoots = getMachineRoots(refinesMachine);
+		for (IMachineRoot root : machineRoots) {
+			String bareName = root.getElementName();
 			if (!machineName.equals(bareName))
 				results.add(bareName);
 		}
 		return results.toArray(new String[results.size()]);
 	}
 
-	/**
-	 * @return an IRodinFile array. Each file is a children of givenProject,
-	 *         IRodinFile and the root element is IMachineRoot
-	 */
-	private IRodinFile[] getMachineFile(IRodinProject rodinProject)
-			throws RodinDBException {
-		final ArrayList<IRodinFile> result = new ArrayList<IRodinFile>();
-		for (IRodinElement element : rodinProject.getChildren()) {
-			if(!(element instanceof IRodinFile))
-				continue;
-			final IRodinFile rf = (IRodinFile) element;
-			if(!(rf.getRoot() instanceof IMachineRoot))
-				continue;
-			result.add(rf);
+	private IMachineRoot[] getMachineRoots(IRefinesMachine refinesMachine) {
+		final IRodinProject rodinProject = refinesMachine.getRodinProject();
+		try {
+			return UIUtils.getMachineRootChildren(rodinProject);
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "When computing the list of contexts of project "
+					+ rodinProject);
+			return new IMachineRoot[0];
 		}
-		return result.toArray(new IRodinFile[result.size()]);
 	}
 
 	/*

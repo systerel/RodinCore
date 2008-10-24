@@ -21,10 +21,10 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.EventBUtils;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeFactory implements
@@ -56,25 +56,27 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
-
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		IEvent event = (IEvent) refinesEvent.getParent();
-		IMachineRoot root = (IMachineRoot) event.getParent();
-		IRefinesMachine[] refinesClauses = root.getRefinesClauses();
-		if (refinesClauses.length == 1) {
-			IRefinesMachine refinesMachine = refinesClauses[0];
-			IRodinFile rf = refinesMachine.getAbstractMachine();
-			IMachineRoot abstractMachine = (IMachineRoot) rf.getRoot();
-			if (abstractMachine.exists()) {
-				IEvent[] events = abstractMachine.getEvents();
-				for (IEvent absEvent : events) {
-					results.add(absEvent.getLabel());
-				}
-			}
+		IMachineRoot root = element.getAncestor(IMachineRoot.ELEMENT_TYPE);
+		try {
+			addAbstractEvents(results, root);
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "When computing abstract events for " + root);
 		}
 		return results.toArray(new String[results.size()]);
+	}
+
+	private void addAbstractEvents(List<String> results, IMachineRoot root)
+			throws RodinDBException {
+		if (root == null)
+			return;
+		IMachineRoot abstractMachine = EventBUtils.getAbstractMachine(root);
+		if (abstractMachine.exists()) {
+			for (IEvent absEvent : abstractMachine.getEvents()) {
+				results.add(absEvent.getLabel());
+			}
+		}
 	}
 
 	public void removeAttribute(IAttributedElement element,

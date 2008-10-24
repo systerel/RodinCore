@@ -59,7 +59,7 @@ public abstract class IdentifierAttributeFactory implements IAttributeFactory {
 	}
 
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		// Not applicable to Identifier Elements
 		return null;
 	}

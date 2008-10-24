@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
@@ -132,16 +131,10 @@ public class CComboEditComposite extends AbstractEditComposite {
 		}
 		
 		combo.add(UNDEFINED);
-		try {
-			String[] values;
-			values = uiSpec.getAttributeFactory().getPossibleValues(element,
-					new NullProgressMonitor());
-			for (String value : values) {
-				combo.add(value);
-			}
-		} catch (RodinDBException e) {
-			EventBUIExceptionHandler.handleRodinException(e,
-					UserAwareness.IGNORE);
+		String[] values = uiSpec.getAttributeFactory().getPossibleValues(
+				element, null);
+		for (String value : values) {
+			combo.add(value);
 		}
 	}
 

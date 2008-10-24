@@ -89,7 +89,7 @@ public abstract class LabelAttributeFactory implements IAttributeFactory {
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		// Not applicable for Labeled Element
 		return null;
 	}
