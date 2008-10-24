@@ -277,35 +277,6 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			return editComposite;
 		}
 
-		/*
-		 * @author htson
-		 *         <p>
-		 *         Utility dummy class implement {@link IEditComposite} which
-		 *         does nothing
-		 *         </p>
-		 */
-		private class DummyEditComposite<E extends IAttributedElement> extends
-				AbstractEditComposite<E> {
-
-			public DummyEditComposite(IAttributeUISpec<E> uiSpec) {
-				super(uiSpec);
-			}
-
-			@Override
-			public void initialise(boolean refreshMarker) {
-				// Do nothing
-			}
-
-			public void setUndefinedValue() {
-				// Do nothing
-			}
-
-			public void edit(int charStart, int charEnd) {
-				// Do nothing
-			}
-			
-		}
-
 		/**
 		 * Return the default prefix.
 		 * 
@@ -315,6 +286,35 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		public String getDefaultPrefix() {
 			return config.getAttribute("defaultValue");
 		}
+	}
+
+	/**
+	 * @author htson
+	 *         <p>
+	 *         Utility dummy class implement {@link IEditComposite} which
+	 *         does nothing
+	 *         </p>
+	 */
+	private static class DummyEditComposite<E extends IAttributedElement> extends
+			AbstractEditComposite<E> {
+
+		public DummyEditComposite(IAttributeUISpec<E> uiSpec) {
+			super(uiSpec);
+		}
+
+		@Override
+		public void initialise(boolean refreshMarker) {
+			// Do nothing
+		}
+
+		public void setUndefinedValue() {
+			// Do nothing
+		}
+
+		public void edit(int charStart, int charEnd) {
+			// Do nothing
+		}
+		
 	}
 
 	/*
