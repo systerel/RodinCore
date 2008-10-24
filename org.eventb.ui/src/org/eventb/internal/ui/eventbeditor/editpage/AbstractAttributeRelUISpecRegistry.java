@@ -191,8 +191,8 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			} catch (CoreException e) {
 				if (EventBEditorUtils.DEBUG)
 					e.printStackTrace();
+				factory = new DummyAttributeFactory();
 			}
-			factory = new DummyAttributeFactory();
 		}
 
 		/*
