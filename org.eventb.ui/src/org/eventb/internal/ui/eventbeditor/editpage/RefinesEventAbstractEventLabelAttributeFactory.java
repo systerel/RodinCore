@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -24,38 +25,29 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeFactory implements
-		IAttributeFactory {
+		IAttributeFactory<IRefinesEvent> {
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IRefinesEvent element, IProgressMonitor monitor)
 			throws RodinDBException {
-		if (!(element instanceof IRefinesEvent)) {
-			return;
-		}
-		IRefinesEvent rElement = (IRefinesEvent) element;
-		IEvent event = (IEvent) rElement.getParent();
-		rElement.setAbstractEventLabel(event.getLabel(), monitor);
+		IEvent event = (IEvent) element.getParent();
+		element.setAbstractEventLabel(event.getLabel(), monitor);
 	}
 
-	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+	public String getValue(IRefinesEvent element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IRefinesEvent;
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		return refinesEvent.getAbstractEventLabel();
+		return element.getAbstractEventLabel();
 	}
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IRefinesEvent element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IRefinesEvent;
-		IRefinesEvent refinesEvent = (IRefinesEvent) element;
-		refinesEvent.setAbstractEventLabel(newValue, new NullProgressMonitor());
+		element.setAbstractEventLabel(newValue, new NullProgressMonitor());
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IRefinesEvent element,
 			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
 		IMachineRoot root = element.getAncestor(IMachineRoot.ELEMENT_TYPE);
@@ -79,14 +71,13 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 		}
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IRefinesEvent element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IRefinesEvent element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IRefinesEvent;
-		return ((IRefinesEvent) element).hasAbstractEventLabel();
+		return element.hasAbstractEventLabel();
 	}
 }

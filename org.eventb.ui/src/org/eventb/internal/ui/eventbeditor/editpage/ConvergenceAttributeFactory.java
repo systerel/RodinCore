@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -15,24 +16,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
-import org.eventb.core.IEvent;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class ConvergenceAttributeFactory implements IAttributeFactory {
+public class ConvergenceAttributeFactory implements
+		IAttributeFactory<IConvergenceElement> {
 
 	public final static String ORDINARY = "ordinary";
 
- 	public final static String CONVERGENT = "convergent";
+	public final static String CONVERGENT = "convergent";
 
- 	public final static String ANTICIPATED = "anticipated";
+	public final static String ANTICIPATED = "anticipated";
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		IEvent event = (IEvent) element;
-		Convergence convergence = event.getConvergence();
+	public String getValue(IConvergenceElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		Convergence convergence = element.getConvergence();
 		if (convergence == Convergence.ORDINARY)
 			return ORDINARY;
 		if (convergence == Convergence.CONVERGENT)
@@ -42,46 +41,40 @@ public class ConvergenceAttributeFactory implements IAttributeFactory {
 		return ORDINARY;
 	}
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IConvergenceElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IEvent;
-		IEvent event = (IEvent) element;
+		final Convergence convergence;
 		if (newValue.equals(ORDINARY))
-			event.setConvergence(Convergence.ORDINARY,
-					new NullProgressMonitor());
+			convergence = Convergence.ORDINARY;
 		else if (newValue.equals(CONVERGENT))
-			event.setConvergence(Convergence.CONVERGENT,
-					new NullProgressMonitor());
+			convergence = Convergence.CONVERGENT;
 		else if (newValue.equals(ANTICIPATED))
-			event.setConvergence(Convergence.ANTICIPATED,
-					new NullProgressMonitor());
+			convergence = Convergence.ANTICIPATED;
+		else
+			convergence = null;
+		element.setConvergence(convergence, null);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IConvergenceElement element,
 			IProgressMonitor monitor) {
 		return new String[] { ORDINARY, CONVERGENT, ANTICIPATED };
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IConvergenceElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		element.removeAttribute(
-				EventBAttributes.CONVERGENCE_ATTRIBUTE,
+		element.removeAttribute(EventBAttributes.CONVERGENCE_ATTRIBUTE,
 				new NullProgressMonitor());
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IConvergenceElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		if (!(element instanceof IConvergenceElement)) {
-			return;
-		}
-		IConvergenceElement cElement = (IConvergenceElement) element;
-		cElement.setConvergence(IConvergenceElement.Convergence.ORDINARY,
+		element.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 				monitor);
 	}
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		assert element instanceof IConvergenceElement;
-		return ((IConvergenceElement) element).hasConvergence();
+
+	public boolean hasValue(IConvergenceElement element,
+			IProgressMonitor monitor) throws RodinDBException {
+		return element.hasConvergence();
 	}
 }

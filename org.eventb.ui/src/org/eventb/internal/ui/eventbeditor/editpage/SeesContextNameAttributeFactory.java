@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -21,63 +22,32 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class SeesContextNameAttributeFactory implements IAttributeFactory {
+public class SeesContextNameAttributeFactory implements IAttributeFactory<ISeesContext> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setDefaultValue(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			ISeesContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		ISeesContext seesContext = (ISeesContext) element;
-		String name = "context";
-		seesContext.setSeenContextName(name, monitor);
+		element.setSeenContextName("context", monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getValue(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+	public String getValue(ISeesContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		ISeesContext seesContext = (ISeesContext) element;
-		return seesContext.getSeenContextName();
+		return element.getSeenContextName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setValue(org.rodinp.core.IAttributedElement,
-	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(ISeesContext element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof ISeesContext;
-		ISeesContext seesContext = (ISeesContext) element;
-		seesContext.setSeenContextName(newValue, monitor);
+		element.setSeenContextName(newValue, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getPossibleValues(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(ISeesContext element,
 			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
-		ISeesContext seesContext = (ISeesContext) element;
-		IContextRoot[] contextRoot = getContextRoots(seesContext);
+		IContextRoot[] contextRoot = getContextRoots(element);
 		for (IContextRoot context : contextRoot) {
 			String bareName = context.getComponentName();
 			results.add(bareName);
@@ -96,20 +66,13 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#removeAttribute(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(ISeesContext element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(ISeesContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof ISeesContext;
-		return ((ISeesContext) element).hasSeenContextName();
+		return element.hasSeenContextName();
 	}
 }

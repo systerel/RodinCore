@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -15,46 +16,40 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPredicateElement;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class PredicateAttributeFactory implements IAttributeFactory {
+public class PredicateAttributeFactory implements
+		IAttributeFactory<IPredicateElement> {
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IPredicateElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IPredicateElement;
-		final IPredicateElement pElement = (IPredicateElement) element;
-		pElement.setPredicateString(newValue, null);
+		element.setPredicateString(newValue, null);
 	}
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IPredicateElement;
-		final IPredicateElement pElement = (IPredicateElement) element;
-		return pElement.getPredicateString();
+	public String getValue(IPredicateElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		return element.getPredicateString();
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IPredicateElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IPredicateElement;
-		final IPredicateElement pElement = (IPredicateElement) element;
-		pElement.setPredicateString("", monitor);
+		element.setPredicateString("", monitor);
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IPredicateElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, monitor);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IPredicateElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Predicate Element.
 		return null;
 	}
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+
+	public boolean hasValue(IPredicateElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IPredicateElement;
-		return ((IPredicateElement) element).hasPredicateString();
+		return element.hasPredicateString();
 	}
 }

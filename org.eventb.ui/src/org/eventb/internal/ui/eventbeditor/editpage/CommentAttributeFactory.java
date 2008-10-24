@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -16,17 +17,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class CommentAttributeFactory implements IAttributeFactory {
+public class CommentAttributeFactory implements
+		IAttributeFactory<ICommentedElement> {
 
-	public String getValue(IAttributedElement element, IProgressMonitor monitor) {
-		assert element instanceof ICommentedElement;
-		final ICommentedElement cElement = (ICommentedElement) element;
+	public String getValue(ICommentedElement element, IProgressMonitor monitor) {
 		try {
-			if (cElement.hasComment())
-				return cElement.getComment();
+			if (element.hasComment())
+				return element.getComment();
 			else
 				return "";
 		} catch (RodinDBException e) {
@@ -34,35 +33,31 @@ public class CommentAttributeFactory implements IAttributeFactory {
 		}
 	}
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(ICommentedElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof ICommentedElement;
-		final ICommentedElement cElement = (ICommentedElement) element;
-		cElement.setComment(newValue, monitor);
+		element.setComment(newValue, monitor);
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			ICommentedElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final ICommentedElement cElement = (ICommentedElement) element;
-		cElement.setComment("", new NullProgressMonitor());
+		element.setComment("", new NullProgressMonitor());
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(ICommentedElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.COMMENT_ATTRIBUTE, monitor);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(ICommentedElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Commented Element.
 		return null;
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(ICommentedElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof ICommentedElement;
-		return ((ICommentedElement) element).hasComment();
+		return element.hasComment();
 
 	}
 }

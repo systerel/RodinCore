@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -15,47 +16,41 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IExpressionElement;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class ExpressionAttributeFactory implements IAttributeFactory {
+public class ExpressionAttributeFactory implements
+		IAttributeFactory<IExpressionElement> {
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IExpressionElement;
-		final IExpressionElement cElement = (IExpressionElement) element;
-		return cElement.getExpressionString();
+	public String getValue(IExpressionElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		return element.getExpressionString();
 	}
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IExpressionElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IExpressionElement;
-		final IExpressionElement eElement = (IExpressionElement) element;
-		eElement.setExpressionString(newValue, monitor);
+		element.setExpressionString(newValue, monitor);
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IExpressionElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final IExpressionElement eElement = (IExpressionElement) element;
-		eElement.setExpressionString("", monitor);
+		element.setExpressionString("", monitor);
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IExpressionElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE, monitor);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IExpressionElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Expression Element.
 		return null;
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IExpressionElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IExpressionElement;
-		return ((IExpressionElement) element).hasExpressionString();
+		return element.hasExpressionString();
 
 	}
 }

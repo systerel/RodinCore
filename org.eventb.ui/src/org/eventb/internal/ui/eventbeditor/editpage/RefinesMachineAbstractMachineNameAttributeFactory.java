@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -22,65 +23,35 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesMachineAbstractMachineNameAttributeFactory implements
-		IAttributeFactory {
+		IAttributeFactory<IRefinesMachine> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setDefaultValue(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IRefinesMachine element, IProgressMonitor monitor)
 			throws RodinDBException {
-		IRefinesMachine refinesEvent = (IRefinesMachine) element;
 		String name = "abstract_machine";
-		refinesEvent.setAbstractMachineName(name, new NullProgressMonitor());
+		element.setAbstractMachineName(name, new NullProgressMonitor());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getValue(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+	public String getValue(IRefinesMachine element, IProgressMonitor monitor)
 			throws RodinDBException {
-		IRefinesMachine refinesMachine = (IRefinesMachine) element;
-		return refinesMachine.getAbstractMachineName();
+		return element.getAbstractMachineName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#setValue(org.rodinp.core.IAttributedElement,
-	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void setValue(IAttributedElement element, String str,
+	public void setValue(IRefinesMachine element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IRefinesMachine;
-		IRefinesMachine refinesMachine = (IRefinesMachine) element;
-		refinesMachine.setAbstractMachineName(str, new NullProgressMonitor());
+		element.setAbstractMachineName(str, new NullProgressMonitor());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getPossibleValues(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IRefinesMachine element,
 			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
-		IRefinesMachine refinesMachine = (IRefinesMachine) element;
-		IMachineRoot machine = (IMachineRoot) refinesMachine.getParent();
+		IMachineRoot machine = (IMachineRoot) element.getParent();
 		String machineName = machine.getRodinFile().getBareName();
-		IMachineRoot[] machineRoots = getMachineRoots(refinesMachine);
+		IMachineRoot[] machineRoots = getMachineRoots(element);
 		for (IMachineRoot root : machineRoots) {
 			String bareName = root.getElementName();
 			if (!machineName.equals(bareName))
@@ -100,20 +71,13 @@ public class RefinesMachineAbstractMachineNameAttributeFactory implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#removeAttribute(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IRefinesMachine element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IRefinesMachine element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IRefinesMachine;
-		return ((IRefinesMachine) element).hasAbstractMachineName();
+		return element.hasAbstractMachineName();
 	}
 }

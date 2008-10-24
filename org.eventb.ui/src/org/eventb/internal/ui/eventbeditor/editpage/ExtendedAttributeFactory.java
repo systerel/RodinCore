@@ -11,6 +11,7 @@
  *     Systerel - replaced inherited by extended
  *     Systerel - fully refactored the setValue() method
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -25,7 +26,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -38,7 +38,7 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of {@link IAttributeFactory} providing the factory
  *         methods for extended attribute of events.
  */
-public class ExtendedAttributeFactory implements IAttributeFactory {
+public class ExtendedAttributeFactory implements IAttributeFactory<IEvent> {
 
 	private static final class SetExtended implements IWorkspaceRunnable {
 
@@ -136,17 +136,9 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	 */
 	private static final String FALSE = Messages.attributeFactory_extended_false;
 
-	/**
-	 * Gets the string representation of the value of the extended attribute,
-	 * i.e. either {@link #TRUE} or {@link #FALSE}.
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory#getValue(org.rodinp.core.IAttributedElement,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		final IEvent event = (IEvent) element;
-		return (event.hasExtended() && event.isExtended()) ? TRUE : FALSE;
+	public String getValue(IEvent element, IProgressMonitor monitor)
+			throws RodinDBException {
+		return (element.hasExtended() && element.isExtended()) ? TRUE : FALSE;
 	}
 
 	/**
@@ -166,24 +158,22 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	 * event.</li>
 	 * </ul>
 	 */
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IEvent element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final IEvent event = (IEvent) element;
 		final boolean extended = newValue.equals(TRUE);
 		if (extended) {
-			RodinCore.run(new SetExtended(event), monitor);
+			RodinCore.run(new SetExtended(element), monitor);
 		} else {
-			RodinCore.run(new UnsetExtended(event), monitor);
+			RodinCore.run(new UnsetExtended(element), monitor);
 		}
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
-			IProgressMonitor monitor) {
+	public String[] getPossibleValues(IEvent element, IProgressMonitor monitor) {
 		return new String[] { FALSE, TRUE };
 	}
 
-	public void removeAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void removeAttribute(IEvent element, IProgressMonitor monitor)
+			throws RodinDBException {
 		element.removeAttribute(EventBAttributes.EXTENDED_ATTRIBUTE, monitor);
 	}
 
@@ -191,20 +181,14 @@ public class ExtendedAttributeFactory implements IAttributeFactory {
 	 * Default value for extended attribute is <code>false</code>, i.e.
 	 * non-extended.
 	 */
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
-			throws RodinDBException {
-		if (!(element instanceof IEvent)) {
-			return;
-		}
-		IEvent event = (IEvent) element;
-		event.setExtended(false, monitor);
+	public void setDefaultValue(IEventBEditor<?> editor, IEvent element,
+			IProgressMonitor monitor) throws RodinDBException {
+		element.setExtended(false, monitor);
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IEvent element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IEvent;
-		return ((IEvent) element).hasExtended();
+		return element.hasExtended();
 	}
-	
+
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -24,10 +25,8 @@ import org.rodinp.core.RodinDBException;
  *         a specific element type.
  *         </p>
  */
-public interface IAttributeFactory {
+public interface IAttributeFactory<E extends IAttributedElement> {
 
-	
-	
 	/**
 	 * Set the default value of the attribute for a given element.
 	 * 
@@ -40,12 +39,9 @@ public interface IAttributeFactory {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public abstract void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
-			throws RodinDBException;
+	public abstract void setDefaultValue(IEventBEditor<?> editor, E element,
+			IProgressMonitor monitor) throws RodinDBException;
 
-	
-	
 	/**
 	 * Return true if a given element has the attribute
 	 * 
@@ -56,9 +52,9 @@ public interface IAttributeFactory {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)throws RodinDBException;
+	public boolean hasValue(E element, IProgressMonitor monitor)
+			throws RodinDBException;
 
-	
 	/**
 	 * Get the value of the attribute (in term of string) of a given element.
 	 * 
@@ -71,8 +67,8 @@ public interface IAttributeFactory {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public abstract String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException;
+	public abstract String getValue(E element, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Set the value of the attribute of a given element from a string.
@@ -87,7 +83,7 @@ public interface IAttributeFactory {
 	 * @throws RodinDBException
 	 *             if some problems occurred
 	 */
-	public abstract void setValue(IAttributedElement element, String value,
+	public abstract void setValue(E element, String value,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
@@ -100,8 +96,8 @@ public interface IAttributeFactory {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public abstract void removeAttribute(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException;
+	public abstract void removeAttribute(E element, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	/**
 	 * Get the possible values of the attribute of a given element. This is used
@@ -116,7 +112,7 @@ public interface IAttributeFactory {
 	 *         Return <code>null</code> if the attribute has undefined
 	 *         possible values.
 	 */
-	public abstract String[] getPossibleValues(IAttributedElement element,
+	public abstract String[] getPossibleValues(E element,
 			IProgressMonitor monitor);
 
 }

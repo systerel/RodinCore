@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -91,7 +92,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	 *         attribute relationship.
 	 *         </p>
 	 */
-	private class AttributeRelationshipInfo {
+	private class AttributeRelationshipInfo<E extends IAttributedElement> {
 		// The configuration element.
 		IConfigurationElement config;
 
@@ -102,7 +103,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		private static final int DEFAULT_PRIORITY = 10000;
 
 		// The factory for creating default attribute value.
-		private IAttributeFactory factory;
+		private IAttributeFactory<E> factory;
 		
 		/**
 		 * Constructor.
@@ -164,13 +165,13 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 *             if some problems occurred.
 		 */
 		public void createDefaultAttribute(IEventBEditor<?> editor,
-				IInternalElement element, IProgressMonitor monitor)
+				E element, IProgressMonitor monitor)
 				throws RodinDBException {
 			if (getDefaultPrefix() == null)
 				return;
 			
 			if (factory == null)
-				factory = loadFactory();
+				loadFactory();
 
 			factory.setDefaultValue(editor, element, monitor);
 		}
@@ -182,17 +183,16 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 *         point. Return The dummy factory class if some problems
 		 *         occurred.
 		 */
-		private IAttributeFactory loadFactory() {
+		@SuppressWarnings("unchecked")
+		private void loadFactory() {
 			try {
-				Object obj = config
-						.createExecutableExtension("factory");
-				if (obj instanceof IAttributeFactory)
-					return (IAttributeFactory) obj;
+				Object obj = config.createExecutableExtension("factory");
+				factory = (IAttributeFactory<E>) obj;
 			} catch (CoreException e) {
 				if (EventBEditorUtils.DEBUG)
 					e.printStackTrace();
 			}
-			return new DummyAttributeFactory();
+			factory = new DummyAttributeFactory();
 		}
 
 		/*
@@ -202,37 +202,37 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 *         does nothing
 		 *         </p>
 		 */
-		class DummyAttributeFactory implements IAttributeFactory {
+		class DummyAttributeFactory implements IAttributeFactory<E> {
 
-			public String[] getPossibleValues(IAttributedElement element,
+			public String[] getPossibleValues(E element,
 					IProgressMonitor monitor) {
 				// Not applicable to dummy factory
 				return null;
 			}
 
-			public String getValue(IAttributedElement element,
+			public String getValue(E element,
 					IProgressMonitor monitor) throws RodinDBException {
 				// Return the empty string.
 				return "";
 			}
 
-			public void removeAttribute(IAttributedElement element,
+			public void removeAttribute(E element,
 					IProgressMonitor monitor) throws RodinDBException {
 				// Do nothing
 			}
 
 			public void setDefaultValue(IEventBEditor<?> editor,
-					IAttributedElement element, IProgressMonitor monitor)
+					E element, IProgressMonitor monitor)
 					throws RodinDBException {
 				// Do nothing
 			}
 
-			public void setValue(IAttributedElement element, String value,
+			public void setValue(E element, String value,
 					IProgressMonitor monitor) throws RodinDBException {
 				// Do nothing
 			}
 
-			public boolean hasValue(IAttributedElement element,
+			public boolean hasValue(E element,
 					IProgressMonitor monitor) throws RodinDBException {
 				return false;
 			}
@@ -246,7 +246,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 */
 		public IEditComposite getEditComposite() {
 			if (factory == null)
-				factory = loadFactory();
+				loadFactory();
 			
 			String prefix = config.getAttribute("prefix");
 			String postfix = config.getAttribute("postfix");

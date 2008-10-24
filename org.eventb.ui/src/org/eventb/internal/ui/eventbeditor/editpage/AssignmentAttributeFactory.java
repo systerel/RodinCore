@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -15,46 +16,40 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
-public class AssignmentAttributeFactory implements IAttributeFactory {
+public class AssignmentAttributeFactory implements
+		IAttributeFactory<IAssignmentElement> {
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IAssignmentElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IAssignmentElement;
-		final IAssignmentElement aElement = (IAssignmentElement) element;
-		aElement.setAssignmentString(newValue, monitor);
+		element.setAssignmentString(newValue, monitor);
 	}
 
-	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+	public String getValue(IAssignmentElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IAssignmentElement;
-		final IAssignmentElement pElement = (IAssignmentElement) element;
-		return pElement.getAssignmentString();
+		return element.getAssignmentString();
 	}
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IAssignmentElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final IAssignmentElement aElement = (IAssignmentElement) element;
-		aElement.setAssignmentString("", monitor);
+		element.setAssignmentString("", monitor);
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IAssignmentElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE, monitor);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IAssignmentElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Assignment Element.
 		return null;
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IAssignmentElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IAssignmentElement;
-		return ((IAssignmentElement) element).hasAssignmentString();
+		return element.hasAssignmentString();
 	}
 }

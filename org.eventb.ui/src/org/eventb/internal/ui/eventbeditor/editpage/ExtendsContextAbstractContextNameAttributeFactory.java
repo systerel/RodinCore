@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -20,46 +21,39 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class ExtendsContextAbstractContextNameAttributeFactory implements
-		IAttributeFactory {
+		IAttributeFactory<IExtendsContext> {
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IExtendsContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		IRefinesMachine refinesEvent = (IRefinesMachine) element;
 		String name = "abstract_context";
-		refinesEvent.setAbstractMachineName(name, new NullProgressMonitor());
+		element.setAbstractContextName(name, new NullProgressMonitor());
 	}
 
-	public String getValue(IAttributedElement element, IProgressMonitor monitor)
+	public String getValue(IExtendsContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		IExtendsContext extendsContext = (IExtendsContext) element;
-		return extendsContext.getAbstractContextName();
+		return element.getAbstractContextName();
 	}
 
-	public void setValue(IAttributedElement element, String str,
+	public void setValue(IExtendsContext element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IExtendsContext;
-		IExtendsContext extendsContext = (IExtendsContext) element;
-		extendsContext.setAbstractContextName(str, new NullProgressMonitor());
+		element.setAbstractContextName(str, new NullProgressMonitor());
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IExtendsContext element,
 			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
-		IExtendsContext extendsContext = (IExtendsContext) element;
-		IContextRoot context = (IContextRoot) extendsContext.getParent();
+		IContextRoot context = (IContextRoot) element.getParent();
 		String contextName = context.getElementName();
 
-		IContextRoot[] contextRoots = getContextRoots(extendsContext);
+		IContextRoot[] contextRoots = getContextRoots(element);
 		for (IContextRoot root : contextRoots) {
 			String bareName = root.getElementName();
 			if (!contextName.equals(bareName))
@@ -79,15 +73,14 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 		}
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IExtendsContext element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
-	
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+
+	public boolean hasValue(IExtendsContext element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IExtendsContext;
-		return ((IExtendsContext) element).hasAbstractContextName();
+		return element.hasAbstractContextName();
 	}
 
 }

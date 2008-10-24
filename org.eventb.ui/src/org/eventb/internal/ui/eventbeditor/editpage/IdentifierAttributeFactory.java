@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - made IAttributeFactory generic
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -17,57 +18,48 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
-public abstract class IdentifierAttributeFactory implements IAttributeFactory {
+public abstract class IdentifierAttributeFactory implements
+		IAttributeFactory<IIdentifierElement> {
 
 	public abstract String getPrefix();
 
 	public void setDefaultValue(IEventBEditor<?> editor,
-			IAttributedElement element, IProgressMonitor monitor)
+			IIdentifierElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		if (!(element instanceof IIdentifierElement)) {
-			return;
-		}
 		String prefix = getPrefix();
-		IIdentifierElement iElement = (IIdentifierElement) element;
 		String identifier = UIUtils.getFreeElementIdentifier(editor,
-				(IInternalParent) element.getParent(), iElement
-						.getElementType(), prefix);
-		iElement.setIdentifierString(identifier, monitor);
+				(IInternalParent) element.getParent(),
+				element.getElementType(), prefix);
+		element.setIdentifierString(identifier, monitor);
 	}
 
-	public void setValue(IAttributedElement element, String newValue,
+	public void setValue(IIdentifierElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IIdentifierElement;
-		final IIdentifierElement iElement = (IIdentifierElement) element;
-		iElement.setIdentifierString(newValue, new NullProgressMonitor());
+		element.setIdentifierString(newValue, new NullProgressMonitor());
 	}
 
-	public String getValue(IAttributedElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		assert element instanceof IIdentifierElement;
-		final IIdentifierElement iElement = (IIdentifierElement) element;
-		return iElement.getIdentifierString();
+	public String getValue(IIdentifierElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		return element.getIdentifierString();
 	}
 
-	public void removeAttribute(IAttributedElement element,
+	public void removeAttribute(IIdentifierElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		element.removeAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE, monitor);
 	}
 
-	public String[] getPossibleValues(IAttributedElement element,
+	public String[] getPossibleValues(IIdentifierElement element,
 			IProgressMonitor monitor) {
 		// Not applicable to Identifier Elements
 		return null;
 	}
 
-	public boolean hasValue(IAttributedElement element, IProgressMonitor monitor)
+	public boolean hasValue(IIdentifierElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		assert element instanceof IIdentifierElement;
-		return ((IIdentifierElement) element).hasIdentifierString();
+		return element.hasIdentifierString();
 	}
-	
+
 }
