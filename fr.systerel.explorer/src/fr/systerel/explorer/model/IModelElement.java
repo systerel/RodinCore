@@ -32,7 +32,8 @@ public interface IModelElement {
 	 * @return The Parent of this element from the model perspective. E.g. the
 	 *         <code>ModelProject</code> for <code>ModelMachines</code> and
 	 *         <code>ModelContexts</code> or the <code>ModelMachine</code>
-	 *         for <code>ModelInvariants</code>.
+	 *         for <code>ModelInvariants</code>. For
+	 *         <code>ModelProjects</code> the result is <code>null</code>.
 	 */
 	public IModelElement getModelParent();
 	

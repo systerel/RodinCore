@@ -14,7 +14,6 @@ package fr.systerel.explorer.model;
 
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Represents a Theorem in the Model

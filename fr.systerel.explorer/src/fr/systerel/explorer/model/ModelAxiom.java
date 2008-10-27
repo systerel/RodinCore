@@ -14,7 +14,6 @@ package fr.systerel.explorer.model;
 
 import org.eventb.core.IAxiom;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Represents an Axiom in the model.
