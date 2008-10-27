@@ -36,7 +36,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 
-import fr.systerel.explorer.Activator;
+import fr.systerel.explorer.ExplorerPlugin;
 import fr.systerel.explorer.navigator.INavigatorDetailsTab;
 
 /**
@@ -48,7 +48,7 @@ import fr.systerel.explorer.navigator.INavigatorDetailsTab;
  */
 public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 
-	private static final String MASTER_DETAILS_ID = Activator.PLUGIN_ID +".masterDetails";
+	private static final String MASTER_DETAILS_ID = ExplorerPlugin.PLUGIN_ID +".masterDetails";
 	private static final String DETAILS_TAB_CLASS = "Class";
 	private TabFolder tabFolder = null;
 	private ListenerList listenerList = new ListenerList();

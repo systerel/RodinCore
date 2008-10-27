@@ -40,43 +40,13 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object element) {
 		if (element instanceof IProject) {
-			IProject project = (IProject) element;
-			if (project.isAccessible()) {
-				try {
-					//if it is a RodinProject return the IRodinProject from the DB.
-					if (project.hasNature(RodinCore.NATURE_ID)) {
-						IRodinProject proj = ExplorerUtils.getRodinProject(project);
-						if (proj != null) {
-			            	ModelController.processProject(proj);
-				        	ModelProject prj= ModelController.getProject(proj);
-				        	if (prj != null) {
-					        	return ModelController.convertToIContext(prj.getRootContexts());
-				        	}
-						}
-					} 
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			return getProjectChildren((IProject) element);
 	    }
         if (element instanceof IMachineRoot) {
-        	ModelMachine machine = ModelController.getMachine(((IMachineRoot) element));
-        	if (machine != null) {
-        		return ModelController.convertToIContext(machine.getSeesContexts()).toArray();
-        	}
+        	return getMachineChildren((IMachineRoot) element);
         } 
         if (element instanceof IContextRoot) {
-        	ModelContext context = ModelController.getContext(((IContextRoot) element));
-        	if (context != null) {
-	        	List<ModelContext> rest = context.getRestContexts();
-	        	List<ModelContext> result = new LinkedList<ModelContext>();
-	        	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
-					ModelContext ctx = iterator.next();
-					result.addAll(ctx.getLongestBranch());
-				}
-	        	return ModelController.convertToIContext(result).toArray();
-        	}
+        	return getContextChildren((IContextRoot) element);
         } 
         return new Object[0];
 	}
@@ -131,4 +101,49 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 		 
 	}
 
+	protected Object[] getProjectChildren(IProject project) {
+		if (project.isAccessible()) {
+			try {
+				//if it is a RodinProject return the IRodinProject from the DB.
+				if (project.hasNature(RodinCore.NATURE_ID)) {
+					IRodinProject proj = ExplorerUtils.getRodinProject(project);
+					if (proj != null) {
+		            	ModelController.processProject(proj);
+			        	ModelProject prj= ModelController.getProject(proj);
+			        	if (prj != null) {
+				        	return ModelController.convertToIContext(prj.getRootContexts());
+			        	}
+					}
+				} 
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return new Object[0];
+	}
+	
+	protected Object[] getMachineChildren(IMachineRoot root){
+    	ModelMachine machine = ModelController.getMachine(root);
+    	if (machine != null) {
+    		return ModelController.convertToIContext(machine.getSeesContexts()).toArray();
+    	}
+    	return new Object[0];
+		
+	}
+	
+	protected Object[] getContextChildren(IContextRoot root) {
+    	ModelContext context = ModelController.getContext(root);
+    	if (context != null) {
+        	List<ModelContext> rest = context.getRestContexts();
+        	List<ModelContext> result = new LinkedList<ModelContext>();
+        	for (Iterator<ModelContext> iterator = rest.iterator(); iterator.hasNext();) {
+				ModelContext ctx = iterator.next();
+				result.addAll(ctx.getLongestBranch());
+			}
+        	return ModelController.convertToIContext(result).toArray();
+    	}
+    	return new Object[0];
+		
+	}
 }

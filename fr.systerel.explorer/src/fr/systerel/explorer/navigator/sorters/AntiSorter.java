@@ -16,14 +16,12 @@ import java.text.Collator;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eventb.core.IContextRoot;
-import org.eventb.core.IMachineRoot;
 
 /**
- * A sorter that doesn't sort.
- * The elements are sorted by the CNF alphabetically by default, which we don't want.
- * This overrides the sorting and keeps them in the order they appear.
- *
+ * A sorter that doesn't sort. The elements are sorted by the CNF alphabetically
+ * by default, which we don't want. This overrides the sorting and keeps them in
+ * the order they appear.
+ * 
  */
 public class AntiSorter extends ViewerSorter {
 

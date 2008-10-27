@@ -85,37 +85,13 @@ public class ModelProject implements IModelElement {
 		try {
 			// get all machines, that this machine refines (all abstract machines, usually just 1)
 			for (IRefinesMachine refine : machine.getRefinesClauses()){
-				final IMachineRoot abst = (IMachineRoot) refine.getAbstractMachine().getRoot();
-				// May not exist, if there are some errors in the project (e.g. was deleted)
-				if (abst.exists()) {
-					if (!machines.containsKey(abst)) {
-						processMachine(abst);
-					}
-					ModelMachine abstMach = machines.get(abst);
-					// don't allow cycles
-					if (!abstMach.getAncestors().contains(mach)) {
-						abstMach.addRefinedByMachine(mach);
-						mach.addRefinesMachine(abstMach);
-						mach.addAncestor(abstMach);
-						mach.addAncestors(abstMach.getAncestors());
-					}
-				}
+				processRefines(refine, mach);
 				
 			}
 			// get all contexts, that this machine sees
 			ISeesContext[] sees =  machine.getSeesClauses();
-			for (int j = 0; j < sees.length; j++) {
-				ISeesContext see = sees[j];
-				IContextRoot ctx = ((ISCContextRoot) see.getSeenSCContext().getRoot()).getContextRoot();
-				// May not exist, if there are some errors in the project (e.g. was deleted)
-				if (ctx.exists()) {
-					if (!contexts.containsKey(ctx)) {
-						processContext(ctx);
-					}
-					ModelContext cplxCtxt = contexts.get(ctx);
-					cplxCtxt.addSeenByMachine(mach);
-					mach.addSeesContext(cplxCtxt);
-				}
+			for (ISeesContext see : sees) {
+				processSees(see, mach);
 			}
 			
 		} catch (RodinDBException e) {
@@ -183,28 +159,8 @@ public class ModelProject implements IModelElement {
 		try {
 			IExtendsContext[] exts;
 			exts = context.getExtendsClauses();
-			for (int j = 0; j < exts.length; j++) {
-				IExtendsContext ext = exts[j];
-				if (ext.getAbstractSCContext() != null) {
-					IRodinFile file = internalProject.getRodinFile(EventBPlugin.getContextFileName(ext.getAbstractContextName()));
-					IContextRoot extCtx =  (IContextRoot) file.getRoot();
-//					IContextRoot extCtx = ext.getAbstractSCContext().getContextRoot();
-					// May not exist, if there are some errors in the project (e.g. was deleted)
-					if (extCtx.exists()) {
-						if (!contexts.containsKey(extCtx)) {
-							processContext(extCtx);
-						}
-						ModelContext exendsCtx = contexts.get(extCtx);
-						// don't allow cycles!
-						if (!exendsCtx.getAncestors().contains(ctx)) {
-							exendsCtx.addExtendedByContext(ctx);
-							ctx.addExtendsContext(exendsCtx);
-							ctx.addAncestor(exendsCtx);
-							ctx.addAncestors(exendsCtx.getAncestors());
-						}
-					}
-				}
-				
+			for (IExtendsContext ext: exts) {
+				processExtends(ext, ctx);
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
@@ -497,5 +453,68 @@ public class ModelProject implements IModelElement {
 		return internalProject;
 	}
 	
+	/**
+	 * Processes a refines clause belonging to a given <code>ModelMachine</code>.
+	 * 
+	 * @param refinesClause
+	 *            The refines clause to process
+	 * @param machine
+	 *            The <code>ModelMachine</code> this clause comes from.
+	 * @throws RodinDBException
+	 */
+	protected void processRefines(IRefinesMachine refinesClause, ModelMachine machine) throws RodinDBException {
+		final IMachineRoot abst = (IMachineRoot) refinesClause.getAbstractMachine().getRoot();
+		// May not exist, if there are some errors in the project (e.g. was deleted)
+		if (abst.exists()) {
+			if (!machines.containsKey(abst)) {
+				processMachine(abst);
+			}
+			ModelMachine abstMach = machines.get(abst);
+			// don't allow cycles
+			if (!abstMach.getAncestors().contains(machine)) {
+				abstMach.addRefinedByMachine(machine);
+				machine.addRefinesMachine(abstMach);
+				machine.addAncestor(abstMach);
+				machine.addAncestors(abstMach.getAncestors());
+			}
+		}
+		
+	}
+	
+	protected void processSees(ISeesContext seesClause, ModelMachine machine) throws RodinDBException {
+		IContextRoot ctx = ((ISCContextRoot) seesClause.getSeenSCContext().getRoot()).getContextRoot();
+		// May not exist, if there are some errors in the project (e.g. was deleted)
+		if (ctx.exists()) {
+			if (!contexts.containsKey(ctx)) {
+				processContext(ctx);
+			}
+			ModelContext cplxCtxt = contexts.get(ctx);
+			cplxCtxt.addSeenByMachine(machine);
+			machine.addSeesContext(cplxCtxt);
+		}
+		
+	}
+	
+	protected void processExtends(IExtendsContext extendsClause, ModelContext context) throws RodinDBException {
+		if (extendsClause.getAbstractSCContext() != null) {
+			IRodinFile file = internalProject.getRodinFile(EventBPlugin.getContextFileName(extendsClause.getAbstractContextName()));
+			IContextRoot extCtx =  (IContextRoot) file.getRoot();
+			// May not exist, if there are some errors in the project (e.g. was deleted)
+			if (extCtx.exists()) {
+				if (!contexts.containsKey(extCtx)) {
+					processContext(extCtx);
+				}
+				ModelContext exendsCtx = contexts.get(extCtx);
+				// don't allow cycles!
+				if (!exendsCtx.getAncestors().contains(context)) {
+					exendsCtx.addExtendedByContext(context);
+					context.addExtendsContext(exendsCtx);
+					context.addAncestor(exendsCtx);
+					context.addAncestors(exendsCtx.getAncestors());
+				}
+			}
+		}
+		
+	}
 	
 }

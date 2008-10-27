@@ -67,15 +67,14 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	// because the don't have any proof obligations.
 	
 	/**
-	 * All contexts that are above this context in the extends tree. 
-	 * (= context that are extended by this context or his ancestors)
+	 * All contexts that are above this context in the extends tree. (= context
+	 * that are extended by this context or his ancestors)
 	 */
 	private ArrayList<ModelContext> ancestors =  new ArrayList<ModelContext>();
 	
 	/**
-	 * The longest branch of contexts that extend this context.
-	 * (including this context)
-	 * The value of this is calculated in the ModelProject by calling
+	 * The longest branch of contexts that extend this context. (including this
+	 * context) The value of this is calculated in the ModelProject by calling
 	 * <code>calculateContextBranches()</code>.
 	 */
 	private ArrayList<ModelContext> longestExtendsBranch =  new ArrayList<ModelContext>();
@@ -190,23 +189,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this context.
 							if (internalContext.getRodinFile().isAncestorOf(source)) {
-								if (source instanceof IWitness ) {
-									source = source.getParent();
-								}
-								if (source instanceof ITheorem) {
-									if (theorems.containsKey(source)) {
-										ModelTheorem thm = theorems.get(source);
-										po.addTheorem(thm);
-										thm.addProofObligation(po);
-									}
-								}
-								if (source instanceof IAxiom) {
-									if (axioms.containsKey(source)) {
-										ModelAxiom axm = axioms.get(source);
-										po.addAxiom(axm);
-										axm.addProofObligation(po);
-									}
-								}
+								processSource(source, po);
 							}
 						}
 					}
@@ -219,10 +202,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		}
 	}
 	
+	
 	/**
-	 * Processes the PSRoot that belongs to this Context
-	 * Each status is added to the corresponding Proof Obligation,
-	 * if that ProofObligation is present.
+	 * Processes the PSRoot that belongs to this Context. Each status is added to
+	 * the corresponding Proof Obligation, if that ProofObligation is present.
 	 */
 	public void processPSRoot(){
 		if (psNeedsProcessing) {
@@ -295,7 +278,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * Adds a context that this context extends
-	 * @param context	The context that is extended by this context.
+	 * 
+	 * @param context
+	 *            The context that is extended by this context.
 	 */
 	public void addExtendsContext(ModelContext context) {
 		//only add new contexts
@@ -320,7 +305,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 
 	/**
 	 * Adds a machine that sees this context.
-	 * @param machine	The machine to add.
+	 * 
+	 * @param machine
+	 *            The machine to add.
 	 */
 	public void addSeenByMachine(ModelMachine machine){
 		if (!seenByMachines.contains(machine)) {
@@ -330,7 +317,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 
 	/**
 	 * Removes a machine that sees this context.
-	 * @param machine	The machine to remove.
+	 * 
+	 * @param machine
+	 *            The machine to remove.
 	 */
 	public void removeSeenByMachine(ModelMachine machine){
 		seenByMachines.remove(machine);
@@ -351,8 +340,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * 
-	 * @return is this Machine a leaf of a tree of Contexts?
-	 * (= is extended by no other context)
+	 * @return <code>true</code> if this Machine is a leaf of a tree of
+	 *         Contexts? (= is extended by no other context). <code>false</code>
+	 *         otherwise.
 	 */
 	public boolean isLeaf(){
 		return (extendedByContexts.size() ==0);
@@ -360,7 +350,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * 
-	 * @return True, if this context is seen by no machine, otherwise false.
+	 * @return <code>true</code> , if this context is seen by no machine,
+	 *         otherwise false.
 	 */
 	public boolean isNotSeen() {
 		return (seenByMachines.size() == 0);
@@ -390,6 +381,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * process the proof obligations if needed
+	 * 
 	 * @return the total number of Proof Obligations
 	 */
 	@Override
@@ -403,6 +395,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 	/**
 	 * process the proof obligations if needed
+	 * 
 	 * @return The number of undischarged Proof Obligations
 	 */
 	@Override
@@ -424,6 +417,35 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 
 	public IRodinElement getInternalElement() {
 		return internalContext;
+	}
+	
+	/**
+	 * Processes a source belonging to a given Proof Obligation
+	 * 
+	 * @param source
+	 *            The source to process
+	 * @param po
+	 *            The proof obligation the source belongs to
+	 */
+	protected void processSource (IRodinElement source, ModelProofObligation po) {
+		if (source instanceof IWitness ) {
+			source = source.getParent();
+		}
+		if (source instanceof ITheorem) {
+			if (theorems.containsKey(source)) {
+				ModelTheorem thm = theorems.get(source);
+				po.addTheorem(thm);
+				thm.addProofObligation(po);
+			}
+		}
+		if (source instanceof IAxiom) {
+			if (axioms.containsKey(source)) {
+				ModelAxiom axm = axioms.get(source);
+				po.addAxiom(axm);
+				axm.addProofObligation(po);
+			}
+		}
+		
 	}
 
 }
