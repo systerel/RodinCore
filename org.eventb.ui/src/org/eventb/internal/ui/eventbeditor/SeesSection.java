@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -21,6 +22,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -37,8 +40,9 @@ public class SeesSection extends AbstractContextsSection<IMachineRoot> {
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Seen Contexts";
 
-	private static final String SECTION_DESCRIPTION =
-		"Select the seen contexts of this machine";
+	private static final String SECTION_DESCRIPTION = "Select the seen contexts of this machine";
+
+	final private static IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
 
 	public SeesSection(IEventBEditor<IMachineRoot> editor, FormToolkit toolkit,
 			Composite parent) {
@@ -88,4 +92,12 @@ public class SeesSection extends AbstractContextsSection<IMachineRoot> {
 		return usedNames;
 	}
 
+	@Override
+	protected String[] getContext() throws RodinDBException {
+		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+				ISeesContext.ELEMENT_TYPE);
+		final ISeesContext seesContext = rodinRoot.getInternalElement(
+				ISeesContext.ELEMENT_TYPE, childName);
+		return factory.getPossibleValues(seesContext, null);
+	}
 }

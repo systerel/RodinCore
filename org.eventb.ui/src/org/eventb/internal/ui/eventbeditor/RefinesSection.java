@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -32,6 +33,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -67,6 +69,8 @@ public class RefinesSection extends SectionPart implements
 
 	private final static String NULL_VALUE = "--- None ---";
 
+	private IAttributeFactory<IRefinesMachine> factory = null;
+	
 	// Buttons.
 	// private Button nullButton;
 	//
@@ -377,46 +381,29 @@ public class RefinesSection extends SectionPart implements
 
 	private void initCombo() {
 		final IInternalElement rodinRoot = editor.getRodinInput();
-		final IRodinProject rodinProject = rodinRoot.getRodinProject();
 		machineCombo.add(NULL_VALUE);
 		try {
-			final IMachineRoot[] machines = UIUtils.getMachineRootChildren(rodinProject);
-			for (IMachineRoot machine : machines) {
-				if (!rodinRoot.equals(machine)) {
-					if (EventBEditorUtils.DEBUG)
-						EventBEditorUtils.debug("Add to Combo: "
-								+ machine.getElementName());
-					machineCombo.add(machine.getComponentName());
-				}
+			final String childName = UIUtils.getFreeChildName(rodinRoot,
+					rodinRoot, IRefinesMachine.ELEMENT_TYPE);
+			final IRefinesMachine refinesMachine = rodinRoot
+					.getInternalElement(IRefinesMachine.ELEMENT_TYPE, childName);
+			final String[] possibleValues = getFactory().getPossibleValues(
+					refinesMachine, null);
+			for (String value : possibleValues) {
+				machineCombo.add(value);
 			}
 		} catch (RodinDBException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
 	}
 
 	private void setComboValue() {
-		IInternalElement root = editor.getRodinInput();
 		try {
-			IRodinElement[] refinedMachines = root
-					.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-			if (refinedMachines.length != 0) {
-				refined = (IRefinesMachine) refinedMachines[0];
-				try {
-					machineCombo.setText(refined.getAbstractMachineName());
-					// contextText.setText(refined.getContents());
-				} catch (RodinDBException e) {
-					e.printStackTrace();
-				}
-				// chooseButton.setSelection(true);
+			if (refined != null && getFactory().hasValue(refined, null)) {
+				machineCombo.setText(getFactory().getValue(refined, null));
 			} else {
-				// nullButton.setSelection(true);
-				// chooseButton.setSelection(false);
 				machineCombo.setText(NULL_VALUE);
-				// contextText.setEnabled(false);
-				// openOrCreateButton.setEnabled(false);
-				refined = null;
 			}
 		} catch (RodinDBException e) {
 			// TODO Refesh?
@@ -519,7 +506,7 @@ public class RefinesSection extends SectionPart implements
 				// chooseButton.setSelection(true);
 				// nullButton.setSelection(false);
 				try {
-					refined = (IRefinesMachine) element ;
+					refined = (IRefinesMachine) element;
 					machineCombo.setText(refined.getAbstractMachineName());
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -543,4 +530,10 @@ public class RefinesSection extends SectionPart implements
 		}
 	}
 
+	private IAttributeFactory<IRefinesMachine> getFactory() {
+		if (factory == null)
+			factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+		return factory;
+	}
+	
 }

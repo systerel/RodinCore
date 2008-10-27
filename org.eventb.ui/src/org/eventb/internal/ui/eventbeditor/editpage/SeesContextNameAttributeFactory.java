@@ -13,20 +13,15 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IContextRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class SeesContextNameAttributeFactory implements IAttributeFactory<ISeesContext> {
+public class SeesContextNameAttributeFactory extends AbstractContextFactory<ISeesContext> {
 
 	public void setDefaultValue(IEventBEditor<?> editor,
 			ISeesContext element, IProgressMonitor monitor)
@@ -43,26 +38,15 @@ public class SeesContextNameAttributeFactory implements IAttributeFactory<ISeesC
 			IProgressMonitor monitor) throws RodinDBException {
 		element.setSeenContextName(newValue, monitor);
 	}
-
-	public String[] getPossibleValues(ISeesContext element,
-			IProgressMonitor monitor) {
-		List<String> results = new ArrayList<String>();
-		IContextRoot[] contextRoot = getContextRoots(element);
-		for (IContextRoot context : contextRoot) {
-			String bareName = context.getComponentName();
-			results.add(bareName);
-		}
-		return results.toArray(new String[results.size()]);
-	}
-
-	private IContextRoot[] getContextRoots(IInternalElement element) {
-		final IRodinProject rodinProject = element.getRodinProject();
+	
+	@Override
+	protected ISeesContext[] getClauses(ISeesContext element) {
+		final IMachineRoot root = (IMachineRoot) element.getParent();
 		try {
-			return UIUtils.getContextRootChildren(rodinProject);
+			return root.getSeesClauses();
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "When computing the list of contexts of project "
-					+ rodinProject);
-			return new IContextRoot[0];
+			UIUtils.log(e, "when reading the sees clauses");
+			return new ISeesContext[0];
 		}
 	}
 

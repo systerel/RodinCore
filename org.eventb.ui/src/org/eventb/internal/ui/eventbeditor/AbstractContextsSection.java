@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -42,7 +43,6 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -51,7 +51,6 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -301,23 +300,22 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 
 	final void initContextCombo() {
 		contextCombo.removeAll();
-		final IRodinProject project = rodinRoot.getRodinProject();
-		final IContextRoot[] contexts;
 		try {
-			contexts = UIUtils.getContextRootChildren(project);
+			for (String context : getContext())
+				contextCombo.add(context);
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when listing the contexts of " + project);
-			return;
-		}
-		final Set<String> usedNames = getUsedContextNames();
-		for (IContextRoot context : contexts) {
-			final String bareName = context.getComponentName();
-			if (!usedNames.contains(bareName)) {
-				contextCombo.add(bareName);
-			}
+			UIUtils.log(e, "when listing the contexts of "
+					+ rodinRoot.getRodinProject());
 		}
 	}
 
+	/**
+	 * Returns the array of all context names to be displayed in the combo.
+	 * 
+	 * @return an array of all context names to display
+	 */
+	abstract protected String[] getContext() throws RodinDBException;
+	
 	public final void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}

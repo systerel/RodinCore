@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -23,12 +20,10 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-public class ExtendsContextAbstractContextNameAttributeFactory implements
-		IAttributeFactory<IExtendsContext> {
+public class ExtendsContextAbstractContextNameAttributeFactory extends
+		AbstractContextFactory<IExtendsContext> {
 
 	public void setDefaultValue(IEventBEditor<?> editor,
 			IExtendsContext element, IProgressMonitor monitor)
@@ -47,29 +42,14 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 		element.setAbstractContextName(str, new NullProgressMonitor());
 	}
 
-	public String[] getPossibleValues(IExtendsContext element,
-			IProgressMonitor monitor) {
-		List<String> results = new ArrayList<String>();
-		IContextRoot context = (IContextRoot) element.getParent();
-		String contextName = context.getElementName();
-
-		IContextRoot[] contextRoots = getContextRoots(element);
-		for (IContextRoot root : contextRoots) {
-			String bareName = root.getElementName();
-			if (!contextName.equals(bareName))
-				results.add(bareName);
-		}
-		return results.toArray(new String[results.size()]);
-	}
-
-	private IContextRoot[] getContextRoots(IInternalElement element) {
-		final IRodinProject rodinProject = element.getRodinProject();
+	@Override
+	protected IExtendsContext[] getClauses(IExtendsContext element) {
+		final IContextRoot root = (IContextRoot) element.getParent();
 		try {
-			return UIUtils.getContextRootChildren(rodinProject);
+			return root.getExtendsClauses();
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "When computing the list of contexts of project "
-					+ rodinProject);
-			return new IContextRoot[0];
+			UIUtils.log(e, "when reading the extends clauses");
+			return new IExtendsContext[0];
 		}
 	}
 
@@ -82,5 +62,4 @@ public class ExtendsContextAbstractContextNameAttributeFactory implements
 			throws RodinDBException {
 		return element.hasAbstractContextName();
 	}
-
 }

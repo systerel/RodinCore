@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used IAttributeFactory
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -21,6 +22,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -40,6 +43,8 @@ public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
 	private static final String SECTION_DESCRIPTION =
 		"Select abstract contexts of this context";
 
+	final private static IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -101,4 +106,12 @@ public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
 		return usedNames;
 	}
 
+	@Override
+	protected String[] getContext() throws RodinDBException {
+		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+				IExtendsContext.ELEMENT_TYPE);
+		final IExtendsContext extendsContext = rodinRoot.getInternalElement(
+				IExtendsContext.ELEMENT_TYPE, childName);
+		return factory.getPossibleValues(extendsContext, null);
+	}
 }
