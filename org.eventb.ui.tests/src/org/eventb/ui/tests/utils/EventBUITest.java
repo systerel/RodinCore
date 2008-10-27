@@ -33,11 +33,13 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
@@ -148,6 +150,52 @@ public abstract class EventBUITest extends TestCase {
 		refinesClause.setAbstractMachineName(abstractMachineName,
 				null);
 		return refinesClause;
+	}
+	
+	
+	
+	/**
+	 * Utility method to create a new sees context clause for a machine.
+	 * 
+	 * @param machine
+	 *            the input machine {@link IMachineRoot}.
+	 * @param contextName
+	 *            the name of the context.
+	 * @return the newly created sees context clause
+	 * @throws RodinDBException
+	 *             if some problems occur.
+	 */
+	protected ISeesContext createSeesContextClause(IMachineRoot machine,
+			String contextName) throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(machine,
+				ISeesContext.ELEMENT_TYPE, "sees_context"); //$NON-NLS-1$
+		ISeesContext seesClause = machine.getSeesClause(childName);
+		seesClause.create(null, null);
+		seesClause.setSeenContextName(contextName, null);
+		return seesClause;
+	}
+	
+	
+	
+	/**
+	 * Utility method to create a new extends context clause for a context.
+	 * 
+	 * @param context
+	 *            the input context {@link IMachineRoot}.
+	 * @param contextName
+	 *            the name of the extended context.
+	 * @return the newly created extends context clause
+	 * @throws RodinDBException
+	 *             if some problems occur.
+	 */
+	protected IExtendsContext createExtendsContextClause(IContextRoot context,
+			String contextName) throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(context,
+				IExtendsContext.ELEMENT_TYPE, "extends_context"); //$NON-NLS-1$
+		IExtendsContext extendsClause = context.getExtendsClause(childName);
+		extendsClause.create(null, null);
+		extendsClause.setAbstractContextName(contextName, null);
+		return extendsClause;
 	}
 	
 	/**
