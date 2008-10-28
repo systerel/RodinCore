@@ -43,28 +43,10 @@ public class ComplexMachineContentProviderTest extends ExplorerTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		contentProvider = new ComplexMachineContentProvider();
-				
-		//create some machines
-		m0 = createMachine("m0");
-		assertNotNull("m0 should be created successfully ", m0);
-
-		m1 = createMachine("m1");
-		assertNotNull("m1 should be created successfully ", m1);
-		
-		m2 = createMachine("m2");
-		assertNotNull("m2 should be created successfully ", m2);
-
-		m3 = createMachine("m3");
-		assertNotNull("m3 should be created successfully ", m3);
-		
-		//create dependencies between machines
-		createRefinesMachineClause(m1, m0, "refines1");
-		assertTrue(m1.getRefinesClause("refines1").exists());
-		createRefinesMachineClause(m2, m1, "refines2");
-		assertTrue(m2.getRefinesClause("refines2").exists());
-		createRefinesMachineClause(m3, m0, "refines3");
-		assertTrue(m3.getRefinesClause("refines3").exists());
+		createMachines();
+		createMachineDependencies();
 	}
+
 	
 	@After
 	@Override
@@ -129,5 +111,28 @@ public class ComplexMachineContentProviderTest extends ExplorerTest {
 		assertArray(contentProvider.getElements(m0), m3);
 	}
 	
+	private void createMachineDependencies() throws RodinDBException {
+		//create dependencies between machines
+		createRefinesMachineClause(m1, m0, "refines1");
+		assertTrue(m1.getRefinesClause("refines1").exists());
+		createRefinesMachineClause(m2, m1, "refines2");
+		assertTrue(m2.getRefinesClause("refines2").exists());
+		createRefinesMachineClause(m3, m0, "refines3");
+		assertTrue(m3.getRefinesClause("refines3").exists());
+	}
+
+	private void createMachines() throws RodinDBException {
+		m0 = createMachine("m0");
+		assertNotNull("m0 should be created successfully ", m0);
+
+		m1 = createMachine("m1");
+		assertNotNull("m1 should be created successfully ", m1);
+		
+		m2 = createMachine("m2");
+		assertNotNull("m2 should be created successfully ", m2);
+
+		m3 = createMachine("m3");
+		assertNotNull("m3 should be created successfully ", m3);
+	}
 	
 }

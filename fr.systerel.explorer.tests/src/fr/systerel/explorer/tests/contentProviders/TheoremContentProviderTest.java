@@ -59,22 +59,14 @@ public class TheoremContentProviderTest extends ExplorerTest {
 		
 		ModelController.processProject(rodinProject);
 		
-		node = ModelController.getContext(c0).theorem_node;
-		assertNotNull("the node should be created successfully ", node);
-		node2 = ModelController.getMachine(m0).theorem_node;
-		assertNotNull("the node should be created successfully ", node2);
+		createTheoremNodes();
 
-		theorem1 = createTheorem(c0, "theorem1");
-		theorem2 = createTheorem(c0, "theorem2");
-		theorem3 = createTheorem(c0, "theorem3");
-		assertArray(c0.getTheorems(), theorem1, theorem2, theorem3);
+		createContextTheorems();
 
-		theorem4 = createTheorem(m0, "theorem4");
-		theorem5 = createTheorem(m0, "theorem5");
-		theorem6 = createTheorem(m0, "theorem6");
-		assertArray(m0.getTheorems(), theorem4, theorem5, theorem6);
+		createMachineTheorems();
 		
 	}
+
 	
 	@Test
 	public void getChildrenContext() throws RodinDBException {
@@ -140,5 +132,25 @@ public class TheoremContentProviderTest extends ExplorerTest {
 		assertArray(contentProvider.getChildren(node2), theorem4, theorem5, theorem6);
 	}
 	
+	private void createTheoremNodes() {
+		node = ModelController.getContext(c0).theorem_node;
+		assertNotNull("the node should be created successfully ", node);
+		node2 = ModelController.getMachine(m0).theorem_node;
+		assertNotNull("the node should be created successfully ", node2);
+	}
+
+	private void createMachineTheorems() throws RodinDBException {
+		theorem4 = createTheorem(m0, "theorem4");
+		theorem5 = createTheorem(m0, "theorem5");
+		theorem6 = createTheorem(m0, "theorem6");
+		assertArray(m0.getTheorems(), theorem4, theorem5, theorem6);
+	}
+
+	private void createContextTheorems() throws RodinDBException {
+		theorem1 = createTheorem(c0, "theorem1");
+		theorem2 = createTheorem(c0, "theorem2");
+		theorem3 = createTheorem(c0, "theorem3");
+		assertArray(c0.getTheorems(), theorem1, theorem2, theorem3);
+	}
 	
 }

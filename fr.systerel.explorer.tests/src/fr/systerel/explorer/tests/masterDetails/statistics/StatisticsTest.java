@@ -102,123 +102,19 @@ public class StatisticsTest extends ExplorerTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		// create a machine
-		m0 = createMachine("m0");
-		assertNotNull("m0 should be created successfully ", m0);
+		setUpMachine();
+		setUpMachinePOs();
 		
-		// create some elements in the machine
-		inv1 = createInvariant(m0, "inv1");
-		inv2 = createInvariant(m0, "inv2");
-		event1 = createEvent(m0, "event1");
-		event2 = createEvent(m0, "event2");
-		thm2 =  createTheorem(m0, "thm2");
+		setUpContext();
+		setUpContextPOs();
 		
-		// create proof obligations for the machine
-		m0IPO = createIPORoot("m0");
-		assertNotNull("m0IPO should be created successfully ", m0IPO);
+		processProject();
 		
-		m0IPS = createIPSRoot("m0");
-		assertNotNull("m0IPS should be created successfully ", m0IPS);
-		
-		//create an undischarged po
-		sequent2 = createSequent(m0IPO, "sequent2");
-		status2 = createPSStatus(m0IPS, "sequent2");
-		status2.setConfidence(IConfidence.PENDING, null);
-
-		source3 =  createPOSource(sequent2, "source3");
-		source3.setSource(inv1, null);
-		source9 =  createPOSource(sequent2, "source9");
-		source9.setSource(event2, null);
-
-		//create a reviewed po
-		sequent3 = createSequent(m0IPO, "sequent3");
-		status3 = createPSStatus(m0IPS, "sequent3");
-		status3.setConfidence(IConfidence.REVIEWED_MAX, null);
-
-		source4 =  createPOSource(sequent3, "source4");
-		source4.setSource(inv1, null);
-		
-		//create a manually discharged po
-		sequent4 = createSequent(m0IPO, "sequent4");
-		status4 = createPSStatus(m0IPS, "sequent4");
-		status4.setConfidence(IConfidence.DISCHARGED_MAX, null);
-		status4.setHasManualProof(true, null);
-
-		source5 =  createPOSource(sequent4, "source5");
-		source5.setSource(event1, null);
-
-		// create a auto. discharged po
-		sequent5 = createSequent(m0IPO, "sequent5");
-		status5 = createPSStatus(m0IPS, "sequent5");
-		status5.setConfidence(IConfidence.DISCHARGED_MAX, null);
-
-		source7 =  createPOSource(sequent5, "source7");
-		source7.setSource(inv1, null);
-		source8 =  createPOSource(sequent5, "source8");
-		source8.setSource(thm2, null);
-
-		//create a reviewed po
-		sequent8 = createSequent(m0IPO, "sequent8");
-		status8 = createPSStatus(m0IPS, "sequent8");
-		status8.setConfidence(IConfidence.REVIEWED_MAX, null);
-
-		source10 =  createPOSource(sequent8, "source10");
-		source10.setSource(inv2, null);
-		
-		
-		// create a context
-		c0 = createContext("c0");
-		assertNotNull("c0 should be created successfully ", c0);
-
-		// create some elements in the context
-		axiom1 = createAxiom(c0, "axiom1");
-		thm1 =  createTheorem(c0, "thm1");
-
-		// create proof obligations for the context
-		c0IPO = createIPORoot("c0");
-		assertNotNull("c0IPO should be created successfully ", c0IPO);
-		c0IPS = createIPSRoot("c0");
-		assertNotNull("c0IPS should be created successfully ", c0IPS);
-
-		//create an undischarged po
-		sequent6 = createSequent(c0IPO, "sequent6");
-		status6 = createPSStatus(c0IPS, "sequent6");
-		status6.setConfidence(IConfidence.PENDING, null);
-
-		source2 =  createPOSource(sequent6, "source2");
-		source2.setSource(axiom1, null);
-		
-		//create a manually discharged po
-		sequent7 = createSequent(c0IPO, "sequent7");
-		status7 = createPSStatus(c0IPS, "sequent7");
-		status7.setConfidence(IConfidence.DISCHARGED_MAX, null);
-		status7.setHasManualProof(true, null);
-
-		source1 =  createPOSource(sequent7, "source1");
-		source1.setSource(thm1, null);
-		
-		//process the project
-		ModelController.processProject(rodinProject);
-		project = ModelController.getProject(rodinProject);
-		mach = ModelController.getMachine(m0);
-		ctx = ModelController.getContext(c0);
-		mach.processPORoot();
-		mach.processPSRoot();
-		ctx.processPORoot();
-		ctx.processPSRoot();
-		
-		
-		po_node_mach = mach.po_node;
-		inv_node = mach.invariant_node;
-		event_node = mach.event_node;
-		thm_node_mach = mach.theorem_node;
-		
-		axiom_node = ctx.axiom_node;
-		thm_node_ctx = ctx.theorem_node;
-		po_node_ctx = ctx.po_node;
+		setUpNodes();
 		
 	}
-	
+
+
 
 	@Test
 	public void equals() {
@@ -814,5 +710,135 @@ public class StatisticsTest extends ExplorerTest {
 		
 		assertEquals(1, stats.getUndischargedRest());
 	}
+
+	private void setUpNodes() {
+		po_node_mach = mach.po_node;
+		inv_node = mach.invariant_node;
+		event_node = mach.event_node;
+		thm_node_mach = mach.theorem_node;
+		
+		axiom_node = ctx.axiom_node;
+		thm_node_ctx = ctx.theorem_node;
+		po_node_ctx = ctx.po_node;
+	}
+
+
+	private void processProject() {
+		ModelController.processProject(rodinProject);
+		project = ModelController.getProject(rodinProject);
+		mach = ModelController.getMachine(m0);
+		ctx = ModelController.getContext(c0);
+		mach.processPORoot();
+		mach.processPSRoot();
+		ctx.processPORoot();
+		ctx.processPSRoot();
+	}
+
+
+	private void setUpContextPOs() throws RodinDBException {
+		// create proof obligations for the context
+		c0IPO = createIPORoot("c0");
+		assertNotNull("c0IPO should be created successfully ", c0IPO);
+		c0IPS = createIPSRoot("c0");
+		assertNotNull("c0IPS should be created successfully ", c0IPS);
+
+		//create an undischarged po
+		sequent6 = createSequent(c0IPO, "sequent6");
+		status6 = createPSStatus(c0IPS, "sequent6");
+		status6.setConfidence(IConfidence.PENDING, null);
+
+		source2 =  createPOSource(sequent6, "source2");
+		source2.setSource(axiom1, null);
+		
+		//create a manually discharged po
+		sequent7 = createSequent(c0IPO, "sequent7");
+		status7 = createPSStatus(c0IPS, "sequent7");
+		status7.setConfidence(IConfidence.DISCHARGED_MAX, null);
+		status7.setHasManualProof(true, null);
+
+		source1 =  createPOSource(sequent7, "source1");
+		source1.setSource(thm1, null);
+	}
+
+
+	private void setUpContext() throws RodinDBException {
+		// create a context
+		c0 = createContext("c0");
+		assertNotNull("c0 should be created successfully ", c0);
+
+		// create some elements in the context
+		axiom1 = createAxiom(c0, "axiom1");
+		thm1 =  createTheorem(c0, "thm1");
+	}
+
+
+	private void setUpMachinePOs() throws RodinDBException {
+		// create proof obligations for the machine
+		m0IPO = createIPORoot("m0");
+		assertNotNull("m0IPO should be created successfully ", m0IPO);
+		
+		m0IPS = createIPSRoot("m0");
+		assertNotNull("m0IPS should be created successfully ", m0IPS);
+		
+		//create an undischarged po
+		sequent2 = createSequent(m0IPO, "sequent2");
+		status2 = createPSStatus(m0IPS, "sequent2");
+		status2.setConfidence(IConfidence.PENDING, null);
+
+		source3 =  createPOSource(sequent2, "source3");
+		source3.setSource(inv1, null);
+		source9 =  createPOSource(sequent2, "source9");
+		source9.setSource(event2, null);
+
+		//create a reviewed po
+		sequent3 = createSequent(m0IPO, "sequent3");
+		status3 = createPSStatus(m0IPS, "sequent3");
+		status3.setConfidence(IConfidence.REVIEWED_MAX, null);
+
+		source4 =  createPOSource(sequent3, "source4");
+		source4.setSource(inv1, null);
+		
+		//create a manually discharged po
+		sequent4 = createSequent(m0IPO, "sequent4");
+		status4 = createPSStatus(m0IPS, "sequent4");
+		status4.setConfidence(IConfidence.DISCHARGED_MAX, null);
+		status4.setHasManualProof(true, null);
+
+		source5 =  createPOSource(sequent4, "source5");
+		source5.setSource(event1, null);
+
+		// create a auto. discharged po
+		sequent5 = createSequent(m0IPO, "sequent5");
+		status5 = createPSStatus(m0IPS, "sequent5");
+		status5.setConfidence(IConfidence.DISCHARGED_MAX, null);
+
+		source7 =  createPOSource(sequent5, "source7");
+		source7.setSource(inv1, null);
+		source8 =  createPOSource(sequent5, "source8");
+		source8.setSource(thm2, null);
+
+		//create a reviewed po
+		sequent8 = createSequent(m0IPO, "sequent8");
+		status8 = createPSStatus(m0IPS, "sequent8");
+		status8.setConfidence(IConfidence.REVIEWED_MAX, null);
+
+		source10 =  createPOSource(sequent8, "source10");
+		source10.setSource(inv2, null);
+	}
+
+
+	private void setUpMachine() throws RodinDBException {
+		// create a machine
+		m0 = createMachine("m0");
+		assertNotNull("m0 should be created successfully ", m0);
+		
+		// create some elements in the machine
+		inv1 = createInvariant(m0, "inv1");
+		inv2 = createInvariant(m0, "inv2");
+		event1 = createEvent(m0, "event1");
+		event2 = createEvent(m0, "event2");
+		thm2 =  createTheorem(m0, "thm2");
+	}
+	
 	
 }

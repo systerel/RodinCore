@@ -76,29 +76,10 @@ public class ModelContextTest extends ExplorerTest {
 		thm1 = createTheorem(contextRoot, "thm1");
 		axm1 = createAxiom(contextRoot, "axm1");
 		
-		//add some proof obligations to the context
-		ipo = createIPORoot("c0");
-		assertNotNull("ipo should be created successfully ", ipo);
-		
-		ips = createIPSRoot("c0");
-		assertNotNull("ips should be created successfully ", ips);
-		
-		//add some sequents
-		sequent1 = createSequent(ipo, "sequent1");
-		status1 = createPSStatus(ips, "sequent1");
-
-		source1 =  createPOSource(sequent1, "source1");
-		source1.setSource(axm1, null);
-		source2 =  createPOSource(sequent1, "source2");
-		source2.setSource(thm1, null);
-
-		
-		sequent2 = createSequent(ipo, "sequent2");
-		status2 = createPSStatus(ips, "sequent2");
-		source3 =  createPOSource(sequent2, "source3");
-		source3.setSource(axm1, null);
+		setUpProofObligations();
 		
 	}
+
 	
 	@After
 	@Override
@@ -179,5 +160,29 @@ public class ModelContextTest extends ExplorerTest {
 		
 	}
 	
+	private void setUpProofObligations() throws RodinDBException {
+		//add some proof obligations to the context
+		ipo = createIPORoot("c0");
+		assertNotNull("ipo should be created successfully ", ipo);
+		
+		ips = createIPSRoot("c0");
+		assertNotNull("ips should be created successfully ", ips);
+		
+		//add some sequents
+		sequent1 = createSequent(ipo, "sequent1");
+		status1 = createPSStatus(ips, "sequent1");
+
+		source1 =  createPOSource(sequent1, "source1");
+		source1.setSource(axm1, null);
+		source2 =  createPOSource(sequent1, "source2");
+		source2.setSource(thm1, null);
+
+		
+		sequent2 = createSequent(ipo, "sequent2");
+		status2 = createPSStatus(ips, "sequent2");
+		source3 =  createPOSource(sequent2, "source3");
+		source3.setSource(axm1, null);
+	}
+
 	
 }

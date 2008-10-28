@@ -217,16 +217,42 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	
 	
 	protected void setUpStatistics() throws RodinDBException {
-		// create a machine
-		m0 = createMachine("m0");
-		assertNotNull("m0 should be created successfully ", m0);
+		setUpMachine();
+		setUpMachinePOs();
 		
-		// create some elements in the machine
-		inv1 = createInvariant(m0, "inv1");
-		inv2 = createInvariant(m0, "inv2");
-		event1 = createEvent(m0, "event1");
-		event2 = createEvent(m0, "event2");
+		processProject();
 		
+		inv_node = mach.invariant_node;
+		event_node = mach.event_node;
+		
+		//create statistics
+		stats1 = new Statistics(inv_node);
+		stats2 = new Statistics(event_node);
+		
+		assertEquals( "Invariants", stats1.getParentLabel());
+		assertEquals("Events", stats2.getParentLabel());
+		assertEquals(4, stats1.getTotal());
+		assertEquals(2, stats2.getTotal());
+		assertEquals(1, stats1.getAuto());
+		assertEquals(0, stats2.getAuto());
+		assertEquals(0, stats1.getManual());
+		assertEquals(1, stats2.getManual());
+		assertEquals(2, stats1.getReviewed());
+		assertEquals(0, stats2.getReviewed());
+		assertEquals(1, stats1.getUndischargedRest());
+		assertEquals(1, stats2.getUndischargedRest());
+				
+	}
+
+	private void processProject() {
+		ModelController.processProject(rodinProject);
+		project = ModelController.getProject(rodinProject);
+		mach = ModelController.getMachine(m0);
+		mach.processPORoot();
+		mach.processPSRoot();
+	}
+
+	private void setUpMachinePOs() throws RodinDBException {
 		// create proof obligations for the machine
 		m0IPO = createIPORoot("m0");
 		assertNotNull("m0IPO should be created successfully ", m0IPO);
@@ -276,33 +302,17 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 
 		source10 =  createPOSource(sequent8, "source10");
 		source10.setSource(inv2, null);
+	}
+
+	private void setUpMachine() throws RodinDBException {
+		// create a machine
+		m0 = createMachine("m0");
+		assertNotNull("m0 should be created successfully ", m0);
 		
-		//process the project
-		ModelController.processProject(rodinProject);
-		project = ModelController.getProject(rodinProject);
-		mach = ModelController.getMachine(m0);
-		mach.processPORoot();
-		mach.processPSRoot();
-		
-		inv_node = mach.invariant_node;
-		event_node = mach.event_node;
-		
-		//create statistics
-		stats1 = new Statistics(inv_node);
-		stats2 = new Statistics(event_node);
-		
-		assertEquals( "Invariants", stats1.getParentLabel());
-		assertEquals("Events", stats2.getParentLabel());
-		assertEquals(4, stats1.getTotal());
-		assertEquals(2, stats2.getTotal());
-		assertEquals(1, stats1.getAuto());
-		assertEquals(0, stats2.getAuto());
-		assertEquals(0, stats1.getManual());
-		assertEquals(1, stats2.getManual());
-		assertEquals(2, stats1.getReviewed());
-		assertEquals(0, stats2.getReviewed());
-		assertEquals(1, stats1.getUndischargedRest());
-		assertEquals(1, stats2.getUndischargedRest());
-				
+		// create some elements in the machine
+		inv1 = createInvariant(m0, "inv1");
+		inv2 = createInvariant(m0, "inv2");
+		event1 = createEvent(m0, "event1");
+		event2 = createEvent(m0, "event2");
 	}
 }

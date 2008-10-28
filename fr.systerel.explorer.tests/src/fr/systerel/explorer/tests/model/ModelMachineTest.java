@@ -81,54 +81,13 @@ public class ModelMachineTest extends ExplorerTest {
 		machineRoot = createMachine("m0");
 		machine =  new ModelMachine(machineRoot);
 
-		//add some elements to the machine
-		inv1 = createInvariant(machineRoot, "inv1");
-		thm1 = createTheorem(machineRoot, "thm1");
-		evt1 = createEvent(machineRoot, "evt1");
+		addElementsToMachine();
 		
-		//create an event with guards, witness and action
-		evt2 = createEvent(machineRoot, "evt2");
-		guard1 = createGuard(evt2, "guard1");
-		action1 = createAction(evt2, "action1");
-		witness1 = createWitness(evt2, "witness1");
-		
-		//add some proof obligations to the machine
-		ipo = createIPORoot("m0");
-		assertNotNull("m0IPO should be created successfully ", ipo);
-		
-		ips = createIPSRoot("m0");
-		assertNotNull("m0IPS should be created successfully ", ips);
-		
-		//add some sequents
-		sequent1 = createSequent(ipo, "sequent1");
-		status1 = createPSStatus(ips, "sequent1");
-
-		source1 =  createPOSource(sequent1, "source1");
-		source1.setSource(inv1, null);
-		source2 =  createPOSource(sequent1, "source2");
-		source2.setSource(evt1, null);
-
-		
-		sequent2 = createSequent(ipo, "sequent2");
-		status2 = createPSStatus(ips, "sequent2");
-		source3 =  createPOSource(sequent2, "source3");
-		source3.setSource(guard1, null);
-		
-		sequent3 = createSequent(ipo, "sequent3");
-		status3 = createPSStatus(ips, "sequent3");
-		source4 =  createPOSource(sequent3, "source4");
-		source4.setSource(action1, null);
-
-		sequent4 = createSequent(ipo, "sequent4");
-		status4 = createPSStatus(ips, "sequent4");
-		source5 =  createPOSource(sequent4, "source5");
-		source5.setSource(witness1, null);
-
-		sequent5 = createSequent(ipo, "sequent5");
-		status5 = createPSStatus(ips, "sequent5");
-		source6 =  createPOSource(sequent5, "source6");
-		source6.setSource(thm1, null);
+		setUpProofObligations();
 	}
+
+
+
 	
 	@After
 	@Override
@@ -211,6 +170,58 @@ public class ModelMachineTest extends ExplorerTest {
 		//check the rest machines
 		assertArray(machine.getRestMachines().toArray(), mm3, mm4);
 		
+	}
+	
+	private void addElementsToMachine() throws RodinDBException {
+		//add some elements to the machine
+		inv1 = createInvariant(machineRoot, "inv1");
+		thm1 = createTheorem(machineRoot, "thm1");
+		evt1 = createEvent(machineRoot, "evt1");
+		
+		//create an event with guards, witness and action
+		evt2 = createEvent(machineRoot, "evt2");
+		guard1 = createGuard(evt2, "guard1");
+		action1 = createAction(evt2, "action1");
+		witness1 = createWitness(evt2, "witness1");
+	}
+
+	
+	private void setUpProofObligations() throws RodinDBException {
+		//add some proof obligations to the machine
+		ipo = createIPORoot("m0");
+		assertNotNull("m0IPO should be created successfully ", ipo);
+		
+		ips = createIPSRoot("m0");
+		assertNotNull("m0IPS should be created successfully ", ips);
+
+		sequent1 = createSequent(ipo, "sequent1");
+		status1 = createPSStatus(ips, "sequent1");
+
+		source1 =  createPOSource(sequent1, "source1");
+		source1.setSource(inv1, null);
+		source2 =  createPOSource(sequent1, "source2");
+		source2.setSource(evt1, null);
+
+		
+		sequent2 = createSequent(ipo, "sequent2");
+		status2 = createPSStatus(ips, "sequent2");
+		source3 =  createPOSource(sequent2, "source3");
+		source3.setSource(guard1, null);
+		
+		sequent3 = createSequent(ipo, "sequent3");
+		status3 = createPSStatus(ips, "sequent3");
+		source4 =  createPOSource(sequent3, "source4");
+		source4.setSource(action1, null);
+
+		sequent4 = createSequent(ipo, "sequent4");
+		status4 = createPSStatus(ips, "sequent4");
+		source5 =  createPOSource(sequent4, "source5");
+		source5.setSource(witness1, null);
+
+		sequent5 = createSequent(ipo, "sequent5");
+		status5 = createPSStatus(ips, "sequent5");
+		source6 =  createPOSource(sequent5, "source6");
+		source6.setSource(thm1, null);
 	}
 	
 	

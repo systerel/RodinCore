@@ -46,31 +46,12 @@ public class ComplexContextContentProviderTest extends ExplorerTest {
 		super.setUp();
 		contentProvider = new ComplexContextContentProvider();
 		
-		//create some contexts
-		c0 = createContext("c0");
-		assertNotNull("c0 should be created successfully ", c0);
-		c1 = createContext("c1");
-		assertNotNull("c1 should be created successfully ", c1);
-		c2 = createContext("c2");
-		assertNotNull("c2 should be created successfully ", c2);
-		c3 = createContext("c3");
-		assertNotNull("c3 should be created successfully ", c3);
-		
-		//create dependencies between the contexts.
-		createExtendsContextClause(c1, c0, "extend1");
-		assertTrue(c1.getExtendsClause("extend1").exists());
-		createExtendsContextClause(c2, c1, "extend2");
-		assertTrue(c2.getExtendsClause("extend2").exists());
-		createExtendsContextClause(c3, c0, "extend3");
-		assertTrue(c3.getExtendsClause("extend3").exists());
-		
-		//create a machine
-		m0 = createMachine("m0");
-		assertNotNull("m0 should be created successfully ", m0);
-		createSeesContextClause(m0, c0, "sees1");
-		assertTrue(m0.getSeesClause("sees1").exists());
+		createContexts();
+		createContextDependencies();
+		setUpMachine();
 		
 	}
+
 	
 	@After
 	@Override
@@ -149,6 +130,33 @@ public class ComplexContextContentProviderTest extends ExplorerTest {
 	public void getElementsMachine() {
 		ModelController.processProject(rodinProject);
 		assertArray(contentProvider.getElements(m0), c0);
+	}
+
+	private void setUpMachine() throws RodinDBException {
+		m0 = createMachine("m0");
+		assertNotNull("m0 should be created successfully ", m0);
+		createSeesContextClause(m0, c0, "sees1");
+		assertTrue(m0.getSeesClause("sees1").exists());
+	}
+
+	private void createContextDependencies() throws RodinDBException {
+		createExtendsContextClause(c1, c0, "extend1");
+		assertTrue(c1.getExtendsClause("extend1").exists());
+		createExtendsContextClause(c2, c1, "extend2");
+		assertTrue(c2.getExtendsClause("extend2").exists());
+		createExtendsContextClause(c3, c0, "extend3");
+		assertTrue(c3.getExtendsClause("extend3").exists());
+	}
+
+	private void createContexts() throws RodinDBException {
+		c0 = createContext("c0");
+		assertNotNull("c0 should be created successfully ", c0);
+		c1 = createContext("c1");
+		assertNotNull("c1 should be created successfully ", c1);
+		c2 = createContext("c2");
+		assertNotNull("c2 should be created successfully ", c2);
+		c3 = createContext("c3");
+		assertNotNull("c3 should be created successfully ", c3);
 	}
 	
 }

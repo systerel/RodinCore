@@ -89,6 +89,20 @@ public class POContentProviderTest extends ExplorerTest {
 		super.setUp();
 		contentProvider = new POContentProvider();
 		
+		setUpContext();
+		setUpContextPOs();
+		
+		setUpMachine();
+		setUpMachinePOs();
+		
+		ModelController.processProject(rodinProject);
+		
+		createNodes();
+
+		
+	}
+
+	private void setUpContext() throws RodinDBException {
 		//create a context
 		c0 = createContext("c0");
 		assertNotNull("c0 should be created successfully ", c0);
@@ -96,29 +110,9 @@ public class POContentProviderTest extends ExplorerTest {
 		//create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
 		thm1 = createTheorem(c0, "thm1");
+	}
 
-		//create proof obligations for the context
-		c0IPO = createIPORoot("c0");
-		assertNotNull("c0IPO should be created successfully ", c0IPO);
-		
-		c0IPS = createIPSRoot("c0");
-		assertNotNull("c0IPS should be created successfully ", c0IPS);
-		
-		sequent1 = createSequent(c0IPO, "sequent1");
-		status1 = createPSStatus(c0IPS, "sequent1");
-
-		source1 =  createPOSource(sequent1, "source1");
-		source1.setSource(axiom1, null);
-
-		sequent2 = createSequent(c0IPO, "sequent2");
-		status2 = createPSStatus(c0IPS, "sequent2");
-
-		source2 =  createPOSource(sequent2, "source2");
-		source2.setSource(axiom1, null);
-
-		source3 =  createPOSource(sequent2, "source3");
-		source3.setSource(thm1, null);
-		
+	private void setUpMachine() throws RodinDBException {
 		// create a machine
 		m0 = createMachine("m0");
 		assertNotNull("m0 should be created successfully ", m0);
@@ -127,8 +121,16 @@ public class POContentProviderTest extends ExplorerTest {
 		inv1 = createInvariant(m0, "inv1");
 		event1 = createEvent(m0, "event1");
 		thm2 =  createTheorem(m0, "thm2");
-		
-		// create proof obligations for the machine
+	}
+
+	private void createNodes() {
+		node = ModelController.getContext(c0).po_node;
+		assertNotNull("the node should be created successfully ", node);
+		node2 = ModelController.getMachine(m0).po_node;
+		assertNotNull("the node should be created successfully ", node2);
+	}
+
+	private void setUpMachinePOs() throws RodinDBException {
 		m0IPO = createIPORoot("m0");
 		assertNotNull("m0IPO should be created successfully ", m0IPO);
 		
@@ -156,17 +158,29 @@ public class POContentProviderTest extends ExplorerTest {
 		source7.setSource(inv1, null);
 		source8 =  createPOSource(sequent5, "source8");
 		source8.setSource(thm2, null);
-		
-		
-		//process the project
-		ModelController.processProject(rodinProject);
-		
-		node = ModelController.getContext(c0).po_node;
-		assertNotNull("the node should be created successfully ", node);
-		node2 = ModelController.getMachine(m0).po_node;
-		assertNotNull("the node should be created successfully ", node2);
+	}
 
+	private void setUpContextPOs() throws RodinDBException {
+		c0IPO = createIPORoot("c0");
+		assertNotNull("c0IPO should be created successfully ", c0IPO);
 		
+		c0IPS = createIPSRoot("c0");
+		assertNotNull("c0IPS should be created successfully ", c0IPS);
+		
+		sequent1 = createSequent(c0IPO, "sequent1");
+		status1 = createPSStatus(c0IPS, "sequent1");
+
+		source1 =  createPOSource(sequent1, "source1");
+		source1.setSource(axiom1, null);
+
+		sequent2 = createSequent(c0IPO, "sequent2");
+		status2 = createPSStatus(c0IPS, "sequent2");
+
+		source2 =  createPOSource(sequent2, "source2");
+		source2.setSource(axiom1, null);
+
+		source3 =  createPOSource(sequent2, "source3");
+		source3.setSource(thm1, null);
 	}
 	
 	@Test
