@@ -300,7 +300,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 		try {
 			return getFactory().getUsedContextNames(getFreeElementContext());
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when getting free child name for " + rodinRoot);
+			UIUtils.log(e, "when getting used context names");
 			return new HashSet<String>();
 		}
 	}
