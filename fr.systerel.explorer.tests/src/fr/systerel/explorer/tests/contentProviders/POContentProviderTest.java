@@ -11,15 +11,12 @@
 
 package fr.systerel.explorer.tests.contentProviders;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -28,14 +25,12 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
-import org.eventb.core.IWitness;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.navigator.IElementNode;
-import fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider;
 import fr.systerel.explorer.navigator.contentProviders.POContentProvider;
 import fr.systerel.explorer.tests.ExplorerTest;
 
