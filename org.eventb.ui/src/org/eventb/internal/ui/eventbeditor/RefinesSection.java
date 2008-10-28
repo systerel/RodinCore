@@ -69,7 +69,7 @@ public class RefinesSection extends SectionPart implements
 
 	private final static String NULL_VALUE = "--- None ---";
 
-	private IAttributeFactory<IRefinesMachine> factory = null;
+	final private static IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
 	
 	// Buttons.
 	// private Button nullButton;
@@ -387,7 +387,7 @@ public class RefinesSection extends SectionPart implements
 					rodinRoot, IRefinesMachine.ELEMENT_TYPE);
 			final IRefinesMachine refinesMachine = rodinRoot
 					.getInternalElement(IRefinesMachine.ELEMENT_TYPE, childName);
-			final String[] possibleValues = getFactory().getPossibleValues(
+			final String[] possibleValues = factory.getPossibleValues(
 					refinesMachine, null);
 			for (String value : possibleValues) {
 				machineCombo.add(value);
@@ -400,8 +400,8 @@ public class RefinesSection extends SectionPart implements
 
 	private void setComboValue() {
 		try {
-			if (refined != null && getFactory().hasValue(refined, null)) {
-				machineCombo.setText(getFactory().getValue(refined, null));
+			if (refined != null && factory.hasValue(refined, null)) {
+				machineCombo.setText(factory.getValue(refined, null));
 			} else {
 				machineCombo.setText(NULL_VALUE);
 			}
@@ -528,12 +528,5 @@ public class RefinesSection extends SectionPart implements
 				}
 			}
 		}
-	}
-
-	private IAttributeFactory<IRefinesMachine> getFactory() {
-		if (factory == null)
-			factory = new RefinesMachineAbstractMachineNameAttributeFactory();
-		return factory;
-	}
-	
+	}	
 }
