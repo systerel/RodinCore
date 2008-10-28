@@ -70,9 +70,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	private ArrayList<ModelMachine> ancestors =  new ArrayList<ModelMachine>();
 	/**
-	 * The longest branch of machines that refine this machine.
-	 * (including this machine)
-	 * The value of this is calculated in the ModelProject by calling
+	 * The longest branch of machines that refine this machine. (including this
+	 * machine) The value of this is calculated in the ModelProject by calling
 	 * <code>calculateMachineBranches()</code>.
 	 */
 	private ArrayList<ModelMachine> longestRefineBranch =  new ArrayList<ModelMachine>();
@@ -83,7 +82,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	/**
 	 * Creates a ModelMachine from a given IMachineRoot
-	 * @param root	The MachineRoot that this ModelMachine is based on.
+	 * 
+	 * @param root
+	 *            The MachineRoot that this ModelMachine is based on.
 	 */
 	public ModelMachine(IMachineRoot root){
 		internalMachine = root;
@@ -164,10 +165,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	
 	/**
-	 * Processes the PORoot that belongs to this machine.
-	 * It creates a ModelProofObligation for each sequent
-	 * and adds it to this machines as well as to the
-	 * concerned Invariants, Theorems and Events.
+	 * Processes the PORoot that belongs to this machine. It creates a
+	 * ModelProofObligation for each sequent and adds it to this machines as
+	 * well as to the concerned Invariants, Theorems and Events.
 	 */
 	public void processPORoot() {
 		if (poNeedsProcessing) {
@@ -188,36 +188,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this machine.
 							if (internalMachine.getRodinFile().isAncestorOf(source) ){
-								if (source instanceof IAction) {
-									source =source.getParent();
-								}
-								if (source instanceof IGuard ) {
-									source = source.getParent();
-								}
-								if (source instanceof IWitness ) {
-									source = source.getParent();
-								}
-								if (source instanceof IInvariant) {
-									if (invariants.containsKey(source)) {
-										ModelInvariant inv = invariants.get(source);
-										po.addInvariant(inv);
-										inv.addProofObligation(po);
-									}
-								}
-								if (source instanceof ITheorem) {
-									if (theorems.containsKey(source)) {
-										ModelTheorem thm = theorems.get(source);
-										po.addTheorem(thm);
-										thm.addProofObligation(po);
-									}
-								}
-								if (source instanceof IEvent) {
-									if (events.containsKey(source) ){
-										ModelEvent evt = events.get(source);
-										po.addEvent(evt);
-										evt.addProofObligation(po);
-									}
-								}
+								source = processSource(source, po);
 							}
 						}
 					}
@@ -230,10 +201,11 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 	}
 
+
 	/**
-	 * Processes the PSRoot that belongs to this Machine.
-	 * Each status is added to the corresponding Proof Obligation,
-	 * if that ProofObligation is present.
+	 * Processes the PSRoot that belongs to this Machine. Each status is added
+	 * to the corresponding Proof Obligation, if that ProofObligation is
+	 * present.
 	 */
 	public void processPSRoot() {
 		if (psNeedsProcessing) {
@@ -280,7 +252,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * Adds a new ModelTheorem to this Machine.
-	 * @param theorem The Theorem to add.
+	 * 
+	 * @param theorem
+	 *            The Theorem to add.
 	 */
 	public void addTheorem(ITheorem theorem) {
 		theorems.put(theorem, new ModelTheorem(theorem, this));
@@ -288,8 +262,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	/**
 	 * 
-	 * @return is this Machine a root of a tree of Machines?
-	 * (= refines no other machine)
+	 * @return is this Machine a root of a tree of Machines? (= refines no other
+	 *         machine)
 	 */
 	public boolean isRoot(){
 		return (refinesMachines.size() ==0);
@@ -297,8 +271,8 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * 
-	 * @return is this Machine a leaf of a tree of Machines?
-	 * (= is refined by no other machine)
+	 * @return is this Machine a leaf of a tree of Machines? (= is refined by no
+	 *         other machine)
 	 */
 	public boolean isLeaf(){
 		return (refinedByMachines.size() ==0);
@@ -395,6 +369,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * process the proof obligations if needed
+	 * 
 	 * @return the total number of Proof Obligations
 	 */
 	@Override
@@ -408,6 +383,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * process the proof obligations if needed
+	 * 
 	 * @return The number of undischarged Proof Obligations
 	 */
 	@Override
@@ -431,5 +407,38 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return internalMachine;
 	}
 	
-	
+	protected IRodinElement processSource(IRodinElement source, ModelProofObligation po) {
+		if (source instanceof IAction) {
+			source =source.getParent();
+		}
+		if (source instanceof IGuard ) {
+			source = source.getParent();
+		}
+		if (source instanceof IWitness ) {
+			source = source.getParent();
+		}
+		if (source instanceof IInvariant) {
+			if (invariants.containsKey(source)) {
+				ModelInvariant inv = invariants.get(source);
+				po.addInvariant(inv);
+				inv.addProofObligation(po);
+			}
+		}
+		if (source instanceof ITheorem) {
+			if (theorems.containsKey(source)) {
+				ModelTheorem thm = theorems.get(source);
+				po.addTheorem(thm);
+				thm.addProofObligation(po);
+			}
+		}
+		if (source instanceof IEvent) {
+			if (events.containsKey(source) ){
+				ModelEvent evt = events.get(source);
+				po.addEvent(evt);
+				evt.addProofObligation(po);
+			}
+		}
+		return source;
+	}
+
 }
