@@ -43,7 +43,7 @@ public class ExtendsContextAbstractContextNameAttributeFactory extends
 	}
 
 	@Override
-	protected IExtendsContext[] getClauses(IExtendsContext element) {
+	public IExtendsContext[] getClauses(IExtendsContext element) {
 		final IContextRoot root = (IContextRoot) element.getParent();
 		try {
 			return root.getExtendsClauses();

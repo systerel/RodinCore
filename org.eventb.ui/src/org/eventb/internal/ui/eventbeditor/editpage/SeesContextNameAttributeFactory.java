@@ -40,7 +40,7 @@ public class SeesContextNameAttributeFactory extends AbstractContextFactory<ISee
 	}
 	
 	@Override
-	protected ISeesContext[] getClauses(ISeesContext element) {
+	public ISeesContext[] getClauses(ISeesContext element) {
 		final IMachineRoot root = (IMachineRoot) element.getParent();
 		try {
 			return root.getSeesClauses();

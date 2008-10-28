@@ -43,8 +43,10 @@ public abstract class AbstractContextFactory<E extends IInternalElement>
 		return results.toArray(new String[results.size()]);
 	}
 
-	protected Set<String> getUsedContextNames(E element) {
+	public Set<String> getUsedContextNames(E element) {
 		Set<String> usedNames = new HashSet<String>();
+		// First add myself
+		usedNames.add(element.getRodinFile().getBareName());
 		// Then, all contexts already extended
 		for (E clause : getClauses(element)) {
 			try {
@@ -80,5 +82,5 @@ public abstract class AbstractContextFactory<E extends IInternalElement>
 		}
 	}
 
-	protected abstract E[] getClauses(E element);
+	public abstract E[] getClauses(E element);
 }
