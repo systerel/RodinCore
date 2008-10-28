@@ -14,6 +14,7 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -54,8 +56,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class AbstractContextsSection<R extends IInternalElement> extends
-		SectionPart implements IElementChangedListener,
+public abstract class AbstractContextsSection<R extends IInternalElement, E extends IInternalElement>
+		extends SectionPart implements IElementChangedListener,
 		ISelectionChangedListener {
 
 	protected IEventBEditor<R> editor;
@@ -235,7 +237,6 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 		final IInternalElement[] elements = elementList
 				.toArray(new IInternalElement[size]);
 		History.getInstance().addOperation(OperationFactory.deleteElement(elements, true));
-//		rodinFile.getRodinDB().delete(elements, true, pm);
 	}
 
 	@Override
@@ -266,7 +267,14 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 	 * 
 	 * @return all clauses of this file
 	 */
-	protected abstract IInternalElement[] getClauses();
+	protected IInternalElement[] getClauses() {
+		try {
+			return getFactory().getClauses(getFreeElementContext());
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when getting free child name for " + rodinRoot);
+			return new IInternalElement[0];
+		}
+	}
 
 	/**
 	 * Returns the descriptive text of this section
@@ -288,7 +296,14 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 	 * 
 	 * @return the set of all used context names
 	 */
-	protected abstract Set<String> getUsedContextNames();
+	private Set<String> getUsedContextNames() {
+		try {
+			return getFactory().getUsedContextNames(getFreeElementContext());
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when getting free child name for " + rodinRoot);
+			return new HashSet<String>();
+		}
+	}
 
 	/**
 	 * Handle the Add/Create action when the corresponding button is clicked.
@@ -314,8 +329,10 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 	 * 
 	 * @return an array of all context names to display
 	 */
-	abstract protected String[] getContext() throws RodinDBException;
-	
+	private String[] getContext() throws RodinDBException {
+		return getFactory().getPossibleValues(getFreeElementContext(), null);
+	}
+
 	public final void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}
@@ -329,5 +346,12 @@ public abstract class AbstractContextsSection<R extends IInternalElement> extend
 			addButton.setEnabled(!getUsedContextNames().contains(text));
 		}
 	}
+
+	/**
+	 * Returns an handle of a free element
+	 */
+	protected abstract E getFreeElementContext() throws RodinDBException;
+
+	protected abstract AbstractContextFactory<E> getFactory();
 
 }

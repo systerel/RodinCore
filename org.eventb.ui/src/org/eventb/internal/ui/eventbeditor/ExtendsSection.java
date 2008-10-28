@@ -13,17 +13,14 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -35,16 +32,16 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editting Sees
  *         clause.
  */
-public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
+public class ExtendsSection extends
+		AbstractContextsSection<IContextRoot, IExtendsContext> {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Abstract Contexts";
 
-	private static final String SECTION_DESCRIPTION =
-		"Select abstract contexts of this context";
+	private static final String SECTION_DESCRIPTION = "Select abstract contexts of this context";
 
-	final private static IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
-	
+	final private static AbstractContextFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -59,23 +56,13 @@ public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
 
 		super(editor, toolkit, parent);
 	}
-	
+
 	@Override
 	protected void addClause(String contextName) throws RodinDBException {
 		History.getInstance().addOperation(
 				OperationFactory.createElement(editor,
 						IExtendsContext.ELEMENT_TYPE,
 						EventBAttributes.TARGET_ATTRIBUTE, contextName));
-	}
-
-	@Override
-	protected IExtendsContext[] getClauses() {
-		try {
-			return rodinRoot.getExtendsClauses();
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when reading the extends clauses");
-			return new IExtendsContext[0];
-		}
 	}
 
 	@Override
@@ -89,29 +76,14 @@ public class ExtendsSection extends AbstractContextsSection<IContextRoot> {
 	}
 
 	@Override
-	protected Set<String> getUsedContextNames() {
-		Set<String> usedNames = new HashSet<String>();
-
-		// First add myself
-		usedNames.add(rodinRoot.getRodinFile().getBareName());
-
-		// Then, all contexts already extended
-		for (IExtendsContext clause : getClauses()) {
-			try {
-				usedNames.add(clause.getAbstractContextName());
-			} catch (RodinDBException e) {
-				UIUtils.log(e, "when reading the extends clause " + clause);
-			}
-		}
-		return usedNames;
+	protected IExtendsContext getFreeElementContext() throws RodinDBException {
+		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+				IExtendsContext.ELEMENT_TYPE);
+		return rodinRoot.getExtendsClause(childName);
 	}
 
 	@Override
-	protected String[] getContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
-				IExtendsContext.ELEMENT_TYPE);
-		final IExtendsContext extendsContext = rodinRoot.getInternalElement(
-				IExtendsContext.ELEMENT_TYPE, childName);
-		return factory.getPossibleValues(extendsContext, null);
+	protected AbstractContextFactory<IExtendsContext> getFactory() {
+		return factory;
 	}
 }

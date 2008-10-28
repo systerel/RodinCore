@@ -13,16 +13,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -35,14 +32,15 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of Section Part for displaying and editing Sees
  *         clause.
  */
-public class SeesSection extends AbstractContextsSection<IMachineRoot> {
+public class SeesSection extends
+		AbstractContextsSection<IMachineRoot, ISeesContext> {
 
 	// Title and description of the section.
 	private static final String SECTION_TITLE = "Seen Contexts";
 
 	private static final String SECTION_DESCRIPTION = "Select the seen contexts of this machine";
 
-	final private static IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+	final private static AbstractContextFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
 
 	public SeesSection(IEventBEditor<IMachineRoot> editor, FormToolkit toolkit,
 			Composite parent) {
@@ -58,16 +56,6 @@ public class SeesSection extends AbstractContextsSection<IMachineRoot> {
 	}
 
 	@Override
-	protected ISeesContext[] getClauses() {
-		try {
-			return rodinRoot.getSeesClauses();
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when reading the sees clauses");
-			return new ISeesContext[0];
-		}
-	}
-
-	@Override
 	protected String getDescription() {
 		return SECTION_DESCRIPTION;
 	}
@@ -78,26 +66,15 @@ public class SeesSection extends AbstractContextsSection<IMachineRoot> {
 	}
 
 	@Override
-	protected Set<String> getUsedContextNames() {
-		Set<String> usedNames = new HashSet<String>();
-
-		// Add all contexts already seen
-		for (ISeesContext clause : getClauses()) {
-			try {
-				usedNames.add(clause.getSeenContextName());
-			} catch (RodinDBException e) {
-				UIUtils.log(e, "when reading the sees clause " + clause);
-			}
-		}
-		return usedNames;
+	protected ISeesContext getFreeElementContext() throws RodinDBException {
+		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+				ISeesContext.ELEMENT_TYPE);
+		return rodinRoot.getSeesClause(childName);
 	}
 
 	@Override
-	protected String[] getContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
-				ISeesContext.ELEMENT_TYPE);
-		final ISeesContext seesContext = rodinRoot.getInternalElement(
-				ISeesContext.ELEMENT_TYPE, childName);
-		return factory.getPossibleValues(seesContext, null);
+	protected AbstractContextFactory<ISeesContext> getFactory() {
+		return factory;
 	}
+
 }
