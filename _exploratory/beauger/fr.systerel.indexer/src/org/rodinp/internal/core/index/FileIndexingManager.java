@@ -19,14 +19,23 @@ import org.rodinp.internal.core.RodinDBStatus;
 
 public class FileIndexingManager {
 
-	private final IndexerRegistry indexersRegistry;
+	private static FileIndexingManager instance;
+	
+	private final IndexerRegistry indexerRegistry;
 
-	public FileIndexingManager(IndexerRegistry indManager) {
-		this.indexersRegistry = indManager;
+	private FileIndexingManager() {
+		this.indexerRegistry = IndexerRegistry.getDefault();
 	}
 
+	public static final FileIndexingManager getDefault() {
+		if (instance == null) {
+			instance = new FileIndexingManager();
+		}
+		return instance;
+	}
+	
 	public IRodinFile[] getDependencies(IRodinFile file) {
-		final IIndexer indexer = indexersRegistry.getIndexerFor(file);
+		final IIndexer indexer = indexerRegistry.getIndexerFor(file);
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
@@ -56,7 +65,7 @@ public class FileIndexingManager {
 			return IndexingResult.failed(file);
 		}
 
-		final IIndexer indexer = indexersRegistry.getIndexerFor(file);
+		final IIndexer indexer = indexerRegistry.getIndexerFor(file);
 
 		printVerbose(makeMessage("indexing", file, indexer));
 

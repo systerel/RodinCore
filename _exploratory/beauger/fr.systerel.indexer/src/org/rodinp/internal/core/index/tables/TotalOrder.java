@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.rodinp.internal.core.index.persistence.PersistentSortedNodes;
+import org.rodinp.internal.core.index.persistence.PersistentTotalOrder;
 
 /**
  * Stores and maintains a total order in a set of T objects.
@@ -121,4 +125,37 @@ public class TotalOrder<T> implements Iterator<T> {
 		}
 	}
 
+	/**
+	 * Use only for persistence purposes.
+	 * 
+	 * @return data to save.
+	 */
+	public PersistentTotalOrder<T> getPersistentData() {
+		if (isSorted) {
+			final PersistentSortedNodes<T> sortData =
+					sortedNodes.getPersistentData();
+			return new PersistentTotalOrder<T>(true, sortData.getNodes(),
+					sortData.getIterated());
+		} else {
+			final List<T> emptyList = Collections.emptyList();
+			return new PersistentTotalOrder<T>(false, graph.getNodes(),
+					emptyList);
+		}
+	}
+
+	/**
+	 * @param pto
+	 */
+	public void setPersistentData(PersistentTotalOrder<T> pto) {
+		graph.setPersistentData(pto);
+		if (pto.isSorted()) {
+			final PersistentSortedNodes<T> psn =
+					new PersistentSortedNodes<T>(pto.getNodes(), pto
+							.getIterated());
+			sortedNodes.setPersistentData(psn);
+		} else {
+			sortedNodes.clear();
+		}
+		isSorted = pto.isSorted();
+	}
 }

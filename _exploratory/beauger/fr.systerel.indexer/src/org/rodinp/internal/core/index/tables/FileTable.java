@@ -44,7 +44,7 @@ public class FileTable {
 		table.clear();
 	}
 
-	public void add(IInternalElement element, IRodinFile file) {
+	public void add(IRodinFile file, IInternalElement element) {
 		Set<IInternalElement> elements = table.get(file);
 		if (elements == null) {
 			elements = new HashSet<IInternalElement>();

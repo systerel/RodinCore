@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.index.IDeclaration;
 
 public class NameTable {
 
@@ -27,7 +28,7 @@ public class NameTable {
 		table = new HashMap<String, Set<IInternalElement>>();
 	}
 	
-	public void put(String name, IInternalElement element) {
+	private void add(String name, IInternalElement element) {
 		Set<IInternalElement> elements = table.get(name);
 		if (elements == null) {
 			elements = new HashSet<IInternalElement>();
@@ -36,7 +37,11 @@ public class NameTable {
 		elements.add(element);
 	}
 	
-	public void remove(String name, IInternalElement element) {
+	public void add(IDeclaration declaration) {
+		add(declaration.getName(), declaration.getElement());
+	}
+	
+	private void remove(String name, IInternalElement element) {
 		Set<IInternalElement> elements = table.get(name);
 		if (elements != null) {
 			elements.remove(element);
@@ -44,6 +49,10 @@ public class NameTable {
 				table.remove(name);
 			}
 		}
+	}
+	
+	public void remove(IDeclaration declaration) {
+		remove(declaration.getName(), declaration.getElement());
 	}
 	
 	public IInternalElement[] getElements(String name) {

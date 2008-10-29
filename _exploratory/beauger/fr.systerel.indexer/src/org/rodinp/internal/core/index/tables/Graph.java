@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.rodinp.internal.core.index.persistence.PersistentTotalOrder;
+
 public class Graph<T> {
 
 	private final Map<T, Node<T>> nodes;
@@ -98,10 +100,17 @@ public class Graph<T> {
 		}
 		return node;
 	}
-
+	
 	private void fireGraphChanged() {
 		for (IGraphChangedListener listener : listeners) {
 			listener.graphChanged();
+		}
+	}
+	
+	protected void setPersistentData(PersistentTotalOrder<T> pto) {
+		nodes.clear();
+		for (Node<T> n: pto.getNodes()) {
+			nodes.put(n.getLabel(), n);
 		}
 	}
 }

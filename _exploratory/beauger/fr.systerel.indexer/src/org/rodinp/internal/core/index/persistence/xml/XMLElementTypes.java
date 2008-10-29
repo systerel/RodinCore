@@ -1,0 +1,52 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
+package org.rodinp.internal.core.index.persistence.xml;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+/**
+ * @author Nicolas Beauger
+ * 
+ */
+public enum XMLElementTypes {
+	// TODO simplify, factorize if possible
+	
+	INDEX_ROOT, PIM, RODIN_INDEX, DESCRIPTOR, OCCURRENCE, EXPORT_TABLE, GRAPH,
+	EXPORT, EXPORTED, NODE, PREDECESSOR, SUCCESSOR, ITERATED;
+
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
+	}
+	
+	public static Element createElement(Document doc, XMLElementTypes name) {
+		return doc.createElement(name.toString());
+	}
+
+	public static boolean hasName(Node node, XMLElementTypes name) {
+		return node.getNodeName().equals(name.toString());
+	}
+
+	public static NodeList getElementsByTagName(Element node,
+			XMLElementTypes nodeType) {
+		return node.getElementsByTagName(nodeType.toString());
+	}
+
+	public static void assertName(Node node, XMLElementTypes name) {
+		if (!hasName(node, name)) {
+			// TODO Throw my own PersistenceException
+		}
+	}
+
+}

@@ -15,14 +15,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.rodinp.internal.core.index.persistence.PersistentSortedNodes;
+
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class SortedNodes<T> implements Iterator<T> {
 
 	private final List<Node<T>> order;
-	private final List<Node<T>> iterated;
+	// TODO could record only iterated labels
+	private final List<T> iterated;
 	private Iterator<Node<T>> iter;
 	private boolean startIter;
 	private int restartPos;
@@ -31,14 +34,14 @@ public class SortedNodes<T> implements Iterator<T> {
 
 	public SortedNodes() {
 		this.order = new ArrayList<Node<T>>();
-		this.iterated = new ArrayList<Node<T>>();
+		this.iterated = new ArrayList<T>();
 		this.iter = null;
 		this.startIter = true;
 		this.restartPos = 0;
 		this.currentNode = null;
 		this.numberToIter = 0;
 	}
-	
+
 	public void clear() {
 		order.clear();
 		iterated.clear();
@@ -48,7 +51,7 @@ public class SortedNodes<T> implements Iterator<T> {
 		currentNode = null;
 		numberToIter = 0;
 	}
-	
+
 	public void sort(List<Node<T>> nodes) {
 
 		final boolean iterating = (currentNode != null);
@@ -65,19 +68,20 @@ public class SortedNodes<T> implements Iterator<T> {
 	}
 
 	private int findRestartPos() {
-		
-		Iterator<Node<T>> iterPrev = iterated.listIterator();
+
+		Iterator<T> iterPrev = iterated.listIterator();
 		Iterator<Node<T>> iterNew = order.listIterator();
 		int pos = 0;
 
 		while (iterNew.hasNext() && iterPrev.hasNext()) {
-			final Node<T> nodePrev = iterPrev.next();
+			final T labelPrev = iterPrev.next();
 			final Node<T> nodeOrder = nextMarked(iterNew);
-	
-			if (nodeOrder == null || nodePrev == null) {
+
+			if (nodeOrder == null || labelPrev == null) {// TODO remove 2nd
+				// part
 				break;
 			}
-			if (!nodeOrder.equals(nodePrev)) {
+			if (!nodeOrder.getLabel().equals(labelPrev)) {
 				break;
 			}
 			pos++;
@@ -89,30 +93,31 @@ public class SortedNodes<T> implements Iterator<T> {
 		startIter = true;
 		iterated.clear();
 	}
-	
+
 	public boolean hasNext() {
 		updateIter();
-		
+
 		return moreToIter();
 	}
 
 	public T next() {
 		updateIter();
-		
+
 		if (!moreToIter()) {
 			throw new NoSuchElementException("No more elements to iter.");
 		}
 
 		numberToIter--;
 		currentNode = nextMarked(iter);
-		iterated.add(currentNode);
-		return currentNode.getLabel();
+		final T label = currentNode.getLabel();
+		iterated.add(label);
+		return label;
 	}
 
 	public void remove() {
 		iter.remove();
 	}
-	
+
 	// successors of the current node will be iterated
 	public void setToIterSuccessors() {
 		if (currentNode == null) {
@@ -178,4 +183,28 @@ public class SortedNodes<T> implements Iterator<T> {
 		return node;
 	}
 
+	/**
+	 * Use only for persistence purposes.
+	 * 
+	 * @return data to save.
+	 */
+	protected PersistentSortedNodes<T> getPersistentData() {
+		final List<T> psnIterated = new ArrayList<T>(iterated);
+		final List<Node<T>> psnNodes = new ArrayList<Node<T>>(order);
+
+		return new PersistentSortedNodes<T>(psnNodes, psnIterated);
+	}
+
+	protected void setPersistentData(PersistentSortedNodes<T> psn) {
+		order.clear();
+		order.addAll(psn.getNodes());
+
+		iterated.clear();
+		iterated.addAll(psn.getIterated());
+		
+		restartPos = findRestartPos();
+		
+		startIter = true;
+		updateIter();
+	}
 }

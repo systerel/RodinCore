@@ -37,10 +37,6 @@ public class ProjectIndexManager {
 
 	private final IRodinProject project;
 
-	private final FileIndexingManager fim;
-
-	private final IndexerRegistry indexerRegistry;
-
 	private final RodinIndex index;
 
 	private final FileTable fileTable;
@@ -53,11 +49,8 @@ public class ProjectIndexManager {
 
 	private final ReentrantReadWriteLock tableRWL;
 
-	public ProjectIndexManager(IRodinProject project, FileIndexingManager fim,
-			IndexerRegistry indManager) {
+	public ProjectIndexManager(IRodinProject project) {
 		this.project = project;
-		this.fim = fim;
-		this.indexerRegistry = indManager;
 		this.index = new RodinIndex();
 		this.fileTable = new FileTable();
 		this.nameTable = new NameTable();
@@ -69,12 +62,11 @@ public class ProjectIndexManager {
 	public void lockRead() throws InterruptedException {
 		tableRWL.readLock().lockInterruptibly();
 	}
-	
+
 	public void unlockRead() {
 		tableRWL.readLock().unlock();
 	}
-	
-	
+
 	public void doIndexing(IProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.beginTask("indexing project " + project,
@@ -83,12 +75,13 @@ public class ProjectIndexManager {
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
 
-			final Map<IInternalElement, IDeclaration> fileImports = computeImports(file);
-			final IndexingToolkit indexingToolkit = new IndexingToolkit(file,
-					fileImports, monitor);
+			final Map<IInternalElement, IDeclaration> fileImports =
+					computeImports(file);
+			final IndexingToolkit indexingToolkit =
+					new IndexingToolkit(file, fileImports, monitor);
 
-			final IIndexingResult result = fim
-					.doIndexing(indexingToolkit);
+			final FileIndexingManager fim = FileIndexingManager.getDefault();
+			final IIndexingResult result = fim.doIndexing(indexingToolkit);
 
 			checkCancel(indexingToolkit);
 			if (result.isSuccess()) {
@@ -120,21 +113,21 @@ public class ProjectIndexManager {
 	 * 
 	 */
 	private void saveCurrentState() {
-//		final List<IRodinFile> toIndexLater = order.getMarkedNodes();
+		// final List<IRodinFile> toIndexLater = order.getMarkedNodes();
 		// TODO record the list (or record the whole object including order)
 	}
 
 	public boolean mustReindexDependents(IIndexingResult result) {
 		// FIXME costly (?)
-		final Set<IDeclaration> currentExports = exportTable.get(result
-				.getFile());
+		final Set<IDeclaration> currentExports =
+				exportTable.get(result.getFile());
 		final Set<IDeclaration> resultExports = result.getExports();
 		return !currentExports.equals(resultExports);
 	}
 
 	private void updateTables(IIndexingResult result) {
 		tableRWL.writeLock().lock();
-		
+
 		clean(result.getFile());
 
 		updateDeclarations(result);
@@ -142,7 +135,7 @@ public class ProjectIndexManager {
 		updateOccurrences(result);
 
 		updateExports(result);
-		
+
 		tableRWL.writeLock().unlock();
 	}
 
@@ -156,8 +149,8 @@ public class ProjectIndexManager {
 	private void updateOccurrences(IIndexingResult result) {
 		final IRodinFile file = result.getFile();
 
-		final Map<IInternalElement, Set<IOccurrence>> occurrencesMap = result
-				.getOccurrences();
+		final Map<IInternalElement, Set<IOccurrence>> occurrencesMap =
+				result.getOccurrences();
 
 		for (IInternalElement element : occurrencesMap.keySet()) {
 			final Set<IOccurrence> occurrences = occurrencesMap.get(element);
@@ -166,7 +159,7 @@ public class ProjectIndexManager {
 			for (IOccurrence occurrence : occurrences) {
 				descriptor.addOccurrence(occurrence);
 			}
-			fileTable.add(element, file);
+			fileTable.add(file, element);
 		}
 	}
 
@@ -180,11 +173,12 @@ public class ProjectIndexManager {
 			if (descriptor == null) {
 				descriptor = index.makeDescriptor(declaration);
 			} else { // possible renaming
-				final String previousName = descriptor.getDeclaration().getName();
+				final IDeclaration previousDecl = descriptor.getDeclaration();
+				final String previousName = previousDecl.getName();
 				if (!previousName.equals(name)) {
 					index.removeDescriptor(element);
 					descriptor = index.makeDescriptor(declaration);
-					nameTable.remove(previousName, element);
+					nameTable.remove(previousDecl);
 					// there are import occurrences of the element;
 					// in those files, it is referred to with previousName
 					// => rodinIndex tables are coherent but those files may not
@@ -193,8 +187,8 @@ public class ProjectIndexManager {
 				}
 			}
 
-			fileTable.add(element, result.getFile());
-			nameTable.put(name, element);
+			fileTable.add(result.getFile(), element);
+			nameTable.add(declaration);
 		}
 	}
 
@@ -204,18 +198,20 @@ public class ProjectIndexManager {
 			final Descriptor descriptor = index.getDescriptor(element);
 
 			if (descriptor == null) {
-				IRodinDBStatus status = new RodinDBStatus(
-						IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
-						element,
-						getClass()
-								+ ": element in FileTable with no Descriptor in RodinIndex.");
+				IRodinDBStatus status =
+						new RodinDBStatus(
+								IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+								element,
+								getClass()
+										+ ": element in FileTable with no Descriptor in RodinIndex.");
 				RodinCore.getRodinCore().getLog().log(status);
 			} else {
 				descriptor.removeOccurrences(file);
 
 				if (descriptor.getOccurrences().length == 0) {
-					final String name = descriptor.getDeclaration().getName();
-					nameTable.remove(name, element);
+					final IDeclaration declaration =
+							descriptor.getDeclaration();
+					nameTable.remove(declaration);
 					index.removeDescriptor(element);
 				}
 			}
@@ -233,12 +229,14 @@ public class ProjectIndexManager {
 	public void fileChanged(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
-					+ " should be indexed in project " + project);
+					+ " should be indexed in project "
+					+ project);
 		}
 
-		if (!indexerRegistry.isIndexable(file)) {
+		if (!IndexerRegistry.getDefault().isIndexable(file)) {
 			return;
 		}
+		final FileIndexingManager fim = FileIndexingManager.getDefault();
 		final IRodinFile[] dependFiles = fim.getDependencies(file);
 		if (dependFiles == null)
 			return;
@@ -263,8 +261,13 @@ public class ProjectIndexManager {
 		return index;
 	}
 
+	public TotalOrder<IRodinFile> getOrder() {
+		return order;
+	}
+
 	private Map<IInternalElement, IDeclaration> computeImports(IRodinFile file) {
-		final Map<IInternalElement, IDeclaration> result = new HashMap<IInternalElement, IDeclaration>();
+		final Map<IInternalElement, IDeclaration> result =
+				new HashMap<IInternalElement, IDeclaration>();
 		final List<IRodinFile> fileDeps = order.getPredecessors(file);
 
 		for (IRodinFile f : fileDeps) {
@@ -274,6 +277,47 @@ public class ProjectIndexManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @throws InterruptedException
+	 * 
+	 */
+	public void lockWrite() throws InterruptedException {
+		tableRWL.writeLock().lockInterruptibly();
+	}
+
+	/**
+	 * 
+	 */
+	public void unlockWrite() {
+		tableRWL.writeLock().unlock();
+	}
+
+	/**
+	 * @return the managed project
+	 */
+	public IRodinProject getProject() {
+		return project;
+	}
+
+	/**
+	 * 
+	 */
+	public void restoreNonPersistentData() {
+		nameTable.clear();
+		fileTable.clear();
+		for (Descriptor desc : index.getDescriptors()) {
+			final IDeclaration declaration = desc.getDeclaration();
+			nameTable.add(declaration);
+
+			final IInternalElement element = declaration.getElement();
+			for (IOccurrence occurrence : desc.getOccurrences()) {
+				final IRodinFile file = occurrence.getRodinFile();
+				fileTable.add(file, element);
+			}
+		}
+
 	}
 
 }

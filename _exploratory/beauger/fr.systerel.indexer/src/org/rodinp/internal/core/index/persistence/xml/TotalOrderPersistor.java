@@ -1,0 +1,77 @@
+/*******************************************************************************
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
+package org.rodinp.internal.core.index.persistence.xml;
+
+import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
+import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.rodinp.core.IRodinFile;
+import org.rodinp.internal.core.index.persistence.PersistentTotalOrder;
+import org.rodinp.internal.core.index.tables.Node;
+import org.rodinp.internal.core.index.tables.TotalOrder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+/**
+ * @author Nicolas Beauger
+ * 
+ */
+public class TotalOrderPersistor {
+
+	public static void restore(Element orderNode,
+			TotalOrder<IRodinFile> totalOrder) {
+
+		final String isSortedStr = getAttribute(orderNode, IS_SORTED);
+		final boolean isSorted = Boolean.parseBoolean(isSortedStr);
+
+		final NodeList nodeNodes = getElementsByTagName(orderNode, NODE);
+		final List<Node<IRodinFile>> fileNodes =
+			new ArrayList<Node<IRodinFile>>();
+		for (int i = 0; i < nodeNodes.getLength(); i++) {
+			final Element nodeNode = (Element) nodeNodes.item(i);
+			final Node<IRodinFile> fileNode =
+				NodePersistor.getIRFNode(nodeNode);
+			fileNodes.add(fileNode);
+		}
+
+		final NodeList iterNodes = getElementsByTagName(orderNode, ITERATED);
+		final List<IRodinFile> iterated =
+				IRFNodeListPersistor.restore(iterNodes);
+
+		final PersistentTotalOrder<IRodinFile> pto =
+				new PersistentTotalOrder<IRodinFile>(isSorted, fileNodes,
+						iterated);
+		
+		 totalOrder.setPersistentData(pto);
+	}
+
+	public static void save(TotalOrder<IRodinFile> totalOrder, Document doc,
+			Element orderNode) {
+		final PersistentTotalOrder<IRodinFile> orderData =
+				totalOrder.getPersistentData();
+
+		final String isSortedStr = Boolean.toString(orderData.isSorted());
+		setAttribute(orderNode, IS_SORTED, isSortedStr);
+
+		for(Node<IRodinFile> node: orderData.getNodes()) {
+			final Element nodeNode = createElement(doc, NODE);
+			NodePersistor.save(node, doc, nodeNode);
+			orderNode.appendChild(nodeNode);
+		}
+		
+		IRFNodeListPersistor.saveFiles(orderData.getIterated(), doc, orderNode, ITERATED);
+	}
+
+}

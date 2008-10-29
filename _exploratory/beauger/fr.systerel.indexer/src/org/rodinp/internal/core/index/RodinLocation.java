@@ -17,6 +17,7 @@ import org.rodinp.core.index.IRodinLocation;
 
 public class RodinLocation implements IRodinLocation {
 
+	// TODO change to IInternalElement since file separation
 	private final IRodinElement element;
 
 	public RodinLocation(IRodinElement element) {

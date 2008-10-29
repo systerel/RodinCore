@@ -22,10 +22,18 @@ import org.rodinp.core.index.IIndexer;
 
 public class IndexerRegistry {
 
+	private static IndexerRegistry instance;
 	private final Map<IInternalElementType<?>, List<IIndexer>> indexers;
 
-	public IndexerRegistry() {
+	private IndexerRegistry() {
 		this.indexers = new HashMap<IInternalElementType<?>, List<IIndexer>>();
+	}
+	
+	public static IndexerRegistry getDefault() {
+		if (instance == null) {
+			instance = new IndexerRegistry();			
+		}
+		return instance;
 	}
 
 	public void addIndexer(IIndexer indexer, IInternalElementType<?> fileType) {

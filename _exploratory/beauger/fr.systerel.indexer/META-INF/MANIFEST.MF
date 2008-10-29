@@ -7,6 +7,8 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime, org.rodinp.core
 Export-Package: org.rodinp.core.index,
  org.rodinp.internal.core.index;x-friends:="fr.systerel.indexer.tests",
+ org.rodinp.internal.core.index.persistence;x-friends:="fr.systerel.indexer.tests",
+ org.rodinp.internal.core.index.persistence.xml;x-friends:="fr.systerel.indexer.tests",
  org.rodinp.internal.core.index.tables;x-friends:="fr.systerel.indexer.tests"
 Bundle-Vendor: %Bundle-Vendor.f0
 Bundle-Localization: plugin

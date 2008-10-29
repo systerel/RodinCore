@@ -19,14 +19,6 @@ public class Declaration implements IDeclaration {
 	private final String name;
 
 	public Declaration(IInternalElement element, String name) {
-
-		// TODO If it's internal API, this is not needed.
-		if (element == null) {
-			throw new NullPointerException("null element");
-		}
-		if (name == null) {
-			throw new NullPointerException("null name");
-		}
 		this.element = element;
 		this.name = name;
 	}

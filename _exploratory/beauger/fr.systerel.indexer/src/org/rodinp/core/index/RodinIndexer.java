@@ -48,10 +48,12 @@ public class RodinIndexer extends Plugin {
 	/** To be moved to {@link IRodinDBStatusConstants} */
 	public static final int INDEXER_ERROR = 1100;
 
-	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
+	private static final Map<String, IOccurrenceKind> kinds =
+			new HashMap<String, IOccurrenceKind>();
 
 	/** To be moved to {@link RodinCore} */
-	public static void register(IIndexer indexer, IInternalElementType<?> fileType) {
+	public static void register(IIndexer indexer,
+			IInternalElementType<?> fileType) {
 		IndexManager.getDefault().addIndexer(indexer, fileType);
 	}
 
@@ -195,18 +197,27 @@ public class RodinIndexer extends Plugin {
 	// To be integrated with RodinCore option processing
 	public void configurePluginDebugOptions() {
 		if (plugin.isDebugging()) {
-			String option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer");
+			String option =
+					Platform
+							.getDebugOption("fr.systerel.indexer/debug/indexer");
 			if (option != null)
 				IndexManager.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
+			option =
+					Platform
+							.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
 			if (option != null)
 				IndexManager.VERBOSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
+			option =
+					Platform
+							.getDebugOption("fr.systerel.indexer/debug/indexer/save_restore");
+			if (option != null)
+				IndexManager.SAVE_RESTORE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option =
+					Platform
+							.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
 			if (option != null)
 				RodinDBChangeListener.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}

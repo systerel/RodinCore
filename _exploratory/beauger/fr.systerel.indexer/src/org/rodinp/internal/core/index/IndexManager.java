@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -27,6 +25,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
+import org.rodinp.internal.core.index.persistence.PersistenceManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -37,6 +36,7 @@ public final class IndexManager {
 	// For debugging and tracing purposes
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
+	public static boolean SAVE_RESTORE;
 
 	// TODO should automatically remove projects mappings when a project gets
 	// deleted.
@@ -45,11 +45,9 @@ public final class IndexManager {
 	// Must be accessed only by synchronized methods
 	private static IndexManager instance;
 
-	private final Map<IRodinProject, ProjectIndexManager> pims;
+	private final PerProjectPIM pppim;
 
-	private final IndexerRegistry indexersManager;
-
-	private final FileIndexingManager fim;
+	private final IndexerRegistry indexerRegistry;
 
 	private static final int eventMask = ElementChangedEvent.POST_CHANGE;
 
@@ -59,20 +57,16 @@ public final class IndexManager {
 	// private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean ENABLE_INDEXING = true;
-
+	
 	private final ReentrantReadWriteLock initSaveLock = new ReentrantReadWriteLock();
 
 	/** Lock guarding table access during indexing */
-	private final Object indexingLock;
 
 	private IndexManager() {
-		pims = new HashMap<IRodinProject, ProjectIndexManager>();
-		indexersManager = new IndexerRegistry();
-		fim = new FileIndexingManager(indexersManager);
+		pppim = new PerProjectPIM();
+		indexerRegistry = IndexerRegistry.getDefault();
 		queue = new FileQueue();
 		listener = new RodinDBChangeListener(queue);
-		indexingLock = new Object();
-		initSaveLock.writeLock().lock();
 	}
 
 	/**
@@ -105,15 +99,15 @@ public final class IndexManager {
 	 *            the associated file type.
 	 */
 	public void addIndexer(IIndexer indexer, IInternalElementType<?> fileType) {
-		indexersManager.addIndexer(indexer, fileType);
+		indexerRegistry.addIndexer(indexer, fileType);
 	}
 
 	/**
 	 * Clears all associations between indexers and file types. Indexers will
 	 * have to be added again if indexing is to be performed anew.
 	 */
-	public void clearIndexers() {
-		indexersManager.clear();
+	public synchronized void clearIndexers() {
+		indexerRegistry.clear();
 	}
 
 	/**
@@ -145,16 +139,8 @@ public final class IndexManager {
 	 *            the monitor by which cancel requests can be performed.
 	 */
 	void doIndexing(IProgressMonitor monitor) {
-		synchronized (indexingLock) {
-			for (IRodinProject project : pims.keySet()) {
-				fetchPIM(project).doIndexing(monitor);
-				if (monitor != null) {
-					monitor.done();
-					if (monitor.isCanceled()) {
-						throw new CancellationException();
-					}
-				}
-			}
+		for (IRodinProject project : pppim.projects()) {
+			fetchPIM(project).doIndexing(monitor);
 		}
 	}
 
@@ -254,32 +240,28 @@ public final class IndexManager {
 	}
 
 	private ProjectIndexManager fetchPIM(IRodinProject project) {
-		ProjectIndexManager pim = pims.get(project);
-		if (pim == null) {
-			pim = new ProjectIndexManager(project, fim, indexersManager);
-			pims.put(project, pim);
-		}
-		return pim;
-	}
-
-	public void save() {
-		initSaveLock.writeLock().lock();
-		// TODO
-		initSaveLock.writeLock().unlock();
+		return pppim.getOrCreate(project);
 	}
 
 	private final Job indexing = new Job("indexing") {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			if (VERBOSE) {
-				System.out.println("indexing...");
-			}
-			doIndexing(monitor);
-			if (VERBOSE) {
-				System.out.println("...end indexing");
-			}
-			if (monitor != null && monitor.isCanceled()) {
+			printVerbose("indexing...");
+			
+			try {
+				doIndexing(monitor);
+			} catch(CancellationException e) {
+				printVerbose("indexing Cancelled");
+			
 				return Status.CANCEL_STATUS;
+			}
+			printVerbose("...end indexing");
+			
+			if (monitor != null) {
+				monitor.done();
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
 			}
 			return Status.OK_STATUS;
 		}
@@ -289,63 +271,81 @@ public final class IndexManager {
 	 * Starts the indexing system. It will run until the given progress monitor
 	 * is canceled.
 	 * 
-	 * @param startMonitor
+	 * @param daemonMonitor
 	 *            the progress monitor that handles the indexing system
 	 *            cancellation.
 	 */
-	public void start(IProgressMonitor startMonitor) {
-		load();
+	public void start(IProgressMonitor daemonMonitor) {
+		if (SAVE_RESTORE) {
+			restore();
+		}
+		RodinCore.addElementChangedListener(listener, eventMask);
 
 		final RodinDB rodinDB = RodinDBManager.getRodinDBManager().getRodinDB();
 		indexing.setRule(rodinDB.getSchedulingRule());
 		// indexing.setUser(true);
 
-		boolean interrupted = false;
-		try {
-			while (true) {
-				try {
-					boolean cancel = false;
-					while (!cancel) { // !startMonitor.isCanceled()) {
-						final IRodinFile file = queue.take();
+		boolean stop = false;
+		do {
+			try {
+				final IRodinFile file = queue.take();
+				// TODO drain to collection ?
 
-						final IRodinProject project = file.getRodinProject();
-						final ProjectIndexManager pim = fetchPIM(project);
+				final IRodinProject project = file.getRodinProject();
+				final ProjectIndexManager pim = fetchPIM(project);
 
-						pim.fileChanged(file);
-						if (ENABLE_INDEXING) {
+				pim.fileChanged(file);
+				if (ENABLE_INDEXING) {
 
-							indexing.schedule();
-							indexing.join();
-							queue.fileProcessed();
-							// TODO define scheduling policies ?
-						}
-						cancel = startMonitor.isCanceled()
-								|| Status.CANCEL_STATUS.equals(indexing
-										.getResult());
-					}
-					return;
-				} catch (InterruptedException e) {
-					interrupted = true;
+					// TODO define scheduling policies ?
+					indexing.schedule();
+					indexing.join();
+					queue.fileProcessed();
 				}
+				stop = daemonMonitor.isCanceled()
+						|| Status.CANCEL_STATUS.equals(indexing.getResult());
+					// FIXME treat separately :
+					// if indexing cancelled, retry 3 times
+					// then pass to next file after remembering this one
+
+			} catch (InterruptedException e) {
+				stop = true;
+				// TODO save
+				// - the queue
+				// - the remaining work => done in PIM when cancel
 			}
-		} finally {
-			if (interrupted) {
-				save();
-				Thread.currentThread().interrupt();
-			}
-		}
+		} while (!stop);
+
+//		save();
 	}
 
-	private void load() {
-		if (VERBOSE) {
-			System.out.println("Loading IndexManager");
-		}
-		// TODO recover from previous save
-
-		RodinCore.addElementChangedListener(listener, eventMask);
+	private void unlockWriteInitSave() {
 		initSaveLock.writeLock().unlock();
 	}
 
+	private void lockWriteInitSave() {
+		initSaveLock.writeLock().lock();
+	}
+
+	public PerProjectPIM getPerProjectPIM() {
+		return pppim;
+	}
+//	public void save(File file) {
+//		lockWriteInitSave();
+//		PersistenceManager.getDefault().save(pppim);
+//		unlockWriteInitSave();
+//	}
+
+	private void restore() {
+		lockWriteInitSave();
+		if (VERBOSE) {
+			System.out.println("Restoring IndexManager");
+		}
+		PersistenceManager.getDefault().restore();
+		
+		unlockWriteInitSave();
+	}
+	
 	/**
 	 * Returns <code>true</code> when the indexing system is up to date, else
 	 * blocks until it becomes up to date.
@@ -354,18 +354,19 @@ public final class IndexManager {
 	 * 
 	 */
 	public void waitUpToDate() throws InterruptedException {
-		// TODO use 1 lock per project
+		// TODO use 1 lock per project ?
+		// FIXME sometimes blocks (running testIntegration)
 		queue.awaitEmptyQueue();
 	}
 
 	/**
 	 * Clears the indexes, tables and indexers.
 	 */
-	public void clear() {
-		synchronized (indexingLock) { // TODO or cancel
-			pims.clear();
-			clearIndexers();
-		}
+	public synchronized void clear() {
+		lockWriteInitSave();
+		clearIndexers();
+		pppim.clear();
+		unlockWriteInitSave();
 	}
 
 	// For testing purpose only, do not call in operational code
@@ -380,6 +381,12 @@ public final class IndexManager {
 		RodinCore.removeElementChangedListener(listener);
 		ENABLE_INDEXING = false;
 
+	}
+
+	void printVerbose(String message) {
+		if (VERBOSE) {
+			System.out.println(message);
+		}
 	}
 
 }

@@ -55,6 +55,9 @@ public class ExportTable {
 		table.clear();
 	}
 
+	public Set<IRodinFile> files() {
+		return table.keySet();
+	}
 //	public boolean contains(IRodinFile f, IInternalElement element) {
 //		final Set<IDeclaration> map = table.get(f);
 //		if (map == null) {
