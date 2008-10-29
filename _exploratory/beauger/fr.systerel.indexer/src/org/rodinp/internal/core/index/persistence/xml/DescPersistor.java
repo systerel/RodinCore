@@ -15,6 +15,7 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -25,7 +26,7 @@ import org.w3c.dom.NodeList;
  */
 public class DescPersistor {
 
-	public static void addOccurrences(Element descNode, Descriptor desc) {
+	public static void addOccurrences(Element descNode, Descriptor desc) throws PersistenceException {
 		final NodeList occNodes = getElementsByTagName(descNode, OCCURRENCE);
 		for (int i=0;i<occNodes.getLength();i++) {
 			final Element occNode = (Element) occNodes.item(i);
@@ -34,7 +35,7 @@ public class DescPersistor {
 		}
 	}
 	
-	public static IDeclaration getDeclaration(Element descNode) {
+	public static IDeclaration getDeclaration(Element descNode) throws PersistenceException {
 		return DeclPersistor.getDeclaration(descNode);
 	}
 	

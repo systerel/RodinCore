@@ -17,6 +17,7 @@ import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,7 +27,7 @@ import org.w3c.dom.Element;
  */
 public class OccPersistor {
 
-	public static IOccurrence getOccurrence(Element occNode) {
+	public static IOccurrence getOccurrence(Element occNode) throws PersistenceException {
 		final IOccurrenceKind kind = getKind(occNode);
 
 		final IRodinLocation location = LocPersistor.getLocation(occNode);
@@ -34,8 +35,8 @@ public class OccPersistor {
 		return new Occurrence(kind, location);
 	}
 
-	private static IOccurrenceKind getKind(Element occNode) {
-		final String kindId = XMLAttributeTypes.getAttribute(occNode, OCC_KIND);
+	private static IOccurrenceKind getKind(Element occNode) throws PersistenceException {
+		final String kindId = getAttribute(occNode, OCC_KIND);
 		return RodinIndexer.getOccurrenceKind(kindId);
 	}
 

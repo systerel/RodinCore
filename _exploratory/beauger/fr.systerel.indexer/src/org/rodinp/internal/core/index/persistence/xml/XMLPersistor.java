@@ -51,8 +51,7 @@ public class XMLPersistor implements IPersistor {
 
 	// TODO use namespaces
 	// TODO check casts
-	// TODO when only 1 child node is expected, consider making an attribute
-	// node
+	// TODO check length when exactly 1 child node is expected 
 
 	public void restore(File file, PerProjectPIM pppim) {
 		// dummyRestore(file);
@@ -67,7 +66,7 @@ public class XMLPersistor implements IPersistor {
 			persistor.restore(indexRoot, pppim);
 
 		} catch (Exception e) {
-			// TODO Throw my own PersistenceException with encapsulated cause e
+			// TODO forgot everything => ?
 			e.printStackTrace();
 		}
 

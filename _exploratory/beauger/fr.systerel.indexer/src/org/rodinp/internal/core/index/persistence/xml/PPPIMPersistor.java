@@ -14,6 +14,7 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -24,7 +25,7 @@ import org.w3c.dom.NodeList;
  */
 public class PPPIMPersistor {
 
-	public void restore(Element indexRoot, PerProjectPIM pppim) {
+	public void restore(Element indexRoot, PerProjectPIM pppim) throws PersistenceException {
 		assertName(indexRoot, INDEX_ROOT);
 		final NodeList pimNodes = getElementsByTagName(indexRoot, PIM);
 

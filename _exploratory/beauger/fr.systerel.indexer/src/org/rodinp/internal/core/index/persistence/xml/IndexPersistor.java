@@ -14,6 +14,7 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,12 +26,14 @@ import org.w3c.dom.NodeList;
  */
 public class IndexPersistor {
 
-	public static void restore(Element indexNode, RodinIndex index) {
+	public static void restore(Element indexNode, RodinIndex index)
+			throws PersistenceException {
 		final NodeList descNodes = getElementsByTagName(indexNode, DESCRIPTOR);
 
 		for (int i = 0; i < descNodes.getLength(); i++) {
 			final Element descNode = (Element) descNodes.item(i);
-			final IDeclaration declaration = DescPersistor.getDeclaration(descNode);
+			final IDeclaration declaration =
+					DescPersistor.getDeclaration(descNode);
 			final Descriptor desc = index.makeDescriptor(declaration);
 			DescPersistor.addOccurrences(descNode, desc);
 		}

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.persistence.PersistentTotalOrder;
 import org.rodinp.internal.core.index.tables.Node;
 import org.rodinp.internal.core.index.tables.TotalOrder;
@@ -31,7 +32,7 @@ import org.w3c.dom.NodeList;
 public class TotalOrderPersistor {
 
 	public static void restore(Element orderNode,
-			TotalOrder<IRodinFile> totalOrder) {
+			TotalOrder<IRodinFile> totalOrder) throws PersistenceException {
 
 		final String isSortedStr = getAttribute(orderNode, IS_SORTED);
 		final boolean isSorted = Boolean.parseBoolean(isSortedStr);

@@ -21,6 +21,7 @@ import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.RodinLocation;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -34,26 +35,26 @@ public class LocPersistor {
 		// private constructor:
 	}
 
-	public static IRodinLocation getLocation(Element occNode) {
+	public static IRodinLocation getLocation(Element occNode)
+			throws PersistenceException {
 		final IInternalElement element =
-				(IInternalElement) IREPersistor.getIREAtt(ELEMENT, occNode);
+				IREPersistor.getIIEAtt(occNode, ELEMENT);
+
+		if (!hasAttribute(occNode, LOC_ATTRIBUTE)) {
+			return new RodinLocation(element);
+		}
 		final String attId = getAttribute(occNode, LOC_ATTRIBUTE);
+		IAttributeType.String attType = RodinCore.getStringAttrType(attId);
+		if (!hasAttribute(occNode, LOC_CHAR_START)) {
+			return new AttributeLocation(element, attType);
+		}
 		final String charStString = getAttribute(occNode, LOC_CHAR_START);
 		final String charEndString = getAttribute(occNode, LOC_CHAR_END);
 
-		if (attId.length() == 0) {
-			return new RodinLocation(element);
-		}
-		final IAttributeType attType = RodinCore.getAttributeType(attId);
-		if (charStString.length() == 0) {
-			return new AttributeLocation(element, attType);
-		}
-		final IAttributeType.String attTypeStr =
-				(IAttributeType.String) attType;
 		final int charStart = Integer.parseInt(charStString);
 		final int charEnd = Integer.parseInt(charEndString);
 
-		return new AttributeSubstringLocation(element, attTypeStr, charStart,
+		return new AttributeSubstringLocation(element, attType, charStart,
 				charEnd);
 	}
 

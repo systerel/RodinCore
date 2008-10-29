@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,9 +41,10 @@ public class ExportedPersistor {
 	 * @param exportNode
 	 * @param exportTable
 	 * @param file
+	 * @throws PersistenceException 
 	 */
 	public static void addExported(Element exportNode, ExportTable exportTable,
-			IRodinFile file) {
+			IRodinFile file) throws PersistenceException {
 
 		final NodeList exportedNodes =
 				getElementsByTagName(exportNode, EXPORTED);

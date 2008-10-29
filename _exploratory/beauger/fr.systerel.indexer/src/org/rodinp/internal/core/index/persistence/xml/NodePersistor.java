@@ -14,6 +14,7 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*
 import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.tables.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,10 +25,10 @@ import org.w3c.dom.Element;
  */
 public class NodePersistor {
 
-	public static Node<IRodinFile> getIRFNode(Element nodeNode) {
-		final IRodinFile label =
-				(IRodinFile) IREPersistor.getIREAtt(LABEL, nodeNode);
-		final String markAtt = getAttribute(nodeNode, MARK);//, Boolean.toString(node.isMarked()));
+	public static Node<IRodinFile> getIRFNode(Element nodeNode)
+			throws PersistenceException {
+		final IRodinFile label = IREPersistor.getIRFAtt(nodeNode, LABEL);
+		final String markAtt = getAttribute(nodeNode, MARK);
 		final boolean mark = Boolean.parseBoolean(markAtt);
 		final String orderPosAtt = getAttribute(nodeNode, ORDER_POS);
 		final int orderPos = Integer.parseInt(orderPosAtt);
@@ -35,7 +36,7 @@ public class NodePersistor {
 		final Node<IRodinFile> result = new Node<IRodinFile>(label);
 		result.setMark(mark);
 		result.setOrderPos(orderPos);
-		
+
 		return result;
 	}
 
@@ -45,10 +46,10 @@ public class NodePersistor {
 		setAttribute(nodeNode, MARK, Boolean.toString(node.isMarked()));
 		setAttribute(nodeNode, ORDER_POS, Integer.toString(node.getOrderPos()));
 
-		IRFNodeListPersistor.saveFilesInNodes(node.getPredecessors(), doc, nodeNode,
-				PREDECESSOR);
+		IRFNodeListPersistor.saveFilesInNodes(node.getPredecessors(), doc,
+				nodeNode, PREDECESSOR);
 
-		IRFNodeListPersistor.saveFilesInNodes(node.getSuccessors(), doc, nodeNode,
-				SUCCESSOR);
+		IRFNodeListPersistor.saveFilesInNodes(node.getSuccessors(), doc,
+				nodeNode, SUCCESSOR);
 	}
 }

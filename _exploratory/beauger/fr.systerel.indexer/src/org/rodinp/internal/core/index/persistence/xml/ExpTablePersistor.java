@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence.xml;
 
+import static org.rodinp.internal.core.index.persistence.xml.IREPersistor.*;
 import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +30,8 @@ import org.w3c.dom.NodeList;
  */
 public class ExpTablePersistor {
 
-	public static void restore(Element expTableNode, ExportTable exportTable) {
+	public static void restore(Element expTableNode, ExportTable exportTable)
+			throws PersistenceException {
 		final NodeList exportNodes = getElementsByTagName(expTableNode, EXPORT);
 		for (int i = 0; i < exportNodes.getLength(); i++) {
 			final Element exportNode = (Element) exportNodes.item(i);
@@ -51,9 +54,9 @@ public class ExpTablePersistor {
 		}
 	}
 
-	private static IRodinFile getFileAtt(Element fileNode) {
-		return (IRodinFile) IREPersistor
-				.getIREAtt(FILE, fileNode);
+	private static IRodinFile getFileAtt(Element fileNode)
+			throws PersistenceException {
+		return getIRFAtt(fileNode, FILE);
 	}
 
 	private static void setFileAtt(IRodinFile file, Element fileElem) {

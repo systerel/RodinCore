@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence.xml;
 
+import static org.rodinp.internal.core.index.persistence.xml.IREPersistor.*;
 import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.internal.core.index.Declaration;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,14 +26,15 @@ import org.w3c.dom.Element;
  */
 public class DeclPersistor {
 
-	public static IDeclaration getDeclaration(Element declNode) {
-		final IInternalElement element =
-				(IInternalElement) IREPersistor.getIREAtt(ELEMENT, declNode);
+	public static IDeclaration getDeclaration(Element declNode)
+			throws PersistenceException {
+		final IInternalElement element = getIIEAtt(declNode, ELEMENT);
 		final String name = getAttribute(declNode, NAME);
 		return new Declaration(element, name);
 	}
 
-	public static void save(IDeclaration declaration, Document doc, Element declNode) {
+	public static void save(IDeclaration declaration, Document doc,
+			Element declNode) {
 		final IInternalElement element = declaration.getElement();
 		final String name = declaration.getName();
 		IREPersistor.setIREAtt(element, ELEMENT, declNode);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence.xml;
 
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Element;
 
 /**
@@ -26,10 +27,20 @@ public enum XMLAttributeTypes {
 	public String toString() {
 		return super.toString().toLowerCase();
 	}
+	
 
 	public static String getAttribute(Element node,
-			XMLAttributeTypes attributeType) {
+			XMLAttributeTypes attributeType) throws PersistenceException {
+		if (!hasAttribute(node, attributeType)) {
+			throw new PersistenceException();
+		}
 		return node.getAttribute(attributeType.toString());
+	}
+
+
+	public static boolean hasAttribute(Element node,
+			XMLAttributeTypes attributeType) {
+		return node.hasAttribute(attributeType.toString());
 	}
 
 	public static void setAttribute(Element node,

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.rodinp.internal.core.index.tables.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,12 +29,12 @@ import org.w3c.dom.NodeList;
  */
 public class IRFNodeListPersistor {
 
-	public static List<IRodinFile> restore(NodeList nodeNodes) {
+	public static List<IRodinFile> restore(NodeList nodeNodes)
+			throws PersistenceException {
 		final List<IRodinFile> fileNodes = new ArrayList<IRodinFile>();
 		for (int i = 0; i < nodeNodes.getLength(); i++) {
 			final Element nodeNode = (Element) nodeNodes.item(i);
-			final IRodinFile file =
-					(IRodinFile) IREPersistor.getIREAtt(FILE, nodeNode);
+			final IRodinFile file = IREPersistor.getIRFAtt(nodeNode, FILE);
 			fileNodes.add(file);
 		}
 		return fileNodes;
@@ -53,8 +54,8 @@ public class IRFNodeListPersistor {
 		parent.appendChild(nodeNode);
 	}
 
-	public static void saveFilesInNodes(List<Node<IRodinFile>> filesInNodes, Document doc,
-			Element nodeNode, XMLElementTypes nodeType) {
+	public static void saveFilesInNodes(List<Node<IRodinFile>> filesInNodes,
+			Document doc, Element nodeNode, XMLElementTypes nodeType) {
 		for (Node<IRodinFile> node : filesInNodes) {
 			saveFile(node.getLabel(), doc, nodeNode, nodeType);
 		}

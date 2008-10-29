@@ -17,6 +17,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -27,7 +28,7 @@ import org.w3c.dom.NodeList;
  */
 public class PIMPersistor {
 
-	public void restore(Element pimNode, PerProjectPIM pppim) {
+	public void restore(Element pimNode, PerProjectPIM pppim) throws PersistenceException {
 		assertName(pimNode, PIM);
 
 		final String projectString = getAttribute(pimNode, PROJECT);
