@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -54,6 +54,6 @@ public interface IRodinLocation {
 	 * 
 	 * @return the element containing this location
 	 */
-	IRodinElement getElement();
+	IInternalElement getElement();
 
 }

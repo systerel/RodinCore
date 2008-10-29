@@ -13,8 +13,7 @@ package org.rodinp.internal.core.index.persistence.xml;
 import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
-import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IAttributeLocation;
 import org.rodinp.core.index.IAttributeSubstringLocation;
@@ -36,7 +35,8 @@ public class LocPersistor {
 	}
 
 	public static IRodinLocation getLocation(Element occNode) {
-		final IRodinElement element = IREPersistor.getIREAtt(ELEMENT, occNode);
+		final IInternalElement element =
+				(IInternalElement) IREPersistor.getIREAtt(ELEMENT, occNode);
 		final String attId = getAttribute(occNode, LOC_ATTRIBUTE);
 		final String charStString = getAttribute(occNode, LOC_CHAR_START);
 		final String charEndString = getAttribute(occNode, LOC_CHAR_END);
@@ -44,23 +44,22 @@ public class LocPersistor {
 		if (attId.length() == 0) {
 			return new RodinLocation(element);
 		}
-		final IAttributedElement attElem = (IAttributedElement) element;
 		final IAttributeType attType = RodinCore.getAttributeType(attId);
 		if (charStString.length() == 0) {
-			return new AttributeLocation(attElem, attType);
+			return new AttributeLocation(element, attType);
 		}
 		final IAttributeType.String attTypeStr =
 				(IAttributeType.String) attType;
 		final int charStart = Integer.parseInt(charStString);
 		final int charEnd = Integer.parseInt(charEndString);
 
-		return new AttributeSubstringLocation(attElem, attTypeStr, charStart,
+		return new AttributeSubstringLocation(element, attTypeStr, charStart,
 				charEnd);
 	}
 
 	public static void save(IRodinLocation location, Document doc,
 			Element occNode) {
-		final IRodinElement element = location.getElement();
+		final IInternalElement element = location.getElement();
 		IREPersistor.setIREAtt(element, ELEMENT, occNode);
 
 		if (location instanceof IAttributeLocation) {

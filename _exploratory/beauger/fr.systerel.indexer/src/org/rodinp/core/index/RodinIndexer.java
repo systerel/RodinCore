@@ -21,10 +21,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
@@ -79,7 +78,7 @@ public class RodinIndexer extends Plugin {
 	 *            a Rodin element
 	 * @return the location pointing at the given element
 	 */
-	public static IRodinLocation getRodinLocation(IRodinElement element) {
+	public static IRodinLocation getRodinLocation(IInternalElement element) {
 		return new RodinLocation(element);
 	}
 
@@ -96,7 +95,7 @@ public class RodinIndexer extends Plugin {
 	 *            the type of the attribute to point at
 	 * @return the location pointing at the given attribute of the given element
 	 */
-	public static IRodinLocation getRodinLocation(IAttributedElement element,
+	public static IRodinLocation getRodinLocation(IInternalElement element,
 			IAttributeType attributeType) {
 		return new AttributeLocation(element, attributeType);
 	}
@@ -124,7 +123,7 @@ public class RodinIndexer extends Plugin {
 	 *            than <code>start</code>
 	 * @return the location pointing at the given attribute of the given element
 	 */
-	public static IRodinLocation getRodinLocation(IAttributedElement element,
+	public static IRodinLocation getRodinLocation(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
 		return new AttributeSubstringLocation(element, attributeType, start,
 				end);

@@ -302,7 +302,7 @@ public class ProjectIndexManager {
 	}
 
 	/**
-	 * 
+	 * Assumes that the RodinIndex is up to date.
 	 */
 	public void restoreNonPersistentData() {
 		nameTable.clear();

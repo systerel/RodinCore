@@ -11,34 +11,27 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IRodinLocation;
 
 public class RodinLocation implements IRodinLocation {
 
 	// TODO change to IInternalElement since file separation
-	private final IRodinElement element;
+	private final IInternalElement element;
 
-	public RodinLocation(IRodinElement element) {
+	public RodinLocation(IInternalElement element) {
 		if (element == null) {
 			throw new NullPointerException("null element");
 		}
 		this.element = element;
 	}
 
-	public IRodinElement getElement() {
+	public IInternalElement getElement() {
 		return element;
 	}
 
 	public IRodinFile getRodinFile() {
-		if (element instanceof IRodinFile) {
-			return (IRodinFile) element;
-		}
-		if (element instanceof IInternalElement) {
-			return ((IInternalElement) element).getRodinFile();
-		}
-		return null;
+		return element.getRodinFile();
 	}
 
 	@Override
