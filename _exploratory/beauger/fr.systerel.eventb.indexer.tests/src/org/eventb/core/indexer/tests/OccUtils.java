@@ -23,9 +23,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
@@ -40,31 +38,31 @@ import org.rodinp.internal.core.index.Occurrence;
  */
 public class OccUtils {
 
-	public static IOccurrence makeDecl(final IRodinElement element) {
+	public static IOccurrence makeDecl(final IInternalElement element) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
 		return newOcc(DECLARATION, loc);
 	}
 
-	public static IOccurrence makeRef(IAttributedElement element,
+	public static IOccurrence makeRef(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType, start, end);
 		return newOcc(REFERENCE, loc);
 	}
 	
-	public static IOccurrence makeRef(IAttributedElement element,
+	public static IOccurrence makeRef(IInternalElement element,
 			IAttributeType.String attributeType) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType);
 		return newOcc(REFERENCE, loc);
 	}
 	
-	public static IOccurrence makeRef(IRodinElement element) {
+	public static IOccurrence makeRef(IInternalElement element) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
 		return newOcc(REFERENCE, loc);
 	}
 
-	public static IOccurrence makeModif(IAttributedElement element,
+	public static IOccurrence makeModif(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
 		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType, start, end);

@@ -11,8 +11,8 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
-import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
+import static org.eventb.core.indexer.EventBIndexUtil.*;
+import static org.rodinp.core.index.RodinIndexer.*;
 
 import java.util.Map;
 
@@ -27,7 +27,6 @@ import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
@@ -37,7 +36,7 @@ import org.rodinp.core.index.IIndexingToolkit;
  * @author Nicolas Beauger
  * 
  */
-public class EventIndexer extends Cancellable{
+public class EventIndexer extends Cancellable {
 
 	private final IEvent event;
 	private final Map<IEvent, SymbolTable> absParamTables;
@@ -58,7 +57,7 @@ public class EventIndexer extends Cancellable{
 	 *            <li>local declarations</li>
 	 *            <li>imported declarations</li>
 	 *            </ul>
-	 * @param index 
+	 * @param index
 	 */
 	public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
 			SymbolTable eventST, SymbolTable declImportST,
@@ -73,7 +72,7 @@ public class EventIndexer extends Cancellable{
 	public void process() throws RodinDBException {
 		checkCancel();
 		processEventLabel();
-		
+
 		checkCancel();
 		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
 		processRefines(event.getRefinesClauses(), absPrmDeclImpST);
@@ -122,7 +121,7 @@ public class EventIndexer extends Cancellable{
 	 * @param index
 	 */
 	private void addRefAttribute(final IDeclaration declaration,
-			IAttributedElement element, IAttributeType.String attribute) {
+			IInternalElement element, IAttributeType.String attribute) {
 		index.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
 				attribute));
 	}
@@ -248,10 +247,10 @@ public class EventIndexer extends Cancellable{
 	private void processActions(IAction[] actions, SymbolTable eventTable)
 			throws RodinDBException {
 		for (IAction action : actions) {
-			final AssignmentIndexer assignIndexer = new AssignmentIndexer(
-					action, eventTable, index);
+			final AssignmentIndexer assignIndexer =
+					new AssignmentIndexer(action, eventTable, index);
 			assignIndexer.process();
-			
+
 			checkCancel();
 		}
 	}
@@ -259,14 +258,14 @@ public class EventIndexer extends Cancellable{
 	private void processPredicateElements(IPredicateElement[] preds,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
-			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
-					symbolTable, index);
+			final PredicateIndexer predIndexer =
+					new PredicateIndexer(elem, symbolTable, index);
 			predIndexer.process();
 
 			checkCancel();
 		}
 	}
-	
+
 	protected void checkCancel() {
 		checkCancel(index);
 	}
