@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -34,8 +33,6 @@ import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -339,30 +336,20 @@ public class ModelController implements IElementChangedListener {
 	 *
 	 */
 	public void elementChanged(ElementChangedEvent event) {	
-		toRefresh.clear();
-		processDelta(event.getDelta());
-		for (IRodinElement elem : toRefresh) {
-			refreshModel(elem);
-			
-		}
+		
+		DeltaProcessor processor =  new DeltaProcessor(event.getDelta());
+		final ArrayList<IRodinElement> toRefresh = processor.getToRefresh();
+		final ArrayList<IRodinElement> toRemove = processor.getToRemove();
+		
 		navigator.getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
 			public void run() {
-				TreeViewer viewer = navigator.getCommonViewer();
-				Control ctrl = viewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					// refresh everything
-					if (toRefresh.contains(RodinCore.getRodinDB())) {
-						viewer.refresh();
-					} else {
-						for (Object elem : toRefresh) {
-							if (elem instanceof IRodinProject) {
-								viewer.refresh(((IRodinProject)elem).getProject());
-							} else {
-								viewer.refresh(elem);
-							}
-						}
-					}
+				cleanUpModel(toRemove);
+				//refresh the model
+				for (IRodinElement elem : toRefresh) {
+					refreshModel(elem);
+					
 				}
+				refreshViewer(toRefresh);
 		}});
 	}
 
@@ -374,7 +361,6 @@ public class ModelController implements IElementChangedListener {
 	 *            The element to refresh
 	 */
 	public void refreshModel(IRodinElement element) {
-//		System.out.println("refreshing model: "+element.toString() );
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject());
 			if (element instanceof IRodinProject) {
@@ -422,176 +408,44 @@ public class ModelController implements IElementChangedListener {
 					context.processPSRoot();
 				}
 			}
-//			if (element instanceof IInvariant) {
-//				ModelMachine mach = (ModelMachine) getInvariant((IInvariant) element).getModelParent();
-//				mach.addInvariant((IInvariant) element);
-//			}
-//			if (element instanceof IEvent) {
-//				System.out.println("event");
-//				ModelMachine mach = (ModelMachine) getEvent((IEvent) element).getModelParent();
-//				mach.addEvent((IEvent) element);
-//			}
-//			if (element instanceof ITheorem) {
-//				ModelTheorem thm = getTheorem((ITheorem) element);
-//				if (thm.getModelParent() instanceof ModelMachine) {
-//					ModelMachine mach = (ModelMachine) thm.getModelParent();
-//					mach.addTheorem((ITheorem) element);
-//				}
-//				if (thm.getModelParent() instanceof ModelContext) {
-//					ModelContext ctx = (ModelContext) thm.getModelParent();
-//					ctx.addTheorem((ITheorem) element);
-//				}
-//			}
-//			if (element instanceof IAxiom) {
-//				ModelContext ctx = (ModelContext) getAxiom((IAxiom) element).getModelParent();
-//				ctx.addAxiom((IAxiom) element);
-//			}
 		}
 	}
 	
-	// List of elements need that to be refreshed in the viewer (when processing Delta of changes).
-	ArrayList<IRodinElement> toRefresh =new ArrayList<IRodinElement>();
-	
-	// this getter is for testing purpose
-	public ArrayList<IRodinElement> getToRefresh() {
-		return toRefresh;
-	}
-
-	
-	
-	private void addToRefresh(IRodinElement o) {
-		if (!toRefresh.contains(o)) {
-			//add the root and not the file
-			if (o instanceof IRodinFile) {
-				o = ((IRodinFile) o).getRoot();
-			}
-			toRefresh.add(o);
-		}
-	}
-	
-	/**
-	 * Process the delta recursively and depend on the kind of the delta.
-	 * <p>
-	 * 
-	 * @param delta
-	 *            The Delta from the Rodin Database
-	 */
-	public void processDelta(final IRodinElementDelta delta) {
-//		System.out.println(delta);
-		int kind = delta.getKind();
-		IRodinElement element = delta.getElement();
-		if (kind == IRodinElementDelta.ADDED) {
-			if (element instanceof IRodinProject) {
-//				the content provider refreshes the model
-				addToRefresh(element.getRodinDB());
+	public void refreshViewer(ArrayList<IRodinElement> toRefresh) {
+		TreeViewer viewer = navigator.getCommonViewer();
+		Control ctrl = viewer.getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			// refresh everything
+			if (toRefresh.contains(RodinCore.getRodinDB())) {
+				viewer.refresh();
 			} else {
-				addToRefresh(element.getParent());
+				for (Object elem : toRefresh) {
+					if (elem instanceof IRodinProject) {
+						viewer.refresh(((IRodinProject)elem).getProject());
+					} else {
+						viewer.refresh(elem);
+					}
+				}
 			}
-			return;
 		}
+		
+	}
 
-		if (kind == IRodinElementDelta.REMOVED) {
+	/**
+	 * Removes the corresponding elements from the model
+	 * @param toRemove
+	 */
+	public void cleanUpModel(ArrayList<IRodinElement> toRemove){
+		for (IRodinElement element : toRemove) {
+			if (element instanceof IContextRoot) {
+				removeContext((IContextRoot) element);
+			}
+			if (element instanceof IMachineRoot) {
+				removeMachine((IMachineRoot) element);
+			}
 			if (element instanceof IRodinProject) {
 				removeProject((IRodinProject) element);
-				// This will update everything.
-				addToRefresh(element.getRodinDB());
-			} else {
-				if (element instanceof IRodinFile)  {
-					IRodinFile file = (IRodinFile) element;
-					//remove the context from the model
-					if (file.getRoot() instanceof IContextRoot) {
-						removeContext((IContextRoot)file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
-					//remove the machine from the model
-					if (file.getRoot() instanceof IMachineRoot) {
-						removeMachine((IMachineRoot)file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
-				}
-				//remove the context from the model
-				if (element instanceof IContextRoot) {
-					removeContext((IContextRoot)element);
-				}
-				//remove the machine from the model
-				if (element instanceof IMachineRoot) {
-					removeMachine((IMachineRoot)element);
-				}
-
-				
-				//add the containing project to refresh.
-				// if it is a root 
-				if (element instanceof IEventBRoot) {
-					addToRefresh(element.getRodinProject());
-				//otherwise add the parent to refresh
-				} else {
-					addToRefresh(element.getParent());
-				}
 			}
-			return;
 		}
-
-		if (kind == IRodinElementDelta.CHANGED) {
-			int flags = delta.getFlags();
-
-			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				IRodinElementDelta[] deltas = delta.getAffectedChildren();
-				for (IRodinElementDelta element2 : deltas) {
-					processDelta(element2);
-				}
-				return;
-			}
-
-			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				if (element.getParent() != null) {
-					addToRefresh(element.getParent());
-				} else {
-					addToRefresh(element);
-				}
-				return;
-			}
-
-			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				//refresh parent for safety (e.g. dependencies between machines)
-				if (element.getParent() != null) {
-					addToRefresh(element.getParent());
-				} else {
-					addToRefresh(element);
-				}
-				return;
-			}
-
-			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				//refresh parent for safety (e.g. dependencies between machines)
-				if (element.getParent() != null) {
-					addToRefresh(element.getParent());
-				} else {
-					addToRefresh(element);
-				}
-				return;
-			}
-			if ((flags & IRodinElementDelta.F_OPENED) != 0) {
-				//refresh parent for safety (e.g. dependencies between machines)
-				if (element.getParent() != null) {
-					addToRefresh(element.getParent());
-				} else {
-					addToRefresh(element);
-				}
-				return;
-			}
-			if ((flags & IRodinElementDelta.F_CLOSED) != 0) {
-				//refresh parent for safety (e.g. dependencies between machines)
-				if (element.getParent() != null) {
-					addToRefresh(element.getParent());
-				} else {
-					addToRefresh(element);
-				}
-				return;
-			}
-			
-		}
-
 	}
-
-	
 }
