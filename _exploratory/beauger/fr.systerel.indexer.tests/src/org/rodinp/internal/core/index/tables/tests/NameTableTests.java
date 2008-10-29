@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIIEArray;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tests.IndexTests;
 
@@ -36,15 +34,20 @@ public class NameTableTests extends IndexTests {
 	private static NamedElement element2;
 	private static final String name1 = "name1";
 	private static final String name2 = "name2";
+	private static IDeclaration declN1E1;
+	private static IDeclaration declN1E2;
+	private static IDeclaration declN2E2;
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		project = createRodinProject("P");
 		file = createRodinFile(project, "nameTable.test");
 		element1 = createNamedElement(file, "elt1");
 		element2 = createNamedElement(file, "elt2");
-
-		super.setUp();
+		declN1E1 = new Declaration(element1, name1);
+		declN1E2 = new Declaration(element2, name1);
+		declN2E2 = new Declaration(element2, name2);
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class NameTableTests extends IndexTests {
 	}
 
 	public void testPutGetOneElement() throws Exception {
-		table.put(name1, element1);
+		table.add(declN1E1);
 
 		final IInternalElement[] expectedResult = makeIIEArray(element1);
 		final IInternalElement[] elements = table.getElements(name1);
@@ -64,8 +67,8 @@ public class NameTableTests extends IndexTests {
 	}
 
 	public void testPutGetSeveralSameName() throws Exception {
-		table.put(name1, element1);
-		table.put(name1, element2);
+		table.add(declN1E1);
+		table.add(declN1E2);
 
 		final IInternalElement[] expectedResult = makeIIEArray(element1,
 				element2);
@@ -75,8 +78,8 @@ public class NameTableTests extends IndexTests {
 	}
 
 	public void testPutGetVariousNames() throws Exception {
-		table.put(name1, element1);
-		table.put(name2, element2);
+		table.add(declN1E1);
+		table.add(declN2E2);
 
 		final IInternalElement[] expectedResult1 = makeIIEArray(element1);
 		final IInternalElement[] expectedResult2 = makeIIEArray(element2);
@@ -88,10 +91,9 @@ public class NameTableTests extends IndexTests {
 	}
 
 	public void testRemove() throws Exception {
-		table.put(name1, element1);
-		table.put(name1, element2);
-
-		table.remove(name1, element1);
+		table.add(declN1E1);
+		table.add(declN1E2);
+		table.remove(declN1E1);
 
 		final IInternalElement[] expectedResult = makeIIEArray(element2);
 		final IInternalElement[] elements = table.getElements(name1);
@@ -100,8 +102,8 @@ public class NameTableTests extends IndexTests {
 	}
 
 	public void testClear() throws Exception {
-		table.put(name1, element1);
-		table.put(name1, element2);
+		table.add(declN1E1);
+		table.add(declN1E2);
 
 		table.clear();
 

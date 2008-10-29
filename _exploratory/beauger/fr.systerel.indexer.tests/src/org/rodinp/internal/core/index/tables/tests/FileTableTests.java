@@ -53,7 +53,7 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testGetElementsPresent() throws Exception {
-		table.add(element, file);
+		table.add(file, element);
 		final IInternalElement[] expectedResult = makeIIEArray(element);
 
 		final IInternalElement[] elements = table.get(file);
@@ -62,7 +62,7 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testGetElementsFileAbsent() throws Exception {
-		table.add(element, file);
+		table.add(file, element);
 
 		final IInternalElement[] elements = table.get(file2);
 
@@ -70,7 +70,7 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testAddElement() throws Exception {
-		table.add(element, file);
+		table.add(file, element);
 
 		final IInternalElement[] expectedResult = makeIIEArray(element);
 		final IInternalElement[] elements = table.get(file);
@@ -79,12 +79,12 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testImportedElement() throws Exception {
-		table.add(element, file2);
+		table.add(file2, element);
 	}
 
 	public void testRemoveElements() throws Exception {
-		table.add(element, file);
-		table.add(element2, file2);
+		table.add(file, element);
+		table.add(file2, element2);
 		table.remove(file);
 
 		final IInternalElement[] elements = table.get(file);
@@ -96,7 +96,7 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testRemoveElementsFileAbsent() throws Exception {
-		table.add(element, file);
+		table.add(file, element);
 		table.remove(file2);
 
 		final IInternalElement[] expectedResult = makeIIEArray(element);
@@ -108,8 +108,8 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testClear() throws Exception {
-		table.add(element, file);
-		table.add(element2, file2);
+		table.add(file, element);
+		table.add(file2, element2);
 		table.clear();
 
 		final IInternalElement[] elements = table.get(file);
@@ -120,7 +120,7 @@ public class FileTableTests extends IndexTests {
 	}
 
 	public void testContains() throws Exception {
-		table.add(element, file);
+		table.add(file, element);
 
 		final boolean contains = table.contains(file, element);
 
