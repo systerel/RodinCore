@@ -12,7 +12,7 @@ package org.rodinp.internal.core.index.tests;
 
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContains;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertContainsNot;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescDeclaration;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
@@ -58,7 +58,7 @@ public class DescriptorTests extends IndexTests {
 
 	public void testConstructor() throws Exception {
 		final Descriptor desc = new Descriptor(declTestElt);
-		assertDescriptor(desc, declTestElt);
+		assertDescDeclaration(desc, declTestElt);
 		assertNotNull("occurrences should not be null", testDesc
 				.getOccurrences());
 	}

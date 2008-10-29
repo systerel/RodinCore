@@ -48,50 +48,51 @@ public class IndexerRegistryTests extends IndexTests {
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
+		IndexerRegistry.getDefault().clear();
 		super.tearDown();
 	}
 
 	public void testAddGetIndexer() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		final IIndexer actual = indMan.getIndexerFor(file1);
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		final IIndexer actual = indReg.getIndexerFor(file1);
 
 		assertEquals("Bad indexer", indexer, actual);
 	}
 
 	public void testAddGetSeveralFileTypes() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		indMan.addIndexer(indexer, file2.getRoot().getElementType());
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indMan.getIndexerFor(file1);
-		final IIndexer actual2 = indMan.getIndexerFor(file2);
+		final IIndexer actual1 = indReg.getIndexerFor(file1);
+		final IIndexer actual2 = indReg.getIndexerFor(file2);
 
 		assertEquals("Bad indexer", indexer, actual1);
 		assertEquals("Bad indexer", indexer, actual2);
 	}
 
 	public void testAddGetVariousIndexers() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 		final FakeNameIndexer indexer2 = new FakeNameIndexer(1, "name2");
 
-		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		indMan.addIndexer(indexer2, file2.getRoot().getElementType());
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer2, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indMan.getIndexerFor(file1);
-		final IIndexer actual2 = indMan.getIndexerFor(file2);
+		final IIndexer actual1 = indReg.getIndexerFor(file1);
+		final IIndexer actual2 = indReg.getIndexerFor(file2);
 
 		assertEquals("Bad indexer", indexer, actual1);
 		assertEquals("Bad indexer", indexer2, actual2);
 	}
 
 	public void testGetUnknownFileType() throws Exception {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
 		try {
-			indMan.getIndexerFor(file1);
+			indReg.getIndexerFor(file1);
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// pass
@@ -103,31 +104,31 @@ public class IndexerRegistryTests extends IndexTests {
 	 * {@link org.rodinp.internal.core.index.IndexerRegistry#isIndexable(IRodinFile)}.
 	 */
 	public void testIsIndexableTrue() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		final boolean indexable = indMan.isIndexable(file1);
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		final boolean indexable = indReg.isIndexable(file1);
 
 		assertTrue("File type " + file1.getElementType()
 				+ " should be indexable", indexable);
 	}
 
 	public void testIsIndexableFalse() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		final boolean indexable = indMan.isIndexable(file1);
+		final boolean indexable = indReg.isIndexable(file1);
 
 		assertFalse("File type " + file1.getElementType()
 				+ " should NOT be indexable", indexable);
 	}
 
 	public void testClear() {
-		final IndexerRegistry indMan = new IndexerRegistry();
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indMan.addIndexer(indexer, file1.getRoot().getElementType());
-		indMan.clear();
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.clear();
 
-		final boolean indexable = indMan.isIndexable(file1);
+		final boolean indexable = indReg.isIndexable(file1);
 		assertFalse("File type " + file1.getElementType()
 				+ " should NOT be indexable", indexable);
 	}
