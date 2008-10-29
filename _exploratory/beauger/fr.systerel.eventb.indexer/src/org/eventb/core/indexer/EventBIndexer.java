@@ -27,7 +27,7 @@ import org.rodinp.core.index.IRodinLocation;
 public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 	private static final boolean DEBUG = false;
-	// FIXME manage exceptions and remove
+	// FIXME manage exceptions and remove (or make an option)
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
@@ -53,7 +53,8 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		}
 	}
 
-	protected abstract void index(IInternalElement root) throws RodinDBException;
+	protected abstract void index(IInternalElement root)
+			throws RodinDBException;
 
 	public IRodinFile[] getDependencies(IInternalElement root) {
 		try {
@@ -65,14 +66,16 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 			return NO_DEPENDENCIES;
 		}
 	}
-		
-	protected abstract IRodinFile[] getDeps(IInternalElement root) throws RodinDBException;
-	
+
+	protected abstract IRodinFile[] getDeps(IInternalElement root)
+			throws RodinDBException;
+
 	protected IDeclaration indexDeclaration(IInternalElement element,
 			String name) {
 
 		final IDeclaration declaration = index.declare(element, name);
-		final IRodinLocation loc = getRodinLocation(element.getRodinFile().getRoot());
+		final IRodinLocation loc =
+				getRodinLocation(element.getRodinFile().getRoot());
 
 		index.addOccurrence(declaration, DECLARATION, loc);
 
@@ -95,8 +98,8 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected void processPredicateElements(IPredicateElement[] preds,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
-			final PredicateIndexer predIndexer = new PredicateIndexer(elem,
-					symbolTable, index);
+			final PredicateIndexer predIndexer =
+					new PredicateIndexer(elem, symbolTable, index);
 			predIndexer.process();
 
 			checkCancel();
@@ -107,8 +110,9 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	 * @param file
 	 */
 	protected void throwIllArgException(IInternalElement root) {
-		throw new IllegalArgumentException("Cannot index " + root
+		throw new IllegalArgumentException("Cannot index "
+				+ root
 				+ ": bad element type");
 	}
-	
+
 }

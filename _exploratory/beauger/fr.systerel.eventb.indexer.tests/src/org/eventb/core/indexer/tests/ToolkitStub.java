@@ -45,7 +45,6 @@ public class ToolkitStub implements IIndexingToolkit {
 	private final Map<IInternalElement, List<IOccurrence>> occurrences;
 	private final List<IDeclaration> exports;
 
-	// TODO change constructor imports arg from List to ...
 	/**
 	 * Constructor.
 	 * 
@@ -109,8 +108,8 @@ public class ToolkitStub implements IIndexingToolkit {
 	public void assertDeclarations(IElementType<?> elementType,
 			IDeclaration... expected) {
 		final List<IDeclaration> expList = Arrays.asList(expected);
-		final List<IDeclaration> declsOfType = getDeclsOfType(elementType,
-				declarations);
+		final List<IDeclaration> declsOfType =
+				getDeclsOfType(elementType, declarations);
 		assertSameElements(expList, declsOfType, "declarations of type "
 				+ elementType);
 	}
@@ -130,8 +129,8 @@ public class ToolkitStub implements IIndexingToolkit {
 	public void assertExports(IElementType<?> elementType,
 			IDeclaration... expected) {
 		final List<IDeclaration> expList = Arrays.asList(expected);
-		final List<IDeclaration> declsOfType = getDeclsOfType(elementType,
-				exports);
+		final List<IDeclaration> declsOfType =
+				getDeclsOfType(elementType, exports);
 		assertSameElements(expList, declsOfType, "exports of type "
 				+ elementType);
 	}

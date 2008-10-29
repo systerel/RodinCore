@@ -16,7 +16,6 @@ import org.eventb.core.IMachineRoot;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.index.RodinIndexer;
 
-
 public class EventBIndexerPlugin extends Plugin {
 
 	// The plug-in ID
@@ -24,7 +23,7 @@ public class EventBIndexerPlugin extends Plugin {
 
 	// The shared instance
 	private static EventBIndexerPlugin plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -34,8 +33,8 @@ public class EventBIndexerPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		RodinIndexer.register(new ContextIndexer(),IContextRoot.ELEMENT_TYPE);
-		RodinIndexer.register(new MachineIndexer(),IMachineRoot.ELEMENT_TYPE);
+		RodinIndexer.register(new ContextIndexer(), IContextRoot.ELEMENT_TYPE);
+		RodinIndexer.register(new MachineIndexer(), IMachineRoot.ELEMENT_TYPE);
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -45,7 +44,7 @@ public class EventBIndexerPlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static EventBIndexerPlugin getDefault() {
