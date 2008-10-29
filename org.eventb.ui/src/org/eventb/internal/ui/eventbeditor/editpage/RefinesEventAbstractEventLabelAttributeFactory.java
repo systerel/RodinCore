@@ -64,7 +64,7 @@ public class RefinesEventAbstractEventLabelAttributeFactory implements
 		if (root == null)
 			return;
 		IMachineRoot abstractMachine = EventBUtils.getAbstractMachine(root);
-		if (abstractMachine.exists()) {
+		if (abstractMachine != null && abstractMachine.exists()) {
 			for (IEvent absEvent : abstractMachine.getEvents()) {
 				results.add(absEvent.getLabel());
 			}
