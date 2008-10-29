@@ -102,6 +102,11 @@ public abstract class ModelPOContainer implements IModelElement {
 					if (po.getIPSStatus().getConfidence() < min) {
 						min = po.getIPSStatus().getConfidence();
 					}
+					if (po.getIPSStatus().isBroken()) {
+						if (min > IConfidence.PENDING) {
+							min = IConfidence.PENDING;
+						}
+					}
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
