@@ -12,8 +12,6 @@ package org.rodinp.internal.core.index.tests;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -40,13 +38,13 @@ public class RodinLocationTests extends IndexTests {
 	private IRodinFile file;
 	private IInternalElement locElement;
 
-	public static void assertLocation(IRodinLocation loc, IRodinElement element) {
+	public static void assertLocation(IRodinLocation loc, IInternalElement element) {
 		assertEquals("unexpected element in location", element, loc
 				.getElement());
 	}
 
 	public static void assertLocation(IRodinLocation loc,
-			IInternalParent element, IAttributeType attributeType) {
+			IInternalElement element, IAttributeType attributeType) {
 		assertLocation(loc, element);
 		assertTrue(loc instanceof IAttributeLocation);
 		final IAttributeLocation aLoc = (IAttributeLocation) loc;
@@ -55,7 +53,7 @@ public class RodinLocationTests extends IndexTests {
 	}
 
 	public static void assertLocation(IRodinLocation loc,
-			IInternalParent element, IAttributeType.String attributeType,
+			IInternalElement element, IAttributeType.String attributeType,
 			int start, int end) {
 		assertLocation(loc, element, attributeType);
 		assertTrue(loc instanceof IAttributeSubstringLocation);
@@ -90,8 +88,9 @@ public class RodinLocationTests extends IndexTests {
 	}
 
 	public void testFileElement() throws Exception {
-		IRodinLocation loc = RodinIndexer.getRodinLocation(file);
-		assertLocation(loc, file);
+		final IInternalElement root = file.getRoot();
+		IRodinLocation loc = RodinIndexer.getRodinLocation(root);
+		assertLocation(loc, root);
 	}
 
 	public void testInternalElement() throws Exception {

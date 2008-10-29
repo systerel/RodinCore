@@ -43,7 +43,7 @@ import org.rodinp.internal.core.index.tables.TotalOrder;
  */
 public class Resources {
 
-	public interface IPersistResource {
+	public static interface IPersistResource {
 		PerProjectPIM getPPPIM();
 
 		List<IRodinFile> getRodinFiles();
@@ -75,8 +75,7 @@ public class Resources {
 		}
 	}
 
-	public static File makePR1File() throws Exception,
-			Exception, Exception {
+	public static File makePR1File() throws Exception {
 		final String xml1 =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<index_root>"
@@ -140,7 +139,7 @@ public class Resources {
 		// name table
 		nameTable.add(declaration);
 
-		pr1.getPPPIM().put(project, pim);
+		// pr1.getPPPIM().put(project, pim);
 		pr1.getRodinFiles().add(rodinFile);
 		pr1.getNames().add(testElt1Name);
 

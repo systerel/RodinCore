@@ -59,7 +59,7 @@ public class IndexTestsUtil {
 		return file;
 	}
 
-	public static Occurrence createDefaultOccurrence(IRodinElement element) {
+	public static Occurrence createDefaultOccurrence(IInternalElement element) {
 		return new Occurrence(TEST_KIND, RodinIndexer.getRodinLocation(element));
 	}
 

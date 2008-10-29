@@ -73,18 +73,20 @@ public class DescriptorTests extends IndexTests {
 
 	public void testGetOccurrences() throws Exception {
 		final Occurrence occ1 = createDefaultOccurrence(testElt);
-		final Occurrence occ2 = createDefaultOccurrence(file);
+		final Occurrence occ2 = createDefaultOccurrence(file.getRoot());
 
 		testDesc.addOccurrence(occ1);
 		testDesc.addOccurrence(occ2);
-		
+
 		IndexTestsUtil.assertContainsAll(testDesc, occ1, occ2);
 	}
 
 	public void testRemoveOccurrences() throws Exception {
 		final Occurrence localOcc = createDefaultOccurrence(testElt);
-		final IRodinFile importer = createRodinFile(rodinProject, "importerFile.test");
-		final Occurrence importOcc = createDefaultOccurrence(importer);
+		final IRodinFile importer =
+				createRodinFile(rodinProject, "importerFile.test");
+		final Occurrence importOcc =
+				createDefaultOccurrence(importer.getRoot());
 
 		testDesc.addOccurrence(localOcc);
 		testDesc.addOccurrence(importOcc);

@@ -83,18 +83,34 @@ public class XMLPersistorTests extends IndexTests {
 //		fail("Not yet implemented");
 //	}
 
+	private void saveTest(IPersistResource pr, File expected) throws Exception {
+		
+		final File file = getNewFile(getName());
+
+		final IPersistor ps = new XMLPersistor();
+	
+		ps.save(pr.getPPPIM(), file);
+		
+		assertFile(expected, file);
+	}
+
+	private void restoreTest(File file, IPersistResource expected) {
+		
+		final IPersistor ps = new XMLPersistor();
+
+		final PerProjectPIM pppim = new PerProjectPIM();
+		ps.restore(file, pppim);
+
+		assertPPPIM(expected, pppim);
+	}
+	
 	public void testSavePR1() throws Exception {
 		
 		IPersistResource pr1 = Resources.makePR1(project);
 		
-		final File expFile = makePR1File();
+		final File pr1File = makePR1File();
 	
-		final File file = getNewFile(getName());
-		final IPersistor ps = new XMLPersistor();
-	
-		ps.save(pr1.getPPPIM(), file);
-		
-		assertFile(expFile, file);
+		saveTest(pr1, pr1File);
 	}
 	
 	public void testRestorePR1() throws Exception {
@@ -102,12 +118,7 @@ public class XMLPersistorTests extends IndexTests {
 		IPersistResource pr1 = makePR1(project);
 		final File pr1File = makePR1File();
 
-		final IPersistor ps = new XMLPersistor();
-
-		final PerProjectPIM pppim = new PerProjectPIM();
-		ps.restore(pr1File, pppim);
-
-		assertPPPIM(pr1, pppim);
+		restoreTest(pr1File, pr1);
 	}
 
 

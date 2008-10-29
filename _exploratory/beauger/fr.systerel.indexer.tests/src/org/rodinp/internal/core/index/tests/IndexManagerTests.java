@@ -16,6 +16,7 @@ import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultO
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
@@ -57,12 +58,13 @@ public class IndexManagerTests extends IndexTests {
 		declElt1 = new Declaration(elt1, name1);
 		declElt2 = new Declaration(elt2, name2);
 		final Descriptor desc1 = rodinIndex.makeDescriptor(declElt1);
-		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
+		final IInternalElement root = file.getRoot();
+		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root));
 		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(file));
+		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root));
 
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getRoot().getElementType());
+		RodinIndexer.register(indexer, root.getElementType());
 	}
 
 	@Override
@@ -100,7 +102,7 @@ public class IndexManagerTests extends IndexTests {
 		// removing elt1, adding elt2
 		rodinIndex.removeDescriptor(elt1);
 		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(createDefaultOccurrence(file));
+		desc2.addOccurrence(createDefaultOccurrence(file.getRoot()));
 
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
