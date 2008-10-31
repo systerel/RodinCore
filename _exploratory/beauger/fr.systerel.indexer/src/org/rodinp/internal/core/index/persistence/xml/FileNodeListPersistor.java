@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence.xml;
 
-import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
 import java.util.ArrayList;
@@ -27,37 +26,37 @@ import org.w3c.dom.NodeList;
  * @author Nicolas Beauger
  * 
  */
-public class IRFNodeListPersistor {
+public class FileNodeListPersistor {
 
-	public static List<IRodinFile> restore(NodeList nodeNodes)
+	public static List<IRodinFile> restore(NodeList nodeNodes, XMLAttributeTypes attType)
 			throws PersistenceException {
 		final List<IRodinFile> fileNodes = new ArrayList<IRodinFile>();
 		for (int i = 0; i < nodeNodes.getLength(); i++) {
 			final Element nodeNode = (Element) nodeNodes.item(i);
-			final IRodinFile file = IREPersistor.getIRFAtt(nodeNode, FILE);
+			final IRodinFile file = IREPersistor.getIRFAtt(nodeNode, attType);
 			fileNodes.add(file);
 		}
 		return fileNodes;
 	}
 
 	public static void saveFiles(List<IRodinFile> files, Document doc,
-			Element parent, XMLElementTypes nodeType) {
+			Element parent, XMLElementTypes nodeType, XMLAttributeTypes attType) {
 		for (IRodinFile file : files) {
-			saveFile(file, doc, parent, nodeType);
+			saveFile(file, doc, parent, nodeType, attType);
 		}
 	}
 
 	private static void saveFile(IRodinFile file, Document doc, Element parent,
-			XMLElementTypes nodeType) {
+			XMLElementTypes nodeType, XMLAttributeTypes attType) {
 		final Element nodeNode = createElement(doc, nodeType);
-		IREPersistor.setIREAtt(file, FILE, nodeNode);
+		IREPersistor.setIREAtt(file, attType, nodeNode);
 		parent.appendChild(nodeNode);
 	}
 
 	public static void saveFilesInNodes(List<Node<IRodinFile>> filesInNodes,
-			Document doc, Element nodeNode, XMLElementTypes nodeType) {
+			Document doc, Element nodeNode, XMLElementTypes nodeType, XMLAttributeTypes attType) {
 		for (Node<IRodinFile> node : filesInNodes) {
-			saveFile(node.getLabel(), doc, nodeNode, nodeType);
+			saveFile(node.getLabel(), doc, nodeNode, nodeType, attType);
 		}
 	}
 }

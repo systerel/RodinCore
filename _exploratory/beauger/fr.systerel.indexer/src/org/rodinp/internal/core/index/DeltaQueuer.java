@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 
-public class RodinDBChangeListener implements IElementChangedListener {
+public class DeltaQueuer implements IElementChangedListener {
 	
 	public static boolean DEBUG = false;
 
@@ -45,7 +45,7 @@ public class RodinDBChangeListener implements IElementChangedListener {
 		}
 	}
 
-	public RodinDBChangeListener(FileQueue queue) {
+	public DeltaQueuer(FileQueue queue) {
 		this.queue = queue;
 	}
 	

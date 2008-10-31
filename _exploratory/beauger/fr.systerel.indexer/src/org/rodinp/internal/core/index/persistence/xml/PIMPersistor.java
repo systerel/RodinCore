@@ -37,18 +37,16 @@ public class PIMPersistor {
 		final ProjectIndexManager pim = pppim.getOrCreate(project);
 
 		final NodeList rodinIndexNodes =
-				getElementsByTagName(pimNode, RODIN_INDEX);
-		// TODO assert length == 1
+				getElementsByTagName(pimNode, RODIN_INDEX, 1);
 		final Element indexNode = (Element) rodinIndexNodes.item(0);
 		IndexPersistor.restore(indexNode, pim.getIndex());
 
 		final NodeList exportNodes =
-				getElementsByTagName(pimNode, EXPORT_TABLE);
-		// TODO assert length == 1
+				getElementsByTagName(pimNode, EXPORT_TABLE, 1);
 		final Element exportNode = (Element) exportNodes.item(0);
 		ExpTablePersistor.restore(exportNode, pim.getExportTable());
 
-		final NodeList orderNodes = getElementsByTagName(pimNode, GRAPH);
+		final NodeList orderNodes = getElementsByTagName(pimNode, GRAPH, 1);
 		// TODO assert length == 1
 		final Element orderNode = (Element) orderNodes.item(0);
 		TotalOrderPersistor.restore(orderNode, pim.getOrder());

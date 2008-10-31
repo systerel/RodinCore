@@ -40,7 +40,7 @@ public class FileQueue {
 	// but it cannot take the file to put since it is not yet present !
 	public void put(IRodinFile file) throws InterruptedException {
 		if (!queue.contains(file)) {
-			if (RodinDBChangeListener.DEBUG) {
+			if (DeltaQueuer.DEBUG) {
 				System.out.println("Indexer: Enqueuing file " + file.getPath());
 			}
 			latch.countUp();

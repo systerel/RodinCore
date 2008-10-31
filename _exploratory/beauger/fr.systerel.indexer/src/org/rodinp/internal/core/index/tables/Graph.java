@@ -68,11 +68,11 @@ public class Graph<T> {
 	}
 
 	private List<Node<T>> getOrCreateNodes(T[] labels) {
-		final List<Node<T>> newPreds = new ArrayList<Node<T>>();
-		for (T pred : labels) {
-			newPreds.add(getOrCreateNode(pred));
+		final List<Node<T>> result = new ArrayList<Node<T>>();
+		for (T label : labels) {
+			result.add(getOrCreateNode(label));
 		}
-		return newPreds;
+		return result;
 	}
 
 	public void clear() {
@@ -108,9 +108,16 @@ public class Graph<T> {
 	}
 	
 	protected void setPersistentData(PersistentTotalOrder<T> pto) {
+		final Map<T, List<T>> predMap = pto.getPredMap();
 		nodes.clear();
 		for (Node<T> n: pto.getNodes()) {
-			nodes.put(n.getLabel(), n);
+			final T label = n.getLabel();
+			nodes.put(label, n);
+			for (T pred: predMap.get(label)) {
+				final Node<T> predNode = getOrCreateNode(pred);
+				n.addPredecessor(predNode);
+			}
 		}
 	}
+	
 }

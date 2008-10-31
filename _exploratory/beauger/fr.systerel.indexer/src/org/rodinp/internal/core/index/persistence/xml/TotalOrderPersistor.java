@@ -14,7 +14,9 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*
 import static org.rodinp.internal.core.index.persistence.xml.XMLElementTypes.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
@@ -39,23 +41,26 @@ public class TotalOrderPersistor {
 
 		final NodeList nodeNodes = getElementsByTagName(orderNode, NODE);
 		final List<Node<IRodinFile>> fileNodes =
-			new ArrayList<Node<IRodinFile>>();
+				new ArrayList<Node<IRodinFile>>();
+		final Map<IRodinFile, List<IRodinFile>> predMap =
+				new HashMap<IRodinFile, List<IRodinFile>>();
+		
 		for (int i = 0; i < nodeNodes.getLength(); i++) {
 			final Element nodeNode = (Element) nodeNodes.item(i);
 			final Node<IRodinFile> fileNode =
-				NodePersistor.getIRFNode(nodeNode);
+					NodePersistor.restoreIRFNode(nodeNode, predMap);
 			fileNodes.add(fileNode);
 		}
 
 		final NodeList iterNodes = getElementsByTagName(orderNode, ITERATED);
 		final List<IRodinFile> iterated =
-				IRFNodeListPersistor.restore(iterNodes);
+				FileNodeListPersistor.restore(iterNodes, LABEL);
 
 		final PersistentTotalOrder<IRodinFile> pto =
-				new PersistentTotalOrder<IRodinFile>(isSorted, fileNodes,
+				new PersistentTotalOrder<IRodinFile>(isSorted, fileNodes, predMap,
 						iterated);
-		
-		 totalOrder.setPersistentData(pto);
+
+		totalOrder.setPersistentData(pto);
 	}
 
 	public static void save(TotalOrder<IRodinFile> totalOrder, Document doc,
@@ -66,13 +71,14 @@ public class TotalOrderPersistor {
 		final String isSortedStr = Boolean.toString(orderData.isSorted());
 		setAttribute(orderNode, IS_SORTED, isSortedStr);
 
-		for(Node<IRodinFile> node: orderData.getNodes()) {
+		for (Node<IRodinFile> node : orderData.getNodes()) {
 			final Element nodeNode = createElement(doc, NODE);
 			NodePersistor.save(node, doc, nodeNode);
 			orderNode.appendChild(nodeNode);
 		}
-		
-		IRFNodeListPersistor.saveFiles(orderData.getIterated(), doc, orderNode, ITERATED);
+
+		FileNodeListPersistor.saveFiles(orderData.getIterated(), doc, orderNode,
+				ITERATED, LABEL);
 	}
 
 }

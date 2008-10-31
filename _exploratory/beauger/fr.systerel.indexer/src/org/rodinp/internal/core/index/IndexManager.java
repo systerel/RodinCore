@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.internal.core.RodinDB;
-import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.index.persistence.PersistenceManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -53,12 +53,13 @@ public final class IndexManager {
 
 	private final FileQueue queue;
 
-	private final RodinDBChangeListener listener;
+	private final DeltaQueuer listener;
 	// private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean ENABLE_INDEXING = true;
-	
-	private final ReentrantReadWriteLock initSaveLock = new ReentrantReadWriteLock();
+
+	private final ReentrantReadWriteLock initSaveLock =
+			new ReentrantReadWriteLock();
 
 	/** Lock guarding table access during indexing */
 
@@ -66,7 +67,7 @@ public final class IndexManager {
 		pppim = new PerProjectPIM();
 		indexerRegistry = IndexerRegistry.getDefault();
 		queue = new FileQueue();
-		listener = new RodinDBChangeListener(queue);
+		listener = new DeltaQueuer(queue);
 	}
 
 	/**
@@ -239,7 +240,7 @@ public final class IndexManager {
 		return exportTable;
 	}
 
-	private ProjectIndexManager fetchPIM(IRodinProject project) {
+	ProjectIndexManager fetchPIM(IRodinProject project) {
 		return pppim.getOrCreate(project);
 	}
 
@@ -247,16 +248,16 @@ public final class IndexManager {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			printVerbose("indexing...");
-			
+
 			try {
 				doIndexing(monitor);
-			} catch(CancellationException e) {
+			} catch (CancellationException e) {
 				printVerbose("indexing Cancelled");
-			
+
 				return Status.CANCEL_STATUS;
 			}
 			printVerbose("...end indexing");
-			
+
 			if (monitor != null) {
 				monitor.done();
 				if (monitor.isCanceled()) {
@@ -281,7 +282,7 @@ public final class IndexManager {
 		}
 		RodinCore.addElementChangedListener(listener, eventMask);
 
-		final RodinDB rodinDB = RodinDBManager.getRodinDBManager().getRodinDB();
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		indexing.setRule(rodinDB.getSchedulingRule());
 		// indexing.setUser(true);
 
@@ -302,11 +303,13 @@ public final class IndexManager {
 					indexing.join();
 					queue.fileProcessed();
 				}
-				stop = daemonMonitor.isCanceled()
-						|| Status.CANCEL_STATUS.equals(indexing.getResult());
-					// FIXME treat separately :
-					// if indexing cancelled, retry 3 times
-					// then pass to next file after remembering this one
+				stop =
+						daemonMonitor.isCanceled()
+								|| Status.CANCEL_STATUS.equals(indexing
+										.getResult());
+				// FIXME treat separately :
+				// if indexing cancelled, retry 3 times
+				// then pass to next file after remembering this one
 
 			} catch (InterruptedException e) {
 				stop = true;
@@ -316,7 +319,7 @@ public final class IndexManager {
 			}
 		} while (!stop);
 
-//		save();
+		// save();
 	}
 
 	private void unlockWriteInitSave() {
@@ -330,11 +333,12 @@ public final class IndexManager {
 	public PerProjectPIM getPerProjectPIM() {
 		return pppim;
 	}
-//	public void save(File file) {
-//		lockWriteInitSave();
-//		PersistenceManager.getDefault().save(pppim);
-//		unlockWriteInitSave();
-//	}
+
+	// public void save(File file) {
+	// lockWriteInitSave();
+	// PersistenceManager.getDefault().save(pppim);
+	// unlockWriteInitSave();
+	// }
 
 	private void restore() {
 		lockWriteInitSave();
@@ -342,10 +346,10 @@ public final class IndexManager {
 			System.out.println("Restoring IndexManager");
 		}
 		PersistenceManager.getDefault().restore();
-		
+
 		unlockWriteInitSave();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> when the indexing system is up to date, else
 	 * blocks until it becomes up to date.
@@ -386,6 +390,53 @@ public final class IndexManager {
 	void printVerbose(String message) {
 		if (VERBOSE) {
 			System.out.println(message);
+		}
+	}
+
+	private final Job overallIndexing = new Job("overallIndexing") {
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			printVerbose("overall indexing...");
+			final IRodinDB rodinDB = RodinCore.getRodinDB();
+			try {
+				final IRodinProject[] allProjects =
+					rodinDB.getRodinProjects();
+				for (IRodinProject project : allProjects) {
+					fetchPIM(project).indexAll(monitor);
+				}
+				doIndexing(monitor);
+			} catch (CancellationException e) {
+				printVerbose("indexing Cancelled");
+
+				return Status.CANCEL_STATUS;
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			printVerbose("...end overall indexing");
+
+			if (monitor != null) {
+				monitor.done();
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+			return Status.OK_STATUS;
+		}
+	};
+
+	/**
+	 * 
+	 */
+	public void indexAll() {
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		overallIndexing.setRule(rodinDB.getSchedulingRule());
+		overallIndexing.schedule();
+		try {
+			overallIndexing.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

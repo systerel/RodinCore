@@ -134,11 +134,11 @@ public class TotalOrder<T> implements Iterator<T> {
 		if (isSorted) {
 			final PersistentSortedNodes<T> sortData =
 					sortedNodes.getPersistentData();
-			return new PersistentTotalOrder<T>(true, sortData.getNodes(),
+			return new PersistentTotalOrder<T>(true, sortData.getNodes(), null,
 					sortData.getIterated());
 		} else {
 			final List<T> emptyList = Collections.emptyList();
-			return new PersistentTotalOrder<T>(false, graph.getNodes(),
+			return new PersistentTotalOrder<T>(false, graph.getNodes(), null,
 					emptyList);
 		}
 	}

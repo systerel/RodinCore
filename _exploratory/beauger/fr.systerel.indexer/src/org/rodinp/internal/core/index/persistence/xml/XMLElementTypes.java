@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence.xml;
 
+import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,15 +22,15 @@ import org.w3c.dom.NodeList;
  */
 public enum XMLElementTypes {
 	// TODO simplify, factorize if possible
-	
+
 	INDEX_ROOT, PIM, RODIN_INDEX, DESCRIPTOR, OCCURRENCE, EXPORT_TABLE, GRAPH,
-	EXPORT, EXPORTED, NODE, PREDECESSOR, SUCCESSOR, ITERATED;
+	EXPORT, EXPORTED, NODE, PREDECESSOR, ITERATED;
 
 	@Override
 	public String toString() {
 		return super.toString().toLowerCase();
 	}
-	
+
 	public static Element createElement(Document doc, XMLElementTypes name) {
 		return doc.createElement(name.toString());
 	}
@@ -41,6 +42,18 @@ public enum XMLElementTypes {
 	public static NodeList getElementsByTagName(Element node,
 			XMLElementTypes nodeType) {
 		return node.getElementsByTagName(nodeType.toString());
+	}
+
+	public static NodeList getElementsByTagName(Element node,
+			XMLElementTypes nodeType, int expectedLength)
+			throws PersistenceException {
+		
+		final NodeList result = node.getElementsByTagName(nodeType.toString());
+		
+		if (result.getLength() != expectedLength) {
+			throw new PersistenceException();
+		}
+		return result;
 	}
 
 	public static void assertName(Node node, XMLElementTypes name) {

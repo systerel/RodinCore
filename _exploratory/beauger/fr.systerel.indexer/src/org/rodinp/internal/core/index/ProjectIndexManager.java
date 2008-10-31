@@ -24,6 +24,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.internal.core.RodinDBStatus;
@@ -115,6 +116,7 @@ public class ProjectIndexManager {
 	private void saveCurrentState() {
 		// final List<IRodinFile> toIndexLater = order.getMarkedNodes();
 		// TODO record the list (or record the whole object including order)
+		// TODO this very list must be recorded when saving in xml
 	}
 
 	public boolean mustReindexDependents(IIndexingResult result) {
@@ -318,6 +320,32 @@ public class ProjectIndexManager {
 			}
 		}
 
+	}
+
+	/**
+	 * @param monitor 
+	 * 
+	 */
+	public void indexAll(IProgressMonitor monitor) {
+		try {
+			final IRodinFile[] files = project.getRodinFiles();
+			for (IRodinFile file : files) {
+				fileChanged(file);
+				checkCancel(monitor);
+			}
+			doIndexing(monitor);
+		} catch (RodinDBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	private void checkCancel(IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			saveCurrentState();
+			throw new CancellationException();
+		}
 	}
 
 }

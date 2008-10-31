@@ -81,48 +81,62 @@ public class PersistenceManager implements ISaveParticipant {
 		context.needDelta(); // optional
 	}
 
+	private final IResourceChangeListener listener = new IResourceChangeListener() {
+		
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta delta = event.getDelta();
+			if (delta != null) {
+				// TODO send to RDBCL
+				// fast reactivation using delta
+				// plugin.updateState(delta);
+			} else {
+				// slower reactivation without benefit
+				// of delta
+				// plugin.rebuildState();
+			}
+		}
+	};
+
 	public void restore() {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final Plugin plugin = RodinIndexer.getDefault();
+		final ISavedState ss;
 		try {
-			final Plugin plugin = RodinIndexer.getDefault();
-			final ISavedState ss = workspace.addSaveParticipant(RodinIndexer
+			ss = workspace.addSaveParticipant(RodinIndexer
 					.getDefault(), PersistenceManager.this);
-			if (ss == null) {
-				// activate for very first time
-				// plugin.buildState();
-			} else {
-				final IPath saveFilePath = ss.lookup(new Path(INDEX_SAVE));
-
-				final File file = plugin.getStateLocation().append(saveFilePath)
-						.toFile();
-				
-				final IPersistor ps = chooseStrategy();
-				
-				ps.restore(file, IndexManager.getDefault().getPerProjectPIM());
-				
-				// plugin.readImportantState(f);
-				IResourceChangeListener listener = new IResourceChangeListener() {
-
-					public void resourceChanged(IResourceChangeEvent event) {
-						IResourceDelta delta = event.getDelta();
-						if (delta != null) {
-							// TODO send to RDBCL
-							// fast reactivation using delta
-							// plugin.updateState(delta);
-						} else {
-							// slower reactivation without benefit
-							// of delta
-							// plugin.rebuildState();
-						}
-					}
-				};
-				ss.processResourceChangeEvents(listener);
-			}
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			restoreFromScratch();
+			return;
 		}
 
+		if (ss == null) {
+			restoreFromScratch();
+			return;
+			// activate for very first time
+			// plugin.buildState();
+		}
+		final IPath saveFilePath = ss.lookup(new Path(INDEX_SAVE));
+
+		if (saveFilePath == null) {
+			restoreFromScratch();
+		} else {
+			final File file = plugin.getStateLocation().append(saveFilePath)
+			.toFile();
+
+			final IPersistor ps = chooseStrategy();
+
+			ps.restore(file, IndexManager.getDefault().getPerProjectPIM());
+		}
+		ss.processResourceChangeEvents(listener);
+	}
+
+	/**
+	 * 
+	 */
+	private void restoreFromScratch() {
+		IndexManager.getDefault().indexAll();
 	}
 
 	private IPersistor chooseStrategy() {

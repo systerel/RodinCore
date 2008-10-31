@@ -30,7 +30,7 @@ import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.IndexRequester;
 import org.rodinp.internal.core.index.OccurrenceKind;
-import org.rodinp.internal.core.index.RodinDBChangeListener;
+import org.rodinp.internal.core.index.DeltaQueuer;
 import org.rodinp.internal.core.index.RodinLocation;
 
 /**
@@ -218,7 +218,7 @@ public class RodinIndexer extends Plugin {
 					Platform
 							.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
 			if (option != null)
-				RodinDBChangeListener.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+				DeltaQueuer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 
 	}
