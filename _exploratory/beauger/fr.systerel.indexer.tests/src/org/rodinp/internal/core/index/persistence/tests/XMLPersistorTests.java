@@ -36,13 +36,12 @@ public class XMLPersistorTests extends IndexTests {
 
 	private static IRodinProject project;
 
-
 	private static void assertPPPIM(IPersistResource resource,
 			PerProjectPIM actual) {
 		final PerProjectPIM expected = resource.getPPPIM();
 		final List<IRodinFile> files = resource.getRodinFiles();
 		final List<String> names = resource.getNames();
-		
+
 		final Set<IRodinProject> expProjects = expected.projects();
 		final Set<IRodinProject> actProjects = actual.projects();
 		assertEquals("bad PerProjectPIM projects", expProjects, actProjects);
@@ -79,23 +78,20 @@ public class XMLPersistorTests extends IndexTests {
 		super.tearDown();
 	}
 
-//	public void testRestoreEmpty() throws Exception {
-//		fail("Not yet implemented");
-//	}
+	private static void saveTest(IPersistResource pr, File expected,
+			String newFileName) throws Exception {
 
-	private void saveTest(IPersistResource pr, File expected) throws Exception {
-		
-		final File file = getNewFile(getName());
+		final File file = getNewFile(newFileName);
 
 		final IPersistor ps = new XMLPersistor();
-	
+
 		ps.save(pr.getPPPIM(), file);
-		
+
 		assertFile(expected, file);
 	}
 
-	private void restoreTest(File file, IPersistResource expected) {
-		
+	private static void restoreTest(File file, IPersistResource expected) {
+
 		final IPersistor ps = new XMLPersistor();
 
 		final PerProjectPIM pppim = new PerProjectPIM();
@@ -103,31 +99,129 @@ public class XMLPersistorTests extends IndexTests {
 
 		assertPPPIM(expected, pppim);
 	}
-	
-	public void testSavePR1() throws Exception {
-		
-		IPersistResource pr1 = Resources.makePR1(project);
-		
-		final File pr1File = makePR1File();
-	
-		saveTest(pr1, pr1File);
-	}
-	
-	public void testRestorePR1() throws Exception {
 
-		IPersistResource pr1 = makePR1(project);
-		final File pr1File = makePR1File();
+	public void testRestoreNoPIM() throws Exception {
 
-		restoreTest(pr1File, pr1);
+		IPersistResource pr = makeNoPIM(project);
+		final File prFile = makeNoPIMFile();
+
+		restoreTest(prFile, pr);
+
 	}
 
+	public void testSaveNoPIM() throws Exception {
 
-//	public void testSave2Projects() throws Exception {
-//		fail("Not yet implemented");
-//	}
-//	
-//	public void testRestore2Projects() throws Exception {
-//		fail("Not yet implemented");
-//	}
+		IPersistResource pr = Resources.makeNoPIM(project);
+
+		final File prFile = makeNoPIMFile();
+
+		saveTest(pr, prFile, getName());
+
+	}
+
+	public void testSaveBasic() throws Exception {
+
+		IPersistResource pr = Resources.makeBasic(project);
+
+		final File prFile = makeBasicFile();
+
+		saveTest(pr, prFile, getName());
+	}
+
+	public void testRestoreBasic() throws Exception {
+
+		IPersistResource pr = makeBasic(project);
+		final File prFile = makeBasicFile();
+
+		restoreTest(prFile, pr);
+	}
+
+	public void testSave2PIMs() throws Exception {
+		final IRodinProject p1 = createRodinProject("P1");
+		final IRodinProject p2 = createRodinProject("P2");
+		IPersistResource pr = Resources.make2PIMs(p1, p2);
+
+		final File prFile = make2PIMsFile();
+
+		try {
+			saveTest(pr, prFile, getName());
+		} finally {
+			deleteProject("P1");
+			deleteProject("P2");
+		}
+	}
+
+	public void testRestore2PIMs() throws Exception {
+		final IRodinProject p1 = createRodinProject("P1");
+		final IRodinProject p2 = createRodinProject("P2");
+		IPersistResource pr = make2PIMs(p1, p2);
+		final File prFile = make2PIMsFile();
+
+		try {
+			restoreTest(prFile, pr);
+		} finally {
+			deleteProject("P1");
+			deleteProject("P2");
+		}
+	}
+
+	public void testSaveSortedFiles() throws Exception {
+		IPersistResource pr = Resources.makeSortedFiles(project);
+
+		final File prFile = makeSortedFilesFile();
+
+		saveTest(pr, prFile, getName());
+	}
+
+	public void testRestoreSortedFiles() throws Exception {
+		IPersistResource pr = makeSortedFiles(project);
+		final File prFile = makeSortedFilesFile();
+
+		restoreTest(prFile, pr);
+	}
+
+	public void testSaveIterating() throws Exception {
+		IPersistResource pr = Resources.makeIterating(project);
+
+		final File prFile = makeIteratingFile();
+
+		saveTest(pr, prFile, getName());
+	}
+
+	public void testRestoreIterating() throws Exception {
+		IPersistResource pr = makeIterating(project);
+		final File prFile = makeIteratingFile();
+
+		restoreTest(prFile, pr);
+//		final IRodinFile nextFile = pr.getPPPIM().get(project).getOrder().next();
+//		assertEquals("bad next file")
+	}
+
+	public void testRestoreIncorrectFileNoExportNode() throws Exception {
+		final File prFile = makeNoExportNodeFile();
+
+		// should make a brand new PPPIM without throwing any exception
+		restoreTest(prFile, EMPTY_RESOURCE);
+	}
+
+	public void testRestoreIncorrectFileTwoRodinIndexes() throws Exception {
+		final File prFile = makeTwoRodinIndexesFile();
+
+		// should make a brand new PPPIM without throwing any exception
+		restoreTest(prFile, EMPTY_RESOURCE);
+		}
+
+	public void testRestoreIncorrectFileMissingttribute() throws Exception {
+		final File prFile = makeMissingAttributeFile();
+		// should make a brand new PPPIM without throwing any exception
+		restoreTest(prFile, EMPTY_RESOURCE);
+	}
+
+	public void testRestoreIncorrectElementHandle() throws Exception {
+		final File prFile = makeBadElementHandleFile();
+	
+		// should make a brand new PPPIM without throwing any exception
+		restoreTest(prFile, EMPTY_RESOURCE);
+	}
 
 }

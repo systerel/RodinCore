@@ -56,7 +56,7 @@ public class Resources {
 		private final List<IRodinFile> rodinFiles;
 		private final List<String> names;
 
-		public PersistResource() throws IOException {
+		public PersistResource() {
 			pppim = new PerProjectPIM();
 			rodinFiles = new ArrayList<IRodinFile>();
 			names = new ArrayList<String>();
@@ -75,8 +75,10 @@ public class Resources {
 		}
 	}
 
-	public static File makePR1File() throws Exception {
-		final String xml1 =
+	public static final IPersistResource EMPTY_RESOURCE = new PersistResource();
+	
+	public static File makeBasicFile() throws Exception {
+		final String xml =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<index_root>"
 						+ "<pim project=\"/P\">"
@@ -95,30 +97,28 @@ public class Resources {
 						+ "</graph>"
 						+ "</pim>"
 						+ "</index_root>";
-		final File file = getNewFile("PR1");
+		final File file = getNewFile("basic");
 
-		write(file, xml1);
+		write(file, xml);
 
 		return file;
 	}
 
-	public static IPersistResource makePR1(IRodinProject project)
+	public static IPersistResource makeBasic(IRodinProject project)
 			throws Exception {
 
-		final PersistResource pr1 = new PersistResource();
+		final PersistResource pr = new PersistResource();
 		final String testElt1Name = "name1";
 		final String intName1 = "intName1";
 
 		final IRodinFile rodinFile = createRodinFile(project, "F1.test");
 		final NamedElement testElt1 = createNamedElement(rodinFile, intName1);
-		System.out.println(rodinFile.getHandleIdentifier());
-		System.out.println(testElt1.getHandleIdentifier());
 		final IDeclaration declaration =
 				new Declaration(testElt1, testElt1Name);
 		final IOccurrence occurrence =
 				createDefaultOccurrence(rodinFile.getRoot());
 
-		final ProjectIndexManager pim = pr1.getPPPIM().getOrCreate(project);
+		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
 
 		final RodinIndex index = pim.getIndex();
 		final ExportTable exportTable = pim.getExportTable();
@@ -139,12 +139,260 @@ public class Resources {
 		// name table
 		nameTable.add(declaration);
 
-		// pr1.getPPPIM().put(project, pim);
-		pr1.getRodinFiles().add(rodinFile);
-		pr1.getNames().add(testElt1Name);
+		pr.getRodinFiles().add(rodinFile);
+		pr.getNames().add(testElt1Name);
 
-		return pr1;
+		return pr;
 	}
+
+	public static File makeNoPIMFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<index_root/>";
+
+		final File file = getNewFile("noPIM");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static IPersistResource makeNoPIM(IRodinProject project)
+			throws Exception {
+
+		return new PersistResource();
+	}
+
+	public static File make2PIMsFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P1\">"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph is_sorted=\"false\"/>"
+						+ "</pim>"
+						+ "<pim project=\"/P2\">"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph is_sorted=\"false\"/>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("2PIMs");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static IPersistResource make2PIMs(IRodinProject p1, IRodinProject p2)
+			throws Exception {
+
+		final PersistResource pr = new PersistResource();
+
+		pr.getPPPIM().getOrCreate(p1);
+		pr.getPPPIM().getOrCreate(p2);
+
+		return pr;
+	}
+
+	public static File makeSortedFilesFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph is_sorted=\"true\">"
+						+ "<node label=\"/P/F1.test\" mark=\"true\" order_pos=\"0\"/>"
+						+ "<node label=\"/P/F2.test\" mark=\"true\" order_pos=\"1\">"
+						+ "<predecessor label=\"/P/F1.test\"/>"
+						+ "</node>"
+						+ "<node label=\"/P/F3.test\" mark=\"true\" order_pos=\"2\">"
+						+ "<predecessor label=\"/P/F1.test\"/>"
+						+ "<predecessor label=\"/P/F2.test\"/>"
+						+ "</node>"
+						+ "</graph>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("sortedFiles");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static IPersistResource makeSortedFiles(IRodinProject project)
+			throws Exception {
+
+		final PersistResource pr = new PersistResource();
+
+		final IRodinFile file1 = createRodinFile(project, "F1.test");
+		final IRodinFile file2 = createRodinFile(project, "F2.test");
+		final IRodinFile file3 = createRodinFile(project, "F3.test");
+
+		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
+
+		final TotalOrder<IRodinFile> order = pim.getOrder();
+
+		// fill elements
+		
+		// order
+		order.setPredecessors(file2, makeIRFArray(file1));
+		order.setPredecessors(file3, makeIRFArray(file1, file2));
+		
+		order.setToIter(file1);
+		order.setToIter(file2);
+		order.setToIter(file3);
+
+		
+		pr.getRodinFiles().add(file1);
+		pr.getRodinFiles().add(file2);
+		pr.getRodinFiles().add(file3);
+
+		return pr;
+	}
+
+	public static File makeIteratingFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph is_sorted=\"true\">"
+						+ "<node label=\"/P/F1.test\" mark=\"true\" order_pos=\"0\"/>"
+						+ "<node label=\"/P/F2.test\" mark=\"true\" order_pos=\"1\">"
+						+ "<predecessor label=\"/P/F1.test\"/>"
+						+ "</node>"
+						+ "<node label=\"/P/F3.test\" mark=\"true\" order_pos=\"2\">"
+						+ "<predecessor label=\"/P/F1.test\"/>"
+						+ "<predecessor label=\"/P/F2.test\"/>"
+						+ "</node>"
+						+ "<iterated label=\"/P/F1.test\"/>"
+						+ "<iterated label=\"/P/F2.test\"/>"
+						+ "</graph>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("iterating");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static IPersistResource makeIterating(IRodinProject project)
+			throws Exception {
+
+		final PersistResource pr = new PersistResource();
+
+		final IRodinFile file1 = createRodinFile(project, "F1.test");
+		final IRodinFile file2 = createRodinFile(project, "F2.test");
+		final IRodinFile file3 = createRodinFile(project, "F3.test");
+
+		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
+
+		final TotalOrder<IRodinFile> order = pim.getOrder();
+
+		// fill elements
+		
+		// order
+		order.setPredecessors(file2, makeIRFArray(file1));
+		order.setPredecessors(file3, makeIRFArray(file1, file2));
+		
+		order.setToIter(file1);
+		order.setToIter(file2);
+		order.setToIter(file3);
+
+		order.next();
+		order.next();
+		
+		pr.getRodinFiles().add(file1);
+		pr.getRodinFiles().add(file2);
+		pr.getRodinFiles().add(file3);
+
+		return pr;
+	}
+
+	public static File makeNoExportNodeFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index/>"
+						+ "<graph is_sorted=\"false\"/>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("noExportNode");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static File makeTwoRodinIndexesFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index/>"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph is_sorted=\"false\"/>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("twoRodinIndexes");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static File makeMissingAttributeFile() throws Exception {
+		// no isSorted attribute in the graph node
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index/>"
+						+ "<export_table/>"
+						+ "<graph/>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("missingAttribute");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static File makeBadElementHandleFile() throws Exception {
+		// IRF instead of IIE in descriptor element attribute
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<pim project=\"/P\">"
+						+ "<rodin_index>"
+						+ "<descriptor element=\"/P/F1.test\" name=\"name1\">"
+						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" occ_kind=\"fr.systerel.indexer.test\"/>"
+						+ "</descriptor>"
+						+ "</rodin_index>"
+						+ "<export_table>"
+						+ "<export file=\"/P/F1.test\">"
+						+ "<exported element=\"/P/F1.test|org.rodinp.core.tests.test#F1|org.rodinp.core.tests.namedElement#intName1\" name=\"name1\"/>"
+						+ "</export>"
+						+ "</export_table>"
+						+ "<graph is_sorted=\"false\">"
+						+ "<node label=\"/P/F1.test\" mark=\"true\" order_pos=\"-1\"/>"
+						+ "</graph>"
+						+ "</pim>"
+						+ "</index_root>";
+		final File file = getNewFile("badElementHandle");
+
+		write(file, xml);
+
+		return file;
+	}
+
 
 	public static File getNewFile(String name) throws IOException {
 		final IPath path = new Path(name);

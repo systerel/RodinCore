@@ -212,7 +212,8 @@ public class IndexTestsUtil {
 		while (expected.hasNext()) {
 			final IRodinFile expFile = expected.next();
 			assertTrue("should have next: " + expFile, actual.hasNext());
-			assertEquals("Bad file", expFile, actual.next());
+			final IRodinFile actFile = actual.next();
+			assertEquals("Bad file", expFile, actFile);
 		}
 	}
 
