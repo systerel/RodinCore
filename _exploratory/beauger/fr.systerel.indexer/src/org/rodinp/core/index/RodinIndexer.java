@@ -31,7 +31,7 @@ import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.IndexRequester;
 import org.rodinp.internal.core.index.OccurrenceKind;
 import org.rodinp.internal.core.index.DeltaQueuer;
-import org.rodinp.internal.core.index.RodinLocation;
+import org.rodinp.internal.core.index.InternalLocation;
 
 /**
  * <em>Temporary class</em>
@@ -78,8 +78,8 @@ public class RodinIndexer extends Plugin {
 	 *            a Rodin element
 	 * @return the location pointing at the given element
 	 */
-	public static IRodinLocation getRodinLocation(IInternalElement element) {
-		return new RodinLocation(element);
+	public static IInternalLocation getInternalLocation(IInternalElement element) {
+		return new InternalLocation(element);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class RodinIndexer extends Plugin {
 	 *            the type of the attribute to point at
 	 * @return the location pointing at the given attribute of the given element
 	 */
-	public static IRodinLocation getRodinLocation(IInternalElement element,
+	public static IInternalLocation getRodinLocation(IInternalElement element,
 			IAttributeType attributeType) {
 		return new AttributeLocation(element, attributeType);
 	}
@@ -123,7 +123,7 @@ public class RodinIndexer extends Plugin {
 	 *            than <code>start</code>
 	 * @return the location pointing at the given attribute of the given element
 	 */
-	public static IRodinLocation getRodinLocation(IInternalElement element,
+	public static IInternalLocation getRodinLocation(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
 		return new AttributeSubstringLocation(element, attributeType, start,
 				end);

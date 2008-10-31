@@ -4,13 +4,13 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.rodinp.core.index;
 
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -18,6 +18,7 @@ import org.rodinp.core.IRodinFile;
  * can be
  * <ul>
  * <li>either a Rodin element ({@link IRodinLocation}),</li>
+ * <li>or an internal element ({@link IInternalLocation}),</li>
  * <li>or an attribute of an internal element ({@link IAttributeLocation}),</li>
  * <li>or a substring of a string attribute of an internal element ({@link IAttributeSubstringLocation}).</li>
  * </ul>
@@ -31,14 +32,14 @@ import org.rodinp.core.IRodinFile;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see IInternalLocation
  * @see IAttributeLocation
  * @see IAttributeSubstringLocation
  * 
  * @author Nicolas Beauger
- * @author Laurent Voisin
  */
 public interface IRodinLocation {
-
+	
 	/**
 	 * Returns the file containing the location, if any. If the location is a
 	 * Rodin file or occurs within a Rodin file, then this Rodin file is
@@ -49,11 +50,12 @@ public interface IRodinLocation {
 	// TODO move this method to IRodinElement
 	IRodinFile getRodinFile();
 
+
 	/**
 	 * Returns the element containing this location.
 	 * 
 	 * @return the element containing this location
 	 */
-	IInternalElement getElement();
+	IRodinElement getElement();
 
 }

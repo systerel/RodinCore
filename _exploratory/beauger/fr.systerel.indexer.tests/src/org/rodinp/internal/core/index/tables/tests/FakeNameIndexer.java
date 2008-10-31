@@ -26,7 +26,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
@@ -65,8 +65,8 @@ public class FakeNameIndexer implements IIndexer {
 				for (int i = 0; i < numberEach; i++) {
 					final NamedElement element = IndexTestsUtil
 							.createNamedElement(rodinFile, name + "_DB" + i);
-					final IRodinLocation loc = RodinIndexer
-							.getRodinLocation(element);
+					final IInternalLocation loc = RodinIndexer
+							.getInternalLocation(element);
 					index.addOccurrence(declaration, TEST_KIND, loc);
 					if (DEBUG) {
 						System.out.println(name + ": "

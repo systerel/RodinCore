@@ -13,14 +13,14 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 public class Occurrence implements IOccurrence {
 
 	private final IOccurrenceKind kind;
-	private final IRodinLocation location;
+	private final IInternalLocation location;
 
-	public Occurrence(IOccurrenceKind kind, IRodinLocation location) {
+	public Occurrence(IOccurrenceKind kind, IInternalLocation location) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
@@ -35,7 +35,7 @@ public class Occurrence implements IOccurrence {
 		return kind;
 	}
 
-	public IRodinLocation getLocation() {
+	public IInternalLocation getLocation() {
 		return location;
 	}
 

@@ -104,7 +104,7 @@ public interface IIndexingToolkit {
 	 *             if the element is neither local nor imported.
 	 */
 	void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
-			IRodinLocation location);
+			IInternalLocation location);
 
 	/**
 	 * Exports the given element, making it visible to dependent files.

@@ -15,6 +15,7 @@ package org.rodinp.core.index;
  * attribute of an internal element in the Rodin database.
  * 
  * @see IRodinLocation
+ * @see IInternalLocation
  * @see IAttributeLocation
  * 
  * @author Laurent Voisin

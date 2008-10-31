@@ -16,7 +16,7 @@ import org.rodinp.core.IRodinFile;
  * Common protocol for occurrences in indexed files.
  * <p>
  * An occurrence has a kind {@link IOccurrenceKind} and a location
- * {@link IRodinLocation} inside a {@link IRodinFile}.
+ * {@link IInternalLocation} inside a {@link IRodinFile}.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -39,9 +39,9 @@ public interface IOccurrence {
 	 * Returns the location of the occurrence.
 	 * 
 	 * @return the location of the occurrence.
-	 * @see IRodinLocation
+	 * @see IInternalLocation
 	 */
-	IRodinLocation getLocation();
+	IInternalLocation getLocation();
 
 	/**
 	 * Returns the file containing the location of the occurrence, if any. If
@@ -52,7 +52,7 @@ public interface IOccurrence {
 	 * </p>
 	 * 
 	 * @return the file containing the location or <code>null</code>
-	 * @see IRodinLocation#getRodinFile()
+	 * @see IInternalLocation#getRodinFile()
 	 */
 	IRodinFile getRodinFile();
 

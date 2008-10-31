@@ -14,7 +14,7 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*
 
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
@@ -30,7 +30,7 @@ public class OccPersistor {
 	public static IOccurrence getOccurrence(Element occNode) throws PersistenceException {
 		final IOccurrenceKind kind = getKind(occNode);
 
-		final IRodinLocation location = LocPersistor.getLocation(occNode);
+		final IInternalLocation location = LocPersistor.getLocation(occNode);
 
 		return new Occurrence(kind, location);
 	}
@@ -45,7 +45,7 @@ public class OccPersistor {
 		final IOccurrenceKind kind = occurrence.getKind();
 		setAttribute(occNode, OCC_KIND, kind.getId());
 
-		final IRodinLocation location = occurrence.getLocation();
+		final IInternalLocation location = occurrence.getLocation();
 		LocPersistor.save(location, doc, occNode);
 	}
 

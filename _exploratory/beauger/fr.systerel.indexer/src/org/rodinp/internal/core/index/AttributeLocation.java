@@ -14,7 +14,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IAttributeLocation;
 
-public class AttributeLocation extends RodinLocation implements
+public class AttributeLocation extends InternalLocation implements
 		IAttributeLocation {
 
 	private final IAttributeType attributeType;

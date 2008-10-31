@@ -17,10 +17,10 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IAttributeLocation;
 import org.rodinp.core.index.IAttributeSubstringLocation;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
-import org.rodinp.internal.core.index.RodinLocation;
+import org.rodinp.internal.core.index.InternalLocation;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,13 +35,13 @@ public class LocPersistor {
 		// private constructor:
 	}
 
-	public static IRodinLocation getLocation(Element occNode)
+	public static IInternalLocation getLocation(Element occNode)
 			throws PersistenceException {
 		final IInternalElement element =
 				IREPersistor.getIIEAtt(occNode, ELEMENT);
 
 		if (!hasAttribute(occNode, LOC_ATTRIBUTE)) {
-			return new RodinLocation(element);
+			return new InternalLocation(element);
 		}
 		final String attId = getAttribute(occNode, LOC_ATTRIBUTE);
 		IAttributeType.String attType = RodinCore.getStringAttrType(attId);
@@ -58,7 +58,7 @@ public class LocPersistor {
 				charEnd);
 	}
 
-	public static void save(IRodinLocation location, Document doc,
+	public static void save(IInternalLocation location, Document doc,
 			Element occNode) {
 		final IInternalElement element = location.getElement();
 		IREPersistor.setIREAtt(element, ELEMENT, occNode);

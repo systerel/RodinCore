@@ -20,7 +20,7 @@ import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 public class IndexingToolkit implements IIndexingToolkit {
 
@@ -80,7 +80,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		final IInternalElement element = declaration.getElement();
 		
 		if (!verifyOccurrence(element, location)) {
@@ -124,7 +124,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	private boolean verifyOccurrence(IInternalElement element,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		final IRodinFile locElemFile = location.getRodinFile();
 		return file.equals(locElemFile) && isLocalOrImported(element);
 	}

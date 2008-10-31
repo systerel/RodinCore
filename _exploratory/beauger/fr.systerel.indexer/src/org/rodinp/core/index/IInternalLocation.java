@@ -10,25 +10,29 @@
  *******************************************************************************/
 package org.rodinp.core.index;
 
-import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 
 /**
- * Common protocol for specifying a location which is an attribute of an
- * internal element in the Rodin database.
+ * Common protocol for specifying a location in a {@link IInternalElement} in
+ * the Rodin database.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see IRodinLocation
- * @see IInternalLocation
+ * @see IAttributeLocation
  * @see IAttributeSubstringLocation
  * 
+ * @author Nicolas Beauger
  * @author Laurent Voisin
  */
-public interface IAttributeLocation extends IInternalLocation {
+public interface IInternalLocation extends IRodinLocation {
 
 	/**
-	 * Returns the type of the attribute containing this location.
+	 * Returns the element containing this location.
 	 * 
-	 * @return the type of the attribute of this location
+	 * @return the element containing this location
 	 */
-	IAttributeType getAttributeType();
+	IInternalElement getElement();
 
 }

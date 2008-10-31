@@ -16,7 +16,7 @@ import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
@@ -51,7 +51,7 @@ public class FakeIndexer implements IIndexer {
 			}
 			assert declaration != null;
 			for (IOccurrence occ : desc.getOccurrences()) {
-				final IRodinLocation location = occ.getLocation();
+				final IInternalLocation location = occ.getLocation();
 				if (file.equals(location.getRodinFile())) {
 					index.addOccurrence(declaration, occ.getKind(), location);
 				}
@@ -69,7 +69,7 @@ public class FakeIndexer implements IIndexer {
 		return null;
 	}
 
-	// private boolean isInFile(IRodinFile file, IRodinLocation location) {
+	// private boolean isInFile(IRodinFile file, IInternalLocation location) {
 	// final IRodinElement locElem = location.getElement();
 	// final IRodinFile locElemFile;
 	// if (locElem instanceof IRodinFile) {

@@ -18,7 +18,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Occurrence;
@@ -30,13 +30,13 @@ public class OccurrenceTests extends IndexTests {
 	}
 
 	private final IOccurrenceKind defaultKind = TEST_KIND;
-	private IRodinLocation location;
+	private IInternalLocation location;
 	private IOccurrence occ;
 
 
-	private static void assertLocation(IRodinLocation expected,
-			IRodinLocation actual) {
-		assertEquals("Field IRodinLocation in Occurrence is not correct", expected, actual);
+	private static void assertLocation(IInternalLocation expected,
+			IInternalLocation actual) {
+		assertEquals("Field IInternalLocation in Occurrence is not correct", expected, actual);
 	}
 
 	private static void assertKind(IOccurrenceKind expected, IOccurrenceKind actual) {
@@ -51,7 +51,7 @@ public class OccurrenceTests extends IndexTests {
 		IRodinFile file = createRodinFile(rodinProject, "occ.test");
 		NamedElement elem = createNamedElement(file, "elem");
 
-		location = RodinIndexer.getRodinLocation(elem);
+		location = RodinIndexer.getInternalLocation(elem);
 		occ = new Occurrence(defaultKind, location);
 	}
 
