@@ -21,7 +21,7 @@
    <url>
       <discovery label="Europa discovery site" url="http://download.eclipse.org/releases/europa"/>
       <discovery label="Main Rodin update site" url="http://rodin-b-sharp.sourceforge.net/updates"/>
-      <discovery label="B4free update site" url="http://bmethod.com/update_site/b4free_provers)"/>
+      <discovery label="Atelier B Provers update site" url="http://bmethod.com/update_site/atelierb_provers"/>
       <discovery label="B2Rodin update site" url="http://bmethod.com/update_site/b2rodin"/>
       <discovery label="Brama update site" url="http://bmethod.com/update_site/brama"/>
       <discovery label="ProB update site" url="http://www.stups.uni-duesseldorf.de/update"/>
