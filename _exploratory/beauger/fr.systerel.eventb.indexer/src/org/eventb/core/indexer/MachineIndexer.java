@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.eventb.core.EventBPlugin.getContextFileName;
-import static org.rodinp.core.index.RodinIndexer.getRodinLocation;
+import static org.eventb.core.EventBPlugin.*;
+import static org.rodinp.core.index.RodinIndexer.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +121,7 @@ public class MachineIndexer extends EventBIndexer {
 				if (element instanceof IVariable) {
 					// re-declaration of abstract variable
 					final IInternalElement root = index.getRootToIndex();
-					indexReference(previousDecl, getRodinLocation(root));
+					indexReference(previousDecl, getInternalLocation(root));
 				}
 			}
 			declImports.put(declaration);

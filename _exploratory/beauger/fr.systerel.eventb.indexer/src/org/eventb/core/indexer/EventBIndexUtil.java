@@ -13,35 +13,37 @@ package org.eventb.core.indexer;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.index.IAttributeSubstringLocation;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
 
-	public static final IOccurrenceKind DECLARATION = RodinIndexer
-			.addOccurrenceKind("fr.systerel.eventb.indexer.declaration",
-					"declaration");
+	public static final IOccurrenceKind DECLARATION =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.declaration", "declaration");
 
-	public static final IOccurrenceKind REFERENCE = RodinIndexer
-			.addOccurrenceKind("fr.systerel.eventb.indexer.reference",
-					"reference");
+	public static final IOccurrenceKind REFERENCE =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.reference", "reference");
 
-	public static final IOccurrenceKind MODIFICATION = RodinIndexer
-	.addOccurrenceKind("fr.systerel.eventb.indexer.modification",
-			"modification");
+	public static final IOccurrenceKind MODIFICATION =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.modification", "modification");
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is
-	 * mandatory, as long as SourceLocation and RodinLocation do not share the
-	 * same range convention.
+	 * mandatory, as long as {@link SourceLocation} and
+	 * {@link IAttributeSubstringLocation} do not share the same range
+	 * convention.
 	 * 
 	 * @param element
 	 * @param attributeType
 	 * @param location
-	 * @return the corresponding IRodinLocation
+	 * @return the corresponding IInternalLocation
 	 */
-	public static IRodinLocation getRodinLocation(IInternalElement element,
+	public static IInternalLocation getRodinLocation(IInternalElement element,
 			IAttributeType.String attributeType, SourceLocation location) {
 		return RodinIndexer.getRodinLocation(element, attributeType, location
 				.getStart(), location.getEnd() + 1);

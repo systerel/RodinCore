@@ -27,7 +27,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Occurrence;
@@ -39,32 +39,32 @@ import org.rodinp.internal.core.index.Occurrence;
 public class OccUtils {
 
 	public static IOccurrence makeDecl(final IInternalElement element) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
+		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
 		return newOcc(DECLARATION, loc);
 	}
 
 	public static IOccurrence makeRef(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
+		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType, start, end);
 		return newOcc(REFERENCE, loc);
 	}
 	
 	public static IOccurrence makeRef(IInternalElement element,
 			IAttributeType.String attributeType) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
+		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType);
 		return newOcc(REFERENCE, loc);
 	}
 	
 	public static IOccurrence makeRef(IInternalElement element) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element);
+		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
 		return newOcc(REFERENCE, loc);
 	}
 
 	public static IOccurrence makeModif(IInternalElement element,
 			IAttributeType.String attributeType, int start, int end) {
-		final IRodinLocation loc = RodinIndexer.getRodinLocation(element,
+		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
 				attributeType, start, end);
 		return newOcc(MODIFICATION, loc);
 	}
@@ -108,7 +108,7 @@ public class OccUtils {
 
 	@SuppressWarnings("restriction")
 	public static IOccurrence newOcc(IOccurrenceKind kind,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		return new Occurrence(kind, location);
 	}
 

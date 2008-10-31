@@ -23,7 +23,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
@@ -87,7 +87,7 @@ public class FormulaIndexer extends DefaultVisitor {
 		if (visibleIdents.contains(ident)) {
 			final IDeclaration declaration = visibleIdents.get(ident);
 			final SourceLocation srcLoc = ident.getSourceLocation();
-			final IRodinLocation loc = getRodinLocation(
+			final IInternalLocation loc = getRodinLocation(
 					visited, attributeType, srcLoc);
 	
 			index.addOccurrence(declaration, kind, loc);

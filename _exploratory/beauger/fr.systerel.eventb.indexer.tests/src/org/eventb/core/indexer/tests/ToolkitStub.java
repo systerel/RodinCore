@@ -29,7 +29,7 @@ import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 /**
  * Stub for the indexing toolkit. Stores the actions performed by an indexer.
@@ -70,7 +70,7 @@ public class ToolkitStub implements IIndexingToolkit {
 
 	@SuppressWarnings("restriction")
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		final IOccurrence occurrence = newOcc(kind, location);
 		final IInternalElement element = declaration.getElement();
 		List<IOccurrence> list = occurrences.get(element);

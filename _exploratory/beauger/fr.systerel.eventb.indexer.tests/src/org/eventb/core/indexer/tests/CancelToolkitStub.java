@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
@@ -69,7 +69,7 @@ public class CancelToolkitStub implements IIndexingToolkit {
 	}
 
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		numOcc++;
 		if (numOcc >= maxOcc) {
 			cancel = true;

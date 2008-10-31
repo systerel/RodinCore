@@ -22,7 +22,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.index.IInternalLocation;
 
 public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
@@ -74,8 +74,8 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 			String name) {
 
 		final IDeclaration declaration = index.declare(element, name);
-		final IRodinLocation loc =
-				getRodinLocation(element.getRodinFile().getRoot());
+		final IInternalLocation loc =
+				getInternalLocation(element.getRodinFile().getRoot());
 
 		index.addOccurrence(declaration, DECLARATION, loc);
 
@@ -83,7 +83,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	}
 
 	protected void indexReference(IDeclaration declaration,
-			IRodinLocation location) {
+			IInternalLocation location) {
 		index.addOccurrence(declaration, REFERENCE, location);
 	}
 
