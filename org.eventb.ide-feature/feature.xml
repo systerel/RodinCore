@@ -28,7 +28,7 @@
    </url>
 
    <requires>
-      <import feature="org.rodinp.platform" version="0.8.2" match="compatible"/>
+      <import feature="org.rodinp.platform" version="0.9.0" match="compatible"/>
    </requires>
 
    <plugin
