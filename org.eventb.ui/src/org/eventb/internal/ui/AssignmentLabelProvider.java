@@ -23,6 +23,7 @@ import org.rodinp.core.RodinDBException;
  *         assignment string.
  *         </p>
  */
+ @Deprecated
 public class AssignmentLabelProvider implements IElementLabelProvider {
 
 	/* (non-Javadoc)

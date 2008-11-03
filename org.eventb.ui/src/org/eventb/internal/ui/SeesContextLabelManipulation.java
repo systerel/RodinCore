@@ -14,21 +14,22 @@ package org.eventb.internal.ui;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
-@Deprecated
-public class SeesContextModifier implements IElementModifier {
+public class SeesContextLabelManipulation extends
+		AbstractInternalElementLabelManipulation<ISeesContext> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		if (element instanceof ISeesContext) {
-			ISeesContext aElement = (ISeesContext) element;
-			IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+
+	@Override
+	ISeesContext getElement(Object obj) {
+		if (obj instanceof ISeesContext) {
+			return (ISeesContext) obj;
 		}
-		return;
+		return null;
 	}
 
+	@Override
+	IAttributeFactory<ISeesContext> getFactory(ISeesContext element) {
+		return factory;
+	}
 }

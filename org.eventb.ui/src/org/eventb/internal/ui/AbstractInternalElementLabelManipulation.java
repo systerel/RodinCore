@@ -11,24 +11,31 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
+import org.eventb.ui.IElementLabelProvider;
 import org.eventb.ui.IElementModifier;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-@Deprecated
-public class RefinesMachineModifier implements IElementModifier {
+public abstract class AbstractInternalElementLabelManipulation<E extends IAttributedElement>
+		implements IElementLabelProvider, IElementModifier {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		if (element instanceof IRefinesMachine) {
-			IRefinesMachine aElement = (IRefinesMachine) element;
-			IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
-		}
-		return;
+	public String getLabel(Object obj) throws RodinDBException {
+		E element = getElement(obj);
+		if (element == null)
+			return null;
+		return getFactory(element).getValue(element, null);
 	}
 
+	public void modify(IRodinElement obj, String text) throws RodinDBException {
+		E element = getElement(obj);
+		if (element == null)
+			return;
+		UIUtils.setStringAttribute(element, getFactory(element), text, null);
+	}
+
+	abstract E getElement(Object obj);
+
+	abstract IAttributeFactory<E> getFactory(E element);
 }

@@ -4,6 +4,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.ui.IElementLabelProvider;
 import org.rodinp.core.RodinDBException;
 
+@Deprecated
 public class SeesContextLabelProvider implements IElementLabelProvider {
 
 	public String getLabel(Object obj) throws RodinDBException {

@@ -14,21 +14,22 @@ package org.eventb.internal.ui;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
-@Deprecated
-public class RefinesEventModifier implements IElementModifier {
+public class RefinesEventLabelManipulation extends
+		AbstractInternalElementLabelManipulation<IRefinesEvent> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		if (element instanceof IRefinesEvent) {
-			IRefinesEvent aElement = (IRefinesEvent) element;
-			IAttributeFactory<IRefinesEvent> factory = new RefinesEventAbstractEventLabelAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<IRefinesEvent> factory = new RefinesEventAbstractEventLabelAttributeFactory();
+
+	@Override
+	IRefinesEvent getElement(Object obj) {
+		if (obj instanceof IRefinesEvent) {
+			return (IRefinesEvent) obj;
 		}
-		return;
+		return null;
 	}
 
+	@Override
+	IAttributeFactory<IRefinesEvent> getFactory(IRefinesEvent element) {
+		return factory;
+	}
 }

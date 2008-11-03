@@ -14,9 +14,6 @@ package org.eventb.internal.ui;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -24,19 +21,22 @@ import org.rodinp.core.RodinDBException;
  *         A modifier class for extends context elements.
  *         </p>
  */
-@Deprecated
-public class ExtendsContextModifier implements IElementModifier {
+public class ExtendsContextLabelManipulation extends
+		AbstractInternalElementLabelManipulation<IExtendsContext> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		// Try to set the name string if element is a IExtendsContext element.
-		if (element instanceof IExtendsContext) {
-			IExtendsContext aElement = (IExtendsContext) element;
-			IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+
+	@Override
+	IExtendsContext getElement(Object obj) {
+		if (obj instanceof IExtendsContext) {
+			return (IExtendsContext) obj;
 		}
-		// Do nothing if the element is not a IExtendsContext element.
-		return;
+		return null;
+	}
+
+	@Override
+	IAttributeFactory<IExtendsContext> getFactory(IExtendsContext element) {
+		return factory;
 	}
 
 }

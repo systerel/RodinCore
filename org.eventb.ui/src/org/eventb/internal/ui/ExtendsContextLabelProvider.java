@@ -24,6 +24,7 @@ import org.rodinp.core.RodinDBException;
  *         otherwise return <code>null</code>.
  *         </p>
  */
+@Deprecated
 public class ExtendsContextLabelProvider implements IElementLabelProvider {
 
 	/*

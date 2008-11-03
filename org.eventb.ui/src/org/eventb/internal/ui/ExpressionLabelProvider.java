@@ -24,6 +24,7 @@ import org.rodinp.core.RodinDBException;
  *         <code>null</code>.
  *         </p>
  */
+@Deprecated
 public class ExpressionLabelProvider implements IElementLabelProvider {
 
 	/* (non-Javadoc)

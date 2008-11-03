@@ -573,9 +573,9 @@
             type="org.eventb.core.seesContext">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.SeesContextLabelProvider"
+               labelProvider="org.eventb.internal.ui.SeesContextLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.SeesContextModifier"/>
+               modifier="org.eventb.internal.ui.SeesContextLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -584,9 +584,9 @@
             type="org.eventb.core.refinesMachine">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.RefinesMachineLabelProvider"
+               labelProvider="org.eventb.internal.ui.RefinesMachineLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.RefinesMachineModifier"/>
+               modifier="org.eventb.internal.ui.RefinesMachineLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -595,9 +595,9 @@
             type="org.eventb.core.extendsContext">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.ExtendsContextLabelProvider"
+               labelProvider="org.eventb.internal.ui.ExtendsContextLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.ExtendsContextModifier"/>
+               modifier="org.eventb.internal.ui.ExtendsContextLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -606,9 +606,9 @@
             type="org.eventb.core.variable">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+               modifier="org.eventb.internal.ui.IdentifierLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -617,14 +617,14 @@
             type="org.eventb.core.invariant">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               labelProvider="org.eventb.internal.ui.PredicateLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.PredicateModifier"/>
+               modifier="org.eventb.internal.ui.PredicateLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -633,14 +633,14 @@
             type="org.eventb.core.theorem">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               labelProvider="org.eventb.internal.ui.PredicateLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.PredicateModifier"/>
+               modifier="org.eventb.internal.ui.PredicateLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -649,9 +649,9 @@
             type="org.eventb.core.event">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -660,9 +660,9 @@
             type="org.eventb.core.refinesEvent">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.RefinesEventLabelProvider"
+               labelProvider="org.eventb.internal.ui.RefinesEventLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.RefinesEventModifier"/>
+               modifier="org.eventb.internal.ui.RefinesEventLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -671,9 +671,9 @@
             type="org.eventb.core.parameter">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+               modifier="org.eventb.internal.ui.IdentifierLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -682,14 +682,14 @@
             type="org.eventb.core.guard">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               labelProvider="org.eventb.internal.ui.PredicateLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.PredicateModifier"/>
+               modifier="org.eventb.internal.ui.PredicateLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -698,14 +698,14 @@
             type="org.eventb.core.action">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.AssignmentLabelProvider"
+               labelProvider="org.eventb.internal.ui.AssignmentLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.AssignmentModifier"/>
+               modifier="org.eventb.internal.ui.AssignmentLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -714,9 +714,9 @@
             type="org.eventb.core.carrierSet">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+               modifier="org.eventb.internal.ui.IdentifierLabelManipulation"/>
       </element>
       <element
             defaultColumn="name"
@@ -725,9 +725,9 @@
             type="org.eventb.core.constant">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.IdentifierLabelProvider"
+               labelProvider="org.eventb.internal.ui.IdentifierLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.IdentifierModifier"/>
+               modifier="org.eventb.internal.ui.IdentifierLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -736,14 +736,14 @@
             type="org.eventb.core.axiom">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               labelProvider="org.eventb.internal.ui.PredicateLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.PredicateModifier"/>
+               modifier="org.eventb.internal.ui.PredicateLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -752,14 +752,14 @@
             type="org.eventb.core.witness">
          <column
                id="name"
-               labelProvider="org.eventb.internal.ui.LabelLabelProvider"
+               labelProvider="org.eventb.internal.ui.LabelLabelManipulation"
                math="false"
-               modifier="org.eventb.internal.ui.LabelModifier"/>
+               modifier="org.eventb.internal.ui.LabelLabelManipulation"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.PredicateLabelProvider"
+               labelProvider="org.eventb.internal.ui.PredicateLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.PredicateModifier"/>
+               modifier="org.eventb.internal.ui.PredicateLabelManipulation"/>
       </element>
       <element
             defaultColumn="content"
@@ -772,9 +772,9 @@
                math="false"/>
          <column
                id="content"
-               labelProvider="org.eventb.internal.ui.ExpressionLabelProvider"
+               labelProvider="org.eventb.internal.ui.ExpressionLabelManipulation"
                math="true"
-               modifier="org.eventb.internal.ui.ExpressionModifier"/>
+               modifier="org.eventb.internal.ui.ExpressionLabelManipulation"/>
       </element>
    </extension>
    <extension

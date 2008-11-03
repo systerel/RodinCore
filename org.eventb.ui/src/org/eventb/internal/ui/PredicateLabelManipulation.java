@@ -11,24 +11,26 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
-import org.eventb.core.ISeesContext;
+import org.eventb.core.IPredicateElement;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
 
-@Deprecated
-public class SeesContextModifier implements IElementModifier {
+public class PredicateLabelManipulation extends
+		AbstractInternalElementLabelManipulation<IPredicateElement> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		if (element instanceof ISeesContext) {
-			ISeesContext aElement = (ISeesContext) element;
-			IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
+
+	@Override
+	IPredicateElement getElement(Object obj) {
+		if (obj instanceof IPredicateElement) {
+			return (IPredicateElement) obj;
 		}
-		return;
+		return null;
+	}
+
+	@Override
+	IAttributeFactory<IPredicateElement> getFactory(IPredicateElement element) {
+		return factory;
 	}
 
 }

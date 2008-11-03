@@ -14,21 +14,22 @@ package org.eventb.internal.ui;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
-@Deprecated
-public class RefinesMachineModifier implements IElementModifier {
+public class RefinesMachineLabelManipulation extends
+		AbstractInternalElementLabelManipulation<IRefinesMachine> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		if (element instanceof IRefinesMachine) {
-			IRefinesMachine aElement = (IRefinesMachine) element;
-			IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+
+	@Override
+	IRefinesMachine getElement(Object obj) {
+		if (obj instanceof IRefinesMachine) {
+			return (IRefinesMachine) obj;
 		}
-		return;
+		return null;
 	}
 
+	@Override
+	IAttributeFactory<IRefinesMachine> getFactory(IRefinesMachine element) {
+		return factory;
+	}
 }

@@ -14,9 +14,6 @@ package org.eventb.internal.ui;
 import org.eventb.core.IExpressionElement;
 import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.ui.IElementModifier;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -24,19 +21,21 @@ import org.rodinp.core.RodinDBException;
  *         An modifier class for expression elements.
  *         </p>
  */
-@Deprecated
-public class ExpressionModifier implements IElementModifier {
+public class ExpressionLabelManipulation extends
+		AbstractInternalElementLabelManipulation<IExpressionElement> {
 
-	public void modify(IRodinElement element, String text)
-			throws RodinDBException {
-		// Try to set the assignment string if element is an assignment element.
-		if (element instanceof IExpressionElement) {
-			IExpressionElement aElement = (IExpressionElement) element;
-			IAttributeFactory<IExpressionElement> factory = new ExpressionAttributeFactory();
-			UIUtils.setStringAttribute(aElement, factory, text, null);
+	private static final IAttributeFactory<IExpressionElement> factory = new ExpressionAttributeFactory();
+
+	@Override
+	IExpressionElement getElement(Object obj) {
+		if (obj instanceof IExpressionElement) {
+			return (IExpressionElement) obj;
 		}
-		// Do nothing if the element is not an assignment element.
-		return;
+		return null;
 	}
 
+	@Override
+	IAttributeFactory<IExpressionElement> getFactory(IExpressionElement element) {
+		return factory;
+	}
 }

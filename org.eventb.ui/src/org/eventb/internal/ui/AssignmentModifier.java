@@ -25,6 +25,7 @@ import org.rodinp.core.RodinDBException;
  *         string.
  *         </p>
  */
+@Deprecated
 public class AssignmentModifier implements IElementModifier {
 
 	public void modify(IRodinElement element, String text)
