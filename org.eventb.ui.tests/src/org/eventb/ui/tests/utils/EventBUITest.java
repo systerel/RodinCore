@@ -35,11 +35,13 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
+import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
@@ -355,6 +357,51 @@ public abstract class EventBUITest extends TestCase {
 		action.setLabel(label, null);
 		action.setAssignmentString(assign, null);
 		return action;
+	}
+
+	/**
+	 * Utility method for creating a variant of a machine.
+	 * 
+	 * @param mch
+	 *            a machine root
+	 * @param expression
+	 *            the expression of the variant
+	 * @return the newly created variant
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IVariant createVariant(IMachineRoot mch, String expression)
+			throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(mch,
+				IVariant.ELEMENT_TYPE, "i_variant"); //$NON-NLS-1$
+		IVariant variant = mch.getVariant(childName);
+		variant.create(null, null);
+		variant.setExpressionString(expression, null);
+		return variant;
+	}
+
+	/**
+	 * Utility method for creating an invariant of a machine.
+	 * 
+	 * @param mch
+	 *            a machine root
+	 * @param label
+	 *            the label of the invariant
+	 * @param predicate
+	 *            the predicate of the invariant
+	 * @return the newly created invariant
+	 * @throws RodinDBException
+	 *             if some problems occurs
+	 */
+	protected IInvariant createInvariant(IMachineRoot mch, String label,
+			String predicate) throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(mch,
+				IInvariant.ELEMENT_TYPE, "i_variant"); //$NON-NLS-1$
+		IInvariant invariant = mch.getInvariant(childName);
+		invariant.create(null, null);
+		invariant.setLabel(label, null);
+		invariant.setPredicateString(predicate, null);
+		return invariant;
 	}
 	
 	@Before
