@@ -71,7 +71,7 @@ public class ToolkitStub implements IIndexingToolkit {
 	@SuppressWarnings("restriction")
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
-		final IOccurrence occurrence = newOcc(kind, location);
+		final IOccurrence occurrence = newOcc(kind, location, declaration);
 		final IInternalElement element = declaration.getElement();
 		List<IOccurrence> list = occurrences.get(element);
 		if (list == null) {

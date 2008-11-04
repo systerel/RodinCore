@@ -190,11 +190,11 @@ public class IntegrationTests extends AbstractRodinDBTests {
 		final IDeclaration declVar1 = requester.getDeclaration(var1);
 		final IDeclaration declVar2 = requester.getDeclaration(var2);
 
-		final IOccurrence declC1 = makeDecl(c1);
-		final IOccurrence refSet1AxmC2 = makeRefPred(axmC2, 7, 11);
-		final IOccurrence refSet1InvM1 = makeRefPred(invM1, 7, 11);
-		final IOccurrence refSet1ThmM2_1 = makeRefPred(thmM2, 0, 4);
-		final IOccurrence refSet1ThmM2_2 = makeRefPred(thmM2, 7, 11);
+		final IOccurrence declC1 = makeDecl(c1, declSet1);
+		final IOccurrence refSet1AxmC2 = makeRefPred(axmC2, 7, 11, declSet1);
+		final IOccurrence refSet1InvM1 = makeRefPred(invM1, 7, 11, declSet1);
+		final IOccurrence refSet1ThmM2_1 = makeRefPred(thmM2, 0, 4, declSet1);
+		final IOccurrence refSet1ThmM2_2 = makeRefPred(thmM2, 7, 11, declSet1);
 
 		// set1 must be indexed in machines because imports from C2
 		// and C3 are identical
@@ -202,35 +202,36 @@ public class IntegrationTests extends AbstractRodinDBTests {
 				makeOccList(declC1, refSet1AxmC2, refSet1InvM1, refSet1ThmM2_1,
 						refSet1ThmM2_2);
 
-		final IOccurrence declC2 = makeDecl(c2);
+		final IOccurrence declC2 = makeDecl(c2, declCst2C2);
 		final IOccurrence refCst2AxmC2 =
-				makeRefPred(c2.getAxiom(INTERNAL_ELEMENT1), 0, 4);
+				makeRefPred(c2.getAxiom(INTERNAL_ELEMENT1), 0, 4, declCst2C2);
 
 		// cst2 from C2 must not be referenced in M1 because imports in C2 and
 		// C3 are
 		// different
 		final List<IOccurrence> expCst2C2 = makeOccList(declC2, refCst2AxmC2);
 
-		final IOccurrence declC3 = makeDecl(c3);
-		final IOccurrence refSet3ThmM1 = makeRefPred(thmM1, 7, 11);
-		final IOccurrence refSet3InvM2 = makeRefPred(invM2, 7, 11);
+		final IOccurrence declC3Set3 = makeDecl(c3, declSet3);
+		final IOccurrence refSet3ThmM1 = makeRefPred(thmM1, 7, 11, declSet3);
+		final IOccurrence refSet3InvM2 = makeRefPred(invM2, 7, 11, declSet3);
 		final List<IOccurrence> expSet3 =
-				makeOccList(declC3, refSet3ThmM1, refSet3InvM2);
+				makeOccList(declC3Set3, refSet3ThmM1, refSet3InvM2);
 
 		// cst2 from C3 must not be referenced in machines either
-		final List<IOccurrence> expCst2C3 = makeOccList(declC3);
+		final IOccurrence declC3Cst2 = makeDecl(c3, declCst2C3);
+		final List<IOccurrence> expCst2C3 = makeOccList(declC3Cst2);
 
-		final IOccurrence declM1 = makeDecl(m1);
-		final IOccurrence refVar1InvM1 = makeRefPred(invM1, 0, 4);
-		final IOccurrence refVar1LblWitM2 = makeRefLabel(witM2);
-		final IOccurrence refVar1PredWitM2 = makeRefPred(witM2, 0, 4);
+		final IOccurrence declM1 = makeDecl(m1, declVar1);
+		final IOccurrence refVar1InvM1 = makeRefPred(invM1, 0, 4, declVar1);
+		final IOccurrence refVar1LblWitM2 = makeRefLabel(witM2, declVar1);
+		final IOccurrence refVar1PredWitM2 = makeRefPred(witM2, 0, 4, declVar1);
 
 		final List<IOccurrence> expVar1 =
 				makeOccList(declM1, refVar1InvM1, refVar1LblWitM2,
 						refVar1PredWitM2);
 
-		final IOccurrence declM2 = makeDecl(m2);
-		final IOccurrence refVar2InvM2 = makeRefPred(invM2, 0, 4);
+		final IOccurrence declM2 = makeDecl(m2, declVar2);
+		final IOccurrence refVar2InvM2 = makeRefPred(invM2, 0, 4, declVar2);
 
 		final List<IOccurrence> expVar2 = makeOccList(declM2, refVar2InvM2);
 

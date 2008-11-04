@@ -22,27 +22,31 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class DescPersistor {
 
-	public static void addOccurrences(Element descNode, Descriptor desc) throws PersistenceException {
+	public static void addOccurrences(Element descNode, Descriptor desc)
+			throws PersistenceException {
 		final NodeList occNodes = getElementsByTagName(descNode, OCCURRENCE);
-		for (int i=0;i<occNodes.getLength();i++) {
+		final IDeclaration declaration = desc.getDeclaration();
+		for (int i = 0; i < occNodes.getLength(); i++) {
 			final Element occNode = (Element) occNodes.item(i);
-			final IOccurrence occ = OccPersistor.getOccurrence(occNode);
+			final IOccurrence occ =
+					OccPersistor.getOccurrence(occNode, declaration);
 			desc.addOccurrence(occ);
 		}
 	}
-	
-	public static IDeclaration getDeclaration(Element descNode) throws PersistenceException {
+
+	public static IDeclaration getDeclaration(Element descNode)
+			throws PersistenceException {
 		return DeclPersistor.getDeclaration(descNode);
 	}
-	
+
 	public static void save(Descriptor desc, Document doc, Element descNode) {
 		final IDeclaration declaration = desc.getDeclaration();
 		DeclPersistor.save(declaration, doc, descNode);
-		
+
 		for (IOccurrence occurrence : desc.getOccurrences()) {
 			final Element occNode = createElement(doc, OCCURRENCE);
 			OccPersistor.save(occurrence, doc, occNode);

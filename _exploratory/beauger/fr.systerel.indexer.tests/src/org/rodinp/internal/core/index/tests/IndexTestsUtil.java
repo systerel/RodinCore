@@ -41,14 +41,16 @@ public class IndexTestsUtil {
 	// #static <T> assertSameElements()
 	// #assertIndex()
 
-	public static final IOccurrenceKind TEST_KIND = RodinIndexer
-			.addOccurrenceKind("fr.systerel.indexer.test", "test");
+	public static final IOccurrenceKind TEST_KIND =
+			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test", "test");
 
-	public static final IOccurrenceKind TEST_KIND_1 = RodinIndexer
-			.addOccurrenceKind("fr.systerel.indexer.test_1", "test_1");
+	public static final IOccurrenceKind TEST_KIND_1 =
+			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_1",
+					"test_1");
 
-	public static final IOccurrenceKind TEST_KIND_2 = RodinIndexer
-			.addOccurrenceKind("fr.systerel.indexer.test_2", "test_2");
+	public static final IOccurrenceKind TEST_KIND_2 =
+			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_2",
+					"test_2");
 
 	public static final String defaultName = "banzai";
 
@@ -59,8 +61,10 @@ public class IndexTestsUtil {
 		return file;
 	}
 
-	public static Occurrence createDefaultOccurrence(IInternalElement element) {
-		return new Occurrence(TEST_KIND, RodinIndexer.getInternalLocation(element));
+	public static Occurrence createDefaultOccurrence(IInternalElement element,
+			IDeclaration declaration) {
+		return new Occurrence(TEST_KIND, RodinIndexer
+				.getInternalLocation(element), declaration);
 	}
 
 	public static NamedElement createNamedElement(IRodinFile file,
@@ -99,9 +103,15 @@ public class IndexTestsUtil {
 
 	public static <T> void assertSameElements(List<T> expList, List<T> actList,
 			String arrayDesc) {
-		assertEquals(arrayDesc + ": bad length in\nact: " + actList + "\nexp: "
+		assertEquals(arrayDesc
+				+ ": bad length in\nact: "
+				+ actList
+				+ "\nexp: "
 				+ expList, expList.size(), actList.size());
-		assertTrue(arrayDesc + ": bad elements in\nact: " + actList + "\nexp: "
+		assertTrue(arrayDesc
+				+ ": bad elements in\nact: "
+				+ actList
+				+ "\nexp: "
 				+ expList, actList.containsAll(expList));
 	}
 
@@ -160,7 +170,9 @@ public class IndexTestsUtil {
 	}
 
 	public static void assertLength(IRodinElement[] elements, int length) {
-		assertEquals("incorrect number of elements in: " + elements + "="
+		assertEquals("incorrect number of elements in: "
+				+ elements
+				+ "="
 				+ Arrays.asList(elements), length, elements.length);
 	}
 

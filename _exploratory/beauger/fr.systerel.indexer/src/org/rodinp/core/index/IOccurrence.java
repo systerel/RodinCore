@@ -56,4 +56,11 @@ public interface IOccurrence {
 	 */
 	IRodinFile getRodinFile();
 
+	/**
+	 * Returns the declaration of the element associated with this occurrence.
+	 * 
+	 * @return the declaration associated with this occurrence.
+	 * @see IDeclaration
+	 */
+	IDeclaration getDeclaration();
 }

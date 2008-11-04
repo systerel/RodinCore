@@ -42,4 +42,21 @@ public class RodinLocation implements IRodinLocation {
 		return null;
 	}
 
+	@Override
+	public int hashCode() {
+		return 31 + element.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof RodinLocation))
+			return false;
+		final RodinLocation other = (RodinLocation) obj;
+		if (!element.equals(other.element))
+			return false;
+		return true;
+	}
+
 }

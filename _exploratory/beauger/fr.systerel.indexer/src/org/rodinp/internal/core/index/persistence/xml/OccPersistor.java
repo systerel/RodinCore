@@ -12,9 +12,10 @@ package org.rodinp.internal.core.index.persistence.xml;
 
 import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 
+import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
@@ -27,12 +28,12 @@ import org.w3c.dom.Element;
  */
 public class OccPersistor {
 
-	public static IOccurrence getOccurrence(Element occNode) throws PersistenceException {
+	public static IOccurrence getOccurrence(Element occNode, IDeclaration declaration) throws PersistenceException {
 		final IOccurrenceKind kind = getKind(occNode);
 
 		final IInternalLocation location = LocPersistor.getLocation(occNode);
 
-		return new Occurrence(kind, location);
+		return new Occurrence(kind, location, declaration);
 	}
 
 	private static IOccurrenceKind getKind(Element occNode) throws PersistenceException {

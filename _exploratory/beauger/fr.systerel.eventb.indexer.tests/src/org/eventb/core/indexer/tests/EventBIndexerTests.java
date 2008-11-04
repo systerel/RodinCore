@@ -48,11 +48,11 @@ public abstract class EventBIndexerTests extends AbstractRodinDBTests {
 					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
 					+ "<org.eventb.core.constant"
 					+ "		name=\"internal_element1\""
-					+ "		org.eventb.core.identifier=\"cst2\"/>"
+					+ "		org.eventb.core.identifier=\"cst1\"/>"
 					+ "<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.label=\"axm1\""
-					+ "		org.eventb.core.predicate=\"cst2 = 2\"/>"
+					+ "		org.eventb.core.predicate=\"cst1 = 2\"/>"
 					+ "</org.eventb.core.contextFile>";
 
 	protected static final String CST_1DECL_1REF_THM =

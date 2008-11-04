@@ -34,37 +34,41 @@ public class DescriptorTests extends IndexTests {
 	private IRodinProject rodinProject;
 	private IRodinFile file;
 	private Descriptor testDesc;
-	private NamedElement testElt;
-	private IDeclaration declTestElt;
+	private NamedElement testElt1;
+	private NamedElement testElt2;
+	private IDeclaration declTestElt1;
 
-	private static final String testEltName = "testElt";
+	private static final String testEltName = "testElt1";
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "desc.test");
-		testElt = createNamedElement(file, "internalName");
-		declTestElt = new Declaration(testElt, testEltName);
-		testDesc = new Descriptor(declTestElt);
+		testElt1 = createNamedElement(file, "internalName1");
+		testElt2 = createNamedElement(file, "internalName2");
+		declTestElt1 = new Declaration(testElt1, testEltName);
+		testDesc = new Descriptor(declTestElt1);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject("P");
-		testElt = null;
+		testElt1 = null;
+		testElt2 = null;
 		super.tearDown();
 	}
 
 	public void testConstructor() throws Exception {
-		final Descriptor desc = new Descriptor(declTestElt);
-		assertDescDeclaration(desc, declTestElt);
+		final Descriptor desc = new Descriptor(declTestElt1);
+		assertDescDeclaration(desc, declTestElt1);
 		assertNotNull("occurrences should not be null", testDesc
 				.getOccurrences());
 	}
 
 	public void testAddHasOccurrence() throws Exception {
-		final Occurrence occ = createDefaultOccurrence(testElt);
+		final Occurrence occ =
+				createDefaultOccurrence(file.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(occ);
 
@@ -72,8 +76,8 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testGetOccurrences() throws Exception {
-		final Occurrence occ1 = createDefaultOccurrence(testElt);
-		final Occurrence occ2 = createDefaultOccurrence(file.getRoot());
+		final Occurrence occ1 = createDefaultOccurrence(testElt2, declTestElt1);
+		final Occurrence occ2 = createDefaultOccurrence(file.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(occ1);
 		testDesc.addOccurrence(occ2);
@@ -82,16 +86,16 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testRemoveOccurrences() throws Exception {
-		final Occurrence localOcc = createDefaultOccurrence(testElt);
+		final Occurrence localOcc = createDefaultOccurrence(testElt2, declTestElt1);
 		final IRodinFile importer =
 				createRodinFile(rodinProject, "importerFile.test");
 		final Occurrence importOcc =
-				createDefaultOccurrence(importer.getRoot());
+				createDefaultOccurrence(importer.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(localOcc);
 		testDesc.addOccurrence(importOcc);
 
-		testDesc.removeOccurrences(testElt.getRodinFile());
+		testDesc.removeOccurrences(testElt1.getRodinFile());
 
 		assertContainsNot(testDesc, localOcc);
 		assertContains(testDesc, importOcc);

@@ -62,6 +62,13 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 	public IDeclaration declare(IInternalElement element, String name) {
 
+		if (element == null) {
+			throw new NullPointerException("null element");
+		}
+		if (name == null) {
+			throw new NullPointerException("null name");
+		}
+
 		if (!isLocal(element)) {
 			throw new IllegalArgumentException(
 					"Element must be in indexed file: "
@@ -75,20 +82,21 @@ public class IndexingToolkit implements IIndexingToolkit {
 
 		final Declaration declaration = new Declaration(element, name);
 		declarations.put(element, declaration);
-		
+
 		return declaration;
 	}
 
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
 		final IInternalElement element = declaration.getElement();
-		
+
 		if (!verifyOccurrence(element, location)) {
 			throw new IllegalArgumentException(
 					"Incorrect occurrence for element: " + element);
 		}
 
-		final IOccurrence occurrence = new Occurrence(kind, location);
+		final IOccurrence occurrence =
+				new Occurrence(kind, location, declaration);
 		result.addOccurrence(element, occurrence);
 	}
 
@@ -114,7 +122,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	public IRodinFile getRodinFile() {
 		return file;
 	}
-	
+
 	public IInternalElement getRootToIndex() {
 		return file.getRoot();
 	}

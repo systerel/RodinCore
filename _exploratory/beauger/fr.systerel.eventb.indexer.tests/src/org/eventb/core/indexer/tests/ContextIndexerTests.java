@@ -78,9 +78,11 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL);
 
-		final IOccurrence occDecl = makeDecl(context);
-
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCst1 = newDecl(cst1, CST1);
+		
+		final IOccurrence occDecl = makeDecl(context, declCst1);
+
 
 		final ToolkitStub tk = new ToolkitStub(context);
 
@@ -99,10 +101,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
 
-		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeRefPred(axiom, 0, 4);
-
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCst1 = newDecl(cst1, CST1);
+	
+		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefPred(axiom, 0, 4, declCst1);
+
 
 		final ToolkitStub tk = new ToolkitStub(context);
 
@@ -134,11 +138,13 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_2OCC_SAME_AXM);
 
-		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occRef1 = makeRefPred(axiom, 0, 4);
-		final IOccurrence occRef2 = makeRefPred(axiom, 7, 11);
-
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCst1 = newDecl(cst1, CST1);
+
+		final IAxiom axiom = context.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occRef1 = makeRefPred(axiom, 0, 4, declCst1);
+		final IOccurrence occRef2 = makeRefPred(axiom, 7, 11, declCst1);
+
 
 		final ToolkitStub tk = new ToolkitStub(context);
 
@@ -215,7 +221,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				createContext(project, "importer", CST_1REF_AXM);
 
 		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
-		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8);
+		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8, declCst1);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declCst1);
 
@@ -323,10 +329,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_THM);
 
-		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeRefPred(thm, 9, 13);
-
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCst1 = newDecl(cst1, CST1);
+		
+		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefPred(thm, 9, 13, declCst1);
+
 
 		final ToolkitStub tk = new ToolkitStub(context);
 

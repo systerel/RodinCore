@@ -59,9 +59,11 @@ public class IndexManagerTests extends IndexTests {
 		declElt2 = new Declaration(elt2, name2);
 		final Descriptor desc1 = rodinIndex.makeDescriptor(declElt1);
 		final IInternalElement root = file.getRoot();
-		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root));
+		desc1.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root,
+				declElt1));
 		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root));
+		desc2.addOccurrence(IndexTestsUtil.createDefaultOccurrence(root,
+				declElt2));
 
 		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, root.getElementType());
@@ -102,7 +104,7 @@ public class IndexManagerTests extends IndexTests {
 		// removing elt1, adding elt2
 		rodinIndex.removeDescriptor(elt1);
 		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(createDefaultOccurrence(file.getRoot()));
+		desc2.addOccurrence(createDefaultOccurrence(file.getRoot(), declElt2));
 
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
@@ -115,8 +117,8 @@ public class IndexManagerTests extends IndexTests {
 	}
 
 	public void testIndexFileDoesNotExist() throws Exception {
-		final IRodinFile inexistentFile = project
-				.getRodinFile("inexistentFile.test");
+		final IRodinFile inexistentFile =
+				project.getRodinFile("inexistentFile.test");
 		manager.scheduleIndexing(inexistentFile);
 	}
 
@@ -147,14 +149,15 @@ public class IndexManagerTests extends IndexTests {
 
 		deleteProject("P2");
 	}
-	
+
 	public void testIndexerException() throws Exception {
 		final IIndexer exceptionIndexer = new FakeExceptionIndexer();
-		
+
 		manager.clearIndexers();
-		
-		RodinIndexer.register(exceptionIndexer, file.getRoot().getElementType());
-		
+
+		RodinIndexer
+				.register(exceptionIndexer, file.getRoot().getElementType());
+
 		// should not throw an exception
 		manager.scheduleIndexing(file);
 	}

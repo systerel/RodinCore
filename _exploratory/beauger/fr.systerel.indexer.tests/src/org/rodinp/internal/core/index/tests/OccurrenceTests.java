@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.TEST_KIND;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Occurrence;
 
 public class OccurrenceTests extends IndexTests {
@@ -32,6 +32,7 @@ public class OccurrenceTests extends IndexTests {
 	private final IOccurrenceKind defaultKind = TEST_KIND;
 	private IInternalLocation location;
 	private IOccurrence occ;
+	private IDeclaration declaration;
 
 
 	private static void assertLocation(IInternalLocation expected,
@@ -49,10 +50,11 @@ public class OccurrenceTests extends IndexTests {
 
 		final IRodinProject rodinProject = createRodinProject("P");
 		IRodinFile file = createRodinFile(rodinProject, "occ.test");
+		NamedElement elemLoc = createNamedElement(file, "elemLoc");
 		NamedElement elem = createNamedElement(file, "elem");
-
-		location = RodinIndexer.getInternalLocation(elem);
-		occ = new Occurrence(defaultKind, location);
+		declaration = new Declaration(elem, "elemName");
+		location = RodinIndexer.getInternalLocation(elemLoc);
+		occ = new Occurrence(defaultKind, location, declaration);
 	}
 
 	@Override

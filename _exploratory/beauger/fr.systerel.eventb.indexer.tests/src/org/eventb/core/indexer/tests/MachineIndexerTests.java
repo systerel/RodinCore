@@ -88,9 +88,10 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL);
 
-		final IOccurrence occDecl = makeDecl(machine);
-
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 =
+				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
+		final IOccurrence occDecl = makeDecl(machine, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -107,11 +108,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testOccurrenceOtherThanDecl() throws Exception {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
+		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 =
+				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
 
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeRefPred(invariant, 0, 4);
-
-		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefPred(invariant, 0, 4, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -141,11 +143,13 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_2OCC_SAME_INV);
 
-		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence occRef1 = makeRefPred(invariant, 0, 4);
-		final IOccurrence occRef2 = makeRefPred(invariant, 7, 11);
-
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 =
+				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
+
+		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
+		final IOccurrence occRef1 = makeRefPred(invariant, 0, 4, declVar1);
+		final IOccurrence occRef2 = makeRefPred(invariant, 7, 11, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -258,7 +262,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				createMachine(project, IMPORTER, VAR_1REF_INV);
 
 		final IInvariant invariant = importer.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence occVar1 = makeRefPred(invariant, 0, 4);
+		final IOccurrence occVar1 = makeRefPred(invariant, 0, 4, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVar1);
 
@@ -278,7 +282,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, IMPORTER, VAR_1DECL);
 
-		final IOccurrence occDecl = makeRef(importer);
+		final IOccurrence occDecl = makeRef(importer, declVarExp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
 
@@ -366,8 +370,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				createMachine(project, MCH_BARE_NAME, CST_1REF_SET_1REF);
 
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence refCst1 = makeRefPred(invariant, 0, 4);
-		final IOccurrence refSet1 = makeRefPred(invariant, 7, 11);
+		final IOccurrence refCst1 = makeRefPred(invariant, 0, 4, declCst1);
+		final IOccurrence refSet1 = makeRefPred(invariant, 7, 11, declSet1);
 
 		final ToolkitStub tk = new ToolkitStub(machine, declCst1, declSet1);
 
@@ -397,10 +401,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_1REF_THM);
 
-		final ITheorem theorem = machine.getTheorem(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeRefPred(theorem, 0, 4);
-
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 =
+				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
+
+		final ITheorem theorem = machine.getTheorem(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefPred(theorem, 0, 4, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -428,10 +434,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_1REF_VRT);
 
-		final IVariant variant = machine.getVariant(INTERNAL_ELEMENT1);
-		final IOccurrence occRef = makeRefExpr(variant, 5, 9);
-
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 =
+				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
+
+		final IVariant variant = machine.getVariant(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefExpr(variant, 5, 9, declVar1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -461,7 +469,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 
-		final IDeclaration declEvt1 = OccUtils.newDecl(event, event.getLabel());
+		final IDeclaration declEvt1 = newDecl(event, event.getLabel());
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -504,7 +512,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IRefinesEvent refinesImp =
 				eventImp.getRefinesClause(INTERNAL_ELEMENT1);
-		final IOccurrence refEventImp = makeRefTarget(refinesImp);
+		final IOccurrence refEventImp = makeRefTarget(refinesImp, declEventExp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declEventExp);
 
@@ -582,9 +590,10 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 		final IParameter prm1 = event.getParameter(INTERNAL_ELEMENT1);
+		final IDeclaration declPrm1 = newDecl(prm1, PRM1);
 
 		final IGuard guard = event.getGuard(INTERNAL_ELEMENT1);
-		final IOccurrence refPrm1 = makeRefPred(guard, 0, 4);
+		final IOccurrence refPrm1 = makeRefPred(guard, 0, 4, declPrm1);
 
 		final ToolkitStub tk = new ToolkitStub(machine);
 
@@ -612,7 +621,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IParameter paramImp = eventImp.getParameter(INTERNAL_ELEMENT1);
-		final IOccurrence refParamImp = makeRefIdent(paramImp);
+		final IOccurrence refParamImp = makeRefIdent(paramImp, declPrmExp);
 
 		final ToolkitStub tk =
 				new ToolkitStub(importer, declEventExp, declPrmExp);
@@ -661,8 +670,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 
 		final IWitness witness = eventImp.getWitness(INTERNAL_ELEMENT1);
-		final IOccurrence refLblWitImp = makeRefLabel(witness);
-		final IOccurrence refPredWitImp = makeRefPred(witness, 0, 4);
+		final IOccurrence refLblWitImp = makeRefLabel(witness, declPrmExp);
+		final IOccurrence refPredWitImp =
+				makeRefPred(witness, 0, 4, declPrmExp);
 
 		final ToolkitStub tk =
 				new ToolkitStub(importer, declEventExp, declPrmExp);
@@ -707,13 +717,14 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, IMPORTER, VAR_1DECL_1REF_ACT);
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVarImp = newDecl(varImp, VAR1);
 
 		final IEvent event = importer.getEvent(INTERNAL_ELEMENT1);
 		final IAction action = event.getAction(INTERNAL_ELEMENT1);
 
-		final IOccurrence occModif = makeModifAssign(action, 0, 4);
+		final IOccurrence occModif = makeModifAssign(action, 0, 4, declVarImp);
 
-		final IOccurrence refVarExp = makeRef(importer);
+		final IOccurrence refVarExp = makeRef(importer, declVarExp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
 
@@ -767,7 +778,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent event = importer.getEvent(INTERNAL_ELEMENT1);
 		final IAction action = event.getAction(INTERNAL_ELEMENT1);
 
-		final IOccurrence occRef = makeModifAssign(action, 0, 4);
+		final IOccurrence occRef = makeModifAssign(action, 0, 4, declVarExp);
 
 		tk.assertOccurrences(varExp, occRef);
 	}
@@ -807,8 +818,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IWitness witness = event.getWitness(INTERNAL_ELEMENT1);
 
-		final IOccurrence occRefLblWit = makeRefLabel(witness);
-		final IOccurrence occRefPredWit = makeRefPred(witness, 0, 5);
+		final IOccurrence occRefLblWit = makeRefLabel(witness, declVarExp);
+		final IOccurrence occRefPredWit =
+				makeRefPred(witness, 0, 5, declVarExp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
 
@@ -820,6 +832,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	}
 
 	public void testEventVarRedeclaredRefInGuard() throws Exception {
+		//FIXME : problem with the concrete declaration of the variable
+		// the one from the export vs the one from the import.
 		final IMachineRoot exporter =
 				createMachine(project, EXPORTER, VAR_1DECL);
 
@@ -856,11 +870,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				createMachine(project, IMPORTER, VAR_1DECL_1REF_GRD);
 
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVarImp = newDecl(varImp, VAR1);
 
 		final IEvent event = importer.getEvent(INTERNAL_ELEMENT1);
 		final IGuard guard = event.getGuard(INTERNAL_ELEMENT1);
 
-		final IOccurrence occRef = makeRefPred(guard, 7, 11);
+		final IOccurrence occRef = makeRefPred(guard, 7, 11, declVarImp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
 
@@ -887,7 +902,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IParameter prmImp = eventImp.getParameter(INTERNAL_ELEMENT1);
 		final IGuard grdImp = eventImp.getGuard(INTERNAL_ELEMENT1);
-		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4);
+		
+		final IDeclaration declPrmImp = newDecl(prmImp, PRM1);
+		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4, declPrmImp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declPrmExp, declEvExp);
 
@@ -944,8 +961,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 
 		final IWitness witness = eventImp.getWitness(INTERNAL_ELEMENT1);
-		final IOccurrence refLblWitImp = makeRefLabel(witness);
-		final IOccurrence refPredWitImp = makeRefPred(witness, 0, 4);
+		final IOccurrence refLblWitImp = makeRefLabel(witness, declPrmExp);
+		final IOccurrence refPredWitImp =
+				makeRefPred(witness, 0, 4, declPrmExp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declEvExp, declPrmExp);
 
@@ -985,7 +1003,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
 		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence refInvImp = makeRefPred(invImp, 0, 4);
+		final IDeclaration declVarImp = newDecl(varImp, CST1);
+		final IOccurrence refInvImp = makeRefPred(invImp, 0, 4, declVarImp);
 
 		final ToolkitStub tk = new ToolkitStub(importer, declCstExp);
 

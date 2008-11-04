@@ -116,7 +116,7 @@ public class Resources {
 		final IDeclaration declaration =
 				new Declaration(testElt1, testElt1Name);
 		final IOccurrence occurrence =
-				createDefaultOccurrence(rodinFile.getRoot());
+				createDefaultOccurrence(rodinFile.getRoot(), declaration);
 
 		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
 

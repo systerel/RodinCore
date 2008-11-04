@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IInternalLocation;
@@ -19,16 +20,21 @@ public class Occurrence implements IOccurrence {
 
 	private final IOccurrenceKind kind;
 	private final IInternalLocation location;
+	private final IDeclaration declaration;
 
-	public Occurrence(IOccurrenceKind kind, IInternalLocation location) {
+	public Occurrence(IOccurrenceKind kind, IInternalLocation location, IDeclaration declaration) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
 		if (location == null) {
 			throw new NullPointerException("null location");
 		}
+		if (declaration == null) {
+			throw new NullPointerException("null declaration");
+		}
 		this.kind = kind;
 		this.location = location;
+		this.declaration = declaration;
 	}
 
 	public IOccurrenceKind getKind() {
@@ -43,6 +49,10 @@ public class Occurrence implements IOccurrence {
 		return location.getRodinFile();
 	}
 	
+	public IDeclaration getDeclaration() {
+		return declaration;
+	}
+
 	// DEBUG
 	@Override
 	public String toString() {
@@ -50,6 +60,7 @@ public class Occurrence implements IOccurrence {
 		sb.append("kind: " + kind.getName());
 		sb.append(" ");
 		sb.append("location: " + location);
+		sb.append("declaration: " + declaration);
 		return sb.toString();
 	}
 
@@ -59,6 +70,7 @@ public class Occurrence implements IOccurrence {
 		int result = 1;
 		result = prime * result + kind.hashCode();
 		result = prime * result + location.hashCode();
+		result = prime * result + declaration.hashCode();
 		return result;
 	}
 
@@ -72,6 +84,8 @@ public class Occurrence implements IOccurrence {
 		if (!kind.equals(other.kind))
 			return false;
 		if (!location.equals(other.location))
+			return false;
+		if (!declaration.equals(other.declaration))
 			return false;
 		return true;
 	}

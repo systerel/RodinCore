@@ -25,9 +25,9 @@ import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Occurrence;
@@ -38,67 +38,76 @@ import org.rodinp.internal.core.index.Occurrence;
  */
 public class OccUtils {
 
-	public static IOccurrence makeDecl(final IInternalElement element) {
+	public static IOccurrence makeDecl(IInternalElement element,
+			IDeclaration declaration) {
 		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
-		return newOcc(DECLARATION, loc);
+		return newOcc(DECLARATION, loc, declaration);
 	}
 
 	public static IOccurrence makeRef(IInternalElement element,
-			IAttributeType.String attributeType, int start, int end) {
-		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
-				attributeType, start, end);
-		return newOcc(REFERENCE, loc);
+			IAttributeType.String attributeType, int start, int end,
+			IDeclaration declaration) {
+		final IInternalLocation loc =
+				RodinIndexer.getRodinLocation(element, attributeType, start,
+						end);
+		return newOcc(REFERENCE, loc, declaration);
 	}
-	
+
 	public static IOccurrence makeRef(IInternalElement element,
-			IAttributeType.String attributeType) {
-		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
-				attributeType);
-		return newOcc(REFERENCE, loc);
+			IAttributeType.String attributeType, IDeclaration declaration) {
+		final IInternalLocation loc =
+				RodinIndexer.getRodinLocation(element, attributeType);
+		return newOcc(REFERENCE, loc, declaration);
 	}
-	
-	public static IOccurrence makeRef(IInternalElement element) {
+
+	public static IOccurrence makeRef(IInternalElement element,
+			IDeclaration declaration) {
 		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
-		return newOcc(REFERENCE, loc);
+		return newOcc(REFERENCE, loc, declaration);
 	}
 
 	public static IOccurrence makeModif(IInternalElement element,
-			IAttributeType.String attributeType, int start, int end) {
-		final IInternalLocation loc = RodinIndexer.getRodinLocation(element,
-				attributeType, start, end);
-		return newOcc(MODIFICATION, loc);
+			IAttributeType.String attributeType, int start, int end,
+			IDeclaration declaration) {
+		final IInternalLocation loc =
+				RodinIndexer.getRodinLocation(element, attributeType, start,
+						end);
+		return newOcc(MODIFICATION, loc, declaration);
 	}
-	
+
 	public static IOccurrence makeRefPred(IPredicateElement pred, int start,
-			int end) {
-		return makeRef(pred, EventBAttributes.PREDICATE_ATTRIBUTE, start, end);
+			int end, IDeclaration declaration) {
+		return makeRef(pred, EventBAttributes.PREDICATE_ATTRIBUTE, start, end,
+				declaration);
 	}
 
 	public static IOccurrence makeModifAssign(IAssignmentElement assign,
-			int start, int end) {
+			int start, int end, IDeclaration declaration) {
 		return makeModif(assign, EventBAttributes.ASSIGNMENT_ATTRIBUTE, start,
-				end);
+				end, declaration);
 	}
 
-	public static IOccurrence makeRefExpr(IExpressionElement expr,
-			int start, int end) {
-		return makeRef(expr, EventBAttributes.EXPRESSION_ATTRIBUTE, start,
-				end);
+	public static IOccurrence makeRefExpr(IExpressionElement expr, int start,
+			int end, IDeclaration declaration) {
+		return makeRef(expr, EventBAttributes.EXPRESSION_ATTRIBUTE, start, end,
+				declaration);
 	}
 
-	public static IOccurrence makeRefLabel(ILabeledElement label) {
-		return makeRef(label, EventBAttributes.LABEL_ATTRIBUTE);
+	public static IOccurrence makeRefLabel(ILabeledElement label,
+			IDeclaration declaration) {
+		return makeRef(label, EventBAttributes.LABEL_ATTRIBUTE, declaration);
 	}
-	
-	public static IOccurrence makeRefIdent(IIdentifierElement ident) {
-		return makeRef(ident, EventBAttributes.IDENTIFIER_ATTRIBUTE);
+
+	public static IOccurrence makeRefIdent(IIdentifierElement ident,
+			IDeclaration declaration) {
+		return makeRef(ident, EventBAttributes.IDENTIFIER_ATTRIBUTE,
+				declaration);
 	}
-	
-	public static IOccurrence makeRefTarget(IRefinesEvent refines) {
-		return makeRef(refines, EventBAttributes.TARGET_ATTRIBUTE);
+
+	public static IOccurrence makeRefTarget(IRefinesEvent refines,
+			IDeclaration declaration) {
+		return makeRef(refines, EventBAttributes.TARGET_ATTRIBUTE, declaration);
 	}
-	
-	
 
 	@SuppressWarnings("restriction")
 	public static IDeclaration newDecl(IInternalElement elt, String name) {
@@ -108,8 +117,8 @@ public class OccUtils {
 
 	@SuppressWarnings("restriction")
 	public static IOccurrence newOcc(IOccurrenceKind kind,
-			IInternalLocation location) {
-		return new Occurrence(kind, location);
+			IInternalLocation location, IDeclaration declaration) {
+		return new Occurrence(kind, location, declaration);
 	}
 
 	public static List<IDeclaration> makeDeclList(IDeclaration... declarations) {
