@@ -53,7 +53,8 @@ public class MachineIndexer extends EventBIndexer {
 
 		final SymbolTable importST = new SymbolTable(null);
 		final SymbolTable eventST = new SymbolTable(null);
-		final Map<IEvent, SymbolTable> absParamTables = new HashMap<IEvent, SymbolTable>();
+		final Map<IEvent, SymbolTable> absParamTables =
+				new HashMap<IEvent, SymbolTable>();
 		processImports(index.getImports(), absParamTables, eventST, importST);
 		checkCancel();
 
@@ -112,27 +113,33 @@ public class MachineIndexer extends EventBIndexer {
 			SymbolTable declImports) throws RodinDBException {
 
 		for (IIdentifierElement ident : idents) {
-			final String name = ident.getIdentifierString();
-			final IDeclaration declaration = indexDeclaration(ident, name);
-			index.export(declaration);
-			final IDeclaration previousDecl = declImports.lookUpper(name);
-			if (previousDecl != null) {
-				final IInternalElement element = previousDecl.getElement();
-				if (element instanceof IVariable) {
-					// re-declaration of abstract variable
-					final IInternalElement root = index.getRootToIndex();
-					indexReference(previousDecl, getInternalLocation(root));
-				}
+			if (ident.hasIdentifierString()) {
+				final String name = ident.getIdentifierString();
+				final IDeclaration declaration = indexDeclaration(ident, name);
+				index.export(declaration);
+				refIfRedeclared(name, declImports);
+				declImports.put(declaration);
 			}
-			declImports.put(declaration);
+		}
+	}
+
+	private void refIfRedeclared(final String name, SymbolTable declImports) {
+		final IDeclaration previousDecl = declImports.lookUpper(name);
+		if (previousDecl != null) {
+			final IInternalElement element = previousDecl.getElement();
+			if (element instanceof IVariable) {
+				// re-declaration of abstract variable
+				final IInternalElement root = index.getRootToIndex();
+				indexReference(previousDecl, getInternalLocation(root));
+			}
 		}
 	}
 
 	private void processExpressionElements(IExpressionElement[] exprs,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IExpressionElement expr : exprs) {
-			final ExpressionIndexer exprIndexer = new ExpressionIndexer(expr,
-					symbolTable, index);
+			final ExpressionIndexer exprIndexer =
+					new ExpressionIndexer(expr, symbolTable, index);
 			exprIndexer.process();
 
 			checkCancel();
@@ -143,8 +150,9 @@ public class MachineIndexer extends EventBIndexer {
 			Map<IEvent, SymbolTable> absParamTables, SymbolTable eventST,
 			SymbolTable declImportST) throws RodinDBException {
 		for (IEvent event : events) {
-			final EventIndexer eventIndexer = new EventIndexer(event,
-					absParamTables, eventST, declImportST, index);
+			final EventIndexer eventIndexer =
+					new EventIndexer(event, absParamTables, eventST,
+							declImportST, index);
 			eventIndexer.process();
 		}
 	}
@@ -154,15 +162,15 @@ public class MachineIndexer extends EventBIndexer {
 			throwIllArgException(root);
 		}
 		final IMachineRoot machine = (IMachineRoot) root;
-	
+
 		final List<IRodinFile> dependFiles = new ArrayList<IRodinFile>();
-	
+
 		final IRefinesMachine[] refines = machine.getRefinesClauses();
 		final ISeesContext[] sees = machine.getSeesClauses();
-	
+
 		addRefinedFiles(refines, dependFiles);
 		addSeenFiles(sees, dependFiles);
-	
+
 		return dependFiles.toArray(new IRodinFile[dependFiles.size()]);
 	}
 
@@ -179,7 +187,7 @@ public class MachineIndexer extends EventBIndexer {
 				extendedFiles.add(seenFile);
 			}
 		}
-	
+
 	}
 
 	/**
@@ -188,12 +196,12 @@ public class MachineIndexer extends EventBIndexer {
 	 */
 	private IRodinFile getSeenFile(ISeesContext seesContext)
 			throws RodinDBException {
-	
+
 		final String seenBareName = seesContext.getSeenContextName();
 		final String seenFileName = getContextFileName(seenBareName);
-	
+
 		final IRodinProject project = seesContext.getRodinProject();
-	
+
 		return project.getRodinFile(seenFileName);
 	}
 

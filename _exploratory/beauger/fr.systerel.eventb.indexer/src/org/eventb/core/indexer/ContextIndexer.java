@@ -71,11 +71,13 @@ public class ContextIndexer extends EventBIndexer {
 		// index declaration for each identifier element and export them
 		// put the declarations into the SymbolTable
 		for (IIdentifierElement ident : elems) {
-			final IDeclaration declaration = indexDeclaration(ident, ident
-					.getIdentifierString());
-			export(declaration);
-			// FIXME possible conflict between sets and constants
-			symbolTable.put(declaration);
+			if (ident.hasIdentifierString()) {
+				final IDeclaration declaration =
+						indexDeclaration(ident, ident.getIdentifierString());
+				export(declaration);
+				// FIXME possible conflict between sets and constants
+				symbolTable.put(declaration);
+			}
 		}
 	}
 

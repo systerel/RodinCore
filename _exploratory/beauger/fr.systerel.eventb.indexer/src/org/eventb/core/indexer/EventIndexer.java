@@ -217,13 +217,15 @@ public class EventIndexer extends Cancellable {
 	private void processParameters(final IParameter[] parameters,
 			SymbolTable totalST) throws RodinDBException {
 		for (IParameter parameter : parameters) {
-			final String ident = parameter.getIdentifierString();
+			if (parameter.hasIdentifierString()) {
+				final String ident = parameter.getIdentifierString();
 
-			IDeclaration declaration = index.declare(parameter, ident);
-			totalST.put(declaration);
-			index.export(declaration);
+				IDeclaration declaration = index.declare(parameter, ident);
+				totalST.put(declaration);
+				index.export(declaration);
 
-			refAnyAbstractParam(ident, parameter, totalST);
+				refAnyAbstractParam(ident, parameter, totalST);
+			}
 		}
 	}
 

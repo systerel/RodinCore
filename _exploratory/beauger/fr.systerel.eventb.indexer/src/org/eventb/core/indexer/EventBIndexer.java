@@ -26,30 +26,29 @@ import org.rodinp.core.index.IInternalLocation;
 
 public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
-	private static final boolean DEBUG = false;
-	// FIXME manage exceptions and remove (or make an option)
+	public static boolean DEBUG;
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
 	protected IIndexingToolkit index;
 
-	// TODO change return type to boolean meaning indexing success
-	public void index(IIndexingToolkit index) {
+	public boolean index(IIndexingToolkit index) {
 		this.index = index;
 		final IInternalElement root = index.getRootToIndex();
 
 		try {
 			index(root);
+			return true;
 		} catch (RodinDBException e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
-			// just return immediately
+			return false;
 		} catch (CancellationException e) {
 			if (DEBUG) {
 				e.printStackTrace();
 			}
-			// just return immediately
+			return false;
 		}
 	}
 

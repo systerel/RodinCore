@@ -66,7 +66,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(declCst1);
 	}
@@ -88,7 +88,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(cst1, occDecl);
 
@@ -112,7 +112,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(cst1, occRef);
 	}
@@ -150,7 +150,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(cst1, occRef1, occRef2);
 	}
@@ -169,7 +169,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertExports(declCst1);
 	}
@@ -192,7 +192,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertExports(declCst1);
 	}
@@ -227,7 +227,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(declCst1.getElement(), occCst1);
 	}
@@ -248,7 +248,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(declCst1.getElement());
 	}
@@ -275,7 +275,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(declCstExp1.getElement());
 		tk.assertEmptyOccurrences(declCstExp2.getElement());
@@ -311,7 +311,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(declSet1);
 	}
@@ -340,7 +340,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		final ContextIndexer indexer = new ContextIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(cst1, occRef);
 	}
@@ -382,7 +382,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final ContextIndexer indexer = new ContextIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertFalse(indexer.index(tk));
 	}
 
 	/**
@@ -410,7 +410,8 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final ContextIndexer indexer = new ContextIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
+		// true because the axiom with missing attribute was ignored
 	}
 
 	/**
@@ -438,7 +439,8 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final ContextIndexer indexer = new ContextIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
+		// true because the axiom that did not parse was ignored
 	}
 
 }

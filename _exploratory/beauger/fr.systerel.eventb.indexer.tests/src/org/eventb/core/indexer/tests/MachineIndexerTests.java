@@ -76,7 +76,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(declVar1);
 	}
@@ -97,7 +97,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(var1, occDecl);
 	}
@@ -119,7 +119,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
@@ -155,7 +155,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(var1, occRef1, occRef2);
 	}
@@ -174,7 +174,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertExports(declVar1);
 	}
@@ -197,7 +197,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyExports();
 	}
@@ -232,7 +232,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertExports(declSet1, declCst1);
 	}
@@ -268,7 +268,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(declVar1.getElement(), occVar1);
 	}
@@ -288,7 +288,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(varExp, occDecl);
 	}
@@ -309,7 +309,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(declVar1.getElement());
 	}
@@ -336,7 +336,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(declVarExp1.getElement());
 		tk.assertEmptyOccurrences(declVarExp2.getElement());
@@ -377,7 +377,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(set1, refSet1);
 		tk.assertOccurrences(cst1, refCst1);
@@ -412,7 +412,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
@@ -445,7 +445,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
@@ -475,7 +475,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(declEvt1);
 		tk.assertExports(declEvt1);
@@ -518,7 +518,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(eventImp);
 		tk.assertOccurrences(eventExp, refEventImp);
@@ -578,7 +578,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(IParameter.ELEMENT_TYPE, declPrm1);
 		tk.assertExports(IParameter.ELEMENT_TYPE, declPrm1);
@@ -599,7 +599,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(prm1, refPrm1);
 	}
@@ -628,7 +628,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(prmExp, refParamImp);
 	}
@@ -679,7 +679,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
 	}
@@ -730,7 +730,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 		tk.assertOccurrencesOtherThanDecl(varImp, occModif);
 		tk.assertOccurrences(varExp, refVarExp);
 	}
@@ -769,7 +769,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		// NOTE: event-b compliant behavior should be:
 		// tk.assertEmptyOccurrences(var1);
@@ -826,14 +826,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(varExp, occRefLblWit, occRefPredWit);
 	}
 
 	public void testEventVarRedeclaredRefInGuard() throws Exception {
-		//FIXME : problem with the concrete declaration of the variable
-		// the one from the export vs the one from the import.
 		final IMachineRoot exporter =
 				createMachine(project, EXPORTER, VAR_1DECL);
 
@@ -881,7 +879,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(varImp, occRef);
 	}
@@ -910,7 +908,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(prmImp, grdRef);
 	}
@@ -969,7 +967,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrencesOtherThanDecl(varImp);
 		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
@@ -1010,7 +1008,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final MachineIndexer indexer = new MachineIndexer();
 
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 
 		tk.assertEmptyOccurrences(cstExp);
 		tk.assertOccurrencesOtherThanDecl(varImp, refInvImp);
@@ -1037,7 +1035,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final MachineIndexer indexer = new MachineIndexer();
 
 		try {
-			indexer.index(tk);
+			assertTrue(indexer.index(tk));
 			fail("IllegalArgumentException expected");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -1065,7 +1063,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final MachineIndexer indexer = new MachineIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertFalse(indexer.index(tk));
 	}
 
 	/**
@@ -1087,7 +1085,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final MachineIndexer indexer = new MachineIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 	}
 
 	/**
@@ -1115,7 +1113,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final MachineIndexer indexer = new MachineIndexer();
 
 		// should not throw an exception
-		indexer.index(tk);
+		assertTrue(indexer.index(tk));
 	}
 
 }

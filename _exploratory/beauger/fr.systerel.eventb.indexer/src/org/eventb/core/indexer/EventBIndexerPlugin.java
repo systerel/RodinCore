@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.internal.core.index.DeltaQueuer;
+import org.rodinp.internal.core.index.IndexManager;
 
 public class EventBIndexerPlugin extends Plugin {
 
@@ -33,6 +36,7 @@ public class EventBIndexerPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		configurePluginDebugOptions();
 		RodinIndexer.register(new ContextIndexer(), IContextRoot.ELEMENT_TYPE);
 		RodinIndexer.register(new MachineIndexer(), IMachineRoot.ELEMENT_TYPE);
 	}
@@ -49,6 +53,17 @@ public class EventBIndexerPlugin extends Plugin {
 	 */
 	public static EventBIndexerPlugin getDefault() {
 		return plugin;
+	}
+
+	public void configurePluginDebugOptions() {
+		if (plugin.isDebugging()) {
+			String option =
+					Platform
+							.getDebugOption("fr.systerel.eventb.indexer/debug");
+			if (option != null)
+				EventBIndexer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+
 	}
 
 }
