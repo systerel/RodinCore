@@ -26,6 +26,7 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexManagerTests extends IndexTests {
@@ -151,14 +152,32 @@ public class IndexManagerTests extends IndexTests {
 	}
 
 	public void testIndexerException() throws Exception {
-		final IIndexer exceptionIndexer = new FakeExceptionIndexer();
+		final IIndexer exceptIndexer = new FakeExceptionIndexer();
 
 		manager.clearIndexers();
 
-		RodinIndexer
-				.register(exceptionIndexer, file.getRoot().getElementType());
+		RodinIndexer.register(exceptIndexer, file.getRoot().getElementType());
 
 		// should not throw an exception
 		manager.scheduleIndexing(file);
+
+		final FileTable fileTable = manager.getFileTable(project);
+		final IInternalElement[] elements = fileTable.get(file);
+		assertEquals("no element expected", 0, elements.length);
+	}
+
+	public void testIndexerFailed() throws Exception {
+		final IIndexer failIndexer = new FakeFailIndexer();
+
+		manager.clearIndexers();
+
+		RodinIndexer.register(failIndexer, file.getRoot().getElementType());
+
+		// should not throw an exception
+		manager.scheduleIndexing(file);
+
+		final FileTable fileTable = manager.getFileTable(project);
+		final IInternalElement[] elements = fileTable.get(file);
+		assertEquals("no element expected", 0, elements.length);
 	}
 }

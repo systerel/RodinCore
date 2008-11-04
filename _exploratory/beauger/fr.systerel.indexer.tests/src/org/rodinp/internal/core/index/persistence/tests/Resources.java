@@ -234,8 +234,6 @@ public class Resources {
 
 		final TotalOrder<IRodinFile> order = pim.getOrder();
 
-		// fill elements
-		
 		// order
 		order.setPredecessors(file2, makeIRFArray(file1));
 		order.setPredecessors(file3, makeIRFArray(file1, file2));
@@ -244,11 +242,13 @@ public class Resources {
 		order.setToIter(file2);
 		order.setToIter(file3);
 
+		// make sorted
+		order.hasNext();
 		
 		pr.getRodinFiles().add(file1);
 		pr.getRodinFiles().add(file2);
 		pr.getRodinFiles().add(file3);
-
+		
 		return pr;
 	}
 

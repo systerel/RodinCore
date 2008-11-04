@@ -34,8 +34,9 @@ import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 public class FakeNameIndexer implements IIndexer {
 
 	private static final boolean DEBUG = false;
-	
-	private static final String ID = "fr.systerel.indexer.tests.fakenameindexer";
+
+	private static final String ID =
+			"fr.systerel.indexer.tests.fakenameindexer";
 
 	private final String[] names;
 	private final int numberEach;
@@ -49,35 +50,42 @@ public class FakeNameIndexer implements IIndexer {
 		indexedElements = new HashMap<String, Set<IInternalElement>>();
 	}
 
-	public void index(IIndexingToolkit index) {
+	public boolean index(IIndexingToolkit index) {
 		indexedElements.clear();
-		
-		IRodinFile rodinFile = index.getRootToIndex().getRodinFile(); 
+
+		IRodinFile rodinFile = index.getRootToIndex().getRodinFile();
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
-				final NamedElement elt = createNamedElement(
-						rodinFile, name);
+				final NamedElement elt = createNamedElement(rodinFile, name);
 				final IDeclaration declaration = index.declare(elt, name);
-				final HashSet<IInternalElement> set = new HashSet<IInternalElement>();
+				final HashSet<IInternalElement> set =
+						new HashSet<IInternalElement>();
 				indexedElements.put(name, set);
 				set.add(elt);
 				for (int i = 0; i < numberEach; i++) {
-					final NamedElement element = IndexTestsUtil
-							.createNamedElement(rodinFile, name + "_DB" + i);
-					final IInternalLocation loc = RodinIndexer
-							.getInternalLocation(element);
+					final NamedElement element =
+							IndexTestsUtil.createNamedElement(rodinFile, name
+									+ "_DB"
+									+ i);
+					final IInternalLocation loc =
+							RodinIndexer.getInternalLocation(element);
 					index.addOccurrence(declaration, TEST_KIND, loc);
 					if (DEBUG) {
-						System.out.println(name + ": "
+						System.out.println(name
+								+ ": "
 								+ element.getElementName());
 					}
 				}
 			}
+			return true;
 		} catch (CoreException e) {
 			e.printStackTrace();
 			TestCase.fail("FakeNameIndexer unable to index "
-					+ rodinFile.getBareName() + "\nreason: "+e.getLocalizedMessage());
+					+ rodinFile.getBareName()
+					+ "\nreason: "
+					+ e.getLocalizedMessage());
+			return false;
 		}
 	}
 

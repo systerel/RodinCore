@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,11 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingToolkit;
 
-public class FakeExceptionIndexer implements IIndexer {
+/**
+ * @author Nicolas Beauger
+ *
+ */
+public class FakeFailIndexer implements IIndexer {
 
 	private static final String ID = "fr.systerel.indexer.tests.fakeexceptionindexer";
 	
@@ -30,7 +34,7 @@ public class FakeExceptionIndexer implements IIndexer {
 	}
 
 	public boolean index(IIndexingToolkit index) {
-		throw new NullPointerException();
+		return false;
 	}
 
 }

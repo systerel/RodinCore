@@ -114,17 +114,17 @@ public class XMLUtils {
 	}
 
 	private static void assertNode(Node expNode, Node actNode) {
-		System.out.println("actual node = "+actNode.getNodeName());
+		System.out.println("actual node = " + actNode.getNodeName());
 
 		assertNodeName(expNode, actNode);
 
 		if (expNode.hasAttributes()) {
-			assertNodeAttributes(expNode, actNode);
+			assertNodeAttributes((Element) expNode, (Element) actNode);
 		}
-		
+
 		removeTextChildNodes(expNode);
 		removeTextChildNodes(actNode);
-			if (expNode.hasChildNodes()) {
+		if (expNode.hasChildNodes()) {
 			assertNodeChildNodes(expNode, actNode);
 		}
 	}
@@ -135,28 +135,31 @@ public class XMLUtils {
 		assertEquals("bad name", expName, actName);
 	}
 
-	private static void assertNodeAttributes(Node expNode, Node actNode) {
+	private static void assertNodeAttributes(Element expNode, Element actNode) {
 		final NamedNodeMap expAttrs = expNode.getAttributes();
-		final NamedNodeMap actAttrs = actNode.getAttributes();
 
-		final int expLength = expAttrs.getLength();
-		final int actLength = actAttrs.getLength();
-		assertEquals("bad attributes length", expLength, actLength);
-		// FIXME maybe a problem with element order
-		for (int i = 0; i < expLength; i++) {
-			assertNode(expAttrs.item(i), actAttrs.item(i));
+		for (int i = 0; i < expAttrs.getLength(); i++) {
+
+			final Node expAtt = expAttrs.item(i);
+			final String expName = expAtt.getNodeName();
+			final String actValue = actNode.getAttribute(expName);
+			final String expValue = expAtt.getNodeValue();
+			assertEquals("bad value for attribute "
+					+ expName
+					+ " in node "
+					+ actNode, expValue, actValue);
 		}
 	}
 
 	private static void assertNodeChildNodes(Node expNode, Node actNode) {
-		
+
 		final NodeList expCNodes = expNode.getChildNodes();
 		final NodeList actCNodes = actNode.getChildNodes();
 
 		final int expCLength = expCNodes.getLength();
-		
+
 		final int actCLength = actCNodes.getLength();
-		 assertEquals("bad child nodes length", expCLength, actCLength);
+		assertEquals("bad child nodes length", expCLength, actCLength);
 		for (int i = 0; i < expCLength; i++) {
 			final Node actCNode = actCNodes.item(i);
 			if (!actCNode.getNodeName().equals("#text")) {
@@ -174,7 +177,7 @@ public class XMLUtils {
 				toRemove.add(child);
 			}
 		}
-		for (Node n: toRemove) {
+		for (Node n : toRemove) {
 			node.removeChild(n);
 		}
 	}

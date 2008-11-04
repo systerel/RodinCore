@@ -36,7 +36,7 @@ public class FakeIndexer implements IIndexer {
 		return NO_FILES;
 	}
 
-	public void index(IIndexingToolkit index) {
+	public boolean index(IIndexingToolkit index) {
 		final IRodinFile file = index.getRootToIndex().getRodinFile();
 		final IDeclaration[] imports = index.getImports();
 
@@ -57,6 +57,7 @@ public class FakeIndexer implements IIndexer {
 				}
 			}
 		}
+		return true;
 	}
 
 	private static IDeclaration findDeclaration(IInternalElement element,
