@@ -69,12 +69,18 @@ public class FileIndexingManager {
 
 		printVerbose(makeMessage("indexing", file, indexer));
 
-		IIndexingResult result = IndexingResult.failed(file);
+		final IIndexingResult result;
 
 		try {
-			indexer.index(indexingToolkit);
+			final boolean success = indexer.index(indexingToolkit);
+			if(!success) {
+				return IndexingResult.failed(file);
+			}
 			indexingToolkit.complete();
 			result = indexingToolkit.getResult();
+			printVerbose(makeMessage("indexing complete", file, indexer));
+			printVerbose("result:\n" + result);
+			return result;
 		} catch (Throwable t) {
 			printDebug(makeMessage("Exception while indexing: "
 					+ t.getMessage(), file, indexer));
@@ -86,9 +92,6 @@ public class FileIndexingManager {
 
 			return IndexingResult.failed(file);
 		}
-		printVerbose(makeMessage("indexing complete", file, indexer));
-		printVerbose("result:\n" + result);
-		return result;
 	}
 
 	private String makeMessage(String context, IRodinFile file,

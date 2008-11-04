@@ -84,6 +84,6 @@ public interface IIndexer {
 	 *            the indexing facility to which to send the results.
 	 * @see IIndexingToolkit
 	 */
-	public void index(IIndexingToolkit index);
+	public boolean index(IIndexingToolkit index);
 
 }
