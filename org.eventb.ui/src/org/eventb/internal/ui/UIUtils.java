@@ -64,6 +64,8 @@ import org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.DefaultIdentifierAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.DefaultLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
@@ -575,16 +577,16 @@ public class UIUtils {
 
 	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
 			IAttributedElement element) {
-		if (element instanceof ICarrierSet){
+		if (element instanceof ICarrierSet) {
 			return new CarrierSetIdentifierAttributeFactory();
-		}else if(element instanceof IConstant){
+		} else if (element instanceof IConstant) {
 			return new ConstantIdentifierAttributeFactory();
-		}else if(element instanceof IParameter){
+		} else if (element instanceof IParameter) {
 			return new ParameterIdentifierAttributeFactory();
-		}else if(element instanceof IVariable){
+		} else if (element instanceof IVariable) {
 			return new VariableIdentifierAttributeFactory();
-		}else{
-			return null;
+		} else {
+			return new DefaultIdentifierAttributeFactory();
 		}
 	}
 	
@@ -600,7 +602,7 @@ public class UIUtils {
 		} else if (type == IVariable.ELEMENT_TYPE) {
 			return new VariableIdentifierAttributeFactory();
 		} else {
-			return null;
+			return new DefaultIdentifierAttributeFactory();
 		}
 	}
 	
@@ -608,20 +610,20 @@ public class UIUtils {
 			IAttributedElement element) {
 		if (element instanceof IAction) {
 			return new ActionLabelAttributeFactory();
-		}else if(element instanceof IAxiom){
+		} else if (element instanceof IAxiom) {
 			return new AxiomLabelAttributeFactory();
-		}else if(element instanceof IEvent){
+		} else if (element instanceof IEvent) {
 			return new EventLabelAttributeFactory();
-		}else if(element instanceof IGuard){
+		} else if (element instanceof IGuard) {
 			return new GuardLabelAttributeFactory();
-		}else if(element instanceof IInvariant){
+		} else if (element instanceof IInvariant) {
 			return new InvariantLabelAttributeFactory();
-		}else if(element instanceof ITheorem){
+		} else if (element instanceof ITheorem) {
 			return new TheoremLabelAttributeFactory();
-		}else if(element instanceof IWitness){
+		} else if (element instanceof IWitness) {
 			return new WitnessLabelAttributeFactory();
-		}else{
-			return null;
+		} else {
+			return new DefaultLabelAttributeFactory();
 		}
 	}
 
@@ -642,7 +644,7 @@ public class UIUtils {
 		} else if (type == IWitness.ELEMENT_TYPE) {
 			return new WitnessLabelAttributeFactory();
 		} else {
-			return null;
+			return new DefaultLabelAttributeFactory();
 		}
 	}
 
@@ -867,13 +869,12 @@ public class UIUtils {
 		ArrayList<IPSRoot> result = new ArrayList<IPSRoot>();
 		for (IRodinElement element : project.getChildren()) {
 			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element)
-						.getRoot();
+				IInternalElement root = ((IRodinFile) element).getRoot();
 				if (root instanceof IPSRoot)
 					result.add((IPSRoot) root);
 			}
 		}
 		return result.toArray(new IPSRoot[result.size()]);
-}
-	
+	}
+
 }
