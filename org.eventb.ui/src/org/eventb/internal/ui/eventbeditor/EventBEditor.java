@@ -33,8 +33,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -48,9 +50,11 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.actions.RedoAction;
-import org.eventb.internal.ui.eventbeditor.actions.UndoAction;
+import org.eventb.internal.ui.eventbeditor.actions.HistoryAction;
+import org.eventb.internal.ui.eventbeditor.actions.HistoryActions;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -331,19 +335,26 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 				.activateContext(EventBUIPlugin.PLUGIN_ID
 						+ ".contexts.eventBEditorScope");
 		// set Retargeted Action
-		setRetargetedAction() ;
+		setRetargetedAction();
 
 	}
-	
 
 	private void setRetargetedAction() {
-		getEditorSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.UNDO.getId(), new UndoAction(this));
-		getEditorSite().getActionBars().setGlobalActionHandler(
-				ActionFactory.REDO.getId(), new RedoAction(this));
+		final IWorkbenchWindow wb = getEditorSite().getWorkbenchWindow();
+		final IActionBars bars = getEditorSite().getActionBars();
+		final HistoryActions actions = HistoryActions.INSTANCE;
+		final String undoID = ActionFactory.UNDO.getId();
+		final String redoID = ActionFactory.REDO.getId();
+		final HistoryAction undoAction = actions.getUndoAction(wb);
+		final HistoryAction redoAction = actions.getRedoAction(wb);
+
+		if (!(bars.getGlobalActionHandler(undoID) == undoAction))
+			bars.setGlobalActionHandler(undoID, undoAction);
+		if (!(bars.getGlobalActionHandler(redoID) == redoAction))
+			bars.setGlobalActionHandler(redoID, redoAction);
 	}
 	
-//	protected abstract IRodinFile getRodinFile(IEditorInput input);
+// protected abstract IRodinFile getRodinFile(IEditorInput input);
 
 	protected IRodinFile getRodinFile(IEditorInput input) {
 		FileEditorInput editorInput = (FileEditorInput) input;
@@ -383,6 +394,9 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 					.getService(IContextService.class);
 			contextService.deactivateContext(contextActivation);
 		}
+
+		// Dispose all operation in the History
+		History.getInstance().dispose(OperationFactory.getContext(rodinRoot));
 
 		saveDefaultPage();
 

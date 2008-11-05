@@ -57,4 +57,8 @@ public class History {
 			UIUtils.log(e.getCause(), "when undoing an operation");
 		}
 	}
+
+	public void dispose(IUndoContext context) {
+		history.dispose(context, true, true, true);
+	}
 }

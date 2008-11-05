@@ -11,19 +11,17 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 
 public class RedoAction extends HistoryAction {
 
-	public RedoAction(IEventBEditor<?> editor) {
-		super(editor);
+	public RedoAction(IWorkbenchWindow workbenchWindow) {
+		super(workbenchWindow);
 	}
 
 	@Override
-	public void run() {
-		IUndoContext context = OperationFactory.getContext(root);
+	public void doRun(IUndoContext context) {
 		History.getInstance().redo(context);
 	}
 
