@@ -15,6 +15,7 @@ package org.eventb.internal.ui.eventbeditor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -541,19 +542,22 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 				}
 			}
 
-			IRodinFile inputFile = this.getRodinInputFile();
-			inputFile.save(monitor, true);
-
-			while (!newElements.isEmpty()) {
-				IRodinElement element = (IRodinElement) newElements.toArray()[0];
-				newElements.remove(element);
-				notifyStatusChanged(element);
-			}
+			getRodinInputFile().save(monitor, true);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-
+		
+		notifyAndClearNewElements();
 		editorDirtyStateChanged(); // Refresh the dirty state of the editor
+	}
+
+	private void notifyAndClearNewElements() {
+		final Iterator<IRodinElement> iterator = newElements.iterator();
+		while (iterator.hasNext()) {
+			final IRodinElement element = iterator.next();
+			iterator.remove();
+			notifyStatusChanged(element);
+		}
 	}
 
 	/*
