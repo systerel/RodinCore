@@ -363,50 +363,53 @@ public class ModelController implements IElementChangedListener {
 	public void refreshModel(IRodinElement element) {
 		if (!(element instanceof IRodinDB)) {
 			ModelProject project = projects.get(element.getRodinProject());
-			if (element instanceof IRodinProject) {
-				project.needsProcessing = true;
-				processProject((IRodinProject)element);
-			}
-			
-			if (element instanceof IMachineRoot) {
-				project.processMachine((IMachineRoot)element);
-			}
-			if (element instanceof IContextRoot) {
-				project.processContext((IContextRoot)element);
-			}
-			if (element instanceof IPORoot) {
-				IPORoot root = (IPORoot) element;
-				//get corresponding machine or context
-				if (root.getMachineRoot().exists()) {
-					ModelMachine machine = getMachine(root.getMachineRoot());
-					machine.poNeedsProcessing = true;
-					machine.processPORoot();
-					//process the statuses as well
-					machine.psNeedsProcessing = true;
-					machine.processPSRoot();
+			if (project != null) {
+				if (element instanceof IRodinProject) {
+					project.needsProcessing = true;
+					processProject((IRodinProject)element);
 				}
-				if (root.getContextRoot().exists()) {
-					ModelContext context = getContext(root.getContextRoot());
-					context.poNeedsProcessing = true;
-					context.processPORoot();
-					//process the statuses as well
-					context.psNeedsProcessing = true;
-					context.processPSRoot();
+				
+				if (element instanceof IMachineRoot) {
+					project.processMachine((IMachineRoot)element);
 				}
-			}
-			if (element instanceof IPSRoot) {
-				IPSRoot root = (IPSRoot) element;
-				//get corresponding machine or context
-				if (root.getMachineRoot().exists()) {
-					ModelMachine machine = getMachine(root.getMachineRoot());
-					machine.psNeedsProcessing = true;
-					machine.processPSRoot();
+				if (element instanceof IContextRoot) {
+					project.processContext((IContextRoot)element);
 				}
-				if (root.getContextRoot().exists()) {
-					ModelContext context = getContext(root.getContextRoot());
-					context.psNeedsProcessing = true;
-					context.processPSRoot();
+				if (element instanceof IPORoot) {
+					IPORoot root = (IPORoot) element;
+					//get corresponding machine or context
+					if (root.getMachineRoot().exists()) {
+						ModelMachine machine = getMachine(root.getMachineRoot());
+						machine.poNeedsProcessing = true;
+						machine.processPORoot();
+						//process the statuses as well
+						machine.psNeedsProcessing = true;
+						machine.processPSRoot();
+					}
+					if (root.getContextRoot().exists()) {
+						ModelContext context = getContext(root.getContextRoot());
+						context.poNeedsProcessing = true;
+						context.processPORoot();
+						//process the statuses as well
+						context.psNeedsProcessing = true;
+						context.processPSRoot();
+					}
 				}
+				if (element instanceof IPSRoot) {
+					IPSRoot root = (IPSRoot) element;
+					//get corresponding machine or context
+					if (root.getMachineRoot().exists()) {
+						ModelMachine machine = getMachine(root.getMachineRoot());
+						machine.psNeedsProcessing = true;
+						machine.processPSRoot();
+					}
+					if (root.getContextRoot().exists()) {
+						ModelContext context = getContext(root.getContextRoot());
+						context.psNeedsProcessing = true;
+						context.processPSRoot();
+					}
+				}
+				
 			}
 		}
 	}
