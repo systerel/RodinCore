@@ -215,7 +215,7 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	private static IUndoContext getContext(IEventBEditor<?> editor) {
+	public static IUndoContext getContext(IEventBEditor<?> editor) {
 		return getContext(editor.getRodinInput().getRodinFile());
 	}
 
