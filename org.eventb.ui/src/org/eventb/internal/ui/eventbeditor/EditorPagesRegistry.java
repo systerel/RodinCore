@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored code for testing with an alternate extension point
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
@@ -35,17 +33,20 @@ import org.eventb.ui.eventbeditor.EventBEditorPage;
  */
 public class EditorPagesRegistry implements IEditorPagesRegistry {
 
+	private static final String EXTENSION_POINT_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".editorPages";
+
 	// Singleton instance of the class
 	private static IEditorPagesRegistry instance;
 
 	// Registry information: Mapping from editor id to related information.
 	private Map<String, EditorInfo> registry;
 
-	// The value can be change for testing purpose.
-	private String EDITORPAGE_ID = EventBUIPlugin.PLUGIN_ID + ".editorPages";
-
 	// Default priority
 	private static final int DEFAULT_PRIORITY = 10000;
+	
+	// Alternate extension point id for testing purposes
+	private String alternateExtensionPointId;
 
 	/**
 	 * @author htson
@@ -357,8 +358,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 
 		registry = new HashMap<String, EditorInfo>();
 
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = reg.getExtensionPoint(EDITORPAGE_ID);
+		IExtensionPoint extensionPoint = getExtensionPoint();
 		IConfigurationElement[] configurations = extensionPoint
 				.getConfigurationElements();
 
@@ -375,6 +375,16 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 		// Sort the pages for each target editor.
 		sortPages();
 
+	}
+
+	private IExtensionPoint getExtensionPoint() {
+		final String id;
+		if (alternateExtensionPointId != null) {
+			id = alternateExtensionPointId;
+		} else {
+			id = EXTENSION_POINT_ID;
+		}
+		return Platform.getExtensionRegistry().getExtensionPoint(id);
 	}
 
 	/**
@@ -488,13 +498,15 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	}
 
 	/**
-	 * Set Editor page registry. This method is used for testing purpose only.
+	 * Change the id of the extension point to use. This method is reserved for
+	 * testing purpose only.
 	 * 
-	 * @param registryName
-	 *            the name of the registry point, e.g. {@link #EDITORPAGE_ID}
+	 * @param extensionPointId
+	 *            the id of the extension point to use or <code>null</code> to
+	 *            revert to the regular one
 	 */
-	public void setEditorPageRegistryID(String registryName) {
-		this.EDITORPAGE_ID = registryName;
+	public void setAlternateExtensionPointID(String extensionPointId) {
+		this.alternateExtensionPointId = extensionPointId;
 		registry = null; // Force to reload the registry
 	}
 
