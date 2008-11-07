@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.osgi.framework.BundleContext;
+import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexerPlugin extends Plugin {
@@ -35,6 +36,8 @@ public class EventBIndexerPlugin extends Plugin {
 	super.start(context);
 	plugin = this;
 	configurePluginDebugOptions();
+	final IOccurrenceKind k = EventBIndexUtil.DECLARATION;
+	// FIXME temp fix to prevent from unrecognized kinds during restoration
 	RodinIndexer.register(new ContextIndexer(), IContextRoot.ELEMENT_TYPE);
 	RodinIndexer.register(new MachineIndexer(), IMachineRoot.ELEMENT_TYPE);
     }

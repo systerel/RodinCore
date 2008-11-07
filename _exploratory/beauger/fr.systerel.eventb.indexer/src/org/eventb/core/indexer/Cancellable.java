@@ -20,10 +20,6 @@ import org.rodinp.core.index.IIndexingToolkit;
  */
 public abstract class Cancellable {
 
-	/**
-	 * @param index TODO
-	 * 
-	 */
 	protected static void checkCancel(IIndexingToolkit index) {
 		if (index.isCancelled()) {
 			throw new CancellationException();
