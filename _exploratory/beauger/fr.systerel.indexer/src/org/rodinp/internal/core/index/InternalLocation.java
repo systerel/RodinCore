@@ -11,48 +11,56 @@
 package org.rodinp.internal.core.index;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IInternalLocation;
+import org.rodinp.core.index.IRodinLocation;
 
 public class InternalLocation implements IInternalLocation {
 
-	private final IInternalElement element;
+    protected final IInternalElement element;
 
-	public InternalLocation(IInternalElement element) {
-		if (element == null) {
-			throw new NullPointerException("null element");
-		}
-		this.element = element;
+    public InternalLocation(IInternalElement element) {
+	if (element == null) {
+	    throw new NullPointerException("null element");
 	}
+	this.element = element;
+    }
 
-	public IInternalElement getElement() {
-		return element;
-	}
+    public IInternalElement getElement() {
+	return element;
+    }
 
-	public IRodinFile getRodinFile() {
-		return element.getRodinFile();
-	}
+    public IRodinFile getRodinFile() {
+	return element.getRodinFile();
+    }
 
-	@Override
-	public int hashCode() {
-		return element.hashCode();
-	}
+    public boolean isIncludedIn(IRodinLocation other) {
+	final IRodinElement otherElement = other.getElement();
+	return otherElement.equals(element)
+	|| otherElement.isAncestorOf(element);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj.getClass() != this.getClass())
-			return false;
-		if (!(obj instanceof InternalLocation))
-			return false;
-		final InternalLocation other = (InternalLocation) obj;
-		return element.equals(other.element);
-	}
+    @Override
+    public int hashCode() {
+	return element.hashCode();
+    }
 
-	@Override
-	public String toString() {
-		return element.toString();
-	}
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj.getClass() != this.getClass())
+	    return false;
+	if (!(obj instanceof InternalLocation))
+	    return false;
+	final InternalLocation other = (InternalLocation) obj;
+	return element.equals(other.element);
+    }
+
+    @Override
+    public String toString() {
+	return element.toString();
+    }
 
 }

@@ -13,46 +13,61 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IAttributeLocation;
+import org.rodinp.core.index.IAttributeSubstringLocation;
+import org.rodinp.core.index.IRodinLocation;
 
 public class AttributeLocation extends InternalLocation implements
-		IAttributeLocation {
+	IAttributeLocation {
 
-	private final IAttributeType attributeType;
+    private final IAttributeType attributeType;
 
-	public AttributeLocation(IInternalElement element,
-			IAttributeType attributeType) {
-		super(element);
-		if (attributeType == null) {
-			throw new NullPointerException("null attribute type");
-		}
-		this.attributeType = attributeType;
+    public AttributeLocation(IInternalElement element,
+	    IAttributeType attributeType) {
+	super(element);
+	if (attributeType == null) {
+	    throw new NullPointerException("null attribute type");
 	}
+	this.attributeType = attributeType;
+    }
 
-	public IAttributeType getAttributeType() {
-		return attributeType;
-	}
+    public IAttributeType getAttributeType() {
+	return attributeType;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + attributeType.hashCode();
-		return result;
+    @Override
+    public boolean isIncludedIn(IRodinLocation other) {
+	if (!(other instanceof IAttributeLocation)) {
+	    return super.isIncludedIn(other);
 	}
+	if (other instanceof IAttributeSubstringLocation) {
+	    return false;
+	}
+	return element.equals(other.getElement())
+		&& attributeType == ((IAttributeLocation) other)
+			.getAttributeType();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!super.equals(obj))
-			return false;
-		if (!(obj instanceof AttributeLocation))
-			return false;
-		final AttributeLocation other = (AttributeLocation) obj;
-		return this.attributeType == other.attributeType;
-	}
-	
-	@Override
-	public String toString() {
-		return super.toString() + "." + attributeType.getName();
-	}
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result + attributeType.hashCode();
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (!super.equals(obj))
+	    return false;
+	if (!(obj instanceof AttributeLocation))
+	    return false;
+	final AttributeLocation other = (AttributeLocation) obj;
+	return this.attributeType == other.attributeType;
+    }
+
+    @Override
+    public String toString() {
+	return super.toString() + "." + attributeType.getName();
+    }
 
 }

@@ -15,11 +15,11 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
 
 public abstract class IndexTests extends AbstractRodinDBTests {
 
-	public IndexTests(String name, boolean disableIndexing) {
-		super(name);
-		if (disableIndexing) {
-			RodinIndexer.disableIndexing();
-		}
+    public IndexTests(String name, boolean disableIndexing) {
+	super(name);
+	if (disableIndexing) {
+	    RodinIndexer.disableIndexing();
 	}
+    }
 
 }

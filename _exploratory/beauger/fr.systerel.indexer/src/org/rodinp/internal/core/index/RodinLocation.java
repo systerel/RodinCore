@@ -17,46 +17,50 @@ import org.rodinp.core.index.IRodinLocation;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class RodinLocation implements IRodinLocation {
 
-	private final IRodinElement element;
-	
-	
-	
-	public RodinLocation(IRodinElement element) {
-		this.element = element;
-	}
+    private final IRodinElement element;
 
-	public IRodinElement getElement() {
-		return element; 
-	}
+    public RodinLocation(IRodinElement element) {
+	this.element = element;
+    }
 
-	public IRodinFile getRodinFile() {
-		if (element instanceof IRodinFile) {
-		return (IRodinFile) element;
-		} else if (element instanceof IInternalElement) {
-			return ((IInternalElement) element).getRodinFile();
-		}
-		return null;
-	}
+    public IRodinElement getElement() {
+	return element;
+    }
 
-	@Override
-	public int hashCode() {
-		return 31 + element.hashCode();
+    public IRodinFile getRodinFile() {
+	if (element instanceof IRodinFile) {
+	    return (IRodinFile) element;
+	} else if (element instanceof IInternalElement) {
+	    return ((IInternalElement) element).getRodinFile();
 	}
+	return null;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof RodinLocation))
-			return false;
-		final RodinLocation other = (RodinLocation) obj;
-		if (!element.equals(other.element))
-			return false;
-		return true;
-	}
+    public boolean isIncludedIn(IRodinLocation other) {
+	final IRodinElement otherElement = other.getElement();
+	return otherElement.equals(element)
+	|| otherElement.isAncestorOf(element);
+    }
+
+    @Override
+    public int hashCode() {
+	return 31 + element.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (!(obj instanceof RodinLocation))
+	    return false;
+	final RodinLocation other = (RodinLocation) obj;
+	if (!element.equals(other.element))
+	    return false;
+	return true;
+    }
 
 }
