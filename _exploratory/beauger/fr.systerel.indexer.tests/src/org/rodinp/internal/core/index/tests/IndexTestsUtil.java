@@ -37,10 +37,6 @@ import org.rodinp.internal.core.index.tables.TotalOrder;
 
 public class IndexTestsUtil {
 
-	// TODO many test methods could benefit from
-	// #static <T> assertSameElements()
-	// #assertIndex()
-
 	public static final IOccurrenceKind TEST_KIND =
 			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test", "test");
 

@@ -19,7 +19,6 @@ import java.util.Set;
 import org.rodinp.core.IRodinFile;
 
 public class DependenceTable {
-	// TODO delete the class
 	
 	private static final IRodinFile[] NO_ELEMENTS = new IRodinFile[0];
 

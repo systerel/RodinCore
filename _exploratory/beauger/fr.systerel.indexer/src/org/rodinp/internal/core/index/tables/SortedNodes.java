@@ -24,7 +24,6 @@ import org.rodinp.internal.core.index.persistence.PersistentSortedNodes;
 public class SortedNodes<T> implements Iterator<T> {
 
 	private final List<Node<T>> order;
-	// TODO could record only iterated labels
 	private final List<T> iterated;
 	private Iterator<Node<T>> iter;
 	private boolean startIter;
@@ -77,8 +76,7 @@ public class SortedNodes<T> implements Iterator<T> {
 			final T labelPrev = iterPrev.next();
 			final Node<T> nodeOrder = nextMarked(iterNew);
 
-			if (nodeOrder == null || labelPrev == null) {// TODO remove 2nd
-				// part
+			if (nodeOrder == null) {
 				break;
 			}
 			if (!nodeOrder.getLabel().equals(labelPrev)) {

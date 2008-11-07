@@ -28,26 +28,33 @@ import org.w3c.dom.Element;
  */
 public class OccPersistor {
 
-	public static IOccurrence getOccurrence(Element occNode, IDeclaration declaration) throws PersistenceException {
-		final IOccurrenceKind kind = getKind(occNode);
+    public static IOccurrence getOccurrence(Element occNode,
+	    IDeclaration declaration) throws PersistenceException {
+	final IOccurrenceKind kind = getKind(occNode);
 
-		final IInternalLocation location = LocPersistor.getLocation(occNode);
+	final IInternalLocation location = LocPersistor.getLocation(occNode);
 
-		return new Occurrence(kind, location, declaration);
+	return new Occurrence(kind, location, declaration);
+    }
+
+    private static IOccurrenceKind getKind(Element occNode)
+	    throws PersistenceException {
+	final String kindId = getAttribute(occNode, KIND);
+	final IOccurrenceKind kind = RodinIndexer.getOccurrenceKind(kindId);
+	if (kind == null) {
+	    throw new PersistenceException();
 	}
+	return kind;
+    }
 
-	private static IOccurrenceKind getKind(Element occNode) throws PersistenceException {
-		final String kindId = getAttribute(occNode, OCC_KIND);
-		return RodinIndexer.getOccurrenceKind(kindId);
-	}
+    public static void save(IOccurrence occurrence, Document doc,
+	    Element occNode) {
 
-	public static void save(IOccurrence occurrence, Document doc, Element occNode) {
+	final IOccurrenceKind kind = occurrence.getKind();
+	setAttribute(occNode, KIND, kind.getId());
 
-		final IOccurrenceKind kind = occurrence.getKind();
-		setAttribute(occNode, OCC_KIND, kind.getId());
-
-		final IInternalLocation location = occurrence.getLocation();
-		LocPersistor.save(location, doc, occNode);
-	}
+	final IInternalLocation location = occurrence.getLocation();
+	LocPersistor.save(location, doc, occNode);
+    }
 
 }

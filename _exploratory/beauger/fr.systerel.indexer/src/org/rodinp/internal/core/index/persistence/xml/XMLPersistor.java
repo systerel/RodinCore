@@ -17,7 +17,9 @@ import java.io.File;
 
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.PerProjectPIM;
+import org.rodinp.internal.core.index.ProjectIndexManager;
 import org.rodinp.internal.core.index.persistence.IPersistor;
+import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -27,40 +29,86 @@ import org.w3c.dom.Element;
  */
 public class XMLPersistor implements IPersistor {
 
-
-	public void restore(File file, PerProjectPIM pppim) {
-		if (IndexManager.VERBOSE) {
-			System.out.println("restoring from file: " + file.getAbsolutePath());
-		}
-		try {
-			final Element indexRoot = getRoot(file);
-			final PPPIMPersistor persistor = new PPPIMPersistor();
-			persistor.restore(indexRoot, pppim);
-
-		} catch (Exception e) {
-			// TODO forgot everything => ?
-			pppim.clear();
-			e.printStackTrace();
-		}
-
+    public boolean restore(File file, PersistentIndexManager data) {
+	if (IndexManager.VERBOSE) {
+	    System.out
+		    .println("restoring from file: " + file.getAbsolutePath());
 	}
+	try {
+	    final Element indexRoot = getRoot(file);
+	    if (indexRoot == null) {
+		return false;
+	    }
+	    PPPIMPersistor.restore(indexRoot, data.getPPPIM());
 
-	public void save(PerProjectPIM pppim, File file) {
-		Document doc;
-		try {
-			doc = getDocument();
+	    DeltaListPersistor.restore(indexRoot, data.getDeltas());
 
-			Element indexRoot = createElement(doc, INDEX_ROOT);
-			final PPPIMPersistor persistor = new PPPIMPersistor();
-			persistor.save(pppim, doc, indexRoot);
-			doc.appendChild(indexRoot);
+	    return true;
+	} catch (Exception e) {
+	    data.getPPPIM().clear();
+	    data.getDeltas().clear();
 
-			final String xml = serializeDocument(doc);
-			write(file, xml);
-		} catch (Exception e) {
-			// TODO log
-			e.printStackTrace();
-		}
+	    if (IndexManager.DEBUG) {
+		e.printStackTrace();
+	    }
+	    return false;
 	}
+    }
+
+    public boolean save(PersistentIndexManager persistIM, File file) {
+	try {
+	    Document doc = getDocument();
+
+	    Element indexRoot = createElement(doc, INDEX_ROOT);
+
+	    PPPIMPersistor.save(persistIM.getPPPIM(), doc, indexRoot);
+
+	    DeltaListPersistor.save(persistIM.getDeltas(), doc, indexRoot);
+
+	    doc.appendChild(indexRoot);
+
+	    final String xml = serializeDocument(doc);
+	    write(file, xml);
+	    return true;
+	} catch (Exception e) {
+	    return false;
+	}
+    }
+
+    public boolean saveProject(ProjectIndexManager pim, File file) {
+	try {
+	    Document doc = getDocument();
+
+	    final Element pimNode = createElement(doc, PIM);
+
+	    final PIMPersistor persistor = new PIMPersistor();
+	    persistor.save(pim, doc, pimNode);
+
+	    doc.appendChild(pimNode);
+
+	    final String xml = serializeDocument(doc);
+	    write(file, xml);
+	    return true;
+	} catch (Exception e) {
+	    return false;
+	}
+    }
+
+    public boolean restoreProject(File file, PerProjectPIM pppim) {
+	try {
+	    final Element pimNode = getRoot(file);
+	    if (pimNode == null) {
+		return false;
+	    }
+	    final PIMPersistor persistor = new PIMPersistor();
+	    persistor.restore(pimNode, pppim);
+	    return true;
+	} catch (Exception e) {
+	    if (IndexManager.DEBUG) {
+		e.printStackTrace();
+	    }
+	    return false;
+	}
+    }
 
 }

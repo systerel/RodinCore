@@ -12,9 +12,9 @@ package org.rodinp.internal.core.index.persistence;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ISavedState;
@@ -24,8 +24,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.internal.core.index.DeltaQueuer;
 import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.index.PerProjectPIM;
+import org.rodinp.internal.core.index.ProjectIndexManager;
 import org.rodinp.internal.core.index.persistence.xml.XMLPersistor;
 
 /**
@@ -34,114 +39,176 @@ import org.rodinp.internal.core.index.persistence.xml.XMLPersistor;
  */
 public class PersistenceManager implements ISaveParticipant {
 
-	/**
-	 * 
-	 */
-	private static final String INDEX_SAVE = "index-save";
-	private static PersistenceManager instance;
+    private static final Plugin plugin = RodinIndexer.getDefault();
+    private static final IPath INDEX_SAVE_PATH = new Path("index-save");
+    private static PersistenceManager instance;
 
-	private PersistenceManager() {
-		// Singleton: private constructor
+    private PersistenceManager() {
+	// Singleton: private constructor
+    }
+
+    public static PersistenceManager getDefault() {
+	if (instance == null) {
+	    instance = new PersistenceManager();
 	}
+	return instance;
+    }
 
-	public static PersistenceManager getDefault() {
-		if (instance == null) {
-			instance = new PersistenceManager();
+    public void doneSaving(ISaveContext context) {
+	// nothing to do
+    }
+
+    public void prepareToSave(ISaveContext context) throws CoreException {
+	// nothing to do
+    }
+
+    public void rollback(ISaveContext context) {
+	// nothing to do
+    }
+
+    public void saving(ISaveContext context) throws CoreException {
+
+	final IPath stateLocation = plugin.getStateLocation();
+
+	switch (context.getKind()) {
+
+	case ISaveContext.FULL_SAVE: {
+	    final IPath[] previousFiles = context.getFiles();
+	    final int saveNumber = context.getSaveNumber();
+	    final IPath saveFilePath = getFullSaveName(saveNumber);
+	    final IPath absoluteFilePath = stateLocation.append(saveFilePath);
+	    final File file = absoluteFilePath.toFile();
+
+	    final PersistentIndexManager data = IndexManager.getDefault()
+		    .getPersistentData(true);
+
+	    final IPersistor ps = chooseStrategy();
+	    final boolean success = ps.save(data, file);
+	    
+	    if (success) {
+		context.map(INDEX_SAVE_PATH, saveFilePath);
+	    } else {
+		file.delete();
+	    }
+	    deleteFiles(previousFiles);
+	    context.needSaveNumber();
+	    context.needDelta();
+	    break;
+	}
+	case ISaveContext.PROJECT_SAVE:
+	    final IProject project = context.getProject();
+	    if (project != null) {
+		final IRodinProject rodinProject = RodinCore.valueOf(project);
+		final PersistentIndexManager data = IndexManager.getDefault()
+			.getPersistentData(false);
+
+		final ProjectIndexManager pim = data.getPPPIM().get(
+			rodinProject);
+		if (pim != null) {
+		    final File file = getProjectSaveFile(stateLocation,
+			    rodinProject);
+
+		    final IPersistor ps = chooseStrategy();
+		    final boolean success = ps.saveProject(pim, file);
+		    if (!success) {
+			file.delete();
+		    }
 		}
-		return instance;
+	    }
+	    break;
+	}
+    }
+
+    private void deleteFiles(IPath[] previousFiles) {
+	for (IPath path : previousFiles) {
+	    path.toFile().delete();
+	}
+    }
+
+    private File getProjectSaveFile(final IPath stateLocation,
+	    final IRodinProject rodinProject) {
+	final String saveProjectName = getProjectSaveName(rodinProject);
+	final Path projectDir = new Path("projects");
+	stateLocation.append(projectDir).toFile().mkdir();
+	final IPath projectRelPath = projectDir.addTrailingSeparator().append(
+		saveProjectName);
+	final IPath projectFilePath = stateLocation.append(projectRelPath);
+	return projectFilePath.toFile();
+    }
+
+    private static String getProjectSaveName(IRodinProject rodinProject) {
+	return "save-" + rodinProject.getElementName();
+    }
+
+    private static IPath getFullSaveName(int saveNumber) {
+	return new Path("save-" + Integer.toString(saveNumber));
+    }
+
+
+    public boolean restore(PersistentIndexManager persistIM, final DeltaQueuer queuer) {
+	final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	final ISavedState ss;
+	try {
+	    ss = workspace.addSaveParticipant(plugin, PersistenceManager.this);
+	} catch (CoreException e) {
+	    return false;
 	}
 
-	public void doneSaving(ISaveContext context) {
-		// TODO Auto-generated method stub
-
+	if (ss == null) {
+	    // activate for very first time
+	    return false;
 	}
 
-	public void prepareToSave(ISaveContext context) throws CoreException {
-		// TODO Auto-generated method stub
+	final IPath saveFilePath = ss.lookup(INDEX_SAVE_PATH);
 
+	if (saveFilePath == null) {
+	    return false;
 	}
+	final File file = plugin.getStateLocation().append(saveFilePath)
+		.toFile();
 
-	public void rollback(ISaveContext context) {
-		// TODO Auto-generated method stub
-
+	if (!file.exists()) {
+	    return false;
 	}
+	final IPersistor ps = chooseStrategy();
 
-	public void saving(ISaveContext context) throws CoreException {
-		final Plugin plugin = RodinIndexer.getDefault();
-		final int saveNumber = context.getSaveNumber();
-		String saveFileName = "save-" + Integer.toString(saveNumber);
-		File file = plugin.getStateLocation().append(saveFileName).toFile();
-		
-		
-		final IPersistor ps = chooseStrategy();
-		ps.save(IndexManager.getDefault().getPerProjectPIM(), file);
-
-		context.map(new Path(INDEX_SAVE), new Path(saveFileName));
-		context.needSaveNumber();
-		context.needDelta(); // optional
+	final boolean success = ps.restore(file, persistIM);
+	if (!success) {
+	    return false;
 	}
+	ss.processResourceChangeEvents(new IResourceChangeListener() {
+	    
+	    public void resourceChanged(IResourceChangeEvent event) {
+		queuer.resourceChanged(event);
+	    }
+	});
+	return true;
+    }
 
-	private final IResourceChangeListener listener = new IResourceChangeListener() {
-		
-		public void resourceChanged(IResourceChangeEvent event) {
-			IResourceDelta delta = event.getDelta();
-			if (delta != null) {
-				// TODO send to RDBCL
-				// fast reactivation using delta
-				// plugin.updateState(delta);
-			} else {
-				// slower reactivation without benefit
-				// of delta
-				// plugin.rebuildState();
-			}
-		}
-	};
+    public boolean restoreProject(IRodinProject project, PerProjectPIM pppim) {
+	final IPath stateLocation = plugin.getStateLocation();
 
-	public void restore() {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final Plugin plugin = RodinIndexer.getDefault();
-		final ISavedState ss;
-		try {
-			ss = workspace.addSaveParticipant(RodinIndexer
-					.getDefault(), PersistenceManager.this);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			restoreFromScratch();
-			return;
-		}
+	final File file = getProjectSaveFile(stateLocation, project);
 
-		if (ss == null) {
-			restoreFromScratch();
-			return;
-			// activate for very first time
-			// plugin.buildState();
-		}
-		final IPath saveFilePath = ss.lookup(new Path(INDEX_SAVE));
+	if (file.exists()) {
+	    final IPersistor ps = chooseStrategy();
 
-		if (saveFilePath == null) {
-			restoreFromScratch();
-		} else {
-			final File file = plugin.getStateLocation().append(saveFilePath)
-			.toFile();
-
-			final IPersistor ps = chooseStrategy();
-
-			ps.restore(file, IndexManager.getDefault().getPerProjectPIM());
-		}
-		ss.processResourceChangeEvents(listener);
+	    return ps.restoreProject(file, pppim);
 	}
+	return false;
+    }
 
-	/**
-	 * 
-	 */
-	private void restoreFromScratch() {
-		IndexManager.getDefault().indexAll();
-	}
+    private IPersistor chooseStrategy() {
+	return new XMLPersistor();
+    }
 
-	private IPersistor chooseStrategy() {
-		return new XMLPersistor();
+    public void deleteProject(IRodinProject project) {
+
+	final IPath stateLocation = plugin.getStateLocation();
+	final File file = getProjectSaveFile(stateLocation, project);
+	if (file.exists()) {
+	    file.delete();
 	}
-	
+    }
 
 }

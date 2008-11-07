@@ -18,9 +18,8 @@ import org.w3c.dom.Element;
  * 
  */
 public enum XMLAttributeTypes {
-	// TODO simplify, factorize if possible
 
-	PROJECT, ELEMENT, NAME, FILE, OCC_KIND, LOC_ATTRIBUTE, LOC_CHAR_START,
+	PROJECT, ELEMENT, NAME, FILE, KIND, LOC_ATTRIBUTE, LOC_CHAR_START,
 	LOC_CHAR_END, IS_SORTED, LABEL, MARK, ORDER_POS;
 
 	@Override

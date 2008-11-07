@@ -29,8 +29,10 @@ import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
+import org.rodinp.internal.core.index.IIndexDelta;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
@@ -44,7 +46,7 @@ import org.rodinp.internal.core.index.tables.TotalOrder;
 public class Resources {
 
 	public static interface IPersistResource {
-		PerProjectPIM getPPPIM();
+		PersistentIndexManager getIMData();
 
 		List<IRodinFile> getRodinFiles();
 
@@ -53,17 +55,19 @@ public class Resources {
 
 	private static class PersistResource implements IPersistResource {
 		private final PerProjectPIM pppim;
+		private final List<IIndexDelta> deltas;
 		private final List<IRodinFile> rodinFiles;
 		private final List<String> names;
 
 		public PersistResource() {
 			pppim = new PerProjectPIM();
+			deltas = new ArrayList<IIndexDelta>();
 			rodinFiles = new ArrayList<IRodinFile>();
 			names = new ArrayList<String>();
 		}
 
-		public PerProjectPIM getPPPIM() {
-			return pppim;
+		public PersistentIndexManager getIMData() {
+			return new PersistentIndexManager(pppim, deltas);
 		}
 
 		public List<String> getNames() {
@@ -84,7 +88,7 @@ public class Resources {
 						+ "<pim project=\"/P\">"
 						+ "<rodin_index>"
 						+ "<descriptor element=\"/P/F1.test|org.rodinp.core.tests.test#F1|org.rodinp.core.tests.namedElement#intName1\" name=\"name1\">"
-						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" occ_kind=\"fr.systerel.indexer.test\"/>"
+						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"fr.systerel.indexer.test\"/>"
 						+ "</descriptor>"
 						+ "</rodin_index>"
 						+ "<export_table>"
@@ -118,7 +122,8 @@ public class Resources {
 		final IOccurrence occurrence =
 				createDefaultOccurrence(rodinFile.getRoot(), declaration);
 
-		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
+		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
+		final ProjectIndexManager pim = pppim.getOrCreate(project);
 
 		final RodinIndex index = pim.getIndex();
 		final ExportTable exportTable = pim.getExportTable();
@@ -189,8 +194,9 @@ public class Resources {
 
 		final PersistResource pr = new PersistResource();
 
-		pr.getPPPIM().getOrCreate(p1);
-		pr.getPPPIM().getOrCreate(p2);
+		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
+		pppim.getOrCreate(p1);
+		pppim.getOrCreate(p2);
 
 		return pr;
 	}
@@ -230,7 +236,8 @@ public class Resources {
 		final IRodinFile file2 = createRodinFile(project, "F2.test");
 		final IRodinFile file3 = createRodinFile(project, "F3.test");
 
-		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
+		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
+		final ProjectIndexManager pim = pppim.getOrCreate(project);
 
 		final TotalOrder<IRodinFile> order = pim.getOrder();
 
@@ -289,7 +296,8 @@ public class Resources {
 		final IRodinFile file2 = createRodinFile(project, "F2.test");
 		final IRodinFile file3 = createRodinFile(project, "F3.test");
 
-		final ProjectIndexManager pim = pr.getPPPIM().getOrCreate(project);
+		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
+		final ProjectIndexManager pim = pppim.getOrCreate(project);
 
 		final TotalOrder<IRodinFile> order = pim.getOrder();
 
@@ -373,7 +381,7 @@ public class Resources {
 						+ "<pim project=\"/P\">"
 						+ "<rodin_index>"
 						+ "<descriptor element=\"/P/F1.test\" name=\"name1\">"
-						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" occ_kind=\"fr.systerel.indexer.test\"/>"
+						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"fr.systerel.indexer.test\"/>"
 						+ "</descriptor>"
 						+ "</rodin_index>"
 						+ "<export_table>"

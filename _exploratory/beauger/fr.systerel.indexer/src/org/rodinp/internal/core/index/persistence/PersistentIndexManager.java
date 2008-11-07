@@ -10,23 +10,30 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence;
 
-import java.io.File;
+import java.util.Collection;
 
+import org.rodinp.internal.core.index.IIndexDelta;
 import org.rodinp.internal.core.index.PerProjectPIM;
-import org.rodinp.internal.core.index.ProjectIndexManager;
-
 
 /**
  * @author Nicolas Beauger
  *
  */
-public interface IPersistor {
+public class PersistentIndexManager {
 
-	boolean save(PersistentIndexManager data, File file);
-
-	boolean saveProject(ProjectIndexManager pim, File file);
-	
-	boolean restore(File file, PersistentIndexManager data);
-	
-	boolean restoreProject(File file, PerProjectPIM pppim);
+    private final PerProjectPIM pppim;
+    private final Collection<IIndexDelta> deltas;
+    public PersistentIndexManager(PerProjectPIM pppim, Collection<IIndexDelta> deltas) {
+	this.pppim = pppim;
+	this.deltas = deltas;
+    }
+    
+    public PerProjectPIM getPPPIM() {
+        return pppim;
+    }
+    public Collection<IIndexDelta> getDeltas() {
+        return deltas;
+    }
+    
+    
 }

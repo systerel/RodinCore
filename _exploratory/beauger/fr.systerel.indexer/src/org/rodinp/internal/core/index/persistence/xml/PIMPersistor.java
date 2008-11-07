@@ -28,51 +28,47 @@ import org.w3c.dom.NodeList;
  */
 public class PIMPersistor {
 
-	public void restore(Element pimNode, PerProjectPIM pppim) throws PersistenceException {
-		assertName(pimNode, PIM);
+    public void restore(Element pimNode, PerProjectPIM pppim)
+	    throws PersistenceException {
+	assertName(pimNode, PIM);
 
-		final String projectString = getAttribute(pimNode, PROJECT);
-		final IRodinProject project =
-				(IRodinProject) RodinCore.valueOf(projectString);
-		final ProjectIndexManager pim = pppim.getOrCreate(project);
+	final String projectString = getAttribute(pimNode, PROJECT);
+	final IRodinProject project = (IRodinProject) RodinCore
+		.valueOf(projectString);
+	final ProjectIndexManager pim = pppim.getOrCreate(project);
 
-		final NodeList rodinIndexNodes =
-				getElementsByTagName(pimNode, RODIN_INDEX, 1);
-		final Element indexNode = (Element) rodinIndexNodes.item(0);
-		IndexPersistor.restore(indexNode, pim.getIndex());
+	final NodeList rodinIndexNodes = getElementsByTagName(pimNode,
+		RODIN_INDEX, 1);
+	final Element indexNode = (Element) rodinIndexNodes.item(0);
+	IndexPersistor.restore(indexNode, pim.getIndex());
 
-		final NodeList exportNodes =
-				getElementsByTagName(pimNode, EXPORT_TABLE, 1);
-		final Element exportNode = (Element) exportNodes.item(0);
-		ExpTablePersistor.restore(exportNode, pim.getExportTable());
+	final NodeList exportNodes = getElementsByTagName(pimNode,
+		EXPORT_TABLE, 1);
+	final Element exportNode = (Element) exportNodes.item(0);
+	ExpTablePersistor.restore(exportNode, pim.getExportTable());
 
-		final NodeList orderNodes = getElementsByTagName(pimNode, GRAPH, 1);
-		// TODO assert length == 1
-		final Element orderNode = (Element) orderNodes.item(0);
-		TotalOrderPersistor.restore(orderNode, pim.getOrder());
+	final NodeList orderNodes = getElementsByTagName(pimNode, GRAPH, 1);
+	final Element orderNode = (Element) orderNodes.item(0);
+	TotalOrderPersistor.restore(orderNode, pim.getOrder());
 
-		pim.restoreNonPersistentData();
-		// TODO also restore other tables from those ones
+	pim.restoreNonPersistentData();
+    }
 
-	}
+    public void save(ProjectIndexManager pim, Document doc, Element pimNode) {
 
-	public void save(ProjectIndexManager pim, Document doc, Element pimNode) {
-		// TODO use pim namespaces
+	IREPersistor.setIREAtt(pim.getProject(), PROJECT, pimNode);
 
-		setAttribute(pimNode, PROJECT, pim.getProject().getHandleIdentifier());
+	final Element indexNode = createElement(doc, RODIN_INDEX);
+	IndexPersistor.save(pim.getIndex(), doc, indexNode);
+	pimNode.appendChild(indexNode);
 
-		final Element indexNode = createElement(doc, RODIN_INDEX);
-		IndexPersistor.save(pim.getIndex(), doc, indexNode);
-		pimNode.appendChild(indexNode);
+	final Element exportNode = createElement(doc, EXPORT_TABLE);
+	ExpTablePersistor.save(pim.getExportTable(), doc, exportNode);
+	pimNode.appendChild(exportNode);
 
-		final Element exportNode = createElement(doc, EXPORT_TABLE);
-		ExpTablePersistor.save(pim.getExportTable(), doc, exportNode);
-		pimNode.appendChild(exportNode);
-
-		final Element orderNode = createElement(doc, GRAPH);
-		TotalOrderPersistor.save(pim.getOrder(), doc, orderNode);
-		pimNode.appendChild(orderNode);
-
-	}
+	final Element orderNode = createElement(doc, GRAPH);
+	TotalOrderPersistor.save(pim.getOrder(), doc, orderNode);
+	pimNode.appendChild(orderNode);
+    }
 
 }

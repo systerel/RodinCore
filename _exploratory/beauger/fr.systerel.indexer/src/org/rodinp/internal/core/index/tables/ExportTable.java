@@ -27,7 +27,6 @@ public class ExportTable {
 		table = new HashMap<IRodinFile, Set<IDeclaration>>();
 	}
 
-	// TODO consider providing a type that hides the set
 	public Set<IDeclaration> get(IRodinFile file) {
 		final Set<IDeclaration> declarations = table.get(file);
 		if (declarations == null) {

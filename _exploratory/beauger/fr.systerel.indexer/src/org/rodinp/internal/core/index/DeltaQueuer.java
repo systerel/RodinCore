@@ -10,75 +10,170 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
+import org.rodinp.internal.core.index.IIndexDelta.Kind;
 
-public class DeltaQueuer implements IElementChangedListener {
-	
-	public static boolean DEBUG = false;
+public class DeltaQueuer implements IElementChangedListener,
+	IResourceChangeListener {
 
-	private final FileQueue queue;
+    public static boolean DEBUG = false;
 
-	private final ThreadLocal<Boolean> interrupted = new  ThreadLocal<Boolean>();
-	
-		
-	public void elementChanged(ElementChangedEvent event) {
-		final IRodinElementDelta delta = event.getDelta();
-		interrupted.set(false);
+    private final DeltaQueue queue;
+
+    private final ThreadLocal<Boolean> interrupted = new ThreadLocal<Boolean>();
+
+    public void elementChanged(ElementChangedEvent event) {
+	final IRodinElementDelta delta = event.getDelta();
+	interrupted.set(false);
+	try {
+	    while (true) {
 		try {
-			while (true) {
-				try {
-					processDelta(delta);
-					return;
-				} catch (InterruptedException e) {
-					interrupted.set(true);
-				}
-			}
-		} finally {
-			if (interrupted.get()) {
-				Thread.currentThread().interrupt();
-			}
+		    processDelta(delta);
+		    return;
+		} catch (InterruptedException e) {
+		    interrupted.set(true);
 		}
+	    }
+	} finally {
+	    if (interrupted.get()) {
+		Thread.currentThread().interrupt();
+	    }
 	}
+    }
 
-	public DeltaQueuer(FileQueue queue) {
-		this.queue = queue;
-	}
-	
-	private void processDelta(IRodinElementDelta delta) throws InterruptedException {
-		// TODO also listen to project creation and deletion
-		// TODO what about project open and close initiated by user: use
-		// workspace listener?
-		enqueueAffectedFiles(delta);
-	}
+    public DeltaQueuer(DeltaQueue queue) {
+	this.queue = queue;
+    }
 
+    private void processDelta(IRodinElementDelta delta)
+	    throws InterruptedException {
+	enqueueAffectedFiles(delta);
+    }
 
-	private void enqueueIfNotPresent(IRodinFile file)
-			throws InterruptedException {
-			queue.put(file);
+    private void enqueueAffectedFiles(IRodinElementDelta delta)
+	    throws InterruptedException {
+	final IRodinElement element = delta.getElement();
+	if (!(element instanceof IOpenable)) {
+	    // No chance to find a file below
+	    return;
 	}
-	
-	private void enqueueAffectedFiles(IRodinElementDelta delta) throws InterruptedException {
-		final IRodinElement element = delta.getElement();
-		if (!(element instanceof IOpenable)) {
-			// No chance to find a file below
+	if (element instanceof IRodinFile) {
+	    final IRodinFile file = (IRodinFile) element;
+	    if (DEBUG) {
+		System.out.println("Indexer: File " + file.getPath()
+			+ " has changed.");
+	    }
+	    final IIndexDelta indexDelta = new IndexDelta(file,
+		    Kind.FILE_CHANGED);
+	    queue.put(indexDelta, false);
+	    return;
+	}
+	for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
+	    enqueueAffectedFiles(childDelta);
+	}
+    }
+
+    public void resourceChanged(IResourceChangeEvent event) {
+	// FIXME general rodin editor problem: open editors of a closing project
+	// should close as well; editors with errors should not generate
+	// an exception (cannot get children of the ContextFile) up to the user.
+
+	System.out.println(evtToString(event));
+
+	if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+	    final IResourceDelta delta = event.getDelta();
+
+	    interrupted.set(false);
+	    try {
+		while (true) {
+		    try {
+			enqueueRodinProjects(delta);
 			return;
+		    } catch (InterruptedException e) {
+			interrupted.set(true);
+		    }
 		}
-		if (element instanceof IRodinFile) {
-			final IRodinFile file = (IRodinFile) element;
-			if (DEBUG) {
-				System.out.println("Indexer: File " + file.getPath() + " has changed.");
-			}
-			enqueueIfNotPresent(file);
-			return;
+	    } finally {
+		if (interrupted.get()) {
+		    Thread.currentThread().interrupt();
 		}
-		for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
-			enqueueAffectedFiles(childDelta);
-		}
+	    }
 	}
+    }
 
+    private void enqueueRodinProjects(IResourceDelta delta)
+	    throws InterruptedException {
+	final IProject project = delta.getResource().getProject();
+	if (project == null) {
+	    for (IResourceDelta childDelta : delta.getAffectedChildren()) {
+		enqueueRodinProjects(childDelta);
+	    }
+	} else {
+	    final IRodinProject rodinProject = RodinCore.valueOf(project);
+	    if (rodinProject == null) {
+		return;
+	    }
+	    final IIndexDelta indexDelta;
+
+	    switch (delta.getKind()) {
+
+	    case IResourceDelta.CHANGED:
+		if (delta.getFlags() == IResourceDelta.OPEN) {
+		    if (project.isOpen()) {
+			indexDelta = new IndexDelta(rodinProject,
+				Kind.PROJECT_OPENED);
+		    } else {
+			indexDelta = new IndexDelta(rodinProject,
+				Kind.PROJECT_CLOSED);
+		    }
+		    queue.put(indexDelta, true);
+		}
+		break;
+	    case IResourceDelta.ADDED:
+		indexDelta = new IndexDelta(rodinProject, Kind.PROJECT_CREATED);
+		queue.put(indexDelta, true);
+		break;
+	    case IResourceDelta.REMOVED:
+		indexDelta = new IndexDelta(rodinProject, Kind.PROJECT_DELETED);
+		queue.put(indexDelta, true);
+		break;
+	    }
+	}
+    }
+
+    private static String evtToString(IResourceChangeEvent event) {
+	final StringBuilder sb = new StringBuilder("### IRCE type="
+		+ event.getType() + "; resource=" + event.getResource());
+	final IResourceDelta delta = event.getDelta();
+	sb.append("; delta= " + delta);
+	if (delta != null) {
+	    appendDelta(sb, delta);
+	}
+	return sb.toString();
+    }
+
+    private static void appendDelta(final StringBuilder sb,
+	    final IResourceDelta delta) {
+
+	sb.append("CHILD delta kind= " + delta.getKind() + "; delta flags= "
+		+ delta.getFlags() + "; path= " + delta.getFullPath()
+		+ "; affected = {");
+
+	final IResourceDelta[] affectedChildren = delta.getAffectedChildren();
+	for (IResourceDelta resourceDelta : affectedChildren) {
+	    appendDelta(sb, resourceDelta);
+	}
+	sb.append("}");
+    }
 }

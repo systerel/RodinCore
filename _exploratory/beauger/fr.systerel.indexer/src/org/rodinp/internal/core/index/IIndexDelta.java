@@ -8,25 +8,22 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.index.persistence;
+package org.rodinp.internal.core.index;
 
-import java.io.File;
-
-import org.rodinp.internal.core.index.PerProjectPIM;
-import org.rodinp.internal.core.index.ProjectIndexManager;
-
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public interface IPersistor {
+public interface IIndexDelta {
 
-	boolean save(PersistentIndexManager data, File file);
+    public enum Kind {
+        FILE_CHANGED, PROJECT_OPENED, PROJECT_CLOSED, PROJECT_CREATED, PROJECT_DELETED
+    }
 
-	boolean saveProject(ProjectIndexManager pim, File file);
-	
-	boolean restore(File file, PersistentIndexManager data);
-	
-	boolean restoreProject(File file, PerProjectPIM pppim);
+    IRodinElement getElement();
+
+    Kind getKind();
+
 }

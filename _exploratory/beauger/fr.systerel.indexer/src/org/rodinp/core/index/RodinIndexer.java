@@ -172,7 +172,7 @@ public class RodinIndexer extends Plugin {
 		super.start(context);
 		plugin = this;
 		configurePluginDebugOptions();
-		indexerJob.setPriority(Job.DECORATE); // TODO decide more precisely
+		indexerJob.setPriority(Job.DECORATE);
 		indexerJob.setSystem(true);
 		indexerJob.schedule();
 	}

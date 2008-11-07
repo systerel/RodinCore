@@ -53,8 +53,12 @@ public class PerProjectPIM {
 		return pim;
 	}
 
-	public void put(IRodinProject project, ProjectIndexManager pim) {
-		pims.put(project, pim);
+	public void put(ProjectIndexManager pim) {
+		pims.put(pim.getProject(), pim);
+	}
+	
+	public void remove(IRodinProject project) {
+	    pims.remove(project);
 	}
 	
 	public void clear() {
