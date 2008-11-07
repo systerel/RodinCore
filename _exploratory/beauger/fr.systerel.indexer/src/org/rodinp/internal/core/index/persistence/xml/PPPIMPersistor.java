@@ -27,7 +27,7 @@ public class PPPIMPersistor {
 
     public static void restore(Element indexRoot, PerProjectPIM pppim)
 	    throws PersistenceException {
-	assertName(indexRoot, INDEX_ROOT); // TODO call everywhere
+	assertName(indexRoot, INDEX_ROOT);
 	final NodeList pimNodes = getElementsByTagName(indexRoot, PIM);
 
 	for (int i = 0; i < pimNodes.getLength(); i++) {

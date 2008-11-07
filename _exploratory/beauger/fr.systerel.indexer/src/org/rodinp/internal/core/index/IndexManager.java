@@ -117,13 +117,7 @@ public final class IndexManager {
 	indexerRegistry.clear();
     }
 
-    /**
-     * Schedules the indexing of the given files.
-     * 
-     * @param files
-     *                the files to index.
-     */
-    // @Deprecated
+    // for testing purposes only
     public void scheduleIndexing(IRodinFile... files) {
 	for (IRodinFile file : files) {
 	    final IRodinProject project = file.getRodinProject();
@@ -132,8 +126,6 @@ public final class IndexManager {
 	}
 
 	doIndexing(null);
-	// TODO don't launch indexing immediately (define scheduling options)
-	// NOTE : that method will be replaced when implementing listeners
     }
 
     /**
@@ -415,8 +407,6 @@ public final class IndexManager {
      * 
      */
     public void waitUpToDate() throws InterruptedException {
-	// TODO use 1 lock per project ?
-	// FIXME sometimes blocks (running testIntegration)
 	queue.awaitEmptyQueue();
     }
 
@@ -487,10 +477,13 @@ public final class IndexManager {
     private void indexAll() {
 	try {
 	    final IRodinDB rodinDB = RodinCore.getRodinDB();
-	    indexAll(rodinDB.getRodinProjects());
+	    final IRodinProject[] allProjects = rodinDB.getRodinProjects();
+	    indexAll(allProjects);
 	} catch (RodinDBException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    // could not get projects: cannot do anymore
+	    if (DEBUG) {
+		e.printStackTrace();
+	    }
 	}
     }
 
@@ -504,12 +497,21 @@ public final class IndexManager {
 	final Job wholeIndexing = new ProjectIndexing(projects);
 
 	wholeIndexing.setRule(rodinDB.getSchedulingRule());
-	wholeIndexing.schedule();
+	boolean interrupted = false;
 	try {
-	    wholeIndexing.join();
-	} catch (InterruptedException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    while(true) {
+		try {
+		    wholeIndexing.schedule();
+		    wholeIndexing.join();
+		    return;
+		} catch (InterruptedException e) {
+		    interrupted = true;
+		}
+	    }
+	}  finally {
+	    if (interrupted) {
+		Thread.currentThread().interrupt();
+	    }
 	}
     }
 

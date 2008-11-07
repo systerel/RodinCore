@@ -40,6 +40,7 @@ public class DeltaListPersistor {
 
     public static void restore(Element indexRoot, Collection<IIndexDelta> deltaList)
 	    throws PersistenceException {
+	assertName(indexRoot, INDEX_ROOT);
 	final NodeList deltaNodes = getElementsByTagName(indexRoot, DELTA);
 	
 	for (int i = 0; i < deltaNodes.getLength(); i++) {
