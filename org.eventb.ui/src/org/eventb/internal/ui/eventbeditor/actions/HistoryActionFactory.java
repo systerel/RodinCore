@@ -21,15 +21,15 @@ public enum HistoryActionFactory {
 	// Singleton instance
 	INSTANCE;
 
-	static abstract class ActionMap<T extends HistoryAction> {
+	static abstract class ActionCache<T extends HistoryAction> {
 
-		private final Map<IWorkbenchWindow, T> map = new HashMap<IWorkbenchWindow, T>();
+		private final Map<IWorkbenchWindow, T> cache = new HashMap<IWorkbenchWindow, T>();
 
 		public T getOrCreateAction(IWorkbenchWindow window) {
-			T action = map.get(window);
+			T action = cache.get(window);
 			if (action == null) {
 				action = createAction(window);
-				map.put(window, action);
+				cache.put(window, action);
 			}
 			return action;
 		}
@@ -38,7 +38,7 @@ public enum HistoryActionFactory {
 
 	}
 
-	static class UndoActionMap extends ActionMap<HistoryAction.Undo> {
+	static class UndoActionCache extends ActionCache<HistoryAction.Undo> {
 
 		@Override
 		protected HistoryAction.Undo createAction(IWorkbenchWindow window) {
@@ -47,7 +47,7 @@ public enum HistoryActionFactory {
 
 	}
 
-	static class RedoActionMap extends ActionMap<HistoryAction.Redo> {
+	static class RedoActionCache extends ActionCache<HistoryAction.Redo> {
 
 		@Override
 		protected HistoryAction.Redo createAction(IWorkbenchWindow window) {
@@ -56,9 +56,9 @@ public enum HistoryActionFactory {
 
 	}
 
-	private final UndoActionMap undos = new UndoActionMap();
+	private final UndoActionCache undos = new UndoActionCache();
 
-	private final RedoActionMap redos = new RedoActionMap();
+	private final RedoActionCache redos = new RedoActionCache();
 
 	/**
 	 * Returns an Undo action for the given workbench window.
