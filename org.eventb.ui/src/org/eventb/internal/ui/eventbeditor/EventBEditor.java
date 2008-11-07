@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -51,8 +52,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.actions.HistoryAction;
-import org.eventb.internal.ui.eventbeditor.actions.HistoryActions;
+import org.eventb.internal.ui.eventbeditor.actions.HistoryActionFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -343,11 +343,11 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 	private void setRetargetedAction() {
 		final IWorkbenchWindow wb = getEditorSite().getWorkbenchWindow();
 		final IActionBars bars = getEditorSite().getActionBars();
-		final HistoryActions actions = HistoryActions.INSTANCE;
 		final String undoID = ActionFactory.UNDO.getId();
 		final String redoID = ActionFactory.REDO.getId();
-		final HistoryAction undoAction = actions.getUndoAction(wb);
-		final HistoryAction redoAction = actions.getRedoAction(wb);
+		final HistoryActionFactory actionFactory = HistoryActionFactory.INSTANCE;
+		final Action undoAction = actionFactory.getUndoAction(wb);
+		final Action redoAction = actionFactory.getRedoAction(wb);
 
 		if (!(bars.getGlobalActionHandler(undoID) == undoAction))
 			bars.setGlobalActionHandler(undoID, undoAction);

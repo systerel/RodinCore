@@ -17,39 +17,67 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalElement;
 
 /**
- * This class is subclassed by UndoAction and RedoAction
- * 
- * @see UndoAction
- * @see RedoAction
+ * Common protocol for classes that manipulate the history within an event-B
+ * editor.
  */
 public abstract class HistoryAction extends Action {
 
-	protected final History history;
-	protected final IWorkbenchWindow workbenchWindow;
+	public static class Undo extends HistoryAction {
+
+		public Undo(IWorkbenchWindow workbenchWindow) {
+			super(workbenchWindow);
+		}
+
+		@Override
+		public void doRun(IUndoContext context) {
+			history.undo(context);
+		}
+	}
+
+	public static class Redo extends HistoryAction {
+
+		public Redo(IWorkbenchWindow workbenchWindow) {
+			super(workbenchWindow);
+		}
+
+		@Override
+		public void doRun(IUndoContext context) {
+			history.redo(context);
+		}
+
+	}
+
+	// The workbench window where to look for an open editor
+	private final IWorkbenchWindow workbenchWindow;
+
+	// Short-cut for accessing the history
+	protected static final History history = History.getInstance();
 
 	public HistoryAction(IWorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;
-		history = History.getInstance();
 	}
 
 	private IEditorPart getActiveEditor() {
 		return workbenchWindow.getActivePage().getActiveEditor();
 	}
 
-	protected abstract void doRun(IUndoContext context);
+	private IUndoContext getUndoContext() {
+		final IEditorPart editor = getActiveEditor();
+		if (!(editor instanceof IEventBEditor<?>))
+			return null;
+		return OperationFactory.getContext((IEventBEditor<?>) editor);
+	}
 
 	@Override
 	final public void run() {
-		final IEditorPart editor = getActiveEditor();
-		if (!(editor instanceof IEventBEditor<?>))
-			return;
-		final IInternalElement root = ((IEventBEditor<?>) editor)
-				.getRodinInput();
-		final IUndoContext context = OperationFactory.getContext(root);
-		doRun(context);
+		final IUndoContext context = getUndoContext();
+		if (context != null) {
+			doRun(context);
+		}
 	}
+
+	protected abstract void doRun(IUndoContext context);
 }
