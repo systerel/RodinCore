@@ -39,7 +39,7 @@ public class TestEditorPagesRegistry extends TestCase {
 	private IEditorPagesRegistry registry;
 
 	// The test registry.
-	private final static String EDITOR_PAGE_REGISTRY_TEST_ID = EventBUITestsPlugin.PLUGIN_ID
+	private static final String TEST_EXTENSION_POINT_ID = EventBUITestsPlugin.PLUGIN_ID
 			+ ".editorPages";
 
 	// Some pre-defined IDs and names.
@@ -62,7 +62,13 @@ public class TestEditorPagesRegistry extends TestCase {
 		super.setUp();
 		registry = EditorPagesRegistry.getDefault();
 		((EditorPagesRegistry) registry)
-				.setEditorPageRegistryID(EDITOR_PAGE_REGISTRY_TEST_ID);
+				.setAlternateExtensionPointID(TEST_EXTENSION_POINT_ID);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		((EditorPagesRegistry) registry).setAlternateExtensionPointID(null);
+		super.tearDown();
 	}
 
 	/**

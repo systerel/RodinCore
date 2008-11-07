@@ -29,6 +29,7 @@ import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.tests.EventBUITestsPlugin;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,8 +45,8 @@ public class TestEditorPagesPreference extends TestCase {
 	private IEditorPagesRegistry registry;
 
 	// The test registry.
-	private final static String EDITOR_PAGE_REGISTRY_TEST_ID = EventBUITestsPlugin.PLUGIN_ID
-			+ ".editorPages";
+	private static final String TEST_EXTENSION_POINT_ID = EventBUITestsPlugin.PLUGIN_ID
+	+ ".editorPages";
 
 	// Some pre-defined IDs and names.
 	private String htmlPageID = "org.eventb.ui.htmlpage";
@@ -70,13 +71,20 @@ public class TestEditorPagesPreference extends TestCase {
 		super.setUp();
 		registry = EditorPagesRegistry.getDefault();
 		((EditorPagesRegistry) registry)
-				.setEditorPageRegistryID(EDITOR_PAGE_REGISTRY_TEST_ID);
+				.setAlternateExtensionPointID(TEST_EXTENSION_POINT_ID);
 		// Try to reset the default values for the two preferences.
 		machinePreference = MachineEditorPagesPreference.getDefault();
 		machinePreference.setDefault();
 		contextPreference = ContextEditorPagesPreference.getDefault();
 		contextPreference.setDefault();
 		pStore = EventBPreferenceStore.getPreferenceStore();
+	}
+
+	@After
+	@Override
+	protected void tearDown() throws Exception {
+		((EditorPagesRegistry) registry).setAlternateExtensionPointID(null);
+		super.tearDown();
 	}
 
 	/**
