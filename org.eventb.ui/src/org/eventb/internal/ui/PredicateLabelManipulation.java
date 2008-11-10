@@ -16,7 +16,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
 
 public class PredicateLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IPredicateElement> {
+		AbstractLabelManipulation<IPredicateElement> {
 
 	private static final IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
 

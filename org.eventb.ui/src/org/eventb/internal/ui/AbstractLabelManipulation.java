@@ -18,7 +18,7 @@ import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public abstract class AbstractInternalElementLabelManipulation<E extends IAttributedElement>
+public abstract class AbstractLabelManipulation<E extends IAttributedElement>
 		implements IElementLabelProvider, IElementModifier {
 
 	public String getLabel(Object obj) throws RodinDBException {

@@ -16,7 +16,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
 
 public class SeesContextLabelManipulation extends
-		AbstractInternalElementLabelManipulation<ISeesContext> {
+		AbstractLabelManipulation<ISeesContext> {
 
 	private static final IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
 

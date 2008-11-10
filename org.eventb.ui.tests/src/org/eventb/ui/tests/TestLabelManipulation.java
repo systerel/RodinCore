@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Systerel - add test for IAttributeFactory
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.ui.tests;
 
@@ -23,7 +23,7 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.internal.ui.AbstractInternalElementLabelManipulation;
+import org.eventb.internal.ui.AbstractLabelManipulation;
 import org.eventb.internal.ui.AssignmentLabelManipulation;
 import org.eventb.internal.ui.ExpressionLabelManipulation;
 import org.eventb.internal.ui.ExtendsContextLabelManipulation;
@@ -37,7 +37,7 @@ import org.eventb.ui.tests.utils.EventBUITest;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class TestInternalElementLabelManipulation extends EventBUITest {
+public class TestLabelManipulation extends EventBUITest {
 
 	public void testGetAssignmentLabel() throws Exception {
 		final String label = "var1 := 3";
@@ -184,7 +184,7 @@ public class TestInternalElementLabelManipulation extends EventBUITest {
 	}
 
 	private void assertGetAndSetAIELabel(
-			AbstractInternalElementLabelManipulation<?> manipulation,
+			AbstractLabelManipulation<?> manipulation,
 			IRodinElement obj, String text) throws Exception {
 		manipulation.modify(obj, text);
 		assertEquals("The label is not set correctly", text, manipulation

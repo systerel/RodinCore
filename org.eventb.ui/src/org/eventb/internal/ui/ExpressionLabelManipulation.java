@@ -22,7 +22,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
  *         </p>
  */
 public class ExpressionLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IExpressionElement> {
+		AbstractLabelManipulation<IExpressionElement> {
 
 	private static final IAttributeFactory<IExpressionElement> factory = new ExpressionAttributeFactory();
 

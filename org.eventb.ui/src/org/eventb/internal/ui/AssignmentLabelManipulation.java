@@ -16,7 +16,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 
 public class AssignmentLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IAssignmentElement> {
+		AbstractLabelManipulation<IAssignmentElement> {
 
 	private static final IAttributeFactory<IAssignmentElement> factory = new AssignmentAttributeFactory();
 

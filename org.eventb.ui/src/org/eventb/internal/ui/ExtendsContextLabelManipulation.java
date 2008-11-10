@@ -22,7 +22,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
  *         </p>
  */
 public class ExtendsContextLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IExtendsContext> {
+		AbstractLabelManipulation<IExtendsContext> {
 
 	private static final IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
 

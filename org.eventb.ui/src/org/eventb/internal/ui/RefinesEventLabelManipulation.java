@@ -16,7 +16,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
 
 public class RefinesEventLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IRefinesEvent> {
+		AbstractLabelManipulation<IRefinesEvent> {
 
 	private static final IAttributeFactory<IRefinesEvent> factory = new RefinesEventAbstractEventLabelAttributeFactory();
 

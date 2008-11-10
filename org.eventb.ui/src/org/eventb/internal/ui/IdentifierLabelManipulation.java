@@ -17,7 +17,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 
 public class IdentifierLabelManipulation extends
-		AbstractInternalElementLabelManipulation<IIdentifierElement> {
+		AbstractLabelManipulation<IIdentifierElement> {
 
 	private static final HashMap<Class<? extends IIdentifierElement>, IAttributeFactory<IIdentifierElement>> factory = new HashMap<Class<? extends IIdentifierElement>, IAttributeFactory<IIdentifierElement>>();
 
