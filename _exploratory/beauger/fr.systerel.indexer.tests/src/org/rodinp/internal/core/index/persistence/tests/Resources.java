@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -30,8 +31,10 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.IIndexDelta;
+import org.rodinp.internal.core.index.IndexDelta;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.IIndexDelta.Kind;
 import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
@@ -80,7 +83,7 @@ public class Resources {
 	}
 
 	public static final IPersistResource EMPTY_RESOURCE = new PersistResource();
-	
+
 	public static File makeBasicFile() throws Exception {
 		final String xml =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -244,18 +247,18 @@ public class Resources {
 		// order
 		order.setPredecessors(file2, makeIRFArray(file1));
 		order.setPredecessors(file3, makeIRFArray(file1, file2));
-		
+
 		order.setToIter(file1);
 		order.setToIter(file2);
 		order.setToIter(file3);
 
 		// make sorted
 		order.hasNext();
-		
+
 		pr.getRodinFiles().add(file1);
 		pr.getRodinFiles().add(file2);
 		pr.getRodinFiles().add(file3);
-		
+
 		return pr;
 	}
 
@@ -302,18 +305,18 @@ public class Resources {
 		final TotalOrder<IRodinFile> order = pim.getOrder();
 
 		// fill elements
-		
+
 		// order
 		order.setPredecessors(file2, makeIRFArray(file1));
 		order.setPredecessors(file3, makeIRFArray(file1, file2));
-		
+
 		order.setToIter(file1);
 		order.setToIter(file2);
 		order.setToIter(file3);
 
 		order.next();
 		order.next();
-		
+
 		pr.getRodinFiles().add(file1);
 		pr.getRodinFiles().add(file2);
 		pr.getRodinFiles().add(file3);
@@ -401,6 +404,36 @@ public class Resources {
 		return file;
 	}
 
+	public static File makeDeltaFile() throws Exception {
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<index_root>"
+						+ "<delta kind=\"FILE_CHANGED\" element=\"/P/F1.test\"/>"
+						+ "<delta kind=\"PROJECT_CLOSED\" element=\"/P\"/>"
+						+ "</index_root>";
+		final File file = getNewFile("delta");
+
+		write(file, xml);
+
+		return file;
+	}
+
+	public static IPersistResource makeDelta(IRodinProject project)
+			throws Exception {
+
+		final PersistResource pr = new PersistResource();
+
+		final IRodinFile file1 = createRodinFile(project, "F1.test");
+
+		final Collection<IIndexDelta> deltas = pr.getIMData().getDeltas();
+
+		deltas.add(new IndexDelta(file1, Kind.FILE_CHANGED));
+		deltas.add(new IndexDelta(project, Kind.PROJECT_CLOSED));
+		
+		pr.getRodinFiles().add(file1);
+
+		return pr;
+	}
 
 	public static File getNewFile(String name) throws IOException {
 		final IPath path = new Path(name);

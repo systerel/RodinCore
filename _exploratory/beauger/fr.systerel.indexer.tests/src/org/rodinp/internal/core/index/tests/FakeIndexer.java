@@ -44,16 +44,18 @@ public class FakeIndexer implements IIndexer {
 			final IInternalElement element = desc.getDeclaration().getElement();
 			final IDeclaration declaration;
 			if (element.getRodinFile().equals(file)) {
-				declaration = index.declare(element, desc.getDeclaration()
-						.getName());
+				declaration =
+						index.declare(element, desc.getDeclaration().getName());
 			} else {
 				declaration = findDeclaration(element, imports);
 			}
-			assert declaration != null;
-			for (IOccurrence occ : desc.getOccurrences()) {
-				final IInternalLocation location = occ.getLocation();
-				if (file.equals(location.getRodinFile())) {
-					index.addOccurrence(declaration, occ.getKind(), location);
+			if (declaration != null) {
+				for (IOccurrence occ : desc.getOccurrences()) {
+					final IInternalLocation location = occ.getLocation();
+					if (file.equals(location.getRodinFile())) {
+						index.addOccurrence(declaration, occ.getKind(),
+								location);
+					}
 				}
 			}
 		}
