@@ -41,12 +41,6 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 		fDefaultTextAttribute = defaultTextAttribute;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
-	 */
-	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
 			boolean documentPartitioningChanged) {
 		if (!documentPartitioningChanged) {
@@ -55,19 +49,11 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 		return partition;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#setDocument(org.eclipse.jface.text.IDocument)
-	 */
-	@Override
 	public void setDocument(IDocument document) {
 		fDocument = document;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#createPresentation(org.eclipse.jface.text.TextPresentation, org.eclipse.jface.text.ITypedRegion)
-	 */
-	@Override
 	public void createPresentation(TextPresentation presentation,
 			ITypedRegion damage) {
 		

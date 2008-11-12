@@ -92,18 +92,15 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
-	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		return computePartitioning(offset, length, false);
 	}
 
-	@Override
 	public void connect(IDocument document) {
 		connect(document, false);
 		
 	}
 
-	@Override
 	public void disconnect() {
 		try {
 			fDocument.removePositionCategory(fPositionCategory);
@@ -113,13 +110,11 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		
 	}
 
-	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public boolean documentChanged(DocumentEvent event) {
 		if (fIsInitialized) {
 			IRegion region= documentChanged2(event);
@@ -128,22 +123,18 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		return false;
 	}
 
-	@Override
 	public String getContentType(int offset) {
 		return getContentType(offset, false);
 	}
 
-	@Override
 	public String[] getLegalContentTypes() {
 		return TextUtilities.copy(fLegalContentTypes);
 	}
 
-	@Override
 	public ITypedRegion getPartition(int offset) {
 		return getPartition(offset, false);
 	}
 
-	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length,
 			boolean includeZeroLengthPartitions) {
 		checkInitialization();
@@ -217,7 +208,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		return result;
 	}
 
-	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		ITypedRegion partition = getPartition(offset, preferOpenPartitions);
 		if (partition != null) {
@@ -226,13 +216,11 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		return null;
 	}
 
-	@Override
 	public String[] getManagingPositionCategories() {
 		// TODO Auto-generated method stub
 		return new String[] {fPositionCategory};
 	}
 
-	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		
 		checkInitialization();
@@ -311,7 +299,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		
 	}
 
-	@Override
 	public void connect(IDocument document, boolean delayInitialization) {
 		fDocument = document;
 		fDocument.addPositionCategory(fPositionCategory);
@@ -322,20 +309,17 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		
 	}
 
-	@Override
 	public DocumentRewriteSession getActiveRewriteSession() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void startRewriteSession(DocumentRewriteSession session)
 			throws IllegalStateException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		// TODO Auto-generated method stub
 		
@@ -344,7 +328,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	/**
 	 * There should never be more than one partition affected.
 	 */
-	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
 		if (!fIsInitialized)
 			return null;

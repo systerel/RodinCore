@@ -14,7 +14,6 @@ package fr.systerel.editor.editors;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineRoot;

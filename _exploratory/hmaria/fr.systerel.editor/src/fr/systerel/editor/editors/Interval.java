@@ -38,8 +38,6 @@ public class Interval implements Comparable<Interval>{
 		this.contentType = contentType;
 	}
 
-	
-	@Override
 	public int compareTo(Interval o) {
 		return offset - o.offset;
 	}

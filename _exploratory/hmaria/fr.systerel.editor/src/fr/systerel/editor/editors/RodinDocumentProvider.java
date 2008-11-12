@@ -31,7 +31,6 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 
 import fr.systerel.editor.EditorUtils;

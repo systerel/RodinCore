@@ -51,7 +51,6 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		}
 		
 
-		@Override
 		public boolean updatePresentation(int offset, TextPresentation presentation) {
 			return false;
 		}
@@ -64,10 +63,6 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 	
 	protected IContextInformationValidator fValidator= new Validator();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
-	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		
@@ -81,47 +76,27 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
-	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
-	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		// TODO Auto-generated method stub
 		return new char[] {'.'};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
-	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		// TODO Auto-generated method stub
 		return new char[] {'.'};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
-	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 //		return fValidator;
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-	 */
-	@Override
 	public String getErrorMessage() {
 		// TODO Auto-generated method stub
 		return null;

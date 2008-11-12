@@ -45,7 +45,6 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		this.mapper = mapper;
 	}
 
-	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// TODO Auto-generated method stub
 		
@@ -54,7 +53,6 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	/**
 	 * Controls the selection in widget
 	 */
-	@Override
 	public void widgetSelected(SelectionEvent e) {
 		
 		int offset = widget2ModelOffset(styledText.getSelection().x);
@@ -114,13 +112,11 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		return editable;
 	}
 
-	@Override
 	public void keyPressed(KeyEvent e) {
 		//do nothing
 	}
 
 	
-	@Override
 	public void keyReleased(KeyEvent e) {
 		//setEditable according to the region the caret is in.
 		if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ||
@@ -133,19 +129,16 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		
 	}
 
-	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		// do nothing
 		
 	}
 
-	@Override
 	public void mouseDown(MouseEvent e) {
 		// do nothing
 		
 	}
 
-	@Override
 	public void mouseUp(MouseEvent e) {
 		
 		int offset = styledText.getSelection().x;
@@ -161,7 +154,6 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		
 	}
 
-	@Override
 	public void verifyText(VerifyEvent e) {
 		int start = widget2ModelOffset(e.start);
 		

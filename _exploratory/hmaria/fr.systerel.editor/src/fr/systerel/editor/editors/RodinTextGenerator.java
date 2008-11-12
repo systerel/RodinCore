@@ -30,7 +30,6 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
