@@ -44,6 +44,7 @@ public class RodinTextGenerator {
 	private DocumentMapper documentMapper;
 	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
 	private Object lineSeparator = System.getProperty("line.separator");
+	private Character tab = '\u0009';
 
 	
 	public RodinTextGenerator(DocumentMapper documentMapper) {
@@ -202,7 +203,6 @@ public class RodinTextGenerator {
 		builder.append(text);
 		int length = builder.length() - start;
 		documentMapper.processInterval(start, length, element, contentType);
-		builder.append(lineSeparator);
 		
 	}
 
@@ -243,6 +243,7 @@ public class RodinTextGenerator {
 			} else {
 				addElementRegion("", element, RodinConfiguration.COMMENT_TYPE);
 			}
+			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -250,14 +251,13 @@ public class RodinTextGenerator {
 	}
 	
 	private void processPredicateElement(IPredicateElement element) {
-		try {
-			addLabelRegion("Pred: ", element);
-			
+		try {			
 			if (element.hasPredicateString()) {
 				addElementRegion(element.getPredicateString(), element, RodinConfiguration.CONTENT_TYPE);
 			} else {
 				addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
 			}
+			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -266,12 +266,12 @@ public class RodinTextGenerator {
 
 	private void processAssignmentElement(IAssignmentElement element) {
 		try {
-			addLabelRegion(":= ", element);
 			if (element.hasAssignmentString()) {
 				addElementRegion(element.getAssignmentString(), element, RodinConfiguration.CONTENT_TYPE);
 			} else {
 				addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
 			}
+			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -281,13 +281,13 @@ public class RodinTextGenerator {
 	
 	private void processLabeledElement(ILabeledElement element) {
 		try {
-			addLabelRegion("L: ", element);
 
 			if (element.hasLabel()) {
 				addElementRegion(element.getLabel(), element, RodinConfiguration.IDENTIFIER_TYPE);
 			} else {
 				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
 			}
+			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -296,13 +296,12 @@ public class RodinTextGenerator {
 
 	private void processIdentifierElement(IIdentifierElement element) {
 		try {
-			addLabelRegion("ID: ", element);
-
 			if (element.hasIdentifierString()) {
 				addElementRegion(element.getIdentifierString(), element, RodinConfiguration.IDENTIFIER_TYPE);
 			} else {
 				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
 			}
+			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -331,64 +330,44 @@ public class RodinTextGenerator {
 	
 
 	private void processEvent(IEvent event) throws RodinDBException {
+
 		int start = builder.length();
 		processElement(event);
+		
+		
+		
 		IGuard[] guards = event.getGuards();
 		for (IGuard guard : guards) {
-			processElement(guard);
+			StringBuilder text = new StringBuilder();
+			text.append(tab);
+			addLabelRegion(text.toString(), guard);
+			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);
+			addLabelRegion(": ", guard);
+			processPredicateElement(guard);
 		}
-		IWitness[] witnesses = event.getWitnesses();
-		for (IWitness witness : witnesses) {
-			processElement(witness);
-		}
-		
-		IAction[] actions = event.getActions();
-		for (IAction action : actions) {
-			processElement(action);
-		}
-		int length = builder.length() - start;
-		foldingRegions.add(new Position(start, length));
-		
 		builder.append(lineSeparator);
-
-
-//		int start = builder.length();
-//		processElement(event);
-//		
-//		
-//		
-//		IGuard[] guards = event.getGuards();
-//		for (IGuard guard : guards) {
-//			
-//			StringBuilder text = new StringBuilder();
-//			text.append('\u0009');
-//			addLabelRegion(text.toString(), guard);
-//			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);
-//			addLabelRegion(": ", guard);
-//			
-//			if (guard.hasPredicateString()) {
-//				addElementRegion(guard.getPredicateString(), guard, RodinConfiguration.CONTENT_TYPE);
-//			} else {
-//				addElementRegion("", guard, RodinConfiguration.CONTENT_TYPE);
-//			}
-//			builder.append(lineSeparator);
-//			
-//		}
-		
-		
 //		IWitness[] witnesses = event.getWitnesses();
 //		for (IWitness witness : witnesses) {
 //			processElement(witness);
 //		}
 //		
-//		IAction[] actions = event.getActions();
-//		for (IAction action : actions) {
-//			processElement(action);
-//		}
-//		int length = builder.length() - start;
-//		foldingRegions.add(new Position(start, length));
-//		
-//		builder.append(lineSeparator);
+		
+		IAction[] actions = event.getActions();
+		for (IAction action : actions) {
+			StringBuilder text = new StringBuilder();
+			text.append(tab);
+			addLabelRegion(text.toString(), action);
+			addElementRegion(action.getLabel(), action, RodinConfiguration.IDENTIFIER_TYPE);
+			addLabelRegion(": ", action);
+			processAssignmentElement(action);
+		}
+		builder.append(lineSeparator);
+		
+		
+		int length = builder.length() - start;
+		foldingRegions.add(new Position(start, length));
+		
+		builder.append(lineSeparator);
 		
 	}
 	
