@@ -13,6 +13,7 @@ package fr.systerel.editor.editors;
 
 import java.util.ArrayList;
 
+import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -26,6 +27,7 @@ import org.rodinp.core.IRodinElement;
 public class DocumentMapper {
 	
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
+	private IEventBRoot root;
 	
 	/**
 	 * Adds an interval to the document mapper at the end of the list.
@@ -206,6 +208,14 @@ public class DocumentMapper {
 	
 	public void resetIntervals() {
 		intervals.clear();
+	}
+
+	public IEventBRoot getRoot() {
+		return root;
+	}
+
+	public void setRoot(IEventBRoot root) {
+		this.root = root;
 	}
 
 }

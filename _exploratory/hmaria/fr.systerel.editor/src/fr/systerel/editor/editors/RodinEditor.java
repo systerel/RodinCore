@@ -56,7 +56,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	public RodinEditor() {
 		super();
 		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new RodinConfiguration(colorManager));
+		setSourceViewerConfiguration(new RodinConfiguration(colorManager, mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
 		RodinCore.addElementChangedListener(this);
@@ -90,7 +90,8 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		
 		styledText = getSourceViewer().getTextWidget();
-		SelectionController controller = new SelectionController(styledText, mapper);
+		
+		SelectionController controller = new SelectionController(styledText, mapper, viewer);
 		styledText.addSelectionListener(controller);
 		styledText.addKeyListener(controller);
 		styledText.addVerifyListener(controller);
@@ -133,7 +134,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		int i = 0;
 		for(Position position : positions){
-			ProjectionAnnotation annotation = new ProjectionAnnotation();
+			ProjectionAnnotation annotation = new ProjectionAnnotation(true);
 			
 			newAnnotations.put(annotation, position);
 			
@@ -197,17 +198,25 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * The editor is refreshed.
 	 */
 	public void elementChanged(ElementChangedEvent event) {
+		System.out.println(event.getDelta());
 		DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
 		if (proc.isMustRefresh()) {
 			Display.getDefault().asyncExec(new Runnable(){
 			public void run() {
 				try {
 					documentProvider.resetDocument(getEditorInput());
+					updateFoldingStructure(documentProvider.getFoldingRegions());
+					updateMarkerStructure(documentProvider.getMarkerAnnotations());
 				} catch (CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		}});;
+			}});;
+		} else if (proc.isMustRefreshMarkers()) {
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run() {
+					updateMarkerStructure(documentProvider.getMarkerAnnotations());
+			}});;
 		}
 		
 	}

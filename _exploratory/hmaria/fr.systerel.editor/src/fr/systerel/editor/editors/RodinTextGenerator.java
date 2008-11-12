@@ -350,6 +350,46 @@ public class RodinTextGenerator {
 		foldingRegions.add(new Position(start, length));
 		
 		builder.append(lineSeparator);
+
+
+//		int start = builder.length();
+//		processElement(event);
+//		
+//		
+//		
+//		IGuard[] guards = event.getGuards();
+//		for (IGuard guard : guards) {
+//			
+//			StringBuilder text = new StringBuilder();
+//			text.append('\u0009');
+//			addLabelRegion(text.toString(), guard);
+//			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);
+//			addLabelRegion(": ", guard);
+//			
+//			if (guard.hasPredicateString()) {
+//				addElementRegion(guard.getPredicateString(), guard, RodinConfiguration.CONTENT_TYPE);
+//			} else {
+//				addElementRegion("", guard, RodinConfiguration.CONTENT_TYPE);
+//			}
+//			builder.append(lineSeparator);
+//			
+//		}
+		
+		
+//		IWitness[] witnesses = event.getWitnesses();
+//		for (IWitness witness : witnesses) {
+//			processElement(witness);
+//		}
+//		
+//		IAction[] actions = event.getActions();
+//		for (IAction action : actions) {
+//			processElement(action);
+//		}
+//		int length = builder.length() - start;
+//		foldingRegions.add(new Position(start, length));
+//		
+//		builder.append(lineSeparator);
+		
 	}
 	
 	public Position[] getFoldingRegions() {

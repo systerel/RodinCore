@@ -34,6 +34,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 
+import fr.systerel.editor.EditorUtils;
+
 /**
  * This is a document provider for rodin machines and contexts. It is intended
  * that for each editor there is used a new instance of this class.
@@ -67,8 +69,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		doc = new Document();
 		if (element instanceof IEditorInput) {
 			IFile file =  (IFile) ((IEditorInput) element).getAdapter(IFile.class);
-			IRodinProject project = RodinCore.getRodinDB().getRodinProject(file.getProject().getName());
+			IRodinProject project = EditorUtils.getRodinProject(file.getProject());
 			inputRoot = (IEventBRoot) project.getRodinFile(file.getName()).getRoot();
+			documentMapper.setRoot(inputRoot);
 			
 			textGenerator = new RodinTextGenerator(documentMapper);
 			doc.set(textGenerator.createText(inputRoot));
@@ -131,10 +134,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	
 	
 	
-	public void databaseChanged() {
-		documentMapper.resetIntervals();
-		doc.set(textGenerator.createText(inputRoot));
-	}
+//	public void databaseChanged() {
+//		documentMapper.resetIntervals();
+//		doc.set(textGenerator.createText(inputRoot));
+//	}
 	
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
 		System.out.println("synchronizing");
@@ -197,6 +200,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		
 		return null;
 	}
-	
+
 	
 }

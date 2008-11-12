@@ -11,6 +11,7 @@
 
 package fr.systerel.editor.editors;
 
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
@@ -26,16 +27,21 @@ import org.eclipse.swt.events.VerifyListener;
  * Controls the selection in the RodinEditor and decides when it should be
  * editable. It is not possible to have just parts of the text editable. So the
  * whole styled text widget is set to editable or not according to the current
- * carret position.
+ * carret position. Since this class directly accesses the styled text widget,
+ * coordinates may be in need of transformation, since the editor implements folding
+ * and the <code>DocumentMapper</code> works with model coordinates and not widget
+ * coordinates.
  */
 public class SelectionController implements SelectionListener, KeyListener, MouseListener, VerifyListener {
 
 	private StyledText styledText;
 	private DocumentMapper mapper;
+	private ProjectionViewer viewer;
 
-	public SelectionController(StyledText styledText, DocumentMapper mapper) {
+	public SelectionController(StyledText styledText, DocumentMapper mapper, ProjectionViewer viewer) {
 		super();
 		this.styledText = styledText;
+		this.viewer = viewer;
 		this.mapper = mapper;
 	}
 
@@ -51,8 +57,8 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		
-		int offset = styledText.getSelection().x;
-		int end = styledText.getSelection().y;
+		int offset = widget2ModelOffset(styledText.getSelection().x);
+		int end = widget2ModelOffset(styledText.getSelection().y);
 		if (!isValidSelection(offset, end - offset)) {
 			correctSelection();
 		}
@@ -60,6 +66,13 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		
 	}
 	
+	/**
+	 * Checks if a selection is valid.
+	 * A selection is valid, iff at most one editable element is selected.
+	 * @param offset The offset to check, in model coordinates
+	 * @param length
+	 * @return <code>true</code> if the selection is valid, <code>false</code> otherwise.
+	 */
 	public boolean isValidSelection(int offset, int length) {
 		Interval interval = mapper.findEditableInterval(offset);
 		//only editable intervals can be selected
@@ -92,9 +105,7 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	 * Decides whether a given position should be editable or not.
 	 * 
 	 * @param offset
-	 *            The position to check
-	 * @param intervals
-	 *            The intervals at that offset.
+	 *            The position to check, in model coordinates.
 	 * @return <code>true</code>, if the region is editable,
 	 *         <code>false</code> otherwise.
 	 */
@@ -114,7 +125,8 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		//setEditable according to the region the caret is in.
 		if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ||
 				e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_LEFT) {
-			Interval interval = mapper.findEditableInterval((styledText.getCaretOffset()));
+			int offset = widget2ModelOffset((styledText.getCaretOffset()));
+			Interval interval = mapper.findEditableInterval(offset);
 			boolean editable = interval != null;
 			styledText.setEditable(editable) ;
 		}
@@ -141,7 +153,8 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		//no selection, otherwise the widgedSelected function takes care of it
 		//setEditable according to the region the caret is in.
 		if (offset == end ) {
-			Interval interval = mapper.findEditableInterval((styledText.getCaretOffset()));
+			int off = widget2ModelOffset((styledText.getCaretOffset()));
+			Interval interval = mapper.findEditableInterval(off);
 			boolean editable = interval != null;
 			styledText.setEditable(editable) ;
 		}
@@ -150,7 +163,9 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 
 	@Override
 	public void verifyText(VerifyEvent e) {
-		Interval editable = mapper.findEditableInterval(e.start);
+		int start = widget2ModelOffset(e.start);
+		
+		Interval editable = mapper.findEditableInterval(start);
 		//if there is no editable interval in the region, cancel.
 		//this includes cases where there is a deletion right before an editable interval
 		if (editable == null)  {
@@ -159,11 +174,17 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 			return;
 		}
 		//do not delete after the editable has ended
-		if (editable.getOffset() +editable.getLength() < e.end && e.text.length() == 0) {
+		int end = widget2ModelOffset(e.end);
+		if (editable.getOffset() +editable.getLength() < end && e.text.length() == 0) {
 //			System.out.println("can not delete after editable has ended");
 			e.doit = false;
 			return;
 		}
 	}
+	
+	protected int widget2ModelOffset(int widgetOffset) {
+		return viewer.widgetOffset2ModelOffset(widgetOffset);
+	}
+	
 	
 }

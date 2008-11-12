@@ -34,9 +34,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final String COMMENT_HEADER_TYPE = "__comment_header";
 	
 	private ColorManager colorManager;
+	private DocumentMapper documentMapper;
 
-	public RodinConfiguration(ColorManager colorManager) {
+	public RodinConfiguration(ColorManager colorManager, DocumentMapper documentMapper) {
 		this.colorManager = colorManager;
+		this.documentMapper = documentMapper;
 	}
 	
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -96,8 +98,8 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 		ContentAssistant assistant= new ContentAssistant();
 		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(), CONTENT_TYPE);
-		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(), COMMENT_TYPE);
+		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(documentMapper), CONTENT_TYPE);
+		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(documentMapper), COMMENT_TYPE);
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);

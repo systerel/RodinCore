@@ -13,6 +13,9 @@
 package fr.systerel.editor.editors;
 
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.ISCMachineFile;
+import org.eventb.core.ISCMachineRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 
@@ -27,10 +30,12 @@ public class DeltaProcessor {
 	private IEventBRoot inputRoot;
 	
 	private boolean mustRefresh;
+	private boolean mustRefreshMarkers;
 	
 	public DeltaProcessor(IRodinElementDelta delta, IEventBRoot inputRoot) {
 		this.inputRoot = inputRoot;
 		mustRefresh = false;
+		mustRefreshMarkers = false;
 		processDelta(delta);
 	}
 
@@ -44,12 +49,27 @@ public class DeltaProcessor {
 	public void processDelta(final IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
+		IEventBRoot scRoot;
+		if (inputRoot instanceof IMachineRoot) {
+			scRoot = inputRoot.getSCMachineRoot();
+		} else {
+			scRoot = inputRoot.getSCContextRoot();
+		}
 		
-		//we're only interested in changes to the inputRoot.
+		//we're only interested in changes to the inputRoot and its statically checked version.
 		if (kind == IRodinElementDelta.CHANGED) {
 			if (element.equals(inputRoot)) {
 				mustRefresh = true;
 				return;
+			}else if (element.equals(scRoot)){
+				mustRefreshMarkers = true;
+				
+			// this part can be removed, when delta contains the root and no longer the file
+			}else if (element instanceof ISCMachineFile){
+				if (((ISCMachineFile) element).getRoot().equals(scRoot)) {
+					mustRefreshMarkers = true;
+				}
+					
 			} else{
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (IRodinElementDelta element2 : deltas) {
@@ -67,6 +87,10 @@ public class DeltaProcessor {
 	 */
 	public boolean isMustRefresh() {
 		return mustRefresh;
+	}
+
+	public boolean isMustRefreshMarkers() {
+		return mustRefreshMarkers;
 	}
 	
 

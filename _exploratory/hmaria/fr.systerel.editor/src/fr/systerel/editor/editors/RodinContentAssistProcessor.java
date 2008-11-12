@@ -11,6 +11,8 @@
 
 package fr.systerel.editor.editors;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -22,6 +24,10 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class RodinContentAssistProcessor implements IContentAssistProcessor {
 
+	private DocumentMapper documentMapper;
+	private CompletionCalculator calculator;
+	
+	
 	/**
 	 * Simple content assist tip closer. The tip is valid in a range
 	 * of 5 characters around its popup location.
@@ -51,6 +57,11 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		}
 	}
 	
+	public RodinContentAssistProcessor(DocumentMapper documentMapper) {
+		this.documentMapper = documentMapper;
+		calculator = new CompletionCalculator(documentMapper);
+	}
+	
 	protected IContextInformationValidator fValidator= new Validator();
 	
 	/* (non-Javadoc)
@@ -60,9 +71,14 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		
-		ICompletionProposal[] result= new ICompletionProposal[1];
-			result[0]= new CompletionProposal("test", offset, 0, 4);
-		return result;
+		String[] completions = calculator.calculateCompletions(offset);
+		ArrayList<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
+		for (String comp : completions) {
+			result.add(new CompletionProposal(comp, offset, 0, comp.length()));
+		}
+//		ICompletionProposal[] result= new ICompletionProposal[1];
+//			result[0]= new CompletionProposal("test", offset, 0, 4);
+		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -110,5 +126,6 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }
