@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.eventbeditor.operations;
 
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
@@ -24,6 +25,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -265,10 +267,12 @@ class OperationBuilder {
 
 	private OperationCreateElement createEvent(IEventBEditor<?> editor,
 			String label) {
-		return createElementOneStringAttribute(editor, editor.getRodinInput(),
-				IEvent.ELEMENT_TYPE, null, LABEL_ATTRIBUTE, label);
-
-		// return new CreateEvent(editor, label);
+		EventBAttributesManager manager = new EventBAttributesManager();
+		manager.addAttribute(LABEL_ATTRIBUTE, label);
+		manager.addAttribute(CONVERGENCE_ATTRIBUTE,
+				IConvergenceElement.Convergence.ORDINARY.getCode());
+		return getCreateElement(editor, editor.getRodinInput(),
+				IEvent.ELEMENT_TYPE, null, manager);
 	}
 
 	private void assertLengthEquals(Object[] tab1, Object[] tab2) {
@@ -293,9 +297,7 @@ class OperationBuilder {
 	}
 
 	/**
-	 * retourne une operation pour creer un element avec un attribut de type
-	 * String
-	 * 
+	 * Return an operation to create an IInternalElement with a string attribute
 	 */
 	public <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
 			IEventBEditor<?> editor, IInternalParent parent,
@@ -393,7 +395,7 @@ class OperationBuilder {
 	}
 
 	/**
-	 * return a Command to create an Element with default attribute
+	 * return an Operation to create an Element with default name and label
 	 * 
 	 * @param editor
 	 *            IEventBEditor where the new element is inserted
@@ -553,13 +555,13 @@ class OperationBuilder {
 
 	}
 
-	public OperationTree renameElement(IRodinFile file,
-			IInternalElementType<?> type, IAttributeFactory factory,
-			String prefix) {
+	public <E extends IInternalElement> OperationTree renameElement(
+			IRodinFile file, IInternalElementType<E> type,
+			IAttributeFactory<E> factory, String prefix) {
 		final OperationNode op = new OperationNode();
 		int counter = 1;
 		try {
-			for (IInternalElement element : file.getRoot().getChildrenOfType(type)) {
+			for (E element : file.getRoot().getChildrenOfType(type)) {
 				op.addCommande(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;
