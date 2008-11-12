@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.ContextEditorPagesPreference;
+import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 
@@ -505,9 +507,15 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 *            the id of the extension point to use or <code>null</code> to
 	 *            revert to the regular one
 	 */
-	public void setAlternateExtensionPointID(String extensionPointId) {
+	public synchronized void setAlternateExtensionPointID(String extensionPointId) {
 		this.alternateExtensionPointId = extensionPointId;
 		registry = null; // Force to reload the registry
+		
+		// FIXME should be done through an observer pattern
+		// with this registry as a subject and the PagesPreferences as clients.
+		// Should also be done for other changes to this registry.
+		MachineEditorPagesPreference.getDefault().setDefault();
+		ContextEditorPagesPreference.getDefault().setDefault();
 	}
 
 }

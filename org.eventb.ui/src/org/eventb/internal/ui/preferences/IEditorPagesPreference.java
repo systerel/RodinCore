@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
- * 
+ * Copyright (c) 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added method setToDefault()
  ******************************************************************************/
 
 package org.eventb.internal.ui.preferences;
@@ -27,18 +27,23 @@ public interface IEditorPagesPreference {
 	 * @return an array of newly created editor pages. This must not be
 	 *         <code>null</code>
 	 */
-	public EventBEditorPage[] createPages();
+	EventBEditorPage[] createPages();
 
 	/**
 	 * Gets the editor ID corresponding to this preference.
 	 * 
 	 * @return the editor ID corresponding to the preference.
 	 */
-	public String getEditorID();
+	String getEditorID();
 
     /**
 	 * Sets the default value for the preference.
 	 */
-	public void setDefault();
+	void setDefault();
+
+    /**
+	 * Sets the current value of this preference back to its default value.
+	 */
+	void setToDefault();
 
 }

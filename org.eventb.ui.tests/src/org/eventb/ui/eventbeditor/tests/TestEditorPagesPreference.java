@@ -74,9 +74,7 @@ public class TestEditorPagesPreference extends TestCase {
 				.setAlternateExtensionPointID(TEST_EXTENSION_POINT_ID);
 		// Try to reset the default values for the two preferences.
 		machinePreference = MachineEditorPagesPreference.getDefault();
-		machinePreference.setDefault();
 		contextPreference = ContextEditorPagesPreference.getDefault();
-		contextPreference.setDefault();
 		pStore = EventBPreferenceStore.getPreferenceStore();
 	}
 
@@ -84,6 +82,8 @@ public class TestEditorPagesPreference extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		((EditorPagesRegistry) registry).setAlternateExtensionPointID(null);
+		machinePreference.setToDefault();
+		contextPreference.setToDefault();
 		super.tearDown();
 	}
 

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBPreferenceStore
+ *     Systerel - added method setToDefault()
  ******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -124,5 +125,9 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 				.toCommaSeparatedList(machinePages));
 		validPageIDs = null;
 	}
-		
+
+	public void setToDefault() {
+		pStore.setToDefault(getPreferenceName());
+		assert validPageIDs == null;
+	}
 }
