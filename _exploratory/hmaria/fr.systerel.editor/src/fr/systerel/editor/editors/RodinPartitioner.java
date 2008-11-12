@@ -130,11 +130,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 	@Override
 	public String getContentType(int offset) {
-		ITypedRegion partition = getPartition(offset);
-		if (partition != null) {
-			return partition.getType();
-		}
-		return null;
+		return getContentType(offset, false);
 	}
 
 	@Override
@@ -144,47 +140,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 	@Override
 	public ITypedRegion getPartition(int offset) {
-		checkInitialization();
-
-		try {
-
-			Position[] category = getPositions();
-
-			if (category == null || category.length == 0)
-				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
-
-			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
-
-			if (index < category.length) {
-
-				TypedPosition next= (TypedPosition) category[index];
-
-				if (offset == next.offset)
-					return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
-
-				if (index == 0)
-					return new TypedRegion(0, next.offset, IDocument.DEFAULT_CONTENT_TYPE);
-
-				TypedPosition previous= (TypedPosition) category[index - 1];
-				if (previous.includes(offset))
-					return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
-
-				int endOffset= previous.getOffset() + previous.getLength();
-				return new TypedRegion(endOffset, next.getOffset() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
-			}
-
-			TypedPosition previous= (TypedPosition) category[category.length - 1];
-			if (previous.includes(offset))
-				return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
-
-			int endOffset= previous.getOffset() + previous.getLength();
-			return new TypedRegion(endOffset, fDocument.getLength() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
-
-		} catch (BadPositionCategoryException x) {
-		} catch (BadLocationException x) {
-		}
-
-		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+		return getPartition(offset, false);
 	}
 
 	@Override
@@ -263,8 +219,11 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
-		// TODO Auto-generated method stub
-		return getContentType(offset);
+		ITypedRegion partition = getPartition(offset, preferOpenPartitions);
+		if (partition != null) {
+			return partition.getType();
+		}
+		return null;
 	}
 
 	@Override
@@ -275,7 +234,81 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
-		return getPartition(offset);
+		
+		checkInitialization();
+
+		try {
+
+			Position[] category = getPositions();
+
+			if (category == null || category.length == 0)
+				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+
+			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
+
+			if (index < category.length) {
+				TypedPosition next= (TypedPosition) category[index];
+
+				if (preferOpenPartitions) {
+					//check if there is a non zero open partition ending at offset:
+					if (index > 0) {
+						TypedPosition previous= (TypedPosition) category[index-1];
+						if (previous.getOffset() + previous.getLength() == offset){
+							//the editable types are considered open partitions
+							if (Interval.isEditableType(previous.getType()))  {
+								return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+							}
+						}
+					}
+					
+					//check if there is a open partition starting at offset:
+					if (next.getOffset() == offset){
+						//the editable types are considered open partitions
+						if (Interval.isEditableType(next.getType()))  {
+							return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+						}
+					}
+					if (index +1 < category.length) {
+						next= (TypedPosition) category[index +1];
+						if (next.getOffset() == offset){
+							//the editable types are considered open partitions
+							if (Interval.isEditableType(next.getType()))  {
+								return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+							}
+						}
+					}
+					next= (TypedPosition) category[index];
+					
+				}
+				
+				
+				if (offset == next.offset)
+					return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+
+				if (index == 0)
+					return new TypedRegion(0, next.offset, IDocument.DEFAULT_CONTENT_TYPE);
+
+				TypedPosition previous= (TypedPosition) category[index - 1];
+				if (previous.includes(offset))
+					return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+
+				int endOffset= previous.getOffset() + previous.getLength();
+				return new TypedRegion(endOffset, next.getOffset() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
+			}
+
+			TypedPosition previous= (TypedPosition) category[category.length - 1];
+			if (previous.includes(offset))
+				return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+
+			int endOffset= previous.getOffset() + previous.getLength();
+			return new TypedRegion(endOffset, fDocument.getLength() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
+
+		} catch (BadPositionCategoryException x) {
+		} catch (BadLocationException x) {
+		}
+
+		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+		
 	}
 
 	@Override
@@ -533,7 +566,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 	/**
 	 * Calculates the correction to positions that have changed. The default
-	 * positionUpdate works fine generally, but not at the beginning and end of
+	 * positionUpdate works fine generally, but not at the beginning and end of editable
 	 * intervals. The results needed for correction are stored in
 	 * <code>correctionIndex</code>, <code>fNewOffSet</code> and
 	 * <code>fNewLength</code>.
@@ -565,7 +598,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					}
 					
 				}
-				
 				
 				//insertion at end
 				for (int i = first-1; i >= 0; i--) {

@@ -11,7 +11,6 @@
 
 package fr.systerel.editor.editors;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.rodinp.core.IRodinElement;

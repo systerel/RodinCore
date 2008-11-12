@@ -161,31 +161,40 @@ public class RodinTextGenerator {
 	}
 
 	private void addRefinesRegion(IMachineRoot machine) throws RodinDBException {
+		//TODO: Add intervals;
 
-			int start = builder.length();
-			int length;
-			builder.append("Refines: ");
-			for (IRefinesMachine refines : machine.getRefinesClauses()) {
-				builder.append(refines.getAbstractMachineName());
-				builder.append(lineSeparator);
-			}
-			length = builder.length() - start;
-			foldingRegions.add(new Position(start, length));
+		int start = builder.length();
+		int length;
+		addLabelRegion("Refines: ", machine);
+		
+		for (IRefinesMachine refines : machine.getRefinesClauses()) {
+			int offset = builder.length();
+			builder.append(refines.getAbstractMachineName());
+			length = builder.length() - offset;
+			documentMapper.processInterval(offset, length, refines, RodinConfiguration.CONTENT_TYPE);
 			builder.append(lineSeparator);
+		}
+		length = builder.length() - start;
+		foldingRegions.add(new Position(start, length));
+		builder.append(lineSeparator);
 	}
 
 	private void addSeesRegion(IMachineRoot machine) throws RodinDBException {
-
-			int start = builder.length();
-			int length;
-			builder.append("Sees: ");
-			for (ISeesContext sees : machine.getSeesClauses()) {
-				builder.append(sees.getSeenContextName());
-				builder.append(lineSeparator);
-			}
-			length = builder.length()-start;
-			foldingRegions.add(new Position(start, length));
+		//TODO: Add intervals;
+		int start = builder.length();
+		int length;
+		addLabelRegion("Sees: ", machine);
+		for (ISeesContext sees : machine.getSeesClauses()) {
+			int offset = builder.length();
+			builder.append(sees.getSeenContextName());
+			length = builder.length() - offset;
+			documentMapper.processInterval(offset, length, sees, RodinConfiguration.CONTENT_TYPE);
 			builder.append(lineSeparator);
+		}
+		length = builder.length()-start;
+		foldingRegions.add(new Position(start, length));
+		builder.append(lineSeparator);
+		builder.append(lineSeparator);
 	}
 	
 	protected void addElementRegion(String text, IRodinElement element, String contentType) {
@@ -197,21 +206,38 @@ public class RodinTextGenerator {
 		
 	}
 
+	protected void addLabelRegion(String text, IRodinElement element) {
+		int start = builder.length();
+		builder.append(text);
+		int length = builder.length() - start;
+		documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
+		
+	}
+	
+	protected void addCommentHeaderRegion(IRodinElement element) {
+		int start = builder.length();
+		builder.append("// ");
+		int length = builder.length() - start;
+		documentMapper.processInterval(start, length, element, RodinConfiguration.COMMENT_HEADER_TYPE);
+		
+	}
+
+	
 	protected void addTitleRegion(String title) {
+		int start = builder.length();
 		builder.append(title);
 		builder.append(lineSeparator);
 		builder.append(lineSeparator);
+		int length = builder.length() - start;
+		documentMapper.processInterval(start, length, null, RodinConfiguration.TITLE_TYPE);
 	}
 	
 	
 
 	private void processCommentedElement(ICommentedElement element) {
 		try {
-			int start = builder.length();
-			builder.append("// ");
-			int length = builder.length() - start;
-			documentMapper.processInterval(start, length, element, RodinConfiguration.COMMENT_HEADER_TYPE);
-
+			addCommentHeaderRegion(element);
+			
 			if (element.hasComment()) {
 				addElementRegion(element.getComment(), element, RodinConfiguration.COMMENT_TYPE);
 			} else {
@@ -225,10 +251,8 @@ public class RodinTextGenerator {
 	
 	private void processPredicateElement(IPredicateElement element) {
 		try {
-			int start = builder.length();
-			builder.append("Pred: ");
-			int length = builder.length() - start;
-			documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
+			addLabelRegion("Pred: ", element);
+			
 			if (element.hasPredicateString()) {
 				addElementRegion(element.getPredicateString(), element, RodinConfiguration.CONTENT_TYPE);
 			} else {
@@ -242,10 +266,7 @@ public class RodinTextGenerator {
 
 	private void processAssignmentElement(IAssignmentElement element) {
 		try {
-			int start = builder.length();
-			builder.append(":= ");
-			int length = builder.length() - start;
-			documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
+			addLabelRegion(":= ", element);
 			if (element.hasAssignmentString()) {
 				addElementRegion(element.getAssignmentString(), element, RodinConfiguration.CONTENT_TYPE);
 			} else {
@@ -260,10 +281,8 @@ public class RodinTextGenerator {
 	
 	private void processLabeledElement(ILabeledElement element) {
 		try {
-			int start = builder.length();
-			builder.append("L: ");
-			int length = builder.length() - start;
-			documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
+			addLabelRegion("L: ", element);
+
 			if (element.hasLabel()) {
 				addElementRegion(element.getLabel(), element, RodinConfiguration.IDENTIFIER_TYPE);
 			} else {
@@ -277,10 +296,8 @@ public class RodinTextGenerator {
 
 	private void processIdentifierElement(IIdentifierElement element) {
 		try {
-			int start = builder.length();
-			builder.append("ID: ");
-			int length = builder.length() - start;
-			documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
+			addLabelRegion("ID: ", element);
+
 			if (element.hasIdentifierString()) {
 				addElementRegion(element.getIdentifierString(), element, RodinConfiguration.IDENTIFIER_TYPE);
 			} else {

@@ -38,9 +38,9 @@ public class DocumentMapper {
 			if (intervals.get(intervals.size() -1).compareTo(interval) > 0) {
 				throw new Exception("Insertion must be sorted");
 			}
-			if (intervals.get(intervals.size() -1).isEditable() && interval.isEditable()) {
-				throw new Exception("Can not add two editable intervals in a row");
-			}
+//			if (intervals.get(intervals.size() -1).isEditable() && interval.isEditable()) {
+//				throw new Exception("Can not add two editable intervals in a row");
+//			}
 		}
 		intervals.add(interval);
 		
@@ -193,7 +193,7 @@ public class DocumentMapper {
 	 */
 	public Interval findInterval(IRodinElement element) {
 		for (Interval interval : intervals) {
-			if (interval.getElement().equals(element)) {
+			if (element.equals(interval.getElement())) {
 				return interval;
 			}
 		}

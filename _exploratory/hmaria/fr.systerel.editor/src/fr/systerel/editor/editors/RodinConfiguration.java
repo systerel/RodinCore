@@ -29,6 +29,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final String IDENTIFIER_TYPE = "__identifier";
 	public static final String COMMENT_TYPE = "__comment";
 	public static final String CONTENT_TYPE = "__content";
+	public static final String TITLE_TYPE = "__title";
 	public static final String LABEL_TYPE = "__label";
 	public static final String COMMENT_HEADER_TYPE = "__comment_header";
 	
@@ -73,9 +74,15 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		rdr = new RodinDamagerRepairer(
 				new TextAttribute(
 					colorManager.getColor(IRodinColorConstant.LABEL), null, SWT.BOLD));
+		reconciler.setDamager(rdr, TITLE_TYPE);
+		reconciler.setRepairer(rdr, TITLE_TYPE);
+
+		rdr = new RodinDamagerRepairer(
+				new TextAttribute(
+					colorManager.getColor(IRodinColorConstant.LABEL)));
 		reconciler.setDamager(rdr, LABEL_TYPE);
 		reconciler.setRepairer(rdr, LABEL_TYPE);
-
+		
 		rdr = new RodinDamagerRepairer(
 				new TextAttribute(
 					colorManager.getColor(IRodinColorConstant.COMMENT)));

@@ -98,7 +98,8 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
-		return fValidator;
+//		return fValidator;
+		return null;
 	}
 
 	/* (non-Javadoc)
