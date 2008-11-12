@@ -14,10 +14,9 @@ package fr.systerel.editor.editors;
 
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.core.ISCMachineFile;
-import org.eventb.core.ISCMachineRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 
 /**
  * This class processes an <code>IRodinElementDelta</code> for the
@@ -65,8 +64,8 @@ public class DeltaProcessor {
 				mustRefreshMarkers = true;
 				
 			// this part can be removed, when delta contains the root and no longer the file
-			}else if (element instanceof ISCMachineFile){
-				if (((ISCMachineFile) element).getRoot().equals(scRoot)) {
+			}else if (element instanceof IRodinFile){
+				if (((IRodinFile) element).getRoot().equals(scRoot)) {
 					mustRefreshMarkers = true;
 				}
 					
