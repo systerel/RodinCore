@@ -95,7 +95,7 @@ public class GraphModifier {
 				// the new source in the predecessor list of target has not been processed
 			instable |= link.prio == Link.Priority.HIGH && link.source.getSuccessorPos() > 0; 
 				// child nodes already traversed partially (and the new source is first in list)
-			instable |= link.source.getSuccessorPos() > link.source.getSuccessorCount(); 
+			instable |= link.source.getSuccessorPos() >= link.source.getSuccessorCount(); 
 				// the list of child nodes was already completely traversed
 			if(instable) {
 				graph.setInstable();
