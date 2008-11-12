@@ -14,16 +14,17 @@ import org.rodinp.core.IRodinElement;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public interface IIndexDelta {
 
-    public enum Kind {
-        FILE_CHANGED, PROJECT_OPENED, PROJECT_CLOSED, PROJECT_CREATED, PROJECT_DELETED
-    }
+	public enum Kind {
+		FILE_CHANGED, PROJECT_OPENED, PROJECT_CLOSED, PROJECT_CREATED,
+		PROJECT_DELETED, PROJECT_CLEANED
+	}
 
-    IRodinElement getElement();
+	IRodinElement getElement();
 
-    Kind getKind();
+	Kind getKind();
 
 }

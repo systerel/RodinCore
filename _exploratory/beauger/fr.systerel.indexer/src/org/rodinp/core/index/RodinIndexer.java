@@ -129,6 +129,18 @@ public class RodinIndexer extends Plugin {
 				end);
 	}
 
+	public static IRodinLocation getIncluded(IRodinLocation loc1,
+			IRodinLocation loc2) {
+		if (loc1.isIncludedIn(loc2)) {
+			return loc1;
+		}
+		if (loc2.isIncludedIn(loc1)) {
+			return loc2;
+		}
+		throw new IllegalArgumentException(
+				"neither location is included in the other");
+	}
+
 	public static IIndexRequester getIndexRequester() {
 		return new IndexRequester();
 	}

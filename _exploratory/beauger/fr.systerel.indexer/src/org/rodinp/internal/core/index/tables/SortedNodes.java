@@ -199,9 +199,9 @@ public class SortedNodes<T> implements Iterator<T> {
 
 		iterated.clear();
 		iterated.addAll(psn.getIterated());
-		
+
 		restartPos = findRestartPos();
-		
+
 		startIter = true;
 		updateIter();
 	}

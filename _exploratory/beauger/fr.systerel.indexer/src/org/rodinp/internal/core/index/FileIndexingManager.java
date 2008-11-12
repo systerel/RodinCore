@@ -20,7 +20,7 @@ import org.rodinp.internal.core.RodinDBStatus;
 public class FileIndexingManager {
 
 	private static FileIndexingManager instance;
-	
+
 	private final IndexerRegistry indexerRegistry;
 
 	private FileIndexingManager() {
@@ -33,7 +33,7 @@ public class FileIndexingManager {
 		}
 		return instance;
 	}
-	
+
 	public IRodinFile[] getDependencies(IRodinFile file) {
 		final IIndexer indexer = indexerRegistry.getIndexerFor(file);
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
@@ -41,7 +41,8 @@ public class FileIndexingManager {
 			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
 			if (IndexManager.DEBUG) {
 				System.out.println("INDEXER: Dependencies for file "
-						+ file.getPath() + " are:");
+						+ file.getPath()
+						+ " are:");
 				for (IRodinFile dep : result) {
 					System.out.println("\t" + dep.getPath());
 				}
@@ -51,8 +52,8 @@ public class FileIndexingManager {
 			printDebug(makeMessage("Exception while extracting dependencies",
 					file, indexer));
 
-			IRodinDBStatus status = new RodinDBStatus(
-					RodinIndexer.INDEXER_ERROR, t);
+			IRodinDBStatus status =
+					new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
 			return null;
 		}
@@ -73,7 +74,7 @@ public class FileIndexingManager {
 
 		try {
 			final boolean success = indexer.index(indexingToolkit);
-			if(!success) {
+			if (!success) {
 				return IndexingResult.failed(file);
 			}
 			indexingToolkit.complete();
@@ -85,8 +86,8 @@ public class FileIndexingManager {
 			printDebug(makeMessage("Exception while indexing: "
 					+ t.getMessage(), file, indexer));
 
-			IRodinDBStatus status = new RodinDBStatus(
-					RodinIndexer.INDEXER_ERROR, t);
+			IRodinDBStatus status =
+					new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
 			printVerbose(makeMessage("indexing failed", file, indexer));
 
@@ -96,8 +97,12 @@ public class FileIndexingManager {
 
 	private String makeMessage(String context, IRodinFile file,
 			final IIndexer indexer) {
-		return "INDEXER: " + context + " : file=" + file.getPath()
-				+ " : indexer=" + indexer.getId();
+		return "INDEXER: "
+				+ context
+				+ " : file="
+				+ file.getPath()
+				+ " : indexer="
+				+ indexer.getId();
 	}
 
 	private void printVerbose(final String message) {
