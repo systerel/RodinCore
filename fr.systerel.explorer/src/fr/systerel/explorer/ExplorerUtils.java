@@ -12,14 +12,9 @@
 
 package fr.systerel.explorer;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -33,31 +28,13 @@ public class ExplorerUtils {
 
 	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
 			throws RodinDBException {
-		ArrayList<IMachineRoot> result = new ArrayList<IMachineRoot>();
-		for (IRodinElement element : project.getChildren()) {
-			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element)
-						.getRoot();
-				if (root instanceof IMachineRoot)
-					result.add((IMachineRoot) root);
-			}
-		}
-		return result.toArray(new IMachineRoot[result.size()]);
+		return project.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);
 	}
 	
 	
 	public static IContextRoot[] getContextRootChildren(IRodinProject project)
 			throws RodinDBException {
-		ArrayList<IContextRoot> result = new ArrayList<IContextRoot>();
-		for (IRodinElement element : project.getChildren()) {
-			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element)
-						.getRoot();
-				if (root instanceof IContextRoot)
-					result.add((IContextRoot) root);
-			}
-		}
-		return result.toArray(new IContextRoot[result.size()]);
+		return project.getRootElementsOfType(IContextRoot.ELEMENT_TYPE);
 	}
 	
 	
