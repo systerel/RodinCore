@@ -262,7 +262,7 @@ public abstract class RodinElement extends PlatformObject implements
 				list.add((T) child);
 			}
 		}
-		return list.toArray(((ElementType<T>) type).getArray(list.size()));
+		return ((ElementType<T>) type).toArray(list);
 	}
 
 	

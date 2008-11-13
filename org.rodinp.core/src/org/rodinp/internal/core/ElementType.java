@@ -12,6 +12,7 @@
 package org.rodinp.internal.core;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
@@ -99,5 +100,9 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 	}
 
 	public abstract T[] getArray(int length);
+
+	public final T[] toArray(List<T> list) {
+		return list.toArray(getArray(list.size()));
+	}
 
 }
