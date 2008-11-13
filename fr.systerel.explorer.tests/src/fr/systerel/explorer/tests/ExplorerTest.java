@@ -80,7 +80,6 @@ public class ExplorerTest {
 	
 	protected static Comparator<Object> comparator = new Comparator<Object> () {
 
-		@Override
 		public int compare(Object arg0, Object arg1) {
 			return arg0.toString().compareTo(arg1.toString());
 		}
