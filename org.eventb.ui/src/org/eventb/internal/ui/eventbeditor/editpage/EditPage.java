@@ -61,9 +61,6 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -168,6 +165,62 @@ public class EditPage extends EventBEditorPage implements
 	}
 
 	/**
+	 * Search the first occurrence of the given element and return the previous
+	 * element
+	 * 
+	 * @param array
+	 *            an IInternalElement array
+	 */
+	private IInternalElement getPreviousElement(IInternalElement[] array,
+			IInternalElement element) {
+		IInternalElement previous = null;
+		for (int i = 0; i < array.length; ++i) {
+			if (array[i].equals(element))
+				break;
+			previous = array[i];
+		}
+		return previous;
+	}
+
+	/**
+	 * Search the first occurrence of the given element and return the next
+	 * element
+	 * 
+	 * @param array
+	 *            an IInternalElement array
+	 */
+	private IInternalElement getNextElement(IInternalElement[] array,
+			IInternalElement element) {
+		IInternalElement[] revert = getReverse(array);
+		return getPreviousElement(revert, element);
+	}
+
+	/**
+	 * Utility method for getting the reverse array of a given array of
+	 * IInternalElement
+	 * 
+	 * @param array
+	 *            an IInternalElement array to revert
+	 */
+	private IInternalElement[] getReverse(IInternalElement[] array) {
+		IInternalElement[] revert = new IInternalElement[array.length];
+		for (int i = 0; i < array.length; ++i) {
+			int revertPos = array.length - 1 - i;
+			revert[revertPos] = array[i];
+		}
+		return revert;
+	}
+
+	private Object[] getCurrentSelection(){
+		if (currentSelection instanceof StructuredSelection) {
+			StructuredSelection ssel = (StructuredSelection) currentSelection;
+			return ssel.toArray();
+		}else{
+			return new Object[0];
+		}
+	}
+	
+	/**
 	 * Utility method for moving elements up and down. An important assumption
 	 * here is that the current selection contain the list of consecutive
 	 * elements of the same type and has the same parent.
@@ -177,20 +230,36 @@ public class EditPage extends EventBEditorPage implements
 	 *            moving down.
 	 */
 	protected void move(boolean up) {
-		if (currentSelection instanceof StructuredSelection
-				&& !currentSelection.isEmpty()) {
-			StructuredSelection ssel = (StructuredSelection) currentSelection;
-			Object[] elements = ssel.toArray();
-			IInternalElement firstElement = (IInternalElement) elements[0];
-			IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
-			IRodinElement parent = firstElement.getParent();
-			IInternalElementType<?> type = firstElement.getElementType();
 
-			if (parent != null && parent instanceof IInternalParent) {
-				AtomicOperation operation = OperationFactory.move(
-						getEventBEditor(), up, (IInternalParent) parent, type,
-						firstElement, lastElement);
-				History.getInstance().addOperation(operation);
+		Object[] elements = getCurrentSelection();
+		if (elements.length == 0) {
+			return;
+		}
+
+		IInternalElement firstElement = (IInternalElement) elements[0];
+		IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
+		IRodinElement parent = firstElement.getParent();
+
+		if (parent != null && parent instanceof IInternalParent) {
+
+			IInternalParent iparent = (IInternalParent) parent;
+
+			final IInternalElementType<?> type = firstElement.getElementType();
+			try {
+				final IInternalElement[] children = iparent
+						.getChildrenOfType(type);
+
+				assert (children.length > 0);
+
+				final IInternalElement previous = getPreviousElement(children,
+						firstElement);
+				final IInternalElement next = getNextElement(children,
+						lastElement);
+
+				EventBEditorUtils.handle(up, firstElement, previous, next);
+
+			} catch (RodinDBException e) {
+				UIUtils.log(e, "Cannot move the current selection");
 			}
 		}
 	}

@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
@@ -53,6 +54,7 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -156,11 +158,86 @@ public class EventBEditorUtils {
 		});
 	}
 
+	
 	/**
-	 * @param up if <code>up</code> is true do handleUp else do handleDown
+	 * return the first selected item
+	 */
+	private static  TreeItem getCurrentItem(Tree tree) {
+		TreeItem[] items = tree.getSelection();
+		return items[0];
+	}
+
+	private static  IInternalElement getElement(TreeItem item) {
+		return (IInternalElement) item.getData();
+	}
+
+	private static  boolean equalsType(IInternalElement element, TreeItem item) {
+		return element.getElementType().equals(
+				getElement(item).getElementType());
+	}
+
+	/**
+	 * Return the previous element of item with the same type or
+	 * <code>null</code> if there isn't
+	 */
+	private static  IInternalElement getPreviousElement(Tree tree, TreeItem item) {
+		final IInternalElement previous = getElement(TreeSupports.findPrevItem(
+				tree, item));
+		if (equalsType(previous, item))
+			return previous;
+		return null;
+	}
+
+	/**
+	 * Return the next element of item with the same type or <code>null</code>
+	 * if there isn't
+	 */
+	private static  IInternalElement getNextElement(Tree tree, TreeItem item) {
+		final IInternalElement next = getElement(TreeSupports.findNextItem(
+				tree, item));
+		if (equalsType(next, item))
+			return next;
+		return null;
+	}
+	
+	/**
+	 * @param up
+	 *            if <code>up</code> is true do handleUp else do handleDown
+	 */
+	public static void handleGeneric(IEventBEditor<?> editor,
+			final TreeViewer viewer, boolean up) {
+		final Tree tree = viewer.getTree();
+		final TreeItem currentItem = getCurrentItem(tree);
+		final IInternalElement current = getElement(currentItem);
+		final IInternalElement previous = getPreviousElement(tree, currentItem);
+		final IInternalElement next = getNextElement(tree, currentItem);
+
+		handle(up, current, previous, next);
+	}
+
+	/**
+	 * Move up or down the elements between first (include) and next (not include). 
+	 * 
+	 * @param up
+	 *            if <code>up</code> is true do handleUp else do handleDown
+	 *            @param first the first element to move
 	 * */
-	public static void handleGeneric(IEventBEditor<?> editor, final TreeViewer viewer, boolean up) {
-		AtomicOperation operation = OperationFactory.handle(editor,viewer,up);
+	public static void handle(boolean up, IInternalElement first,
+			IInternalElement previous, IInternalElement next) {
+
+		// if up, we move the previous element before the next
+		// if down, we move the next element before the selected
+		final IInternalElement movedElement = (up) ? previous : next;
+		final IInternalElement nextSibling = (up) ? next : first;
+
+		if (movedElement == null)
+			return;
+
+		final IInternalParent newParent = (IInternalParent) movedElement
+				.getParent();
+
+		AtomicOperation operation = OperationFactory.move(first.getRodinFile()
+				.getRoot(), movedElement, newParent, nextSibling);
 		History.getInstance().addOperation(operation);
 	}
 	

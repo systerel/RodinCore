@@ -19,7 +19,6 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.Collection;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -501,58 +500,9 @@ class OperationBuilder {
 		return op;
 	}
 
-	public OperationTree handle(TreeViewer viewer, boolean up) {
-		return new Handle(viewer, up);
-	}
-
-	public OperationTree move(boolean up, IInternalParent parent,
-			IInternalElementType<?> type, IInternalElement firstElement,
-			IInternalElement lastElement) {
-		IInternalElement prevElement = null;
-		IInternalElement nextElement = null;
-		IInternalElement movedElement = null;
-		IInternalElement oldSibling = null;
-		IInternalElement newSibling = null;
-		IInternalElement[] children = null;
-		try {
-			children = parent.getChildrenOfType(type);
-
-			assert (children.length > 0);
-			prevElement = null;
-			for (int i = 0; i < children.length; ++i) {
-				if (children[i].equals(firstElement))
-					break;
-				prevElement = children[i];
-			}
-			nextElement = null;
-			for (int i = children.length - 1; i >= 0; --i) {
-				if (children[i].equals(lastElement))
-					break;
-				nextElement = children[i];
-			}
-
-			if (up) {
-				if (prevElement != null) {
-					movedElement = prevElement;
-					oldSibling = prevElement.getNextSibling();
-					newSibling = nextElement;
-				}
-			} else {
-				if (nextElement != null) {
-					movedElement = nextElement;
-					oldSibling = nextElement.getNextSibling();
-					newSibling = firstElement;
-				}
-			}
-			if (movedElement != null) {
-				return new Move(parent, movedElement, oldSibling, newSibling);
-			} else {
-				return null;
-			}
-		} catch (RodinDBException e) {
-			return null;
-		}
-
+	public OperationTree move(IInternalElement movedElement,
+			IInternalParent newParent, IInternalElement newSibling) {
+		return new Move(movedElement, newParent, newSibling);
 	}
 
 	public <E extends IInternalElement> OperationTree renameElement(

@@ -13,7 +13,6 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.Collection;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
@@ -94,10 +93,10 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createVariantWizard(IEventBEditor<?> editor,
-			String predicate) {
+			String expression) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createVariant(
-				editor, predicate));
+				editor, expression));
 		cmd.addContext(getContext(editor));
 		return cmd;
 	}
@@ -114,8 +113,14 @@ public class OperationFactory {
 	}
 
 	/**
+	 * return an Operation to create an Element with default name and label
+	 * 
+	 * @param editor
+	 *            IEventBEditor where the new element is inserted
 	 * @param label
 	 *            if null the label of created element is the next free label.
+	 * @param content
+	 *            the predicate
 	 */
 	public static AtomicOperation createInvariantWizard(
 			IEventBEditor<?> editor, String label, String content) {
@@ -153,6 +158,21 @@ public class OperationFactory {
 		return cmd;
 	}
 
+	/**
+	 * return an Operation to create an Element with default name and label
+	 * 
+	 * @param editor
+	 *            IEventBEditor where the new element is inserted
+	 * @param parent
+	 *            the element where the new element is inserted
+	 * @param type
+	 *            the type of the new element
+	 * @param sibling
+	 *            the new element is inserted before sibling. If sibling is
+	 *            null, the new element is inserted after the last element in
+	 *            parent.
+	 * 
+	 */
 	public static <T extends IInternalElement> AtomicOperation createElementGeneric(
 			IEventBEditor<?> editor, IInternalParent parent,
 			final IInternalElementType<T> type, final IInternalElement sibling) {
@@ -307,6 +327,20 @@ public class OperationFactory {
 		return cmd;
 	}
 
+	/**
+	 * Return an operation to create an IInternalElement with the given type and
+	 * a string attribute. The parent of the new element is
+	 * <code>editor.getRodinInput()</code>
+	 * 
+	 * @param editor
+	 *            an IEventBEditor<?>
+	 * @param internalElementType
+	 *            an IInternalElementType\<T\>. Type of the element to create
+	 * @param attribute
+	 *            an IAttributeType.String
+	 * @param value
+	 *            a String. The value of the attribute
+	 */
 	public static <T extends IInternalElement> AtomicOperation createElement(
 			IEventBEditor<?> editor,
 			IInternalElementType<T> internalElementType,
@@ -320,27 +354,38 @@ public class OperationFactory {
 		return op;
 	}
 
-	public static AtomicOperation handle(IEventBEditor<?> editor,
-			TreeViewer viewer, boolean up) {
+	/**
+	 * Create an Operation to move an element.
+	 * <p>
+	 * After execute and redo :
+	 * <ul>
+	 * <li><code>movedElement.getParent() equals newParent</code></li>
+	 * <li> <code>movedElement.getNextSibling() equals newSibling</code></li>
+	 * </ul>
+	 * <p>
+	 * After undo :
+	 * <ul>
+	 * <li><code>movedElement.getParent()</code> equals oldParent</li>
+	 * <li><code>movedElement.getNextSibling()</code> equals oldSibling</li>
+	 * </ul>
+	 * 
+	 * @param root
+	 *            the root element to get context of the Operation
+	 * @param movedElement
+	 *            the element to move
+	 * @param newParent
+	 *            the new parent of moved element
+	 * @param nextSibling
+	 *            the new next sibling element of moved element
+	 */
+	public static AtomicOperation move(IInternalElement root,
+			IInternalElement movedElement, IInternalParent newParent,
+			IInternalElement nextSibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.handle(viewer,
-				up));
-		op.addContext(getContext(editor));
+		final AtomicOperation op = new AtomicOperation(builder.move(
+				movedElement, newParent, nextSibling));
+		op.addContext(getContext(root));
 		return op;
-	}
 
-	public static AtomicOperation move(IEventBEditor<?> editor, boolean up,
-			IInternalParent parent, IInternalElementType<?> type,
-			IInternalElement firstElement, IInternalElement lastElement) {
-		final OperationBuilder builder = new OperationBuilder();
-		final OperationTree op = builder.move(up, parent, type, firstElement,
-				lastElement);
-		if (op != null) {
-			final AtomicOperation atomOp = new AtomicOperation(op);
-			atomOp.addContext(getContext(editor));
-			return atomOp;
-		} else {
-			return null;
-		}
 	}
 }
