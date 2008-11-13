@@ -338,9 +338,10 @@ public final class IndexManager {
 
 	private void processProjectChanged(IIndexDelta delta) {
 		final IRodinProject project = (IRodinProject) delta.getElement();
-		final Kind kind = delta.getKind();
 		final PersistenceManager persistenceManager =
 				PersistenceManager.getDefault();
+		final Kind kind = delta.getKind();
+		
 		if (kind == Kind.PROJECT_OPENED) {
 			lockWriteInitSave();
 			final boolean success =
@@ -354,7 +355,6 @@ public final class IndexManager {
 			// already saved by persistence manager (PROJECT_SAVE)
 			pppim.remove(project);
 		} else if (kind == Kind.PROJECT_CREATED || kind == Kind.PROJECT_CLEANED) {
-			// TODO could make only one Kind
 			indexProject(project);
 		} else if (kind == Kind.PROJECT_DELETED) {
 			pppim.remove(project);

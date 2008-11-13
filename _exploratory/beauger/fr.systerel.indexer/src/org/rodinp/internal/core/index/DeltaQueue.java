@@ -20,48 +20,50 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class DeltaQueue {
 
-    private final BlockingQueue<IIndexDelta> queue;
+	private final BlockingQueue<IIndexDelta> queue;
 
-    private final CountUpDownLatch latch = new CountUpDownLatch(0);
+	private final CountUpDownLatch latch = new CountUpDownLatch(0);
 
-    public DeltaQueue() {
-	this.queue = new LinkedBlockingQueue<IIndexDelta>();
-    }
-
-    // Concurrency: no synchronization is required in the {contains;put} block
-    // The possible situations are the following:
-    // 1/ queue.contains(file) is true, then queue.take is called and takes file
-    // => the condition becomes false but put is not called.
-    // This is not a problem since the taker will process an up to date version
-    // of the file (after the current delta event that caused a possible put)
-    //  
-    // 2/ queue.contains(file) is false, then queue.take is called before put
-    // but it cannot take the file to put since it is not yet present !
-    public void put(IIndexDelta delta, boolean allowDuplicate) throws InterruptedException {
-	if (allowDuplicate || !queue.contains(delta)) {
-	    if (DeltaQueuer.DEBUG) {
-		System.out.println("Indexer: Enqueuing delta "
-			+ delta.getElement().getPath() + " reason: "
-			+ delta.getKind());
-	    }
-	    latch.countUp();
-	    queue.put(delta);
+	public DeltaQueue() {
+		this.queue = new LinkedBlockingQueue<IIndexDelta>();
 	}
-    }
 
-    public IIndexDelta take() throws InterruptedException {
-	return queue.take();
-    }
-    
-    public void drainTo(Collection<? super IIndexDelta> c) {
-	queue.drainTo(c);
-    }
+	// Concurrency: no synchronization is required in the {contains;put} block
+	// The possible situations are the following:
+	// 1/ queue.contains(file) is true, then queue.take is called and takes file
+	// => the condition becomes false but put is not called.
+	// This is not a problem since the taker will process an up to date version
+	// of the file (after the current delta event that caused a possible put)
+	//  
+	// 2/ queue.contains(file) is false, then queue.take is called before put
+	// but it cannot take the file to put since it is not yet present !
+	public void put(IIndexDelta delta, boolean allowDuplicate)
+			throws InterruptedException {
+		if (allowDuplicate || !queue.contains(delta)) {
+			if (DeltaQueuer.DEBUG) {
+				System.out.println("Indexer: Enqueuing delta "
+						+ delta.getElement().getPath()
+						+ " reason: "
+						+ delta.getKind());
+			}
+			latch.countUp();
+			queue.put(delta);
+		}
+	}
 
-    public void deltaProcessed() {
-	latch.countDown();
-    }
+	public IIndexDelta take() throws InterruptedException {
+		return queue.take();
+	}
 
-    public void awaitEmptyQueue() throws InterruptedException {
-	latch.await();
-    }
+	public void drainTo(Collection<? super IIndexDelta> c) {
+		queue.drainTo(c);
+	}
+
+	public void deltaProcessed() {
+		latch.countDown();
+	}
+
+	public void awaitEmptyQueue() throws InterruptedException {
+		latch.await();
+	}
 }
