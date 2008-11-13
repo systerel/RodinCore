@@ -130,4 +130,15 @@ public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 	 */
 	IInternalElement getRoot();
 	
+	/**
+	 * Returns the element type of the root element of this file.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @return the type of the root element of this Rodin file
+	 * 
+	 */
+	IInternalElementType<?> getRootElementType();
+
 }

@@ -440,5 +440,9 @@ public abstract class RodinFile extends Openable implements IRodinFile,
 		final String name = path.removeFileExtension().lastSegment();
 		return rootType.createInstance(name, this);
 	}
-	
+
+	public IInternalElementType<?> getRootElementType() {
+		return rootType;
+	}
+
 }

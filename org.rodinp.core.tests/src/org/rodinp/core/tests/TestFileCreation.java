@@ -339,4 +339,9 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Wrong element", rf, children[0]);
 	}
 	
+	public void testRootElementType() throws Exception {
+		IRodinFile rodinFile = rodinProject.getRodinFile("X.test");
+		assertEquals(RodinTestRoot.ELEMENT_TYPE, rodinFile.getRootElementType());
+	}
+
 }
