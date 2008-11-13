@@ -22,6 +22,7 @@ public class AllTests {
 		suite.addTestSuite(CopyMoveResourcesTests.class);
 		suite.addTestSuite(RodinElementDeltaTests.class);
 		suite.addTestSuite(TestRodinDB.class);
+		suite.addTestSuite(TestRodinProject.class);
 		suite.addTestSuite(AttributeTests.class);
 		suite.addTestSuite(MarkerTests.class);
 		suite.addTestSuite(ElementTypeTests.class);

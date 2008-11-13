@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.core.IJavaProject
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed deprecated methods
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -182,4 +183,18 @@ public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 	 */
 	IRodinFile[] getRodinFiles() throws RodinDBException;
 	
+	/**
+	 * Returns the root elements of the Rodin files of this project that are of
+	 * the given element type.
+	 * 
+	 * @param type
+	 *            type of the root elements to retrieve
+	 * @return the root elements of this project that are of the given type
+	 * @exception RodinDBException
+	 *                if this project does not exist, or if an exception occurs
+	 *                while accessing its children files
+	 */
+	<T extends IInternalElement> T[] getRootElementsOfType(
+			IInternalElementType<T> type) throws RodinDBException;
+
 }

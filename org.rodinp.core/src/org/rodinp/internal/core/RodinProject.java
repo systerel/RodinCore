@@ -15,6 +15,7 @@
 package org.rodinp.internal.core;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -390,5 +393,18 @@ public class RodinProject extends Openable implements IRodinProject {
 				}
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends IInternalElement> T[] getRootElementsOfType(
+			IInternalElementType<T> type) throws RodinDBException {
+		final IRodinFile[] files = getRodinFiles();
+		final ArrayList<T> list = new ArrayList<T>(files.length);
+		for (IRodinFile file: files) {
+			if (type == file.getRootElementType()) {
+				list.add((T) file.getRoot());
+			}
+		}
+		return ((ElementType<T>) type).toArray(list);
 	}
 }
