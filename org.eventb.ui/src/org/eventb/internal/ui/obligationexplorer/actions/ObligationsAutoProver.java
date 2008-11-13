@@ -33,7 +33,6 @@ import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
@@ -81,18 +80,17 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 					if (obj instanceof IRodinProject) {
 						// Run the Auto Prover on all IPSFile in this project
 						IRodinProject rodinPrj = (IRodinProject) obj;
-						final IPSRoot[] psRoot;
+						final IPSRoot[] psRoots;
 						try {
-//							psFiles = rodinPrj
-//									.getChildrenOfType(IPSFile.ELEMENT_TYPE);
-							psRoot = UIUtils.getPSRootChildren(rodinPrj);
+							psRoots = rodinPrj
+									.getRootElementsOfType(IPSRoot.ELEMENT_TYPE);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,
 											UserAwareness.IGNORE);
 							continue;
 						}
-						for (IPSRoot root: psRoot) {
+						for (IPSRoot root: psRoots) {
 							IProofComponent pc = pm.getProofComponent(root);
 							IPSStatus[] statuses;
 							try {

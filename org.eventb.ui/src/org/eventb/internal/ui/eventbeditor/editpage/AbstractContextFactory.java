@@ -62,7 +62,8 @@ public abstract class AbstractContextFactory<E extends IInternalElement>
 	private IContextRoot[] getContextRoots(IInternalElement element) {
 		final IRodinProject rodinProject = element.getRodinProject();
 		try {
-			return UIUtils.getContextRootChildren(rodinProject);
+			return rodinProject
+					.getRootElementsOfType(IContextRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "When computing the list of contexts of project "
 					+ rodinProject);

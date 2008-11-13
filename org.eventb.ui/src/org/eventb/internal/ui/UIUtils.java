@@ -48,12 +48,10 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IParameter;
@@ -94,7 +92,6 @@ import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -832,49 +829,6 @@ public class UIUtils {
 	private static String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
-	}
-
-	
-	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
-			throws RodinDBException {
-		ArrayList<IMachineRoot> result = new ArrayList<IMachineRoot>();
-		for (IRodinElement element : project.getChildren()) {
-			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element)
-						.getRoot();
-				if (root instanceof IMachineRoot)
-					result.add((IMachineRoot) root);
-			}
-		}
-		return result.toArray(new IMachineRoot[result.size()]);
-	}
-	
-	
-	public static IContextRoot[] getContextRootChildren(IRodinProject project)
-			throws RodinDBException {
-		ArrayList<IContextRoot> result = new ArrayList<IContextRoot>();
-		for (IRodinElement element : project.getChildren()) {
-			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element)
-						.getRoot();
-				if (root instanceof IContextRoot)
-					result.add((IContextRoot) root);
-			}
-		}
-		return result.toArray(new IContextRoot[result.size()]);
-	}
-
-	public static IPSRoot[] getPSRootChildren(IRodinProject project)
-			throws RodinDBException {
-		ArrayList<IPSRoot> result = new ArrayList<IPSRoot>();
-		for (IRodinElement element : project.getChildren()) {
-			if (element instanceof IRodinFile) {
-				IInternalElement root = ((IRodinFile) element).getRoot();
-				if (root instanceof IPSRoot)
-					result.add((IPSRoot) root);
-			}
-		}
-		return result.toArray(new IPSRoot[result.size()]);
 	}
 
 }

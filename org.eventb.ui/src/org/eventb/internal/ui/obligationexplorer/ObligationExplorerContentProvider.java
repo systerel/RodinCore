@@ -382,12 +382,10 @@ public class ObligationExplorerContentProvider implements
 		if (parent instanceof IRodinProject) {
 			IRodinProject prj = (IRodinProject) parent;
 			try {
-//				IRodinElement[] machines = prj
-//						.getChildrenOfType(IMachineFile.ELEMENT_TYPE);
-//				IRodinElement[] contexts = prj
-//				.getChildrenOfType(IContextFile.ELEMENT_TYPE);
-				IRodinElement[] machines = UIUtils.getMachineRootChildren(prj);
-				IRodinElement[] contexts = UIUtils.getContextRootChildren(prj);
+				IMachineRoot[] machines = prj
+						.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);
+				IContextRoot[] contexts = prj
+						.getRootElementsOfType(IContextRoot.ELEMENT_TYPE);
 
 				IRodinElement[] results = new IRodinElement[machines.length
 						+ contexts.length];

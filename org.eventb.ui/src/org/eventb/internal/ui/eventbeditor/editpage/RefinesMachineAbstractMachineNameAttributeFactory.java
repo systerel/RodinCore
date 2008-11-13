@@ -61,12 +61,12 @@ public class RefinesMachineAbstractMachineNameAttributeFactory implements
 	}
 
 	private IMachineRoot[] getMachineRoots(IRefinesMachine refinesMachine) {
-		final IRodinProject rodinProject = refinesMachine.getRodinProject();
+		final IRodinProject rp = refinesMachine.getRodinProject();
 		try {
-			return UIUtils.getMachineRootChildren(rodinProject);
+			return rp.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "When computing the list of contexts of project "
-					+ rodinProject);
+			UIUtils.log(e, "When computing the list of machines of project "
+					+ rp);
 			return new IMachineRoot[0];
 		}
 	}

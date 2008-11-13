@@ -79,18 +79,17 @@ public class RetryAutoProversAction extends Action {
 					if (obj instanceof IRodinProject) {
 						// Run the Auto Prover on all IPSRoot in this project
 						IRodinProject rodinPrj = (IRodinProject) obj;
-						final IPSRoot[] psRoot;
+						final IPSRoot[] psRoots;
 						try {
-//							psFiles = rodinPrj
-//									.getChildrenOfType(IPSRoot.ELEMENT_TYPE);
-							psRoot = UIUtils.getPSRootChildren(rodinPrj);
+							psRoots = rodinPrj
+									.getRootElementsOfType(IPSRoot.ELEMENT_TYPE);
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,
 											UserAwareness.IGNORE);
 							continue;
 						}
-						for (IPSRoot root: psRoot) {
+						for (IPSRoot root: psRoots) {
 							IProofComponent pc = pm.getProofComponent(root);
 							IPSStatus[] statuses;
 							try {
