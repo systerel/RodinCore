@@ -55,19 +55,19 @@ public class DeltaProcessor {
 			scRoot = inputRoot.getSCContextRoot();
 		}
 		
-		//we're only interested in changes to the inputRoot and its statically checked version.
+		//we're only interested in changes to the inputRoot or its file and its statically checked version.
 		if (kind == IRodinElementDelta.CHANGED) {
 			if (element.equals(inputRoot)) {
+				mustRefresh = true;
+				return;
+			}else if (element.equals(inputRoot.getRodinFile())) {
 				mustRefresh = true;
 				return;
 			}else if (element.equals(scRoot)){
 				mustRefreshMarkers = true;
 				
-			// this part can be removed, when delta contains the root and no longer the file
-			}else if (element instanceof IRodinFile){
-				if (((IRodinFile) element).getRoot().equals(scRoot)) {
-					mustRefreshMarkers = true;
-				}
+			}else if (element.equals(scRoot.getRodinFile())) {
+				mustRefreshMarkers = true;
 					
 			} else{
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();

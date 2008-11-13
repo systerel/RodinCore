@@ -112,8 +112,8 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
             IVerticalRuler ruler, int styles)
     {
         ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
-
-    	// ensure decoration support has been created and configured.
+   
+        // ensure decoration support has been created and configured.
     	getSourceViewerDecorationSupport(viewer);
     	
     	return viewer;
@@ -134,7 +134,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		int i = 0;
 		for(Position position : positions){
-			ProjectionAnnotation annotation = new ProjectionAnnotation(true);
+			ProjectionAnnotation annotation = new ProjectionAnnotation(false);
 			
 			newAnnotations.put(annotation, position);
 			
@@ -198,13 +198,15 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * The editor is refreshed.
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		System.out.println(event.getDelta());
 		DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
 		if (proc.isMustRefresh()) {
 			Display.getDefault().asyncExec(new Runnable(){
 			public void run() {
 				try {
 					documentProvider.resetDocument(getEditorInput());
+					documentProvider.setCanSaveDocument(documentProvider.getInputRoot().getRodinFile());
+					
+					
 					updateFoldingStructure(documentProvider.getFoldingRegions());
 					updateMarkerStructure(documentProvider.getMarkerAnnotations());
 				} catch (CoreException e) {

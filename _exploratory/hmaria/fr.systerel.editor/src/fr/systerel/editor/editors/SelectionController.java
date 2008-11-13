@@ -37,12 +37,15 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	private StyledText styledText;
 	private DocumentMapper mapper;
 	private ProjectionViewer viewer;
+	private StyledText editorText;
+	private OverlayEditor overlayEditor;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper, ProjectionViewer viewer) {
 		super();
 		this.styledText = styledText;
 		this.viewer = viewer;
 		this.mapper = mapper;
+		overlayEditor = new OverlayEditor(styledText, mapper, viewer);
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -61,7 +64,6 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 			correctSelection();
 		}
 		styledText.setEditable(isEditableRegion(offset));
-		
 	}
 	
 	/**
@@ -152,6 +154,9 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 			styledText.setEditable(editable) ;
 		}
 		
+		
+		//TODO: this is just a test
+		overlayEditor.setToOffset(offset);		
 	}
 
 	public void verifyText(VerifyEvent e) {
@@ -177,6 +182,5 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	protected int widget2ModelOffset(int widgetOffset) {
 		return viewer.widgetOffset2ModelOffset(widgetOffset);
 	}
-	
 	
 }
