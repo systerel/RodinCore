@@ -24,7 +24,6 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 public class RodinContentAssistProcessor implements IContentAssistProcessor {
 
-	private DocumentMapper documentMapper;
 	private CompletionCalculator calculator;
 	
 	
@@ -56,9 +55,8 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		}
 	}
 	
-	public RodinContentAssistProcessor(DocumentMapper documentMapper) {
-		this.documentMapper = documentMapper;
-		calculator = new CompletionCalculator(documentMapper);
+	public RodinContentAssistProcessor(DocumentMapper documentMapper, OverlayEditor overlayEditor) {
+		calculator = new CompletionCalculator(documentMapper, overlayEditor);
 	}
 	
 	protected IContextInformationValidator fValidator= new Validator();
@@ -69,7 +67,9 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 		String[] completions = calculator.calculateCompletions(offset);
 		ArrayList<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 		for (String comp : completions) {
-			result.add(new CompletionProposal(comp, offset, 0, comp.length()));
+			if (comp.length() > 0) {
+				result.add(new CompletionProposal(comp, offset, 0, comp.length()));
+			}
 		}
 //		ICompletionProposal[] result= new ICompletionProposal[1];
 //			result[0]= new CompletionProposal("test", offset, 0, 4);

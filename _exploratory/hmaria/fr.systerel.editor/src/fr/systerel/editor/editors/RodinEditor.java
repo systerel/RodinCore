@@ -73,9 +73,9 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	protected void createActions() {
 		super.createActions();
 		
-		IAction a= new TextOperationAction(RodinEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
-		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", a); //$NON-NLS-1$
+//		IAction a= new TextOperationAction(RodinEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+//		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+//		setAction("ContentAssistProposal", a); //$NON-NLS-1$
 		
 	}
 	

@@ -30,14 +30,18 @@ import fr.systerel.editor.EditorUtils;
 public class CompletionCalculator {
 
 	private DocumentMapper documentMapper;
+	private OverlayEditor overlayEditor;
 
-	public CompletionCalculator(DocumentMapper documentMapper) {
+	public CompletionCalculator(DocumentMapper documentMapper, OverlayEditor overlayEditor) {
 		this.documentMapper = documentMapper;
+		this.overlayEditor = overlayEditor;
 	}
 	
 	public String[] calculateCompletions(int offset) {
 		ArrayList<String> result = new ArrayList<String>();
-		Interval interval = documentMapper.findEditableInterval(offset);
+//		Interval interval = documentMapper.findEditableInterval(offset);
+		Interval interval = overlayEditor.getInterval();
+	
 		if (interval != null) {
 			IRodinElement element = interval.getElement();
 			if (element != null) {

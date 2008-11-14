@@ -11,16 +11,24 @@
 
 package fr.systerel.editor.editors;
 
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,6 +36,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -39,35 +48,39 @@ import org.rodinp.core.RodinDBException;
 /**
  *
  */
-public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationModelListener,
-						IAnnotationModelListenerExtension, ExtendedModifyListener{
+public class OverlayEditor implements IAnnotationModelListener,
+						IAnnotationModelListenerExtension, ExtendedModifyListener, VerifyKeyListener{
 	private StyledText editorText;
 	private DocumentMapper mapper;
 	private StyledText parent;
 	private ProjectionViewer viewer;
-	private boolean ctrl = false;
-	private boolean enter = false;
 	private Interval interval;
 	private static final int DEFAULT_WIDTH = 300;
+	private ITextViewer textViewer;
+	private IContentAssistant contentAssistant;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper, ProjectionViewer viewer) {
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.parent = parent;
 		
+		textViewer = new TextViewer(parent, SWT.BORDER |SWT.V_SCROLL);
+		contentAssistant = getContentAssistant();
+		contentAssistant.install(textViewer);
+		
+		editorText = textViewer.getTextWidget();
+		editorText.addVerifyKeyListener(this);
 		createEditorText();
 	}
 
 
 	private void createEditorText() {
-		editorText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
+//		editorText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
 		editorText.setFont(parent.getFont());
 		Point oldsize = parent.getSize();
 		parent.pack();
 		parent.setSize(oldsize);
 		editorText.setVisible(false);
-		editorText.addKeyListener(this);
-		editorText.addVerifyListener(this);
 		editorText.addExtendedModifyListener(this);
 	}
 
@@ -88,7 +101,8 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 				Point endPoint = new Point(findMaxWidth(start, start +interval.getLength()), parent.getLocationAtOffset(start +interval.getLength()).y);
 				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y) +parent.getLineHeight());
 				
-				editorText.setText(text);
+				textViewer.setDocument(createDocument(text));
+//				editorText.setText(text);
 				resizeTo(size.x, size.y);
 				editorText.setFont(parent.getFont());
 				setToLocation(location.x, location.y);
@@ -110,49 +124,11 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 	}
 	
 	public void abortEditing() {
-		ctrl = false;
-		enter = false;
 		editorText.setVisible(false);
+		interval = null;
 		
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.character == SWT.ESC) {
-			abortEditing();
-		}
-		if (e.character == '\r'){
-			enter = true;
-		}
-	
-		if (e.character == '\0'){
-			ctrl= true;
-		}
-		if (enter && ctrl) {
-			ctrl = false;
-			enter = false;
-			//TODO: add the changes to the database;
-			System.out.println("changes in " +interval.getElement());
-			addChangeToDatabase();
-			editorText.setVisible(false);
-		}
-		
-		
-	}
-
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-
-		if (e.character == '\r'){
-			enter = false;
-		}
-	
-		if (e.character == '\0'){
-			ctrl= false;
-		}
-		
-	}
 	
 	public void addChangeToDatabase() {
 		IRodinElement element = interval.getElement();
@@ -250,19 +226,14 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 		
 		return max;
 	}
-
-
-	@Override
-	public void verifyText(VerifyEvent e) {
-		if (e.text != null && e.text.length() > 0) {
-			if (e.text.charAt(0) == ('\r') ){
-				if (ctrl) {
-					e.doit = false;
-				}
-			}
-		}
-		
+	
+	protected IDocument createDocument(String text) {
+		IDocument doc = new Document();
+		doc.set(text);
+		return doc;
 	}
+
+
 
 
 	@Override
@@ -302,5 +273,50 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public IContentAssistant getContentAssistant() {
+
+		ContentAssistant assistant= new ContentAssistant();
+//		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(mapper, this), Document.DEFAULT_CONTENT_TYPE);
+
+		assistant.enableAutoActivation(true);
+		assistant.setAutoActivationDelay(500);
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+
+		return assistant;
+	}
+
+
+	@Override
+	public void verifyKey(VerifyEvent event) {
+		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\r') {
+			//do not add the return to the text
+			event.doit = false;
+			addChangeToDatabase();
+			editorText.setVisible(false);
+			interval = null;
+		}
+		if (event.character == SWT.ESC) {
+			abortEditing();
+		}
+		
+		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\u0020') {
+			contentAssistant.showPossibleCompletions();
+		}
+			
+		
+	}
+
+	/**
+	 *
+	 * @return the interval that this editor is currently editing
+	 * or <code>null</code>, if there editor is not visible currently.
+	 */
+	public Interval getInterval() {
+		return interval;
+	}
+	
 	
 }

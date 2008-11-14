@@ -340,7 +340,6 @@ public class RodinTextGenerator {
 		processCommentedElement(event);
 		
 		IGuard[] guards = event.getGuards();
-		String tabString = new String( new char[]{tab});
 		for (IGuard guard : guards) {
 			addLabelRegion(getTabs(2), guard);
 			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);

@@ -97,22 +97,15 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
 		
-		ArrayList<Interval> intervals = documentMapper.getIntervals();
-		for (Interval interval : intervals) {
-			if (interval.isChanged()) {
-				try {
-					String newText = doc.get(interval.getOffset(), interval.getLength());
-					IRodinElement affected = interval.getElement();
-					//TODO: save the changes to files from the database here
-					//TODO: add the changes to the database where? in the partitioner?
-					affected.getOpenable().save(null, false);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}
-		}
+		documentMapper.getRoot().getRodinFile().save(null, true);
+//		ArrayList<Interval> intervals = documentMapper.getIntervals();
+//		for (Interval interval : intervals) {
+//			if (interval.isChanged()) {
+//				IRodinElement affected = interval.getElement();
+//				affected.getOpenable().save(null, false);
+//				
+//			}
+//		}
 
 	}
 
