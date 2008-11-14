@@ -42,7 +42,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 class OperationBuilder {
@@ -506,12 +505,12 @@ class OperationBuilder {
 	}
 
 	public <E extends IInternalElement> OperationTree renameElement(
-			IRodinFile file, IInternalElementType<E> type,
+			IInternalElement root, IInternalElementType<E> type,
 			IAttributeFactory<E> factory, String prefix) {
 		final OperationNode op = new OperationNode();
 		int counter = 1;
 		try {
-			for (E element : file.getRoot().getChildrenOfType(type)) {
+			for (E element : root.getChildrenOfType(type)) {
 				op.addCommande(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;

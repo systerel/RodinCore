@@ -275,13 +275,13 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation renameElements(IRodinFile file,
+	public static AtomicOperation renameElements(IInternalElement root,
 			IInternalElementType<?> type, IAttributeFactory factory,
 			String prefix) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(builder.renameElement(
-				file, type, factory, prefix));
-		op.addContext(getContext(file));
+				root, type, factory, prefix));
+		op.addContext(getContext(root));
 		return op;
 	}
 

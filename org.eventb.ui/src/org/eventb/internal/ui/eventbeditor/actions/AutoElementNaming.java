@@ -52,7 +52,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 		if (factory != null) {
 			History.getInstance().addOperation(
 					OperationFactory
-							.renameElements(root.getRodinFile(), type, factory, prefix));
+							.renameElements(root, type, factory, prefix));
 		}
 	}
 
