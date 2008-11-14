@@ -331,15 +331,18 @@ public class RodinTextGenerator {
 	private void processEvent(IEvent event) throws RodinDBException {
 
 		int start = builder.length();
-		processElement(event);
+//		processElement(event);
 		
+		builder.append(tab);
+		processLabeledElement(event);
 		
+		builder.append(tab);
+		processCommentedElement(event);
 		
 		IGuard[] guards = event.getGuards();
+		String tabString = new String( new char[]{tab});
 		for (IGuard guard : guards) {
-			StringBuilder text = new StringBuilder();
-			text.append(tab);
-			addLabelRegion(text.toString(), guard);
+			addLabelRegion(getTabs(2), guard);
 			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);
 			addLabelRegion(": ", guard);
 			processPredicateElement(guard);
@@ -353,9 +356,7 @@ public class RodinTextGenerator {
 		
 		IAction[] actions = event.getActions();
 		for (IAction action : actions) {
-			StringBuilder text = new StringBuilder();
-			text.append(tab);
-			addLabelRegion(text.toString(), action);
+			addLabelRegion(getTabs(2), action);
 			addElementRegion(action.getLabel(), action, RodinConfiguration.IDENTIFIER_TYPE);
 			addLabelRegion(": ", action);
 			processAssignmentElement(action);
@@ -374,4 +375,12 @@ public class RodinTextGenerator {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
 	
+	
+	private String getTabs(int number) {
+		StringBuilder tabs = new StringBuilder();
+		for (int i = 0; i < number; i++) {
+			tabs.append(tab);
+		}
+		return tabs.toString();
+	}
 }

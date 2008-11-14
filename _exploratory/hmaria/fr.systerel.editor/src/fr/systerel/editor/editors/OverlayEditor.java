@@ -18,9 +18,13 @@ import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ExtendedModifyEvent;
+import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -35,7 +39,8 @@ import org.rodinp.core.RodinDBException;
 /**
  *
  */
-public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationModelListener, IAnnotationModelListenerExtension{
+public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationModelListener,
+						IAnnotationModelListenerExtension, ExtendedModifyListener{
 	private StyledText editorText;
 	private DocumentMapper mapper;
 	private StyledText parent;
@@ -55,7 +60,7 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 
 
 	private void createEditorText() {
-		editorText = new StyledText(parent, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		editorText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
 		editorText.setFont(parent.getFont());
 		Point oldsize = parent.getSize();
 		parent.pack();
@@ -63,6 +68,7 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 		editorText.setVisible(false);
 		editorText.addKeyListener(this);
 		editorText.addVerifyListener(this);
+		editorText.addExtendedModifyListener(this);
 	}
 
 	
@@ -72,17 +78,20 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 			String text = "test";
 			if (interval != null) {
 				int start = viewer.modelOffset2WidgetOffset(interval.getOffset());
-				text = parent.getText(start, start +interval.getLength()-1);
-				Point location = new Point (parent.getLocationAtOffset(start).x, parent.getLocationAtOffset(start).y -2);
-				Point endPoint = new Point(findMaxWidth(start, start +interval.getLength()), parent.getLocationAtOffset(start +interval.getLength()).y);
-				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y  +2) +parent.getLineHeight());
+				if (interval.getLength() > 0) {
+					text = parent.getText(start, start +interval.getLength()-1);
+				} else {
+					text = "";
+				}
+				Point location = (parent.getLocationAtOffset(start));
 				
-				int width = Math.max(size.x +5 +editorText.getVerticalBar().getSize().x, DEFAULT_WIDTH);
-				int height = size.y +4;
-				editorText.setSize(width, height);
+				Point endPoint = new Point(findMaxWidth(start, start +interval.getLength()), parent.getLocationAtOffset(start +interval.getLength()).y);
+				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y) +parent.getLineHeight());
+				
 				editorText.setText(text);
+				resizeTo(size.x, size.y);
 				editorText.setFont(parent.getFont());
-				editorText.setLocation(location);
+				setToLocation(location.x, location.y);
 				editorText.setVisible(true);
 				editorText.setFocus();
 			}
@@ -90,10 +99,16 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 		}
 	}
 	
-	public void setToLocation(int y) {
-		editorText.setLocation(editorText.getLocation().x, y-2);
+	public void setToLocation(int x, int y) {
+		editorText.setLocation(x, y-2);
 	}
 
+	public void resizeTo(int width, int height) {
+		int w = Math.max(width +5 +editorText.getVerticalBar().getSize().x, DEFAULT_WIDTH);
+		int h = Math.max(height, editorText.getLineHeight() ) +4;
+		editorText.setSize(w, h);
+	}
+	
 	public void abortEditing() {
 		ctrl = false;
 		enter = false;
@@ -262,13 +277,30 @@ public class OverlayEditor implements KeyListener, VerifyListener, IAnnotationMo
 		if (event.getChangedAnnotations().length >0 && editorText.isVisible()) {
 			//adjust the location of the editor
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-				setToLocation(parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
+				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
 			} else {
-				// if the interval that is currently being edited, is hidden from view
+				// if the interval that is currently being edited is hidden from view
 				// abort the editing
 				abortEditing();
 			}
 		}
+	}
+
+
+
+	@Override
+	public void modifyText(ExtendedModifyEvent event) {
+		int max = 0;
+		for (int i = 0; i < editorText.getLineCount()-1; i++) {
+			int offset = editorText.getOffsetAtLine(i +1)-1;
+			max = Math.max(max, editorText.getLocationAtOffset(offset).x);
+		}
+		//last line
+		max = Math.max(max, editorText.getLocationAtOffset(editorText.getCharCount()).x);
+		int height = editorText.getLineCount() * editorText.getLineHeight();
+		resizeTo(max, height);
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
