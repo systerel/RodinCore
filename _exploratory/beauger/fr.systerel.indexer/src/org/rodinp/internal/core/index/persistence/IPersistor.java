@@ -15,18 +15,17 @@ import java.io.File;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
 
-
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public interface IPersistor {
 
 	boolean save(PersistentIndexManager data, File file);
 
 	boolean saveProject(ProjectIndexManager pim, File file);
-	
+
 	boolean restore(File file, PersistentIndexManager data);
-	
+
 	boolean restoreProject(File file, PerProjectPIM pppim);
 }

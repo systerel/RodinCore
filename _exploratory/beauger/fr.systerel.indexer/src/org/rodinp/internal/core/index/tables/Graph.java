@@ -42,11 +42,11 @@ public class Graph<T> {
 			listeners.add(listener);
 		}
 	}
-	
+
 	public void removeElementChangedListener(IGraphChangedListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	public List<T> getPredecessors(T label) {
 		final Node<T> node = nodes.get(label);
 		if (node == null) {
@@ -100,24 +100,24 @@ public class Graph<T> {
 		}
 		return node;
 	}
-	
+
 	private void fireGraphChanged() {
 		for (IGraphChangedListener listener : listeners) {
 			listener.graphChanged();
 		}
 	}
-	
+
 	protected void setPersistentData(PersistentTotalOrder<T> pto) {
 		final Map<T, List<T>> predMap = pto.getPredMap();
 		nodes.clear();
-		for (Node<T> n: pto.getNodes()) {
+		for (Node<T> n : pto.getNodes()) {
 			final T label = n.getLabel();
 			nodes.put(label, n);
-			for (T pred: predMap.get(label)) {
+			for (T pred : predMap.get(label)) {
 				final Node<T> predNode = getOrCreateNode(pred);
 				n.addPredecessor(predNode);
 			}
 		}
 	}
-	
+
 }

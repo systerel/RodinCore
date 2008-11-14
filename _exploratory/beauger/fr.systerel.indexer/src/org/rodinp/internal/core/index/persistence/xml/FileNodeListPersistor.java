@@ -28,8 +28,8 @@ import org.w3c.dom.NodeList;
  */
 public class FileNodeListPersistor {
 
-	public static List<IRodinFile> restore(NodeList nodeNodes, XMLAttributeTypes attType)
-			throws PersistenceException {
+	public static List<IRodinFile> restore(NodeList nodeNodes,
+			XMLAttributeTypes attType) throws PersistenceException {
 		final List<IRodinFile> fileNodes = new ArrayList<IRodinFile>();
 		for (int i = 0; i < nodeNodes.getLength(); i++) {
 			final Element nodeNode = (Element) nodeNodes.item(i);
@@ -54,7 +54,8 @@ public class FileNodeListPersistor {
 	}
 
 	public static void saveFilesInNodes(List<Node<IRodinFile>> filesInNodes,
-			Document doc, Element nodeNode, XMLElementTypes nodeType, XMLAttributeTypes attType) {
+			Document doc, Element nodeNode, XMLElementTypes nodeType,
+			XMLAttributeTypes attType) {
 		for (Node<IRodinFile> node : filesInNodes) {
 			saveFile(node.getLabel(), doc, nodeNode, nodeType, attType);
 		}

@@ -44,7 +44,7 @@ public class TotalOrderPersistor {
 				new ArrayList<Node<IRodinFile>>();
 		final Map<IRodinFile, List<IRodinFile>> predMap =
 				new HashMap<IRodinFile, List<IRodinFile>>();
-		
+
 		for (int i = 0; i < nodeNodes.getLength(); i++) {
 			final Element nodeNode = (Element) nodeNodes.item(i);
 			final Node<IRodinFile> fileNode =
@@ -57,8 +57,8 @@ public class TotalOrderPersistor {
 				FileNodeListPersistor.restore(iterNodes, LABEL);
 
 		final PersistentTotalOrder<IRodinFile> pto =
-				new PersistentTotalOrder<IRodinFile>(isSorted, fileNodes, predMap,
-						iterated);
+				new PersistentTotalOrder<IRodinFile>(isSorted, fileNodes,
+						predMap, iterated);
 
 		totalOrder.setPersistentData(pto);
 	}
@@ -77,8 +77,8 @@ public class TotalOrderPersistor {
 			orderNode.appendChild(nodeNode);
 		}
 
-		FileNodeListPersistor.saveFiles(orderData.getIterated(), doc, orderNode,
-				ITERATED, LABEL);
+		FileNodeListPersistor.saveFiles(orderData.getIterated(), doc,
+				orderNode, ITERATED, LABEL);
 	}
 
 }

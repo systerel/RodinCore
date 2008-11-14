@@ -16,10 +16,10 @@ import org.rodinp.internal.core.index.tables.Node;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class PersistentSortedNodes<T> {
-	
+
 	final List<Node<T>> nodes;
 	final List<T> iterated;
 
@@ -35,7 +35,5 @@ public class PersistentSortedNodes<T> {
 	public List<T> getIterated() {
 		return iterated;
 	}
-	
-	
-	
+
 }

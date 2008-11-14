@@ -22,43 +22,44 @@ import org.w3c.dom.NodeList;
  */
 public enum XMLElementTypes {
 
-    INDEX_ROOT, PIM, RODIN_INDEX, DESCRIPTOR, OCCURRENCE, EXPORT_TABLE, GRAPH, EXPORT, EXPORTED, NODE, PREDECESSOR, ITERATED, DELTA;
+	INDEX_ROOT, PIM, RODIN_INDEX, DESCRIPTOR, OCCURRENCE, EXPORT_TABLE, GRAPH,
+	EXPORT, EXPORTED, NODE, PREDECESSOR, ITERATED, DELTA;
 
-    @Override
-    public String toString() {
-	return super.toString().toLowerCase();
-    }
-
-    public static Element createElement(Document doc, XMLElementTypes name) {
-	return doc.createElement(name.toString());
-    }
-
-    public static boolean hasName(Node node, XMLElementTypes name) {
-	return node.getNodeName().equals(name.toString());
-    }
-
-    public static NodeList getElementsByTagName(Element node,
-	    XMLElementTypes nodeType) {
-	return node.getElementsByTagName(nodeType.toString());
-    }
-
-    public static NodeList getElementsByTagName(Element node,
-	    XMLElementTypes nodeType, int expectedLength)
-	    throws PersistenceException {
-
-	final NodeList result = node.getElementsByTagName(nodeType.toString());
-
-	if (result.getLength() != expectedLength) {
-	    throw new PersistenceException();
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
 	}
-	return result;
-    }
 
-    public static void assertName(Node node, XMLElementTypes name)
-	    throws PersistenceException {
-	if (!hasName(node, name)) {
-	    throw new PersistenceException();
+	public static Element createElement(Document doc, XMLElementTypes name) {
+		return doc.createElement(name.toString());
 	}
-    }
+
+	public static boolean hasName(Node node, XMLElementTypes name) {
+		return node.getNodeName().equals(name.toString());
+	}
+
+	public static NodeList getElementsByTagName(Element node,
+			XMLElementTypes nodeType) {
+		return node.getElementsByTagName(nodeType.toString());
+	}
+
+	public static NodeList getElementsByTagName(Element node,
+			XMLElementTypes nodeType, int expectedLength)
+			throws PersistenceException {
+
+		final NodeList result = node.getElementsByTagName(nodeType.toString());
+
+		if (result.getLength() != expectedLength) {
+			throw new PersistenceException();
+		}
+		return result;
+	}
+
+	public static void assertName(Node node, XMLElementTypes name)
+			throws PersistenceException {
+		if (!hasName(node, name)) {
+			throw new PersistenceException();
+		}
+	}
 
 }

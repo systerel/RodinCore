@@ -21,46 +21,46 @@ import org.rodinp.core.index.IRodinLocation;
  */
 public class RodinLocation implements IRodinLocation {
 
-    private final IRodinElement element;
+	private final IRodinElement element;
 
-    public RodinLocation(IRodinElement element) {
-	this.element = element;
-    }
-
-    public IRodinElement getElement() {
-	return element;
-    }
-
-    public IRodinFile getRodinFile() {
-	if (element instanceof IRodinFile) {
-	    return (IRodinFile) element;
-	} else if (element instanceof IInternalElement) {
-	    return ((IInternalElement) element).getRodinFile();
+	public RodinLocation(IRodinElement element) {
+		this.element = element;
 	}
-	return null;
-    }
 
-    public boolean isIncludedIn(IRodinLocation other) {
-	final IRodinElement otherElement = other.getElement();
-	return otherElement.equals(element)
-	|| otherElement.isAncestorOf(element);
-    }
+	public IRodinElement getElement() {
+		return element;
+	}
 
-    @Override
-    public int hashCode() {
-	return 31 + element.hashCode();
-    }
+	public IRodinFile getRodinFile() {
+		if (element instanceof IRodinFile) {
+			return (IRodinFile) element;
+		} else if (element instanceof IInternalElement) {
+			return ((IInternalElement) element).getRodinFile();
+		}
+		return null;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (!(obj instanceof RodinLocation))
-	    return false;
-	final RodinLocation other = (RodinLocation) obj;
-	if (!element.equals(other.element))
-	    return false;
-	return true;
-    }
+	public boolean isIncludedIn(IRodinLocation other) {
+		final IRodinElement otherElement = other.getElement();
+		return otherElement.equals(element)
+				|| otherElement.isAncestorOf(element);
+	}
+
+	@Override
+	public int hashCode() {
+		return 31 + element.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof RodinLocation))
+			return false;
+		final RodinLocation other = (RodinLocation) obj;
+		if (!element.equals(other.element))
+			return false;
+		return true;
+	}
 
 }

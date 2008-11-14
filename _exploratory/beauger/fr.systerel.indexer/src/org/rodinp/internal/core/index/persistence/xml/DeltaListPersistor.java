@@ -26,30 +26,30 @@ import org.w3c.dom.NodeList;
  */
 public class DeltaListPersistor {
 
-    public static void save(Collection<IIndexDelta> deltas, Document doc,
-	    Element indexRoot) {
-	for (IIndexDelta delta : deltas) {
+	public static void save(Collection<IIndexDelta> deltas, Document doc,
+			Element indexRoot) {
+		for (IIndexDelta delta : deltas) {
 
-	    final DeltaPersistor persistor = new DeltaPersistor();
-	    final Element deltaNode = createElement(doc, DELTA);
-	    persistor.save(delta, doc, deltaNode);
+			final DeltaPersistor persistor = new DeltaPersistor();
+			final Element deltaNode = createElement(doc, DELTA);
+			persistor.save(delta, doc, deltaNode);
 
-	    indexRoot.appendChild(deltaNode);
-	}
-    }
-
-    public static void restore(Element indexRoot, Collection<IIndexDelta> deltaList)
-	    throws PersistenceException {
-	assertName(indexRoot, INDEX_ROOT);
-	final NodeList deltaNodes = getElementsByTagName(indexRoot, DELTA);
-	
-	for (int i = 0; i < deltaNodes.getLength(); i++) {
-	    final Element deltaNode = (Element) deltaNodes.item(i);
-
-	    final IIndexDelta delta = DeltaPersistor.getDelta(deltaNode);
-	    deltaList.add(delta);
+			indexRoot.appendChild(deltaNode);
+		}
 	}
 
-    }
+	public static void restore(Element indexRoot,
+			Collection<IIndexDelta> deltaList) throws PersistenceException {
+		assertName(indexRoot, INDEX_ROOT);
+		final NodeList deltaNodes = getElementsByTagName(indexRoot, DELTA);
+
+		for (int i = 0; i < deltaNodes.getLength(); i++) {
+			final Element deltaNode = (Element) deltaNodes.item(i);
+
+			final IIndexDelta delta = DeltaPersistor.getDelta(deltaNode);
+			deltaList.add(delta);
+		}
+
+	}
 
 }

@@ -25,29 +25,29 @@ import org.w3c.dom.NodeList;
  */
 public class PPPIMPersistor {
 
-    public static void restore(Element indexRoot, PerProjectPIM pppim)
-	    throws PersistenceException {
-	assertName(indexRoot, INDEX_ROOT);
-	final NodeList pimNodes = getElementsByTagName(indexRoot, PIM);
+	public static void restore(Element indexRoot, PerProjectPIM pppim)
+			throws PersistenceException {
+		assertName(indexRoot, INDEX_ROOT);
+		final NodeList pimNodes = getElementsByTagName(indexRoot, PIM);
 
-	for (int i = 0; i < pimNodes.getLength(); i++) {
-	    final Element pimNode = (Element) pimNodes.item(i);
+		for (int i = 0; i < pimNodes.getLength(); i++) {
+			final Element pimNode = (Element) pimNodes.item(i);
 
-	    final PIMPersistor persistor = new PIMPersistor();
-	    persistor.restore(pimNode, pppim);
+			final PIMPersistor persistor = new PIMPersistor();
+			persistor.restore(pimNode, pppim);
+		}
+
 	}
 
-    }
+	public static void save(PerProjectPIM pppim, Document doc, Element indexRoot) {
+		for (ProjectIndexManager pim : pppim.pims()) {
+			final Element pimNode = createElement(doc, PIM);
 
-    public static void save(PerProjectPIM pppim, Document doc, Element indexRoot) {
-	for (ProjectIndexManager pim : pppim.pims()) {
-	    final Element pimNode = createElement(doc, PIM);
+			final PIMPersistor persistor = new PIMPersistor();
+			persistor.save(pim, doc, pimNode);
 
-	    final PIMPersistor persistor = new PIMPersistor();
-	    persistor.save(pim, doc, pimNode);
-
-	    indexRoot.appendChild(pimNode);
+			indexRoot.appendChild(pimNode);
+		}
 	}
-    }
 
 }

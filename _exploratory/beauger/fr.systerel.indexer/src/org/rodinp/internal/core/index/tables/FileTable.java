@@ -22,7 +22,8 @@ public class FileTable {
 
 	private Map<IRodinFile, Set<IInternalElement>> table;
 
-	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
+	private static final IInternalElement[] NO_ELEMENTS =
+			new IInternalElement[0];
 
 	public FileTable() {
 		table = new HashMap<IRodinFile, Set<IInternalElement>>();

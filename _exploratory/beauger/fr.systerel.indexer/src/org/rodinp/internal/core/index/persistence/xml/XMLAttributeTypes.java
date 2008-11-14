@@ -26,7 +26,6 @@ public enum XMLAttributeTypes {
 	public String toString() {
 		return super.toString().toLowerCase();
 	}
-	
 
 	public static String getAttribute(Element node,
 			XMLAttributeTypes attributeType) throws PersistenceException {
@@ -35,7 +34,6 @@ public enum XMLAttributeTypes {
 		}
 		return node.getAttribute(attributeType.toString());
 	}
-
 
 	public static boolean hasAttribute(Element node,
 			XMLAttributeTypes attributeType) {

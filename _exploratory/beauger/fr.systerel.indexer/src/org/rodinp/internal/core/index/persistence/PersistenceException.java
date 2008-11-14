@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.persistence;
 
-
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class PersistenceException extends Exception {
 

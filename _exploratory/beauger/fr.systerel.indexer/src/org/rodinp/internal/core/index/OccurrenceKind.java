@@ -15,10 +15,10 @@ import org.rodinp.core.index.IOccurrenceKind;
 
 /**
  * @author Laurent Voisin
- *
+ * 
  */
 public class OccurrenceKind implements IOccurrenceKind {
-	
+
 	private final String id;
 	private final String name;
 

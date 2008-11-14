@@ -28,10 +28,10 @@ public class IndexerRegistry {
 	private IndexerRegistry() {
 		this.indexers = new HashMap<IInternalElementType<?>, List<IIndexer>>();
 	}
-	
+
 	public static IndexerRegistry getDefault() {
 		if (instance == null) {
-			instance = new IndexerRegistry();			
+			instance = new IndexerRegistry();
 		}
 		return instance;
 	}
@@ -46,8 +46,8 @@ public class IndexerRegistry {
 	}
 
 	public List<IIndexer> getIndexersFor(IRodinFile file) {
-		final IInternalElementType<? extends IInternalElement> fileType = file
-				.getRoot().getElementType();
+		final IInternalElementType<? extends IInternalElement> fileType =
+				file.getRoot().getElementType();
 		final List<IIndexer> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {

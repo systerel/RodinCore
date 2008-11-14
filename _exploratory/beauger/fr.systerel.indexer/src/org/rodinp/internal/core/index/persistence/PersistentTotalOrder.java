@@ -17,7 +17,7 @@ import org.rodinp.internal.core.index.tables.Node;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class PersistentTotalOrder<T> {
 
@@ -26,7 +26,7 @@ public class PersistentTotalOrder<T> {
 	private final List<Node<T>> nodes;
 	private final Map<T, List<T>> predMap;
 	private final List<T> iterated;
-	
+
 	public PersistentTotalOrder(boolean isSorted, List<Node<T>> nodes,
 			Map<T, List<T>> predMap, List<T> iterated) {
 		this.isSorted = isSorted;
@@ -34,13 +34,15 @@ public class PersistentTotalOrder<T> {
 		this.predMap = predMap;
 		this.iterated = iterated;
 	}
-	
+
 	public boolean isSorted() {
 		return isSorted;
 	}
+
 	public List<Node<T>> getNodes() {
 		return nodes;
 	}
+
 	public List<T> getIterated() {
 		return iterated;
 	}
@@ -48,6 +50,5 @@ public class PersistentTotalOrder<T> {
 	public Map<T, List<T>> getPredMap() {
 		return predMap;
 	}
-	
-	
+
 }

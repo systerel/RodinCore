@@ -12,7 +12,7 @@ package org.rodinp.internal.core.index;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class IndexingException extends Exception {
 

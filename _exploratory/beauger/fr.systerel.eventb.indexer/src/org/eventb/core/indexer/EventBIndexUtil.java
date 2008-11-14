@@ -20,33 +20,33 @@ import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
 
-    public static final IOccurrenceKind DECLARATION = RodinIndexer
-	    .addOccurrenceKind("fr.systerel.eventb.indexer.declaration",
-		    "declaration");
+	public static final IOccurrenceKind DECLARATION =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.declaration", "declaration");
 
-    public static final IOccurrenceKind REFERENCE = RodinIndexer
-	    .addOccurrenceKind("fr.systerel.eventb.indexer.reference",
-		    "reference");
+	public static final IOccurrenceKind REFERENCE =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.reference", "reference");
 
-    public static final IOccurrenceKind MODIFICATION = RodinIndexer
-	    .addOccurrenceKind("fr.systerel.eventb.indexer.modification",
-		    "modification");
+	public static final IOccurrenceKind MODIFICATION =
+			RodinIndexer.addOccurrenceKind(
+					"fr.systerel.eventb.indexer.modification", "modification");
 
-    /**
-     * When extracting a location from a SourceLocation, using that method is
-     * mandatory, as long as {@link SourceLocation} and
-     * {@link IAttributeSubstringLocation} do not share the same range
-     * convention.
-     * 
-     * @param element
-     * @param attributeType
-     * @param location
-     * @return the corresponding IInternalLocation
-     */
-    public static IInternalLocation getRodinLocation(IInternalElement element,
-	    IAttributeType.String attributeType, SourceLocation location) {
-	return RodinIndexer.getRodinLocation(element, attributeType, location
-		.getStart(), location.getEnd() + 1);
-    }
+	/**
+	 * When extracting a location from a SourceLocation, using that method is
+	 * mandatory, as long as {@link SourceLocation} and
+	 * {@link IAttributeSubstringLocation} do not share the same range
+	 * convention.
+	 * 
+	 * @param element
+	 * @param attributeType
+	 * @param location
+	 * @return the corresponding IInternalLocation
+	 */
+	public static IInternalLocation getRodinLocation(IInternalElement element,
+			IAttributeType.String attributeType, SourceLocation location) {
+		return RodinIndexer.getRodinLocation(element, attributeType, location
+				.getStart(), location.getEnd() + 1);
+	}
 
 }

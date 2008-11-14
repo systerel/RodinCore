@@ -19,7 +19,7 @@ import org.rodinp.core.IRodinProject;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class PerProjectPIM {
 
@@ -35,11 +35,11 @@ public class PerProjectPIM {
 	public Set<IRodinProject> projects() {
 		return pims.keySet();
 	}
-	
+
 	public Collection<ProjectIndexManager> pims() {
 		return pims.values();
 	}
-	
+
 	public ProjectIndexManager get(IRodinProject project) {
 		return pims.get(project);
 	}
@@ -56,11 +56,11 @@ public class PerProjectPIM {
 	public void put(ProjectIndexManager pim) {
 		pims.put(pim.getProject(), pim);
 	}
-	
+
 	public void remove(IRodinProject project) {
-	    pims.remove(project);
+		pims.remove(project);
 	}
-	
+
 	public void clear() {
 		pims.clear();
 	}

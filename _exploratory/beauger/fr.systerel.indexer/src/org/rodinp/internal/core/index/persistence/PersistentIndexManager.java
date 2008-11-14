@@ -17,23 +17,25 @@ import org.rodinp.internal.core.index.PerProjectPIM;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class PersistentIndexManager {
 
-    private final PerProjectPIM pppim;
-    private final Collection<IIndexDelta> deltas;
-    public PersistentIndexManager(PerProjectPIM pppim, Collection<IIndexDelta> deltas) {
-	this.pppim = pppim;
-	this.deltas = deltas;
-    }
-    
-    public PerProjectPIM getPPPIM() {
-        return pppim;
-    }
-    public Collection<IIndexDelta> getDeltas() {
-        return deltas;
-    }
-    
-    
+	private final PerProjectPIM pppim;
+	private final Collection<IIndexDelta> deltas;
+
+	public PersistentIndexManager(PerProjectPIM pppim,
+			Collection<IIndexDelta> deltas) {
+		this.pppim = pppim;
+		this.deltas = deltas;
+	}
+
+	public PerProjectPIM getPPPIM() {
+		return pppim;
+	}
+
+	public Collection<IIndexDelta> getDeltas() {
+		return deltas;
+	}
+
 }

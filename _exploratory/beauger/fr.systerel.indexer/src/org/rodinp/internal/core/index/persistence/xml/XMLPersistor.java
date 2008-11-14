@@ -29,86 +29,86 @@ import org.w3c.dom.Element;
  */
 public class XMLPersistor implements IPersistor {
 
-    public boolean restore(File file, PersistentIndexManager data) {
-	if (IndexManager.VERBOSE) {
-	    System.out
-		    .println("restoring from file: " + file.getAbsolutePath());
+	public boolean restore(File file, PersistentIndexManager data) {
+		if (IndexManager.VERBOSE) {
+			System.out
+					.println("restoring from file: " + file.getAbsolutePath());
+		}
+		try {
+			final Element indexRoot = getRoot(file);
+			if (indexRoot == null) {
+				return false;
+			}
+			PPPIMPersistor.restore(indexRoot, data.getPPPIM());
+
+			DeltaListPersistor.restore(indexRoot, data.getDeltas());
+
+			return true;
+		} catch (Exception e) {
+			data.getPPPIM().clear();
+			data.getDeltas().clear();
+
+			if (IndexManager.DEBUG) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
-	try {
-	    final Element indexRoot = getRoot(file);
-	    if (indexRoot == null) {
-		return false;
-	    }
-	    PPPIMPersistor.restore(indexRoot, data.getPPPIM());
 
-	    DeltaListPersistor.restore(indexRoot, data.getDeltas());
+	public boolean save(PersistentIndexManager persistIM, File file) {
+		try {
+			Document doc = getDocument();
 
-	    return true;
-	} catch (Exception e) {
-	    data.getPPPIM().clear();
-	    data.getDeltas().clear();
+			Element indexRoot = createElement(doc, INDEX_ROOT);
 
-	    if (IndexManager.DEBUG) {
-		e.printStackTrace();
-	    }
-	    return false;
+			PPPIMPersistor.save(persistIM.getPPPIM(), doc, indexRoot);
+
+			DeltaListPersistor.save(persistIM.getDeltas(), doc, indexRoot);
+
+			doc.appendChild(indexRoot);
+
+			final String xml = serializeDocument(doc);
+			write(file, xml);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
-    }
 
-    public boolean save(PersistentIndexManager persistIM, File file) {
-	try {
-	    Document doc = getDocument();
+	public boolean saveProject(ProjectIndexManager pim, File file) {
+		try {
+			Document doc = getDocument();
 
-	    Element indexRoot = createElement(doc, INDEX_ROOT);
+			final Element pimNode = createElement(doc, PIM);
 
-	    PPPIMPersistor.save(persistIM.getPPPIM(), doc, indexRoot);
+			final PIMPersistor persistor = new PIMPersistor();
+			persistor.save(pim, doc, pimNode);
 
-	    DeltaListPersistor.save(persistIM.getDeltas(), doc, indexRoot);
+			doc.appendChild(pimNode);
 
-	    doc.appendChild(indexRoot);
-
-	    final String xml = serializeDocument(doc);
-	    write(file, xml);
-	    return true;
-	} catch (Exception e) {
-	    return false;
+			final String xml = serializeDocument(doc);
+			write(file, xml);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
-    }
 
-    public boolean saveProject(ProjectIndexManager pim, File file) {
-	try {
-	    Document doc = getDocument();
-
-	    final Element pimNode = createElement(doc, PIM);
-
-	    final PIMPersistor persistor = new PIMPersistor();
-	    persistor.save(pim, doc, pimNode);
-
-	    doc.appendChild(pimNode);
-
-	    final String xml = serializeDocument(doc);
-	    write(file, xml);
-	    return true;
-	} catch (Exception e) {
-	    return false;
+	public boolean restoreProject(File file, PerProjectPIM pppim) {
+		try {
+			final Element pimNode = getRoot(file);
+			if (pimNode == null) {
+				return false;
+			}
+			final PIMPersistor persistor = new PIMPersistor();
+			persistor.restore(pimNode, pppim);
+			return true;
+		} catch (Exception e) {
+			if (IndexManager.DEBUG) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
-    }
-
-    public boolean restoreProject(File file, PerProjectPIM pppim) {
-	try {
-	    final Element pimNode = getRoot(file);
-	    if (pimNode == null) {
-		return false;
-	    }
-	    final PIMPersistor persistor = new PIMPersistor();
-	    persistor.restore(pimNode, pppim);
-	    return true;
-	} catch (Exception e) {
-	    if (IndexManager.DEBUG) {
-		e.printStackTrace();
-	    }
-	    return false;
-	}
-    }
 
 }

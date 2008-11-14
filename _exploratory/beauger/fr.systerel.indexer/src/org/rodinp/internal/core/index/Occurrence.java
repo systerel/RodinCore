@@ -22,7 +22,8 @@ public class Occurrence implements IOccurrence {
 	private final IInternalLocation location;
 	private final IDeclaration declaration;
 
-	public Occurrence(IOccurrenceKind kind, IInternalLocation location, IDeclaration declaration) {
+	public Occurrence(IOccurrenceKind kind, IInternalLocation location,
+			IDeclaration declaration) {
 		if (kind == null) {
 			throw new NullPointerException("null kind");
 		}
@@ -48,7 +49,7 @@ public class Occurrence implements IOccurrence {
 	public IRodinFile getRodinFile() {
 		return location.getRodinFile();
 	}
-	
+
 	public IDeclaration getDeclaration() {
 		return declaration;
 	}
@@ -78,7 +79,7 @@ public class Occurrence implements IOccurrence {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (! (obj instanceof Occurrence))
+		if (!(obj instanceof Occurrence))
 			return false;
 		final Occurrence other = (Occurrence) obj;
 		if (!kind.equals(other.kind))

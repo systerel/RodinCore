@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.tests.OccUtils.newDecl;
+import static org.eventb.core.indexer.tests.OccUtils.*;
 import junit.framework.TestCase;
 
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingToolkit;
-import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IInternalLocation;
+import org.rodinp.core.index.IOccurrenceKind;
 
 /**
  * @author Nicolas Beauger
@@ -113,6 +113,10 @@ public class CancelToolkitStub implements IIndexingToolkit {
 
 	public void assertNumExp(int expected) {
 		TestCase.assertEquals("bad number of exports", expected, numExp);
+	}
+
+	public IDeclaration[] getDeclarations() {
+		return new IDeclaration[0];
 	}
 
 }

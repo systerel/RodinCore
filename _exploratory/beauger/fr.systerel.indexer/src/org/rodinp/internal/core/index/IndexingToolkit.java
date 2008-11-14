@@ -60,7 +60,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 		this.result.setDeclarations(declarations);
 		this.monitor = monitor;
 	}
-	
+
 	public IDeclaration[] getDeclarations() {
 		final Collection<IDeclaration> decls = declarations.values();
 		return decls.toArray(new IDeclaration[decls.size()]);

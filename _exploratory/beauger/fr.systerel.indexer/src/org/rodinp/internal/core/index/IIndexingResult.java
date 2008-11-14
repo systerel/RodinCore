@@ -27,7 +27,7 @@ public interface IIndexingResult {
 	Map<IInternalElement, Set<IOccurrence>> getOccurrences();
 
 	IRodinFile getFile();
-	
+
 	boolean isSuccess();
 
 }

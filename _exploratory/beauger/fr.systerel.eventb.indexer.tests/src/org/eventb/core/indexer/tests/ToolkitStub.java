@@ -193,4 +193,8 @@ public class ToolkitStub implements IIndexingToolkit {
 		return result;
 	}
 
+	public IDeclaration[] getDeclarations() {
+		return declarations.toArray(new IDeclaration[declarations.size()]);
+	}
+
 }

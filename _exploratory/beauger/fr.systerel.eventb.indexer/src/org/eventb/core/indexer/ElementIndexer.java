@@ -39,7 +39,8 @@ public abstract class ElementIndexer extends Cancellable {
 	 */
 	public abstract void process() throws RodinDBException;
 
-	protected final void process(IInternalElement element, IAttributeType.String attribute) throws RodinDBException {
+	protected final void process(IInternalElement element,
+			IAttributeType.String attribute) throws RodinDBException {
 		if (!isValid(element, attribute)) {
 			return;
 		}
@@ -53,11 +54,13 @@ public abstract class ElementIndexer extends Cancellable {
 		final Formula<?> formula = getParsedFormula(result);
 		visitAndIndex(element, attribute, formula);
 	}
-	
+
 	protected abstract String getFormulaString() throws RodinDBException;
+
 	protected abstract IParseResult parseFormula(String formulaString);
+
 	protected abstract Formula<?> getParsedFormula(IParseResult result);
-	
+
 	private void visitAndIndex(IInternalElement element,
 			IAttributeType.String attribute, Formula<?> formula) {
 		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
@@ -71,8 +74,8 @@ public abstract class ElementIndexer extends Cancellable {
 		symbolTable.addToIdentTable(idents, identTable);
 
 		if (!identTable.isEmpty()) {
-			final FormulaIndexer formulaIndexer = 
-				new FormulaIndexer(element, attribute, identTable, index);
+			final FormulaIndexer formulaIndexer =
+					new FormulaIndexer(element, attribute, identTable, index);
 
 			formula.accept(formulaIndexer);
 		}
@@ -85,7 +88,7 @@ public abstract class ElementIndexer extends Cancellable {
 		}
 		return elem.hasAttribute(attribute);
 	}
-	
+
 	private void checkCancel() {
 		checkCancel(index);
 	}

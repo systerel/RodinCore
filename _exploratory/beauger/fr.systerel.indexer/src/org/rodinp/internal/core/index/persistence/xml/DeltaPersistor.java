@@ -22,25 +22,27 @@ import org.w3c.dom.Element;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class DeltaPersistor {
 
-    public void save(IIndexDelta delta, Document doc, Element deltaNode) {
-	final String kind = delta.getKind().toString();
-	setAttribute(deltaNode, KIND, kind);
-	
-	final IRodinElement element = delta.getElement();
-	IREPersistor.setIREAtt(element, ELEMENT, deltaNode);
-    }
+	public void save(IIndexDelta delta, Document doc, Element deltaNode) {
+		final String kind = delta.getKind().toString();
+		setAttribute(deltaNode, KIND, kind);
 
-    public static IIndexDelta getDelta(Element deltaNode) throws PersistenceException {
-	final String kindStr = getAttribute(deltaNode, KIND);
-	final Kind kind = Kind.valueOf(kindStr);
-	
-	final IRodinElement element = IREPersistor.getIREAtt(deltaNode, ELEMENT);
-	
-	return new IndexDelta(element, kind);
-    }
+		final IRodinElement element = delta.getElement();
+		IREPersistor.setIREAtt(element, ELEMENT, deltaNode);
+	}
+
+	public static IIndexDelta getDelta(Element deltaNode)
+			throws PersistenceException {
+		final String kindStr = getAttribute(deltaNode, KIND);
+		final Kind kind = Kind.valueOf(kindStr);
+
+		final IRodinElement element =
+				IREPersistor.getIREAtt(deltaNode, ELEMENT);
+
+		return new IndexDelta(element, kind);
+	}
 
 }

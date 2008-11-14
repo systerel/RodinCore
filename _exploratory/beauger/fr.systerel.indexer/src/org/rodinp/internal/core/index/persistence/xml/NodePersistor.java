@@ -29,7 +29,8 @@ import org.w3c.dom.NodeList;
  */
 public class NodePersistor {
 
-	public static Node<IRodinFile> restoreIRFNode(Element nodeNode, Map<IRodinFile, List<IRodinFile>> predMap)
+	public static Node<IRodinFile> restoreIRFNode(Element nodeNode,
+			Map<IRodinFile, List<IRodinFile>> predMap)
 			throws PersistenceException {
 		final IRodinFile label = IREPersistor.getIRFAtt(nodeNode, LABEL);
 		final String markAtt = getAttribute(nodeNode, MARK);

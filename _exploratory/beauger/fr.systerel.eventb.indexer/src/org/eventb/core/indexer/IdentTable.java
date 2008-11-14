@@ -18,23 +18,23 @@ import org.rodinp.core.index.IDeclaration;
 
 public class IdentTable {
 	private final Map<FreeIdentifier, IDeclaration> table;
-	
+
 	public IdentTable() {
 		this.table = new HashMap<FreeIdentifier, IDeclaration>();
 	}
-	
+
 	public void put(FreeIdentifier ident, IDeclaration declaration) {
 		table.put(ident, declaration);
 	}
-	
+
 	public IDeclaration get(FreeIdentifier ident) {
 		return table.get(ident);
 	}
-	
+
 	public boolean contains(FreeIdentifier ident) {
 		return table.containsKey(ident);
 	}
-	
+
 	public boolean isEmpty() {
 		return table.isEmpty();
 	}

@@ -81,7 +81,6 @@ public class DeltaTests extends IndexTests {
 		}
 
 		public void elementChanged(ElementChangedEvent event) {
-			System.out.println("YEP ! delta = " + event);
 			addAffectedFiles(event.getDelta(), list);
 		}
 

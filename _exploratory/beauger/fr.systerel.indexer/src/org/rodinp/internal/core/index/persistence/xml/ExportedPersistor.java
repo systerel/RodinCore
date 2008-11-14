@@ -41,7 +41,7 @@ public class ExportedPersistor {
 	 * @param exportNode
 	 * @param exportTable
 	 * @param file
-	 * @throws PersistenceException 
+	 * @throws PersistenceException
 	 */
 	public static void addExported(Element exportNode, ExportTable exportTable,
 			IRodinFile file) throws PersistenceException {

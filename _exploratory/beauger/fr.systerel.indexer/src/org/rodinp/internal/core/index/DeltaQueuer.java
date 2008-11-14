@@ -39,7 +39,6 @@ public class DeltaQueuer implements IElementChangedListener,
 	}
 
 	public void elementChanged(ElementChangedEvent event) {
-		System.out.println("### ECE: " + event);
 		final IRodinElementDelta delta = event.getDelta();
 		interrupted.set(false);
 		try {
@@ -88,8 +87,6 @@ public class DeltaQueuer implements IElementChangedListener,
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		System.out.println(evtToString(event));
-
 		boolean process = false;
 		boolean clean = false;
 		switch (event.getType()) {
@@ -147,8 +144,7 @@ public class DeltaQueuer implements IElementChangedListener,
 	}
 
 	private void enqueueRodinProject(IRodinProject rodinProject,
-			IResourceDelta delta, boolean clean)
-			throws InterruptedException {
+			IResourceDelta delta, boolean clean) throws InterruptedException {
 		if (clean) {
 			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_CLEANED), true);
 			return;
@@ -175,37 +171,5 @@ public class DeltaQueuer implements IElementChangedListener,
 			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_DELETED), true);
 			break;
 		}
-	}
-
-	private static String evtToString(IResourceChangeEvent event) {
-		final StringBuilder sb =
-				new StringBuilder("### IRCE type="
-						+ event.getType()
-						+ "; resource="
-						+ event.getResource());
-		final IResourceDelta delta = event.getDelta();
-		sb.append("; delta= " + delta);
-		if (delta != null) {
-			appendDelta(sb, delta);
-		}
-		return sb.toString();
-	}
-
-	private static void appendDelta(final StringBuilder sb,
-			final IResourceDelta delta) {
-
-		sb.append("CHILD path= "
-				+ delta.getFullPath()
-				+ "; delta kind= "
-				+ Integer.toHexString(delta.getKind())
-				+ "; delta flags= "
-				+ Integer.toHexString(delta.getFlags())
-				+ "; affected = {");
-
-		final IResourceDelta[] affectedChildren = delta.getAffectedChildren();
-		for (IResourceDelta resourceDelta : affectedChildren) {
-			appendDelta(sb, resourceDelta);
-		}
-		sb.append("}");
 	}
 }

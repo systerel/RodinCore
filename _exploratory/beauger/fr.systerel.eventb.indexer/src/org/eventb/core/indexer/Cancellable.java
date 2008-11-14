@@ -16,7 +16,7 @@ import org.rodinp.core.index.IIndexingToolkit;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public abstract class Cancellable {
 
@@ -26,6 +26,4 @@ public abstract class Cancellable {
 		}
 	}
 
-	
-	
 }

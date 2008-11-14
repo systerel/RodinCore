@@ -23,11 +23,11 @@ import org.rodinp.core.index.IIndexingToolkit;
  * 
  */
 public class PredicateIndexer extends ElementIndexer {
-	
+
 	final IPredicateElement element;
 
-	public PredicateIndexer(IPredicateElement element,
-			SymbolTable symbolTable, IIndexingToolkit index) {
+	public PredicateIndexer(IPredicateElement element, SymbolTable symbolTable,
+			IIndexingToolkit index) {
 
 		super(symbolTable, index);
 		this.element = element;
@@ -51,7 +51,5 @@ public class PredicateIndexer extends ElementIndexer {
 	protected IParseResult parseFormula(String formulaString) {
 		return ff.parsePredicate(formulaString);
 	}
-
-
 
 }

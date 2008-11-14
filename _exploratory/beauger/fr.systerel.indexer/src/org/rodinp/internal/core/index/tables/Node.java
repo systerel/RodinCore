@@ -48,7 +48,7 @@ public class Node<T> {
 			addPredecessor(pred);
 		}
 	}
-	
+
 	public void addPredecessor(Node<T> tail) {
 		if (this.equals(tail)) {
 			throw new IllegalArgumentException(

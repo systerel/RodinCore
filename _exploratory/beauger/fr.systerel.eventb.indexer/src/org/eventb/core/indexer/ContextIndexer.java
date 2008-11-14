@@ -30,94 +30,94 @@ import org.rodinp.core.index.IDeclaration;
  */
 public class ContextIndexer extends EventBIndexer {
 
-    private static final String ID = "fr.systerel.eventb.indexer.context";
+	private static final String ID = "fr.systerel.eventb.indexer.context";
 
-    protected void index(IInternalElement root) throws RodinDBException {
-	if (!(root instanceof IContextRoot)) {
-	    throwIllArgException(root);
-	}
-	index((IContextRoot) root);
-    }
-
-    private void index(IContextRoot root) throws RodinDBException {
-	checkCancel();
-
-	final SymbolTable importST = new SymbolTable(null);
-	processImports(index.getImports(), importST);
-	checkCancel();
-
-	final SymbolTable totalST = new SymbolTable(importST);
-	processIdentifierElements(root.getCarrierSets(), totalST);
-	checkCancel();
-	processIdentifierElements(root.getConstants(), totalST);
-	checkCancel();
-
-	processPredicateElements(root.getAxioms(), totalST);
-	checkCancel();
-	processPredicateElements(root.getTheorems(), totalST);
-    }
-
-    private void processImports(IDeclaration[] imports, SymbolTable importST) {
-	for (IDeclaration declaration : imports) {
-	    export(declaration);
-	    importST.put(declaration);
-	}
-    }
-
-    private void processIdentifierElements(IIdentifierElement[] elems,
-	    SymbolTable symbolTable) throws RodinDBException {
-	for (IIdentifierElement ident : elems) {
-	    if (ident.hasIdentifierString()) {
-		final IDeclaration declaration = indexDeclaration(ident, ident
-			.getIdentifierString());
-		export(declaration);
-		symbolTable.put(declaration);
-	    }
-	}
-    }
-
-    public IRodinFile[] getDeps(IInternalElement root) throws RodinDBException {
-	if (!(root instanceof IContextRoot)) {
-	    throwIllArgException(root);
-	}
-	final IContextRoot context = (IContextRoot) root;
-
-	final List<IRodinFile> extFiles = new ArrayList<IRodinFile>();
-
-	final IExtendsContext[] extendsClauses = context.getExtendsClauses();
-
-	addExtendedFiles(extendsClauses, extFiles);
-
-	return extFiles.toArray(new IRodinFile[extFiles.size()]);
-    }
-
-    private void addExtendedFiles(IExtendsContext[] extendsClauses,
-	    List<IRodinFile> extendedFiles) throws RodinDBException {
-
-	for (IExtendsContext extendsContext : extendsClauses) {
-	    final IRodinFile extended = getExtendedFile(extendsContext);
-	    if (extended != null) {
-		extendedFiles.add(extended);
-	    }
-	}
-    }
-
-    private IRodinFile getExtendedFile(IExtendsContext extendsContext)
-	    throws RodinDBException {
-	if (!extendsContext.hasAbstractContextName()) {
-	    return null;
+	protected void index(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IContextRoot)) {
+			throwIllArgException(root);
+		}
+		index((IContextRoot) root);
 	}
 
-	final String extBareName = extendsContext.getAbstractContextName();
-	final String extFileName = getContextFileName(extBareName);
+	private void index(IContextRoot root) throws RodinDBException {
+		checkCancel();
 
-	final IRodinProject project = extendsContext.getRodinProject();
+		final SymbolTable importST = new SymbolTable(null);
+		processImports(index.getImports(), importST);
+		checkCancel();
 
-	return project.getRodinFile(extFileName);
-    }
+		final SymbolTable totalST = new SymbolTable(importST);
+		processIdentifierElements(root.getCarrierSets(), totalST);
+		checkCancel();
+		processIdentifierElements(root.getConstants(), totalST);
+		checkCancel();
 
-    public String getId() {
-	return ID;
-    }
+		processPredicateElements(root.getAxioms(), totalST);
+		checkCancel();
+		processPredicateElements(root.getTheorems(), totalST);
+	}
+
+	private void processImports(IDeclaration[] imports, SymbolTable importST) {
+		for (IDeclaration declaration : imports) {
+			export(declaration);
+			importST.put(declaration);
+		}
+	}
+
+	private void processIdentifierElements(IIdentifierElement[] elems,
+			SymbolTable symbolTable) throws RodinDBException {
+		for (IIdentifierElement ident : elems) {
+			if (ident.hasIdentifierString()) {
+				final IDeclaration declaration =
+						indexDeclaration(ident, ident.getIdentifierString());
+				export(declaration);
+				symbolTable.put(declaration);
+			}
+		}
+	}
+
+	public IRodinFile[] getDeps(IInternalElement root) throws RodinDBException {
+		if (!(root instanceof IContextRoot)) {
+			throwIllArgException(root);
+		}
+		final IContextRoot context = (IContextRoot) root;
+
+		final List<IRodinFile> extFiles = new ArrayList<IRodinFile>();
+
+		final IExtendsContext[] extendsClauses = context.getExtendsClauses();
+
+		addExtendedFiles(extendsClauses, extFiles);
+
+		return extFiles.toArray(new IRodinFile[extFiles.size()]);
+	}
+
+	private void addExtendedFiles(IExtendsContext[] extendsClauses,
+			List<IRodinFile> extendedFiles) throws RodinDBException {
+
+		for (IExtendsContext extendsContext : extendsClauses) {
+			final IRodinFile extended = getExtendedFile(extendsContext);
+			if (extended != null) {
+				extendedFiles.add(extended);
+			}
+		}
+	}
+
+	private IRodinFile getExtendedFile(IExtendsContext extendsContext)
+			throws RodinDBException {
+		if (!extendsContext.hasAbstractContextName()) {
+			return null;
+		}
+
+		final String extBareName = extendsContext.getAbstractContextName();
+		final String extFileName = getContextFileName(extBareName);
+
+		final IRodinProject project = extendsContext.getRodinProject();
+
+		return project.getRodinFile(extFileName);
+	}
+
+	public String getId() {
+		return ID;
+	}
 
 }

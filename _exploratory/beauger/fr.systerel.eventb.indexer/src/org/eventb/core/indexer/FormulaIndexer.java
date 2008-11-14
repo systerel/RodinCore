@@ -30,32 +30,27 @@ import org.rodinp.core.index.IInternalLocation;
  * 
  */
 public class FormulaIndexer extends DefaultVisitor {
-	
+
 	private final IInternalElement visited;
 	private final IAttributeType.String attributeType;
 	private final IdentTable visibleIdents;
 	private final IIndexingToolkit index;
 
-
-
-	public FormulaIndexer(IInternalElement visited, IAttributeType.String attributeType,
-			IdentTable visibleIdents, IIndexingToolkit index) {
+	public FormulaIndexer(IInternalElement visited,
+			IAttributeType.String attributeType, IdentTable visibleIdents,
+			IIndexingToolkit index) {
 		this.visited = visited;
 		this.attributeType = attributeType;
 		this.visibleIdents = visibleIdents;
 		this.index = index;
 	}
 
-
-
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
 		index(ident, REFERENCE);
-		
+
 		return true;
 	}
-
-
 
 	public boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign) {
 		return false;
@@ -65,15 +60,13 @@ public class FormulaIndexer extends DefaultVisitor {
 		for (FreeIdentifier ident : assign.getAssignedIdentifiers()) {
 			index(ident, MODIFICATION);
 		}
-		
+
 		for (Expression expression : assign.getExpressions()) {
 			expression.accept(this);
 		}
-		
+
 		return true;
 	}
-
-
 
 	/**
 	 * @param ident
@@ -83,16 +76,15 @@ public class FormulaIndexer extends DefaultVisitor {
 		if (ident.isPrimed()) {
 			ident = ident.withoutPrime(FormulaFactory.getDefault());
 		}
-		
+
 		if (visibleIdents.contains(ident)) {
 			final IDeclaration declaration = visibleIdents.get(ident);
 			final SourceLocation srcLoc = ident.getSourceLocation();
-			final IInternalLocation loc = getRodinLocation(
-					visited, attributeType, srcLoc);
-	
+			final IInternalLocation loc =
+					getRodinLocation(visited, attributeType, srcLoc);
+
 			index.addOccurrence(declaration, kind, loc);
 		}
 	}
-
 
 }

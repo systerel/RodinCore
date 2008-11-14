@@ -39,16 +39,17 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		this.occurrences = new HashMap<IInternalElement, Set<IOccurrence>>();
 		this.success = false;
 	}
-	
+
 	@Override
 	public IIndexingResult clone() {
-		
+
 		final IndexingResult copy = new IndexingResult(file);
-		copy.declarations = new HashMap<IInternalElement, IDeclaration>(declarations);
+		copy.declarations =
+				new HashMap<IInternalElement, IDeclaration>(declarations);
 		copy.exports.addAll(exports);
 		copy.occurrences.putAll(occurrences);
 		copy.success = success;
-		
+
 		return copy;
 	}
 

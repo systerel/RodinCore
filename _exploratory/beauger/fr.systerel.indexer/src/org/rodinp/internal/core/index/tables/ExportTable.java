@@ -57,12 +57,12 @@ public class ExportTable {
 	public Set<IRodinFile> files() {
 		return table.keySet();
 	}
-//	public boolean contains(IRodinFile f, IInternalElement element) {
-//		final Set<IDeclaration> map = table.get(f);
-//		if (map == null) {
-//			return false;
-//		}
-//		return map.contains(element);
-//	}
-//
+	// public boolean contains(IRodinFile f, IInternalElement element) {
+	// final Set<IDeclaration> map = table.get(f);
+	// if (map == null) {
+	// return false;
+	// }
+	// return map.contains(element);
+	// }
+	//
 }

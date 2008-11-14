@@ -121,7 +121,8 @@ public final class IndexManager {
 	}
 
 	// for testing purposes only
-	public void scheduleIndexing(IRodinFile... files) throws InterruptedException {
+	public void scheduleIndexing(IRodinFile... files)
+			throws InterruptedException {
 		assert !indexingEnabled;
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
@@ -315,13 +316,12 @@ public final class IndexManager {
 		} while (!stop);
 	}
 
-	private void processCurrentDeltas()
-			throws InterruptedException {
+	private void processCurrentDeltas() throws InterruptedException {
 		final int maxAttempts = 3;
 		final Iterator<IIndexDelta> iter = currentDeltas.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			final IIndexDelta delta = iter.next();
-			
+
 			int attempts = 0;
 			boolean success = false;
 			do {
@@ -352,7 +352,7 @@ public final class IndexManager {
 		final PersistenceManager persistenceManager =
 				PersistenceManager.getDefault();
 		final Kind kind = delta.getKind();
-		
+
 		if (kind == Kind.PROJECT_OPENED) {
 			lockWriteInitSave();
 			final boolean success =

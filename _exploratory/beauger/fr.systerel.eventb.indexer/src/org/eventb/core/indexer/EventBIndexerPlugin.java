@@ -20,50 +20,50 @@ import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexerPlugin extends Plugin {
 
-    // The plug-in ID
-    public static final String PLUGIN_ID = "fr.systerel.eventb.indexer";
+	// The plug-in ID
+	public static final String PLUGIN_ID = "fr.systerel.eventb.indexer";
 
-    // The shared instance
-    private static EventBIndexerPlugin plugin;
+	// The shared instance
+	private static EventBIndexerPlugin plugin;
 
-    /**
-     * The constructor
-     */
-    public EventBIndexerPlugin() {
-    }
-
-    public void start(BundleContext context) throws Exception {
-	super.start(context);
-	plugin = this;
-	configurePluginDebugOptions();
-	final IOccurrenceKind k = EventBIndexUtil.DECLARATION;
-	// FIXME temp fix to prevent from unrecognized kinds during restoration
-	RodinIndexer.register(new ContextIndexer(), IContextRoot.ELEMENT_TYPE);
-	RodinIndexer.register(new MachineIndexer(), IMachineRoot.ELEMENT_TYPE);
-    }
-
-    public void stop(BundleContext context) throws Exception {
-	plugin = null;
-	super.stop(context);
-    }
-
-    /**
-     * Returns the shared instance
-     * 
-     * @return the shared instance
-     */
-    public static EventBIndexerPlugin getDefault() {
-	return plugin;
-    }
-
-    public void configurePluginDebugOptions() {
-	if (plugin.isDebugging()) {
-	    String option = Platform
-		    .getDebugOption("fr.systerel.eventb.indexer/debug");
-	    if (option != null)
-		EventBIndexer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+	/**
+	 * The constructor
+	 */
+	public EventBIndexerPlugin() {
 	}
 
-    }
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		configurePluginDebugOptions();
+		final IOccurrenceKind k = EventBIndexUtil.DECLARATION;
+		// FIXME temp fix to prevent from unrecognized kinds during restoration
+		RodinIndexer.register(new ContextIndexer(), IContextRoot.ELEMENT_TYPE);
+		RodinIndexer.register(new MachineIndexer(), IMachineRoot.ELEMENT_TYPE);
+	}
+
+	public void stop(BundleContext context) throws Exception {
+		plugin = null;
+		super.stop(context);
+	}
+
+	/**
+	 * Returns the shared instance
+	 * 
+	 * @return the shared instance
+	 */
+	public static EventBIndexerPlugin getDefault() {
+		return plugin;
+	}
+
+	public void configurePluginDebugOptions() {
+		if (plugin.isDebugging()) {
+			String option =
+					Platform.getDebugOption("fr.systerel.eventb.indexer/debug");
+			if (option != null)
+				EventBIndexer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+
+	}
 
 }

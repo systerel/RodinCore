@@ -40,30 +40,30 @@ import org.rodinp.core.IRodinFile;
  */
 public interface IRodinLocation {
 
-    /**
-     * Returns the file containing the location, if any. If the location is a
-     * Rodin file or occurs within a Rodin file, then this Rodin file is
-     * returned. Otherwise, <code>null</code> is returned.
-     * 
-     * @return the file containing the location or <code>null</code>
-     */
-    // TODO move this method to IRodinElement
-    IRodinFile getRodinFile();
+	/**
+	 * Returns the file containing the location, if any. If the location is a
+	 * Rodin file or occurs within a Rodin file, then this Rodin file is
+	 * returned. Otherwise, <code>null</code> is returned.
+	 * 
+	 * @return the file containing the location or <code>null</code>
+	 */
+	// TODO move this method to IRodinElement
+	IRodinFile getRodinFile();
 
-    /**
-     * Returns the element containing this location.
-     * 
-     * @return the element containing this location
-     */
-    IRodinElement getElement();
+	/**
+	 * Returns the element containing this location.
+	 * 
+	 * @return the element containing this location
+	 */
+	IRodinElement getElement();
 
-    /**
-     * Returns true iff this location is included in the given one.
-     * 
-     * @param other
-     *                the checked location.
-     * @return whether this location is included in the given one.
-     */
-    boolean isIncludedIn(IRodinLocation other);
+	/**
+	 * Returns true iff this location is included in the given one.
+	 * 
+	 * @param other
+	 *            the checked location.
+	 * @return whether this location is included in the given one.
+	 */
+	boolean isIncludedIn(IRodinLocation other);
 
 }

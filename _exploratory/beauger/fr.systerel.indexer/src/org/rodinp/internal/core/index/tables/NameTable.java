@@ -20,14 +20,15 @@ import org.rodinp.core.index.IDeclaration;
 
 public class NameTable {
 
-	private static final IInternalElement[] NO_ELEMENTS = new IInternalElement[0];
+	private static final IInternalElement[] NO_ELEMENTS =
+			new IInternalElement[0];
 
 	private Map<String, Set<IInternalElement>> table;
-	
+
 	public NameTable() {
 		table = new HashMap<String, Set<IInternalElement>>();
 	}
-	
+
 	private void add(String name, IInternalElement element) {
 		Set<IInternalElement> elements = table.get(name);
 		if (elements == null) {
@@ -36,11 +37,11 @@ public class NameTable {
 		}
 		elements.add(element);
 	}
-	
+
 	public void add(IDeclaration declaration) {
 		add(declaration.getName(), declaration.getElement());
 	}
-	
+
 	private void remove(String name, IInternalElement element) {
 		Set<IInternalElement> elements = table.get(name);
 		if (elements != null) {
@@ -50,11 +51,11 @@ public class NameTable {
 			}
 		}
 	}
-	
+
 	public void remove(IDeclaration declaration) {
 		remove(declaration.getName(), declaration.getElement());
 	}
-	
+
 	public IInternalElement[] getElements(String name) {
 		final Set<IInternalElement> elements = table.get(name);
 		if (elements == null || elements.size() == 0) {
@@ -62,11 +63,11 @@ public class NameTable {
 		}
 		return elements.toArray(new IInternalElement[elements.size()]);
 	}
-	
+
 	public void clear() {
 		table.clear();
 	}
-	
+
 	// DEBUG
 	@Override
 	public String toString() {
@@ -74,7 +75,7 @@ public class NameTable {
 		for (String name : table.keySet()) {
 			sb.append(name + ": ");
 			for (IInternalElement elem : table.get(name)) {
-				sb.append(elem.getElementName()+"; ");
+				sb.append(elem.getElementName() + "; ");
 			}
 			sb.append("\n");
 		}

@@ -56,8 +56,8 @@ public class IndexRequester implements IIndexRequester {
 
 	public IInternalElement[] getElements(IRodinProject project, String name)
 			throws InterruptedException {
-		final NameTable nameTable = IndexManager.getDefault().getNameTable(
-				project);
+		final NameTable nameTable =
+				IndexManager.getDefault().getNameTable(project);
 
 		return nameTable.getElements(name);
 	}

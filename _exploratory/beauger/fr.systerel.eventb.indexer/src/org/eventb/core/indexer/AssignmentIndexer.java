@@ -23,7 +23,7 @@ import org.rodinp.core.index.IIndexingToolkit;
  * 
  */
 public class AssignmentIndexer extends ElementIndexer {
-	
+
 	final IAssignmentElement element;
 
 	public AssignmentIndexer(IAssignmentElement element,

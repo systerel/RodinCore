@@ -38,244 +38,244 @@ import org.rodinp.core.index.IIndexingToolkit;
  */
 public class EventIndexer extends Cancellable {
 
-    private final IEvent event;
-    private final Map<IEvent, SymbolTable> absParamTables;
-    private final SymbolTable eventST;
-    private final SymbolTable declImportST;
-    private final IIndexingToolkit index;
+	private final IEvent event;
+	private final Map<IEvent, SymbolTable> absParamTables;
+	private final SymbolTable eventST;
+	private final SymbolTable declImportST;
+	private final IIndexingToolkit index;
 
-    /**
-     * Constructor.
-     * 
-     * @param event
-     *                the event to index
-     * @param absParamTables
-     * @param eventST
-     * @param declImportST
-     *                a SymbolTable containing, by decreasing order of priority:
-     *                <ul>
-     *                <li>local declarations</li>
-     *                <li>imported declarations</li>
-     *                </ul>
-     * @param index
-     */
-    public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
-	    SymbolTable eventST, SymbolTable declImportST,
-	    IIndexingToolkit index) {
-	this.declImportST = declImportST;
-	this.event = event;
-	this.absParamTables = absParamTables;
-	this.eventST = eventST;
-	this.index = index;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param event
+	 *            the event to index
+	 * @param absParamTables
+	 * @param eventST
+	 * @param declImportST
+	 *            a SymbolTable containing, by decreasing order of priority:
+	 *            <ul>
+	 *            <li>local declarations</li>
+	 *            <li>imported declarations</li>
+	 *            </ul>
+	 * @param index
+	 */
+	public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
+			SymbolTable eventST, SymbolTable declImportST,
+			IIndexingToolkit index) {
+		this.declImportST = declImportST;
+		this.event = event;
+		this.absParamTables = absParamTables;
+		this.eventST = eventST;
+		this.index = index;
+	}
 
-    public void process() throws RodinDBException {
-	checkCancel();
-	processEventLabel();
+	public void process() throws RodinDBException {
+		checkCancel();
+		processEventLabel();
 
-	checkCancel();
-	final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
-	processRefines(event.getRefinesClauses(), absPrmDeclImpST);
+		checkCancel();
+		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
+		processRefines(event.getRefinesClauses(), absPrmDeclImpST);
 
-	checkCancel();
-	final SymbolTable totalST = new SymbolTable(absPrmDeclImpST);
-	processParameters(event.getParameters(), totalST);
+		checkCancel();
+		final SymbolTable totalST = new SymbolTable(absPrmDeclImpST);
+		processParameters(event.getParameters(), totalST);
 
-	checkCancel();
-	processPredicateElements(event.getGuards(), totalST);
-	checkCancel();
-	processActions(event.getActions(), totalST);
+		checkCancel();
+		processPredicateElements(event.getGuards(), totalST);
+		checkCancel();
+		processActions(event.getActions(), totalST);
 
-	checkCancel();
-	processWitnesses(event.getWitnesses(), totalST);
-    }
+		checkCancel();
+		processWitnesses(event.getWitnesses(), totalST);
+	}
 
-    /**
-     * @param refinesEvents
-     * @throws RodinDBException
-     */
-    private void processRefines(IRefinesEvent[] refinesEvents,
-	    SymbolTable absParamDeclImportST) throws RodinDBException {
-	for (IRefinesEvent refinesEvent : refinesEvents) {
-	    if (refinesEvent.hasAbstractEventLabel()) {
-		final String absEventLabel = refinesEvent
-			.getAbstractEventLabel();
+	/**
+	 * @param refinesEvents
+	 * @throws RodinDBException
+	 */
+	private void processRefines(IRefinesEvent[] refinesEvents,
+			SymbolTable absParamDeclImportST) throws RodinDBException {
+		for (IRefinesEvent refinesEvent : refinesEvents) {
+			if (refinesEvent.hasAbstractEventLabel()) {
+				final String absEventLabel =
+						refinesEvent.getAbstractEventLabel();
 
-		final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
-		if (declAbsEvent != null) {
-		    final IInternalElement element = declAbsEvent.getElement();
-		    if (element instanceof IEvent) {
-			addRefAttribute(declAbsEvent, refinesEvent,
-				TARGET_ATTRIBUTE);
+				final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
+				if (declAbsEvent != null) {
+					final IInternalElement element = declAbsEvent.getElement();
+					if (element instanceof IEvent) {
+						addRefAttribute(declAbsEvent, refinesEvent,
+								TARGET_ATTRIBUTE);
 
-			addAbstractParams((IEvent) element,
-				absParamDeclImportST);
-		    }
+						addAbstractParams((IEvent) element,
+								absParamDeclImportST);
+					}
+				}
+			}
+			checkCancel();
 		}
-	    }
-	    checkCancel();
+
 	}
 
-    }
-
-    /**
-     * @param declaration
-     * @param element
-     * @param attribute
-     * @param index
-     */
-    private void addRefAttribute(final IDeclaration declaration,
-	    IInternalElement element, IAttributeType.String attribute) {
-	index.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
-		attribute));
-    }
-
-    /**
-     * @param declaration
-     * @param absParamDeclImportST
-     */
-    private void addAbstractParams(IEvent abstractEvent,
-	    SymbolTable absParamDeclImportST) {
-	final SymbolTable absParamST = absParamTables.get(abstractEvent);
-	if (absParamST != null) {
-	    absParamDeclImportST.putAll(absParamST);
+	/**
+	 * @param declaration
+	 * @param element
+	 * @param attribute
+	 * @param index
+	 */
+	private void addRefAttribute(final IDeclaration declaration,
+			IInternalElement element, IAttributeType.String attribute) {
+		index.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
+				attribute));
 	}
-    }
 
-    /**
-     * @param index
-     * @throws RodinDBException
-     */
-    private void processEventLabel() throws RodinDBException {
-	if (event.hasLabel()) {
-	    final String eventLabel = event.getLabel();
-	    final IDeclaration declaration = index.declare(event, eventLabel);
-	    index.export(declaration);
-	}
-    }
-
-    /**
-     * @param witnesses
-     * @param totalST
-     * @param index
-     * @throws RodinDBException
-     */
-    private void processWitnesses(IWitness[] witnesses, SymbolTable totalST)
-	    throws RodinDBException {
-
-	processWitnessLabels(witnesses, totalST);
-	processPredicateElements(witnesses, totalST);
-    }
-
-    /**
-     * @param witnesses
-     * @param totalST
-     * @param index
-     * @param ff
-     * @throws RodinDBException
-     */
-    private void processWitnessLabels(ILabeledElement[] witnesses,
-	    SymbolTable totalST) throws RodinDBException {
-
-	for (ILabeledElement label : witnesses) {
-	    if (label.hasLabel()) {
-		final String name = getNameNoPrime(label.getLabel());
-
-		final IDeclaration declAbs = totalST.lookUpper(name);
-
-		if (declAbs != null) {
-		    final IInternalElement element = declAbs.getElement();
-		    if (element instanceof IParameter
-			    || element instanceof IVariable) {
-			// could be a namesake
-			addRefAttribute(declAbs, label, LABEL_ATTRIBUTE);
-		    }
+	/**
+	 * @param declaration
+	 * @param absParamDeclImportST
+	 */
+	private void addAbstractParams(IEvent abstractEvent,
+			SymbolTable absParamDeclImportST) {
+		final SymbolTable absParamST = absParamTables.get(abstractEvent);
+		if (absParamST != null) {
+			absParamDeclImportST.putAll(absParamST);
 		}
-	    }
-	    checkCancel();
 	}
-    }
 
-    /**
-     * @param labelElem
-     * @return
-     * @throws RodinDBException
-     */
-    private static String getNameNoPrime(String label) throws RodinDBException {
-	final FormulaFactory ff = FormulaFactory.getDefault();
-
-	final FreeIdentifier ident = ff.makeFreeIdentifier(label, null);
-	final String name;
-	if (ident.isPrimed()) {
-	    name = ident.withoutPrime(ff).getName();
-	} else {
-	    name = ident.getName();
+	/**
+	 * @param index
+	 * @throws RodinDBException
+	 */
+	private void processEventLabel() throws RodinDBException {
+		if (event.hasLabel()) {
+			final String eventLabel = event.getLabel();
+			final IDeclaration declaration = index.declare(event, eventLabel);
+			index.export(declaration);
+		}
 	}
-	return name;
-    }
 
-    /**
-     * @param parameters
-     * @param table
-     * @param index
-     * @throws RodinDBException
-     */
-    private void processParameters(final IParameter[] parameters,
-	    SymbolTable totalST) throws RodinDBException {
-	for (IParameter parameter : parameters) {
-	    if (parameter.hasIdentifierString()) {
-		final String ident = parameter.getIdentifierString();
+	/**
+	 * @param witnesses
+	 * @param totalST
+	 * @param index
+	 * @throws RodinDBException
+	 */
+	private void processWitnesses(IWitness[] witnesses, SymbolTable totalST)
+			throws RodinDBException {
 
-		IDeclaration declaration = index.declare(parameter, ident);
-		totalST.put(declaration);
-		index.export(declaration);
-
-		refAnyAbstractParam(ident, parameter, totalST);
-	    }
+		processWitnessLabels(witnesses, totalST);
+		processPredicateElements(witnesses, totalST);
 	}
-    }
 
-    /**
-     * @param ident
-     * @param parameter
-     * @param totalST
-     * @param index
-     */
-    private void refAnyAbstractParam(final String ident, IParameter parameter,
-	    SymbolTable totalST) {
-	final IDeclaration declAbsParam = totalST.lookUpper(ident);
-	if (declAbsParam != null) {
-	    if (declAbsParam.getElement() instanceof IParameter) {
-		// could be a namesake
-		addRefAttribute(declAbsParam, parameter, IDENTIFIER_ATTRIBUTE);
-	    }
+	/**
+	 * @param witnesses
+	 * @param totalST
+	 * @param index
+	 * @param ff
+	 * @throws RodinDBException
+	 */
+	private void processWitnessLabels(ILabeledElement[] witnesses,
+			SymbolTable totalST) throws RodinDBException {
+
+		for (ILabeledElement label : witnesses) {
+			if (label.hasLabel()) {
+				final String name = getNameNoPrime(label.getLabel());
+
+				final IDeclaration declAbs = totalST.lookUpper(name);
+
+				if (declAbs != null) {
+					final IInternalElement element = declAbs.getElement();
+					if (element instanceof IParameter
+							|| element instanceof IVariable) {
+						// could be a namesake
+						addRefAttribute(declAbs, label, LABEL_ATTRIBUTE);
+					}
+				}
+			}
+			checkCancel();
+		}
 	}
-    }
 
-    private void processActions(IAction[] actions, SymbolTable eventTable)
-	    throws RodinDBException {
-	for (IAction action : actions) {
-	    final AssignmentIndexer assignIndexer = new AssignmentIndexer(
-		    action, eventTable, index);
-	    assignIndexer.process();
+	/**
+	 * @param labelElem
+	 * @return
+	 * @throws RodinDBException
+	 */
+	private static String getNameNoPrime(String label) throws RodinDBException {
+		final FormulaFactory ff = FormulaFactory.getDefault();
 
-	    checkCancel();
+		final FreeIdentifier ident = ff.makeFreeIdentifier(label, null);
+		final String name;
+		if (ident.isPrimed()) {
+			name = ident.withoutPrime(ff).getName();
+		} else {
+			name = ident.getName();
+		}
+		return name;
 	}
-    }
 
-    private void processPredicateElements(IPredicateElement[] preds,
-	    SymbolTable symbolTable) throws RodinDBException {
-	for (IPredicateElement elem : preds) {
-	    final PredicateIndexer predIndexer = new PredicateIndexer(elem,
-		    symbolTable, index);
-	    predIndexer.process();
+	/**
+	 * @param parameters
+	 * @param table
+	 * @param index
+	 * @throws RodinDBException
+	 */
+	private void processParameters(final IParameter[] parameters,
+			SymbolTable totalST) throws RodinDBException {
+		for (IParameter parameter : parameters) {
+			if (parameter.hasIdentifierString()) {
+				final String ident = parameter.getIdentifierString();
 
-	    checkCancel();
+				IDeclaration declaration = index.declare(parameter, ident);
+				totalST.put(declaration);
+				index.export(declaration);
+
+				refAnyAbstractParam(ident, parameter, totalST);
+			}
+		}
 	}
-    }
 
-    protected void checkCancel() {
-	checkCancel(index);
-    }
+	/**
+	 * @param ident
+	 * @param parameter
+	 * @param totalST
+	 * @param index
+	 */
+	private void refAnyAbstractParam(final String ident, IParameter parameter,
+			SymbolTable totalST) {
+		final IDeclaration declAbsParam = totalST.lookUpper(ident);
+		if (declAbsParam != null) {
+			if (declAbsParam.getElement() instanceof IParameter) {
+				// could be a namesake
+				addRefAttribute(declAbsParam, parameter, IDENTIFIER_ATTRIBUTE);
+			}
+		}
+	}
+
+	private void processActions(IAction[] actions, SymbolTable eventTable)
+			throws RodinDBException {
+		for (IAction action : actions) {
+			final AssignmentIndexer assignIndexer =
+					new AssignmentIndexer(action, eventTable, index);
+			assignIndexer.process();
+
+			checkCancel();
+		}
+	}
+
+	private void processPredicateElements(IPredicateElement[] preds,
+			SymbolTable symbolTable) throws RodinDBException {
+		for (IPredicateElement elem : preds) {
+			final PredicateIndexer predIndexer =
+					new PredicateIndexer(elem, symbolTable, index);
+			predIndexer.process();
+
+			checkCancel();
+		}
+	}
+
+	protected void checkCancel() {
+		checkCancel(index);
+	}
 
 }
