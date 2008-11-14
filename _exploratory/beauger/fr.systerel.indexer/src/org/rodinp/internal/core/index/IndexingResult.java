@@ -20,7 +20,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 
-public class IndexingResult implements IIndexingResult {
+public class IndexingResult implements IIndexingResult, Cloneable {
 
 	private final IRodinFile file;
 	private Map<IInternalElement, IDeclaration> declarations;
@@ -28,12 +28,28 @@ public class IndexingResult implements IIndexingResult {
 	private final Map<IInternalElement, Set<IOccurrence>> occurrences;
 	private boolean success;
 
+	public static IIndexingResult failed(IRodinFile f) {
+		return new IndexingResult(f);
+	}
+
 	public IndexingResult(IRodinFile file) {
 		this.file = file;
 		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.exports = new HashSet<IDeclaration>();
 		this.occurrences = new HashMap<IInternalElement, Set<IOccurrence>>();
 		this.success = false;
+	}
+	
+	@Override
+	public IIndexingResult clone() {
+		
+		final IndexingResult copy = new IndexingResult(file);
+		copy.declarations = new HashMap<IInternalElement, IDeclaration>(declarations);
+		copy.exports.addAll(exports);
+		copy.occurrences.putAll(occurrences);
+		copy.success = success;
+		
+		return copy;
 	}
 
 	public void addExport(IDeclaration declaration) {
@@ -55,10 +71,6 @@ public class IndexingResult implements IIndexingResult {
 
 	public void setSuccess(boolean value) {
 		this.success = value;
-	}
-
-	public static IIndexingResult failed(IRodinFile f) {
-		return new IndexingResult(f);
 	}
 
 	public Map<IInternalElement, IDeclaration> getDeclarations() {

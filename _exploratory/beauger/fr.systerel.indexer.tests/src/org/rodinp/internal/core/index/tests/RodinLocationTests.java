@@ -23,8 +23,6 @@ import org.rodinp.core.tests.basis.NamedElement;
 
 public class RodinLocationTests extends IndexTests {
 
-	// TODO comment all tests !
-	
 	public RodinLocationTests(String name) {
 		super(name, true);
 	}

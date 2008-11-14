@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -24,9 +27,10 @@ import org.rodinp.internal.core.index.tables.tests.FakeNameIndexer;
  */
 public class IndexerRegistryTests extends IndexTests {
 
-	private static FakeNameIndexer indexer;
+	private static IIndexer indexer;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
+	private static List<IIndexer> indexerList;
 
 	/**
 	 * @param name
@@ -39,6 +43,7 @@ public class IndexerRegistryTests extends IndexTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		indexer = new FakeNameIndexer(1, "name");
+		indexerList = Arrays.asList(indexer);
 		final IRodinProject rodinProject = createRodinProject("P");
 		file1 = createRodinFile(rodinProject, "indexersManager.test");
 		file2 = createRodinFile(rodinProject, "indexersManager.test2");
@@ -56,9 +61,10 @@ public class IndexerRegistryTests extends IndexTests {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
 		indReg.addIndexer(indexer, file1.getRoot().getElementType());
-		final IIndexer actual = indReg.getIndexerFor(file1);
 
-		assertEquals("Bad indexer", indexer, actual);
+		final List<IIndexer> actual = indReg.getIndexersFor(file1);
+
+		assertSameElements(indexerList, actual, "indexer");
 	}
 
 	public void testAddGetSeveralFileTypes() {
@@ -67,49 +73,61 @@ public class IndexerRegistryTests extends IndexTests {
 		indReg.addIndexer(indexer, file1.getRoot().getElementType());
 		indReg.addIndexer(indexer, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indReg.getIndexerFor(file1);
-		final IIndexer actual2 = indReg.getIndexerFor(file2);
+		final List<IIndexer> actual1 = indReg.getIndexersFor(file1);
+		final List<IIndexer> actual2 = indReg.getIndexersFor(file2);
 
-		assertEquals("Bad indexer", indexer, actual1);
-		assertEquals("Bad indexer", indexer, actual2);
+		assertSameElements(indexerList, actual1, "indexer");
+		assertSameElements(indexerList, actual2, "indexer");
 	}
 
 	public void testAddGetVariousIndexers() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
-		final FakeNameIndexer indexer2 = new FakeNameIndexer(1, "name2");
+		final IIndexer indexer2 = new FakeNameIndexer(1, "name2");
+		final List<IIndexer> indexer2List = Arrays.asList(indexer2);
 
 		indReg.addIndexer(indexer, file1.getRoot().getElementType());
 		indReg.addIndexer(indexer2, file2.getRoot().getElementType());
 
-		final IIndexer actual1 = indReg.getIndexerFor(file1);
-		final IIndexer actual2 = indReg.getIndexerFor(file2);
+		final List<IIndexer> actual1 = indReg.getIndexersFor(file1);
+		final List<IIndexer> actual2 = indReg.getIndexersFor(file2);
 
-		assertEquals("Bad indexer", indexer, actual1);
-		assertEquals("Bad indexer", indexer2, actual2);
+		assertSameElements(indexerList, actual1, "indexer");
+		assertSameElements(indexer2List, actual2, "indexer");
+	}
+
+	public void testAddGetSeveralIndexersSameType() {
+		final IndexerRegistry indReg = IndexerRegistry.getDefault();
+		final IIndexer indexer2 = new FakeNameIndexer(1, "name2");
+		final List<IIndexer> indexer12List = Arrays.asList(indexer, indexer2);
+
+		
+		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer2, file1.getRoot().getElementType());
+
+		final List<IIndexer> actual = indReg.getIndexersFor(file1);
+
+		assertSameElements(indexer12List, actual, "indexer");
 	}
 
 	public void testGetUnknownFileType() throws Exception {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
 		try {
-			indReg.getIndexerFor(file1);
+			indReg.getIndexersFor(file1);
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.rodinp.internal.core.index.IndexerRegistry#isIndexable(IRodinFile)}.
-	 */
 	public void testIsIndexableTrue() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
 		indReg.addIndexer(indexer, file1.getRoot().getElementType());
 		final boolean indexable = indReg.isIndexable(file1);
 
-		assertTrue("File type " + file1.getElementType()
+		assertTrue("File type "
+				+ file1.getElementType()
 				+ " should be indexable", indexable);
 	}
 
@@ -118,7 +136,8 @@ public class IndexerRegistryTests extends IndexTests {
 
 		final boolean indexable = indReg.isIndexable(file1);
 
-		assertFalse("File type " + file1.getElementType()
+		assertFalse("File type "
+				+ file1.getElementType()
 				+ " should NOT be indexable", indexable);
 	}
 
@@ -129,7 +148,8 @@ public class IndexerRegistryTests extends IndexTests {
 		indReg.clear();
 
 		final boolean indexable = indReg.isIndexable(file1);
-		assertFalse("File type " + file1.getElementType()
+		assertFalse("File type "
+				+ file1.getElementType()
 				+ " should NOT be indexable", indexable);
 	}
 

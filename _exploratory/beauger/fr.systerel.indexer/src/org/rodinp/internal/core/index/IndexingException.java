@@ -4,22 +4,18 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.index.tests;
+package org.rodinp.internal.core.index;
 
-import org.rodinp.core.index.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
+/**
+ * @author Nicolas Beauger
+ *
+ */
+public class IndexingException extends Exception {
 
-public abstract class IndexTests extends AbstractRodinDBTests {
-
-	public IndexTests(String name, boolean disableIndexing) {
-		super(name);
-		if (disableIndexing) {
-			RodinIndexer.disableIndexing();
-		}
-	}
+	private static final long serialVersionUID = -1779497488319389286L;
 
 }

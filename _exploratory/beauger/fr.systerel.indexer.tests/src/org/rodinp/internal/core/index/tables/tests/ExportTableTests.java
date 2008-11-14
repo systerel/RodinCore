@@ -145,17 +145,4 @@ public class ExportTableTests extends IndexTests {
 		assertEmptyExports(actual2);
 	}
 
-	// public void testContains() throws Exception {
-	// table.add(file1, elt1F1, name1F1);
-	//
-	// final boolean contains = table.contains(file1, elt1F1);
-	//
-	// assertTrue("The ExportTable should contain " + elt1F1, contains);
-	// }
-	//
-	// public void testContainsNot() throws Exception {
-	// final boolean contains = table.contains(file1, elt1F1);
-	//
-	// assertFalse("TheExportTable should not contain " + elt1F1, contains);
-	// }
 }

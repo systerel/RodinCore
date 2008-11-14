@@ -38,90 +38,96 @@ import org.rodinp.internal.core.index.tests.IndexTests;
  */
 public class DeltaTests extends IndexTests {
 
-    private static IRodinProject project;
+	private static IRodinProject project;
 
-    public DeltaTests(String name) {
-	super(name, true);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-	super.setUp();
-	project = createRodinProject("P");
-    }
-
-    static void addAffectedFiles(IRodinElementDelta delta, List<IRodinFile> list) {
-	final IRodinElement element = delta.getElement();
-	if (!(element instanceof IOpenable)) {
-	    // No chance to find a file below
-	    return;
-	}
-	if (element instanceof IRodinFile) {
-	    final IRodinFile file = (IRodinFile) element;
-	    list.add(file);
-	    return;
-	}
-	for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
-	    addAffectedFiles(childDelta, list);
-	}
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-	deleteProject("P");
-	IndexManager.getDefault().clear();
-	super.tearDown();
-    }
-
-    private static class FakeListener implements IElementChangedListener {
-	private final List<IRodinFile> list;
-
-	public FakeListener() {
-	    list = new ArrayList<IRodinFile>();
+	public DeltaTests(String name) {
+		super(name, true);
 	}
 
-	public void elementChanged(ElementChangedEvent event) {
-	    System.out.println("YEP ! delta = " + event);
-	    addAffectedFiles(event.getDelta(), list);
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		project = createRodinProject("P");
 	}
 
-	public List<IRodinFile> getList() {
-	    return list;
+	static void addAffectedFiles(IRodinElementDelta delta, List<IRodinFile> list) {
+		final IRodinElement element = delta.getElement();
+		if (!(element instanceof IOpenable)) {
+			// No chance to find a file below
+			return;
+		}
+		if (element instanceof IRodinFile) {
+			final IRodinFile file = (IRodinFile) element;
+			list.add(file);
+			return;
+		}
+		for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
+			addAffectedFiles(childDelta, list);
+		}
 	}
-    }
 
-    public void testModifOutsideWhenProjectClosed() throws Exception {
+	@Override
+	protected void tearDown() throws Exception {
+		deleteProject("P");
+		IndexManager.getDefault().clear();
+		super.tearDown();
+	}
 
-	final IRodinFile file = createRodinFile(project,
-		"delta2.test");
-	NamedElement elt = getNamedElement(file.getRoot(), "elt");
-	elt.create(null, null);
-	file.save(null, true);
+	private static class FakeListener implements IElementChangedListener {
+		private final List<IRodinFile> list;
 
-	final IPath location = file.getResource().getLocation();
+		public FakeListener() {
+			list = new ArrayList<IRodinFile>();
+		}
 
-	final List<IRodinFile> expected = Arrays.asList(file);
+		public void elementChanged(ElementChangedEvent event) {
+			System.out.println("YEP ! delta = " + event);
+			addAffectedFiles(event.getDelta(), list);
+		}
 
-	project.getProject().close(null);
+		public List<IRodinFile> getList() {
+			return list;
+		}
+	}
 
-	final File resource = location.toFile();
+	/**
+	 * Verify that, when a project is closed, if it is modified outside Rodin
+	 * platform, then opened again, a delta will be generated when performing a
+	 * refresh.
+	 * 
+	 * @throws Exception
+	 */
+	public void testModifOutsideWhenProjectClosed() throws Exception {
 
-	final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		+ "<org.rodinp.core.tests.test/>";
-	Thread.sleep(1000); // Ensure file timestamp is at least 1 second after
-	write(resource, xml);
+		final IRodinFile file = createRodinFile(project, "delta2.test");
+		NamedElement elt = getNamedElement(file.getRoot(), "elt");
+		elt.create(null, null);
+		file.save(null, true);
 
-	project.getProject().open(null);
+		final IPath location = file.getResource().getLocation();
 
-	final FakeListener listener = new FakeListener();
-	RodinCore.addElementChangedListener(listener);
+		final List<IRodinFile> expected = Arrays.asList(file);
 
-	project.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+		project.getProject().close(null);
 
-	RodinCore.removeElementChangedListener(listener);
+		final File resource = location.toFile();
 
-	assertSameElements(expected, listener.getList(),
-		"delta file");
-    }
+		final String xml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<org.rodinp.core.tests.test/>";
+		Thread.sleep(1000); // Ensure file timestamp is at least 1 second after
+		write(resource, xml);
+
+		project.getProject().open(null);
+
+		final FakeListener listener = new FakeListener();
+		RodinCore.addElementChangedListener(listener);
+
+		project.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		RodinCore.removeElementChangedListener(listener);
+
+		assertSameElements(expected, listener.getList(), "delta file");
+	}
 
 }

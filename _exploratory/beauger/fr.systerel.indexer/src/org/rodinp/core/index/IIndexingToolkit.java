@@ -48,9 +48,18 @@ public interface IIndexingToolkit {
 	/**
 	 * Returns the root element of the file which is to be indexed.
 	 * 
-	 * @return the root element of the file to index
+	 * @return the root element of the file to index.
 	 */
 	IInternalElement getRootToIndex();
+
+	/**
+	 * Returns declarations that have been recorded so far. This method is
+	 * particularly intended to be used by serial indexers, so that they can get
+	 * declarations from previous indexers that worked on the same file.
+	 * 
+	 * @return all recorded declarations.
+	 */
+	public IDeclaration[] getDeclarations();
 
 	/**
 	 * Returns the declarations visible from files on which the current file

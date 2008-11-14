@@ -84,7 +84,7 @@ public class ProjectIndexManager {
 			final FileIndexingManager fim = FileIndexingManager.getDefault();
 			final IIndexingResult result = fim.doIndexing(indexingToolkit);
 
-			checkCancel(indexingToolkit);
+			checkCancel(monitor);
 			if (result.isSuccess()) {
 				if (mustReindexDependents(result)) {
 					order.setToIterSuccessors();
@@ -98,15 +98,6 @@ public class ProjectIndexManager {
 			}
 		}
 		order.end();
-	}
-
-	/**
-	 * @param indexingToolkit
-	 */
-	private void checkCancel(IndexingToolkit indexingToolkit) {
-		if (indexingToolkit.isCancelled()) {
-			throw new CancellationException();
-		}
 	}
 
 	public boolean mustReindexDependents(IIndexingResult result) {
@@ -229,12 +220,16 @@ public class ProjectIndexManager {
 			return;
 		}
 		final FileIndexingManager fim = FileIndexingManager.getDefault();
-		final IRodinFile[] dependFiles = fim.getDependencies(file);
-		if (dependFiles == null)
-			return;
 
-		order.setPredecessors(file, dependFiles);
-		order.setToIter(file);
+		IRodinFile[] dependFiles;
+		try {
+			dependFiles = fim.getDependencies(file);
+			order.setPredecessors(file, dependFiles);
+			order.setToIter(file);
+		} catch (IndexingException e) {
+			// forget this file
+		}
+
 	}
 
 	public FileTable getFileTable() {
@@ -328,7 +323,7 @@ public class ProjectIndexManager {
 	}
 
 	private void checkCancel(IProgressMonitor monitor) {
-		if (monitor.isCanceled()) {
+		if (monitor != null && monitor.isCanceled()) {
 			throw new CancellationException();
 		}
 	}

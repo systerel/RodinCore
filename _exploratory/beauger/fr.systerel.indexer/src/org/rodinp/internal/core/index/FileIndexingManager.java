@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +30,7 @@ import org.rodinp.internal.core.RodinDBStatus;
 
 public class FileIndexingManager {
 
-	// Timeout for indexer.index()
+	// Timeout for IIndexer#index() and IIndexer#getDependencies()
 	private static final int TIMEOUT = 30;
 	private static final TimeUnit UNIT = TimeUnit.SECONDS;
 
@@ -46,31 +49,55 @@ public class FileIndexingManager {
 		return instance;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file) {
-		final IIndexer indexer = indexerRegistry.getIndexerFor(file);
+	public IRodinFile[] getDependencies(IRodinFile file)
+			throws IndexingException {
+		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
+		final Set<IRodinFile> result = new HashSet<IRodinFile>();
+		boolean valid = false;
+		for (IIndexer indexer : indexers) {
+			final boolean success = addDependencies(file, indexer, result);
+			if (!success)
+				break;
+			valid = true;
+		}
+		if (valid) {
+			return result.toArray(new IRodinFile[result.size()]);
+		} else {
+			throw new IndexingException();
+		}
+	}
+
+	private boolean addDependencies(IRodinFile file, IIndexer indexer,
+			final Set<IRodinFile> result) {
+		try {
+			final IRodinFile[] deps = getDependencies(file, indexer);
+
+			result.addAll(Arrays.asList(deps));
+			return true;
+		} catch (Throwable e) {
+			// cast off local result
+			// interruption was processed in the called method
+			return false;
+		}
+	}
+
+	private IRodinFile[] getDependencies(IRodinFile file, IIndexer indexer)
+			throws Throwable {
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
 
 		final DependCaller callGetDeps =
 				new DependCaller(indexer, file.getRoot());
-		Future<IRodinFile[]> task = taskExec.submit(callGetDeps);
+		Future<IRodinFile[]> task =
+				Executors.newSingleThreadExecutor().submit(callGetDeps);
 		try {
-//			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
 			final IRodinFile[] result = task.get(TIMEOUT, UNIT);
-			if (IndexManager.DEBUG) {
-				System.out.println("INDEXER: Dependencies for file "
-						+ file.getPath()
-						+ " are:");
-				for (IRodinFile dep : result) {
-					System.out.println("\t" + dep.getPath());
-				}
-			}
-			return result;
-			
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			task.cancel(true);
-			return null;
+			printDebugDeps(file, result);
 
+			return result;
+		} catch (InterruptedException e) {
+			task.cancel(true);
+			Thread.currentThread().interrupt();
+			throw e;
 		} catch (Throwable t) {
 			printDebug(makeMessage("Exception while extracting dependencies",
 					file, indexer));
@@ -78,7 +105,18 @@ public class FileIndexingManager {
 			IRodinDBStatus status =
 					new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
-			return null;
+			throw t;
+		}
+	}
+
+	private void printDebugDeps(IRodinFile file, final IRodinFile[] result) {
+		if (IndexManager.DEBUG) {
+			System.out.println("INDEXER: Dependencies for file "
+					+ file.getPath()
+					+ " are:");
+			for (IRodinFile dep : result) {
+				System.out.println("\t" + dep.getPath());
+			}
 		}
 	}
 
@@ -89,15 +127,29 @@ public class FileIndexingManager {
 			return IndexingResult.failed(file);
 		}
 
-		final IIndexer indexer = indexerRegistry.getIndexerFor(file);
+		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
+		IIndexingResult prevResult = IndexingResult.failed(file);
 
+		for (IIndexer indexer : indexers) {
+			final IIndexingResult result = doIndexing(indexer, indexingToolkit);
+			if (!result.isSuccess()) {
+				return prevResult;
+			}
+			prevResult = result;
+		}
+		return prevResult;
+	}
+
+	private IIndexingResult doIndexing(IIndexer indexer,
+			IndexingToolkit indexingToolkit) {
+		final IRodinFile file = indexingToolkit.getRodinFile();
 		printVerbose(makeMessage("indexing", file, indexer));
 
 		final IndexCaller callIndex = new IndexCaller(indexer, indexingToolkit);
-		Future<Boolean> task = taskExec.submit(callIndex);
+		Future<Boolean> task =
+				Executors.newSingleThreadExecutor().submit(callIndex);
 
 		try {
-			// final boolean success = indexer.index(indexingToolkit);
 			final boolean success = task.get(TIMEOUT, UNIT);
 			if (!success) {
 				return IndexingResult.failed(file);
@@ -147,9 +199,6 @@ public class FileIndexingManager {
 			System.out.println(message);
 		}
 	}
-
-	private static final ExecutorService taskExec =
-			Executors.newSingleThreadExecutor();
 
 	private static final class IndexCaller implements Callable<Boolean> {
 		private final IIndexer indexer;

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +59,11 @@ public class IndexingToolkit implements IIndexingToolkit {
 		this.result = new IndexingResult(file);
 		this.result.setDeclarations(declarations);
 		this.monitor = monitor;
+	}
+	
+	public IDeclaration[] getDeclarations() {
+		final Collection<IDeclaration> decls = declarations.values();
+		return decls.toArray(new IDeclaration[decls.size()]);
 	}
 
 	public IDeclaration declare(IInternalElement element, String name) {
@@ -155,7 +161,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	}
 
 	public IIndexingResult getResult() {
-		return result;
+		return result.clone();
 	}
 
 }

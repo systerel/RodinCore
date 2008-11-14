@@ -29,174 +29,174 @@ import org.rodinp.internal.core.index.RodinLocation;
  */
 public class LocationInclusionTests extends IndexTests {
 
-    private static final IAttributeType.String attrType = RodinCore
-	    .getStringAttrType("org.rodinp.core.testAttributeType");
-    private static IRodinProject project;
-    private static IRodinFile file1;
-    private static IRodinFile file2;
-    private static NamedElement elt1F1;
-    private static NamedElement elt2F1;
-    private static NamedElement elt1F2;
+	private static final IAttributeType.String attrType =
+			RodinCore.getStringAttrType("org.rodinp.core.testAttributeType");
+	private static IRodinProject project;
+	private static IRodinFile file1;
+	private static IRodinFile file2;
+	private static NamedElement elt1F1;
+	private static NamedElement elt2F1;
+	private static NamedElement elt1F2;
 
-    public LocationInclusionTests(String name) {
-	super(name, true);
-    }
+	public LocationInclusionTests(String name) {
+		super(name, true);
+	}
 
-    @Override
-    protected void setUp() throws Exception {
-	super.setUp();
-	project = createRodinProject("P");
-	file1 = createRodinFile(project, "inclusion1.test");
-	file2 = createRodinFile(project, "inclusion2.test");
-	elt1F1 = createNamedElement(file1, "internalName1");
-	elt2F1 = createNamedElement(file1, "internalName2");
-	elt1F2 = createNamedElement(file2, "internalName1");
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		project = createRodinProject("P");
+		file1 = createRodinFile(project, "inclusion1.test");
+		file2 = createRodinFile(project, "inclusion2.test");
+		elt1F1 = createNamedElement(file1, "internalName1");
+		elt2F1 = createNamedElement(file1, "internalName2");
+		elt1F2 = createNamedElement(file2, "internalName1");
 
-    }
+	}
 
-    @Override
-    protected void tearDown() throws Exception {
-	deleteProject("P");
-	super.tearDown();
-    }
+	@Override
+	protected void tearDown() throws Exception {
+		deleteProject("P");
+		super.tearDown();
+	}
 
-    public void testRLsameElement() throws Exception {
-	final IRodinLocation loc1 = new RodinLocation(project);
-	final IRodinLocation loc2 = new RodinLocation(project);
+	public void testRLsameElement() throws Exception {
+		final IRodinLocation loc1 = new RodinLocation(project);
+		final IRodinLocation loc2 = new RodinLocation(project);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("an element should be included in itself", included);
-    }
+		assertTrue("an element should be included in itself", included);
+	}
 
-    public void testRLFileInProject() throws Exception {
-	final IRodinLocation loc1 = new RodinLocation(file1);
-	final IRodinLocation loc2 = new RodinLocation(project);
+	public void testRLFileInProject() throws Exception {
+		final IRodinLocation loc1 = new RodinLocation(file1);
+		final IRodinLocation loc2 = new RodinLocation(project);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("a file should be included in its project", included);
-    }
+		assertTrue("a file should be included in its project", included);
+	}
 
-    public void testRLProjectInFile() throws Exception {
-	final IRodinLocation loc1 = new RodinLocation(project);
-	final IRodinLocation loc2 = new RodinLocation(file1);
+	public void testRLProjectInFile() throws Exception {
+		final IRodinLocation loc1 = new RodinLocation(project);
+		final IRodinLocation loc2 = new RodinLocation(file1);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse("a project should not be included in a file", included);
-    }
+		assertFalse("a project should not be included in a file", included);
+	}
 
-    public void testRLeltNotInFile() throws Exception {
-	final IRodinLocation loc1 = new RodinLocation(file1);
-	final IRodinLocation loc2 = new RodinLocation(elt1F2);
+	public void testRLeltNotInFile() throws Exception {
+		final IRodinLocation loc1 = new RodinLocation(file1);
+		final IRodinLocation loc2 = new RodinLocation(elt1F2);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse("element is not in file", included);
-    }
+		assertFalse("element is not in file", included);
+	}
 
-    public void testILDiffElt() throws Exception {
-	final IRodinLocation loc1 = new InternalLocation(elt1F1);
-	final IRodinLocation loc2 = new InternalLocation(elt2F1);
+	public void testILDiffElt() throws Exception {
+		final IRodinLocation loc1 = new InternalLocation(elt1F1);
+		final IRodinLocation loc2 = new InternalLocation(elt2F1);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse("elements are different", included);
-    }
+		assertFalse("elements are different", included);
+	}
 
-    public void testAttLocInIntLoc() throws Exception {
-	final IRodinLocation loc1 = new AttributeLocation(elt1F1, attrType);
-	final IRodinLocation loc2 = new InternalLocation(elt1F1);
+	public void testAttLocInIntLoc() throws Exception {
+		final IRodinLocation loc1 = new AttributeLocation(elt1F1, attrType);
+		final IRodinLocation loc2 = new InternalLocation(elt1F1);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("an attribute should be included in its element", included);
-    }
+		assertTrue("an attribute should be included in its element", included);
+	}
 
-    public void testSubsLocInAttLoc() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 1, 5);
-	final IRodinLocation loc2 = new AttributeLocation(elt1F1, attrType);
+	public void testSubsLocInAttLoc() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
+		final IRodinLocation loc2 = new AttributeLocation(elt1F1, attrType);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue(
-		"an attribute substring should be included in its attribute",
-		included);
-    }
+		assertTrue(
+				"an attribute substring should be included in its attribute",
+				included);
+	}
 
-    public void testSubsLocInProject() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 0, 5);
-	final IRodinLocation loc2 = new RodinLocation(project);
+	public void testSubsLocInProject() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 0, 5);
+		final IRodinLocation loc2 = new RodinLocation(project);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("an attribute substring should be included in its project",
-		included);
-    }
+		assertTrue("an attribute substring should be included in its project",
+				included);
+	}
 
-    public void testSameSubsLoc() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 1, 5);
-	final IRodinLocation loc2 = new AttributeSubstringLocation(elt1F1,
-		attrType, 1, 5);
+	public void testSameSubsLoc() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
+		final IRodinLocation loc2 =
+				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("an attribute substring should be included in itself",
-		included);
-    }
+		assertTrue("an attribute substring should be included in itself",
+				included);
+	}
 
-    public void testSubsLocInSubsLoc() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 3, 5);
-	final IRodinLocation loc2 = new AttributeSubstringLocation(elt1F1,
-		attrType, 1, 15);
+	public void testSubsLocInSubsLoc() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 3, 5);
+		final IRodinLocation loc2 =
+				new AttributeSubstringLocation(elt1F1, attrType, 1, 15);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertTrue("an attribute substring should be included in a wider one",
-		included);
-    }
+		assertTrue("an attribute substring should be included in a wider one",
+				included);
+	}
 
-    public void testSubsLocNotInSubsLoc() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 3, 15);
-	final IRodinLocation loc2 = new AttributeSubstringLocation(elt1F1,
-		attrType, 8, 11);
+	public void testSubsLocNotInSubsLoc() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 3, 15);
+		final IRodinLocation loc2 =
+				new AttributeSubstringLocation(elt1F1, attrType, 8, 11);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse(
-		"an attribute substring should not be included in an inner one",
-		included);
-    }
+		assertFalse(
+				"an attribute substring should not be included in an inner one",
+				included);
+	}
 
-    public void testSubsLocApart() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 3, 5);
-	final IRodinLocation loc2 = new AttributeSubstringLocation(elt1F1,
-		attrType, 8, 11);
+	public void testSubsLocApart() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 3, 5);
+		final IRodinLocation loc2 =
+				new AttributeSubstringLocation(elt1F1, attrType, 8, 11);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse(
-		"an attribute substring should not be included in a separate one",
-		included);
-    }
+		assertFalse(
+				"an attribute substring should not be included in a separate one",
+				included);
+	}
 
-    public void testSubsLocOverlap() throws Exception {
-	final IRodinLocation loc1 = new AttributeSubstringLocation(elt1F1,
-		attrType, 3, 9);
-	final IRodinLocation loc2 = new AttributeSubstringLocation(elt1F1,
-		attrType, 7, 11);
+	public void testSubsLocOverlap() throws Exception {
+		final IRodinLocation loc1 =
+				new AttributeSubstringLocation(elt1F1, attrType, 3, 9);
+		final IRodinLocation loc2 =
+				new AttributeSubstringLocation(elt1F1, attrType, 7, 11);
 
-	final boolean included = loc1.isIncludedIn(loc2);
+		final boolean included = loc1.isIncludedIn(loc2);
 
-	assertFalse(
-		"an attribute substring should not be included in an overlapping one",
-		included);
-    }
+		assertFalse(
+				"an attribute substring should not be included in an overlapping one",
+				included);
+	}
 }

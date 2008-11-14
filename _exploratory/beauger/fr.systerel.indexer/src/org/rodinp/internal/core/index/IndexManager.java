@@ -13,6 +13,7 @@ package org.rodinp.internal.core.index;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
@@ -120,7 +121,7 @@ public final class IndexManager {
 	}
 
 	// for testing purposes only
-	public void scheduleIndexing(IRodinFile... files) {
+	public void scheduleIndexing(IRodinFile... files) throws InterruptedException {
 		assert !indexingEnabled;
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
@@ -143,6 +144,13 @@ public final class IndexManager {
 	void doIndexing(IProgressMonitor monitor) {
 		for (IRodinProject project : pppim.projects()) {
 			fetchPIM(project).doIndexing(monitor);
+			checkCancel(monitor);
+		}
+	}
+
+	private void checkCancel(IProgressMonitor monitor) {
+		if (monitor != null && monitor.isCanceled()) {
+			throw new CancellationException();
 		}
 	}
 
@@ -299,8 +307,7 @@ public final class IndexManager {
 				currentDeltas.add(headDelta);
 				queue.drainTo(currentDeltas);
 				if (indexingEnabled) {
-					processDeltas(currentDeltas);
-					currentDeltas.clear();
+					processCurrentDeltas();
 				}
 			} catch (InterruptedException e) {
 				stop = true;
@@ -308,10 +315,13 @@ public final class IndexManager {
 		} while (!stop);
 	}
 
-	private void processDeltas(List<IIndexDelta> deltas)
+	private void processCurrentDeltas()
 			throws InterruptedException {
 		final int maxAttempts = 3;
-		for (IIndexDelta delta : deltas) {
+		final Iterator<IIndexDelta> iter = currentDeltas.iterator();
+		while(iter.hasNext()) {
+			final IIndexDelta delta = iter.next();
+			
 			int attempts = 0;
 			boolean success = false;
 			do {
@@ -323,6 +333,7 @@ public final class IndexManager {
 				}
 			} while (!success && attempts < maxAttempts);
 			queue.deltaProcessed();
+			iter.remove();
 		}
 	}
 

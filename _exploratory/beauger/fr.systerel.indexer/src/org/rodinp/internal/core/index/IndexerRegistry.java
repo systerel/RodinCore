@@ -45,7 +45,7 @@ public class IndexerRegistry {
 		list.add(indexer);
 	}
 
-	public IIndexer getIndexerFor(IRodinFile file) {
+	public List<IIndexer> getIndexersFor(IRodinFile file) {
 		final IInternalElementType<? extends IInternalElement> fileType = file
 				.getRoot().getElementType();
 		final List<IIndexer> list = indexers.get(fileType);
@@ -55,7 +55,7 @@ public class IndexerRegistry {
 					"No known indexers for file type: " + fileType);
 		}
 		// TODO manage indexers priorities
-		return list.get(0);
+		return list;
 	}
 
 	public boolean isIndexable(IRodinFile file) {
