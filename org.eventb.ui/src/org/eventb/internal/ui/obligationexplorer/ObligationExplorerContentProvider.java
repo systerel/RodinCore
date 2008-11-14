@@ -153,18 +153,17 @@ public class ObligationExplorerContentProvider implements
 			// the view.
 			if (element instanceof IRodinFile) {
 				IRodinFile psFile = (IRodinFile) element;
-				
+
 				if (psFile.getRoot() instanceof IPSRoot) {
 					IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 					// ASSUMPTION: psFile must correspond to either machineFile
 					// or
 					// contextFile
-					IRodinFile machineFile = psRoot.getMachineRoot()
-							.getRodinFile();
-					if (machineFile.exists())
-						element = machineFile;
+					IMachineRoot machineRoot = psRoot.getMachineRoot();
+					if (machineRoot.getRodinFile().exists())
+						element = machineRoot;
 					else
-						element = psRoot.getContextRoot().getRodinFile();
+						element = psRoot.getContextRoot();
 					Object parent = psFile.getRodinProject();
 					postAdd(parent, element, runnables);
 					return false;
@@ -176,7 +175,7 @@ public class ObligationExplorerContentProvider implements
 				Object parent = getParent(element);
 				if (parent != null) {
 					postAdd(parent, element, runnables);
-					if (parent instanceof IRodinFile)
+					if (parent instanceof IInternalElement)
 						postUpdateLabel(parent, runnables);
 				}
 				return false;
@@ -188,7 +187,7 @@ public class ObligationExplorerContentProvider implements
 			if (element instanceof IRodinProject || element instanceof IPSStatus) {
 				postRemove(new Object [] {element}, runnables);
 				Object parent = getParent(element);
-				if (parent != null && parent instanceof IRodinFile) {
+				if (parent != null && parent instanceof IInternalElement) {
 					postUpdateLabel(parent, runnables);
 				}
 			}
@@ -200,10 +199,8 @@ public class ObligationExplorerContentProvider implements
 					// ASSUMPTION: psFile must correspond to either machineFile
 					// or
 					// contextFile
-					IRodinFile machineFile = psRoot.getMachineRoot()
-							.getRodinFile();
-					IRodinFile contextFile = psRoot.getContextRoot()
-							.getRodinFile();
+					IMachineRoot machineFile = psRoot.getMachineRoot();
+					IContextRoot contextFile = psRoot.getContextRoot();
 					postRemove(new Object[] { machineFile, contextFile },
 							runnables);
 				}
@@ -221,7 +218,7 @@ public class ObligationExplorerContentProvider implements
 				if (root instanceof IMachineRoot
 						|| root instanceof IContextRoot) {
 
-					postUpdateLabel(element, runnables);
+					postUpdateLabel(root, runnables);
 					return false;
 				}
 			}
@@ -256,7 +253,7 @@ public class ObligationExplorerContentProvider implements
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 				postRefresh(element, runnables);
 				Object parent = this.getParent(element);
-				if (parent != null && parent instanceof IRodinFile)
+				if (parent != null && parent instanceof IInternalElement)
 					postUpdateLabel(parent, runnables);
 				return false;
 			}
