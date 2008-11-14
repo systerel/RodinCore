@@ -58,11 +58,15 @@ public class DeltaProcessor {
 		//we're only interested in changes to the inputRoot or its file and its statically checked version.
 		if (kind == IRodinElementDelta.CHANGED) {
 			if (element.equals(inputRoot)) {
-				mustRefresh = true;
-				return;
+				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
+					mustRefresh = true;
+					return;
+				}
 			}else if (element.equals(inputRoot.getRodinFile())) {
-				mustRefresh = true;
-				return;
+				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
+					mustRefresh = true;
+					return;
+				}
 			}else if (element.equals(scRoot)){
 				mustRefreshMarkers = true;
 				

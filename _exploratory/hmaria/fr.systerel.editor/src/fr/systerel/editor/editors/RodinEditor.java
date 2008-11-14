@@ -13,12 +13,10 @@ package fr.systerel.editor.editors;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -32,9 +30,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.internal.editors.text.FileEditorInputAdapterFactory;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -209,8 +204,6 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 				try {
 					documentProvider.resetDocument(getEditorInput());
 					documentProvider.setCanSaveDocument(documentProvider.getEditorInput());
-					
-					
 					updateFoldingStructure(documentProvider.getFoldingRegions());
 					updateMarkerStructure(documentProvider.getMarkerAnnotations());
 				} catch (CoreException e) {

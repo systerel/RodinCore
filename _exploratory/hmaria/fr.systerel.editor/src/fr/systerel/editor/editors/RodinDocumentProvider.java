@@ -97,15 +97,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
 		
-		documentMapper.getRoot().getRodinFile().save(null, true);
-//		ArrayList<Interval> intervals = documentMapper.getIntervals();
-//		for (Interval interval : intervals) {
-//			if (interval.isChanged()) {
-//				IRodinElement affected = interval.getElement();
-//				affected.getOpenable().save(null, false);
-//				
-//			}
-//		}
+		inputRoot.getRodinFile().save(null, true);
 
 	}
 
