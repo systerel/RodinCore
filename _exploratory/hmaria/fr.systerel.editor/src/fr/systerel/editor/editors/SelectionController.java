@@ -37,15 +37,14 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	private StyledText styledText;
 	private DocumentMapper mapper;
 	private ProjectionViewer viewer;
-	private StyledText editorText;
 	private OverlayEditor overlayEditor;
 
-	public SelectionController(StyledText styledText, DocumentMapper mapper, ProjectionViewer viewer) {
+	public SelectionController(StyledText styledText, DocumentMapper mapper, ProjectionViewer viewer, OverlayEditor overlayEditor) {
 		super();
 		this.styledText = styledText;
 		this.viewer = viewer;
 		this.mapper = mapper;
-		overlayEditor = new OverlayEditor(styledText, mapper, viewer);
+		this.overlayEditor = overlayEditor;
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -115,19 +114,22 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	}
 
 	public void keyPressed(KeyEvent e) {
+		if (e.character == SWT.ESC) {
+			overlayEditor.abortEditing();
+		}
 		//do nothing
 	}
 
 	
 	public void keyReleased(KeyEvent e) {
 		//setEditable according to the region the caret is in.
-		if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ||
-				e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_LEFT) {
-			int offset = widget2ModelOffset((styledText.getCaretOffset()));
-			Interval interval = mapper.findEditableInterval(offset);
-			boolean editable = interval != null;
-			styledText.setEditable(editable) ;
-		}
+//		if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ||
+//				e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_LEFT) {
+//			int offset = widget2ModelOffset((styledText.getCaretOffset()));
+//			Interval interval = mapper.findEditableInterval(offset);
+//			boolean editable = interval != null;
+//			styledText.setEditable(editable) ;
+//		}
 		
 	}
 
@@ -144,19 +146,18 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	public void mouseUp(MouseEvent e) {
 		
 		int offset = styledText.getSelection().x;
-		int end = styledText.getSelection().y;
-		//no selection, otherwise the widgedSelected function takes care of it
-		//setEditable according to the region the caret is in.
-		if (offset == end ) {
-			int off = widget2ModelOffset((styledText.getCaretOffset()));
-			Interval interval = mapper.findEditableInterval(off);
-			boolean editable = interval != null;
-			styledText.setEditable(editable) ;
-		}
+//		int end = styledText.getSelection().y;
+//		//no selection, otherwise the widgedSelected function takes care of it
+//		//setEditable according to the region the caret is in.
+//		if (offset == end ) {
+//			int off = widget2ModelOffset((styledText.getCaretOffset()));
+//			Interval interval = mapper.findEditableInterval(off);
+//			boolean editable = interval != null;
+//			styledText.setEditable(editable) ;
+//		}
 		
 		
-		//TODO: this is just a test
-		overlayEditor.setToOffset(offset);		
+		overlayEditor.showAtOffset(offset);		
 	}
 
 	public void verifyText(VerifyEvent e) {

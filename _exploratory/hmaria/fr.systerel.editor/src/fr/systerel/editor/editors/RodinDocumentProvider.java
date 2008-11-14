@@ -44,6 +44,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private IDocument doc;
 	private DocumentMapper documentMapper;
 	private IEventBRoot inputRoot;
+	private IEditorInput editorInput;
 	private RodinTextGenerator textGenerator;
 	
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
@@ -68,6 +69,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		doc = new Document();
 		if (element instanceof IEditorInput) {
 			IFile file =  (IFile) ((IEditorInput) element).getAdapter(IFile.class);
+			editorInput = (IEditorInput) element;
 			IRodinProject project = EditorUtils.getRodinProject(file.getProject());
 			inputRoot = (IEventBRoot) project.getRodinFile(file.getName()).getRoot();
 			documentMapper.setRoot(inputRoot);
@@ -124,7 +126,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	public boolean isModifiable(Object element) {
-		return true;
+		return false;
 	}
 
 	public void changed(Object element) {
@@ -198,6 +200,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		}
 		
 		return null;
+	}
+
+	public IEditorInput getEditorInput() {
+		return editorInput;
 	}
 
 	

@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -31,6 +32,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.internal.editors.text.FileEditorInputAdapterFactory;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -91,10 +93,12 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		styledText = getSourceViewer().getTextWidget();
 		
-		SelectionController controller = new SelectionController(styledText, mapper, viewer);
-		styledText.addSelectionListener(controller);
+		OverlayEditor editor = new OverlayEditor(styledText, mapper, viewer);
+		annotationModel.addAnnotationModelListener(editor);
+		SelectionController controller = new SelectionController(styledText, mapper, viewer, editor);
+//		styledText.addSelectionListener(controller);
 		styledText.addKeyListener(controller);
-		styledText.addVerifyListener(controller);
+//		styledText.addVerifyListener(controller);
 		styledText.addMouseListener(controller);
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
@@ -204,7 +208,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 			public void run() {
 				try {
 					documentProvider.resetDocument(getEditorInput());
-					documentProvider.setCanSaveDocument(documentProvider.getInputRoot().getRodinFile());
+					documentProvider.setCanSaveDocument(documentProvider.getEditorInput());
 					
 					
 					updateFoldingStructure(documentProvider.getFoldingRegions());
@@ -222,6 +226,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		}
 		
 	}
+
 	
 	
 }
