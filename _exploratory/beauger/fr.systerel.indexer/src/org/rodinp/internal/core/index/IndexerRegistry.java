@@ -54,7 +54,6 @@ public class IndexerRegistry {
 			throw new IllegalArgumentException(
 					"No known indexers for file type: " + fileType);
 		}
-		// TODO manage indexers priorities
 		return list;
 	}
 

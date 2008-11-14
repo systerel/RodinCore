@@ -34,6 +34,13 @@ import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.rodinp.internal.core.index.tables.TotalOrder;
 
+/**
+ * The ProjectIndexManager (PIM) stores and maintains index tables for a single
+ * project.
+ * 
+ * @author Nicolas Beauger
+ * 
+ */
 public class ProjectIndexManager {
 
 	private final IRodinProject project;
@@ -66,6 +73,14 @@ public class ProjectIndexManager {
 
 	public void unlockRead() {
 		tableRWL.readLock().unlock();
+	}
+
+	public void lockWrite() throws InterruptedException {
+		tableRWL.writeLock().lockInterruptibly();
+	}
+
+	public void unlockWrite() {
+		tableRWL.writeLock().unlock();
 	}
 
 	public void doIndexing(IProgressMonitor monitor) {
@@ -264,21 +279,6 @@ public class ProjectIndexManager {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * @throws InterruptedException
-	 * 
-	 */
-	public void lockWrite() throws InterruptedException {
-		tableRWL.writeLock().lockInterruptibly();
-	}
-
-	/**
-	 * 
-	 */
-	public void unlockWrite() {
-		tableRWL.writeLock().unlock();
 	}
 
 	/**
