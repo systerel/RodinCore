@@ -11,562 +11,714 @@
 package org.eventb.ui.eventbeditor.operation.tests;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IContextRoot;
-import org.eventb.core.IEventBRoot;
+import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
+import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IParameter;
+import org.eventb.core.IPredicateElement;
 import org.eventb.core.ITheorem;
-import org.eventb.core.IVariant;
-import org.eventb.core.basis.EventBElement;
+import org.eventb.core.IVariable;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
-import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
+import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.junit.After;
-import org.junit.Before;
+import org.eventb.ui.eventbeditor.operation.tests.utils.Element;
+import org.eventb.ui.eventbeditor.operation.tests.utils.OperationTest;
 import org.junit.Test;
-import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.tests.ModifyingResourceTests;
 
-public class TestOperation extends ModifyingResourceTests {
+public class TestOperation extends OperationTest {
 
-	/**
-	 * The pointer to the test Rodin project.
-	 */
-	protected IRodinProject rodinProject;
-
-	/**
-	 * The testing workspace.
-	 */
-	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
-	protected IMachineRoot mch;
-	protected IEventBEditor<IMachineRoot> machineEditor;
-	protected IContextRoot ctx;
-	protected IEventBEditor<IContextRoot> contextEditor;
-
-	public TestOperation() {
-		super("org.eventb.ui.eventbeditor.commands.tests.TestOperation");
-	}
-
-	@Before
-	@SuppressWarnings("unchecked")
 	@Override
-	public void setUp() throws Exception {
+	protected void setUp() throws Exception {
 		super.setUp();
-		
-		// ensure autobuilding is turned off
-		IWorkspaceDescription wsDescription = workspace.getDescription();
-		if (wsDescription.isAutoBuilding()) {
-			wsDescription.setAutoBuilding(false);
-			workspace.setDescription(wsDescription);
-		}
-
-		// Create a new project
-		IProject project = workspace.getRoot().getProject("P"); //$NON-NLS-1$
-		project.create(null);
-		project.open(null);
-		IProjectDescription pDescription = project.getDescription();
-		pDescription.setNatureIds(new String[] { RodinCore.NATURE_ID });
-		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.valueOf(project);
-
-		mch = createMachine("mch0");
-		machineEditor = (IEventBEditor<IMachineRoot>) openEditor(mch);
-
-		ctx = createContext("ctx0");
-		contextEditor = (IEventBEditor<IContextRoot>) openEditor(ctx);
-
-	}
-
-	@After
-	@Override
-	public void tearDown() throws Exception {
-		EventBUIPlugin.getActivePage().closeAllEditors(false);
-		rodinProject.getProject().delete(true, true, null);
-		super.tearDown();
 	}
 
 	@Test
-	public void testWizardNewTheorem() throws Exception {
-		final String label = "thm0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createTheoremWizard(
-				contextEditor, label, predicate);
-		startDeltas();
-		executeAddOneElementWithAttributs(ctx, cmd, ITheorem.ELEMENT_TYPE,
-				label, predicate);
-		stopDeltas();
-	}
+	public void testChangeAttribute() throws Exception {
+		final IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
 
-	@Test
-	public void testWizardNewAxiom() throws Exception {
-		final String label = "axm0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createAxiomWizard(
-				contextEditor, label, predicate);
-		startDeltas();
-		executeAddOneElementWithAttributs(ctx, cmd, IAxiom.ELEMENT_TYPE, label,
-				predicate);
-		stopDeltas();
-	}
+		// at beginning and after undo
+		IInvariant invariant = createInvariant(mch, "myInvariant", "predicate");
+		final Element mchUndo = asElement(mch);
 
-	@Test
-	public void testWizardNewConstants() throws Exception {
-		final IRodinElementDelta[] deltaAffected;
-		final AtomicOperation cmd;
-		final String identifier = "cst0";
-		final ArrayList<String> labels = getLabels__testWizardNewConstants();
-		final ArrayList<String> predicates = getPredicates__testWizardNewConstants();
+		// after execute and redo, only event are renamed
+		addInvariant(mchElement, "myInvariant", "predicateIsRenamed");
 
-		cmd = OperationFactory.createConstantWizard(contextEditor, identifier,
-				getStringTabFromList(labels), getStringTabFromList(predicates));
+		final AtomicOperation op = OperationFactory.changeAttribute(mch
+				.getRodinFile(), factory, invariant, "predicateIsRenamed");
 
-		assertExists("Root element should exist", ctx);
-		startDeltas();
-		cmd.execute(null, null);
-		deltaAffected = getDeltaFor(ctx, true).getAffectedChildren();
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
 
-		assertEquals("The numbers of affected elements are not equals",
-				1 + labels.size(), deltaAffected.length);
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
 
-		for (IRodinElementDelta delta : deltaAffected) {
-			IRodinElement element = delta.getElement();
-			if (element.getElementType().equals(IConstant.ELEMENT_TYPE)) {
-				IConstant constant = (IConstant) element;
-				assertEquals("Bad Constant identifier", identifier, constant
-						.getIdentifierString());
-			} else if (element.getElementType().equals(IAxiom.ELEMENT_TYPE)) {
-				IAxiom axiom = (IAxiom) element;
-				assertTrue("Bad Axiom label", labels.contains(axiom.getLabel()));
-				assertTrue("Bad Axiom predicate", predicates.contains(axiom
-						.getPredicateString()));
-			} else {
-				new AssertionError("An element has been affected");
-			}
-		}
-		stopDeltas();
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
 	}
 
 	/**
-	 * 
-	 * ensures :
-	 * <ul>
-	 * <li>set is added ( carrier set )</li>
-	 * <li>elements are added ( constant )</li>
-	 * <li>one axiom is created for set definition</li>
-	 * <li>axioms for no equality between elements</li>
-	 * <li>added axioms have different label</li>
-	 * </ul>
+	 * add all elements to parent.
 	 */
-	@Test
-	public void testWizardNewEnumeratedSet() throws Exception {
-		final IRodinElementDelta[] deltaAffected;
-		final String identifier = getName__WizardNewEnumeratedSet();
-		final ArrayList<String> elements = getElements__testWizardNewEnumeratedSet();
-		final ArrayList<String> axioms = getResultedAxioms__WizardNewEnumeratedSet();
-		final ArrayList<String> labels = new ArrayList<String>();
-		final AtomicOperation cmd = OperationFactory.createEnumeratedSetWizard(
-				contextEditor, identifier, getStringTabFromList(elements));
-
-		assertExists("Rodin element should exist", ctx);
-		startDeltas();
-		cmd.execute(null, null);
-		deltaAffected = getDeltaFor(ctx, true).getAffectedChildren();
-
-		assertEquals("The numbers of affected elements are not equals", 1
-				+ elements.size() + axioms.size(), deltaAffected.length);
-
-		for (IRodinElementDelta delta : deltaAffected) {
-			IRodinElement element = delta.getElement();
-			if (element.getElementType().equals(IConstant.ELEMENT_TYPE)) {
-				IConstant constant = (IConstant) element;
-				assertTrue("Bad Element", elements.contains(constant
-						.getIdentifierString()));
-			} else if (element.getElementType().equals(IAxiom.ELEMENT_TYPE)) {
-				final IAxiom axiom = (IAxiom) element;
-				final String label = axiom.getLabel();
-				assertTrue("Bad Axiom predicate", axioms.contains(axiom
-						.getPredicateString()));
-				assertTrue("Two axioms have label : " + label, !labels
-						.contains(label));
-				labels.add(label);
-			} else if (element.getElementType()
-					.equals(ICarrierSet.ELEMENT_TYPE)) {
-				ICarrierSet set = (ICarrierSet) element;
-				assertEquals("Bad Identifier", identifier, set
-						.getIdentifierString());
-			} else {
-				new AssertionError("An element has been affected");
-			}
-		}
-		stopDeltas();
-	}
-
-	@Test
-	public void testWizardNewCarrierSet() throws Exception {
-		final String identifier = "carotte";
-		final AtomicOperation cmd = OperationFactory.createCarrierSetWizard(
-				contextEditor, identifier);
-		startDeltas();
-		executeAddOneElementWithAttributs(ctx, cmd, ICarrierSet.ELEMENT_TYPE,
-				"", identifier);
-		stopDeltas();
-	}
-
-	@Test
-	public void testWizardNewVariant() throws Exception {
-		final String expression = "a>b";
-		final AtomicOperation cmd = OperationFactory.createVariantWizard(
-				machineEditor, expression);
-		startDeltas();
-		executeAddOneElementWithAttributs(mch, cmd, IVariant.ELEMENT_TYPE, "",
-				expression);
-		stopDeltas();
-	}
-
-	@Test
-	public void testWizardNewInvariant() throws Exception {
-		final String label = "inv0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createInvariantWizard(
-				machineEditor, label, predicate);
-		startDeltas();
-		executeAddOneElementWithAttributs(mch, cmd, IInvariant.ELEMENT_TYPE,
-				label, predicate);
-		stopDeltas();
-	}
-
-	@Test
-	public void testWizardVariable() throws Exception {
-		final IRodinElementDelta[] deltaAffected;
-		final String varName = "var0";
-		final String actName = "act0";
-		final String actSub = "var0 := 0";
-		ArrayList<Pair<String, String>> invariants = new ArrayList<Pair<String, String>>();
-		invariants.add(new Pair<String, String>("inv0", "var0 : NAT"));
-		invariants.add(new Pair<String, String>("inv0", "var0 < 50"));
-
-		final AtomicOperation cmd = OperationFactory.createVariableWizard(
-				machineEditor, varName, invariants, actName, actSub);
-		assertExists("Rodin element should exist", ctx);
-
-		startDeltas();
-		cmd.execute(null, null);
-		deltaAffected = getDeltaFor(mch, true).getAffectedChildren();
-
-		// add initialisation + variable + invariant
-		assertEquals("The numbers of affected elements are not equals",
-				2 + invariants.size(), deltaAffected.length);
-		//ajouter un test pour les sous fils
-		stopDeltas();
-		throw new Exception("This test is not yet finished.") ;
-	}
-
-	// public void testWizardEvent() throws Exception {
-	// final String label = "";
-	// final String predicate = "a>b";
-	// final AtomicCommand cmd = CommandFactory.createEventWizard(
-	// machineEditor, label, predicate);
-	// }
-
-	@Test
-	public void testWizardNewTheoremUndo() throws Exception {
-		final String label = "thm0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createTheoremWizard(
-				contextEditor, label, predicate);
-		executeAddAndUndo(ctx, cmd);
-	}
-
-	@Test
-	public void testWizardNewAxiomUndo() throws Exception {
-		final String label = "thm0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createAxiomWizard(
-				contextEditor, label, predicate);
-		executeAddAndUndo(ctx, cmd);
-	}
-
-	@Test
-	public void testWizardNewConstantUndo() throws Exception {
-		final AtomicOperation cmd;
-		final String identifier = "cst0";
-		final ArrayList<String> labels = getLabels__testWizardNewConstants();
-		final ArrayList<String> predicates = getPredicates__testWizardNewConstants();
-
-		cmd = OperationFactory.createConstantWizard(contextEditor, identifier,
-				getStringTabFromList(labels), getStringTabFromList(predicates));
-		executeAddAndUndo(ctx, cmd);
-	}
-
-	@Test
-	public void testWizardNewEnumeratedSetUndo() throws Exception {
-		final AtomicOperation cmd;
-		final String identifier = getName__WizardNewEnumeratedSet();
-		final ArrayList<String> elements = getElements__testWizardNewEnumeratedSet();
-
-		cmd = OperationFactory.createEnumeratedSetWizard(contextEditor,
-				identifier, getStringTabFromList(elements));
-		executeAddAndUndo(ctx, cmd);
-	}
-
-	@Test
-	public void testWizardNewCarrierSetUndo() throws Exception {
-		final String identifier = "mySet";
-		final AtomicOperation cmd = OperationFactory.createCarrierSetWizard(
-				contextEditor, identifier);
-		executeAddAndUndo(ctx, cmd);
-	}
-
-	@Test
-	public void testWizardNewVariantUndo() throws Exception {
-		final String expression = "a>b";
-		final AtomicOperation cmd = OperationFactory.createVariantWizard(
-				machineEditor, expression);
-		executeAddAndUndo(mch, cmd);
-	}
-
-	@Test
-	public void testWizardNewInvariantUndo() throws Exception {
-		final String label = "inv0";
-		final String predicate = "a>b";
-		final AtomicOperation cmd = OperationFactory.createInvariantWizard(
-				machineEditor, label, predicate);
-		executeAddAndUndo(mch, cmd);
-	}
-
-	//
-	// public void testWizardNewVaribaleUndo() throws Exception {
-	// final String label = "thm0";
-	// final String predicate = "a>b";
-	// final AtomicCommand cmd = CommandFactory.createVariableWizard(
-	// contextEditor, label, predicate);
-	// executeAddAndUndo(ctx, cmd);
-	// }
-	//
-	// public void testWizardNewEventUndo() throws Exception {
-	// final String label = "thm0";
-	// final String predicate = "a>b";
-	// final AtomicCommand cmd = CommandFactory.createEventWizard(
-	// contextEditor, label, predicate);
-	// executeAddAndUndo(ctx, cmd);
-	// }
-
-	/**
-	 * Execute the command cmd. cmd must be a simple command. Ensures : - there
-	 * is only one added element - the type of element is type - the label of
-	 * element is label
-	 */
-	private void executeAddOneElementWithAttributs(final IEventBRoot rf,
-			final AtomicOperation cmd,
-			final IElementType<? extends IRodinElement> type,
-			final String label, final String content)
-			throws ExecutionException, RodinDBException {
-		final IRodinElementDelta delta;
-
-		assertExists("Rodin element should exist", rf);
-
-		cmd.execute(null, null);
-		delta = getDeltaFor(rf, true);
-
-		assertNotNull("No delta", delta);
-		assertTrue("Childrens have not changed", deltaChildrenChanged(delta));
-		assertEquals("More than one element which have been added", 1, delta
-				.getAddedChildren().length);
-
-		for (IRodinElementDelta childrenDelta : delta.getAddedChildren()) {
-			assertElement(childrenDelta, type, label, content);
-		}
-	}
-
-	/**
-	 * Execute and undo the command cmd. cmd must add element
-	 * <p>
-	 * Ensures : all added elements do not exist
-	 */
-	private void executeAddAndUndo(final IEventBRoot rf, final AtomicOperation cmd)
-			throws ExecutionException, RodinDBException {
-		final IRodinElementDelta delta;
-
-		assertExists("Rodin element should exist", rf);
-
-		startDeltas();
-		cmd.execute(null, null);
-		cmd.undo(null, null);
-		delta = getDeltaFor(rf, true);
-
-		assertNotNull("No delta", delta);
-
-		for (IRodinElementDelta d : delta.getAddedChildren()) {
-			assertFalse("One Element has not be removed", d.getElement()
-					.exists());
-		}
-		stopDeltas();
-	}
-
-	/**
-	 * ensures the type, label and content of element described by delta are
-	 * equals to arguments
-	 */
-	private void assertElement(IRodinElementDelta delta,
-			IElementType<? extends IRodinElement> type, String label,
-			String content) throws RodinDBException {
-		EventBElement element = (EventBElement) delta.getElement();
-
-		assertTrue("Added element does not exist", element.exists());
-		assertEquals("Wrong delta kind", IRodinElementDelta.ADDED, delta
-				.getKind());
-		assertEquals("Added element has a wrong type", type, element
-				.getElementType());
-		if (type.equals(IInvariant.ELEMENT_TYPE)
-				|| type.equals(ITheorem.ELEMENT_TYPE)
-				|| type.equals(IAxiom.ELEMENT_TYPE)) {
-			assertEquals("Added element has a wrong label", label, element
-					.getLabel());
-			assertEquals("Added element has a wrong predicate", content,
-					element.getPredicateString());
-		} else if (type.equals(ICarrierSet.ELEMENT_TYPE)) {
-			assertEquals("Added CarrierSet has a wrong identifier", content,
-					element.getIdentifierString());
-		} else if (type.equals(IVariant.ELEMENT_TYPE)) {
-			assertEquals("Added Variant has a wrong expression", content,
-					element.getExpressionString());
-		} else {
-			throw new AssertionError("No test for this element");
-		}
-
-	}
-
-	private void assertEquals(String msg,
-			IElementType<? extends IRodinElement> expected,
-			IElementType<? extends IRodinElement> actual) {
-		if (!expected.equals(actual)) {
-			throw new AssertionError(msg + " (expected : " + expected
-					+ ", actual : " + actual);
-		}
-	}
-
-	private ArrayList<String> getLabels__testWizardNewConstants() {
-		final ArrayList<String> labels = new ArrayList<String>();
-		labels.add("axm0");
-		labels.add("axm1");
-		labels.add("axm2");
-		return labels;
-	}
-
-	private ArrayList<String> getPredicates__testWizardNewConstants() {
-		final ArrayList<String> predicates = new ArrayList<String>();
-		predicates.add("myConst : NAT");
-		predicates.add("myConst > 0");
-		predicates.add("myConst < 42");
-		return predicates;
-	}
-
-	private String getName__WizardNewEnumeratedSet() {
-		return "enum0";
-	}
-
-	private ArrayList<String> getElements__testWizardNewEnumeratedSet() {
-		final ArrayList<String> elements = new ArrayList<String>();
-		elements.add("a");
-		elements.add("b");
-		elements.add("c");
-		return elements;
-	}
-
-	private ArrayList<String> getResultedAxioms__WizardNewEnumeratedSet() {
-		final ArrayList<String> elements = new ArrayList<String>();
-		elements.add(getName__WizardNewEnumeratedSet() + " = {a, b, c}");
-		elements.add("\u00ac a = b");
-		elements.add("\u00ac a = c");
-		elements.add("\u00ac b = c");
-		return elements;
-	}
-
-	/* UTILS FUNCTIONS */
-
-	/**
-	 * Open the an Event-B Editor ({@link IEventBEditor}) for a given
-	 * component. Assuming that the component is either a machine ({@link IMachineRoot})
-	 * or a context ({@link IContextRoot}).
-	 * 
-	 * @param component
-	 *            the input component
-	 * @return the Event-B Editor for the input component.
-	 * @throws PartInitException
-	 *             if some problems occur when open the editor.
-	 */
-	protected IEventBEditor<?> openEditor(IEventBRoot component)
-			throws PartInitException {
-		IEditorInput fileInput = new FileEditorInput(component.getRodinFile().getResource());
-		String editorId = ""; //$NON-NLS-1$
-		if (component instanceof IMachineRoot) {
-			editorId = EventBMachineEditor.EDITOR_ID;
-		} else if (component instanceof IContextRoot) {
-			editorId = EventBContextEditor.EDITOR_ID;
-		}
-		return (IEventBEditor<?>) EventBUIPlugin.getActivePage().openEditor(
-				fileInput, editorId);
-	}
-
-	/**
-	 * Utility method to create a context with the given bare name. The context
-	 * is created as a child of the test Rodin project ({@link #rodinProject}).
-	 * 
-	 * @param bareName
-	 *            the bare name (without the extension .ctx) of the context
-	 * @return the newly created context.
-	 * @throws RodinDBException
-	 *             if some problems occur.
-	 */
-	protected IContextRoot createContext(String bareName)
+	private void addElements(Element parent, IInternalElement[] elements)
 			throws RodinDBException {
-		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IRodinFile file = rodinProject.getRodinFile(fileName);
-		file.create(true, null);
-		return (IContextRoot) file.getRoot();
-	}
-
-	protected IMachineRoot createMachine(String bareName)
-			throws RodinDBException {
-		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IRodinFile file = rodinProject.getRodinFile(fileName);
-		file.create(true, null);
-		return (IMachineRoot) file.getRoot();
-	}
-
-	private String[] getStringTabFromList(ArrayList<String> list) {
-		String[] tab = new String[list.size()];
-		int i = 0;
-		for (String string : list) {
-			tab[i] = string;
-			i++;
+		for (IRodinElement element : elements) {
+			parent.addChildren(asElement((IInternalElement) element), null);
 		}
-		return tab;
 	}
 
+	@Test
+	public void testCopyElements() throws Exception {
+
+		final IMachineRoot mchSource = createMachine("source");
+
+		final IInternalElement[] elements = new IInternalElement[] {
+				createEvent(mchSource, "event"),
+				createInvariant(mchSource, "inv2", "predicate"),
+				createRefinesMachineClause(mchSource, "mch2") };
+
+		// at beginning and after undo
+		createInvariant(mch, "myInvariant", "predicate");
+		createVariant(mch, "expression");
+		final Element mchUndo = asElement(mch);
+
+		// after execute and redo
+		mchElement = asElement(mch);
+		addElements(mchElement, elements);
+
+		final AtomicOperation op = OperationFactory.copyElements(mch, elements);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	/**
+	 * ensures that an action is created with
+	 * <code>OperationFactory.createAction(machineEditor, event, label, assignement,
+	 * null))</code>
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testCreateAction() throws Exception {
+		final IEvent event = createEvent(mch, "event");
+		final Element mchUndo = asElement(mch);
+
+		final Element eventElement = addEventElement(mchElement, "event");
+		addAction(eventElement, "myAction", "myAssignment");
+
+		final AtomicOperation op = OperationFactory.createAction(machineEditor,
+				event, "myAction", "myAssignment", null);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateActionMultiple() throws Exception {
+		// Create event in RodinDB and get equivalent Element
+		final IEvent event = createEvent(mch, "event");
+		final Element mchUndo = asElement(mch);
+
+		final Element eventElement = addEventElement(mchElement, "event");
+
+		final String[] label = new String[] { "act1", "act2", "act3" };
+		final String[] assignment = new String[] { "var1:=4", "var2:=4",
+				"var3:=4" };
+		addAction(eventElement, label, assignment);
+
+		final AtomicOperation op = OperationFactory.createAction(machineEditor,
+				event, label, assignment, null);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateAxiomWizard() throws Exception {
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axiom",
+				"predicate");
+		final AtomicOperation op = OperationFactory.createAxiomWizard(
+				contextEditor, "axiom", "predicate");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+	}
+
+	@Test
+	public void testCreateAxiomWizardMultiple() throws Exception {
+		final String[] labels = new String[] { "label1", "label2", "label3" };
+		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
+				predicates);
+
+		final AtomicOperation op = OperationFactory.createAxiomWizard(
+				contextEditor, labels, predicates);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+	}
+
+	@Test
+	public void testCreateCarrierSetWizard() throws Exception {
+		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
+		final AtomicOperation op = OperationFactory.createCarrierSetWizard(
+				contextEditor, "mySet");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+
+	}
+
+	@Test
+	public void testCreateCarrierSetWizardMultiple() throws Exception {
+		final String[] identifiers = new String[] { "mySet1", "mySet2",
+				"mySet3" };
+		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE,
+				identifiers);
+		final AtomicOperation op = OperationFactory.createCarrierSetWizard(
+				contextEditor, identifiers);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+
+	}
+
+	@Test
+	public void testCreateConstantWizard() throws Exception {
+		final String[] labels = new String[] { "axm1", "axm2", "axm3" };
+		final String[] predicates = new String[] { "prd1", "prd2", "prd3" };
+		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE,
+				"myConstant");
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
+				predicates);
+
+		final AtomicOperation op = OperationFactory.createConstantWizard(
+				contextEditor, "myConstant", labels, predicates);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+
+	}
+
+	@Test
+	public void testCreateElement() throws Exception {
+		addElementWithStringAttribute(ctxElement, IExtendsContext.ELEMENT_TYPE,
+				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
+		final AtomicOperation op = OperationFactory.createElement(
+				contextEditor, IExtendsContext.ELEMENT_TYPE,
+				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+	}
+
+	@Test
+	public void testCreateElementGeneric() throws Exception, RodinDBException {
+		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, machineEditor,
+				mch, "inv");
+
+		final AtomicOperation op = OperationFactory.createElementGeneric(
+				machineEditor, mch, IInvariant.ELEMENT_TYPE, null);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateEnumeratedSetWizard() throws Exception {
+		final String[] elements = new String[] { "e1", "e2", "e3" };
+		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
+		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE, elements);
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm1",
+				"mySet = {e1, e2, e3}");
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm2",
+				"¬ e1 = e2");
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm3",
+				"¬ e1 = e3");
+		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm4",
+				"¬ e2 = e3");
+
+		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(
+				contextEditor, "mySet", elements);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", ctx, ctxElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", ctx,
+				getContextElement("ctx"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+	}
+
+	// test Bug 2217041
+	@Test
+	public void testCreateEvent() throws Exception {
+		final String[] varNames = new String[] { "var1", "var2" };
+		final String[] grdNames = new String[] { "grd1", "grd2" };
+		final String[] grdPredicates = new String[] { "var1 : NAT",
+				"var2 : NAT" };
+		final String[] actNames = new String[] { "act1", "act2" };
+		final String[] actSubstitutions = new String[] { "a := var1",
+				"b := var2" };
+
+		final Element eventElement = addEventElement(mchElement, "evt");
+		addElementWithIdentifier(eventElement, IParameter.ELEMENT_TYPE,
+				varNames);
+		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
+				grdNames, grdPredicates);
+		addAction(eventElement, actNames, actSubstitutions);
+
+		final AtomicOperation op = OperationFactory.createEvent(machineEditor,
+				"evt", varNames, grdNames, grdPredicates, actNames,
+				actSubstitutions);
+
+		execute(op);
+		assertEquivalent("Error when execute operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo operation", mch, mchElement);
+	}
+
+	/**
+	 * ensures that a guard is created with
+	 * <code>OperationFactory.createGuard(machineEditor, event, label, assignement,
+	 * null))</code>
+	 * 
+	 */
+	@Test
+	public void testCreateGuard() throws Exception {
+		final IEvent event = createEvent(mch, "event");
+		final Element mchUndo = asElement(mch);
+
+		final Element eventElement = addEventElement(mchElement, "event");
+		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
+				"myGuard", "a : NAT");
+
+		final AtomicOperation op = OperationFactory.createGuard(machineEditor,
+				event, "myGuard", "a : NAT", null);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateInvariantWizard() throws Exception {
+		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
+				"myInvariant", "myPredicate");
+		final AtomicOperation op = OperationFactory.createInvariantWizard(
+				machineEditor, "myInvariant", "myPredicate");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateInvariantWizardMultiple() throws Exception {
+		final String[] labels = new String[] { "inv1", "inv2", "inv3" };
+		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
+		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
+				labels, predicates);
+
+		final AtomicOperation op = OperationFactory.createInvariantWizard(
+				machineEditor, labels, predicates);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateTheoremWizard() throws Exception {
+		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE,
+				"myTheorem", "myPredicate");
+		final AtomicOperation op = OperationFactory.createTheoremWizard(
+				machineEditor, "myTheorem", "myPredicate");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateTheoremWizardMultiple() throws Exception {
+		final String[] labels = new String[] { "thm1", "thm2", "thm3" };
+		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
+		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE, labels,
+				predicates);
+
+		final AtomicOperation op = OperationFactory.createTheoremWizard(
+				machineEditor, labels, predicates);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	private class InvariantsPair extends Pair<String, String> {
+		public InvariantsPair(String obj1, String obj2) {
+			super(obj1, obj2);
+		}
+	}
+
+	@Test
+	public void testCreateVariableWizard() throws Exception {
+		addElementWithIdentifier(mchElement, IVariable.ELEMENT_TYPE,
+				"myVariable");
+		final Element event = addEventElement(mchElement, "INITIALISATION");
+		addAction(event, "act1", "myVariable := 1");
+		addInvariant(mchElement, "inv1", "myVariable > 0");
+		addInvariant(mchElement, "inv2", "myVariable < 3");
+
+		InvariantsPair[] invariants = new InvariantsPair[] {
+				new InvariantsPair("inv1", "myVariable > 0"),
+				new InvariantsPair("inv2", "myVariable < 3") };
+
+		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
+				Arrays.asList(invariants));
+
+		final AtomicOperation op = OperationFactory.createVariableWizard(
+				machineEditor, "myVariable", invariantCollection, "act1",
+				"myVariable := 1");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	@Test
+	public void testCreateVariantWizard() throws Exception {
+		addVariant(mchElement, "expression");
+
+		final AtomicOperation op = OperationFactory.createVariantWizard(
+				machineEditor, "expression");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch,
+				getMachineElement("mch"));
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+	}
+
+	/**
+	 * ensures that an element is deleted when execute and redo operation.<br>
+	 * ensures that the deleted element is created and that the orders is kept
+	 * when undo
+	 */
+	@Test
+	public void testDeleteElement() throws Exception {
+		// after execute and redo, there is one invariant
+		addInvariant(mchElement, "inv2", "predicate2");
+
+		// at beginning and after undo there is two invariant
+		final Element mchUndo = getMachineElement("mch");
+		addInvariant(mchUndo, "inv1", "predicate1");
+		addInvariant(mchUndo, "inv2", "predicate2");
+
+		IInvariant inv = createInvariant(mch, "inv1", "predicate1");
+		createInvariant(mch, "inv2", "predicate2");
+
+		// to ensure the orders of the childrens after undo
+		Element.setTestSibling(true);
+
+		final AtomicOperation op = OperationFactory.deleteElement(inv);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+
+	}
+
+	/**
+	 * ensures that elements are deleted when execute and redo operation.<br>
+	 * ensures that all deleted elements are created and that the orders is kept
+	 * when undo
+	 */
+	@Test
+	public void testDeleteElementMultiple() throws Exception {
+		// after execute and redo, there is one invariant
+		addInvariant(mchElement, "inv2", "predicate2");
+
+		// at beginning and after undo there is two invariant
+		final Element mchUndo = getMachineElement("mch");
+		addInvariant(mchUndo, "inv1", "predicate1");
+		addInvariant(mchUndo, "inv2", "predicate2");
+		addInvariant(mchUndo, "inv3", "predicate3");
+
+		final IInvariant inv1 = createInvariant(mch, "inv1", "predicate1");
+		createInvariant(mch, "inv2", "predicate2");
+		final IInvariant inv3 = createInvariant(mch, "inv3", "predicate3");
+
+		// to ensure the orders of the children after undo
+		Element.setTestSibling(true);
+
+		final AtomicOperation op = OperationFactory.deleteElement(
+				new IInternalElement[] { inv1, inv3 }, true);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+
+	}
+
+	/**
+	 * ensures that the first element is move down when execute and redo<br>
+	 * ensures that the first element is still the first after undo
+	 */
+	@Test
+	public void testMove1() throws Exception {
+		// orders after execute and redo
+		addInvariant(mchElement, "inv2", "predicate");
+		addInvariant(mchElement, "inv1", "predicate");
+		addInvariant(mchElement, "inv3", "predicate");
+		addInvariant(mchElement, "inv4", "predicate");
+
+		// orders at beginning and after undo
+		final Element mchUndo = getMachineElement("mch");
+		addInvariant(mchUndo, "inv1", "predicate");
+		addInvariant(mchUndo, "inv2", "predicate");
+		addInvariant(mchUndo, "inv3", "predicate");
+		addInvariant(mchUndo, "inv4", "predicate");
+
+		final IInvariant moved = createInvariant(mch, "inv1", "predicate");
+		createInvariant(mch, "inv2", "predicate");
+		final IInvariant nextSibling = createInvariant(mch, "inv3", "predicate");
+		createInvariant(mch, "inv4", "predicate");
+
+		// to take orders when compare
+		Element.setTestSibling(true);
+
+		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
+				nextSibling);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+
+	}
+
+	/**
+	 * ensures that the last element is move before the first when execute and
+	 * redo<br>
+	 * ensures that the last element is still the last after undo
+	 */
+	@Test
+	public void testMove2() throws Exception {
+		// orders after execute and redo
+		addInvariant(mchElement, "inv4", "predicate");
+		addInvariant(mchElement, "inv1", "predicate");
+		addInvariant(mchElement, "inv2", "predicate");
+		addInvariant(mchElement, "inv3", "predicate");
+
+		// orders at beginning and after undo
+		final Element mchUndo = getMachineElement("mch");
+		addInvariant(mchUndo, "inv1", "predicate");
+		addInvariant(mchUndo, "inv2", "predicate");
+		addInvariant(mchUndo, "inv3", "predicate");
+		addInvariant(mchUndo, "inv4", "predicate");
+
+		final IInvariant nextSibling = createInvariant(mch, "inv1", "predicate");
+		createInvariant(mch, "inv2", "predicate");
+		createInvariant(mch, "inv3", "predicate");
+		final IInvariant moved = createInvariant(mch, "inv4", "predicate");
+
+		// to take orders when compare
+		Element.setTestSibling(true);
+
+		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
+				nextSibling);
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+
+	}
+
+	/**
+	 * ensures that prefix of elements with the same type is renamed<br>
+	 * ensures others elements are not renamed
+	 */
+	@Test
+	public void testRenameElements() throws Exception {
+		final IAttributeFactory<ILabeledElement> factory = new EventLabelAttributeFactory();
+
+		// at beginning and after undo
+		final IEvent event = createEvent(mch, "myEvent1");
+		createEvent(mch, "myEvent2");
+		createEvent(mch, "myEvent3");
+		createEvent(mch, "myEvent4");
+		createGuard(event, "myGuard", "predicate"); // ILabeledElement
+		createInvariant(mch, "myInvariant", "predicate"); // ILabeledElement
+		final Element mchUndo = asElement(mch);
+
+		// after execute and redo, only event are renamed
+		final Element eventElement = addEventElement(mchElement, "evt1");
+		addEventElement(mchElement, "evt2");
+		addEventElement(mchElement, "evt3");
+		addEventElement(mchElement, "evt4");
+		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
+				"myGuard", "predicate");
+		addInvariant(mchElement, "myInvariant", "predicate");
+
+		final AtomicOperation op = OperationFactory.renameElements(mch,
+				IEvent.ELEMENT_TYPE, factory, "evt");
+
+		execute(op);
+		assertEquivalent("Error when execute an operation", mch, mchElement);
+
+		undo(op);
+		assertEquivalent("Error when undo an operation", mch, mchUndo);
+
+		redo(op);
+		assertEquivalent("Error when redo an operation", mch, mchElement);
+
+	}
 }
