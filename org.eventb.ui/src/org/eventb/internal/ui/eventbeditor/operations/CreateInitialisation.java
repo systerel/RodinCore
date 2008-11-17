@@ -38,8 +38,8 @@ class CreateInitialisation extends OperationLeaf {
 	private IAction action;
 
 	// TODO a retravailler en utilisant les autres Operation
-	CreateInitialisation(IMachineRoot root,
-			final String actLabel, final String actSub) {
+	CreateInitialisation(IMachineRoot root, final String actLabel,
+			final String actSub) {
 		super("CreateInitialisation");
 		this.root = root;
 		this.actLabel = actLabel;
@@ -65,7 +65,7 @@ class CreateInitialisation extends OperationLeaf {
 			action.create(null, monitor);
 			action.setLabel(actLabel, monitor);
 			action.setAssignmentString(actSub, monitor);
-//			editor.addNewElement(action);
+			// editor.addNewElement(action);
 
 		} catch (RodinDBException e) {
 			return e.getStatus();
@@ -99,9 +99,11 @@ class CreateInitialisation extends OperationLeaf {
 			throws RodinDBException {
 		IEvent result = EventBEditorUtils.getInitialisation(root);
 		if (result != null) {
+			newInit = false;
 			return result;
 		}
 
+		newInit = true;
 		final String evtName = UIUtils.getFreeElementName(root, root,
 				IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
 		result = root.getEvent(evtName);
@@ -112,12 +114,17 @@ class CreateInitialisation extends OperationLeaf {
 				.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 						monitor);
 		result.setExtended(false, monitor);
-//		editor.addNewElement(result);
+		// editor.addNewElement(result);
 		return result;
 	}
 
 	public void setParent(IInternalElement element) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public IInternalElement getCreatedElement() {
+		return action;
 	}
 }
