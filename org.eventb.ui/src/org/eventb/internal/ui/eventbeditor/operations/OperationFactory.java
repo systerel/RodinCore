@@ -13,10 +13,10 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.Collection;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
@@ -31,21 +31,21 @@ public class OperationFactory {
 		// non instanciable class
 	}
 
-	public static AtomicOperation createTheoremWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createTheoremWizard(IInternalElement parent,
 			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createTheorem(
-				editor, label, content));
-		cmd.addContext(getContext(editor));
+				parent, label, content));
+		cmd.addContext(getContext(parent));
 		return cmd;
 	}
 
-	public static AtomicOperation createTheoremWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createTheoremWizard(IInternalElement root,
 			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createTheorem(
-				editor, labels, contents));
-		cmd.addContext(getContext(editor));
+				root, labels, contents));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
@@ -54,115 +54,113 @@ public class OperationFactory {
 	 *            null to set a default label
 	 * @param predicate
 	 */
-	public static AtomicOperation createAxiomWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String label, String predicate) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(editor,
+		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(root,
 				label, predicate));
-		cmd.addContext(getContext(editor));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createAxiomWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String[] labels, String[] predicates) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(editor,
+		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(root,
 				labels, predicates));
-		cmd.addContext(getContext(editor));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createConstantWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createConstantWizard(IContextRoot root,
 			String identifier, String[] labels, String[] predicates) {
 		final AtomicOperation cmd;
 		final OperationBuilder builder = new OperationBuilder();
-		cmd = new AtomicOperation(builder.createConstant(editor, identifier,
+		cmd = new AtomicOperation(builder.createConstant(root, identifier,
 				labels, predicates));
-		cmd.addContext(getContext(editor));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createEnumeratedSetWizard(
-			IEventBEditor<?> editor, String identifier, String[] elements) {
+	public static AtomicOperation createEnumeratedSetWizard(IContextRoot root,
+			String identifier, String[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createEnumeratedSet(editor, identifier, elements));
-		cmd.addContext(getContext(editor));
+				.createEnumeratedSet(root, identifier, elements));
+		cmd.addContext(getContext(root));
 		return cmd;
 
 	}
 
-	public static AtomicOperation createVariantWizard(IEventBEditor<?> editor,
+	public static AtomicOperation createVariantWizard(IMachineRoot root,
 			String expression) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createVariant(
-				editor, expression));
-		cmd.addContext(getContext(editor));
+				root, expression));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createVariableWizard(
-			final IEventBEditor<IMachineRoot> editor, final String varName,
+	public static AtomicOperation createVariableWizard(final IMachineRoot root,
+			final String varName,
 			final Collection<Pair<String, String>> invariant,
 			final String actName, final String actSub) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createVariable(
-				editor, varName, invariant, actName, actSub));
-		cmd.addContext(getContext(editor));
+				root, varName, invariant, actName, actSub));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
 	/**
 	 * return an Operation to create an Element with default name and label
 	 * 
-	 * @param editor
-	 *            IEventBEditor where the new element is inserted
+	 * @param root
+	 *            root element the new element is inserted
 	 * @param label
 	 *            if null the label of created element is the next free label.
 	 * @param content
 	 *            the predicate
 	 */
-	public static AtomicOperation createInvariantWizard(
-			IEventBEditor<?> editor, String label, String content) {
+	public static AtomicOperation createInvariantWizard(IMachineRoot root,
+			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createInvariant(editor, label, content));
-		cmd.addContext(getContext(editor));
+				.createInvariant(root, label, content));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createInvariantWizard(
-			IEventBEditor<?> editor, String[] labels, String[] contents) {
+	public static AtomicOperation createInvariantWizard(IMachineRoot root,
+			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createInvariant(editor, labels, contents));
-		cmd.addContext(getContext(editor));
+				.createInvariant(root, labels, contents));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createCarrierSetWizard(
-			IEventBEditor<?> editor, String identifier) {
+	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
+			String identifier) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createCarrierSet(editor, identifier));
-		cmd.addContext(getContext(editor));
+				.createCarrierSet(root, identifier));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
-	public static AtomicOperation createCarrierSetWizard(
-			IEventBEditor<?> editor, String[] identifier) {
+	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
+			String[] identifier) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createCarrierSet(editor, identifier));
-		cmd.addContext(getContext(editor));
+				.createCarrierSet(root, identifier));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
 	/**
 	 * return an Operation to create an Element with default name and label
 	 * 
-	 * @param editor
-	 *            IEventBEditor where the new element is inserted
 	 * @param parent
 	 *            the element where the new element is inserted
 	 * @param type
@@ -174,12 +172,12 @@ public class OperationFactory {
 	 * 
 	 */
 	public static <T extends IInternalElement> AtomicOperation createElementGeneric(
-			IEventBEditor<?> editor, IInternalParent parent,
-			final IInternalElementType<T> type, final IInternalElement sibling) {
+			IInternalElement parent, final IInternalElementType<T> type,
+			final IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder
-				.createDefaultElement(editor, parent, type, sibling));
-		cmd.addContext(getContext(editor));
+				.createDefaultElement(parent, type, sibling));
+		cmd.addContext(getContext(parent));
 		return cmd;
 	}
 
@@ -189,8 +187,8 @@ public class OperationFactory {
 	 * <p>
 	 * varNames and varSubstitutions must be not null and have the same length
 	 * 
-	 * @param editor
-	 *            editor of parent file
+	 * @param root
+	 *            root element of parent file
 	 * @param name
 	 *            name of the element
 	 * @param varNames
@@ -204,14 +202,14 @@ public class OperationFactory {
 	 * @param actSubstitutions
 	 *            actions substitution
 	 */
-	public static AtomicOperation createEvent(IEventBEditor<?> editor,
-			String name, String[] varNames, String[] grdNames,
-			String[] grdPredicates, String[] actNames, String[] actSubstitutions) {
+	public static AtomicOperation createEvent(IMachineRoot root, String name,
+			String[] varNames, String[] grdNames, String[] grdPredicates,
+			String[] actNames, String[] actSubstitutions) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createEvent(
-				editor, name, varNames, grdNames, grdPredicates, actNames,
+				root, name, varNames, grdNames, grdPredicates, actNames,
 				actSubstitutions));
-		cmd.addContext(getContext(editor));
+		cmd.addContext(getContext(root));
 		return cmd;
 	}
 
@@ -219,7 +217,7 @@ public class OperationFactory {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.deleteElement(
 				element, true));
-		cmd.addContext(getContext(element.getRodinFile()));
+		cmd.addContext(getContext(element));
 		return cmd;
 	}
 
@@ -230,16 +228,12 @@ public class OperationFactory {
 		final AtomicOperation cmd = new AtomicOperation(builder.deleteElement(
 				elements, force));
 		if (elements.length > 0) {
-			cmd.addContext(getContext(elements[0].getRodinFile()));
+			cmd.addContext(getContext(elements[0]));
 		}
 		return cmd;
 	}
 
-	public static IUndoContext getContext(IEventBEditor<?> editor) {
-		return getContext(editor.getRodinInput().getRodinFile());
-	}
-
-	public static IUndoContext getContext(IRodinFile rodinFile) {
+	private static IUndoContext getContext(IRodinFile rodinFile) {
 		final String bareName = rodinFile.getBareName();
 
 		return new IUndoContext() {
@@ -285,33 +279,30 @@ public class OperationFactory {
 		return op;
 	}
 
-	public static AtomicOperation createGuard(IEventBEditor<?> editor,
-			IInternalElement event, String label, String predicate,
-			IInternalElement sibling) {
+	public static AtomicOperation createGuard(IInternalElement event,
+			String label, String predicate, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createGuard(
-				editor, event, label, predicate, sibling));
-		cmd.addContext(getContext(editor));
+				event, label, predicate, sibling));
+		cmd.addContext(getContext(event));
 		return cmd;
 	}
 
-	public static AtomicOperation createAction(IEventBEditor<?> editor,
-			IInternalElement event, String label, String assignement,
-			IInternalElement sibling) {
+	public static AtomicOperation createAction(IInternalElement event,
+			String label, String assignement, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
-				editor, event, label, assignement, sibling));
-		cmd.addContext(getContext(editor));
+				event, label, assignement, sibling));
+		cmd.addContext(getContext(event));
 		return cmd;
 	}
 
-	public static AtomicOperation createAction(IEventBEditor<?> editor,
-			IInternalElement event, String label[], String predicate[],
-			IInternalElement sibling) {
+	public static AtomicOperation createAction(IInternalElement event,
+			String label[], String predicate[], IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
-				editor, event, label, predicate, sibling));
-		cmd.addContext(getContext(editor));
+				event, label, predicate, sibling));
+		cmd.addContext(getContext(event));
 		return cmd;
 	}
 
@@ -329,11 +320,12 @@ public class OperationFactory {
 
 	/**
 	 * Return an operation to create an IInternalElement with the given type and
-	 * a string attribute. The parent of the new element is
-	 * <code>editor.getRodinInput()</code>
+	 * a string attribute.
 	 * 
-	 * @param editor
-	 *            an IEventBEditor<?>
+	 * @param parent
+	 *            The parent of the new element is
+	 * 
+	 * 
 	 * @param internalElementType
 	 *            an IInternalElementType\<T\>. Type of the element to create
 	 * @param attribute
@@ -342,15 +334,14 @@ public class OperationFactory {
 	 *            a String. The value of the attribute
 	 */
 	public static <T extends IInternalElement> AtomicOperation createElement(
-			IEventBEditor<?> editor,
+			IInternalElement parent,
 			IInternalElementType<T> internalElementType,
 			IAttributeType.String attribute, String value) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(builder
-				.createElementOneStringAttribute(editor,
-						editor.getRodinInput(), internalElementType, null,
-						attribute, value));
-		op.addContext(getContext(editor));
+				.createElementOneStringAttribute(parent, internalElementType,
+						null, attribute, value));
+		op.addContext(getContext(parent));
 		return op;
 	}
 

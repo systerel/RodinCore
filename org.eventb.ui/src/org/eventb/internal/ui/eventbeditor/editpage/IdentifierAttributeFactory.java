@@ -17,8 +17,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public abstract class IdentifierAttributeFactory implements
@@ -26,13 +25,12 @@ public abstract class IdentifierAttributeFactory implements
 
 	public abstract String getPrefix();
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IIdentifierElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IIdentifierElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		String prefix = getPrefix();
-		String identifier = UIUtils.getFreeElementIdentifier(editor,
-				(IInternalParent) element.getParent(),
-				element.getElementType(), prefix);
+		String identifier = UIUtils.getFreeElementIdentifier(
+				(IInternalElement) element.getParent(), element
+						.getElementType(), prefix);
 		element.setIdentifierString(identifier, monitor);
 	}
 

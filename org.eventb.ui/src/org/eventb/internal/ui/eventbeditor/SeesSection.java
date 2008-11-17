@@ -50,7 +50,7 @@ public class SeesSection extends
 	@Override
 	protected void addClause(String contextName) throws RodinDBException {
 		History.getInstance().addOperation(
-				OperationFactory.createElement(editor,
+				OperationFactory.createElement(editor.getRodinInput(),
 						ISeesContext.ELEMENT_TYPE,
 						EventBAttributes.TARGET_ATTRIBUTE, contextName));
 	}

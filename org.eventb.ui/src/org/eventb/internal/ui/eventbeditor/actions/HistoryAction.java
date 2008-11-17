@@ -68,7 +68,8 @@ public abstract class HistoryAction extends Action {
 		final IEditorPart editor = getActiveEditor();
 		if (!(editor instanceof IEventBEditor<?>))
 			return null;
-		return OperationFactory.getContext((IEventBEditor<?>) editor);
+		return OperationFactory.getContext(((IEventBEditor<?>) editor)
+				.getRodinInput());
 	}
 
 	@Override

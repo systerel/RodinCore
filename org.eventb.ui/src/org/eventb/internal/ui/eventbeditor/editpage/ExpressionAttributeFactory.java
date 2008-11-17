@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IExpressionElement;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class ExpressionAttributeFactory implements
@@ -31,9 +30,8 @@ public class ExpressionAttributeFactory implements
 		element.setExpressionString(newValue, monitor);
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IExpressionElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IExpressionElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		element.setExpressionString("", monitor);
 	}
 

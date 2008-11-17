@@ -30,7 +30,6 @@ import org.eventb.internal.ui.elementSpecs.IAttributeRelationship;
 import org.eventb.internal.ui.elementSpecs.IElementSpecRegistry;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
@@ -155,8 +154,9 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		/**
 		 * Create the default value for this attribute of the given element.
 		 * 
-		 * @param editor
-		 *            an Event-B Editor
+		 * @param root
+		 *            the root element
+		 * 
 		 * @param element
 		 *            the element whose attribute is in concern
 		 * @param monitor
@@ -164,8 +164,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		 * @throws RodinDBException
 		 *             if some problems occurred.
 		 */
-		public void createDefaultAttribute(IEventBEditor<?> editor,
-				E element, IProgressMonitor monitor)
+		public void createDefaultAttribute(E element, IProgressMonitor monitor)
 				throws RodinDBException {
 			if (getDefaultPrefix() == null)
 				return;
@@ -173,7 +172,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 			if (factory == null)
 				loadFactory();
 
-			factory.setDefaultValue(editor, element, monitor);
+			factory.setDefaultValue(element, monitor);
 		}
 
 		/*
@@ -221,8 +220,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 				// Do nothing
 			}
 
-			public void setDefaultValue(IEventBEditor<?> editor,
-					E element, IProgressMonitor monitor)
+			public void setDefaultValue(E element, IProgressMonitor monitor)
 					throws RodinDBException {
 				// Do nothing
 			}
@@ -389,13 +387,13 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecReigstry#createElement(org.eventb.ui.eventbeditor.IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, org.rodinp.core.IInternalElement)
 	 */
 	public <T extends IInternalElement> T createElement(
-			final IEventBEditor<?> editor, IInternalParent parent,
+			final IInternalElement root, IInternalParent parent,
 			final IInternalElementType<T> type, final IInternalElement sibling)
 			throws CoreException {
 		if (attributeRelationships == null)
 			loadRegistry();
 
-		String newName = UIUtils.getFreeChildName(editor.getRodinInput(), parent, type);
+		String newName = UIUtils.getFreeChildName(root, parent, type);
 		final T newElement = parent.getInternalElement(type, newName);
 		RodinCore.run(new IWorkspaceRunnable() {
 
@@ -408,8 +406,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 						AttributeRelationshipInfo info = attributeRelInfos
 								.get(rel);
 						info
-								.createDefaultAttribute(editor, newElement,
-										monitor);
+								.createDefaultAttribute(newElement, monitor);
 					}
 				}
 			}

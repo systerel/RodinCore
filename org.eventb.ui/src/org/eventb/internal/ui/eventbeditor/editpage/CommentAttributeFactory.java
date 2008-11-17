@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class CommentAttributeFactory implements
@@ -35,9 +34,8 @@ public class CommentAttributeFactory implements
 		element.setComment(newValue, monitor);
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			ICommentedElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(ICommentedElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		element.setComment("", new NullProgressMonitor());
 	}
 

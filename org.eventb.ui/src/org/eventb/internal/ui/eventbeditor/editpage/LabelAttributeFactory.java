@@ -16,8 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public abstract class LabelAttributeFactory implements
@@ -25,13 +24,11 @@ public abstract class LabelAttributeFactory implements
 
 	protected abstract String getPrefix();
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			ILabeledElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(ILabeledElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		String prefix = getPrefix();
-		String label = UIUtils.getFreeElementLabel(editor,
-				(IInternalParent) element.getParent(),
-				element.getElementType(), prefix);
+		String label = UIUtils.getFreeElementLabel((IInternalElement) element
+				.getParent(), element.getElementType(), prefix);
 		element.setLabel(label, monitor);
 	}
 

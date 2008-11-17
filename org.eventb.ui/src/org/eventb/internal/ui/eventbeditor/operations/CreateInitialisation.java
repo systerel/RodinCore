@@ -23,13 +23,12 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 class CreateInitialisation extends OperationLeaf {
 
-	private IEventBEditor<IMachineRoot> editor;
+	private IMachineRoot root;
 	private String actLabel;
 	private String actSub;
 
@@ -39,10 +38,10 @@ class CreateInitialisation extends OperationLeaf {
 	private IAction action;
 
 	// TODO a retravailler en utilisant les autres Operation
-	CreateInitialisation(final IEventBEditor<IMachineRoot> editor,
+	CreateInitialisation(IMachineRoot root,
 			final String actLabel, final String actSub) {
 		super("CreateInitialisation");
-		this.editor = editor;
+		this.root = root;
 		this.actLabel = actLabel;
 		this.actSub = actSub;
 	}
@@ -59,14 +58,14 @@ class CreateInitialisation extends OperationLeaf {
 			event = getInitialisationEvent(monitor);
 			defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.actionLabel");
-			name = UIUtils.getFreeElementName(editor, event,
+			name = UIUtils.getFreeElementName(root, event,
 					IAction.ELEMENT_TYPE, defaultPrefix);
 			action = event.getInternalElement(IAction.ELEMENT_TYPE, name);
 
 			action.create(null, monitor);
 			action.setLabel(actLabel, monitor);
 			action.setAssignmentString(actSub, monitor);
-			editor.addNewElement(action);
+//			editor.addNewElement(action);
 
 		} catch (RodinDBException e) {
 			return e.getStatus();
@@ -98,13 +97,12 @@ class CreateInitialisation extends OperationLeaf {
 
 	private IEvent getInitialisationEvent(IProgressMonitor monitor)
 			throws RodinDBException {
-		final IMachineRoot root = editor.getRodinInput();
 		IEvent result = EventBEditorUtils.getInitialisation(root);
 		if (result != null) {
 			return result;
 		}
 
-		final String evtName = UIUtils.getFreeElementName(editor, root,
+		final String evtName = UIUtils.getFreeElementName(root, root,
 				IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
 		result = root.getEvent(evtName);
 
@@ -114,7 +112,7 @@ class CreateInitialisation extends OperationLeaf {
 				.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 						monitor);
 		result.setExtended(false, monitor);
-		editor.addNewElement(result);
+//		editor.addNewElement(result);
 		return result;
 	}
 

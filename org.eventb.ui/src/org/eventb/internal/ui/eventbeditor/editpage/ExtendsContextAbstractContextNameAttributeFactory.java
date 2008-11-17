@@ -19,15 +19,13 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class ExtendsContextAbstractContextNameAttributeFactory extends
 		AbstractContextFactory<IExtendsContext> {
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IExtendsContext element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IExtendsContext element,
+			IProgressMonitor monitor) throws RodinDBException {
 		String name = "abstract_context";
 		element.setAbstractContextName(name, new NullProgressMonitor());
 	}

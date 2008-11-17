@@ -143,7 +143,7 @@ public class CComboEditComposite<E extends IAttributedElement> extends
 
 	public void setDefaultValue(IEventBEditor<?> editor) {
 		try {
-			uiSpec.getAttributeFactory().setDefaultValue(editor, element,
+			uiSpec.getAttributeFactory().setDefaultValue(element,
 					new NullProgressMonitor());
 			if (combo != null)
 				combo.setFocus();

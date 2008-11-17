@@ -60,7 +60,7 @@ public class ExtendsSection extends
 	@Override
 	protected void addClause(String contextName) throws RodinDBException {
 		History.getInstance().addOperation(
-				OperationFactory.createElement(editor,
+				OperationFactory.createElement(editor.getRodinInput(),
 						IExtendsContext.ELEMENT_TYPE,
 						EventBAttributes.TARGET_ATTRIBUTE, contextName));
 	}

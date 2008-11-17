@@ -79,7 +79,6 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.projectexplorer.ExplorerUtilities;
 import org.eventb.ui.projectexplorer.TreeNode;
 import org.osgi.framework.Bundle;
@@ -499,19 +498,19 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeElementName(
-			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElement root, IInternalParent parent,
 			IInternalElementType<T> type, String defaultPrefix)
 			throws RodinDBException {
-		String prefix = getNamePrefix(editor.getRodinInput(), type, defaultPrefix);
+		String prefix = getNamePrefix(root, type, defaultPrefix);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
-	public static String getFreeElementLabel(IEventBEditor<?> editor,
-			IInternalParent parent,
+	public static String getFreeElementLabel(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
-		return prefix + getFreeElementLabelIndex(editor, parent, type, prefix);
+		final IInternalElement root = parent.getRodinFile().getRoot();
+		String prefix = getPrefix(root, type, defaultPrefix);
+		return prefix + getFreeElementLabelIndex(parent, type, prefix);
 	}
 
 
@@ -519,8 +518,6 @@ public class UIUtils {
 	 * Returns an integer that can be used as a label index for a newly created
 	 * element.
 	 * 
-	 * @param editor
-	 *            unused parameter
 	 * @param parent
 	 *            the parent node to be looked for
 	 * @param type
@@ -532,19 +529,18 @@ public class UIUtils {
 	 *         beginIndex)
 	 * @throws RodinDBException
 	 */
-	public static String getFreeElementLabelIndex(IEventBEditor<?> editor,
-			IInternalParent parent,
-			IInternalElementType<? extends IInternalElement> type,
-			String prefix) throws RodinDBException {
+	public static String getFreeElementLabelIndex(IInternalParent parent,
+			IInternalElementType<? extends IInternalElement> type, String prefix)
+			throws RodinDBException {
 		return getFreePrefixIndex(parent, type,
 				EventBAttributes.LABEL_ATTRIBUTE, prefix);
 	}
 
-	public static String getFreeElementIdentifier(IEventBEditor<?> editor,
-			IInternalParent parent,
+	public static String getFreeElementIdentifier(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		String prefix = getPrefix(editor.getRodinInput(), type, defaultPrefix);
+		final IInternalElement root = parent.getRodinFile().getRoot();
+		String prefix = getPrefix(root, type, defaultPrefix);
 		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 

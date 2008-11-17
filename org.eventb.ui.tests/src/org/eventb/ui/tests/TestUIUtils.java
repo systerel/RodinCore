@@ -27,8 +27,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
-import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -159,7 +157,7 @@ public class TestUIUtils extends EventBUITest {
 
 	/**
 	 * Ensures that abstract guards are taken into account when computing a free
-	 * label for a guard in an extended concrete event.
+	 * label for a guard in an extended concrete event. ( bug ID 2142052 fixed )
 	 */
 	public void testGetFreeIndexLabelGuardExtended() throws Exception {
 		final IEvent con = createRefiningEvent();
@@ -256,10 +254,8 @@ public class TestUIUtils extends EventBUITest {
 	// CALLING THE CALLING METHODS //
 	public void testGetFreeIndexCallingMethods() throws RodinDBException {
 		String freeIndexFound;
-		EditPage editPage = new EditPage();
-		EventBContextEditor editor = (EventBContextEditor) editPage.getEditor();
 
-		freeIndexFound = UIUtils.getFreeElementLabelIndex(editor, m0,
+		freeIndexFound = UIUtils.getFreeElementLabelIndex(m0,
 				IAxiom.ELEMENT_TYPE, axiomLabelPrefix);
 		assertEquals("incorrect free element label index", "1", freeIndexFound);
 

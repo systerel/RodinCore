@@ -24,14 +24,12 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeFactory implements
 		IAttributeFactory<IRefinesEvent> {
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IRefinesEvent element, IProgressMonitor monitor)
+	public void setDefaultValue(IRefinesEvent element, IProgressMonitor monitor)
 			throws RodinDBException {
 		IEvent event = (IEvent) element.getParent();
 		element.setAbstractEventLabel(event.getLabel(), monitor);

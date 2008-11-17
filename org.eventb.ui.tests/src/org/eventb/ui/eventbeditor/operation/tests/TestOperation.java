@@ -127,8 +127,8 @@ public class TestOperation extends OperationTest {
 		final Element eventElement = addEventElement(mchElement, "event");
 		addAction(eventElement, "myAction", "myAssignment");
 
-		final AtomicOperation op = OperationFactory.createAction(machineEditor,
-				event, "myAction", "myAssignment", null);
+		final AtomicOperation op = OperationFactory.createAction(event,
+				"myAction", "myAssignment", null);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -153,7 +153,7 @@ public class TestOperation extends OperationTest {
 				"var3:=4" };
 		addAction(eventElement, label, assignment);
 
-		final AtomicOperation op = OperationFactory.createAction(machineEditor,
+		final AtomicOperation op = OperationFactory.createAction(
 				event, label, assignment, null);
 
 		execute(op);
@@ -170,8 +170,8 @@ public class TestOperation extends OperationTest {
 	public void testCreateAxiomWizard() throws Exception {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axiom",
 				"predicate");
-		final AtomicOperation op = OperationFactory.createAxiomWizard(
-				contextEditor, "axiom", "predicate");
+		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
+				 "axiom", "predicate");
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -191,8 +191,8 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
 				predicates);
 
-		final AtomicOperation op = OperationFactory.createAxiomWizard(
-				contextEditor, labels, predicates);
+		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
+				 labels, predicates);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -208,8 +208,8 @@ public class TestOperation extends OperationTest {
 	@Test
 	public void testCreateCarrierSetWizard() throws Exception {
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
-		final AtomicOperation op = OperationFactory.createCarrierSetWizard(
-				contextEditor, "mySet");
+		final AtomicOperation op = OperationFactory.createCarrierSetWizard(ctx,
+				 "mySet");
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -229,8 +229,8 @@ public class TestOperation extends OperationTest {
 				"mySet3" };
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE,
 				identifiers);
-		final AtomicOperation op = OperationFactory.createCarrierSetWizard(
-				contextEditor, identifiers);
+		final AtomicOperation op = OperationFactory.createCarrierSetWizard(ctx,
+				 identifiers);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -253,8 +253,8 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
 				predicates);
 
-		final AtomicOperation op = OperationFactory.createConstantWizard(
-				contextEditor, "myConstant", labels, predicates);
+		final AtomicOperation op = OperationFactory.createConstantWizard(ctx,
+				 "myConstant", labels, predicates);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -272,8 +272,8 @@ public class TestOperation extends OperationTest {
 	public void testCreateElement() throws Exception {
 		addElementWithStringAttribute(ctxElement, IExtendsContext.ELEMENT_TYPE,
 				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
-		final AtomicOperation op = OperationFactory.createElement(
-				contextEditor, IExtendsContext.ELEMENT_TYPE,
+		final AtomicOperation op = OperationFactory.createElement(ctx,
+				 IExtendsContext.ELEMENT_TYPE,
 				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
 
 		execute(op);
@@ -289,11 +289,11 @@ public class TestOperation extends OperationTest {
 
 	@Test
 	public void testCreateElementGeneric() throws Exception, RodinDBException {
-		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, machineEditor,
+		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, mch,
 				mch, "inv");
 
 		final AtomicOperation op = OperationFactory.createElementGeneric(
-				machineEditor, mch, IInvariant.ELEMENT_TYPE, null);
+				 mch, IInvariant.ELEMENT_TYPE, null);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -320,8 +320,8 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm4",
 				"¬ e2 = e3");
 
-		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(
-				contextEditor, "mySet", elements);
+		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(ctx,
+				 "mySet", elements);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", ctx, ctxElement);
@@ -352,7 +352,7 @@ public class TestOperation extends OperationTest {
 				grdNames, grdPredicates);
 		addAction(eventElement, actNames, actSubstitutions);
 
-		final AtomicOperation op = OperationFactory.createEvent(machineEditor,
+		final AtomicOperation op = OperationFactory.createEvent(mch,
 				"evt", varNames, grdNames, grdPredicates, actNames,
 				actSubstitutions);
 
@@ -369,7 +369,7 @@ public class TestOperation extends OperationTest {
 
 	/**
 	 * ensures that a guard is created with
-	 * <code>OperationFactory.createGuard(machineEditor, event, label, assignement,
+	 * <code>OperationFactory.createGuard( event, label, assignement,
 	 * null))</code>
 	 * 
 	 */
@@ -382,7 +382,7 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
 				"myGuard", "a : NAT");
 
-		final AtomicOperation op = OperationFactory.createGuard(machineEditor,
+		final AtomicOperation op = OperationFactory.createGuard(
 				event, "myGuard", "a : NAT", null);
 
 		execute(op);
@@ -399,8 +399,8 @@ public class TestOperation extends OperationTest {
 	public void testCreateInvariantWizard() throws Exception {
 		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
 				"myInvariant", "myPredicate");
-		final AtomicOperation op = OperationFactory.createInvariantWizard(
-				machineEditor, "myInvariant", "myPredicate");
+		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
+				 "myInvariant", "myPredicate");
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -420,8 +420,8 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
 				labels, predicates);
 
-		final AtomicOperation op = OperationFactory.createInvariantWizard(
-				machineEditor, labels, predicates);
+		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
+				 labels, predicates);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -438,8 +438,8 @@ public class TestOperation extends OperationTest {
 	public void testCreateTheoremWizard() throws Exception {
 		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE,
 				"myTheorem", "myPredicate");
-		final AtomicOperation op = OperationFactory.createTheoremWizard(
-				machineEditor, "myTheorem", "myPredicate");
+		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
+				 "myTheorem", "myPredicate");
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -459,8 +459,8 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE, labels,
 				predicates);
 
-		final AtomicOperation op = OperationFactory.createTheoremWizard(
-				machineEditor, labels, predicates);
+		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
+				 labels, predicates);
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);
@@ -495,8 +495,8 @@ public class TestOperation extends OperationTest {
 		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
 				Arrays.asList(invariants));
 
-		final AtomicOperation op = OperationFactory.createVariableWizard(
-				machineEditor, "myVariable", invariantCollection, "act1",
+		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
+				 "myVariable", invariantCollection, "act1",
 				"myVariable := 1");
 
 		execute(op);
@@ -514,8 +514,8 @@ public class TestOperation extends OperationTest {
 	public void testCreateVariantWizard() throws Exception {
 		addVariant(mchElement, "expression");
 
-		final AtomicOperation op = OperationFactory.createVariantWizard(
-				machineEditor, "expression");
+		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
+				 "expression");
 
 		execute(op);
 		assertEquivalent("Error when execute an operation", mch, mchElement);

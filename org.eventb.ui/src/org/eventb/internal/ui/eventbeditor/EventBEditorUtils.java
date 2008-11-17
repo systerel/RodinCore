@@ -269,8 +269,7 @@ public class EventBEditorUtils {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
 					AtomicOperation operation = OperationFactory.createAction(
-							editor, event, null, EventBUIPlugin.SUB_DEFAULT,
-							null);
+							event, null, EventBUIPlugin.SUB_DEFAULT, null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation
 							.getCreatedElement());
@@ -298,7 +297,8 @@ public class EventBEditorUtils {
 					String abs_name;
 					try {
 						abs_name = ((IEvent) event).getLabel();
-						AtomicOperation op = OperationFactory.createElement(editor,
+						AtomicOperation op = OperationFactory.createElement(
+								editor.getRodinInput(),
 								IRefinesEvent.ELEMENT_TYPE,
 								EventBAttributes.TARGET_ATTRIBUTE, abs_name);
 						History.getInstance().addOperation(op);
@@ -327,7 +327,7 @@ public class EventBEditorUtils {
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
-					AtomicOperation op = OperationFactory.createElement(editor,
+					AtomicOperation op = OperationFactory.createElement(editor.getRodinInput(),
 							IWitness.ELEMENT_TYPE,
 							EventBAttributes.PREDICATE_ATTRIBUTE,
 							EventBUIPlugin.PRD_DEFAULT);
@@ -355,8 +355,7 @@ public class EventBEditorUtils {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
 					AtomicOperation operation = OperationFactory.createGuard(
-							editor, event, null, EventBUIPlugin.GRD_DEFAULT,
-							null);
+							event, null, EventBUIPlugin.GRD_DEFAULT, null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation.getCreatedElement());
 				}
@@ -381,7 +380,7 @@ public class EventBEditorUtils {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
 					AtomicOperation operation = OperationFactory
-							.createElementGeneric(editor, event,
+							.createElementGeneric(event,
 									IParameter.ELEMENT_TYPE, null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation.getCreatedElement());
@@ -405,7 +404,7 @@ public class EventBEditorUtils {
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory.createElementGeneric(
-						editor, editor.getRodinInput(), IVariable.ELEMENT_TYPE,
+						editor.getRodinInput(), IVariable.ELEMENT_TYPE,
 						null);
 				History.getInstance().addOperation(op);
 				addNewElement(editor,op);
@@ -424,8 +423,8 @@ public class EventBEditorUtils {
 	 */
 	public static void addInvariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createInvariantWizard(editor,
-				null, EventBUIPlugin.INV_DEFAULT);
+		AtomicOperation op = OperationFactory.createInvariantWizard(editor
+				.getRodinInput(), null, EventBUIPlugin.INV_DEFAULT);
 		History.getInstance().addOperation(op);
 		addNewElement(editor,op);
 	}
@@ -441,8 +440,8 @@ public class EventBEditorUtils {
 	 */
 	public static void addTheorem(final IEventBEditor<?> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createTheoremWizard(editor, null,
-				EventBUIPlugin.THM_DEFAULT);
+		AtomicOperation op = OperationFactory.createTheoremWizard(editor
+				.getRodinInput(), null, EventBUIPlugin.THM_DEFAULT);
 		History.getInstance().addOperation(op);
 		addNewElement(editor,op);
 	}
@@ -468,8 +467,9 @@ public class EventBEditorUtils {
 		final String[] actNames = defaultArray(3, null);
 		final String[] actSubstitutions = defaultArray(3,
 				EventBUIPlugin.SUB_DEFAULT);
-		final AtomicOperation op = OperationFactory.createEvent(editor, name,
-				varNames, grdNames, grdPredicates, actNames, actSubstitutions);
+		final AtomicOperation op = OperationFactory.createEvent(editor
+				.getRodinInput(), name, varNames, grdNames, grdPredicates,
+				actNames, actSubstitutions);
 		History.getInstance().addOperation(op);
 		IInternalElement event = op.getCreatedElement();
 		displayInSynthesis(viewer, event, event);
@@ -505,8 +505,8 @@ public class EventBEditorUtils {
 	 */
 	public static void addAxiom(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createAxiomWizard(editor, null,
-				EventBUIPlugin.AXM_DEFAULT);
+		AtomicOperation op = OperationFactory.createAxiomWizard(editor
+				.getRodinInput(), null, EventBUIPlugin.AXM_DEFAULT);
 		History.getInstance().addOperation(op);
 		addNewElement(editor, op);
 	}
@@ -522,8 +522,8 @@ public class EventBEditorUtils {
 	 */
 	public static void addConstant(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createElementGeneric(editor,
-				editor.getRodinInput(), IConstant.ELEMENT_TYPE, null);
+		AtomicOperation op = OperationFactory.createElementGeneric(editor
+				.getRodinInput(), IConstant.ELEMENT_TYPE, null);
 		History.getInstance().addOperation(op);
 		addNewElement(editor, op);
 	}
@@ -539,8 +539,8 @@ public class EventBEditorUtils {
 	 */
 	public static void addSet(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createElementGeneric(editor,
-				editor.getRodinInput(), ICarrierSet.ELEMENT_TYPE, null);
+		AtomicOperation op = OperationFactory.createElementGeneric(editor
+				.getRodinInput(), ICarrierSet.ELEMENT_TYPE, null);
 		History.getInstance().addOperation(op);
 		addNewElement(editor, op);
 	}
@@ -583,7 +583,7 @@ public class EventBEditorUtils {
 
 			String prefix = UIUtils.getPrefix(editor.getRodinInput(),
 					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
-			String index = UIUtils.getFreeElementLabelIndex(editor, root,
+			String index = UIUtils.getFreeElementLabelIndex(root,
 					IInvariant.ELEMENT_TYPE, prefix);
 
 			final IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
@@ -601,8 +601,8 @@ public class EventBEditorUtils {
 			final String actName = dialog.getInitActionName();
 			final String actSub = dialog.getInitActionSubstitution();
 			final AtomicOperation operation = OperationFactory
-					.createVariableWizard(editor, varName, invariant, actName,
-							actSub);
+					.createVariableWizard(editor.getRodinInput(), varName,
+							invariant, actName, actSub);
 			History.getInstance().addOperation(operation);
 			addNewElement(editor, operation);
 		} catch (RodinDBException e) {
@@ -614,8 +614,8 @@ public class EventBEditorUtils {
 			final Collection<Pair<String, String>> invariant, String actName,
 			String actSub) {
 		final AtomicOperation operation = OperationFactory
-				.createVariableWizard(editor, varName, invariant, actName,
-						actSub);
+				.createVariableWizard(editor.getRodinInput(), varName,
+						invariant, actName, actSub);
 		History.getInstance().addOperation(operation);
 		addNewElement(editor, operation);
 	}
@@ -651,7 +651,7 @@ public class EventBEditorUtils {
 	static void newConstant(IEventBEditor<IContextRoot> editor, String identifier,
 			String[] axmNames, String[] axmSubs) {
 		AtomicOperation operation = OperationFactory.createConstantWizard(
-				editor, identifier, axmNames, axmSubs);
+				editor.getRodinInput(), identifier, axmNames, axmSubs);
 		History.getInstance().addOperation(operation);
 		addNewElements(editor, operation);
 	}
@@ -684,7 +684,7 @@ public class EventBEditorUtils {
 			String invPrefix = UIUtils.getPrefix(editor.getRodinInput(),
 					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
 
-			String invIndex = UIUtils.getFreeElementLabelIndex(editor,
+			String invIndex = UIUtils.getFreeElementLabelIndex(
 					rodinFile.getRoot(), IInvariant.ELEMENT_TYPE,
 					invPrefix);
 			final ElementNameContentInputDialog<IInvariant> dialog =
@@ -701,7 +701,7 @@ public class EventBEditorUtils {
 			String[] names = dialog.getNewNames();
 			String[] contents = dialog.getNewContents();
 			AtomicOperation operation = OperationFactory.createInvariantWizard(
-					editor, names, contents);
+					editor.getRodinInput(), names, contents);
 			History.getInstance().addOperation(operation);
 			addNewElements(editor, operation);
 		} catch (RodinDBException e) {
@@ -727,8 +727,8 @@ public class EventBEditorUtils {
 			return; // Cancel
 
 		final String expression = dialog.getExpression();
-		AtomicOperation operation = OperationFactory.createVariantWizard(
-				editor, expression);
+		AtomicOperation operation = OperationFactory.createVariantWizard(editor
+				.getRodinInput(), expression);
 		History.getInstance().addOperation(operation);
 		addNewElements(editor, operation);
 	}
@@ -750,7 +750,7 @@ public class EventBEditorUtils {
 							"org.eventb.core.theoremLabel");
 			String thmPrefix = UIUtils.getPrefix(editor.getRodinInput(),
 					ITheorem.ELEMENT_TYPE, defaultPrefix);
-			String thmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
+			String thmIndex = UIUtils.getFreeElementLabelIndex(editor
 					.getRodinInput(), ITheorem.ELEMENT_TYPE, thmPrefix);
 			final ElementNameContentInputDialog<ITheorem> dialog =
 				new ElementNameContentInputDialog<ITheorem>(
@@ -764,7 +764,7 @@ public class EventBEditorUtils {
 			String[] names = dialog.getNewNames();
 			String[] contents = dialog.getNewContents();
 			AtomicOperation operation = OperationFactory.createTheoremWizard(
-					editor, names, contents);
+					editor.getRodinInput(), names, contents);
 			History.getInstance().addOperation(operation);
 			addNewElements(editor, operation);
 		} catch (RodinDBException e) {
@@ -809,9 +809,9 @@ public class EventBEditorUtils {
 	public static void newEvent(IEventBEditor<IMachineRoot> editor, String name,
 			String[] paramNames, String[] grdNames, String[] grdPredicates,
 			String[] actNames, String[] actSubstitutions) {
-		AtomicOperation operation = OperationFactory
-				.createEvent(editor, name, paramNames, grdNames, grdPredicates,
-						actNames, actSubstitutions);
+		AtomicOperation operation = OperationFactory.createEvent(editor
+				.getRodinInput(), name, paramNames, grdNames, grdPredicates,
+				actNames, actSubstitutions);
 		History.getInstance().addOperation(operation);
 		addNewElements(editor, operation);
 	}
@@ -827,13 +827,12 @@ public class EventBEditorUtils {
 	public static void newCarrierSets(final EventBContextEditor editor,
 			IProgressMonitor monitor) {
 
-		final IContextRoot ctxFile = editor.getRodinInput();
+		final IContextRoot ctxRoot = editor.getRodinInput();
 		try {
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 			.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
 
-			String identifier = UIUtils.getFreeElementIdentifier(editor, ctxFile,
-					ICarrierSet.ELEMENT_TYPE, defaultPrefix);
+			String identifier = UIUtils.getFreeElementIdentifier(ctxRoot, ICarrierSet.ELEMENT_TYPE, defaultPrefix);
 			final ElementAttributeInputDialog dialog = new ElementAttributeInputDialog(
 					Display.getCurrent().getActiveShell(), "New Carrier Sets",
 					"Identifier", identifier);
@@ -843,7 +842,7 @@ public class EventBEditorUtils {
 				return; // Cancel
 			final Collection<String> attributes = dialog.getAttributes();
 			final String[] names = attributes.toArray(new String[attributes.size()]);
-			final AtomicOperation operation = OperationFactory.createCarrierSetWizard(editor, names);
+			final AtomicOperation operation = OperationFactory.createCarrierSetWizard(editor.getRodinInput(), names);
 			History.getInstance().addOperation(operation);
 			addNewElements(editor, operation);
 		} catch (RodinDBException e) {
@@ -861,12 +860,12 @@ public class EventBEditorUtils {
 	public static void newEnumeratedSet(final EventBContextEditor editor,
 			IProgressMonitor monitor) {
 
-		final IContextRoot ctxFile = editor.getRodinInput();
+		final IContextRoot ctxRoot = editor.getRodinInput();
 		try {
 			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.carrierSetIdentifier");
-			String identifier = UIUtils.getFreeElementIdentifier(editor,
-					ctxFile, ICarrierSet.ELEMENT_TYPE, defaultPrefix);
+			String identifier = UIUtils.getFreeElementIdentifier(ctxRoot,
+					ICarrierSet.ELEMENT_TYPE, defaultPrefix);
 			final NewEnumeratedSetInputDialog dialog = new NewEnumeratedSetInputDialog(
 					Display.getCurrent().getActiveShell(),
 					"New Enumerated Set", identifier);
@@ -876,7 +875,8 @@ public class EventBEditorUtils {
 			final String[] elements = dialog.getElements();
 			if (name != null) {
 				final AtomicOperation operation = OperationFactory
-						.createEnumeratedSetWizard(editor, name, elements);
+						.createEnumeratedSetWizard(editor.getRodinInput(),
+								name, elements);
 				History.getInstance().addOperation(operation);
 				addNewElements(editor, operation);
 			}
@@ -898,13 +898,14 @@ public class EventBEditorUtils {
 	public static void newAxioms(final IEventBEditor<IContextRoot> editor,
 			final IRodinFile rodinFile) {
 		try {
+			final IInternalElement root = editor.getRodinInput();
 			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.axiomLabel");
 
-			String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(),
-					IAxiom.ELEMENT_TYPE, defaultPrefix);
-			String axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-					.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
+			String axmPrefix = UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE,
+					defaultPrefix);
+			String axmIndex = UIUtils.getFreeElementLabelIndex(root,
+					IAxiom.ELEMENT_TYPE, axmPrefix);
 			final ElementNameContentInputDialog<IAxiom> dialog =
 				new ElementNameContentInputDialog<IAxiom>(
 					Display.getCurrent().getActiveShell(), "New Axioms",
@@ -917,7 +918,7 @@ public class EventBEditorUtils {
 			String[] names = dialog.getNewNames();
 			String[] contents = dialog.getNewContents();
 			final AtomicOperation operation = OperationFactory
-					.createAxiomWizard(editor, names, contents);
+					.createAxiomWizard(editor.getRodinInput(), names, contents);
 			History.getInstance().addOperation(operation);
 			addNewElements(editor, operation);
 		} catch (RodinDBException e) {
@@ -976,10 +977,9 @@ public class EventBEditorUtils {
 		}
 	}
 	
-	public static String getFreeInitialisationActionName(IEventBEditor<IMachineRoot> editor)
+	public static String getFreeInitialisationActionName(IMachineRoot root)
 			throws RodinDBException {
-		final IMachineRoot root = editor.getRodinInput();
-
+		
 		IInternalElement initialisation = getInitialisation(root);
 
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
@@ -988,7 +988,7 @@ public class EventBEditorUtils {
 			return UIUtils.getPrefix(root,
 					IAction.ELEMENT_TYPE, defaultPrefix) + 1;
 		else {
-			return UIUtils.getFreeElementLabel(editor, initialisation,
+			return UIUtils.getFreeElementLabel(initialisation,
 					IAction.ELEMENT_TYPE, defaultPrefix);
 		}
 	}

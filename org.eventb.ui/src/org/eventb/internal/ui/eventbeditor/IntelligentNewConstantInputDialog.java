@@ -111,6 +111,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	private void createDialogContents(Composite parent) {
+		final IContextRoot root = editor.getRodinInput();
 		composite = toolkit.createComposite(parent);
 		if (EventBEditorUtils.DEBUG)
 			composite.setBackground(EventBSharedColor.getSystemColor(
@@ -141,10 +142,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 				.getDefaultPrefix("org.eventb.core.axiomLabel");
-		String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(),
-				IAxiom.ELEMENT_TYPE, defaultPrefix);
+		String axmPrefix = UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE,
+				defaultPrefix);
 		try {
-			axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor.getRodinInput(),
+			axmIndex = UIUtils.getFreeElementLabelIndex(root,
 					IAxiom.ELEMENT_TYPE, axmPrefix);
 		} catch (RodinDBException e1) {
 			// TODO Auto-generated catch block
@@ -176,9 +177,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
 		String cstLabel = "defaultLabel";
 		try {
-			cstLabel = UIUtils.getFreeElementIdentifier(editor,
-					editor.getRodinInput(), IConstant.ELEMENT_TYPE,
-					PrefixCstName.DEFAULT_PREFIX);
+			cstLabel = UIUtils.getFreeElementIdentifier(root,
+					IConstant.ELEMENT_TYPE, PrefixCstName.DEFAULT_PREFIX);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,6 +195,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
+		final IContextRoot root = editor.getRodinInput();
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			identifier = null;
 			axmLabels = null;
@@ -205,12 +206,12 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			label.setLayoutData(gd);
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.axiomLabel");
-			String axmPrefix = UIUtils.getPrefix(editor.getRodinInput(), IAxiom.ELEMENT_TYPE,
+			String axmPrefix = UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE,
 					defaultPrefix);
 
 			try {
-				axmIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
+				axmIndex = UIUtils.getFreeElementLabelIndex(root,
+						IAxiom.ELEMENT_TYPE, axmPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

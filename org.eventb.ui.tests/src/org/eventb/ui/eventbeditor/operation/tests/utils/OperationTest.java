@@ -150,7 +150,7 @@ public abstract class OperationTest extends EventBUITest {
 		result.addAttribute(getBooleanAttribute(EXTENDED_ATTRIBUTE, false));
 		result.addAttribute(getIntAttribute(CONVERGENCE_ATTRIBUTE, ORDINARY
 				.getCode()));
-		parent.addChildren(result,null);
+		parent.addChildren(result, null);
 		return result;
 	}
 
@@ -161,13 +161,13 @@ public abstract class OperationTest extends EventBUITest {
 	}
 
 	protected Element addDefaultElement(Element parentElement,
-			IInternalElementType<?> type, IEventBEditor<?> editor,
+			IInternalElementType<?> type, IInternalElement root,
 			IInternalElement parent, String prefix) throws RodinDBException {
 		Element result = new Element(type);
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.LABEL_ATTRIBUTE, UIUtils.getFreeElementLabel(
-						editor, parent, type, prefix)));
-		parentElement.addChildren(result,null);
+						parent, type, prefix)));
+		parentElement.addChildren(result, null);
 		return result;
 	}
 
@@ -208,7 +208,7 @@ public abstract class OperationTest extends EventBUITest {
 				EventBAttributes.LABEL_ATTRIBUTE, label));
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.ASSIGNMENT_ATTRIBUTE, assignment));
-		parent.addChildren(result,null);
+		parent.addChildren(result, null);
 		return result;
 	}
 
@@ -250,7 +250,7 @@ public abstract class OperationTest extends EventBUITest {
 				EventBAttributes.LABEL_ATTRIBUTE, label));
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.PREDICATE_ATTRIBUTE, predicate));
-		parent.addChildren(result,null);
+		parent.addChildren(result, null);
 		return result;
 	}
 
@@ -274,7 +274,7 @@ public abstract class OperationTest extends EventBUITest {
 		Element result = new Element(type);
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier));
-		parent.addChildren(result,null);
+		parent.addChildren(result, null);
 		return result;
 	}
 
@@ -300,7 +300,7 @@ public abstract class OperationTest extends EventBUITest {
 			String value) {
 		Element result = new Element(type);
 		result.addAttribute(getStringAttribute(attribute, value));
-		parent.addChildren(result,null);
+		parent.addChildren(result, null);
 		return result;
 	}
 
@@ -369,7 +369,7 @@ public abstract class OperationTest extends EventBUITest {
 		for (Attribute<?, ?> attribute : getAttributes(root))
 			result.addAttribute(attribute);
 		for (IRodinElement children : root.getChildren())
-			result.addChildren(asElement((IInternalElement) children),null);
+			result.addChildren(asElement((IInternalElement) children), null);
 		return result;
 	}
 

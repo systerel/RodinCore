@@ -25,7 +25,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -181,8 +180,8 @@ public class ExtendedAttributeFactory implements IAttributeFactory<IEvent> {
 	 * Default value for extended attribute is <code>false</code>, i.e.
 	 * non-extended.
 	 */
-	public void setDefaultValue(IEventBEditor<?> editor, IEvent element,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setDefaultValue(IEvent element, IProgressMonitor monitor)
+			throws RodinDBException {
 		element.setExtended(false, monitor);
 	}
 

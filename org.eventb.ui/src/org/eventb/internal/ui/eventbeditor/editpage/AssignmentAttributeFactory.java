@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class AssignmentAttributeFactory implements
@@ -31,9 +30,8 @@ public class AssignmentAttributeFactory implements
 		return element.getAssignmentString();
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IAssignmentElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IAssignmentElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		element.setAssignmentString("", monitor);
 	}
 

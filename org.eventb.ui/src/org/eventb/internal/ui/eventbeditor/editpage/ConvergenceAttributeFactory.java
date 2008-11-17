@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IConvergenceElement.Convergence;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class ConvergenceAttributeFactory implements
@@ -66,9 +65,8 @@ public class ConvergenceAttributeFactory implements
 				new NullProgressMonitor());
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IConvergenceElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IConvergenceElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		element.setConvergence(IConvergenceElement.Convergence.ORDINARY,
 				monitor);
 	}

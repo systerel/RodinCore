@@ -61,7 +61,8 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 
 	public <T extends IInternalElement> T createElement(IInternalParent parent,
 			IInternalElementType<T> type) throws Exception {
-		final T e = registry.createElement(editor, parent, type, null);
+		final T e = registry.createElement(editor.getRodinInput(), parent,
+				type, null);
 		assertNotNull("Couldn't create an element of type " + type, e);
 		return e;
 	}

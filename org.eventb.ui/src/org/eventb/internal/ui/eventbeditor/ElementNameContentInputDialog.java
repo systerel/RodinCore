@@ -138,8 +138,8 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 			IEventBInputText text = new EventBText(toolkit.createText(body,
 					prefix + index));
 			try {
-				index = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), type, prefix);
+				index = UIUtils.getFreeElementLabelIndex(
+						editor.getRodinInput(), type, prefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -178,7 +178,7 @@ public class ElementNameContentInputDialog<T extends ILabeledElement> extends
 			IEventBInputText text = new EventBText(toolkit.createText(
 					scrolledForm.getBody(), prefix + index));
 			try {
-				index = UIUtils.getFreeElementLabelIndex(editor, editor
+				index = UIUtils.getFreeElementLabelIndex(editor
 						.getRodinInput(), type, prefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block

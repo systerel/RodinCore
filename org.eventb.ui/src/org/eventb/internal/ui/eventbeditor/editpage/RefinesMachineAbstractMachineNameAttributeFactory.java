@@ -22,16 +22,14 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesMachineAbstractMachineNameAttributeFactory implements
 		IAttributeFactory<IRefinesMachine> {
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IRefinesMachine element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IRefinesMachine element,
+			IProgressMonitor monitor) throws RodinDBException {
 		String name = "abstract_machine";
 		element.setAbstractMachineName(name, new NullProgressMonitor());
 	}

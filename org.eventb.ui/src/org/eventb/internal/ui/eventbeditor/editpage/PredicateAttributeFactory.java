@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPredicateElement;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class PredicateAttributeFactory implements
@@ -31,9 +30,8 @@ public class PredicateAttributeFactory implements
 		return element.getPredicateString();
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			IPredicateElement element, IProgressMonitor monitor)
-			throws RodinDBException {
+	public void setDefaultValue(IPredicateElement element,
+			IProgressMonitor monitor) throws RodinDBException {
 		element.setPredicateString("", monitor);
 	}
 

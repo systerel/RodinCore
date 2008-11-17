@@ -310,8 +310,8 @@ public class RefinesSection extends SectionPart implements
 				refined = null;
 			}
 		} else if (refined == null) { // Create new element
-			AtomicOperation operation = OperationFactory.createElement(editor,
-					IRefinesMachine.ELEMENT_TYPE,
+			AtomicOperation operation = OperationFactory.createElement(editor
+					.getRodinInput(), IRefinesMachine.ELEMENT_TYPE,
 					EventBAttributes.TARGET_ATTRIBUTE, machine);
 			History.getInstance().addOperation(operation);
 			refined = (IRefinesMachine) operation.getCreatedElement();

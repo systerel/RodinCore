@@ -18,13 +18,11 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class SeesContextNameAttributeFactory extends AbstractContextFactory<ISeesContext> {
 
-	public void setDefaultValue(IEventBEditor<?> editor,
-			ISeesContext element, IProgressMonitor monitor)
+	public void setDefaultValue(ISeesContext element, IProgressMonitor monitor)
 			throws RodinDBException {
 		element.setSeenContextName("context", monitor);
 	}

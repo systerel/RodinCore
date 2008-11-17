@@ -14,7 +14,6 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -40,8 +39,8 @@ public interface IAttributeRelUISpecRegistry {
 	 * possible next sibling. The default value for its attribute is also
 	 * created if applicable.
 	 * 
-	 * @param editor
-	 *            an Event-B Editor
+	 * @param root
+	 *            the root element
 	 * @param parent
 	 *            the internal parent of the new element
 	 * @param type
@@ -55,7 +54,7 @@ public interface IAttributeRelUISpecRegistry {
 	 *             if some problems occurred.
 	 */
 	public abstract <T extends IInternalElement> T createElement(
-			IEventBEditor<?> editor, IInternalParent parent,
+			IInternalElement root, IInternalParent parent,
 			IInternalElementType<T> type, IInternalElement sibling)
 			throws CoreException;
 

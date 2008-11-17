@@ -112,6 +112,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 */
 	@Override
 	protected void createContents() {
+		final IMachineRoot root = editor.getRodinInput();
 		Composite body = scrolledForm.getBody();
 		if (EventBEditorUtils.DEBUG)
 			body.setBackground(EventBSharedColor.getSystemColor(
@@ -140,7 +141,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 
 		String actLabel = "act";
 		try {
-			actLabel = EventBEditorUtils.getFreeInitialisationActionName(editor);
+			actLabel = EventBEditorUtils.getFreeInitialisationActionName(root);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -192,9 +193,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		try {
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.variableIdentifier");
-			varName = UIUtils.getFreeElementIdentifier(editor,
-					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
-					defaultPrefix);
+			varName = UIUtils.getFreeElementIdentifier(root,
+					IVariable.ELEMENT_TYPE, defaultPrefix);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -223,7 +223,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			label.setLayoutData(gd);
 
 			try {
-				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
+				invIndex = UIUtils.getFreeElementLabelIndex(editor
 						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
@@ -272,13 +272,14 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	}
 
 	private void initialise() {
+		final IMachineRoot root = editor.getRodinInput();
 		clearDirtyTexts();
 		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
 			IEventBInputText invariantPredicateText = pair.getSecond();
 			IEventBInputText invariantNameText = pair.getFirst();
 			try {
-				invIndex = UIUtils.getFreeElementLabelIndex(editor, editor
-						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
+				invIndex = UIUtils.getFreeElementLabelIndex(root,
+						IInvariant.ELEMENT_TYPE, invPrefix);
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -288,7 +289,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		}
 		String actionName = "act";
 		try {
-			actionName = EventBEditorUtils.getFreeInitialisationActionName(editor);
+			actionName = EventBEditorUtils.getFreeInitialisationActionName(root);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -300,9 +301,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		try {
 			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.variableIdentifier");
-			varName = UIUtils.getFreeElementIdentifier(editor,
-					editor.getRodinInput(), IVariable.ELEMENT_TYPE,
-					defaultPrefix);
+			varName = UIUtils.getFreeElementIdentifier(root,
+					IVariable.ELEMENT_TYPE, defaultPrefix);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

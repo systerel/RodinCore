@@ -185,9 +185,9 @@ public class NewEventInputDialog extends EventBInputDialog {
 		
 		String evtLabel = "defaultEvt";
 		try {
-			evtLabel = UIUtils.getFreeElementLabel(editor, editor
-					.getRodinInput(), IEvent.ELEMENT_TYPE,
-					PrefixEvtName.DEFAULT_PREFIX);
+			final IMachineRoot root = editor.getRodinInput();
+			evtLabel = UIUtils.getFreeElementLabel(root,
+					IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

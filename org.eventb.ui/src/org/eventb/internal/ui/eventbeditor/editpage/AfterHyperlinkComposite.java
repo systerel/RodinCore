@@ -53,8 +53,9 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				AtomicOperation operation = OperationFactory.createElementGeneric(
-						page.getEventBEditor(), parent, type, null);
+				AtomicOperation operation = OperationFactory
+						.createElementGeneric((IInternalElement) parent, type,
+								null);
 				History.getInstance().addOperation(operation);
 			}
 

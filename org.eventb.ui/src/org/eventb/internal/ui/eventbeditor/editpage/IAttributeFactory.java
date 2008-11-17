@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.RodinDBException;
 
@@ -30,8 +29,6 @@ public interface IAttributeFactory<E extends IAttributedElement> {
 	/**
 	 * Set the default value of the attribute for a given element.
 	 * 
-	 * @param editor
-	 *            an Event-B Editor
 	 * @param element
 	 *            an internal element
 	 * @param monitor
@@ -39,7 +36,7 @@ public interface IAttributeFactory<E extends IAttributedElement> {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public abstract void setDefaultValue(IEventBEditor<?> editor, E element,
+	public abstract void setDefaultValue(E element,
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**

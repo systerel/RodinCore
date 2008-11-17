@@ -60,8 +60,8 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 					assert (children.length != 0);
 					IInternalElement first = children[0];
 					AtomicOperation operation = OperationFactory
-							.createElementGeneric(page.getEventBEditor(),
-									parent, type, first);
+							.createElementGeneric((IInternalElement) parent,
+									type, first);
 					History.getInstance().addOperation(operation);
 
 				} catch (RodinDBException exception) {
