@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - increased index of label when add new input
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -29,7 +30,6 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
-import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -48,8 +48,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
-	private String axmIndex;
-
+	final private String axmPrefix;
+	
 	String identifier;
 
 	private IEventBInputText identifierText;
@@ -77,8 +77,26 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			Shell parentShell, String title) {
 		super(parentShell, title);
 		this.editor = editor;
+		final IContextRoot root = editor.getRodinInput();
+		axmPrefix = getAxiomPrefix(root);
 	}
 
+	private String getAxiomPrefix(IContextRoot root) {
+		final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
+				.getDefaultPrefix("org.eventb.core.axiomLabel");
+		return UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE, defaultPrefix);
+	}
+	
+	private String getFirstFreeAxiomPrefix(IContextRoot root, String prefix) {
+		try {
+			return UIUtils.getFreeElementLabelIndex(root, IAxiom.ELEMENT_TYPE,
+					prefix);
+		} catch (RodinDBException e1) {
+			e1.printStackTrace();
+			return "1";
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -140,41 +158,17 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		label = toolkit.createLabel(composite, "Axiom");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-				.getDefaultPrefix("org.eventb.core.axiomLabel");
-		String axmPrefix = UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE,
-				defaultPrefix);
-		try {
-			axmIndex = UIUtils.getFreeElementLabelIndex(root,
-					IAxiom.ELEMENT_TYPE, axmPrefix);
-		} catch (RodinDBException e1) {
-			// TODO Auto-generated catch block
-			axmIndex = "1";
-			e1.printStackTrace();
-		}
-
-		IEventBInputText axiomNameText = new EventBText(toolkit.createText(
-				composite, axmPrefix + axmIndex));
-
-		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-		gd.widthHint = 50;
-		axiomNameText.getTextWidget().setLayoutData(gd);
-		axiomNameText.getTextWidget().addModifyListener(
-				new DirtyStateListener());
-
-		IEventBInputText axiomPredicateText = new EventBMath(toolkit
-				.createText(composite, ""));
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.widthHint = 150;
-		axiomPredicateText.getTextWidget().setLayoutData(gd);
-		axiomPredicateText.getTextWidget().addModifyListener(
-				new DirtyStateListener());
-		textWidget.addModifyListener(
-				new GuardListener(axiomPredicateText.getTextWidget()));
-
+		final IEventBInputText axiomNameText = getNameInputText(toolkit,
+				composite, getNewAxiomName());
+		final IEventBInputText axiomPredicateText = getContentInputText(
+				toolkit, composite);
 		axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				axiomNameText, axiomPredicateText));
 
+		textWidget.addModifyListener(
+				new GuardListener(axiomPredicateText.getTextWidget()));
+
+		
 		String cstLabel = "defaultLabel";
 		try {
 			cstLabel = UIUtils.getFreeElementIdentifier(root,
@@ -195,7 +189,6 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
-		final IContextRoot root = editor.getRodinInput();
 		if (buttonId == IDialogConstants.CANCEL_ID) {
 			identifier = null;
 			axmLabels = null;
@@ -204,31 +197,11 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 			Label label = toolkit.createLabel(composite, "Axiom");
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
-			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-					.getDefaultPrefix("org.eventb.core.axiomLabel");
-			String axmPrefix = UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE,
-					defaultPrefix);
 
-			try {
-				axmIndex = UIUtils.getFreeElementLabelIndex(root,
-						IAxiom.ELEMENT_TYPE, axmPrefix);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			IEventBInputText axiomNameText = new EventBText(toolkit.createText(
-					composite, axmPrefix + axmIndex));
-			gd = new GridData(SWT.FILL, SWT.NONE, false, false);
-			axiomNameText.getTextWidget().setLayoutData(gd);
-			axiomNameText.getTextWidget().addModifyListener(
-					new DirtyStateListener());
-
-			IEventBInputText axiomPredicateText = new EventBMath(toolkit
-					.createText(composite, ""));
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			axiomPredicateText.getTextWidget().setLayoutData(gd);
-			axiomPredicateText.getTextWidget().addModifyListener(
-					new DirtyStateListener());
+			final IEventBInputText axiomNameText = getNameInputText(toolkit,
+					composite, getNewAxiomName());
+			final IEventBInputText axiomPredicateText = getContentInputText(
+					toolkit, composite);
 
 			axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 					axiomNameText, axiomPredicateText));
@@ -244,6 +217,13 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		super.buttonPressed(buttonId);
 	}
 
+	private String getNewAxiomName() {
+		String axmIndex = getFirstFreeAxiomPrefix(editor.getRodinInput(),
+				axmPrefix);
+		final int index = Integer.parseInt(axmIndex) + axiomPairTexts.size();
+		return axmPrefix + index;
+	}
+	
 	private void addValues() {
 		final String[] axmNames = axmLabels
 				.toArray(new String[axmLabels.size()]);

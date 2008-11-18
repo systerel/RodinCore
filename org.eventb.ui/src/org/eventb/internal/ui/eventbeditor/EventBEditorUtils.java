@@ -579,35 +579,29 @@ public class EventBEditorUtils {
 	 */
 	public static void intelligentNewVariable(final IEventBEditor<IMachineRoot> editor,
 			final IMachineRoot root) {
-		try {
 
-			String prefix = UIUtils.getPrefix(editor.getRodinInput(),
-					IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
-			String index = UIUtils.getFreeElementLabelIndex(root,
-					IInvariant.ELEMENT_TYPE, prefix);
+		String prefix = UIUtils.getPrefix(editor.getRodinInput(),
+				IInvariant.ELEMENT_TYPE, PrefixInvName.DEFAULT_PREFIX);
 
-			final IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
-					editor, Display.getCurrent().getActiveShell(),
-					"New Variable", prefix, index);
+		final IntelligentNewVariableInputDialog dialog = new IntelligentNewVariableInputDialog(
+				editor, Display.getCurrent().getActiveShell(), "New Variable",
+				prefix);
 
-			dialog.open();
+		dialog.open();
 
-			if (dialog.getReturnCode() == InputDialog.CANCEL)
-				return; // Cancel
+		if (dialog.getReturnCode() == InputDialog.CANCEL)
+			return; // Cancel
 
-			final String varName = dialog.getName();
-			final Collection<Pair<String, String>> invariant = dialog
-					.getInvariants();
-			final String actName = dialog.getInitActionName();
-			final String actSub = dialog.getInitActionSubstitution();
-			final AtomicOperation operation = OperationFactory
-					.createVariableWizard(editor.getRodinInput(), varName,
-							invariant, actName, actSub);
-			History.getInstance().addOperation(operation);
-			addNewElement(editor, operation);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		final String varName = dialog.getName();
+		final Collection<Pair<String, String>> invariant = dialog
+				.getInvariants();
+		final String actName = dialog.getInitActionName();
+		final String actSub = dialog.getInitActionSubstitution();
+		final AtomicOperation operation = OperationFactory
+				.createVariableWizard(editor.getRodinInput(), varName,
+						invariant, actName, actSub);
+		History.getInstance().addOperation(operation);
+		addNewElement(editor, operation);
 	}
 
 	static void newVariable(IEventBEditor<IMachineRoot> editor, String varName,
@@ -687,11 +681,9 @@ public class EventBEditorUtils {
 			String invIndex = UIUtils.getFreeElementLabelIndex(
 					rodinFile.getRoot(), IInvariant.ELEMENT_TYPE,
 					invPrefix);
-			final ElementNameContentInputDialog<IInvariant> dialog =
-				new ElementNameContentInputDialog<IInvariant>(
+			final ElementNameContentInputDialog<IInvariant> dialog = new ElementNameContentInputDialog<IInvariant>(
 					Display.getCurrent().getActiveShell(), "New Invariants",
-					"Label(s) and predicate(s)", editor, IInvariant.ELEMENT_TYPE,
-					invPrefix, invIndex);
+					"Label(s) and predicate(s)", invPrefix, invIndex);
 
 			dialog.open();
 
@@ -752,11 +744,9 @@ public class EventBEditorUtils {
 					ITheorem.ELEMENT_TYPE, defaultPrefix);
 			String thmIndex = UIUtils.getFreeElementLabelIndex(editor
 					.getRodinInput(), ITheorem.ELEMENT_TYPE, thmPrefix);
-			final ElementNameContentInputDialog<ITheorem> dialog =
-				new ElementNameContentInputDialog<ITheorem>(
+			final ElementNameContentInputDialog<ITheorem> dialog = new ElementNameContentInputDialog<ITheorem>(
 					Display.getCurrent().getActiveShell(), "New Theorems",
-					"Label(s) and predicate(s)", editor, ITheorem.ELEMENT_TYPE,
-					thmPrefix, thmIndex);
+					"Label(s) and predicate(s)", thmPrefix, thmIndex);
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)
 				return; // Cancel
@@ -898,7 +888,7 @@ public class EventBEditorUtils {
 	public static void newAxioms(final IEventBEditor<IContextRoot> editor,
 			final IRodinFile rodinFile) {
 		try {
-			final IInternalElement root = editor.getRodinInput();
+			final IContextRoot root = editor.getRodinInput();
 			final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
 					.getDefaultPrefix("org.eventb.core.axiomLabel");
 
@@ -906,11 +896,9 @@ public class EventBEditorUtils {
 					defaultPrefix);
 			String axmIndex = UIUtils.getFreeElementLabelIndex(root,
 					IAxiom.ELEMENT_TYPE, axmPrefix);
-			final ElementNameContentInputDialog<IAxiom> dialog =
-				new ElementNameContentInputDialog<IAxiom>(
+			final ElementNameContentInputDialog<IAxiom> dialog = new ElementNameContentInputDialog<IAxiom>(
 					Display.getCurrent().getActiveShell(), "New Axioms",
-					"Label(s) and predicate(s)", editor, IAxiom.ELEMENT_TYPE,
-					axmPrefix, axmIndex);
+					"Label(s) and predicate(s)", axmPrefix, axmIndex);
 			dialog.open();
 			if (dialog.getReturnCode() == InputDialog.CANCEL)
 				return; // Cancel
@@ -918,7 +906,7 @@ public class EventBEditorUtils {
 			String[] names = dialog.getNewNames();
 			String[] contents = dialog.getNewContents();
 			final AtomicOperation operation = OperationFactory
-					.createAxiomWizard(editor.getRodinInput(), names, contents);
+					.createAxiomWizard(root, names, contents);
 			History.getInstance().addOperation(operation);
 			addNewElements(editor, operation);
 		} catch (RodinDBException e) {

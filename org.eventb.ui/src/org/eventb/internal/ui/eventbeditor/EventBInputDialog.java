@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - add getNameInputText and getContentInputText to factor several methods
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -19,13 +20,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.IEventBInputText;
 
 /**
  * @author htson
@@ -181,5 +186,24 @@ public abstract class EventBInputDialog extends Dialog {
 			parent.setSize(curr.x + 1, curr.y);
 		}
 		scrolledForm.reflow(true);
+	}
+
+	protected IEventBInputText getNameInputText(FormToolkit tk, Composite composite, String text) {
+		final IEventBInputText inputText = new EventBText(tk.createText(composite, text));
+		final GridData gd = new GridData(SWT.FILL, SWT.NONE, false, false);
+		gd.widthHint = 50;
+		inputText.getTextWidget().setLayoutData(gd);
+		inputText.getTextWidget().addModifyListener(new DirtyStateListener());
+		return inputText;
+	}
+
+	protected EventBMath getContentInputText(FormToolkit tk, Composite composite) {
+		final EventBMath textMath = new EventBMath(tk.createText(composite,
+				""));
+		final GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.widthHint = 150;
+		textMath.getTextWidget().setLayoutData(gd);
+		textMath.getTextWidget().addModifyListener(new DirtyStateListener());
+		return textMath;
 	}
 }

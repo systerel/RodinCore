@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - increased index of label when add new input
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -80,11 +81,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	 */
 	public IntelligentNewVariableInputDialog(IEventBEditor<IMachineRoot> editor,
 			Shell parentShell, String title,
-			String invPrefix, String invIndex) {
+			String invPrefix) {
 		super(parentShell, title);
 		this.editor = editor;
-		this.invIndex = invIndex;
 		this.invPrefix = invPrefix;
+		this.invIndex = getInvarianFirstIndex(editor.getRodinInput(), invPrefix);
 		invariantPairTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 	}
 
@@ -166,27 +167,16 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		label = toolkit.createLabel(body, "Invariant");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		IEventBInputText invariantNameText = new EventBText(toolkit.createText(
-				body, invPrefix + invIndex));
-
-		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-		gd.widthHint = 50;
-		invariantNameText.getTextWidget().setLayoutData(gd);
-		invariantNameText.getTextWidget().addModifyListener(
-				new DirtyStateListener());
-
-		IEventBInputText invariantPredicateText = new EventBMath(toolkit
-				.createText(body, ""));
-		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gd.widthHint = 150;
-		invariantPredicateText.getTextWidget().setLayoutData(gd);
-		invariantPredicateText.getTextWidget().addModifyListener(
-				new DirtyStateListener());
-		identifierText.getTextWidget().addModifyListener(
-				new GuardListener(invariantPredicateText.getTextWidget()));
-
+		final IEventBInputText invariantNameText = getNameInputText(toolkit,
+				scrolledForm.getBody(), getNewInvariantName(invPrefix,
+						invIndex, 0));
+		final IEventBInputText invariantPredicateText = getContentInputText(
+				toolkit, scrolledForm.getBody());
 		invariantPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				invariantNameText, invariantPredicateText));
+
+		identifierText.getTextWidget().addModifyListener(
+				new GuardListener(invariantPredicateText.getTextWidget()));
 
 		Text nameTextWidget = identifierText.getTextWidget();
 		String varName = "var";
@@ -222,29 +212,11 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 			label.setLayoutData(gd);
 
-			try {
-				invIndex = UIUtils.getFreeElementLabelIndex(editor
-						.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			IEventBInputText invariantNameText = new EventBText(toolkit
-					.createText(body, invPrefix + invIndex));
-
-			gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-			invariantNameText.getTextWidget().setLayoutData(gd);
-			invariantNameText.getTextWidget().addModifyListener(
-					new DirtyStateListener());
-
-			IEventBInputText invariantPredicateText = new EventBMath(toolkit
-					.createText(body, ""));
-			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-			invariantPredicateText.getTextWidget().setLayoutData(gd);
-			invariantPredicateText.getTextWidget().addModifyListener(
-					new DirtyStateListener());
-
+			final IEventBInputText invariantNameText = getNameInputText(
+					toolkit, scrolledForm.getBody(), getNewInvariantName(
+							invPrefix, invIndex, invariantPairTexts.size()));
+			final IEventBInputText invariantPredicateText = getContentInputText(
+					toolkit, scrolledForm.getBody());
 			invariantPairTexts
 					.add(new Pair<IEventBInputText, IEventBInputText>(
 							invariantNameText, invariantPredicateText));
@@ -260,6 +232,21 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		super.buttonPressed(buttonId);
 	}
 
+	private String getInvarianFirstIndex(IMachineRoot root, String prefix) {
+		try {
+			return UIUtils.getFreeElementLabelIndex(root,
+					IInvariant.ELEMENT_TYPE, prefix);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return "1";
+		}
+	}
+	
+	private String getNewInvariantName(String prefix, String firstIndex, int num) {
+		final int index = Integer.parseInt(firstIndex) + num;
+		return prefix + index;
+	}
+	
 	private void addValues() {
 
 		final String varName = getName();
@@ -274,18 +261,16 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	private void initialise() {
 		final IMachineRoot root = editor.getRodinInput();
 		clearDirtyTexts();
+		invIndex = getInvarianFirstIndex(root, invPrefix);
+		int num = 0 ;
 		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
 			IEventBInputText invariantPredicateText = pair.getSecond();
 			IEventBInputText invariantNameText = pair.getFirst();
-			try {
-				invIndex = UIUtils.getFreeElementLabelIndex(root,
-						IInvariant.ELEMENT_TYPE, invPrefix);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			invariantNameText.getTextWidget().setText(invPrefix + invIndex);
+
+			invariantNameText.getTextWidget().setText(
+					getNewInvariantName(invPrefix, invIndex, num));
 			invariantPredicateText.getTextWidget().setText("");
+			num++;
 		}
 		String actionName = "act";
 		try {
