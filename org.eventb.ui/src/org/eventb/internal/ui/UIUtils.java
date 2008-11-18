@@ -42,6 +42,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
@@ -791,7 +792,7 @@ public class UIUtils {
 	 */
 	public static void showInfo(final String message) {
 		final String pluginName = getPluginName();
-		Display.getDefault().syncExec(new Runnable() {
+		syncExec(new Runnable() {
 			public void run() {
 				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
 						.getActiveWorkbenchWindow();
@@ -809,7 +810,7 @@ public class UIUtils {
 	 */
 	public static void showUnexpectedError(final CoreException e) {
 		final String pluginName = getPluginName();
-		Display.getDefault().syncExec(new Runnable() {
+		syncExec(new Runnable() {
 			public void run() {
 				final IStatus status = new Status(IStatus.ERROR,
 						EventBUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getStatus()
@@ -822,6 +823,11 @@ public class UIUtils {
 
 	}
 	
+	private static void syncExec(Runnable runnable) {
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.syncExec(runnable);
+	}
+
 	private static String getPluginName() {
 		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
