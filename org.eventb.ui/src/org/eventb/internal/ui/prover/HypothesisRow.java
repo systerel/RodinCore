@@ -128,10 +128,11 @@ public class HypothesisRow {
 		this.proverUI = proverUI;
 
 		this.toolkit = toolkit;
+		// FIXME why twice the same color?
 		if (odd)
 			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
 		else
-			background = new Color(Display.getDefault(), 225, 255, 255);
+			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
 
 		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
 		if (ProverUIUtils.DEBUG) {

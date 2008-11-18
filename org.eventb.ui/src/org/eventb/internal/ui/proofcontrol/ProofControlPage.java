@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
@@ -167,7 +168,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            a runnable with progress monitor.
 	 */
 	private static void applyTacticWithProgress(IRunnableWithProgress op) {
-		final Shell shell = Display.getDefault().getActiveShell();
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		final Shell shell = display.getActiveShell();
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
 			dialog.run(true, true, op);

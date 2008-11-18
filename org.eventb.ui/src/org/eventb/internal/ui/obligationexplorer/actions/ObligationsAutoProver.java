@@ -21,10 +21,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSRoot;
@@ -160,7 +160,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 
 
 	private void runWithProgress(IRunnableWithProgress op) {
-		final Shell shell = Display.getDefault().getActiveShell();
+		final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		try {
 			dialog.run(true, true, op);
