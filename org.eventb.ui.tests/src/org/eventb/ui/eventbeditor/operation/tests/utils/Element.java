@@ -44,7 +44,7 @@ public class Element {
 		return type;
 	}
 
-	public void addChildren(Element element, Element nextSibling) {
+	public void addChild(Element element, Element nextSibling) {
 		assert element != null;
 		assert element != sibling;
 
@@ -104,18 +104,18 @@ public class Element {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(type.getName());
 		buffer.append("(");
-		boolean first = true;
-		for (Object o : attributes.toArray()) {
-			if (!first)
-				buffer.append(", ");
-			first = false;
+		String sep = "";
+		for (Object o : attributes) {
+			buffer.append(sep);
+			sep = ", ";
 			buffer.append(o.toString());
 		}
-		buffer.append(")\n");
+		buffer.append(")");
+
+		sep = "\n - ";
 		for (Object o : children.toArray()) {
-			buffer.append(" - ");
+			buffer.append(sep);
 			buffer.append(o.toString());
-			buffer.append("\n");
 		}
 
 		return buffer.toString();

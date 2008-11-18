@@ -12,22 +12,22 @@ package org.eventb.ui.eventbeditor.operation.tests.utils;
 
 import org.rodinp.core.IAttributeType;
 
-public final class Attribute<T_TYPE extends IAttributeType, T_VALUE> {
-	private final T_TYPE type;
-	private final T_VALUE value;
+public final class Attribute<T extends IAttributeType, V> {
+	private final T type;
+	private final V value;
 	private final int hashCode;
 
-	public Attribute(T_TYPE type, T_VALUE value) {
+	public Attribute(T type, V value) {
 		this.type = type;
 		this.value = value;
-		hashCode = type.hashCode() * 17 * 17 + value.hashCode() * 17;
+		hashCode = (type.hashCode() * 17 + value.hashCode()) * 17;
 	}
 
-	public T_TYPE getType() {
+	public T getType() {
 		return type;
 	}
 
-	public T_VALUE getValue() {
+	public V getValue() {
 		return value;
 	}
 

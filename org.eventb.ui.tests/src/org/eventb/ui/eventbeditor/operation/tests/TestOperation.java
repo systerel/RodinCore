@@ -77,7 +77,7 @@ public class TestOperation extends OperationTest {
 	private void addElements(Element parent, IInternalElement[] elements)
 			throws RodinDBException {
 		for (IRodinElement element : elements) {
-			parent.addChildren(asElement((IInternalElement) element), null);
+			parent.addChild(asElement((IInternalElement) element), null);
 		}
 	}
 
