@@ -14,7 +14,6 @@ package org.eventb.internal.ui.eventbeditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionGroup;
@@ -156,8 +155,7 @@ public class ConstantMasterSection extends EventBTreePartWithButtons {
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(final ElementChangedEvent event) {
-		Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
+		syncExec(new Runnable() {
 			public void run() {
 				if (ConstantMasterSection.this.getViewer().getControl().isDisposed())
 					return;

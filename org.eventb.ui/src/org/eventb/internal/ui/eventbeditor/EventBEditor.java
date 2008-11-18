@@ -40,6 +40,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
@@ -632,7 +633,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 				return;
 			}
 			notifyElementChangedListeners(delta);
-			Display display = Display.getDefault();
+			Display display = PlatformUI.getWorkbench().getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					editorDirtyStateChanged();

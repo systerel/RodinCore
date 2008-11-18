@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.forms.IManagedForm;
@@ -179,6 +180,11 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 		viewer.getControl().setMenu(menu);
 		this.editor.getSite().registerContextMenu(menuMgr,
 				viewer);
+	}
+	
+	protected void syncExec(Runnable runnable) {
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.syncExec(runnable);
 	}
 
 	@Override
