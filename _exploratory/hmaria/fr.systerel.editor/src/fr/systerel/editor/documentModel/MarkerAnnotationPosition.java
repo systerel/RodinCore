@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;

@@ -9,11 +9,13 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import java.util.Arrays;
 
 import org.rodinp.core.IRodinElement;
+
+import fr.systerel.editor.editors.RodinConfiguration;
 
 /**
  * An interval represents a range in a document associated with a

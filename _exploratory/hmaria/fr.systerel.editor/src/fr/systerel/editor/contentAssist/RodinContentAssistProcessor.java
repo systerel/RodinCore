@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.contentAssist;
 
 import java.util.ArrayList;
 
@@ -21,6 +21,9 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.editors.OverlayEditor;
 
 public class RodinContentAssistProcessor implements IContentAssistProcessor {
 

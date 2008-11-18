@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinMarkerUtil;
 
 import fr.systerel.editor.EditorUtils;
+import fr.systerel.editor.editors.RodinConfiguration;
+import fr.systerel.editor.editors.RodinEditor;
 
 /**
  * This is a document provider for rodin machines and contexts. It is intended

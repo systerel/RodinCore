@@ -21,6 +21,9 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.RodinDamagerRepairer;
+
 /**
  *
  */

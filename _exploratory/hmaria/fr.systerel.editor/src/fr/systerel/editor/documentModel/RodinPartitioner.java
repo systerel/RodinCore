@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,8 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
+
+import fr.systerel.editor.editors.RodinConfiguration;
 
 /**
  * Partitions a document according to the intervals.

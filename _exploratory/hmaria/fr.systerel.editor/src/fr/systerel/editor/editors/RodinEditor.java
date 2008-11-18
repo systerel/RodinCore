@@ -30,11 +30,17 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
+
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
+import fr.systerel.editor.documentModel.RodinDocumentProvider;
 
 public class RodinEditor extends TextEditor implements IElementChangedListener {
 
@@ -64,16 +70,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		super.dispose();
 	}
 	
-	
-	protected void createActions() {
-		super.createActions();
 		
-//		IAction a= new TextOperationAction(RodinEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
-//		a.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-//		setAction("ContentAssistProposal", a); //$NON-NLS-1$
-		
-	}
-	
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -88,7 +85,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		styledText = getSourceViewer().getTextWidget();
 		
-		OverlayEditor editor = new OverlayEditor(styledText, mapper, viewer);
+		OverlayEditor editor = new OverlayEditor(styledText, mapper, viewer, this);
 		annotationModel.addAnnotationModelListener(editor);
 		SelectionController controller = new SelectionController(styledText, mapper, viewer, editor);
 //		styledText.addSelectionListener(controller);
@@ -97,8 +94,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		styledText.addMouseListener(controller);
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
-		
-		
+			
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 	}

@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
 
@@ -32,6 +32,8 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.editor.editors.RodinConfiguration;
 
 /**
  *

@@ -9,12 +9,13 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
 
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinElement;
+
 
 /**
  * Maps <code>Intervals</code> to a document.
@@ -136,7 +137,7 @@ public class DocumentMapper {
 	 * @param offset
 	 * @return the editable interval at the given offset or <code>null</code> if none exists.
 	 */
-	protected Interval findEditableInterval(int offset) {
+	public Interval findEditableInterval(int offset) {
 		int index = findEditableIntervalIndex(offset);
 		if (index >= 0) {
 			return intervals.get(index);

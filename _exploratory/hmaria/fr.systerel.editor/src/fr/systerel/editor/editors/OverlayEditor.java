@@ -11,10 +11,15 @@
 
 package fr.systerel.editor.editors;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -22,34 +27,38 @@ import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.swt.IFocusService;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.editor.actions.StyledTextEditAction;
+import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.Interval;
+
 
 /**
  *
  */
-public class OverlayEditor implements IAnnotationModelListener,
-						IAnnotationModelListenerExtension, ExtendedModifyListener, VerifyKeyListener{
+public class OverlayEditor implements IAnnotationModelListener, IAnnotationModelListenerExtension, 
+										ExtendedModifyListener, VerifyKeyListener, IMenuListener{
 	private StyledText editorText;
 	private DocumentMapper mapper;
 	private StyledText parent;
@@ -58,30 +67,59 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private static final int DEFAULT_WIDTH = 300;
 	private ITextViewer textViewer;
 	private IContentAssistant contentAssistant;
+	private RodinEditor editor;
+	private Menu fTextContextMenu;
+	private ArrayList<IAction> editActions = new ArrayList<IAction>();
+	
+	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID +".editorText";
 
-	public OverlayEditor(StyledText parent, DocumentMapper mapper, ProjectionViewer viewer) {
+
+	public OverlayEditor(StyledText parent, DocumentMapper mapper, ProjectionViewer viewer, RodinEditor editor) {
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.parent = parent;
+		this.editor = editor;
 		
 		textViewer = new TextViewer(parent, SWT.BORDER |SWT.V_SCROLL);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
 		
-		editorText = textViewer.getTextWidget();
-		editorText.addVerifyKeyListener(this);
-		createEditorText();
+		setupEditorText();
 	}
 
 
-	private void createEditorText() {
-//		editorText = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
+	private void setupEditorText() {
+		editorText = textViewer.getTextWidget();
+
+		editorText.addVerifyKeyListener(this);
+		editorText.addModifyListener(new EventBStyledTextModifyListener());
+
 		editorText.setFont(parent.getFont());
 		Point oldsize = parent.getSize();
 		parent.pack();
 		parent.setSize(oldsize);
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
+		
+		createMenu();
+		createEditActions();
+	
+		
+		//the focus tracker is used to activate the handlers, when the widget has focus.
+		IFocusService focusService =(IFocusService) editor.getSite().getService(IFocusService.class);
+		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
+	}
+
+
+	private void createMenu() {
+		String id = "editorTextMenu";
+		MenuManager manager= new MenuManager(id, id);
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(this);
+		fTextContextMenu= manager.createContextMenu(editorText);
+
+		// comment this line if using gestures, above.
+		editorText.setMenu(fTextContextMenu);
 	}
 
 	
@@ -102,21 +140,36 @@ public class OverlayEditor implements IAnnotationModelListener,
 				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y) +parent.getLineHeight());
 				
 				textViewer.setDocument(createDocument(text));
-//				editorText.setText(text);
+				editorText.setCaretOffset(offset - start);
 				resizeTo(size.x, size.y);
 				editorText.setFont(parent.getFont());
 				setToLocation(location.x, location.y);
 				editorText.setVisible(true);
 				editorText.setFocus();
-			}
-			
+			}			
 		}
 	}
 	
+	/**
+	 * Sets the editor text to a given location. The y-value will get slightly
+	 * corrected. The y value should correspond to the start of a line in the
+	 * underlying editor
+	 * 
+	 * @param x,
+	 *            the x-value of the new location
+	 * @param y,
+	 *            the y-value of the new location
+	 */
 	public void setToLocation(int x, int y) {
 		editorText.setLocation(x, y-2);
 	}
 
+	/**
+	 * Resizes the editor. A margin will be added to the given width and height.
+	 * 
+	 * @param width
+	 * @param height
+	 */
 	public void resizeTo(int width, int height) {
 		int w = Math.max(width +5 +editorText.getVerticalBar().getSize().x, DEFAULT_WIDTH);
 		int h = Math.max(height, editorText.getLineHeight() ) +4;
@@ -258,7 +311,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 
-
+	/**
+	 * Resizes the editorText widget according to the text modifications.
+	 */
 	@Override
 	public void modifyText(ExtendedModifyEvent event) {
 		int max = 0;
@@ -270,7 +325,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		max = Math.max(max, editorText.getLocationAtOffset(editorText.getCharCount()).x);
 		int height = editorText.getLineCount() * editorText.getLineHeight();
 		resizeTo(max, height);
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -306,17 +360,51 @@ public class OverlayEditor implements IAnnotationModelListener,
 			contentAssistant.showPossibleCompletions();
 		}
 			
-		
 	}
 
 	/**
 	 *
 	 * @return the interval that this editor is currently editing
-	 * or <code>null</code>, if there editor is not visible currently.
+	 * or <code>null</code>, if the editor is not visible currently.
 	 */
 	public Interval getInterval() {
 		return interval;
 	}
+
+
+	@Override
+	public void menuAboutToShow(IMenuManager manager) {
+		for (IAction action : editActions) {
+			if (action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.COPY)
+					|| action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.CUT)) {
+				action.setEnabled(editorText.getSelectionCount() > 0);
+			}
+			if (action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.PASTE)) {
+				//TODO: disable, if nothing to paste.
+			}
+			manager.add(action);
+			
+		}
+	}
 	
-	
+	public void createEditActions() {
+		IAction action;
+		action= new StyledTextEditAction(editorText, ST.COPY);
+		action.setText("Copy");
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		editActions.add(action);
+
+		action= new StyledTextEditAction(editorText, ST.PASTE);
+		action.setText("Paste");
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		editActions.add(action);
+
+		action= new StyledTextEditAction(editorText, ST.CUT);
+		action.setText("Cut");
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		editActions.add(action);
+		
+		
+	}
+
 }

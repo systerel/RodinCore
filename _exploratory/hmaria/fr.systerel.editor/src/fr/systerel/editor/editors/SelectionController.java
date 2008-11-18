@@ -23,6 +23,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.Interval;
+
 /**
  * Controls the selection in the RodinEditor and decides when it should be
  * editable. It is not possible to have just parts of the text editable. So the

@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.contentAssist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +24,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.EditorUtils;
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.editors.OverlayEditor;
 
 /**
  */
