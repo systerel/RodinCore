@@ -12,6 +12,12 @@ package org.eventb.ui.eventbeditor.operation.tests.utils;
 
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.EventBAttributes;
@@ -25,20 +31,29 @@ import org.rodinp.core.IAttributeType;
 
 public class TestElement extends TestCase {
 
+	protected static void assertChildren(Element element, Element... expected) {
+		Set<Element> expSet = new HashSet<Element>(Arrays.asList(expected));
+		assertEquals(expSet, element.getChildren());
+	}
+
+	protected static void assertAttributes(Element element,
+			Attribute<?, ?>... expected) {
+		HashSet<Attribute<?, ?>> expSet = new HashSet<Attribute<?, ?>>(Arrays
+				.asList(expected));
+		assertEquals(expSet, element.getAttributes());
+	}
+
 	@Test
 	public void testAddChidren() throws Exception {
 		Element e1 = new Element(IAxiom.ELEMENT_TYPE);
 		Element e2 = new Element(IAction.ELEMENT_TYPE);
 		Element e3 = new Element(IEvent.ELEMENT_TYPE);
-		e1.addChildren(e2, null);
-		assertTrue(e1.getChildren().contains(e2));
-		assertEquals(1, e1.getChildren().size());
 
-		e1.addChildren(e3, null);
-		assertTrue(e1.getChildren().contains(e3));
-		assertTrue(e1.getChildren().contains(e2));
-		assertEquals(2, e1.getChildren().size());
+		e1.addChild(e2, null);
+		assertChildren(e1, e2);
 
+		e1.addChild(e3, null);
+		assertChildren(e1, e2, e3);
 	}
 
 	private void addStringAttribute(Element element,
@@ -50,7 +65,7 @@ public class TestElement extends TestCase {
 	private Element addEvent(Element parent, String label) {
 		final Element event = new Element(IEvent.ELEMENT_TYPE);
 		addStringAttribute(event, LABEL_ATTRIBUTE, "event");
-		parent.addChildren(event, null);
+		parent.addChild(event, null);
 		return event;
 	}
 
@@ -58,26 +73,26 @@ public class TestElement extends TestCase {
 		final Element action = new Element(IAction.ELEMENT_TYPE);
 		addStringAttribute(action, LABEL_ATTRIBUTE, label);
 		addStringAttribute(action, ASSIGNMENT_ATTRIBUTE, assignment);
-		parent.addChildren(action, null);
+		parent.addChild(action, null);
 		return action;
 	}
 
 	private Element addAction(Element parent, String label) {
 		final Element action = new Element(IAction.ELEMENT_TYPE);
 		addStringAttribute(action, LABEL_ATTRIBUTE, label);
-		parent.addChildren(action, null);
+		parent.addChild(action, null);
 		return action;
 	}
 
 	private Element addSeesContext(Element parent) {
 		final Element sees = new Element(ISeesContext.ELEMENT_TYPE);
-		parent.addChildren(sees, null);
+		parent.addChild(sees, null);
 		return sees;
 	}
 
-	private void assertNotEquals(String msg, Element expected, Element actual) {
-		final String message = msg + "\nexpected :\n " + expected.toString()
-				+ "\nbut was :\n" + actual.toString();
+	private void assertNotEquals(Element expected, Element actual) {
+		final String message = "element :\n " + expected.toString()
+				+ "\nand element :\n" + actual.toString() + "\nshould differ.";
 		if (expected == null && actual == null)
 			fail(message);
 		if (expected != null && expected.equals(actual))
@@ -101,14 +116,14 @@ public class TestElement extends TestCase {
 		final Element event3 = addEvent(mch3, "event");
 		addAction(event3, "action");
 
-		assertEquals("Sould be equals", mch1, mch1);
-		assertEquals("Sould be equals", mch1, mch2);
-		assertEquals("Sould be equals", mch2, mch1);
+		assertEquals(mch1, mch1);
+		assertEquals(mch1, mch2);
+		assertEquals(mch2, mch1);
 
-		assertNotEquals("Sould be equals", mch1, mch3);
-		assertNotEquals("Sould be equals", mch3, mch1);
-		assertNotEquals("Sould be equals", mch2, mch3);
-		assertNotEquals("Sould be equals", mch3, mch2);
+		assertNotEquals(mch1, mch3);
+		assertNotEquals(mch3, mch1);
+		assertNotEquals(mch2, mch3);
+		assertNotEquals(mch3, mch2);
 	}
 
 	@Test
@@ -124,8 +139,7 @@ public class TestElement extends TestCase {
 		Attribute<IAttributeType.String, String> att1 = new Attribute<IAttributeType.String, String>(
 				EventBAttributes.LABEL_ATTRIBUTE, "monLabel");
 		e1.addAttribute(att1);
-		assertTrue(e1.getAttributes().contains(att1));
-		assertEquals(e1.getAttributes().size(), 1);
+		assertAttributes(e1, att1);
 	}
 
 }
