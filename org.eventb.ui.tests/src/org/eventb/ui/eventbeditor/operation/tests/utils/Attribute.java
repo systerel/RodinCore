@@ -12,29 +12,29 @@ package org.eventb.ui.eventbeditor.operation.tests.utils;
 
 import org.rodinp.core.IAttributeType;
 
-public final class Attribute<T extends IAttributeType, V> {
-	private final T type;
-	private final V value;
+public final class Attribute {
+	private final IAttributeType type;
+	private final Object value;
 	private final int hashCode;
 
-	public Attribute(T type, V value) {
+	public Attribute(IAttributeType type, Object value) {
 		this.type = type;
 		this.value = value;
 		hashCode = (type.hashCode() * 17 + value.hashCode()) * 17;
 	}
 
-	public T getType() {
+	public IAttributeType getType() {
 		return type;
 	}
 
-	public V getValue() {
+	public Object getValue() {
 		return value;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Attribute) {
-			Attribute<?, ?> att = (Attribute<?, ?>) obj;
+			Attribute att = (Attribute) obj;
 			return getType().equals(att.getType())
 					&& getValue().equals(att.getValue());
 		} else {

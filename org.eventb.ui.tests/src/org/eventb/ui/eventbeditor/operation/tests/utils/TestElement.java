@@ -14,9 +14,7 @@ import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -32,13 +30,12 @@ import org.rodinp.core.IAttributeType;
 public class TestElement extends TestCase {
 
 	protected static void assertChildren(Element element, Element... expected) {
-		Set<Element> expSet = new HashSet<Element>(Arrays.asList(expected));
-		assertEquals(expSet, element.getChildren());
+		assertEquals(Arrays.asList(expected), element.getChildren());
 	}
 
 	protected static void assertAttributes(Element element,
-			Attribute<?, ?>... expected) {
-		HashSet<Attribute<?, ?>> expSet = new HashSet<Attribute<?, ?>>(Arrays
+			Attribute... expected) {
+		HashSet<Attribute> expSet = new HashSet<Attribute>(Arrays
 				.asList(expected));
 		assertEquals(expSet, element.getAttributes());
 	}
@@ -58,8 +55,7 @@ public class TestElement extends TestCase {
 
 	private void addStringAttribute(Element element,
 			IAttributeType.String attribute, String value) {
-		element.addAttribute(new Attribute<IAttributeType.String, String>(
-				attribute, value));
+		element.addAttribute(new Attribute(attribute, value));
 	}
 
 	private Element addEvent(Element parent, String label) {
@@ -128,16 +124,16 @@ public class TestElement extends TestCase {
 
 	@Test
 	public void testEqualsAttribute() throws Exception {
-		Attribute<IAttributeType.String, String> att1 = new Attribute<IAttributeType.String, String>(
-				EventBAttributes.LABEL_ATTRIBUTE, "monLabel");
+		Attribute att1 = new Attribute(EventBAttributes.LABEL_ATTRIBUTE,
+				"monLabel");
 		assertTrue(att1.equals(att1));
 	}
 
 	@Test
 	public void testAddAttribute() throws Exception {
 		Element e1 = new Element(IAxiom.ELEMENT_TYPE);
-		Attribute<IAttributeType.String, String> att1 = new Attribute<IAttributeType.String, String>(
-				EventBAttributes.LABEL_ATTRIBUTE, "monLabel");
+		Attribute att1 = new Attribute(EventBAttributes.LABEL_ATTRIBUTE,
+				"monLabel");
 		e1.addAttribute(att1);
 		assertAttributes(e1, att1);
 	}

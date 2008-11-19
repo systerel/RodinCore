@@ -10,33 +10,34 @@
  *******************************************************************************/
 package org.eventb.ui.eventbeditor.operation.tests.utils;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 public class Element {
 
-	private final Set<Element> children;
+	private final List<Element> children;
 
-	private final Set<Attribute<?, ?>> attributes;
+	private final Set<Attribute> attributes;
 
 	private IInternalElementType<? extends IInternalElement> type;
 
 	private Element sibling;
-
-	private static boolean testSibling = false;
 
 	/**
 	 * Class that represents an IInternalElement.
 	 */
 	public Element(IInternalElementType<? extends IInternalElement> type) {
 		this.type = type;
-		children = new HashSet<Element>();
-		attributes = new HashSet<Attribute<?, ?>>();
+		children = new ArrayList<Element>();
+		attributes = new HashSet<Attribute>();
 		sibling = null;
 	}
 
@@ -47,28 +48,26 @@ public class Element {
 	public void addChild(Element element, Element nextSibling) {
 		assert element != null;
 		assert element != sibling;
+		assert nextSibling == null || children.contains(nextSibling);
 
-		for (Element pre : children) {
-			if (pre.sibling == nextSibling) {
-				pre.sibling = element;
-				break;
-			}
+		if (nextSibling == null) {
+			children.add(element);
+		} else {
+			int index = children.indexOf(sibling);
+			children.add(index, element);
 		}
-		children.add(element);
-		element.sibling = nextSibling;
 	}
 
-	public Collection<Element> getChildren() {
-		return new HashSet<Element>(children);
+	public List<Element> getChildren() {
+		return children;
 	}
 
-	public <T_TYPE extends IAttributeType> void addAttribute(
-			Attribute<T_TYPE, ?> attribute) {
+	public void addAttribute(Attribute attribute) {
 		attributes.add(attribute);
 	}
 
-	public Set<Attribute<?, ?>> getAttributes() {
-		return new HashSet<Attribute<?, ?>>(attributes);
+	public Set<Attribute> getAttributes() {
+		return new HashSet<Attribute>(attributes);
 	}
 
 	@Override
@@ -80,18 +79,7 @@ public class Element {
 			return false;
 		if (!attributes.equals(element.getAttributes()))
 			return false;
-		if (testSibling(this, element))
-			return false;
 		return children.equals(element.getChildren());
-	}
-
-	private boolean testSibling(Element element1, Element element2) {
-		if (!testSibling)
-			return false;
-		else
-			return (element1.sibling == null && element2.sibling != null)
-					|| (element1.sibling != null && !element1.sibling
-							.equals(element2.sibling));
 	}
 
 	@Override
@@ -121,7 +109,42 @@ public class Element {
 		return buffer.toString();
 	}
 
-	public static void setTestSibling(boolean b) {
-		testSibling = b;
+	private static Object getAttributeValue(IInternalElement element,
+			IAttributeType type) throws RodinDBException {
+		if (!element.hasAttribute(type)) {
+			return null;
+		}
+		if (type instanceof IAttributeType.Long) {
+			return element.getAttributeValue((IAttributeType.Long) type);
+		} else if (type instanceof IAttributeType.String) {
+			return element.getAttributeValue((IAttributeType.String) type);
+		} else if (type instanceof IAttributeType.Boolean) {
+			return element.getAttributeValue((IAttributeType.Boolean) type);
+		} else if (type instanceof IAttributeType.Handle) {
+			return element.getAttributeValue((IAttributeType.Handle) type);
+		} else if (type instanceof IAttributeType.Integer) {
+			return element.getAttributeValue((IAttributeType.Integer) type);
+		} else {
+			return null;
+		}
 	}
+
+	private static void addAttributes(IInternalElement root, Element element)
+			throws RodinDBException {
+		IAttributeType[] types = root.getAttributeTypes();
+		for (IAttributeType type : types)
+			element.addAttribute(new Attribute(type, getAttributeValue(root,
+					type)));
+	}
+
+	public static Element valueOf(IInternalElement root)
+			throws RodinDBException {
+		final Element result = new Element(root.getElementType());
+		addAttributes(root, result);
+
+		for (IRodinElement children : root.getChildren())
+			result.addChild(valueOf((IInternalElement) children), null);
+		return result;
+	}
+
 }

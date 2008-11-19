@@ -107,9 +107,9 @@ class OperationBuilder {
 		OperationNode cmd = new OperationNode();
 		cmd.addCommande(createCarrierSet(root, identifier));
 		if (elements.length > 0) {
+			cmd.addCommande(createElementsOfEnumeratedSet(root, elements));
 			cmd.addCommande(createAxiomDefinitionOfEnumeratedSet(root,
 					identifier, elements));
-			cmd.addCommande(createElementsOfEnumeratedSet(root, elements));
 			cmd.addCommande(createAxiomElementsDifferentsOfEnumeratedSet(root,
 					elements));
 		}

@@ -82,6 +82,10 @@ public class OperationFactory {
 		return cmd;
 	}
 
+	/**
+	 * Elements are added in the following order : carrier set, constant, axiom
+	 * set = {element1,...}, axiom element are not equals
+	 */
 	public static AtomicOperation createEnumeratedSetWizard(IContextRoot root,
 			String identifier, String[] elements) {
 		final OperationBuilder builder = new OperationBuilder();

@@ -17,9 +17,6 @@ import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
@@ -35,7 +32,6 @@ import org.eventb.ui.tests.utils.EventBUITest;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public abstract class OperationTest extends EventBUITest {
@@ -98,39 +94,18 @@ public abstract class OperationTest extends EventBUITest {
 		return result;
 	}
 
-	private Object getAttributeValue(IInternalElement element,
-			IAttributeType type) throws RodinDBException {
-		if (!element.hasAttribute(type)) {
-			return null;
-		}
-		if (type instanceof IAttributeType.Long) {
-			return element.getAttributeValue((IAttributeType.Long) type);
-		} else if (type instanceof IAttributeType.String) {
-			return element.getAttributeValue((IAttributeType.String) type);
-		} else if (type instanceof IAttributeType.Boolean) {
-			return element.getAttributeValue((IAttributeType.Boolean) type);
-		} else if (type instanceof IAttributeType.Handle) {
-			return element.getAttributeValue((IAttributeType.Handle) type);
-		} else if (type instanceof IAttributeType.Integer) {
-			return element.getAttributeValue((IAttributeType.Integer) type);
-		} else {
-			return null;
-		}
+	private Attribute getStringAttribute(IAttributeType.String type,
+			String value) {
+		return new Attribute(type, value);
 	}
 
-	private Attribute<IAttributeType.String, String> getStringAttribute(
-			IAttributeType.String type, String value) {
-		return new Attribute<IAttributeType.String, String>(type, value);
+	private Attribute getBooleanAttribute(IAttributeType.Boolean type,
+			boolean value) {
+		return new Attribute(type, value);
 	}
 
-	private Attribute<IAttributeType.Boolean, Boolean> getBooleanAttribute(
-			IAttributeType.Boolean type, boolean value) {
-		return new Attribute<IAttributeType.Boolean, Boolean>(type, value);
-	}
-
-	private Attribute<IAttributeType.Integer, Integer> getIntAttribute(
-			IAttributeType.Integer type, int value) {
-		return new Attribute<IAttributeType.Integer, Integer>(type, value);
+	private Attribute getIntAttribute(IAttributeType.Integer type, int value) {
+		return new Attribute(type, value);
 	}
 
 	/**
@@ -355,25 +330,6 @@ public abstract class OperationTest extends EventBUITest {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private Set<Attribute<?, ?>> getAttributes(IInternalElement root)
-			throws RodinDBException {
-		final Set<Attribute<?, ?>> result = new HashSet<Attribute<?, ?>>();
-		IAttributeType[] types = root.getAttributeTypes();
-		for (IAttributeType type : types)
-			result.add(new Attribute(type, getAttributeValue(root, type)));
-		return result;
-	}
-
-	protected Element asElement(IInternalElement root) throws RodinDBException {
-		final Element result = new Element(root.getElementType());
-		for (Attribute<?, ?> attribute : getAttributes(root))
-			result.addAttribute(attribute);
-		for (IRodinElement children : root.getChildren())
-			result.addChild(asElement((IInternalElement) children), null);
-		return result;
-	}
-
 	/**
 	 * ensures that element is equivalent to root. An Element and a
 	 * IInternalElement is equivalent if they have the same type, the same
@@ -389,7 +345,7 @@ public abstract class OperationTest extends EventBUITest {
 	 */
 	protected void assertEquivalent(String msg, IInternalElement root,
 			Element expected) throws RodinDBException {
-		Element actual = asElement(root);
+		Element actual = Element.valueOf(root);
 		if (!expected.equals(actual))
 			fail(msg + "\nexpected :\n" + expected + "\nbut was :\n" + actual);
 	}
@@ -409,30 +365,21 @@ public abstract class OperationTest extends EventBUITest {
 	 */
 	protected void assertNotEquivalent(String msg, IInternalElement root,
 			Element element) throws RodinDBException {
-		assertFalse(msg, element.equals(asElement(root)));
+		assertFalse(msg, element.equals(Element.valueOf(root)));
 	}
 
-	protected void execute(AtomicOperation op) throws ExecutionException {
+	protected void verifyOperation(AtomicOperation op, IInternalElement root,
+			Element element) throws RodinDBException, ExecutionException {
+
+		Element elementUndo = Element.valueOf(root);
+
 		op.execute(null, null);
-	}
+		assertEquivalent("Error when execute an operation", root, element);
 
-	protected void executeUndo(AtomicOperation op) throws ExecutionException {
-		execute(op);
 		op.undo(null, null);
-	}
+		assertEquivalent("Error when undo an operation", root, elementUndo);
 
-	protected void executeUndoRedo(AtomicOperation op)
-			throws ExecutionException {
-		executeUndo(op);
 		op.redo(null, null);
+		assertEquivalent("Error when redo an operation", root, element);
 	}
-
-	protected void undo(AtomicOperation op) throws ExecutionException {
-		op.undo(null, null);
-	}
-
-	protected void redo(AtomicOperation op) throws ExecutionException {
-		op.redo(null, null);
-	}
-
 }

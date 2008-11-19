@@ -51,9 +51,7 @@ public class TestOperation extends OperationTest {
 	public void testChangeAttribute() throws Exception {
 		final IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
 
-		// at beginning and after undo
 		IInvariant invariant = createInvariant(mch, "myInvariant", "predicate");
-		final Element mchUndo = asElement(mch);
 
 		// after execute and redo, only event are renamed
 		addInvariant(mchElement, "myInvariant", "predicateIsRenamed");
@@ -61,14 +59,7 @@ public class TestOperation extends OperationTest {
 		final AtomicOperation op = OperationFactory.changeAttribute(mch
 				.getRodinFile(), factory, invariant, "predicateIsRenamed");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -77,7 +68,7 @@ public class TestOperation extends OperationTest {
 	private void addElements(Element parent, IInternalElement[] elements)
 			throws RodinDBException {
 		for (IRodinElement element : elements) {
-			parent.addChild(asElement((IInternalElement) element), null);
+			parent.addChild(Element.valueOf((IInternalElement) element), null);
 		}
 	}
 
@@ -94,22 +85,14 @@ public class TestOperation extends OperationTest {
 		// at beginning and after undo
 		createInvariant(mch, "myInvariant", "predicate");
 		createVariant(mch, "expression");
-		final Element mchUndo = asElement(mch);
 
 		// after execute and redo
-		mchElement = asElement(mch);
+		mchElement = Element.valueOf(mch);
 		addElements(mchElement, elements);
 
 		final AtomicOperation op = OperationFactory.copyElements(mch, elements);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -122,7 +105,6 @@ public class TestOperation extends OperationTest {
 	@Test
 	public void testCreateAction() throws Exception {
 		final IEvent event = createEvent(mch, "event");
-		final Element mchUndo = asElement(mch);
 
 		final Element eventElement = addEventElement(mchElement, "event");
 		addAction(eventElement, "myAction", "myAssignment");
@@ -130,21 +112,12 @@ public class TestOperation extends OperationTest {
 		final AtomicOperation op = OperationFactory.createAction(event,
 				"myAction", "myAssignment", null);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
 	public void testCreateActionMultiple() throws Exception {
-		// Create event in RodinDB and get equivalent Element
 		final IEvent event = createEvent(mch, "event");
-		final Element mchUndo = asElement(mch);
 
 		final Element eventElement = addEventElement(mchElement, "event");
 
@@ -153,17 +126,10 @@ public class TestOperation extends OperationTest {
 				"var3:=4" };
 		addAction(eventElement, label, assignment);
 
-		final AtomicOperation op = OperationFactory.createAction(
-				event, label, assignment, null);
+		final AtomicOperation op = OperationFactory.createAction(event, label,
+				assignment, null);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -171,17 +137,9 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axiom",
 				"predicate");
 		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
-				 "axiom", "predicate");
+				"axiom", "predicate");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
@@ -192,35 +150,18 @@ public class TestOperation extends OperationTest {
 				predicates);
 
 		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
-				 labels, predicates);
+				labels, predicates);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
 	public void testCreateCarrierSetWizard() throws Exception {
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
 		final AtomicOperation op = OperationFactory.createCarrierSetWizard(ctx,
-				 "mySet");
+				"mySet");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
-
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
@@ -230,18 +171,9 @@ public class TestOperation extends OperationTest {
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE,
 				identifiers);
 		final AtomicOperation op = OperationFactory.createCarrierSetWizard(ctx,
-				 identifiers);
+				identifiers);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
-
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
@@ -254,18 +186,9 @@ public class TestOperation extends OperationTest {
 				predicates);
 
 		final AtomicOperation op = OperationFactory.createConstantWizard(ctx,
-				 "myConstant", labels, predicates);
+				"myConstant", labels, predicates);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
-
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
@@ -273,37 +196,20 @@ public class TestOperation extends OperationTest {
 		addElementWithStringAttribute(ctxElement, IExtendsContext.ELEMENT_TYPE,
 				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
 		final AtomicOperation op = OperationFactory.createElement(ctx,
-				 IExtendsContext.ELEMENT_TYPE,
+				IExtendsContext.ELEMENT_TYPE,
 				EventBAttributes.TARGET_ATTRIBUTE, "ctx");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	@Test
 	public void testCreateElementGeneric() throws Exception, RodinDBException {
-		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, mch,
-				mch, "inv");
+		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, mch, mch, "inv");
 
-		final AtomicOperation op = OperationFactory.createElementGeneric(
-				 mch, IInvariant.ELEMENT_TYPE, null);
+		final AtomicOperation op = OperationFactory.createElementGeneric(mch,
+				IInvariant.ELEMENT_TYPE, null);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -320,18 +226,10 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm4",
 				"¬ e2 = e3");
 
-		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(ctx,
-				 "mySet", elements);
+		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(
+				ctx, "mySet", elements);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", ctx, ctxElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", ctx,
-				getContextElement("ctx"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", ctx, ctxElement);
+		verifyOperation(op, ctx, ctxElement);
 	}
 
 	// test Bug 2217041
@@ -352,19 +250,10 @@ public class TestOperation extends OperationTest {
 				grdNames, grdPredicates);
 		addAction(eventElement, actNames, actSubstitutions);
 
-		final AtomicOperation op = OperationFactory.createEvent(mch,
-				"evt", varNames, grdNames, grdPredicates, actNames,
-				actSubstitutions);
+		final AtomicOperation op = OperationFactory.createEvent(mch, "evt",
+				varNames, grdNames, grdPredicates, actNames, actSubstitutions);
 
-		execute(op);
-		assertEquivalent("Error when execute operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -376,23 +265,15 @@ public class TestOperation extends OperationTest {
 	@Test
 	public void testCreateGuard() throws Exception {
 		final IEvent event = createEvent(mch, "event");
-		final Element mchUndo = asElement(mch);
 
 		final Element eventElement = addEventElement(mchElement, "event");
 		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
 				"myGuard", "a : NAT");
 
-		final AtomicOperation op = OperationFactory.createGuard(
-				event, "myGuard", "a : NAT", null);
+		final AtomicOperation op = OperationFactory.createGuard(event,
+				"myGuard", "a : NAT", null);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -400,17 +281,9 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
 				"myInvariant", "myPredicate");
 		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
-				 "myInvariant", "myPredicate");
+				"myInvariant", "myPredicate");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -421,17 +294,9 @@ public class TestOperation extends OperationTest {
 				labels, predicates);
 
 		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
-				 labels, predicates);
+				labels, predicates);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -439,17 +304,9 @@ public class TestOperation extends OperationTest {
 		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE,
 				"myTheorem", "myPredicate");
 		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
-				 "myTheorem", "myPredicate");
+				"myTheorem", "myPredicate");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -460,17 +317,9 @@ public class TestOperation extends OperationTest {
 				predicates);
 
 		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
-				 labels, predicates);
+				labels, predicates);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	private class InvariantsPair extends Pair<String, String> {
@@ -483,10 +332,10 @@ public class TestOperation extends OperationTest {
 	public void testCreateVariableWizard() throws Exception {
 		addElementWithIdentifier(mchElement, IVariable.ELEMENT_TYPE,
 				"myVariable");
-		final Element event = addEventElement(mchElement, "INITIALISATION");
-		addAction(event, "act1", "myVariable := 1");
 		addInvariant(mchElement, "inv1", "myVariable > 0");
 		addInvariant(mchElement, "inv2", "myVariable < 3");
+		final Element event = addEventElement(mchElement, "INITIALISATION");
+		addAction(event, "act1", "myVariable := 1");
 
 		InvariantsPair[] invariants = new InvariantsPair[] {
 				new InvariantsPair("inv1", "myVariable > 0"),
@@ -496,18 +345,9 @@ public class TestOperation extends OperationTest {
 				Arrays.asList(invariants));
 
 		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
-				 "myVariable", invariantCollection, "act1",
-				"myVariable := 1");
+				"myVariable", invariantCollection, "act1", "myVariable := 1");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	@Test
@@ -515,17 +355,9 @@ public class TestOperation extends OperationTest {
 		addVariant(mchElement, "expression");
 
 		final AtomicOperation op = OperationFactory.createVariantWizard(mch,
-				 "expression");
+				"expression");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch,
-				getMachineElement("mch"));
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -538,28 +370,12 @@ public class TestOperation extends OperationTest {
 		// after execute and redo, there is one invariant
 		addInvariant(mchElement, "inv2", "predicate2");
 
-		// at beginning and after undo there is two invariant
-		final Element mchUndo = getMachineElement("mch");
-		addInvariant(mchUndo, "inv1", "predicate1");
-		addInvariant(mchUndo, "inv2", "predicate2");
-
 		IInvariant inv = createInvariant(mch, "inv1", "predicate1");
 		createInvariant(mch, "inv2", "predicate2");
 
-		// to ensure the orders of the childrens after undo
-		Element.setTestSibling(true);
-
 		final AtomicOperation op = OperationFactory.deleteElement(inv);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
-
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -572,31 +388,14 @@ public class TestOperation extends OperationTest {
 		// after execute and redo, there is one invariant
 		addInvariant(mchElement, "inv2", "predicate2");
 
-		// at beginning and after undo there is two invariant
-		final Element mchUndo = getMachineElement("mch");
-		addInvariant(mchUndo, "inv1", "predicate1");
-		addInvariant(mchUndo, "inv2", "predicate2");
-		addInvariant(mchUndo, "inv3", "predicate3");
-
 		final IInvariant inv1 = createInvariant(mch, "inv1", "predicate1");
 		createInvariant(mch, "inv2", "predicate2");
 		final IInvariant inv3 = createInvariant(mch, "inv3", "predicate3");
 
-		// to ensure the orders of the children after undo
-		Element.setTestSibling(true);
-
 		final AtomicOperation op = OperationFactory.deleteElement(
 				new IInternalElement[] { inv1, inv3 }, true);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
-
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -611,33 +410,15 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv3", "predicate");
 		addInvariant(mchElement, "inv4", "predicate");
 
-		// orders at beginning and after undo
-		final Element mchUndo = getMachineElement("mch");
-		addInvariant(mchUndo, "inv1", "predicate");
-		addInvariant(mchUndo, "inv2", "predicate");
-		addInvariant(mchUndo, "inv3", "predicate");
-		addInvariant(mchUndo, "inv4", "predicate");
-
 		final IInvariant moved = createInvariant(mch, "inv1", "predicate");
 		createInvariant(mch, "inv2", "predicate");
 		final IInvariant nextSibling = createInvariant(mch, "inv3", "predicate");
 		createInvariant(mch, "inv4", "predicate");
 
-		// to take orders when compare
-		Element.setTestSibling(true);
-
 		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
 				nextSibling);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
-
+		verifyOperation(op, mch, mchElement);
 	}
 
 	/**
@@ -653,32 +434,15 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv2", "predicate");
 		addInvariant(mchElement, "inv3", "predicate");
 
-		// orders at beginning and after undo
-		final Element mchUndo = getMachineElement("mch");
-		addInvariant(mchUndo, "inv1", "predicate");
-		addInvariant(mchUndo, "inv2", "predicate");
-		addInvariant(mchUndo, "inv3", "predicate");
-		addInvariant(mchUndo, "inv4", "predicate");
-
 		final IInvariant nextSibling = createInvariant(mch, "inv1", "predicate");
 		createInvariant(mch, "inv2", "predicate");
 		createInvariant(mch, "inv3", "predicate");
 		final IInvariant moved = createInvariant(mch, "inv4", "predicate");
 
-		// to take orders when compare
-		Element.setTestSibling(true);
-
 		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
 				nextSibling);
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 
 	}
 
@@ -697,7 +461,6 @@ public class TestOperation extends OperationTest {
 		createEvent(mch, "myEvent4");
 		createGuard(event, "myGuard", "predicate"); // ILabeledElement
 		createInvariant(mch, "myInvariant", "predicate"); // ILabeledElement
-		final Element mchUndo = asElement(mch);
 
 		// after execute and redo, only event are renamed
 		final Element eventElement = addEventElement(mchElement, "evt1");
@@ -711,14 +474,7 @@ public class TestOperation extends OperationTest {
 		final AtomicOperation op = OperationFactory.renameElements(mch,
 				IEvent.ELEMENT_TYPE, factory, "evt");
 
-		execute(op);
-		assertEquivalent("Error when execute an operation", mch, mchElement);
-
-		undo(op);
-		assertEquivalent("Error when undo an operation", mch, mchUndo);
-
-		redo(op);
-		assertEquivalent("Error when redo an operation", mch, mchElement);
+		verifyOperation(op, mch, mchElement);
 
 	}
 }
