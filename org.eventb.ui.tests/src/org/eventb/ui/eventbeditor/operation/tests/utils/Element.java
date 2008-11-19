@@ -27,39 +27,35 @@ public class Element {
 
 	private final Set<Attribute> attributes;
 
-	private IInternalElementType<? extends IInternalElement> type;
-
-	private Element sibling;
+	private IInternalElementType<?> type;
 
 	/**
 	 * Class that represents an IInternalElement.
 	 */
-	public Element(IInternalElementType<? extends IInternalElement> type) {
+	public Element(IInternalElementType<?> type) {
 		this.type = type;
 		children = new ArrayList<Element>();
 		attributes = new HashSet<Attribute>();
-		sibling = null;
 	}
 
-	public IInternalElementType<? extends IInternalElement> getType() {
+	public IInternalElementType<?> getType() {
 		return type;
 	}
 
 	public void addChild(Element element, Element nextSibling) {
 		assert element != null;
-		assert element != sibling;
-		assert nextSibling == null || children.contains(nextSibling);
 
 		if (nextSibling == null) {
 			children.add(element);
 		} else {
-			int index = children.indexOf(sibling);
+			int index = children.indexOf(nextSibling);
+			assert 0 <= index;
 			children.add(index, element);
 		}
 	}
 
 	public List<Element> getChildren() {
-		return children;
+		return new ArrayList<Element>(children);
 	}
 
 	public void addAttribute(Attribute attribute) {
@@ -96,55 +92,36 @@ public class Element {
 		for (Object o : attributes) {
 			buffer.append(sep);
 			sep = ", ";
-			buffer.append(o.toString());
+			buffer.append(o);
 		}
 		buffer.append(")");
 
 		sep = "\n - ";
 		for (Object o : children.toArray()) {
 			buffer.append(sep);
-			buffer.append(o.toString());
+			buffer.append(o);
 		}
 
 		return buffer.toString();
 	}
 
-	private static Object getAttributeValue(IInternalElement element,
-			IAttributeType type) throws RodinDBException {
-		if (!element.hasAttribute(type)) {
-			return null;
-		}
-		if (type instanceof IAttributeType.Long) {
-			return element.getAttributeValue((IAttributeType.Long) type);
-		} else if (type instanceof IAttributeType.String) {
-			return element.getAttributeValue((IAttributeType.String) type);
-		} else if (type instanceof IAttributeType.Boolean) {
-			return element.getAttributeValue((IAttributeType.Boolean) type);
-		} else if (type instanceof IAttributeType.Handle) {
-			return element.getAttributeValue((IAttributeType.Handle) type);
-		} else if (type instanceof IAttributeType.Integer) {
-			return element.getAttributeValue((IAttributeType.Integer) type);
-		} else {
-			return null;
-		}
-	}
-
-	private static void addAttributes(IInternalElement root, Element element)
-			throws RodinDBException {
-		IAttributeType[] types = root.getAttributeTypes();
-		for (IAttributeType type : types)
-			element.addAttribute(new Attribute(type, getAttributeValue(root,
-					type)));
-	}
-
-	public static Element valueOf(IInternalElement root)
-			throws RodinDBException {
-		final Element result = new Element(root.getElementType());
-		addAttributes(root, result);
-
-		for (IRodinElement children : root.getChildren())
-			result.addChild(valueOf((IInternalElement) children), null);
+	public static Element valueOf(IInternalElement ie) throws RodinDBException {
+		final Element result = new Element(ie.getElementType());
+		addAttributes(ie, result);
+		addChildren(ie, result);
 		return result;
+	}
+
+	private static void addAttributes(IInternalElement ie, Element element)
+			throws RodinDBException {
+		for (IAttributeType type : ie.getAttributeTypes())
+			element.addAttribute(Attribute.valueOf(ie, type));
+	}
+
+	private static void addChildren(IInternalElement element, Element result)
+			throws RodinDBException {
+		for (IRodinElement child : element.getChildren())
+			result.addChild(valueOf((IInternalElement) child), null);
 	}
 
 }
