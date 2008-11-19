@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.junit.Test;
@@ -41,15 +42,19 @@ public class TestElement extends TestCase {
 
 	@Test
 	public void testAddChidren() throws Exception {
-		Element e1 = new Element(IAxiom.ELEMENT_TYPE);
+		Element parent = new Element(IAxiom.ELEMENT_TYPE);
 		Element e2 = new Element(IAction.ELEMENT_TYPE);
 		Element e3 = new Element(IEvent.ELEMENT_TYPE);
+		Element e1 = new Element(IInvariant.ELEMENT_TYPE);
 
-		e1.addChild(e2, null);
-		assertChildren(e1, e2);
+		parent.addChild(e2, null);
+		assertChildren(parent, e2);
 
-		e1.addChild(e3, null);
-		assertChildren(e1, e2, e3);
+		parent.addChild(e3, null);
+		assertChildren(parent, e2, e3);
+
+		parent.addChild(e1, e2);
+		assertChildren(parent, e1, e2, e3);
 	}
 
 	private void addStringAttribute(Element element,
