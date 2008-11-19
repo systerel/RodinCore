@@ -37,7 +37,6 @@ import org.eventb.ui.eventbeditor.operation.tests.utils.Element;
 import org.eventb.ui.eventbeditor.operation.tests.utils.OperationTest;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class TestOperation extends OperationTest {
@@ -67,8 +66,8 @@ public class TestOperation extends OperationTest {
 	 */
 	private void addElements(Element parent, IInternalElement[] elements)
 			throws RodinDBException {
-		for (IRodinElement element : elements) {
-			parent.addChild(Element.valueOf((IInternalElement) element), null);
+		for (IInternalElement element : elements) {
+			parent.addChild(Element.valueOf(element), null);
 		}
 	}
 
