@@ -18,7 +18,6 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
@@ -124,16 +123,14 @@ public class TestElement extends TestCase {
 
 	@Test
 	public void testEqualsAttribute() throws Exception {
-		Attribute att1 = new Attribute(EventBAttributes.LABEL_ATTRIBUTE,
-				"monLabel");
+		Attribute att1 = new Attribute(LABEL_ATTRIBUTE, "myLabel");
 		assertTrue(att1.equals(att1));
 	}
 
 	@Test
 	public void testAddAttribute() throws Exception {
 		Element e1 = new Element(IAxiom.ELEMENT_TYPE);
-		Attribute att1 = new Attribute(EventBAttributes.LABEL_ATTRIBUTE,
-				"monLabel");
+		Attribute att1 = new Attribute(LABEL_ATTRIBUTE, "myLabel");
 		e1.addAttribute(att1);
 		assertAttributes(e1, att1);
 	}
