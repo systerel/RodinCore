@@ -11,6 +11,8 @@
 package org.eventb.ui.eventbeditor.operation.tests.utils;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 public final class Attribute {
 	private final IAttributeType type;
@@ -51,4 +53,25 @@ public final class Attribute {
 	public int hashCode() {
 		return hashCode;
 	}
+	
+	public static Attribute valueOf(IInternalElement element,
+			IAttributeType type) throws RodinDBException {
+		assert element.hasAttribute(type);
+		
+		if (type instanceof IAttributeType.Long) {
+			return new Attribute(type, element.getAttributeValue((IAttributeType.Long) type));
+		} else if (type instanceof IAttributeType.String) {
+			return new Attribute(type, element.getAttributeValue((IAttributeType.String) type));
+		} else if (type instanceof IAttributeType.Boolean) {
+			return new Attribute(type, element.getAttributeValue((IAttributeType.Boolean) type));
+		} else if (type instanceof IAttributeType.Handle) {
+			return new Attribute(type, element.getAttributeValue((IAttributeType.Handle) type));
+		} else if (type instanceof IAttributeType.Integer) {
+			return new Attribute(type, element.getAttributeValue((IAttributeType.Integer) type));
+		}
+		
+		assert false;
+		return null;
+	}
+
 }
