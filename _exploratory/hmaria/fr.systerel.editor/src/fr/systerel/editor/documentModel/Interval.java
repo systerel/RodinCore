@@ -11,8 +11,11 @@
 
 package fr.systerel.editor.documentModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.ui.texteditor.IElementStateListener;
 import org.rodinp.core.IRodinElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
@@ -89,4 +92,7 @@ public class Interval implements Comparable<Interval>{
 	public static boolean isEditableType(String contentType) {
 		return Arrays.asList(editableTypes).contains(contentType);
 	}
+	
+	
+	
 }

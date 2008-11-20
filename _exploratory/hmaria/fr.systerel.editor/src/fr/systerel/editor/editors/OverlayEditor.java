@@ -31,9 +31,13 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
+import org.eclipse.swt.custom.PaintObjectEvent;
+import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Menu;
@@ -58,7 +62,7 @@ import fr.systerel.editor.documentModel.Interval;
  *
  */
 public class OverlayEditor implements IAnnotationModelListener, IAnnotationModelListenerExtension, 
-										ExtendedModifyListener, VerifyKeyListener, IMenuListener{
+										ExtendedModifyListener, VerifyKeyListener, IMenuListener, PaintListener{
 	private StyledText editorText;
 	private DocumentMapper mapper;
 	private StyledText parent;
@@ -70,6 +74,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	private RodinEditor editor;
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
+	private boolean documentReady;
 	
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID +".editorText";
 
@@ -100,6 +105,9 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		parent.setSize(oldsize);
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
+		parent.addPaintListener(this);
+		
+//		setFocusListener();
 		
 		createMenu();
 		createEditActions();
@@ -111,6 +119,26 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	}
 
 
+//	private void setFocusListener() {
+//		editorText.addFocusListener(new FocusListener() {
+//
+//			@Override
+//			public void focusGained(FocusEvent e) {
+//				// do nothing
+//				
+//			}
+//
+//			@Override
+//			public void focusLost(FocusEvent e) {
+//				addChangeToDatabase();
+//				editorText.setVisible(false);
+//				interval = null;
+//			}
+//			
+//		});
+//	}
+//
+
 	private void createMenu() {
 		String id = "editorTextMenu";
 		MenuManager manager= new MenuManager(id, id);
@@ -118,25 +146,35 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		manager.addMenuListener(this);
 		fTextContextMenu= manager.createContextMenu(editorText);
 
-		// comment this line if using gestures, above.
 		editorText.setMenu(fTextContextMenu);
 	}
 
 	
 	public void showAtOffset(int offset){
+		Interval inter = mapper.findEditableInterval(viewer.widgetOffset2ModelOffset(offset));
+		int pos = 0;
+		if (inter != null) {
+			pos = offset - inter.getOffset();
+		}
+		// if the overlay editor is currently shown,
+		// save the content and show at the new location.
+		if (editorText.isVisible()) {
+			saveAndExit();
+		}
+		
 		if (!editorText.isVisible()) {
-			interval = mapper.findEditableInterval(viewer.widgetOffset2ModelOffset(offset));
-			String text = "test";
-			if (interval != null) {
-				int start = viewer.modelOffset2WidgetOffset(interval.getOffset());
-				if (interval.getLength() > 0) {
-					text = parent.getText(start, start +interval.getLength()-1);
+			String text;
+			if (inter != null) {
+				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
+				offset = start + pos;
+				if (inter.getLength() > 0) {
+					text = parent.getText(start, start +inter.getLength()-1);
 				} else {
 					text = "";
 				}
 				Point location = (parent.getLocationAtOffset(start));
 				
-				Point endPoint = new Point(findMaxWidth(start, start +interval.getLength()), parent.getLocationAtOffset(start +interval.getLength()).y);
+				Point endPoint = new Point(findMaxWidth(start, start +inter.getLength()), parent.getLocationAtOffset(start +inter.getLength()).y);
 				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y) +parent.getLineHeight());
 				
 				textViewer.setDocument(createDocument(text));
@@ -148,6 +186,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 				editorText.setFocus();
 			}			
 		}
+		interval = inter;
 	}
 	
 	/**
@@ -184,49 +223,53 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 	
 	public void addChangeToDatabase() {
-		IRodinElement element = interval.getElement();
-		String contentType= interval.getContentType();
-		String text = removeWhiteSpaces(editorText.getText());
-		if (element instanceof IIdentifierElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-			try {
-				((IIdentifierElement) element).setIdentifierString(text, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (interval != null) {
+			//TODO: check if there really are changes. if not, do nothing.
+			IRodinElement element = interval.getElement();
+			String contentType= interval.getContentType();
+			String text = removeWhiteSpaces(editorText.getText());
+			if (element instanceof IIdentifierElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+				try {
+					((IIdentifierElement) element).setIdentifierString(text, null);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (element instanceof ILabeledElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+				try {
+					((ILabeledElement) element).setLabel(text, null);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (element instanceof IPredicateElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+				try {
+					((IPredicateElement) element).setPredicateString(text, null);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (element instanceof IAssignmentElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+				try {
+					((IAssignmentElement) element).setAssignmentString(text, null);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (element instanceof ICommentedElement && contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
+				try {
+					((ICommentedElement) element).setComment(text, null);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-		if (element instanceof ILabeledElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-			try {
-				((ILabeledElement) element).setLabel(text, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (element instanceof IPredicateElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			try {
-				((IPredicateElement) element).setPredicateString(text, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (element instanceof IAssignmentElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			try {
-				((IAssignmentElement) element).setAssignmentString(text, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (element instanceof ICommentedElement && contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
-			try {
-				((ICommentedElement) element).setComment(text, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
 	}
 	
 	/**
@@ -345,12 +388,10 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 	@Override
 	public void verifyKey(VerifyEvent event) {
-		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\r') {
+		if ((event.stateMask == SWT.NONE)  && event.character == SWT.CR) {
 			//do not add the return to the text
 			event.doit = false;
-			addChangeToDatabase();
-			editorText.setVisible(false);
-			interval = null;
+			saveAndExit();
 		}
 		if (event.character == SWT.ESC) {
 			abortEditing();
@@ -404,7 +445,31 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		editActions.add(action);
 		
+	}
+	
+	public void saveAndExit() {
+		addChangeToDatabase();
+		editorText.setVisible(false);
+		interval = null;
+	}
+
+	public synchronized boolean isDocumentReady() {
+		return documentReady;
+	}
+
+
+
+	@Override
+	public void paintControl(PaintEvent e) {
+		if (interval != null) {
+			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
+				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
+			} 
+		}
 		
 	}
 
+
+
+	
 }

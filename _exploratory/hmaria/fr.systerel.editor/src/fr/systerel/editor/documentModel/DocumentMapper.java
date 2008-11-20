@@ -29,6 +29,7 @@ public class DocumentMapper {
 	
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private IEventBRoot root;
+	private Interval previous;
 	
 	/**
 	 * Adds an interval to the document mapper at the end of the list.
@@ -41,14 +42,36 @@ public class DocumentMapper {
 			if (intervals.get(intervals.size() -1).compareTo(interval) > 0) {
 				throw new Exception("Insertion must be sorted");
 			}
-//			if (intervals.get(intervals.size() -1).isEditable() && interval.isEditable()) {
-//				throw new Exception("Can not add two editable intervals in a row");
-//			}
 		}
 		intervals.add(interval);
 		
 	}
 
+	/**
+	 * Adds an interval to the document mapper just after a given interval. If
+	 * the given previous interval is not found in the list, the new interval is
+	 * added at the end of the list. The intervals must be added in the order
+	 * they appear in the text!
+	 * 
+	 * @param interval
+	 * @param previous
+	 * @throws Exception
+	 */
+	public void addIntervalAfter(Interval interval, Interval previous) {
+		int index = intervals.indexOf(previous);
+		if (index >= 0 && index < intervals.size()) {
+			intervals.add(index +1, interval);
+		} else {
+			try {
+				addInterval(interval);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	/**
 	 * returns all intervals that are contained in the range starting from offset
 	 * @param offset The offset of the range.
@@ -178,19 +201,55 @@ public class DocumentMapper {
 		return null;
 	}
 	
+	/**
+	 * Processes an interval. Creates and adds a new interval, if there exists
+	 * none yet. Otherwise updates length and offset. It is expected that this
+	 * method is called in the order the intervals appear in the document.
+	 * 
+	 * @param offset
+	 * @param length
+	 * @param element
+	 * @param contentType
+	 */
 	public void processInterval(int offset, int length, IRodinElement element, String contentType) {
-		Interval intervall = new Interval(offset, length, element, contentType);
-		
-		try {
-			addInterval(intervall);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Interval inter;
+		if (Interval.isEditableType(contentType)) {
+			inter = findInterval(element, contentType);
+			if (inter != null) {
+				inter.setLength(length);
+				inter.setOffset(offset);
+			} else {
+				inter= new Interval(offset, length, element, contentType);
+				try {
+					addIntervalAfter(inter, previous);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else {
+			if (intervals.indexOf(previous) < intervals.size()-1){
+				inter = intervals.get(intervals.indexOf(previous) +1);
+				inter.setLength(length);
+				inter.setOffset(offset);
+			} else {
+				inter= new Interval(offset, length, element, contentType);
+				try {
+					addInterval(inter);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
+		previous = inter;
+		
+		
 	}
 	
 	/**
 	 * Finds the first interval that belongs to the given element
+	 * 
 	 * @param element
 	 * @return the first interval that belongs to the given element
 	 */
@@ -203,13 +262,31 @@ public class DocumentMapper {
 		return null;
 	}
 
+	/**
+	 * Finds the first interval that belongs to the given element and has a
+	 * given contentType. 
+	 * 
+	 * @param element
+	 * @param contentType
+	 * @return the first interval that belongs to the given element
+	 */
+	public Interval findInterval(IRodinElement element, String contentType) {
+		for (Interval interval : intervals) {
+			if (element.equals(interval.getElement()) && interval.getContentType().equals(contentType)) {
+				return interval;
+			}
+		}
+		return null;
+	}
+	
+	
 	public ArrayList<Interval> getIntervals() {
 		return intervals;
 	}
 	
-	public void resetIntervals() {
-		intervals.clear();
-	}
+//	public void resetIntervals() {
+//		intervals.clear();
+//	}
 
 	public IEventBRoot getRoot() {
 		return root;
@@ -217,6 +294,10 @@ public class DocumentMapper {
 
 	public void setRoot(IEventBRoot root) {
 		this.root = root;
+	}
+	
+	public void resetPrevious() {
+		previous = null;
 	}
 
 }

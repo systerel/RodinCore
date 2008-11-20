@@ -129,7 +129,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
 		System.out.println("synchronizing");
-		documentMapper.resetIntervals();
+//		documentMapper.resetIntervals();
 		doc.set(textGenerator.createText(inputRoot));
 		fireElementDirtyStateChanged(element, false);
 	}

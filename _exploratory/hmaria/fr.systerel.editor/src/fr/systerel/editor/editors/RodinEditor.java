@@ -27,10 +27,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.internal.win32.DOCINFO;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -49,10 +51,12 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	private DocumentMapper mapper = new DocumentMapper();
     private ProjectionSupport projectionSupport;
 	private ProjectionAnnotationModel annotationModel;
+	private OverlayEditor overlayEditor;
 	private IAnnotationModel visualAnnotationModel;
 	private Annotation[] oldAnnotations;
 	private Annotation[] oldMarkers = new Annotation[0];
 	private RodinDocumentProvider documentProvider;
+	private int topIndex;
 	public static final String EDITOR_ID = "fr.systerel.editor.editors.RodinEditor";
 
 
@@ -62,8 +66,11 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		setSourceViewerConfiguration(new RodinConfiguration(colorManager, mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
+		setElementStateListener();
 		RodinCore.addElementChangedListener(this);
+		
 	}
+
 	
 	public void dispose() {
 		colorManager.dispose();
@@ -85,9 +92,9 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		styledText = getSourceViewer().getTextWidget();
 		
-		OverlayEditor editor = new OverlayEditor(styledText, mapper, viewer, this);
-		annotationModel.addAnnotationModelListener(editor);
-		SelectionController controller = new SelectionController(styledText, mapper, viewer, editor);
+		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
+		annotationModel.addAnnotationModelListener(overlayEditor);
+		SelectionController controller = new SelectionController(styledText, mapper, viewer, overlayEditor);
 //		styledText.addSelectionListener(controller);
 		styledText.addKeyListener(controller);
 //		styledText.addVerifyListener(controller);
@@ -110,7 +117,6 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
    
         // ensure decoration support has been created and configured.
     	getSourceViewerDecorationSupport(viewer);
-    	
     	return viewer;
     }
 	
@@ -195,27 +201,49 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	public void elementChanged(ElementChangedEvent event) {
 		DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
 		if (proc.isMustRefresh()) {
-			Display.getDefault().asyncExec(new Runnable(){
-			public void run() {
-				try {
-					documentProvider.resetDocument(getEditorInput());
-					documentProvider.setCanSaveDocument(documentProvider.getEditorInput());
-					updateFoldingStructure(documentProvider.getFoldingRegions());
-					updateMarkerStructure(documentProvider.getMarkerAnnotations());
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}});;
+			performRevert();
 		} else if (proc.isMustRefreshMarkers()) {
-			Display.getDefault().asyncExec(new Runnable(){
-				public void run() {
-					updateMarkerStructure(documentProvider.getMarkerAnnotations());
-			}});;
+			updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		}
 		
 	}
 
+	private void setElementStateListener() {
+		documentProvider.addElementStateListener(new IElementStateListener() {
+
+			@Override
+			public void elementContentAboutToBeReplaced(Object element) {
+				// do nothing
+			}
+
+			@Override
+			public void elementContentReplaced(Object element) {
+//				setHighlightRange(topIndex, 0, false);
+				
+				documentProvider.setCanSaveDocument(documentProvider.getEditorInput());
+				updateFoldingStructure(documentProvider.getFoldingRegions());
+				updateMarkerStructure(documentProvider.getMarkerAnnotations());
+				
+			}
+
+			@Override
+			public void elementDeleted(Object element) {
+				// do nothing
+			}
+
+			@Override
+			public void elementDirtyStateChanged(Object element, boolean isDirty) {
+				// do nothing
+			}
+
+			@Override
+			public void elementMoved(Object originalElement, Object movedElement) {
+				// do nothing
+			}
+			
+		});
+	}
+	
 	
 	
 }

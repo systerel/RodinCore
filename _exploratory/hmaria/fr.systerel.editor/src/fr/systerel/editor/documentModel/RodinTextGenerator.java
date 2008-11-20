@@ -60,7 +60,8 @@ public class RodinTextGenerator {
 	 */
 	public String createText(IEventBRoot root) {
 		builder = new StringBuilder();
-		documentMapper.resetIntervals();
+//		documentMapper.resetIntervals();
+		documentMapper.resetPrevious();
 		
 		if (root instanceof IMachineRoot) {
 			IMachineRoot machine = (IMachineRoot) root;
