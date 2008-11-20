@@ -176,7 +176,8 @@ public class ElementComposite implements IElementComposite {
 				recreate = true;
 			} else {
 				for (int i = 0; i < rels.size(); ++i) {
-					if (sectionComps.get(i).getElementType() != rels.get(i)) {
+					if (sectionComps.get(i).getElementType() != rels.get(i)
+							.getChildType()) {
 						recreate = true;
 						break;
 					}
