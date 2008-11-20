@@ -31,8 +31,6 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
-import org.eclipse.swt.custom.PaintObjectEvent;
-import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -332,13 +330,11 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 
 
-	@Override
 	public void modelChanged(IAnnotationModel model) {
 		// do nothing
 	}
 
 
-	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		// react to folding of the editor
 		if (event.getChangedAnnotations().length >0 && editorText.isVisible()) {
@@ -357,7 +353,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	/**
 	 * Resizes the editorText widget according to the text modifications.
 	 */
-	@Override
 	public void modifyText(ExtendedModifyEvent event) {
 		int max = 0;
 		for (int i = 0; i < editorText.getLineCount()-1; i++) {
@@ -386,7 +381,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	}
 
 
-	@Override
 	public void verifyKey(VerifyEvent event) {
 		if ((event.stateMask == SWT.NONE)  && event.character == SWT.CR) {
 			//do not add the return to the text
@@ -413,8 +407,8 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	}
 
 
-	@Override
 	public void menuAboutToShow(IMenuManager manager) {
+		
 		for (IAction action : editActions) {
 			if (action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.COPY)
 					|| action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.CUT)) {
@@ -459,7 +453,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 
 
-	@Override
 	public void paintControl(PaintEvent e) {
 		if (interval != null) {
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {

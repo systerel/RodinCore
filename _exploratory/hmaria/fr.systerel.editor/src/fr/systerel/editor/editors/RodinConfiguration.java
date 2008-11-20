@@ -12,14 +12,11 @@
 package fr.systerel.editor.editors;
 
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.RodinDamagerRepairer;

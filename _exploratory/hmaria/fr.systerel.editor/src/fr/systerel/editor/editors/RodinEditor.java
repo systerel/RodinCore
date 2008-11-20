@@ -12,7 +12,6 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -27,11 +26,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.internal.win32.DOCINFO;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
@@ -211,12 +207,10 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	private void setElementStateListener() {
 		documentProvider.addElementStateListener(new IElementStateListener() {
 
-			@Override
 			public void elementContentAboutToBeReplaced(Object element) {
 				// do nothing
 			}
 
-			@Override
 			public void elementContentReplaced(Object element) {
 //				setHighlightRange(topIndex, 0, false);
 				
@@ -226,17 +220,14 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 				
 			}
 
-			@Override
 			public void elementDeleted(Object element) {
 				// do nothing
 			}
 
-			@Override
 			public void elementDirtyStateChanged(Object element, boolean isDirty) {
 				// do nothing
 			}
 
-			@Override
 			public void elementMoved(Object originalElement, Object movedElement) {
 				// do nothing
 			}

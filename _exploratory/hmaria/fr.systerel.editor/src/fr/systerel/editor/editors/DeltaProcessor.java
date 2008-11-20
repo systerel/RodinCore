@@ -16,7 +16,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
 
 /**
  * This class processes an <code>IRodinElementDelta</code> for the
