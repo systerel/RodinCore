@@ -48,7 +48,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.FoldingPosition;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
@@ -111,7 +110,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
 		//TODO
-		addButtonTest();
+//		addButtonTest();
 			
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
@@ -137,7 +136,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * @param positions
 	 *            The new positions
 	 */
-	public void updateFoldingStructure(FoldingPosition[] positions){
+	public void updateFoldingStructure(Position[] positions){
 		
 		
 		Annotation[] annotations = new Annotation[positions.length];
@@ -145,11 +144,11 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		//this will hold the new annotations along
 		//with their corresponding positions
 		HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
-//		boolean collapsed = false;
+		boolean collapsed = false;
 		
 		int i = 0;
-		for(FoldingPosition position : positions){
-			ProjectionAnnotation annotation = new ProjectionAnnotation(position.isCollapsed());
+		for(Position position : positions){
+			ProjectionAnnotation annotation = new ProjectionAnnotation(collapsed);
 			
 			newAnnotations.put(annotation, new Position(position.offset, position.length));
 			
