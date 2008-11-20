@@ -107,7 +107,8 @@ public class RodinTextGenerator {
 				processElement(inv);
 			}
 			length = builder.length() - start;
-			foldingRegions.add(new Position(start,length));
+//			foldingRegions.add(new Position(start,length));
+			documentMapper.addEditorElementWithType(IInvariant.ELEMENT_TYPE, start, length);
 			builder.append(lineSeparator);
 		}
 	}
@@ -124,7 +125,8 @@ public class RodinTextGenerator {
 				processElement(var);
 			}
 			length = builder.length() -start;
-			foldingRegions.add(new Position(start,length));
+//			foldingRegions.add(new Position(start,length));
+			documentMapper.addEditorElementWithType(IVariable.ELEMENT_TYPE, start, length);
 			builder.append(lineSeparator);
 		}
 	}
@@ -141,7 +143,8 @@ public class RodinTextGenerator {
 				processElement(thm);
 			}
 			length = builder.length();
-			foldingRegions.add(new Position(start, length));
+//			foldingRegions.add(new Position(start, length));
+			documentMapper.addEditorElementWithType(ITheorem.ELEMENT_TYPE, start, length);
 			builder.append(lineSeparator);
 		}
 	}
@@ -158,7 +161,9 @@ public class RodinTextGenerator {
 				processEvent(evt);
 			}
 			length = builder.length() - start;
-			foldingRegions.add(new Position(start, length));
+//			foldingRegions.add(new Position(start, length));
+			documentMapper.addEditorElementWithType(IEvent.ELEMENT_TYPE, start, length);
+			
 			builder.append(lineSeparator);
 		}
 	}
@@ -178,7 +183,8 @@ public class RodinTextGenerator {
 			builder.append(lineSeparator);
 		}
 		length = builder.length() - start;
-		foldingRegions.add(new Position(start, length));
+//		foldingRegions.add(new Position(start, length));
+		documentMapper.addEditorElementWithType(IRefinesMachine.ELEMENT_TYPE, start, length);
 		builder.append(lineSeparator);
 	}
 
@@ -195,7 +201,8 @@ public class RodinTextGenerator {
 			builder.append(lineSeparator);
 		}
 		length = builder.length()-start;
-		foldingRegions.add(new Position(start, length));
+//		foldingRegions.add(new Position(start, length));
+		documentMapper.addEditorElementWithType(ISeesContext.ELEMENT_TYPE, start, length);
 		builder.append(lineSeparator);
 		builder.append(lineSeparator);
 	}
@@ -367,7 +374,8 @@ public class RodinTextGenerator {
 		
 		
 		int length = builder.length() - start;
-		foldingRegions.add(new Position(start, length));
+//		foldingRegions.add(new Position(start, length));
+		documentMapper.getEditorElement(event).setFoldingPosition(start, length);
 		
 		builder.append(lineSeparator);
 		
@@ -376,7 +384,6 @@ public class RodinTextGenerator {
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
-	
 	
 	private String getTabs(int number) {
 		StringBuilder tabs = new StringBuilder();

@@ -10,12 +10,17 @@
   *******************************************************************************/
 package fr.systerel.editor.editors;
 
+import java.awt.Point;
 import java.util.HashMap;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -24,9 +29,16 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
@@ -36,6 +48,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.FoldingPosition;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
@@ -97,6 +110,8 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		styledText.addMouseListener(controller);
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
+		//TODO
+		addButtonTest();
 			
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
@@ -122,18 +137,21 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * @param positions
 	 *            The new positions
 	 */
-	public void updateFoldingStructure(Position[] positions){
+	public void updateFoldingStructure(FoldingPosition[] positions){
+		
+		
 		Annotation[] annotations = new Annotation[positions.length];
 		
 		//this will hold the new annotations along
 		//with their corresponding positions
 		HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
+//		boolean collapsed = false;
 		
 		int i = 0;
-		for(Position position : positions){
-			ProjectionAnnotation annotation = new ProjectionAnnotation(false);
+		for(FoldingPosition position : positions){
+			ProjectionAnnotation annotation = new ProjectionAnnotation(position.isCollapsed());
 			
-			newAnnotations.put(annotation, position);
+			newAnnotations.put(annotation, new Position(position.offset, position.length));
 			
 			annotations[i]=annotation;
 			i++;
@@ -213,7 +231,6 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 
 			public void elementContentReplaced(Object element) {
 //				setHighlightRange(topIndex, 0, false);
-				
 				documentProvider.setCanSaveDocument(documentProvider.getEditorInput());
 				updateFoldingStructure(documentProvider.getFoldingRegions());
 				updateMarkerStructure(documentProvider.getMarkerAnnotations());
@@ -235,6 +252,30 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		});
 	}
 	
+	public void addButtonTest() {
+		Button button = new Button(styledText, SWT.PUSH);
+		button.setLocation(0, 0);
+		button.setSize(15, 15);
+		button.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("button");
+				
+			}
+			
+		});
+		Image image = getDefaultImage();
+		button.setImage(image);
+		
+	}
+
 	
 	
 }

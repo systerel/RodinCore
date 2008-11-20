@@ -385,9 +385,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 				affected.setLength(affected.getLength() +change);
 				affected.setChanged(true);
 				
-						
-				//Output the affected RodinElement for testing
-				System.out.println("Affected element: " +affected.getElement());
 			}
 			
 			//adapt the offsets of the following intervals
@@ -395,7 +392,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 				intervals.get(i).setOffset(intervals.get(i).getOffset() +change);
 			}
 		} else {
-			System.out.println("Error: no editable interval as this position. The document change should not have been allowed!");
+//			System.out.println("Error: no editable interval as this position. The document change should not have been allowed!");
 		}
 	}
 

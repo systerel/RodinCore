@@ -12,8 +12,12 @@
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eventb.core.IEventBRoot;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 
@@ -30,6 +34,9 @@ public class DocumentMapper {
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private IEventBRoot root;
 	private Interval previous;
+	
+	private HashMap<IRodinElement, EditorElement> editorElements = new HashMap<IRodinElement, EditorElement>();
+	private HashMap<IInternalElementType<?>, EditorElement> editorElementsWithType = new HashMap<IInternalElementType<?>, EditorElement>();
 	
 	/**
 	 * Adds an interval to the document mapper at the end of the list.
@@ -112,7 +119,7 @@ public class DocumentMapper {
 	 */
 	private int findIntervalIndex(int offset) {
 		int low = 0;
-		int high =  intervals.size();
+		int high =  intervals.size()-1;
 		int mid;
 		while  (low <= high ) {
 			mid =  (low + high)/2;
@@ -243,6 +250,14 @@ public class DocumentMapper {
 			}
 		}
 		previous = inter;
+		if (element != null) {
+			EditorElement el = editorElements.get(element);
+			if (el == null) {
+				el = new EditorElement(element);
+			}
+			el.addInterval(inter);
+			editorElements.put(element, el);
+		}
 		
 		
 	}
@@ -254,6 +269,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element) {
+		//TODO: adapt this method to editorElements. will be faster.
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement())) {
 				return interval;
@@ -271,6 +287,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element, String contentType) {
+		//TODO: adapt this method to editorElements. will be faster.
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement()) && interval.getContentType().equals(contentType)) {
 				return interval;
@@ -284,10 +301,6 @@ public class DocumentMapper {
 		return intervals;
 	}
 	
-//	public void resetIntervals() {
-//		intervals.clear();
-//	}
-
 	public IEventBRoot getRoot() {
 		return root;
 	}
@@ -300,4 +313,53 @@ public class DocumentMapper {
 		previous = null;
 	}
 
+	public EditorElement[] getEditorElements() {
+		return editorElements.values().toArray(new EditorElement[editorElements.size()]);
+	}
+
+	public EditorElement[] getEditorElementsWithType() {
+		return editorElementsWithType.values().toArray(new EditorElement[editorElements.size()]);
+	}
+	
+	public EditorElement getEditorElement(IRodinElement key) {
+		return editorElements.get(key);
+	}
+
+	public EditorElement getEditorElementWithType(IRodinElement key) {
+		return editorElementsWithType.get(key);
+	}
+	
+	public void addEditorElement(IRodinElement key, EditorElement value) {
+		editorElements.put(key, value);
+	}
+
+	public void addEditorElementWithType(IInternalElementType<?> key, EditorElement value) {
+		editorElementsWithType.put(key, value);
+	}
+
+	public void addEditorElementWithType(IInternalElementType<?> type, int folding_start, int folding_length) {
+		EditorElement el = editorElementsWithType.get(type);
+		if (el == null ) {
+			el = new EditorElement(type);
+			editorElementsWithType.put(type, el);
+		}
+		el.setFoldingPosition(folding_start, folding_length);
+	}
+	
+	public FoldingPosition[] getFoldingPositions() {
+		ArrayList<FoldingPosition> result = new ArrayList<FoldingPosition>();
+		for (EditorElement el : editorElements.values()) {
+			if (el.getFoldingPosition() != null) {
+				result.add(el.getFoldingPosition());
+			}
+		}
+		for (EditorElement el : editorElementsWithType.values()) {
+			if (el.getFoldingPosition() != null) {
+				result.add(el.getFoldingPosition());
+			}
+		}
+		return result.toArray(new FoldingPosition[result.size()]);
+	}
+	
+	
 }

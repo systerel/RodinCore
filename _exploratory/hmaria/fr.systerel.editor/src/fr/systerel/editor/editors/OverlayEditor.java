@@ -74,6 +74,9 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private boolean documentReady;
 	
+	//counts the lines that were added to the underlying (parent) styled text
+	private int addedLines = 0;
+	
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID +".editorText";
 
 
@@ -210,12 +213,44 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	public void resizeTo(int width, int height) {
 		int w = Math.max(width +5 +editorText.getVerticalBar().getSize().x, DEFAULT_WIDTH);
 		int h = Math.max(height, editorText.getLineHeight() ) +4;
+		
+		adaptEditorLines(h);
+		
 		editorText.setSize(w, h);
+	}
+
+	/**
+	 * Adds or removes lines in the underlying editor in order not to cover up
+	 * its content with the overlay editor.
+	 * 
+	 * @param new_height
+	 *            The new height of the editor
+	 */
+	private void adaptEditorLines(int new_height) {
+		//need to add lines?
+		if (new_height > editorText.getSize().y && new_height > editorText.getLineHeight()+4) {
+			Point location = new Point(0, editorText.getLocation().y +editorText.getSize().y);
+			int offset = parent.getOffsetAtLocation(location);
+			int line = parent.getLineAtOffset(offset);
+			int start = parent.getOffsetAtLine(line);
+			parent.replaceTextRange(start, 0, System.getProperty("line.separator"));
+			addedLines++;
+		//need to remove lines?
+		} else if (new_height < editorText.getSize().y && addedLines > 0 ) {
+			Point location = new Point(0, editorText.getLocation().y +editorText.getSize().y);
+			int offset = parent.getOffsetAtLocation(location);
+			int line = parent.getLineAtOffset(offset);
+			int start = parent.getOffsetAtLine(line-1);
+			int end = parent.getOffsetAtLine(line);
+			parent.replaceTextRange(start, end-start, "");
+			addedLines--;
+		}
 	}
 	
 	public void abortEditing() {
 		editorText.setVisible(false);
 		interval = null;
+		addedLines = 0;
 		
 	}
 
@@ -337,10 +372,11 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 	public void modelChanged(AnnotationModelEvent event) {
 		// react to folding of the editor
+		
 		if (event.getChangedAnnotations().length >0 && editorText.isVisible()) {
 			//adjust the location of the editor
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
+//				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
 			} else {
 				// if the interval that is currently being edited is hidden from view
 				// abort the editing
@@ -443,8 +479,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	
 	public void saveAndExit() {
 		addChangeToDatabase();
-		editorText.setVisible(false);
-		interval = null;
+		abortEditing();
 	}
 
 	public synchronized boolean isDocumentReady() {

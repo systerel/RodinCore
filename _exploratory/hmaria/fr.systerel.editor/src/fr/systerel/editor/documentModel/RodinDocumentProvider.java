@@ -25,6 +25,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -143,9 +144,11 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return false;
 	}
 
-	public Position[] getFoldingRegions() {
-		return textGenerator.getFoldingRegions();
+	public FoldingPosition[] getFoldingRegions() {
+//		return textGenerator.getFoldingRegions();
+		return documentMapper.getFoldingPositions();
 	}
+
 
 	public IEventBRoot getInputRoot() {
 		return inputRoot;
