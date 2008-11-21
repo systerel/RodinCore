@@ -132,20 +132,7 @@ public class SelectionController implements SelectionListener, MouseListener,
 	}
 
 	public void mouseUp(MouseEvent e) {
-		
-		int offset = styledText.getSelection().x;
-//		int end = styledText.getSelection().y;
-//		//no selection, otherwise the widgedSelected function takes care of it
-//		//setEditable according to the region the caret is in.
-//		if (offset == end ) {
-//			int off = widget2ModelOffset((styledText.getCaretOffset()));
-//			Interval interval = mapper.findEditableInterval(off);
-//			boolean editable = interval != null;
-//			styledText.setEditable(editable) ;
-//		}
-		
-		
-		overlayEditor.showAtOffset(offset);		
+		overlayEditor.showAtOffset(styledText.getCaretOffset());		
 	}
 
 	public void verifyText(VerifyEvent e) {

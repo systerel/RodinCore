@@ -79,6 +79,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			
 			textGenerator = new RodinTextGenerator(documentMapper);
 			doc.set(textGenerator.createText(inputRoot));
+			documentMapper.setDocument(doc);
+			documentMapper.setDocumentProvider(this);
 			
 			
 		}
@@ -123,7 +125,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
 		System.out.println("synchronizing");
+		fireElementContentAboutToBeReplaced(element);
 		doc.set(textGenerator.createText(inputRoot));
+		fireElementContentReplaced(element);
 		fireElementDirtyStateChanged(element, false);
 	}
 
@@ -137,12 +141,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public Position[] getFoldingRegions() {
-//		return textGenerator.getFoldingRegions();
 		return documentMapper.getFoldingPositions();
 	}
 
 	public ProjectionAnnotation[] getFoldingAnnotations() {
-//		return textGenerator.getFoldingRegions();
 		return documentMapper.getFoldingAnnotations();
 	}
 	
@@ -193,5 +195,17 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return editorInput;
 	}
 
+	protected void replaceTextInDocument(Interval interval, String text) {
+		if (doc != null ){
+			try {
+				fireElementContentAboutToBeReplaced(doc);
+				doc.replace(interval.getOffset(), interval.getLength(), text);
+				fireElementContentReplaced(doc);
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 }

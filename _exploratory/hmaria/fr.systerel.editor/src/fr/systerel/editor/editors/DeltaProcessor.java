@@ -12,6 +12,9 @@
 
 package fr.systerel.editor.editors;
 
+import java.util.ArrayList;
+
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinElement;
@@ -26,15 +29,31 @@ public class DeltaProcessor {
 	 * The root (a machine or a context) that is used as input for the editor.
 	 */
 	private IEventBRoot inputRoot;
-	
+	// indicates that the whole document should be recreated
 	private boolean mustRefresh;
+	// indicates that the markers should be refreshed.
 	private boolean mustRefreshMarkers;
+	// indicates which elements should be refreshed.
+	private ArrayList<IRodinElement> elementsToRefresh;
+	private IEventBRoot scRoot;
 	
+	
+	public IRodinElement[] getElementsToRefresh() {
+		return elementsToRefresh.toArray(new IRodinElement[elementsToRefresh.size()]);
+	}
+
 	public DeltaProcessor(IRodinElementDelta delta, IEventBRoot inputRoot) {
 		this.inputRoot = inputRoot;
 		mustRefresh = false;
 		mustRefreshMarkers = false;
+		elementsToRefresh = new ArrayList<IRodinElement>();
+		if (inputRoot instanceof IMachineRoot) {
+			scRoot = inputRoot.getSCMachineRoot();
+		} else {
+			scRoot = inputRoot.getSCContextRoot();
+		}
 		processDelta(delta);
+
 	}
 
 	/**
@@ -47,32 +66,45 @@ public class DeltaProcessor {
 	public void processDelta(final IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
-		IEventBRoot scRoot;
-		if (inputRoot instanceof IMachineRoot) {
-			scRoot = inputRoot.getSCMachineRoot();
-		} else {
-			scRoot = inputRoot.getSCContextRoot();
+
+
+		//change happened to another machine or context. we're not interested.
+		if (element instanceof IMachineRoot || element instanceof IContextRoot) {
+			if (!element.equals(inputRoot)) {
+				return;
+				
+			}
 		}
+		
+		//TODO: handle additions and removing
+		
 		
 		//we're only interested in changes to the inputRoot or its file and its statically checked version.
 		if (kind == IRodinElementDelta.CHANGED) {
-			if (element.equals(inputRoot)) {
-				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
-					mustRefresh = true;
-					return;
-				}
-			}else if (element.equals(inputRoot.getRodinFile())) {
-				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
-					mustRefresh = true;
-					return;
-				}
-			}else if (element.equals(scRoot)){
+			
+//			if (element.equals(inputRoot)) {
+//				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
+//					mustRefresh = true;
+//					return;
+//				}
+//			}else if (element.equals(inputRoot.getRodinFile())) {
+//				if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN )!= 0) {
+//					mustRefresh = true;
+//					return;
+//				}
+			if (element.equals(scRoot)){
 				mustRefreshMarkers = true;
 				
 			}else if (element.equals(scRoot.getRodinFile())) {
 				mustRefreshMarkers = true;
 					
-			} else{
+			} else if ((delta.getFlags() & IRodinElementDelta.F_ATTRIBUTE ) != 0){
+				if (element.getAncestor(IMachineRoot.ELEMENT_TYPE).equals(inputRoot )
+						||  element.getAncestor(IContextRoot.ELEMENT_TYPE).equals(inputRoot )) {
+					elementsToRefresh.add(element);
+				}
+			
+			} else if ((delta.getFlags() & IRodinElementDelta.F_CHILDREN ) != 0){
 				IRodinElementDelta[] deltas = delta.getAffectedChildren();
 				for (IRodinElementDelta element2 : deltas) {
 					processDelta(element2);

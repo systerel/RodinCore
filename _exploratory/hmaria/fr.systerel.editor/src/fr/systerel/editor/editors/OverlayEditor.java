@@ -427,6 +427,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 			abortEditing();
 		}
 		
+		
 		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\u0020') {
 			contentAssistant.showPossibleCompletions();
 		}

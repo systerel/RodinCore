@@ -14,11 +14,22 @@ package fr.systerel.editor.documentModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eventb.core.IAssignmentElement;
+import org.eventb.core.ICommentedElement;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.IPredicateElement;
+import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
+
+import fr.systerel.editor.editors.RodinConfiguration;
 
 
 /**
@@ -34,6 +45,8 @@ public class DocumentMapper {
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private IEventBRoot root;
 	private Interval previous;
+	private IDocument document;
+	private RodinDocumentProvider documentProvider;
 	
 	private HashMap<IRodinElement, EditorElement> editorElements = new HashMap<IRodinElement, EditorElement>();
 	private HashMap<IInternalElementType<?>, EditorElement> editorElementsWithType = new HashMap<IInternalElementType<?>, EditorElement>();
@@ -211,6 +224,11 @@ public class DocumentMapper {
 		return null;
 	}
 	
+	/**
+	 * Finds the index of an interval that contains a given offset and is editable.
+	 * @param offset
+	 * @return The index of the resulting interval or -1 if none was found.
+	 */
 	protected int findEditableIntervalIndex(int offset) {
 		//an editable is never next to another editable interval (or in the same position)
 		//for each offset there can be at most three intervals at that position
@@ -305,7 +323,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element) {
-		//TODO: adapt this method to editorElements. will be faster.
+		//TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement())) {
 				return interval;
@@ -323,7 +341,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element, String contentType) {
-		//TODO: adapt this method to editorElements. will be faster.
+		//TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement()) && interval.getContentType().equals(contentType)) {
 				return interval;
@@ -397,7 +415,7 @@ public class DocumentMapper {
 		return result.toArray(new Position[result.size()]);
 	}
 	
-
+	
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
 		for (EditorElement el : editorElements.values()) {
@@ -413,4 +431,179 @@ public class DocumentMapper {
 		return result.toArray(new ProjectionAnnotation[result.size()]);
 	}
 
+	public void elementChanged(IRodinElement element) {
+		EditorElement el = editorElements.get(element);
+		if (el != null) {
+			for (Interval interval : el.getIntervals()) {
+				try {
+					if (element instanceof IIdentifierElement && 
+							interval.getContentType().equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+						checkIdentifier((IIdentifierElement) element, interval);
+					}
+					else if (element instanceof ILabeledElement && 
+							interval.getContentType().equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+						checkLabeled((ILabeledElement) element, interval);
+					}
+					else if (element instanceof IAssignmentElement && 
+							interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
+						checkAssignment((IAssignmentElement) element, interval);
+					}
+					else if (element instanceof IPredicateElement && 
+							interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
+						checkPredicate((IPredicateElement) element, interval);
+					}
+					else if (element instanceof ICommentedElement && 
+							interval.getContentType().equals(RodinConfiguration.COMMENT_TYPE)) {
+						checkCommented((ICommentedElement) element, interval);
+					}
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+			}
+		}
+	}
+
+	private void checkLabeled(ILabeledElement element, Interval interval)
+			throws RodinDBException {
+		if ( element.hasLabel()) {
+			String text = element.getLabel();
+			synchronizeInterval(interval, text);
+		}
+	}
+
+	private void checkIdentifier(IIdentifierElement element, Interval interval)
+			throws RodinDBException {
+		if (element.hasIdentifierString()) {
+			String text = element.getIdentifierString();
+			synchronizeInterval(interval, text);
+		}
+	}
+
+	private void checkAssignment(IAssignmentElement element, Interval interval)
+			throws RodinDBException {
+		if (element.hasAssignmentString()) {
+			String text = element.getAssignmentString();
+			synchronizeInterval(interval, text);
+		}
+	}
+
+	private void checkPredicate(IPredicateElement element, Interval interval)
+			throws RodinDBException {
+		if (element.hasPredicateString()) {
+			String text = element.getPredicateString();
+			synchronizeInterval(interval, text);
+		}
+	}
+	
+	private void checkCommented(ICommentedElement element, Interval interval)
+			throws RodinDBException {
+		if (element.hasComment()) {
+			String text = element.getComment();
+			synchronizeInterval(interval, text);
+		}
+	}
+	
+	
+	public IDocument getDocument() {
+		return document;
+	}
+
+	public void setDocument(IDocument document) {
+		this.document = document;
+	}
+	
+	/**
+	 * Adapts the offset of the intervals starting from a given index in the
+	 * list.
+	 * 
+	 * @param index
+	 *            The first interval to adapt
+	 * @param delta
+	 *            The delta of change to the offset.
+	 */
+	public void adaptIntervalOffsetsFrom(int index, int delta) {
+		for (int i = index; i < intervals.size(); i++) {
+			Interval interval = intervals.get(i);
+			interval.setOffset(interval.getOffset() + delta);
+		}
+	}
+
+	/**
+	 * Adapts the folding positions starting from a given offset to a delta of
+	 * change in position.
+	 * 
+	 * @param offset
+	 *            The offset where the change happened
+	 * @param delta
+	 *            The delta of the change
+	 */
+	public void adaptFoldingPositions(int offset, int delta) {
+		ArrayList<EditorElement> elements = new ArrayList<EditorElement>(editorElements.values());
+		elements.addAll(editorElementsWithType.values());
+		for (EditorElement el : elements) {
+			Position pos = el.getFoldingPosition();
+			if (pos  != null) {
+				//change happened inside position
+				if (pos.getOffset() <= offset && pos.getOffset() +pos.getLength() >= offset) {
+					pos.setLength(pos.getLength() +delta);
+				//change happened ahead of position
+				} else if ( pos.getOffset() > offset) {
+					pos.setOffset(pos.getOffset() +delta);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Gets the text that is bound by the given interval from the underlying
+	 * document.
+	 * 
+	 * @param interval
+	 * @return The text to be found in the document within the interval bounds,
+	 *         or <code>null</code> if the bounds of the interval do not
+	 *         conform with the document.
+	 */
+	protected String getTextFromDocument(Interval interval) {
+		if (document != null ){
+			try {
+				return document.get(interval.getOffset(), interval.getLength());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Synchronizes a given interval with its representation in the text. I.e.
+	 * the text area in the document represented by the document is replaced by
+	 * the new_text and the interval length is adapted accordingly. The folding
+	 * positions are adapted to the changes and the interval offsets of the
+	 * follwing intervals too.
+	 * 
+	 * @param interval
+	 *            The interval where the change happened
+	 * @param new_Text
+	 *            The new text to be set into that interval
+	 */
+	protected void synchronizeInterval(Interval interval, String new_Text) {
+		String old_text = getTextFromDocument(interval);
+		if (!old_text.equals(new_Text)){
+			adaptIntervalOffsetsFrom(intervals.indexOf(interval) +1, new_Text.length() - old_text.length());
+			adaptFoldingPositions(interval.getOffset(), new_Text.length() - old_text.length());
+			documentProvider.replaceTextInDocument(interval, new_Text);
+			interval.setLength(new_Text.length());
+		}
+	}
+	
+
+	public void setDocumentProvider(RodinDocumentProvider documentProvider) {
+		this.documentProvider = documentProvider;
+	}
+	
+	
 }

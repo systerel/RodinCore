@@ -357,7 +357,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 				//currently there can be no new partitions.
 				fPositionUpdater.update(event);
 
-				updateIntervals(event);
+//				updateIntervals(event);
 				
 				if (needsCorrection) {
 					correctPosition();

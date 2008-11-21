@@ -28,6 +28,7 @@ public class EditorElement {
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	
 	private Position foldingPosition;
+	//TODO: check if it is really necessary to save the annotations.
 	private ProjectionAnnotation foldingAnnotation;
 	
 	public EditorElement(IRodinElement element) {
@@ -59,6 +60,13 @@ public class EditorElement {
 		return (foldingAnnotation != null) ? foldingAnnotation.isCollapsed() : false;
 	}
 	
+	/**
+	 * Sets the offset and length of the folding position to the given values.
+	 * Creates a new position if none exists yet.
+	 * 
+	 * @param start
+	 * @param length
+	 */
 	public void setFoldingPosition(int start, int length) {
 		if (foldingPosition != null) {
 			foldingPosition.setOffset(start);

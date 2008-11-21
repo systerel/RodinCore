@@ -12,8 +12,6 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -34,10 +32,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -211,12 +208,28 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * The editor is refreshed.
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
-		if (proc.isMustRefresh()) {
-			performRevert();
-		} else if (proc.isMustRefreshMarkers()) {
-			updateMarkerStructure(documentProvider.getMarkerAnnotations());
-		}
+//		System.out.println(event.getDelta());
+		final DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
+		Display.getDefault().asyncExec( new Runnable() {
+
+			@Override
+			public void run() {
+				IRodinElement[] elements = proc.getElementsToRefresh();
+				if (elements.length > 0) {
+					for (IRodinElement element : elements) {
+						mapper.elementChanged(element);
+					}
+				} else if (proc.isMustRefreshMarkers()) {
+					updateMarkerStructure(documentProvider.getMarkerAnnotations());
+				}
+				else if (proc.isMustRefresh()) {
+					performRevert();
+				}
+				
+			}
+			
+		});
+		
 		
 	}
 
