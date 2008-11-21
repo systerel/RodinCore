@@ -105,7 +105,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
 		//TODO
-//		addButtonTest();
+		addButtonTest();
 			
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());

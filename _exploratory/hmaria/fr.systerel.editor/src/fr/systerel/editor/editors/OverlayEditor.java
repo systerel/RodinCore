@@ -72,7 +72,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	private RodinEditor editor;
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
-	private boolean documentReady;
+	private EventBStyledTextModifyListener eventBTranslator;
 	
 	//counts the lines that were added to the underlying (parent) styled text
 	private int addedLines = 0;
@@ -89,6 +89,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		textViewer = new TextViewer(parent, SWT.BORDER |SWT.V_SCROLL);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
+		eventBTranslator = new EventBStyledTextModifyListener();
 		
 		setupEditorText();
 	}
@@ -98,7 +99,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		editorText = textViewer.getTextWidget();
 
 		editorText.addVerifyKeyListener(this);
-		editorText.addModifyListener(new EventBStyledTextModifyListener());
 
 		editorText.setFont(parent.getFont());
 		Point oldsize = parent.getSize();
@@ -107,8 +107,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
 		parent.addPaintListener(this);
-		
-//		setFocusListener();
 		
 		createMenu();
 		createEditActions();
@@ -119,26 +117,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 
-
-//	private void setFocusListener() {
-//		editorText.addFocusListener(new FocusListener() {
-//
-//			@Override
-//			public void focusGained(FocusEvent e) {
-//				// do nothing
-//				
-//			}
-//
-//			@Override
-//			public void focusLost(FocusEvent e) {
-//				addChangeToDatabase();
-//				editorText.setVisible(false);
-//				interval = null;
-//			}
-//			
-//		});
-//	}
-//
 
 	private void createMenu() {
 		String id = "editorTextMenu";
@@ -166,6 +144,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		if (!editorText.isVisible()) {
 			String text;
 			if (inter != null) {
+				setEventBTranslation(inter);
 				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 				offset = start + pos;
 				if (inter.getLength() > 0) {
@@ -483,10 +462,6 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		abortEditing();
 	}
 
-	public synchronized boolean isDocumentReady() {
-		return documentReady;
-	}
-
 
 
 	public void paintControl(PaintEvent e) {
@@ -498,7 +473,20 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		
 	}
 
-
+	public void setEventBTranslation(Interval interval) {
+		
+		if ((interval.getElement() instanceof IPredicateElement ||
+				interval.getElement() instanceof IAssignmentElement ) 
+				&& interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
+			
+			editorText.addModifyListener(eventBTranslator);
+			
+		} else   {
+			editorText.removeModifyListener(eventBTranslator);
+		}
+	}
+	
+	
 
 	
 }
