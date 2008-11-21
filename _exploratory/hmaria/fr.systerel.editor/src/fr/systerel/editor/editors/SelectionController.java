@@ -14,12 +14,15 @@ package fr.systerel.editor.editors;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
@@ -35,7 +38,8 @@ import fr.systerel.editor.documentModel.Interval;
  * and the <code>DocumentMapper</code> works with model coordinates and not widget
  * coordinates.
  */
-public class SelectionController implements SelectionListener, KeyListener, MouseListener, VerifyListener {
+public class SelectionController implements SelectionListener, MouseListener, 
+									VerifyListener, VerifyKeyListener, TraverseListener {
 
 	private StyledText styledText;
 	private DocumentMapper mapper;
@@ -116,25 +120,6 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 		return editable;
 	}
 
-	public void keyPressed(KeyEvent e) {
-		if (e.character == SWT.ESC) {
-			overlayEditor.abortEditing();
-		}
-		//do nothing
-	}
-
-	
-	public void keyReleased(KeyEvent e) {
-		//setEditable according to the region the caret is in.
-//		if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ||
-//				e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_LEFT) {
-//			int offset = widget2ModelOffset((styledText.getCaretOffset()));
-//			Interval interval = mapper.findEditableInterval(offset);
-//			boolean editable = interval != null;
-//			styledText.setEditable(editable) ;
-//		}
-		
-	}
 
 	public void mouseDoubleClick(MouseEvent e) {
 		// do nothing
@@ -185,6 +170,50 @@ public class SelectionController implements SelectionListener, KeyListener, Mous
 	
 	protected int widget2ModelOffset(int widgetOffset) {
 		return viewer.widgetOffset2ModelOffset(widgetOffset);
+	}
+
+	protected int model2widgetOffset(int modelOffset) {
+		return viewer.modelOffset2WidgetOffset(modelOffset);
+	}
+	
+	@Override
+	public void verifyKey(VerifyEvent event) {
+		if (event.character == SWT.ESC) {
+			overlayEditor.abortEditing();
+		}
+		if (event.character == SWT.CR) {
+			overlayEditor.showAtOffset(styledText.getCaretOffset());		
+		}
+	}
+
+	@Override
+	public void keyTraversed(TraverseEvent e) {
+		if (e.detail == SWT.TRAVERSE_TAB_NEXT ) {
+			goToNextEditRegion();
+			e.doit = false;
+		}
+		if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			goToPreviousEditRegion();
+			e.doit = false;
+		}
+	}
+	
+	public void goToNextEditRegion(){
+		int offset = widget2ModelOffset(styledText.getCaretOffset());
+		Interval next = mapper.findEditableIntervalAfter(offset);
+		int new_offset = model2widgetOffset(next.getOffset());
+		//TODO: check if folding regions need to be expanded.
+		styledText.setCaretOffset(new_offset);
+		styledText.showSelection();
+	}
+
+	public void goToPreviousEditRegion(){
+		int offset = widget2ModelOffset(styledText.getCaretOffset());
+		Interval next = mapper.findEditableIntervalBefore(offset);
+		int new_offset = model2widgetOffset(next.getOffset());
+		//TODO: check if folding regions need to be expanded.
+		styledText.setCaretOffset(new_offset);
+		styledText.showSelection();
 	}
 	
 }

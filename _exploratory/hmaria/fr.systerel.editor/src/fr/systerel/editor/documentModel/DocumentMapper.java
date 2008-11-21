@@ -174,6 +174,42 @@ public class DocumentMapper {
 		}
 		return null;
 	}
+
+	/**
+	 * Finds the first editable interval that starts after a given offset.
+	 * 
+	 * @param offset
+	 * @return the first editable interval after the given offset or
+	 *         <code>null</code> if none exists.
+	 */
+	public Interval findEditableIntervalAfter(int offset) {
+		for (Interval interval : intervals) {
+			if (interval.getOffset() > offset && interval.isEditable()) {
+				return interval;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds the last editable interval that ends before a given offset.
+	 * 
+	 * @param offset
+	 * @return the editable interval before given offset or <code>null</code>
+	 *         if none exists.
+	 */
+	public Interval findEditableIntervalBefore(int offset) {
+		Interval previous = null;
+		for (Interval interval : intervals) {
+			if (interval.getOffset() + interval.getLength() >=  offset) {
+				return previous;
+			}
+			if (interval.isEditable()) {
+				previous = interval;
+			}
+		}
+		return null;
+	}
 	
 	protected int findEditableIntervalIndex(int offset) {
 		//an editable is never next to another editable interval (or in the same position)
@@ -346,8 +382,8 @@ public class DocumentMapper {
 		el.setFoldingPosition(folding_start, folding_length);
 	}
 	
-	public FoldingPosition[] getFoldingPositions() {
-		ArrayList<FoldingPosition> result = new ArrayList<FoldingPosition>();
+	public Position[] getFoldingPositions() {
+		ArrayList<Position> result = new ArrayList<Position>();
 		for (EditorElement el : editorElements.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
@@ -358,8 +394,23 @@ public class DocumentMapper {
 				result.add(el.getFoldingPosition());
 			}
 		}
-		return result.toArray(new FoldingPosition[result.size()]);
+		return result.toArray(new Position[result.size()]);
 	}
 	
-	
+
+	public ProjectionAnnotation[] getFoldingAnnotations() {
+		ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
+		for (EditorElement el : editorElements.values()) {
+			if (el.getFoldingAnnotation() != null) {
+				result.add(el.getFoldingAnnotation());
+			}
+		}
+		for (EditorElement el : editorElementsWithType.values()) {
+			if (el.getFoldingAnnotation() != null) {
+				result.add(el.getFoldingAnnotation());
+			}
+		}
+		return result.toArray(new ProjectionAnnotation[result.size()]);
+	}
+
 }

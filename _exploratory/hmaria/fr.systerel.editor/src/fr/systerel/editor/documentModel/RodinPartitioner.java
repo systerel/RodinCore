@@ -350,7 +350,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			try {
 				//TODO: can partitions be deleted?
 //				updateIntervals(event);
-				//TODO: update the DB here?
 	
 				boolean needsCorrection = calculateCorrection(event);
 				
@@ -420,15 +419,12 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			try {
 				TypedPosition p;
 				if (last_end < interval.getOffset() ) {
-//				if (last_end+1 == interval.getOffset() ) {
 					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.LABEL_TYPE);
 					fDocument.addPosition(fPositionCategory, p);
-//					System.out.println("filler position: " +p.getOffset() +", " +(p.getOffset() +p.getLength()));
 				}
 				p = new TypedPosition(interval.getOffset(), interval.getLength(), interval.getContentType());
 				last_end = interval.getOffset() +interval.getLength();
 				fDocument.addPosition(fPositionCategory, p);
-//				System.out.println(p.getType()+" postion: " +p.getOffset() +", " +(p.getOffset() +p.getLength()));
 			} catch (BadLocationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

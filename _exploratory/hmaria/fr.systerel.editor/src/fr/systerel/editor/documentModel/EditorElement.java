@@ -13,6 +13,8 @@ package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
@@ -25,7 +27,8 @@ public class EditorElement {
 	private IInternalElementType<?> elementType;
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	
-	private FoldingPosition foldingPosition;
+	private Position foldingPosition;
+	private ProjectionAnnotation foldingAnnotation;
 	
 	public EditorElement(IRodinElement element) {
 		this.element = element;
@@ -53,21 +56,17 @@ public class EditorElement {
 	}
 
 	public boolean isCollapsed() {
-		return (foldingPosition != null) ? foldingPosition.isCollapsed() : false;
-	}
-	
-	public void setCollapsed(boolean collapsed) {
-		if (foldingPosition != null) {
-			foldingPosition.setCollapsed(collapsed);
-		}
+		return (foldingAnnotation != null) ? foldingAnnotation.isCollapsed() : false;
 	}
 	
 	public void setFoldingPosition(int start, int length) {
 		if (foldingPosition != null) {
 			foldingPosition.setOffset(start);
 			foldingPosition.setLength(length);
+			foldingAnnotation.markDeleted(false);
 		} else {
-			foldingPosition = new FoldingPosition(start,length);
+			foldingPosition = new Position(start,length);
+			foldingAnnotation = new ProjectionAnnotation(false);
 		}
 	}
 
@@ -80,8 +79,16 @@ public class EditorElement {
 		return elementType;
 	}
 
-	public FoldingPosition getFoldingPosition() {
+	public Position getFoldingPosition() {
 		return foldingPosition;
+	}
+
+	public ProjectionAnnotation getFoldingAnnotation() {
+		return foldingAnnotation;
+	}
+
+	public void setFoldingAnnotation(ProjectionAnnotation foldingAnnotation) {
+		this.foldingAnnotation = foldingAnnotation;
 	}
 	
 	

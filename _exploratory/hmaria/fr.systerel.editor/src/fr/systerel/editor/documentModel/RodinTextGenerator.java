@@ -169,7 +169,6 @@ public class RodinTextGenerator {
 	}
 
 	private void addRefinesRegion(IMachineRoot machine) throws RodinDBException {
-		//TODO: Add intervals;
 
 		int start = builder.length();
 		int length;
@@ -183,7 +182,6 @@ public class RodinTextGenerator {
 			builder.append(lineSeparator);
 		}
 		length = builder.length() - start;
-//		foldingRegions.add(new Position(start, length));
 		documentMapper.addEditorElementWithType(IRefinesMachine.ELEMENT_TYPE, start, length);
 		builder.append(lineSeparator);
 	}
@@ -340,9 +338,7 @@ public class RodinTextGenerator {
 
 	private void processEvent(IEvent event) throws RodinDBException {
 
-		int start = builder.length();
-//		processElement(event);
-		
+		int start = builder.length();		
 		builder.append(tab);
 		processLabeledElement(event);
 		
@@ -374,11 +370,9 @@ public class RodinTextGenerator {
 		
 		
 		int length = builder.length() - start;
-//		foldingRegions.add(new Position(start, length));
 		documentMapper.getEditorElement(event).setFoldingPosition(start, length);
 		
 		builder.append(lineSeparator);
-		
 	}
 	
 	public Position[] getFoldingRegions() {

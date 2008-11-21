@@ -10,17 +10,14 @@
   *******************************************************************************/
 package fr.systerel.editor.editors;
 
-import java.awt.Point;
 import java.util.HashMap;
 
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelListener;
-import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -35,12 +32,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -104,9 +101,10 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		annotationModel.addAnnotationModelListener(overlayEditor);
 		SelectionController controller = new SelectionController(styledText, mapper, viewer, overlayEditor);
 //		styledText.addSelectionListener(controller);
-		styledText.addKeyListener(controller);
 //		styledText.addVerifyListener(controller);
 		styledText.addMouseListener(controller);
+		styledText.addVerifyKeyListener(controller);
+		styledText.addTraverseListener(controller);
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
 		//TODO
@@ -138,8 +136,9 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 */
 	public void updateFoldingStructure(Position[] positions){
 		
-		
-		Annotation[] annotations = new Annotation[positions.length];
+		positions = mapper.getFoldingPositions();
+//		Annotation[] annotations = new Annotation[positions.length];
+		ProjectionAnnotation[] annotations = mapper.getFoldingAnnotations();
 		
 		//this will hold the new annotations along
 		//with their corresponding positions
@@ -148,11 +147,11 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		
 		int i = 0;
 		for(Position position : positions){
-			ProjectionAnnotation annotation = new ProjectionAnnotation(collapsed);
+//			ProjectionAnnotation annotation = new ProjectionAnnotation(collapsed);
 			
-			newAnnotations.put(annotation, new Position(position.offset, position.length));
+			newAnnotations.put(annotations[i], new Position(position.offset, position.length));
 			
-			annotations[i]=annotation;
+//			annotations[i]=annotation;
 			i++;
 		}
 		

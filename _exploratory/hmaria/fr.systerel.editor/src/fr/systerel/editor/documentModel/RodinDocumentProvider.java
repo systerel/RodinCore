@@ -120,17 +120,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	public void changed(Object element) {
 	}
 	
-	
-	
-	
-//	public void databaseChanged() {
-//		documentMapper.resetIntervals();
-//		doc.set(textGenerator.createText(inputRoot));
-//	}
-	
+		
 	protected void doSynchronize(Object element, IProgressMonitor monitor) throws CoreException {
 		System.out.println("synchronizing");
-//		documentMapper.resetIntervals();
 		doc.set(textGenerator.createText(inputRoot));
 		fireElementDirtyStateChanged(element, false);
 	}
@@ -144,11 +136,16 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return false;
 	}
 
-	public FoldingPosition[] getFoldingRegions() {
+	public Position[] getFoldingRegions() {
 //		return textGenerator.getFoldingRegions();
 		return documentMapper.getFoldingPositions();
 	}
 
+	public ProjectionAnnotation[] getFoldingAnnotations() {
+//		return textGenerator.getFoldingRegions();
+		return documentMapper.getFoldingAnnotations();
+	}
+	
 
 	public IEventBRoot getInputRoot() {
 		return inputRoot;
