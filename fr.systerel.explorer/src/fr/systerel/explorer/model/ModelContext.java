@@ -149,12 +149,10 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		axioms.clear();
 		theorems.clear();
 		try {
-			IAxiom[] axms = internalContext.getChildrenOfType(IAxiom.ELEMENT_TYPE);
-			for (IAxiom axm : axms) {
+			for (IAxiom axm : internalContext.getAxioms()) {
 				addAxiom(axm);
 			}
-			ITheorem[] thms = internalContext.getChildrenOfType(ITheorem.ELEMENT_TYPE);
-			for (ITheorem thm :  thms) {
+			for (ITheorem thm :  internalContext.getTheorems()) {
 				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
