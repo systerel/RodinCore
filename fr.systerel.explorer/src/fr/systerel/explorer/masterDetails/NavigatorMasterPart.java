@@ -137,14 +137,10 @@ public class NavigatorMasterPart implements IFormPart {
 		return false;
 	}
 
-	public Composite getViewerContainer() {
-		return container;
-	}
-	
 	/**
 	 * Creates and formats the toolbar for the filters
 	 */
-	public void setUpFiltersToolBar() {
+	private void setUpFiltersToolBar() {
 		
 		coolBar = new CoolBar(container, SWT.FLAT);
 		FormData coolData = new FormData();
@@ -160,7 +156,7 @@ public class NavigatorMasterPart implements IFormPart {
 	/**
 	 *  Creates and initializes the CommonViewer 
 	 */
-	public void setUpCommonViewer(RodinNavigator navigator) {
+	private void setUpCommonViewer(RodinNavigator navigator) {
 		FormData textData = new FormData();
 		textData.left = new FormAttachment(0);
 		textData.right = new FormAttachment(100);
