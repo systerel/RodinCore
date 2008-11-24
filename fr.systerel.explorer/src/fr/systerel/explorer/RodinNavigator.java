@@ -16,7 +16,6 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.navigator.CommonNavigator;
-import org.rodinp.core.RodinCore;
 
 import fr.systerel.explorer.masterDetails.NavigatorMasterDetailsBlock;
 import fr.systerel.explorer.model.ModelController;
