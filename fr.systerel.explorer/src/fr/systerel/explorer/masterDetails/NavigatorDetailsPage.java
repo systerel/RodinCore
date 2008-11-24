@@ -181,9 +181,8 @@ public class NavigatorDetailsPage implements IDetailsPage, ISelectionProvider {
 	 *            the selection changed event
 	 */
 	public void fireSelectionChanged(final SelectionChangedEvent event) {
-		Object[] listeners = this.listenerList.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+		for (Object obj : listenerList.getListeners()) {
+			final ISelectionChangedListener l = (ISelectionChangedListener) obj;
 			SafeRunner.run(new SafeRunnable() {
 				public void run() {
 					l.selectionChanged(event);
