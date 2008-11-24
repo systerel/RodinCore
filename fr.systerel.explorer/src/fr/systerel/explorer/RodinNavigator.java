@@ -31,14 +31,9 @@ public class RodinNavigator extends CommonNavigator {
 	protected IManagedForm managedForm;
 
 	public RodinNavigator(){
-		controller = new ModelController(this);
+		new ModelController(this);
 	}
 	
-	/**
-	 * The Controller of the internal model.
-	 */
-	@SuppressWarnings("unused")
-	private ModelController controller;
 	private NavigatorMasterDetailsBlock masterDetailsBlock;
 	
 	
