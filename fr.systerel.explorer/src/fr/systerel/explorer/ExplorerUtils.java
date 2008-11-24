@@ -39,6 +39,6 @@ public class ExplorerUtils {
 	
 	
 	public static IRodinProject getRodinProject(IProject project) {
-		return RodinCore.getRodinDB().getRodinProject(project.getName());
+		return RodinCore.valueOf(project);
 	}
 }
