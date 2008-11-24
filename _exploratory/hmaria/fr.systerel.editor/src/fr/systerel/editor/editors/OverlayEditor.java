@@ -107,7 +107,8 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
 		parent.addPaintListener(this);
-		
+		editorText.addModifyListener(eventBTranslator);
+
 		createMenu();
 		createEditActions();
 	
@@ -474,16 +475,11 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	}
 
 	public void setEventBTranslation(Interval interval) {
-		
-		if ((interval.getElement() instanceof IPredicateElement ||
+		boolean enable = (interval.getElement() instanceof IPredicateElement ||
 				interval.getElement() instanceof IAssignmentElement ) 
-				&& interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
-			
-			editorText.addModifyListener(eventBTranslator);
-			
-		} else   {
-			editorText.removeModifyListener(eventBTranslator);
-		}
+				&& interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE);
+		eventBTranslator.setEnable(enable);
+		
 	}
 	
 	
