@@ -896,6 +896,8 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 		// E * ... * 0 * ... * F == 0
 		expressionTest("0", "0 ∗ 0");
+		expressionTest("0", "0 ∗ 1");
+		expressionTest("0", "1 ∗ 0");
 		expressionTest("0", "(x + 2 ∗ y) ∗ 0");
 		expressionTest("0", "0 ∗ (x + 2 ∗ y)");
 		expressionTest("0", "0 ∗ (x + 2 ∗ y) ∗ y");
