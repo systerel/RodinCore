@@ -36,7 +36,7 @@ public class FinitePositive extends EmptyInputReasoner {
 		if (!Lib.isFinite(goal))
 			return null;
 		SimplePredicate sPred = (SimplePredicate) goal;
-		if (!Lib.isSetOfIntergers(sPred.getExpression()))
+		if (!Lib.isSetOfIntegers(sPred.getExpression()))
 			return null;
 
 		// There will be 2 antecidents

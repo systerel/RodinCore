@@ -3147,7 +3147,7 @@ public class Tactics {
 	 */
 	public static List<IPosition> finiteNegativeGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
-			if (Lib.isSetOfIntergers(((SimplePredicate) predicate)
+			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
 				return Arrays.asList(new IPosition[] { IPosition.ROOT });
 		}
@@ -3180,7 +3180,7 @@ public class Tactics {
 	 */
 	public static List<IPosition> finitePositiveGetPositions(Predicate predicate) {
 		if (Lib.isFinite(predicate)) {
-			if (Lib.isSetOfIntergers(((SimplePredicate) predicate)
+			if (Lib.isSetOfIntegers(((SimplePredicate) predicate)
 					.getExpression()))
 				return Arrays.asList(new IPosition[] { IPosition.ROOT });
 		}
