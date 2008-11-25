@@ -1,24 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - allowing subclasses to provide a type environment
  ******************************************************************************/
 
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
@@ -142,17 +145,9 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @return an expression corresponding to the string image.
 	 */
 	protected Expression makeInputExpression(String inputImage) {
-		Expression input = Lib.parseExpression(inputImage);
-		if (input == null)
-			Assert.isTrue(false, "Input expression: \n\t" + inputImage
-					+ "\n\tcannot be parsed");
-		ITypeCheckResult typeCheck = input.typeCheck(ff.makeTypeEnvironment());
-		if (!typeCheck.isSuccess())
-			Assert.isTrue(false, "Input expression: \n\t" + inputImage
-					+ "\n\tcannot be type checked");
-		return input;
+		return makeExpression(inputImage, ff.makeTypeEnvironment());
 	}
-	
+
 	/**
 	 * Utility method for making an expected expression from its string image. This
 	 * method will make the test failed if the string image does not correspond
@@ -163,16 +158,30 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @return an expression corresponding to the string image.
 	 */
 	protected Expression makeExpectedExpression(String expectedImage) {
-		Expression expected = Lib.parseExpression(expectedImage);
-		if (expected == null)
-			Assert.isTrue(false, "Expected expression: \n\t" + expectedImage
+		return makeExpression(expectedImage, ff.makeTypeEnvironment());
+	}
+
+	/**
+	 * Utility method for making an expression from its string image. This
+	 * method will make the test failed if the string image does not correspond
+	 * to a well-defined and well-typed expression.
+	 * 
+	 * @param image
+	 *            the string image of an expression.
+	 * @param typenv
+	 *            the type environment to use for type-checking the expression
+	 * @return an expression corresponding to the string image.
+	 */
+	protected Expression makeExpression(String image, ITypeEnvironment typenv) {
+		Expression input = Lib.parseExpression(image);
+		if (input == null)
+			Assert.isTrue(false, "Expression: \n\t" + image
 					+ "\n\tcannot be parsed");
-		ITypeCheckResult typeCheck = expected.typeCheck(ff
-				.makeTypeEnvironment());
+		ITypeCheckResult typeCheck = input.typeCheck(typenv);
 		if (!typeCheck.isSuccess())
-			Assert.isTrue(false, "Expected expression: \n\t" + expectedImage
+			Assert.isTrue(false, "Expression: \n\t" + image
 					+ "\n\tcannot be type checked");
-		return expected;
+		return input;
 	}
 
 	/**
@@ -214,5 +223,45 @@ public abstract class AbstractFormulaRewriterTests {
 		expressionTest(expected, input);
 	}
 	
+	/**
+	 * Test the rewriter for rewriting from an input expression (represented by
+	 * its string image) to an expected expression (represented by its string
+	 * image).
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is
+	 * an integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
+	 * 
+	 * @param expectedImage
+	 *            the string image of the expected expression.
+	 * @param inputImage
+	 *            the string image of the input expression.
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
+	 */
+	protected void expressionTest(String expectedImage,
+			String inputImage, String... env) {
+		ITypeEnvironment typenv = makeTypeEnvironment(env);
+		Expression input = makeExpression(inputImage, typenv);
+		Expression expected = makeExpression(expectedImage, typenv);
+		expressionTest(expected, input);
+	}
+
+	private ITypeEnvironment makeTypeEnvironment(String... env) {
+		assertTrue(env.length % 2 == 0);
+		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		for (int i = 0; i < env.length; i+=2) {
+			final String name = env[i];
+			final String typeString = env[i+1];
+			final IParseResult res = ff.parseType(typeString);
+			assertTrue(res.isSuccess());
+			typenv.addName(name, res.getParsedType());
+		}
+		return typenv;
+	}
 
 }
