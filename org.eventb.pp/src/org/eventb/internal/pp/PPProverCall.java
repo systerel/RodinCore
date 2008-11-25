@@ -1,15 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added cancellation tests
  *******************************************************************************/
-
 package org.eventb.internal.pp;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -58,11 +62,24 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 
 	@Override
 	public void run() {
-		final PPProof prover = new PPProof(hypotheses, goal);
-		prover.translate();
-		prover.load();
-		prover.prove(maxSteps, this);
-		result = prover.getResult();
+		try {
+			final PPProof prover = new PPProof(hypotheses, goal);
+			checkCancellation();
+			prover.translate();
+			checkCancellation();
+			prover.load();
+			checkCancellation();
+			prover.prove(maxSteps, this);
+			result = prover.getResult();
+		} catch (CancellationException e) {
+			result = new PPResult(PPResult.Result.cancel, null);
+		}
+	}
+	
+	private void checkCancellation() {
+		if (isCancelled()) {
+			throw new CancellationException();
+		}
 	}
 
 	@Override

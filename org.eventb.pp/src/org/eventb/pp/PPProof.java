@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added cancellation tests
  *******************************************************************************/
-
 package org.eventb.pp;
 
 import java.util.ArrayList;
@@ -60,6 +63,14 @@ public class PPProof {
 	public static void debug(String message){
 		System.out.println(message);
 	}
+	
+	/**
+	 * Hook codes to be run at the end of each phase.
+	 * 
+	 * Reserved for testing purpose only.
+	 */
+	public static Runnable translateHook = null;
+	public static Runnable loadHook = null;
 	
 	private List<InputPredicate> hypotheses = new ArrayList<InputPredicate>();
 	private InputPredicate goal;
@@ -133,6 +144,7 @@ public class PPProof {
 			predicate.translate();
 		}
 		goal.translate();
+		runHook(translateHook);
 	}
 	
 	/**
@@ -142,8 +154,15 @@ public class PPProof {
 	public void load() {
 		final AbstractContext loadContext = new AbstractContext();
 		load(loadContext);
-		
+		runHook(loadHook);
 	}
+	
+	private void runHook(Runnable hook) {
+		if (hook != null) {
+			hook.run();
+		}
+	}
+
 	protected void load(AbstractContext loadContext){
 		for (InputPredicate predicate : hypotheses) {
 			if (predicate.loadPhaseOne(loadContext)) {
