@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.explorer.tests.masterDetails.statistics;
+package fr.systerel.explorer.tests.statistics;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -30,10 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.masterDetails.statistics.AggregateStatistics;
-import fr.systerel.explorer.masterDetails.statistics.IStatistics;
-import fr.systerel.explorer.masterDetails.statistics.Statistics;
-import fr.systerel.explorer.masterDetails.statistics.StatisticsContentProvider;
 import fr.systerel.explorer.model.ModelAxiom;
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
@@ -43,6 +39,10 @@ import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.model.ModelTheorem;
 import fr.systerel.explorer.navigator.IElementNode;
+import fr.systerel.explorer.statistics.AggregateStatistics;
+import fr.systerel.explorer.statistics.IStatistics;
+import fr.systerel.explorer.statistics.Statistics;
+import fr.systerel.explorer.statistics.StatisticsContentProvider;
 import fr.systerel.explorer.tests.ExplorerTest;
 
 /**

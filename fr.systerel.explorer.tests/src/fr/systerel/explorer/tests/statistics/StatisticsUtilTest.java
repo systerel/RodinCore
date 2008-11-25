@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.explorer.tests.masterDetails.statistics;
+package fr.systerel.explorer.tests.statistics;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
@@ -28,26 +28,24 @@ import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.masterDetails.statistics.StatisticsTab;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelElementNode;
 import fr.systerel.explorer.model.ModelMachine;
+import fr.systerel.explorer.statistics.StatisticsUtil;
 import fr.systerel.explorer.tests.ExplorerTest;
 
 /**
  * 
  *
  */
-public class StatisticsTabTest extends ExplorerTest {
+public class StatisticsUtilTest extends ExplorerTest {
 
-	protected static StatisticsTab tab;
 	protected static IRodinProject rodinProject2;
 	
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		tab = new StatisticsTab();
 		rodinProject2 = createRodinProject("P2");
 		
 	}
@@ -67,40 +65,40 @@ public class StatisticsTabTest extends ExplorerTest {
 	@Test
 	public void isValidSelectionUnprocessedProject() {
 		Object[] input = {rodinProject.getProject()};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionProcessedProject() {
 		ModelController.processProject(rodinProject);
 		Object[] input = {rodinProject.getProject()};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionMachine() throws RodinDBException {
 		Object[] input = {createMachine("m1")};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionContext() throws RodinDBException {
 		Object[] input = {createContext("c1")};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionValidNode() throws RodinDBException {
 		ModelMachine machine = new ModelMachine(createMachine("m0"));
 		Object[] input = {new ModelElementNode(IInvariant.ELEMENT_TYPE, machine )};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionInvalidNode() throws RodinDBException {
 		ModelMachine machine = new ModelMachine(createMachine("m0"));
 		Object[] input = {new ModelElementNode(IVariable.ELEMENT_TYPE, machine )};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
@@ -108,7 +106,7 @@ public class StatisticsTabTest extends ExplorerTest {
 		IMachineRoot m0 = createMachine("m0");
 		IInvariant inv = createInvariant(m0, "inv");
 		Object[] input = {inv};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
@@ -116,7 +114,7 @@ public class StatisticsTabTest extends ExplorerTest {
 		IMachineRoot m0 = createMachine("m0");
 		IVariable var = createVariable(m0, "var");
 		Object[] input = {var};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
@@ -124,13 +122,13 @@ public class StatisticsTabTest extends ExplorerTest {
 		ModelController.processProject(rodinProject);
 		ModelController.processProject(rodinProject2);
 		Object[] input = {rodinProject.getProject(), rodinProject2.getProject()};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
 	public void isValidSelectionMultipleRoots() throws RodinDBException {
 		Object[] input = {createMachine("m1"), createContext("c1")};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
@@ -139,7 +137,7 @@ public class StatisticsTabTest extends ExplorerTest {
 		ModelElementNode inv_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, machine );
 		ModelElementNode evt_node = new ModelElementNode(IEvent.ELEMENT_TYPE, machine );
 		Object[] input = {inv_node, evt_node};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
@@ -150,7 +148,7 @@ public class StatisticsTabTest extends ExplorerTest {
 		IEvent evt = createEvent(m0, "evt");
 		ITheorem thm = createTheorem(m0, "thm");
 		Object[] input = {inv, inv2, evt, thm};
-		assertNull(tab.isValidSelection(input));
+		assertNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
@@ -159,14 +157,14 @@ public class StatisticsTabTest extends ExplorerTest {
 		ModelElementNode inv_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, machine );
 		ModelElementNode po_node = new ModelElementNode(IPSStatus.ELEMENT_TYPE, machine );
 		Object[] input = {inv_node, po_node};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 
 	@Test
 	public void isValidSelectionMultipleInvalid2() throws RodinDBException {
 		ModelController.processProject(rodinProject);
 		Object[] input = {rodinProject.getProject(), createMachine("m1")};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
@@ -174,32 +172,32 @@ public class StatisticsTabTest extends ExplorerTest {
 		IMachineRoot m0 = createMachine("m0");
 		IInvariant inv = createInvariant(m0, "inv");
 		Object[] input = {inv, createMachine("m1")};
-		assertNotNull(tab.isValidSelection(input));
+		assertNotNull(StatisticsUtil.isValidSelection(input));
 	}
 	
 	@Test
 	public void detailsRequiredProject() {
 		Object[] input = {rodinProject.getProject()};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 
 	@Test
 	public void detailsRequiredMachine() throws RodinDBException {
 		Object[] input = {createMachine("m1")};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 
 	@Test
 	public void detailsRequiredContext() throws RodinDBException {
 		Object[] input = {createContext("c1")};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 	
 	@Test
 	public void detailsRequiredNode() throws RodinDBException {
 		ModelMachine machine = new ModelMachine(createMachine("m0"));
 		Object[] input = {new ModelElementNode(IInvariant.ELEMENT_TYPE, machine )};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 
 	@Test
@@ -207,13 +205,13 @@ public class StatisticsTabTest extends ExplorerTest {
 		IMachineRoot m0 = createMachine("m0");
 		IInvariant inv = createInvariant(m0, "inv");
 		Object[] input = {inv};
-		assertFalse(tab.detailsRequired(input));
+		assertFalse(StatisticsUtil.detailsRequired(input));
 	}
 
 	@Test
 	public void detailsRequiredMultipleRoots() throws RodinDBException {
 		Object[] input = {createContext("c1"), createMachine("m1")};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 
 	@Test
@@ -222,7 +220,7 @@ public class StatisticsTabTest extends ExplorerTest {
 		IInvariant inv = createInvariant(m0, "inv");
 		IEvent evt = createEvent(m0, "evt");
 		Object[] input = {inv, evt};
-		assertTrue(tab.detailsRequired(input));
+		assertTrue(StatisticsUtil.detailsRequired(input));
 	}
 	
 }

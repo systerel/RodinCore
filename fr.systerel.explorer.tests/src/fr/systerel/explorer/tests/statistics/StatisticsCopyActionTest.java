@@ -9,13 +9,11 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.explorer.tests.masterDetails.statistics;
+package fr.systerel.explorer.tests.statistics;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
-import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -32,30 +30,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.masterDetails.statistics.IStatistics;
-import fr.systerel.explorer.masterDetails.statistics.Statistics;
-import fr.systerel.explorer.masterDetails.statistics.StatisticsDetailsComparator;
+import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
-import fr.systerel.explorer.navigator.IElementNode;
+import fr.systerel.explorer.statistics.IStatistics;
+import fr.systerel.explorer.statistics.Statistics;
+import fr.systerel.explorer.statistics.StatisticsCopyAction;
 import fr.systerel.explorer.tests.ExplorerTest;
 
 /**
  * 
  *
  */
-public class StatisticsDetailsComparatorTest extends ExplorerTest {
-	
+public class StatisticsCopyActionTest extends ExplorerTest {
+
 	protected static IMachineRoot m0;
 	protected static IContextRoot c0;
-	protected static IElementNode po_node_mach;
-	protected static IElementNode axiom_node;
-	protected static IElementNode inv_node;
-	protected static IElementNode event_node;
-	protected static IElementNode thm_node_mach;
-	protected static IElementNode po_node_ctx;
-	protected static IElementNode thm_node_ctx;
 	protected static IInvariant inv1;
 	protected static IInvariant inv2;
 	protected static IEvent event1;
@@ -91,166 +82,151 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	protected static IPOSource source8;
 	protected static IPOSource source9;
 	protected static IPOSource source10;
-	protected static IStatistics stats1;
-	protected static IStatistics stats2;
 	protected static ModelProject project;
 	protected static ModelMachine mach;
-	protected static TableColumn column;
+	protected static ModelContext ctx;
+	protected static IStatistics stats1;
+	protected static IStatistics stats2;
+	protected static IStatistics stats3;
+	protected static StatisticsCopyAction actionNoLabel;
+	protected static StatisticsCopyAction actionLabel;
 	
+	
+	
+
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		setUpStatistics();
 		
-		
-	}
-	
-	@Test
-	public void compareNameAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.NAME;
-		
-		assertTrue(comparator.compare(stats1, stats2) >0);
-		
-	}
- 	
-
-	@Test
-	public void compareTotalAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.TOTAL;
-	
-		assertTrue(comparator.compare(stats1, stats2) >0);
-	}
-	
-	@Test
-	public void compareAutoAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.AUTO;
-	
-		assertTrue(comparator.compare(stats1, stats2) >0);
-	}
-
-	@Test
-	public void compareManualAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.MANUAL;
-	
-		assertTrue(comparator.compare(stats1, stats2) <0);
-	}
-	
-	@Test
-	public void compareReviewedAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.REVIEWED;
-	
-		assertTrue(comparator.compare(stats1, stats2) >0);
-	}
-
-	@Test
-	public void compareUndischargedRestAscend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.UNDISCHARGED;
-	
-		assertTrue(comparator.compare(stats1, stats2) ==0);
-	}
-
-	@Test
-	public void compareNameDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.NAME;
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-		
-		assertTrue(comparator.compare(stats1, stats2) <0);
-		
-	}
-
-	@Test
-	public void compareTotalDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.TOTAL;
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-	
-		assertTrue(comparator.compare(stats1, stats2) <0);
-	}
-	
-	@Test
-	public void compareAutoDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.AUTO;
-	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-		
-		assertTrue(comparator.compare(stats1, stats2) <0);
-	}
-
-	@Test
-	public void compareManualDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.MANUAL;
-	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-		
-		assertTrue(comparator.compare(stats1, stats2) >0);
-	}
-	
-	@Test
-	public void compareReviewedDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.REVIEWED;
-	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-		
-		assertTrue(comparator.compare(stats1, stats2) <0);
-	}
-
-	@Test
-	public void compareUndischargedRestDescend() {
-		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.UNDISCHARGED;
-	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
-		
-		assertTrue(comparator.compare(stats1, stats2) ==0);
-	}
-	
-	
-	protected void setUpStatistics() throws RodinDBException {
 		setUpMachine();
 		setUpMachinePOs();
 		
+		setUpContext();
+		setUpContextPOs();
+		
 		processProject();
 		
-		inv_node = mach.invariant_node;
-		event_node = mach.event_node;
-		
-		//create statistics
-		stats1 = new Statistics(inv_node);
-		stats2 = new Statistics(event_node);
-		
-		assertEquals( "Invariants", stats1.getParentLabel());
-		assertEquals("Events", stats2.getParentLabel());
-		assertEquals(4, stats1.getTotal());
-		assertEquals(2, stats2.getTotal());
-		assertEquals(1, stats1.getAuto());
-		assertEquals(0, stats2.getAuto());
-		assertEquals(0, stats1.getManual());
-		assertEquals(1, stats2.getManual());
-		assertEquals(2, stats1.getReviewed());
-		assertEquals(0, stats2.getReviewed());
-		assertEquals(1, stats1.getUndischargedRest());
-		assertEquals(1, stats2.getUndischargedRest());
+		setUpStatistics();
 				
+		actionLabel = new StatisticsCopyAction(true);
+		actionNoLabel = new StatisticsCopyAction(false);
 	}
+
+	
+
+	@Test
+	public void buildCopyStringSimpleNoLabel() {
+		IStatistics[] input = {stats1};
+		String result = actionNoLabel.buildCopyString(input);
+		String expected = "7	1	2	2	2" +System.getProperty("line.separator");
+		assertEquals(expected, result);
+	}
+
+	@Test
+	public void buildCopyStringNoLabel() {
+		IStatistics[] input = {stats1, stats2, stats3};
+		String result = actionNoLabel.buildCopyString(input);
+		String expected = "7	1	2	2	2" +System.getProperty("line.separator")
+		 +"5	1	1	2	1" +System.getProperty("line.separator")
+		 +"2	0	1	0	1" +System.getProperty("line.separator");
+		assertEquals(expected, result);
+	}
+
+
+	@Test
+	public void buildCopyStringSimpleLabel() {
+		IStatistics[] input = {stats1};
+		String result = actionLabel.buildCopyString(input);
+		String expected = "P	7	1	2	2	2" +System.getProperty("line.separator");
+		assertEquals(expected, result);
+	}
+
+	@Test
+	public void buildCopyStringLabel() {
+		IStatistics[] input = {stats1, stats2, stats3};
+		String result = actionLabel.buildCopyString(input);
+		String expected = "P	7	1	2	2	2" +System.getProperty("line.separator")
+		 +"m0	5	1	1	2	1" +System.getProperty("line.separator")
+		 +"c0	2	0	1	0	1" +System.getProperty("line.separator");
+		assertEquals(expected, result);
+	}
+	
+
+	private void setUpStatistics() {
+		//create some statistics
+		stats1 = new Statistics(project);
+		assertEquals(7, stats1.getTotal());
+		assertEquals(1, stats1.getAuto());
+		assertEquals(2, stats1.getManual());
+		assertEquals(2, stats1.getReviewed());
+		assertEquals(2, stats1.getUndischargedRest());
+		assertEquals("P", stats1.getParentLabel());
+		stats2 = new Statistics(mach);
+		assertEquals(5, stats2.getTotal());
+		assertEquals(1, stats2.getAuto());
+		assertEquals(1, stats2.getManual());
+		assertEquals(2, stats2.getReviewed());
+		assertEquals(1, stats2.getUndischargedRest());
+		assertEquals("m0", stats2.getParentLabel());
+		stats3 = new Statistics(ctx);
+		assertEquals(2, stats3.getTotal());
+		assertEquals(0, stats3.getAuto());
+		assertEquals(1, stats3.getManual());
+		assertEquals(0, stats3.getReviewed());
+		assertEquals(1, stats3.getUndischargedRest());
+		assertEquals("c0", stats3.getParentLabel());
+	}
+
 
 	private void processProject() {
 		ModelController.processProject(rodinProject);
 		project = ModelController.getProject(rodinProject);
 		mach = ModelController.getMachine(m0);
+		ctx = ModelController.getContext(c0);
 		mach.processPORoot();
 		mach.processPSRoot();
+		ctx.processPORoot();
+		ctx.processPSRoot();
 	}
+
+
+	private void setUpContextPOs() throws RodinDBException {
+		// create proof obligations for the context
+		c0IPO = createIPORoot("c0");
+		assertNotNull("c0IPO should be created successfully ", c0IPO);
+		c0IPS = createIPSRoot("c0");
+		assertNotNull("c0IPS should be created successfully ", c0IPS);
+
+		//create an undischarged po
+		sequent6 = createSequent(c0IPO, "sequent6");
+		status6 = createPSStatus(c0IPS, "sequent6");
+		status6.setConfidence(IConfidence.PENDING, null);
+
+		source2 =  createPOSource(sequent6, "source2");
+		source2.setSource(axiom1, null);
+		
+		//create a manually discharged po
+		sequent7 = createSequent(c0IPO, "sequent7");
+		status7 = createPSStatus(c0IPS, "sequent7");
+		status7.setConfidence(IConfidence.DISCHARGED_MAX, null);
+		status7.setHasManualProof(true, null);
+
+		source1 =  createPOSource(sequent7, "source1");
+		source1.setSource(thm1, null);
+	}
+
+
+	private void setUpContext() throws RodinDBException {
+		// create a context
+		c0 = createContext("c0");
+		assertNotNull("c0 should be created successfully ", c0);
+
+		// create some elements in the context
+		axiom1 = createAxiom(c0, "axiom1");
+		thm1 =  createTheorem(c0, "thm1");
+	}
+
 
 	private void setUpMachinePOs() throws RodinDBException {
 		// create proof obligations for the machine
@@ -294,6 +270,8 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 
 		source7 =  createPOSource(sequent5, "source7");
 		source7.setSource(inv1, null);
+		source8 =  createPOSource(sequent5, "source8");
+		source8.setSource(thm2, null);
 
 		//create a reviewed po
 		sequent8 = createSequent(m0IPO, "sequent8");
@@ -303,6 +281,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 		source10 =  createPOSource(sequent8, "source10");
 		source10.setSource(inv2, null);
 	}
+
 
 	private void setUpMachine() throws RodinDBException {
 		// create a machine
@@ -314,5 +293,8 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 		inv2 = createInvariant(m0, "inv2");
 		event1 = createEvent(m0, "event1");
 		event2 = createEvent(m0, "event2");
+		thm2 =  createTheorem(m0, "thm2");
 	}
+	
+	
 }
