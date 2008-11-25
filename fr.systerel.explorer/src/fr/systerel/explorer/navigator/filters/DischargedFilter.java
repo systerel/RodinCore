@@ -23,7 +23,7 @@ import fr.systerel.explorer.model.ModelController;
  */
 public class DischargedFilter extends ViewerFilter {
 
-	public static boolean active = false;
+	private boolean active = false;
 
 	/**
 	 * 
@@ -45,6 +45,10 @@ public class DischargedFilter extends ViewerFilter {
 			return !ModelController.getModelPO((IPSStatus) element).isDischarged();
 		}
 		return true;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

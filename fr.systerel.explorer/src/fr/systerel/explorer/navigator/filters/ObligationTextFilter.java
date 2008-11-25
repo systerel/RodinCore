@@ -29,9 +29,11 @@ public class ObligationTextFilter extends ViewerFilter {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static String text = "";
+	private String text = "";
+	
+	
 	//excluding or including the string?
-	public static boolean exclude = false;
+	private boolean exclude = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -57,6 +59,10 @@ public class ObligationTextFilter extends ViewerFilter {
 				return excluding;
 		}
 		return true;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 }

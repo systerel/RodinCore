@@ -14,7 +14,10 @@ package fr.systerel.explorer.navigator;
 import java.util.ArrayList;
 
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -30,7 +33,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eventb.internal.ui.TimerText;
+import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
@@ -53,9 +56,47 @@ public class NavigatorController {
 			ModelController.createInstance(viewer);
 			setUpFiltersToolBar(viewer);
 			registeredViewers.add(viewer);
+			
 		}
 	}
+	
+	
+	/**
+	 * Finds the <code>DischargedFilter</code> of a given viewer.
+	 * 
+	 * @param viewer
+	 * @return The viewer's <code>DischargedFilter</code> if it has one,
+	 *         <code>null</code> otherwise.
+	 */
+	private static DischargedFilter findDischargedFilter(CommonViewer viewer) {
+		INavigatorFilterService service = viewer.getNavigatorContentService().getFilterService();
+		ViewerFilter[] filters = service.getVisibleFilters(false);
+		for (ViewerFilter filter : filters) {
+			if (filter instanceof DischargedFilter) {
+				return (DischargedFilter) filter;
+			}
+		}
+		return null;
+	}
 
+	/**
+	 * Finds the <code>ObligationTextFilter</code> of a given viewer.
+	 * 
+	 * @param viewer
+	 * @return The viewer's <code>ObligationTextFilter</code> if it has one,
+	 *         <code>null</code> otherwise.
+	 */
+	private static ObligationTextFilter findObligationTextFilter(CommonViewer viewer) {
+		INavigatorFilterService service = viewer.getNavigatorContentService().getFilterService();
+		ViewerFilter[] filters = service.getVisibleFilters(false);
+		for (ViewerFilter filter : filters) {
+			if (filter instanceof ObligationTextFilter) {
+				return (ObligationTextFilter) filter;
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * Creates and formats the toolbar for the filters
@@ -89,27 +130,30 @@ public class NavigatorController {
 	}
 	
 	private static CoolItem createText(CoolBar cool, final CommonViewer viewer) {
+		final ObligationTextFilter filter = findObligationTextFilter(viewer);
 		final Text filterText = new Text(cool, SWT.SINGLE | SWT.BORDER);
-		new TimerText(filterText, 1000) {
+		filterText.addModifyListener(new ModifyListener() {
 
-			@Override
-			protected void response() {
-				ObligationTextFilter.text = filterText.getText();
-				PlatformUI.getWorkbench().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								Control ctrl = viewer.getControl();
-								if (ctrl != null && !ctrl.isDisposed()) {
-									Object[] expanded = viewer
-											.getExpandedElements();
-									viewer.refresh(false);
-									viewer.setExpandedElements(expanded);
+			public void modifyText(ModifyEvent e) {
+				if (filter != null) {
+					filter.setText(filterText.getText());
+					PlatformUI.getWorkbench().getDisplay().asyncExec(
+							new Runnable() {
+								public void run() {
+									Control ctrl = viewer.getControl();
+									if (ctrl != null && !ctrl.isDisposed()) {
+										Object[] expanded = viewer
+												.getExpandedElements();
+										viewer.refresh(false);
+										viewer.setExpandedElements(expanded);
+									}
 								}
-							}
-						});
+							});
+					}
+				
 			}
-
-		};
+			
+		});
 		filterText.pack();
 		Point size = filterText.getSize();
 		CoolItem item = new CoolItem(cool, SWT.NONE);
@@ -119,27 +163,32 @@ public class NavigatorController {
 		return item;
 	}
 
-	private static CoolItem createToolItem(CoolBar cool, final CommonViewer viewer) {
+	private static void createToolItem(CoolBar cool, final CommonViewer viewer) {
 		ToolBar toolBar = new ToolBar(cool, SWT.FLAT);
+		final DischargedFilter filter = findDischargedFilter(viewer);
 		final ToolItem discharge = new ToolItem(toolBar, SWT.CHECK);
+		
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
 		discharge.setImage(registry.get(IEventBSharedImages.IMG_DISCHARGED));
 		discharge.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				DischargedFilter.active = discharge.getSelection();
-				PlatformUI.getWorkbench().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								Control ctrl = viewer.getControl();
-								if (ctrl != null && !ctrl.isDisposed()) {
-									Object[] expanded = viewer
-											.getExpandedElements();
-									viewer.refresh(false);
-									viewer.setExpandedElements(expanded);
+				if (filter != null) {
+					filter.setActive(discharge.getSelection());
+					PlatformUI.getWorkbench().getDisplay().asyncExec(
+							new Runnable() {
+								public void run() {
+									Control ctrl = viewer.getControl();
+									if (ctrl != null && !ctrl.isDisposed()) {
+										Object[] expanded = viewer
+												.getExpandedElements();
+										viewer.refresh(false);
+										viewer.setExpandedElements(expanded);
+									}
 								}
-							}
-						});
+							});
+					
+				}
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -153,7 +202,6 @@ public class NavigatorController {
 		item.setControl(toolBar);
 		Point preferred = item.computeSize(size.x, size.y);
 		item.setPreferredSize(preferred);
-		return item;
 	}
 
 }
