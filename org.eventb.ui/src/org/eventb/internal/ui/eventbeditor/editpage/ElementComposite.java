@@ -160,7 +160,7 @@ public class ElementComposite implements IElementComposite {
 	public void refresh(IRodinElement element) {
 		if (!rElement.exists())
 			return;
-		if (element == rElement) {
+		if (rElement.equals(element)) {
 			row.refresh();
 			if (sectionComps == null)
 				return;

@@ -488,8 +488,8 @@ class OperationBuilder {
 		return new Move(movedElement, newParent, newSibling);
 	}
 
-	public <E extends IInternalElement> OperationTree renameElement(
-			IInternalElement root, IInternalElementType<E> type,
+	public <E extends IInternalElement, T extends E> OperationTree renameElement(
+			IInternalElement root, IInternalElementType<T> type,
 			IAttributeFactory<E> factory, String prefix) {
 		final OperationNode op = new OperationNode();
 		int counter = 1;
@@ -498,6 +498,12 @@ class OperationBuilder {
 				op.addCommande(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;
+			}
+			for (IRodinElement element : root.getChildren()) {
+				if (element instanceof IInternalElement) {
+					final IInternalElement iie = (IInternalElement) element;
+					op.addCommande(renameElement(iie, type, factory, prefix));
+				}
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block

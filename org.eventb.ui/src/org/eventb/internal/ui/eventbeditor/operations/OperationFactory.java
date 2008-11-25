@@ -273,13 +273,13 @@ public class OperationFactory {
 		return cmd;
 	}
 
-	public static AtomicOperation renameElements(IInternalElement root,
-			IInternalElementType<?> type, IAttributeFactory factory,
-			String prefix) {
+	public static <E extends IInternalElement, T extends E> AtomicOperation renameElements(
+			IInternalElement parent, IInternalElementType<T> type,
+			IAttributeFactory<E> factory, String prefix) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(builder.renameElement(
-				root, type, factory, prefix));
-		op.addContext(getContext(root));
+				parent, type, factory, prefix));
+		op.addContext(getContext(parent));
 		return op;
 	}
 

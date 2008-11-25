@@ -366,8 +366,21 @@
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
             <groupMarker name="Naming"/>
+            <separator name="naming-prefix"/>
             <groupMarker name="Prefix"/>
          </menu>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoActNaming"
+               id="org.eventb.ui.actions.autoActLabel"
+               label="%editorAction.autoActLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
+               style="push"/>
+         <action
+               class="org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming"
+               id="org.eventb.ui.actions.autoGrdLabel"
+               label="%editorAction.autoGrdLabel.label"
+               menubarPath="org.eventb.ui.refactoring/Naming"
+               style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
                id="org.eventb.ui.actions.autoThmNaming"
@@ -479,6 +492,7 @@
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
             <groupMarker name="Naming"/>
+            <separator name="naming-prefix"/>
             <groupMarker name="Prefix"/>
          </menu>
          <action
