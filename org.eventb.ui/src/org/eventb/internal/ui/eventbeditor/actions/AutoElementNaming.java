@@ -37,7 +37,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 			editor = (IEventBEditor<?>) targetEditor;
 	}
 
-	public abstract String getAttributeID();
+	public abstract String getAttributeRelationshipID();
 	
 	private void rename(final String prefix, final String attributeID) {
 		IInternalElement root = editor.getRodinInput();
@@ -92,7 +92,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {
-		String attributeID = getAttributeID();
+		String attributeID = getAttributeRelationshipID();
 		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
 				.getType(attributeID);
 		IRodinFile inputFile = editor.getRodinInput().getRodinFile();
