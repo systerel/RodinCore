@@ -108,7 +108,7 @@ public class FormulaSimplification {
 			break;
 		case Expression.MUL:
 			neutral = number1;
-			determinant = null;  // FIXME should be number0
+			determinant = number0;
 			break;
 		default:
 			assert false;
