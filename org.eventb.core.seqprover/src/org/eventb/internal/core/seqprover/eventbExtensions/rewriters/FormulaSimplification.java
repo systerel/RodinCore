@@ -87,8 +87,8 @@ public class FormulaSimplification {
 			AssociativeExpression expression, Expression[] children) {
 		int tag = expression.getTag();
 
-		Expression neutral = null;
-		Expression determinant = null;
+		final Expression neutral;
+		final Expression determinant;
 		IntegerLiteral number0 = ff.makeIntegerLiteral(new BigInteger("0"),
 				null);
 		IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"),
@@ -106,6 +106,13 @@ public class FormulaSimplification {
 			neutral = number0;
 			determinant = null;
 			break;
+		case Expression.MUL:
+			neutral = number1;
+			determinant = null;  // FIXME should be number0
+			break;
+		default:
+			assert false;
+			return expression;
 		}
 		boolean eliminateDuplicate = (tag == Expression.BUNION || tag == Expression.BINTER);
 
@@ -114,12 +121,7 @@ public class FormulaSimplification {
 
 		if (expressions.size() != children.length) {
 			if (expressions.size() == 0)
-				if (tag == Expression.BUNION || tag == Expression.BINTER)
-					return ff.makeEmptySet(expression.getType(), null);
-				else if (tag == Expression.PLUS)
-					return number0;
-				else if (tag == Expression.MUL)
-					return number1;
+				return neutral;
 
 			if (expressions.size() == 1)
 				return expressions.iterator().next();

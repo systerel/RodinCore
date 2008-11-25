@@ -401,8 +401,13 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
 		expressionTest(emptySetInteger, inputExp);
-				
 		
+		// Test with empty and type
+		expressionTest("(∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S)) ∩ ∅");
+		expressionTest("(∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S)) ∩ S");
+		expressionTest("(∅ ⦂ ℙ(S))", "S ∩ (∅ ⦂ ℙ(S))");
+
+
 		// S /\ ... /\ T /\ ... /\ T /\ ... /\ U == S /\ ... /\ T /\ ... /\ ... /\ U
 		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∩ {x ∣ x > 0}");
 		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ S ∩ T ∩ {x ∣ x > 0}");
@@ -411,7 +416,12 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ S ∩ {x ∣ x > 0} ∩ S");
 		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ S ∩ T ∩ {x ∣ x > 0} ∩ S ∩ T");
 
-		
+		expressionTest("S", "S ∩ S", "S", "ℙ(S)");
+		expressionTest("S", "S ∩ S ∩ S", "S", "ℙ(S)");
+		expressionTest("t", "t ∩ t", "t", "ℙ(S)");
+		expressionTest("t", "t ∩ t ∩ t", "t", "ℙ(S)");
+
+
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
 		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∪ ∅");
 		expressionTest("{x ∣ x > 0}", "∅ ∪ {x ∣ x > 0}");
@@ -422,6 +432,11 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ S ∪ T ∪ ∅");
 		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "{x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅");
 		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅");
+
+		expressionTest("S", "S ∪ S", "S", "ℙ(S)");
+		expressionTest("S", "S ∪ S ∪ S", "S", "ℙ(S)");
+		expressionTest("t", "t ∪ t", "t", "ℙ(S)");
+		expressionTest("t", "t ∪ t ∪ t", "t", "ℙ(S)");
 
 		
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ U == S \/ ... \/ T \/ ... \/ ... \/ U
