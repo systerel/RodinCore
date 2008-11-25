@@ -500,10 +500,8 @@ class OperationBuilder {
 				counter++;
 			}
 			for (IRodinElement element : root.getChildren()) {
-				if (element instanceof IInternalElement) {
-					final IInternalElement iie = (IInternalElement) element;
-					op.addCommande(renameElement(iie, type, factory, prefix));
-				}
+				final IInternalElement ie = (IInternalElement) element;
+				op.addCommande(renameElement(ie, type, factory, prefix));
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
