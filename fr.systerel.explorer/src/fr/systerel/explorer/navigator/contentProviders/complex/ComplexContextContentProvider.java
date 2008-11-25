@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -71,20 +70,15 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
-        	IProject project = (IProject) element;
-			//if it is a RodinProject return the IRodinProject from the DB.
-			try {
-				if (project.isAccessible() && project.hasNature(RodinCore.NATURE_ID)) {
-					return ExplorerUtils.getContextRootChildren(ExplorerUtils.getRodinProject(project)).length >0;
+        	IRodinProject rodinProject = RodinCore.valueOf((IProject) element);
+        	if (rodinProject.exists()) {
+				try {
+					return ExplorerUtils.getContextRootChildren(rodinProject).length >0;
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
 		}
         return getChildren(element).length >0;
 	}
@@ -106,24 +100,16 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 	}
 
 	protected Object[] getProjectChildren(IProject project) {
-		if (project.isAccessible()) {
-			try {
-				//if it is a RodinProject return the IRodinProject from the DB.
-				if (project.hasNature(RodinCore.NATURE_ID)) {
-					IRodinProject proj = ExplorerUtils.getRodinProject(project);
-					if (proj != null) {
-		            	ModelController.processProject(proj);
-			        	ModelProject prj= ModelController.getProject(proj);
-			        	if (prj != null) {
-				        	return ModelController.convertToIContext(prj.getRootContexts());
-			        	}
-					}
-				} 
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		//if it is a RodinProject return the IRodinProject from the DB.
+    	IRodinProject proj = RodinCore.valueOf(project);
+    	if (proj.exists()) {
+			ModelController.processProject(proj);
+			ModelProject prj= ModelController.getProject(proj);
+			if (prj != null) {
+				return ModelController.convertToIContext(prj.getRootContexts());
 			}
 		}
+
 		return new Object[0];
 	}
 	
