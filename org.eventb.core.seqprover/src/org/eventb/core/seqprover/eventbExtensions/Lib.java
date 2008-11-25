@@ -28,6 +28,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -1190,19 +1191,16 @@ public final class Lib {
 	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
-	public static boolean isSetOfIntergers(Formula<?> formula) {
-		if (formula instanceof Expression) {
-			Expression expression = (Expression) formula;
-			Type type = expression.getType();
-			if (type instanceof PowerSetType) {
-				Type baseType = type.getBaseType();
-				AtomicExpression integer = ff.makeAtomicExpression(
-						Expression.INTEGER, null);
-				integer.typeCheck(ff.makeTypeEnvironment());
-				return baseType.toExpression(ff).equals(integer);
-			}
+	public static boolean isSetOfIntegers(Formula<?> formula) {
+		if (!(formula instanceof Expression)) {
+			return false;
 		}
-		return false;
+		Expression expression = (Expression) formula;
+		Type type = expression.getType();
+		if (type == null) {
+			return false;
+		}
+		return type.getBaseType() instanceof IntegerType;
 	}
 
 
