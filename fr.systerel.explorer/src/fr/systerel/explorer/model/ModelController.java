@@ -18,8 +18,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -38,7 +39,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.ExplorerUtils;
-import fr.systerel.explorer.RodinNavigator;
 
 /**
  * The Model is used to present the structure of the machines and contexts and
@@ -51,18 +51,27 @@ public class ModelController implements IElementChangedListener {
 	
 	
 	private static HashMap<IRodinProject, ModelProject> projects = new HashMap<IRodinProject, ModelProject>();
-	RodinNavigator navigator;
+	CommonViewer viewer;
+	private static ModelController instance;
 
 	/**
 	 * Create this controller and register it in the DataBase for changes.
 	 * 
-	 * @param navigator
+	 * @param viewer
 	 */
-	public ModelController(RodinNavigator navigator){
+	public ModelController(CommonViewer viewer){
 		RodinCore.addElementChangedListener(this);
-		this.navigator = navigator;
+		this.viewer = viewer;
 	}
 
+	public static void createInstance(CommonViewer viewer) {
+		if (instance == null) {
+			instance = new ModelController(viewer);
+		} else {
+			instance.viewer = viewer;
+		}
+	}
+	
 	/**
 	 * No arguments constructor for testing purpose
 	 */
@@ -341,7 +350,7 @@ public class ModelController implements IElementChangedListener {
 		final ArrayList<IRodinElement> toRefresh = processor.getToRefresh();
 		final ArrayList<IRodinElement> toRemove = processor.getToRemove();
 		
-		navigator.getViewSite().getShell().getDisplay().asyncExec(new Runnable(){
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
 			public void run() {
 				cleanUpModel(toRemove);
 				//refresh the model
@@ -415,7 +424,6 @@ public class ModelController implements IElementChangedListener {
 	}
 	
 	public void refreshViewer(ArrayList<IRodinElement> toRefresh) {
-		TreeViewer viewer = navigator.getCommonViewer();
 		Control ctrl = viewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
 			// refresh everything

@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-   <extension-point id="masterDetails" name="%point.masterDetails" schema="schema/masterDetails.exsd"/>
    <extension
          id="org.eclipse.ui.navigator.resourceContent"
          point="org.eclipse.ui.views">
       <view
+            allowMultiple="false"
             category="org.eventb.ui"
-            class="fr.systerel.explorer.RodinNavigator"
+            class="org.eclipse.ui.navigator.CommonNavigator"
             icon="icons/full/clcl16/prj_expl.gif"
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">
+      </view>
+      <view
+            category="org.eventb.ui"
+            class="fr.systerel.explorer.statistics.StatisticsView"
+            id="fr.systerel.explorer.statistics"
+            name="%view.statistics">
       </view>
    </extension>
    <extension
@@ -613,13 +619,6 @@
                tooltip="%viewActions.newComponent.tooltip">
          </action>
       </viewContribution>
-   </extension>
-   <extension
-         point="fr.systerel.explorer.masterDetails">
-      <detailsTab
-            Class="fr.systerel.explorer.masterDetails.statistics.StatisticsTab"
-            id="fr.systerel.explorer.masterDetails.statistics">
-      </detailsTab>
    </extension>
 
 </plugin>

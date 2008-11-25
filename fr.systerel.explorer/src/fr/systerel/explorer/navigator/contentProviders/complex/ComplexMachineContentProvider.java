@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -29,6 +30,7 @@ import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
+import fr.systerel.explorer.navigator.NavigatorController;
 
 /**
  * The content provider for machines
@@ -91,8 +93,9 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	   	// Do nothing
-		 
+		if (viewer instanceof CommonViewer) {
+		   	NavigatorController.setUpNavigator((CommonViewer) viewer);
+		}
 	}
 
 	

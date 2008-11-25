@@ -32,7 +32,6 @@ import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.pom.AutoProver;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.IEventBSharedImages;
