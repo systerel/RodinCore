@@ -179,7 +179,7 @@ public class EventBEditorUtils {
 		if (left == null || right == null) {
 			return false;
 		}
-		return left.getElementType().equals(right.getElementType());
+		return left.getElementType() == right.getElementType();
 	}
 
 	/**
