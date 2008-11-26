@@ -173,9 +173,13 @@ public class EventBEditorUtils {
 		return (IInternalElement) item.getData();
 	}
 
-	private static  boolean equalsType(IInternalElement element, TreeItem item) {
-		return element.getElementType().equals(
-				getElement(item).getElementType());
+	private static boolean equalsType(TreeItem leftItem, TreeItem rightItem) {
+		final IInternalElement left = getElement(leftItem);
+		final IInternalElement right = getElement(rightItem);
+		if (left == null || right == null) {
+			return false;
+		}
+		return left.getElementType().equals(right.getElementType());
 	}
 
 	/**
@@ -183,13 +187,11 @@ public class EventBEditorUtils {
 	 * <code>null</code> if there isn't
 	 */
 	private static  IInternalElement getPreviousElement(Tree tree, TreeItem item) {
-		final IInternalElement previous = getElement(TreeSupports.findPrevItem(
-				tree, item));
-		if (previous == null || !equalsType(previous, item)) {
-			return null;
-		} else {
-			return previous;
+		final TreeItem prevItem = TreeSupports.findPrevItem(tree, item);
+		if (equalsType(prevItem, item)) {
+			return getElement(prevItem);
 		}
+		return null;
 	}
 
 	/**
@@ -197,13 +199,11 @@ public class EventBEditorUtils {
 	 * if there isn't
 	 */
 	private static IInternalElement getNextElement(Tree tree, TreeItem item) {
-		final IInternalElement next = getElement(TreeSupports.findNextItem(
-				tree, item));
-		if (next == null || !equalsType(next, item)) {
-			return null;
-		} else {
-			return next;
+		final TreeItem nextItem = TreeSupports.findNextItem(tree, item);
+		if (equalsType(nextItem, item)) {
+			return getElement(nextItem);
 		}
+		return null;
 	}
 	
 	/**
