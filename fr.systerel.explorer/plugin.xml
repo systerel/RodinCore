@@ -544,37 +544,37 @@
             name="%filters.hideResources">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BccFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$CheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcc"
             name="%filters.hideBcc">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BcmFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$CheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcm"
             name="%filters.hideBcm">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BpoFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$POFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpo"
             name="%filters.hideBpo">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BprFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$PRFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpr"
             name="%filters.hideBpr">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BpsFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$PSFilter"
             id="fr.systerel.explorer.navigator.filters.hideBps"
             name="%filters.hideBps">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BucFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$UncheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBuc"
             name="%filters.hideBuc">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.BumFilter"
+            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$UncheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBum"
             name="%filters.hideBum">
       </commonFilter>

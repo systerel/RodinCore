@@ -58,6 +58,7 @@ public class RecalculateAutoStatusAction extends Action {
 
     private StructuredViewer viewer;
 
+	@Override
 	public void run() {
 		// Rerun the auto prover on selected elements.
 		// The enablement condition guarantees that only machineFiles and
