@@ -153,9 +153,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareNameDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.NAME;
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) <0);
 		
@@ -164,9 +162,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	@Test
 	public void compareTotalDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.TOTAL;
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 	
 		assertTrue(comparator.compare(stats1, stats2) <0);
 	}
@@ -175,9 +171,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	public void compareAutoDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.AUTO;
 	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) <0);
 	}
@@ -186,9 +180,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	public void compareManualDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.MANUAL;
 	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) >0);
 	}
@@ -197,9 +189,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	public void compareReviewedDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.REVIEWED;
 	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) <0);
 	}
@@ -208,9 +198,7 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	public void compareUndischargedRestDescend() {
 		StatisticsDetailsComparator comparator = StatisticsDetailsComparator.UNDISCHARGED;
 	
-		//setting twice the same column, changes the order to descending
-		comparator.updateColumn(1);
-		comparator.updateColumn(1);
+		comparator.setOrder(!StatisticsDetailsComparator.ASCENDING);
 		
 		assertTrue(comparator.compare(stats1, stats2) ==0);
 	}
