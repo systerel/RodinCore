@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * by default, which we don't want. This overrides the sorting and keeps them in
  * the order they appear.
  * 
+ * The CNF demands a subclass of <code>ViewerSorter</code>.
+ * 
  */
 public class AntiSorter extends ViewerSorter {
 
@@ -29,7 +31,7 @@ public class AntiSorter extends ViewerSorter {
 	 * 
 	 */
 	public AntiSorter() {
-		// TODO Auto-generated constructor stub
+		// do nothing
 	}
 
 	/**
@@ -37,7 +39,7 @@ public class AntiSorter extends ViewerSorter {
 	 */
 	public AntiSorter(Collator collator) {
 		super(collator);
-		// TODO Auto-generated constructor stub
+		// do nothing
 	}
 	
 
