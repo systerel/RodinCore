@@ -21,9 +21,6 @@ import org.eclipse.ui.navigator.ICommonActionConstants;
 public class ElementActionProvider extends NavigatorActionProvider {
 
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-     */
     @Override
     public void fillActionBars(IActionBars actionBars) {
         super.fillActionBars(actionBars);

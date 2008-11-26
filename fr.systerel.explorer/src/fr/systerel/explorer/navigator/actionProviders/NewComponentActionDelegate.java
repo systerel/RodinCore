@@ -33,16 +33,10 @@ public class NewComponentActionDelegate implements IViewActionDelegate {
 
 	IViewPart view;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	public void init(IViewPart viewPart) {
 		this.view = viewPart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	public void run(IAction action) {
 		BusyIndicator.showWhile(view.getViewSite().getShell().getDisplay(), new Runnable() {
 			public void run() {
@@ -67,9 +61,6 @@ public class NewComponentActionDelegate implements IViewActionDelegate {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing
 

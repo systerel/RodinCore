@@ -38,9 +38,6 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class StatisticsContentProvider implements IStructuredContentProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof Object[]) {
 			Object[] elements = (Object[]) inputElement;
@@ -67,17 +64,11 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	public void dispose() {
 		// do nothing
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}

@@ -68,11 +68,6 @@ public class NewProjectWizard extends Wizard implements INewWizard{
 		setNeedsProgressMonitor(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		page = new NewProjectWizardPage(selection);

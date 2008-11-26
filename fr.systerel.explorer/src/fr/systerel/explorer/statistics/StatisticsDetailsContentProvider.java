@@ -34,9 +34,6 @@ import fr.systerel.explorer.navigator.IElementNode;
  */
 public class StatisticsDetailsContentProvider extends StatisticsContentProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
 		ArrayList<Object> children = new ArrayList<Object>();

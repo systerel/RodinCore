@@ -25,7 +25,6 @@ import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Invariant elements
- * @author Administrator
  *
  */
 public class InvariantContentProvider implements ITreeContentProvider {

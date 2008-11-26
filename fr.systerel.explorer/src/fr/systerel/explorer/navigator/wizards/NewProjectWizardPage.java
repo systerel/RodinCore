@@ -50,11 +50,6 @@ public class NewProjectWizardPage extends WizardPage {
 		setDescription("This wizard creates a new (empty) Event-B Project in the current Workspace");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();

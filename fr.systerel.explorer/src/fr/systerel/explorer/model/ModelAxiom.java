@@ -33,7 +33,6 @@ public class ModelAxiom extends ModelPOContainer {
 	}
 
 	public IRodinElement getInternalElement() {
-		// TODO Auto-generated method stub
 		return internalAxiom;
 	}
 

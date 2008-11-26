@@ -20,18 +20,10 @@ import org.eclipse.ui.navigator.ICommonActionConstants;
 
 /**
  * The Action Provider for <code>IMachineRoot</code>s and <code>IContextRoot</code>s 
- * @author Maria Husmann
  *
  */
 public class RootActionProvider extends NavigatorActionProvider {
 
-	/**
-	 * Create the actions.
-	 */
-
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-     */
     @Override
     public void fillActionBars(IActionBars actionBars) {
         super.fillActionBars(actionBars);

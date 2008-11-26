@@ -31,7 +31,7 @@ import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
- * @author Administrator
+ * Provides some static utility methods for statistics
  * 
  */
 public class StatisticsUtil {

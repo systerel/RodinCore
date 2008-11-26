@@ -28,8 +28,6 @@ import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Theorem elements
- * @author Maria Husmann
- *
  */
 public class TheoremContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {

@@ -24,7 +24,6 @@ import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Event elements
- * @author Maria Husmann
  *
  */
 public class EventContentProvider implements ITreeContentProvider {

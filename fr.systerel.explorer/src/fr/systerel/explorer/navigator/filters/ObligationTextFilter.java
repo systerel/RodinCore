@@ -26,7 +26,7 @@ public class ObligationTextFilter extends ViewerFilter {
 	 * 
 	 */
 	public ObligationTextFilter() {
-		// TODO Auto-generated constructor stub
+		// do nothing
 	}
 	
 	private String text = "";
@@ -35,9 +35,6 @@ public class ObligationTextFilter extends ViewerFilter {
 	//excluding or including the string?
 	private boolean exclude = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	/**
 	 * Implements filtering based on proof obligation names.
 	 */

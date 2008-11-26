@@ -26,8 +26,6 @@ import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Variable elements
- * @author Maria Husmann
- *
  */
 public class VariableContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {

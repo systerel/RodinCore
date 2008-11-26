@@ -39,18 +39,10 @@ import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
- * @author Maria Husmann
- * 
- *
  */
 public class RodinLabelProvider implements
 		ILabelProvider{
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	public Image getImage(Object element) {
 
 		if (element instanceof IPSStatus) {
@@ -106,11 +98,6 @@ public class RodinLabelProvider implements
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	public String getText(Object obj) {
 		if (obj instanceof ILabeledElement) {
 			try {
@@ -142,9 +129,6 @@ public class RodinLabelProvider implements
 		return obj.toString();
 	}
 
-//	public Font getFont(Object element) {
-//		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-//	}
 	
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing

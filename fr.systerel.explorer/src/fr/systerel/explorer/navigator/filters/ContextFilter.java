@@ -25,7 +25,7 @@ import org.eventb.core.IMachineRoot;
  */
 public class ContextFilter extends ViewerFilter {
 	public ContextFilter() {
-		// TODO Auto-generated constructor stub
+		// do nothing
 	}
 
 	@Override

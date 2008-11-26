@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 
 package fr.systerel.explorer.navigator.filters;
 
@@ -25,24 +24,21 @@ public class DischargedFilter extends ViewerFilter {
 
 	private boolean active = false;
 
-	/**
-	 * 
-	 */
 	public DischargedFilter() {
-		// TODO Auto-generated constructor stub
+		// do nothing
 	}
 
 	@Override
-	public boolean select(Viewer viewer, Object parentElement,
-			Object element) {
-		
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+
 		if (element instanceof IPSStatus) {
-			if (! active) {
+			if (!active) {
 				// No filtering on discharged POs
 				return true;
 			}
 
-			return !ModelController.getModelPO((IPSStatus) element).isDischarged();
+			return !ModelController.getModelPO((IPSStatus) element)
+					.isDischarged();
 		}
 		return true;
 	}
