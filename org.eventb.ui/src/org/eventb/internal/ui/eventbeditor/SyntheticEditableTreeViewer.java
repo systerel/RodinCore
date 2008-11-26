@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.actions.ActionContext;
+import org.eventb.core.IEventBRoot;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -49,7 +49,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 	class SyntheticContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root
-		private IRodinFile invisibleRoot = null;
+		private IEventBRoot invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -68,9 +68,9 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IEventBRoot) {
 				try {
-					return ((IRodinFile) parent).getRoot().getChildren();
+					return ((IEventBRoot) parent).getChildren();
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -104,9 +104,9 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IEventBRoot) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IRodinFile) parent;
+					invisibleRoot = (IEventBRoot) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

@@ -168,6 +168,8 @@ public class EventBEditorUtils {
 	}
 
 	private static  IInternalElement getElement(TreeItem item) {
+		if (item == null)
+			return null;
 		return (IInternalElement) item.getData();
 	}
 
@@ -183,21 +185,25 @@ public class EventBEditorUtils {
 	private static  IInternalElement getPreviousElement(Tree tree, TreeItem item) {
 		final IInternalElement previous = getElement(TreeSupports.findPrevItem(
 				tree, item));
-		if (equalsType(previous, item))
+		if (previous == null || !equalsType(previous, item)) {
+			return null;
+		} else {
 			return previous;
-		return null;
+		}
 	}
 
 	/**
 	 * Return the next element of item with the same type or <code>null</code>
 	 * if there isn't
 	 */
-	private static  IInternalElement getNextElement(Tree tree, TreeItem item) {
+	private static IInternalElement getNextElement(Tree tree, TreeItem item) {
 		final IInternalElement next = getElement(TreeSupports.findNextItem(
 				tree, item));
-		if (equalsType(next, item))
+		if (next == null || !equalsType(next, item)) {
+			return null;
+		} else {
 			return next;
-		return null;
+		}
 	}
 	
 	/**

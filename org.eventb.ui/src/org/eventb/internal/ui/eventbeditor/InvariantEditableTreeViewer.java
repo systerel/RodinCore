@@ -18,14 +18,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eventb.core.IContextRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -44,7 +42,7 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 	class InvariantContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		// The invisible root
-		private IRodinFile invisibleRoot = null;
+		private IMachineRoot invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -63,16 +61,13 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IRodinFile) {
-				IRodinFile rf = (IRodinFile) parent;
-				if (rf.getRoot() instanceof IContextRoot) {
-					IMachineRoot root = (IMachineRoot) rf.getRoot();
-					try {
-						return root.getChildrenOfType(IInvariant.ELEMENT_TYPE);
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			if (parent instanceof IMachineRoot) {
+				IMachineRoot root = (IMachineRoot) parent;
+				try {
+					return root.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 
@@ -103,9 +98,9 @@ public class InvariantEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IMachineRoot) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IRodinFile) parent;
+					invisibleRoot = (IMachineRoot) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

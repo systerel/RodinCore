@@ -25,7 +25,6 @@ import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -45,7 +44,7 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 			ITreeContentProvider {
 
 		// The invisible root of the tree
-		private IRodinFile invisibleRoot = null;
+		private IContextRoot invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -64,15 +63,12 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IRodinFile) {
-				IRodinFile rf = (IRodinFile) parent;
-				if (rf.getRoot() instanceof IContextRoot) {
-					IContextRoot root = (IContextRoot) rf.getRoot();
-					try {
-						return root.getChildrenOfType(IAxiom.ELEMENT_TYPE);
-					} catch (RodinDBException e) {
-						EventBUIExceptionHandler.handleGetChildrenException(e);
-					}
+			if (parent instanceof IContextRoot) {
+				IContextRoot root = (IContextRoot) parent;
+				try {
+					return root.getChildrenOfType(IAxiom.ELEMENT_TYPE);
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleGetChildrenException(e);
 				}
 			}
 
@@ -102,9 +98,9 @@ public class AxiomEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IContextRoot) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IRodinFile) parent;
+					invisibleRoot = (IContextRoot) parent;
 					return getChildren(invisibleRoot);
 				}
 			}

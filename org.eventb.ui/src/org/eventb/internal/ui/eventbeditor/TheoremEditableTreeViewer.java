@@ -18,12 +18,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -43,7 +45,7 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 			ITreeContentProvider {
 
 		// The invisible root.
-		private IRodinFile invisibleRoot = null;
+		private IEventBRoot invisibleRoot = null;
 
 		/*
 		 * (non-Javadoc)
@@ -62,9 +64,10 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IMachineRoot
+					|| parent instanceof IContextRoot) {
 				try {
-					return ((IRodinFile) parent).getRoot()
+					return ((IEventBRoot) parent)
 							.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					// TODO Auto-generated catch block
@@ -99,9 +102,10 @@ public class TheoremEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IRodinFile) {
+			if (parent instanceof IMachineRoot
+					|| parent instanceof IContextRoot) {
 				if (invisibleRoot == null) {
-					invisibleRoot = (IRodinFile) parent;
+					invisibleRoot = (IEventBRoot) parent;
 					return getChildren(invisibleRoot);
 				}
 			}
