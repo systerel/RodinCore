@@ -42,8 +42,10 @@ public abstract class FileTypeFilter extends ViewerFilter {
 		if (element instanceof IFile) {
 			IRodinFile el = RodinCore.valueOf((IFile) element);
 			if (el.exists()) {
-				if (el.getRoot().getElementType().equals(getType())) {
-					return false;
+				if (el.getRoot().exists()) {
+					if (getType().equals(el.getRoot().getElementType())) {
+						return false;
+					}
 				}
 			}
 		}

@@ -274,4 +274,17 @@ public class AggregateStatistics implements IStatistics {
 		}
 	}
 
+	public void buildCopyString(StringBuilder builder, boolean copyLabel, Character separator) {
+		builder.append(getTotal());
+		builder.append(separator);
+		builder.append(getAuto());
+		builder.append(separator);
+		builder.append(getManual());
+		builder.append(separator);
+		builder.append(getReviewed());
+		builder.append(separator);
+		builder.append(getUndischargedRest());
+		builder.append(System.getProperty("line.separator"));
+	}
+
 }

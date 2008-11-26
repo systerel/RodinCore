@@ -25,18 +25,17 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
+import fr.systerel.explorer.ExplorerUtils;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.navigator.filters.DischargedFilter;
 import fr.systerel.explorer.navigator.filters.ObligationTextFilter;
@@ -137,20 +136,8 @@ public class NavigatorController {
 			public void modifyText(ModifyEvent e) {
 				if (filter != null) {
 					filter.setText(filterText.getText());
-					PlatformUI.getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
-								public void run() {
-									Control ctrl = viewer.getControl();
-									if (ctrl != null && !ctrl.isDisposed()) {
-										Object[] expanded = viewer
-												.getExpandedElements();
-										viewer.refresh(false);
-										viewer.setExpandedElements(expanded);
-									}
-								}
-							});
-					}
-				
+					ExplorerUtils.refreshViewer(viewer);
+				}
 			}
 			
 		});
@@ -175,19 +162,7 @@ public class NavigatorController {
 			public void widgetSelected(SelectionEvent e) {
 				if (filter != null) {
 					filter.setActive(discharge.getSelection());
-					PlatformUI.getWorkbench().getDisplay().asyncExec(
-							new Runnable() {
-								public void run() {
-									Control ctrl = viewer.getControl();
-									if (ctrl != null && !ctrl.isDisposed()) {
-										Object[] expanded = viewer
-												.getExpandedElements();
-										viewer.refresh(false);
-										viewer.setExpandedElements(expanded);
-									}
-								}
-							});
-					
+					ExplorerUtils.refreshViewer(viewer);
 				}
 			}
 

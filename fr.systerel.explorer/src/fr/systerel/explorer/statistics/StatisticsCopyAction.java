@@ -20,8 +20,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-
-import fr.systerel.explorer.ExplorerPlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This is a copy action for IStatistics.
@@ -39,7 +38,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 	 */
 	public StatisticsCopyAction (ISelectionProvider selectionProvider, boolean copyLabel) {
 		super("Copy");
-	    clipboard= new Clipboard(ExplorerPlugin.getDefault().getWorkbench().getDisplay());
+	    clipboard= new Clipboard(PlatformUI.getWorkbench().getDisplay());
 	    this.selectionProvider = selectionProvider;
 	    selectionProvider.addSelectionChangedListener(this);
 	    this.copyLabel = copyLabel;
@@ -92,20 +91,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 		for (Object element : objects) {
 			if (element instanceof IStatistics){
 				IStatistics stats = (IStatistics) element;
-				if (copyLabel) {
-					text.append(stats.getParentLabel()) ;
-					text.append(sep);
-				}
-				text.append( stats.getTotal());
-				text.append(sep);
-				text.append(stats.getAuto());
-				text.append(sep);
-				text.append(stats.getManual());
-				text.append(sep);
-				text.append(stats.getReviewed());
-				text.append(sep);
-				text.append(stats.getUndischargedRest());
-				text.append(System.getProperty("line.separator"));
+				stats.buildCopyString(text, copyLabel, sep);
 			}
 		}
 		return text.toString();

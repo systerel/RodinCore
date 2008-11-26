@@ -12,11 +12,12 @@
 
 package fr.systerel.explorer;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,7 +39,16 @@ public class ExplorerUtils {
 	}
 	
 	
-	public static IRodinProject getRodinProject(IProject project) {
-		return RodinCore.valueOf(project);
+	public static void refreshViewer(final CommonViewer viewer) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				Control ctrl = viewer.getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					Object[] expanded = viewer.getExpandedElements();
+					viewer.refresh(false);
+					viewer.setExpandedElements(expanded);
+				}
+			}
+		});
 	}
 }

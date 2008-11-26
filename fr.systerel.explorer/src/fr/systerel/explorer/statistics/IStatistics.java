@@ -51,4 +51,6 @@ public interface IStatistics {
 	public Object getParent();
 	
 	public boolean isAggregate();
+	
+	public void buildCopyString (StringBuilder builder, boolean copyLabel, Character separator);
 }

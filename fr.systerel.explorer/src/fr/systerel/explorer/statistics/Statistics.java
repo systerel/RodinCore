@@ -177,4 +177,23 @@ public class Statistics implements IStatistics{
 			return false;
 		return true;
 	}
+
+
+	public void buildCopyString(StringBuilder builder, boolean copyLabel,
+			Character separator) {
+		if (copyLabel) {
+			builder.append(getParentLabel()) ;
+			builder.append(separator);
+		}
+		builder.append(getTotal());
+		builder.append(separator);
+		builder.append(getAuto());
+		builder.append(separator);
+		builder.append(getManual());
+		builder.append(separator);
+		builder.append(getReviewed());
+		builder.append(separator);
+		builder.append(getUndischargedRest());
+		builder.append(System.getProperty("line.separator"));
+	}
 }
