@@ -35,6 +35,12 @@ import fr.systerel.explorer.navigator.IElementNode;
  * 
  */
 public class StatisticsUtil {
+	private static final String PROJECTS = "PROJECTS";
+	private static final String MACH_CONT = "machines contexts";
+	private static final String NODES = "NODES";
+	private static final String ELEMS = "elements";
+	private static final String POS = "proof obligations";
+	
 	/**
 	 * Decides, if a given selection is valid for statistics
 	 * 
@@ -44,76 +50,59 @@ public class StatisticsUtil {
 	 *         String describing why it is not valid.
 	 */
 	public static String isValidSelection(Object[] elements) {
-		int level = 0;
-		int projects = 1;
-		int machConts = 2;
-		int nodes = 3;
-		int invs = 4;
-		int pos = 5;
+		//describes the level of previous elements.
+		String level = "";
+		//describes the level of the current element.
+		String new_level;
 
 		for (Object el : elements) {
-			String selection = "Selection is not valid.";
 			if (el instanceof IProject) {
+				new_level = PROJECTS;
 				IRodinProject proj = RodinCore.valueOf((IProject) el);
 
 				if (proj.exists()) {
 					ModelProject modelproject = ModelController
 							.getProject(proj);
-					if (modelproject != null) {
-						if (level == 0) {
-							level = projects;
-						} else if (level != projects) {
-							return selection;
-						}
-					} else
-						return "Expand the projects at least once to see the statistics.";
-				} else
+					if (modelproject == null) {
+						return "Expand the PROJECTS at least once to see the statistics.";
+					}
+				} else {
 					return "Must be a Rodin Project and not closed.";
-				
-			} else if (el instanceof IMachineRoot || el instanceof IContextRoot) {
-				if (level == 0) {
-					level = machConts;
-				} else if (level != machConts) {
-					return selection;
 				}
+
+			} else if (el instanceof IMachineRoot || el instanceof IContextRoot) {
+				new_level = MACH_CONT;
+				
 			} else if (el instanceof IElementNode) {
 				IInternalElementType<?> type = ((IElementNode) el)
 						.getChildrenType();
-				if (type == IVariable.ELEMENT_TYPE) {
-					return "No statistics for this selection.";
-				}
-				if (type == ICarrierSet.ELEMENT_TYPE) {
-					return "No statistics for this selection.";
-				}
-				if (type == IConstant.ELEMENT_TYPE) {
+				if (type == IVariable.ELEMENT_TYPE
+						|| type == ICarrierSet.ELEMENT_TYPE
+						|| type == IConstant.ELEMENT_TYPE) {
 					return "No statistics for this selection.";
 				}
 				// for the proof obligation node only other proof obligations
 				// nodes are allowed
 				// otherwise we may count some proof obligations twice
 				if (type == IPSStatus.ELEMENT_TYPE) {
-					if (level == 0) {
-						level = pos;
-					} else if (level != pos) {
-						return selection;
-					}
-					// all other nodes (invariants, events, theorems, axioms)
+					new_level = POS;
+					// all other NODES (invariants, events, theorems, axioms)
 				} else {
-					if (level == 0) {
-						level = nodes;
-					} else if (level != nodes) {
-						return selection;
-					}
+					new_level = NODES;
 				}
 			} else if (el instanceof IInvariant || el instanceof IEvent
 					|| el instanceof ITheorem || el instanceof IAxiom) {
-				if (level == 0) {
-					level = invs;
-				} else if (level != invs) {
-					return selection;
-				}
+				new_level = ELEMS;
 			} else
 				return "No statistics for this selection.";
+			
+			// check the levels. all elements must be of the same level for the
+			// selection to be valid
+			if (level.length() == 0) {
+				level = new_level;
+			} else if (level != new_level) {
+				return "Selection is not a valid combination of elements.";
+			}
 		}
 		return null;
 	}
