@@ -20,9 +20,8 @@ import org.eclipse.jface.viewers.ViewerComparator;
  */
 public abstract class StatisticsDetailsComparator extends ViewerComparator {
 	
-	private static int column;
-	private static final boolean ASCENDING = true;
-	static boolean order = ASCENDING;
+	public static final boolean ASCENDING = true;
+	protected boolean order = ASCENDING;
 	
 	/**
 	 * Constructor argument values that indicate to sort items by name, total,
@@ -113,21 +112,13 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 	public abstract int compare(IStatistics stats1, IStatistics stats2);
 	
-	/**
-	 * Updates the sorting according to the selected column. If the selected
-	 * column is the same as the previously selected, the sorting order is
-	 * toggled. Otherwise the sorting is set to ascending.
-	 * 
-	 * @param columnIndex
-	 *            The selected column.
-	 */
-	public void updateColumn(int columnIndex) {
-		if (!(columnIndex ==column)) {
-			column = columnIndex;
-			order = ASCENDING;
-		} else {
-			order = !order;
-		}
+
+	public void setOrder(boolean order) {
+		this.order = order;
 	}
 
+	public boolean getOrder() {
+		return order;
+	}
+	
 }

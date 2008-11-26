@@ -12,6 +12,8 @@
 
 package fr.systerel.explorer.statistics;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -35,7 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -57,6 +59,8 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	private TableViewer viewer;
 	TableViewer detailsViewer;
 	private Composite container;
+	private HashMap<Integer, StatisticsColumn> detailColumns = new HashMap<Integer, StatisticsColumn>();
+	private HashMap<Integer, StatisticsColumn> overviewColumns = new HashMap<Integer, StatisticsColumn>();
 	
 	private IStructuredContentProvider statisticsContentProvider =
 		new StatisticsContentProvider();
@@ -157,38 +161,46 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	
 	private void createOverviewViewer(){
 		viewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		viewer.getTable().setHeaderVisible(true);
-		addOverviewColumn("Total");
-		addOverviewColumn("Auto");
-		addOverviewColumn("Manual");
-		addOverviewColumn("Reviewed");
-		addOverviewColumn("Undischarged");
+		Table table =viewer.getTable();
+		table.setHeaderVisible(true);
+		
+		addOverviewColumn(new StatisticsColumn.TotalColumn(table));
+		addOverviewColumn(new StatisticsColumn.AutoColumn(table));
+		addOverviewColumn(new StatisticsColumn.ManualColumn(table));
+		addOverviewColumn(new StatisticsColumn.ReviewedColumn(table));
+		addOverviewColumn(new StatisticsColumn.UndischargedColumn(table));
+		
 		viewer.setContentProvider(statisticsContentProvider);
-		viewer.setLabelProvider(new StatisticsLabelProvider());
+		viewer.setLabelProvider(new StatisticsLabelProvider(this));
 		viewer.getTable().setLayout(new RowLayout (SWT.VERTICAL));
 		FormData data = createFormData(0, -1);
 		viewer.getControl().setLayoutData(data);
 	}
 	
-	private void addOverviewColumn(String headerText) {
-		TableColumn column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText(headerText);
-		column.pack();
+	private void addOverviewColumn(StatisticsColumn column) {
+		overviewColumns.put(new Integer(column.getIndex()), column);
 		
 	}
 
+	private void setUpDetailsColumn(StatisticsColumn column, StatisticsDetailsComparator comparator) {
+		detailColumns.put(new Integer(column.getIndex()), column);
+		addSelectionListener(column, comparator);
+	}
+	
 	private void createDetailsViewer() {
 		detailsViewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		detailsViewer.setContentProvider(statisticsDetailsContentProvider);
-		detailsViewer.setLabelProvider(new StatisticsDetailsLabelProvider());
+		detailsViewer.setLabelProvider(new StatisticsDetailsLabelProvider(this));
 		detailsViewer.getTable().setHeaderVisible(true);
 		detailsViewer.getTable().setVisible(false);
-		addDetailsColumn("Name", StatisticsDetailsComparator.NAME, 0);
-		addDetailsColumn("Total", StatisticsDetailsComparator.TOTAL, 1);
-		addDetailsColumn("Auto.", StatisticsDetailsComparator.AUTO, 2);
-		addDetailsColumn("Manual.", StatisticsDetailsComparator.MANUAL, 3);
-		addDetailsColumn("Reviewed", StatisticsDetailsComparator.REVIEWED, 4);
-		addDetailsColumn("Undischarged", StatisticsDetailsComparator.UNDISCHARGED, 5);
+		Table table = detailsViewer.getTable();
+		
+		setUpDetailsColumn(new StatisticsColumn.NameColumn(table), StatisticsDetailsComparator.NAME);
+		setUpDetailsColumn(new StatisticsColumn.TotalColumn(table), StatisticsDetailsComparator.TOTAL);
+		setUpDetailsColumn(new StatisticsColumn.AutoColumn(table), StatisticsDetailsComparator.AUTO);
+		setUpDetailsColumn(new StatisticsColumn.ManualColumn(table), StatisticsDetailsComparator.MANUAL);
+		setUpDetailsColumn(new StatisticsColumn.ReviewedColumn(table), StatisticsDetailsComparator.REVIEWED);
+		setUpDetailsColumn(new StatisticsColumn.UndischargedColumn(table), StatisticsDetailsComparator.UNDISCHARGED);
 		
 		FormData tableData = createFormData(viewer.getControl());
 		detailsViewer.getControl().setLayoutData(tableData);
@@ -214,23 +226,35 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 
 	}
 
-	private void addDetailsColumn(final String text, final StatisticsDetailsComparator comparator, final int index) {
-		final TableColumn column = new TableColumn(detailsViewer.getTable(), SWT.NONE);
-		column.setText(text);
-		column.pack();
-
+	private void addSelectionListener(StatisticsColumn column, final StatisticsDetailsComparator comparator) {
 		// Add listener to column to sort when clicked on the header.
-		column.addSelectionListener(new SelectionAdapter() {
+		column.getColumn().addSelectionListener(new SelectionAdapter() {
        	
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				comparator.updateColumn(index);
-				detailsViewer.setComparator(comparator);
+				// already sorting with this column's comparator: toggle order.
+				if (detailsViewer.getComparator() == comparator) {
+					comparator.setOrder(!comparator.getOrder());
+					
+				//sort with this column's comparator.
+				} else {
+					comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
+					detailsViewer.setComparator(comparator);
+				}
+			
 				detailsViewer.refresh(false);
 				colorEvery2ndLine();
 				
 			}
 		});
+	}
+	
+	public StatisticsColumn getDetailColumn(int index){
+		return detailColumns.get(new Integer(index));
+	}
+
+	public StatisticsColumn getOverviewColumn(int index){
+		return overviewColumns.get(new Integer(index));
 	}
 	
 
