@@ -39,17 +39,14 @@ public abstract class FileTypeFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof IFile) {
-			IRodinFile el = RodinCore.valueOf((IFile) element);
-			if (el.exists()) {
-				if (el.getRoot().exists()) {
-					if (getType().equals(el.getRoot().getElementType())) {
-						return false;
-					}
-				}
-			}
+		if (!(element instanceof IFile)) {
+			return true;
 		}
-		return true;
+		IRodinFile el = RodinCore.valueOf((IFile) element);
+		if (el == null) {
+			return true;
+		}
+		return getType() != el.getRootElementType();
 	}
 
 	public static class UncheckedMachineFilter extends FileTypeFilter {
