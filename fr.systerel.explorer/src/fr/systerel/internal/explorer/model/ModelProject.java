@@ -173,7 +173,9 @@ public class ModelProject implements IModelElement {
 	}
 
 	/**
-	 * calculates the longestExtendsBranch for all context of this project
+	 * calculates the longestExtendsBranch for all context of this project.
+	 * 
+	 * In some cases the calculated branch may be not the very longest.
 	 */
 	public void calculateContextBranches() {
 		//reset previous calculations
@@ -192,9 +194,12 @@ public class ModelProject implements IModelElement {
 						parent.setLongestBranch(new ArrayList<ModelContext>(branch));
 					}
 					if (parent.getExtendsContexts().size() > 0) {
-						//usually there should be just 1, if there are more those are ignored here
-						//in that case, Rodin outputs error messages already.
-						//TODO: this is not true for contexts. adapt!
+						// A context can extend more than one context.
+						// Here we take the first to make it simpler and faster.
+						// in some cases this might result in branch
+						// that is not actually the longest one.
+						// But that is not so grave, since it only influences
+						// the presentation of the contexts.
 						parent = parent.getExtendsContexts().get(0);
 					} else parent = null;
 				}

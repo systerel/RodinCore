@@ -49,7 +49,7 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	private ModelPOContainer parent;
 	private IEventBRoot parentRoot;	
 
-	public IModelElement getModelParent() {
+	public ModelPOContainer getModelParent() {
 		return parent;
 	}
 

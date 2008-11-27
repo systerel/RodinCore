@@ -65,7 +65,7 @@ public class ActionCollection {
 	 * Provides an open action for various elements in Rodin 
 	 * (Machines, Contexts, Invariants, ProofObligations...)
 	 * @param site
-	 * @return An opnen action
+	 * @return An open action
 	 */
 	public static Action getOpenAction(final ICommonActionExtensionSite site) {
 		Action doubleClickAction = new Action("Open") {
@@ -179,7 +179,7 @@ public class ActionCollection {
 						if (dialog.getReturnCode() == InputDialog.CANCEL)
 							return; // Cancel
 						
-						//TODO is there away to do this without closing the editors?
+						//is there away to do this without closing the editors?
 						closeOpenEditors(resource);
 						IProjectDescription desc = resource.getDescription();
 						desc.setName(bareName);

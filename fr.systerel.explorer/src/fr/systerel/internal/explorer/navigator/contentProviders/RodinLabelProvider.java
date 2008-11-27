@@ -77,7 +77,7 @@ public class RodinLabelProvider implements ILabelProvider {
 				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
 			}
 			if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
-				ModelPOContainer parent = (ModelPOContainer) ((ModelElementNode) node)
+				ModelPOContainer parent = ((ModelElementNode) node)
 						.getModelParent();
 				boolean discharged = parent.getMinConfidence() > IConfidence.REVIEWED_MAX;
 				boolean reviewed = parent.getMinConfidence() > IConfidence.PENDING;
