@@ -26,8 +26,8 @@ class RevertProofComponentOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask("Saving proof files", 2);
-			pc.getPRFile().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
-			pc.getPSFile().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
+			pc.getPRRoot().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
+			pc.getPSRoot().getRodinFile().makeConsistent(new SubProgressMonitor(pm, 1));
 		} finally {
 			pm.done();
 		}

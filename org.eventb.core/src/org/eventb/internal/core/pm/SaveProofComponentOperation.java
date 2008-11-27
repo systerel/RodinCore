@@ -28,8 +28,8 @@ class SaveProofComponentOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask("Saving proof files", 2);
-			pc.getPRFile().getRodinFile().save(new SubProgressMonitor(pm, 1), force, true);
-			pc.getPSFile().getRodinFile().save(new SubProgressMonitor(pm, 1), force, false);
+			pc.getPRRoot().getRodinFile().save(new SubProgressMonitor(pm, 1), force, true);
+			pc.getPSRoot().getRodinFile().save(new SubProgressMonitor(pm, 1), force, false);
 		} finally {
 			pm.done();
 		}

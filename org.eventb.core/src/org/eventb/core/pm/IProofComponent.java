@@ -90,20 +90,20 @@ public interface IProofComponent {
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the Rodin file associated with this proof component and
+	 * Returns the Rodin root associated with this proof component and
 	 * containing its proof obligations.
 	 * 
-	 * @return the proof obligation file of this component.
+	 * @return the proof obligation root of this component.
 	 */
-	IPORoot getPOFile();
+	IPORoot getPORoot();
 
 	/**
-	 * Returns the Rodin file associated with this proof component and
+	 * Returns the Rodin root associated with this proof component and
 	 * containing its proofs.
 	 * 
-	 * @return the proof file of this component.
+	 * @return the proof root of this component.
 	 */
-	IPRRoot getPRFile();
+	IPRRoot getPRRoot();
 
 	/**
 	 * Returns an array of all proof attempts that have been created for this
@@ -151,12 +151,12 @@ public interface IProofComponent {
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the Rodin file associated with this proof component and
+	 * Returns the Rodin root associated with this proof component and
 	 * containing its proof statuses.
 	 * 
-	 * @return the proof status file of this component.
+	 * @return the proof status root of this component.
 	 */
-	IPSRoot getPSFile();
+	IPSRoot getPSRoot();
 
 	/**
 	 * Returns the scheduling rule used by this component for interacting with

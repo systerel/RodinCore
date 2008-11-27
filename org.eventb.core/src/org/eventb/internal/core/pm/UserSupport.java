@@ -121,7 +121,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 	public IRodinFile getInput() {
 		if (pc != null)
-			return pc.getPSFile().getRodinFile();
+			return pc.getPSRoot().getRodinFile();
 		return null;
 	}
 
@@ -608,7 +608,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 	
 	public IPSStatus[] getStatuses() throws RodinDBException {
-		return pc.getPSFile().getStatuses();
+		return pc.getPSRoot().getStatuses();
 	}
 
 	public IProofComponent getProofComponent() {

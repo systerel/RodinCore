@@ -116,7 +116,7 @@ public class ObligationsAutoProver implements IViewActionDelegate {
 						final IProofComponent pc = pm.getProofComponent(root);
 						IPSStatus[] statuses;
 						try {
-							statuses = pc.getPSFile().getStatuses();
+							statuses = pc.getPSRoot().getStatuses();
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,

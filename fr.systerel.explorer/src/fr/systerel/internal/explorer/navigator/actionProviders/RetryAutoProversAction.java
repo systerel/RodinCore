@@ -114,7 +114,7 @@ public class RetryAutoProversAction extends Action {
 						final IProofComponent pc = pm.getProofComponent(root);
 						IPSStatus[] statuses;
 						try {
-							statuses = pc.getPSFile().getStatuses();
+							statuses = pc.getPSRoot().getStatuses();
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler
 									.handleGetChildrenException(e,

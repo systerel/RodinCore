@@ -71,7 +71,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 	}
 
 	private IPOSequent getPOSequent() {
-		return component.getPOFile().getSequent(name);
+		return component.getPORoot().getSequent(name);
 	}
 
 	public String getName() {

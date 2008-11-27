@@ -71,12 +71,12 @@ public class ProofComponent implements IProofComponent {
 		return map.get(owner);
 	}
 
-	public IPORoot getPOFile() {
-		return getPSFile().getPORoot();
+	public IPORoot getPORoot() {
+		return psRoot.getPORoot();
 	}
 
-	public IPRRoot getPRFile() {
-		return getPSFile().getPRRoot();
+	public IPRRoot getPRRoot() {
+		return psRoot.getPRRoot();
 	}
 
 	public ProofAttempt[] getProofAttempts() {
@@ -89,15 +89,15 @@ public class ProofComponent implements IProofComponent {
 		return values(poName).toArray(NO_PROOF_ATTEMPTS);
 	}
 
-	public IPSRoot getPSFile() {
+	public IPSRoot getPSRoot() {
 		return psRoot;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
 		final ISchedulingRule[] rules = new ISchedulingRule[] {
-				getPOFile().getSchedulingRule(),
-				getPRFile().getSchedulingRule(),
-				getPSFile().getSchedulingRule() };
+				getPORoot().getSchedulingRule(),
+				getPRRoot().getSchedulingRule(),
+				getPSRoot().getSchedulingRule() };
 		return MultiRule.combine(rules);
 	}
 
@@ -130,7 +130,7 @@ public class ProofComponent implements IProofComponent {
 
 	@Override
 	public String toString() {
-		return getPSFile().toString();
+		return getPSRoot().toString();
 	}
 
 	synchronized void addAllAttempts(Collection<ProofAttempt> col) {
@@ -154,16 +154,16 @@ public class ProofComponent implements IProofComponent {
 	}
 
 	public IPRProof getProof(String name) {
-		return getPRFile().getProof(name);
+		return getPRRoot().getProof(name);
 	}
 
 	public IPSStatus getStatus(String poName) {
-		return getPSFile().getStatus(poName);
+		return getPSRoot().getStatus(poName);
 	}
 
 	public boolean hasUnsavedChanges() throws RodinDBException {
-		return getPRFile().getRodinFile().hasUnsavedChanges()
-				|| getPSFile().getRodinFile().hasUnsavedChanges();
+		return getPRRoot().getRodinFile().hasUnsavedChanges()
+				|| getPSRoot().getRodinFile().hasUnsavedChanges();
 	}
 
 	public void makeConsistent(IProgressMonitor monitor)

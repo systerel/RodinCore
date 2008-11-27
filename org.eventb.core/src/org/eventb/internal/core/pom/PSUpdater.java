@@ -80,7 +80,7 @@ public class PSUpdater {
 			throws RodinDBException {
 		try {
 			this.pc = pc;
-			psRoot = pc.getPSFile();
+			psRoot = pc.getPSRoot();
 			IRodinFile psFile = psRoot.getRodinFile();
 			if (psFile.exists()) {
 				final IPSStatus[] ss = psRoot.getStatuses();

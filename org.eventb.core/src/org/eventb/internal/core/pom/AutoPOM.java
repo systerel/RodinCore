@@ -69,7 +69,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 		final String componentName = psRoot.getComponentName();
 		
-		final IPOSequent[] poSequents = pc.getPOFile().getSequents();
+		final IPOSequent[] poSequents = pc.getPORoot().getSequents();
 		final int nbOfPOs = poSequents.length;
 		final int workUnits = 2 + nbOfPOs * 2 + 2 + nbOfPOs;
 		
@@ -148,7 +148,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 				pc.makeConsistent(null);
 			} catch (RodinDBException e) {
 				Util.log(e, "when reverting changes to proof and status files for"
-						+ ((IPORoot)pc.getPRFile()).getComponentName());
+						+ ((IPORoot)pc.getPRRoot()).getComponentName());
 			}
 			throw new OperationCanceledException();
 		}
@@ -184,7 +184,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)
 			throws RodinDBException {
-		final IRodinFile prFile = pc.getPRFile().getRodinFile();
+		final IRodinFile prFile = pc.getPRRoot().getRodinFile();
 		if (!prFile.exists()) {
 			prFile.create(true, pm);
 		}

@@ -226,9 +226,9 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * retrieved.
 	 */
 	public void testProofFiles() throws Exception {
-		assertEquals(psRoot, pc.getPSFile());
-		assertEquals(poRoot, pc.getPOFile());
-		assertEquals(prRoot, pc.getPRFile());
+		assertEquals(psRoot, pc.getPSRoot());
+		assertEquals(poRoot, pc.getPORoot());
+		assertEquals(prRoot, pc.getPRRoot());
 	}
 
 	/**
