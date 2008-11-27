@@ -67,7 +67,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	private IStructuredContentProvider statisticsDetailsContentProvider =
 		new StatisticsDetailsContentProvider();
 
-	private static final String NAVIGATOR_ID = "fr.systerel.internal.explorer.navigator.view";
+	private static final String NAVIGATOR_ID = "fr.systerel.explorer.navigator.view";
 
 	/**
 	 * 

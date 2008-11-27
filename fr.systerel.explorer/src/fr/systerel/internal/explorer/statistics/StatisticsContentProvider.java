@@ -18,19 +18,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
-import fr.systerel.explorer.IElementNode;
+import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
-import fr.systerel.internal.explorer.model.ModelProject;
 
 /**
  * This is the content provider for the overview of the statistics.
@@ -101,39 +98,15 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 	
 	
 	protected IStatistics getStatistics(Object inputElement) {
-		if (inputElement instanceof IMachineRoot) {
-			return  new Statistics(ModelController.getMachine((IMachineRoot) inputElement));
-		}
-		if (inputElement instanceof IContextRoot) {
-			return new Statistics(ModelController.getContext((IContextRoot) inputElement));
-		}
-		if (inputElement instanceof IInvariant) {
-			return  new Statistics(ModelController.getInvariant((IInvariant) inputElement));
-		}
-		if (inputElement instanceof IAxiom) {
-			return new Statistics(ModelController.getAxiom((IAxiom) inputElement));
-		}
-		if (inputElement instanceof ITheorem) {
-			return new Statistics(ModelController.getTheorem((ITheorem) inputElement));
-		}
-		if (inputElement instanceof IEvent) {
-			return new Statistics(ModelController.getEvent((IEvent) inputElement));
-		}
-		if (inputElement instanceof IElementNode) {
-			IElementNode node = (IElementNode) inputElement;
-			if (canHavePOs(node.getChildrenType())) {
-				return new Statistics(inputElement);
-			}
-		}
 		if (inputElement instanceof IProject) {
 			IRodinProject rodinProject = RodinCore.valueOf((IProject) inputElement);
 			if (rodinProject.exists()) {
-				ModelProject modelProject = ModelController
-						.getProject(rodinProject);
-				if (modelProject != null) {
-					return new Statistics(modelProject);
-				}
+				inputElement = rodinProject;
 			}
+		}
+		IModelElement element = ModelController.getModelElement(inputElement);
+		if (element != null) {
+			return new Statistics(element);
 		}
 		return null;
 	}
