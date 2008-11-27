@@ -22,9 +22,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider;
 
 /**
  * 

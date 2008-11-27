@@ -21,10 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.navigator.IElementNode;
-import fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider;
+import fr.systerel.explorer.IElementNode;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider;
 
 /**
  * 
@@ -61,7 +61,7 @@ public class AxiomContentProviderTest extends ExplorerTest {
 	}
 	
 	/**
-	 * Test method for {@link fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider#getChildren(java.lang.Object)}.
+	 * Test method for {@link fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider#getChildren(java.lang.Object)}.
 	 * @throws RodinDBException 
 	 */
 	@Test
@@ -73,7 +73,7 @@ public class AxiomContentProviderTest extends ExplorerTest {
 	}
 
 	/**
-	 * Test method for {@link fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider#getParent(java.lang.Object)}.
+	 * Test method for {@link fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider#getParent(java.lang.Object)}.
 	 * @throws RodinDBException 
 	 */
 	@Test
@@ -86,7 +86,7 @@ public class AxiomContentProviderTest extends ExplorerTest {
 	}
 
 	/**
-	 * Test method for {@link fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider#hasChildren(java.lang.Object)}.
+	 * Test method for {@link fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider#hasChildren(java.lang.Object)}.
 	 */
 	@Test
 	public void hasChildren() {
@@ -97,7 +97,7 @@ public class AxiomContentProviderTest extends ExplorerTest {
 	}
 
 	/**
-	 * Test method for {@link fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider#getElements(java.lang.Object)}.
+	 * Test method for {@link fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider#getElements(java.lang.Object)}.
 	 */
 	@Test
 	public void getElements() {

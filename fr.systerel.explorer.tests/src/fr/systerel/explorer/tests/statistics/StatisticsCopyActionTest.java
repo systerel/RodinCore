@@ -30,14 +30,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelContext;
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelMachine;
-import fr.systerel.explorer.model.ModelProject;
-import fr.systerel.explorer.statistics.IStatistics;
-import fr.systerel.explorer.statistics.Statistics;
-import fr.systerel.explorer.statistics.StatisticsCopyAction;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.model.ModelContext;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelMachine;
+import fr.systerel.internal.explorer.model.ModelProject;
+import fr.systerel.internal.explorer.statistics.IStatistics;
+import fr.systerel.internal.explorer.statistics.Statistics;
+import fr.systerel.internal.explorer.statistics.StatisticsCopyAction;
 
 /**
  * 

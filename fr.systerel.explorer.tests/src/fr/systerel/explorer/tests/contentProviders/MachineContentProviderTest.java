@@ -20,8 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.navigator.contentProviders.MachineContentProvider;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.navigator.contentProviders.MachineContentProvider;
 
 /**
  * 

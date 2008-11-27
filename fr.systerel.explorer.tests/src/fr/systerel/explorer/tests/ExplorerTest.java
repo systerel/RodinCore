@@ -57,9 +57,9 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.IModelElement;
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelProofObligation;
+import fr.systerel.internal.explorer.model.IModelElement;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelProofObligation;
 
 /**
  *

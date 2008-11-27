@@ -36,9 +36,9 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelProject;
 
 /**
  * 

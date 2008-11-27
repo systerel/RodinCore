@@ -28,11 +28,11 @@ import org.junit.Test;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelElementNode;
-import fr.systerel.explorer.model.ModelMachine;
-import fr.systerel.explorer.statistics.StatisticsUtil;
 import fr.systerel.explorer.tests.ExplorerTest;
+import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelElementNode;
+import fr.systerel.internal.explorer.model.ModelMachine;
+import fr.systerel.internal.explorer.statistics.StatisticsUtil;
 
 /**
  * 
