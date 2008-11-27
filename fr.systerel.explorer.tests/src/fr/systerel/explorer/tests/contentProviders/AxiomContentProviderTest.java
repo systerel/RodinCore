@@ -78,10 +78,11 @@ public class AxiomContentProviderTest extends ExplorerTest {
 	 */
 	@Test
 	public void getParent() throws RodinDBException {
+		ModelController.getContext(c0).processChildren();
 		// get the parent of the axioms
-		assertEquals(contentProvider.getParent(axiom1),  node);
+		assertEquals(node, contentProvider.getParent(axiom1));
 		// get the parent of the intermediary node
-		assertEquals(contentProvider.getParent(node),  c0);
+		assertEquals(c0, contentProvider.getParent(node));
 	}
 
 	/**

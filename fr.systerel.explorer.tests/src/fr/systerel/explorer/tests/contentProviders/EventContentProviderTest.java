@@ -70,6 +70,7 @@ public class EventContentProviderTest extends ExplorerTest {
 
 	@Test
 	public void getParent() throws RodinDBException {
+		ModelController.getMachine(m0).processChildren();
 		// get the parent of the events
 		assertEquals(contentProvider.getParent(event1),  node);
 		// get the parent of the intermediary node

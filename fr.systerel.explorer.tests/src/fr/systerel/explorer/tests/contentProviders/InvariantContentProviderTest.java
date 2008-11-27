@@ -70,6 +70,7 @@ public class InvariantContentProviderTest extends ExplorerTest {
 
 	@Test
 	public void getParent() throws RodinDBException {
+		ModelController.getMachine(m0).processChildren();
 		// get the parent of the invariants
 		assertEquals(contentProvider.getParent(invariant1),  node);
 		// get the parent of the intermediary node

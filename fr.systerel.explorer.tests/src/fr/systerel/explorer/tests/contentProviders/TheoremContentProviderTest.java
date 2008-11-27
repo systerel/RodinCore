@@ -86,6 +86,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 	
 	@Test
 	public void getParentContext() throws RodinDBException {
+		ModelController.getContext(c0).processChildren();
 		// get the parent of the theorems
 		assertEquals(contentProvider.getParent(theorem1),  node);
 		// get the parent of the intermediary node
@@ -94,6 +95,7 @@ public class TheoremContentProviderTest extends ExplorerTest {
 
 	@Test
 	public void getParentMachine() throws RodinDBException {
+		ModelController.getMachine(m0).processChildren();
 		// get the parent of the theorems
 		assertEquals(contentProvider.getParent(theorem4),  node2);
 		// get the parent of the intermediary node
