@@ -74,6 +74,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	 */
 	public StatisticsView() {
 		// do nothing
+		
 	}
 
 
@@ -104,6 +105,14 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 		
 		addPopUpMenu();
 	
+	}
+	
+	@Override
+	public void dispose(){
+		super.dispose();
+		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
+		selectionService.removeSelectionListener(NAVIGATOR_ID, this);
+		
 	}
 		
 
