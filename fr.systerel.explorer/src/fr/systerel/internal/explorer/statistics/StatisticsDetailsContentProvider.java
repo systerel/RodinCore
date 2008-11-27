@@ -19,6 +19,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -92,8 +93,7 @@ public class StatisticsDetailsContentProvider extends StatisticsContentProvider 
 				}
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIUtils.log(e, "when getting statistics children for " +object);
 		}
 		return new Object[0];
 

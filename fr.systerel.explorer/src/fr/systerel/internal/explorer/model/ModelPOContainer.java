@@ -23,6 +23,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
@@ -108,8 +109,7 @@ public abstract class ModelPOContainer implements IModelElement {
 						}
 					}
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					UIUtils.log(e, "when accessing IPSStatus " + po.getIPSStatus());
 				}
 				
 			}

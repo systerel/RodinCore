@@ -61,8 +61,7 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 				try {
 					return ExplorerUtils.getMachineRootChildren(rodinProject).length >0;
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return false;
 				}
 			}
 		}

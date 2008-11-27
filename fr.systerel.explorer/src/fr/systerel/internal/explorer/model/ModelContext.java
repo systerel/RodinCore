@@ -28,6 +28,7 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -157,8 +158,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIUtils.log(e, "when accessing axioms and theorems of "+internalContext);
 		}
 	}
 	
@@ -194,8 +194,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					}
 				}
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-	//			e.printStackTrace();
+				UIUtils.log(e, "when processing proof obligations of " +internalContext);
 			}
 			poNeedsProcessing = false;
 		}
@@ -221,8 +220,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					}
 				}
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-	//			e.printStackTrace();
+				UIUtils.log(e, "when processing proof statuses of " +internalContext);
 			}
 			psNeedsProcessing = false;
 		}

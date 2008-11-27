@@ -21,6 +21,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -124,8 +125,7 @@ public class ModelElementNode implements IModelElement, IElementNode{
 				try {
 					return parentRoot.getChildrenOfType(type);
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					UIUtils.log(e, "when accessing children of type " +type +" of " +parentRoot);
 				}
 			}
 			

@@ -16,6 +16,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -120,8 +121,7 @@ public class Statistics implements IStatistics{
 			try {
 				return ((ILabeledElement) internal_parent).getLabel();
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				UIUtils.log(e, "when getting label for " +internal_parent);
 			}
 		}
 		if (internal_parent instanceof IEventBRoot) {

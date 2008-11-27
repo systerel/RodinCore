@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -38,8 +39,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 				try {
 					return ExplorerUtils.getMachineRootChildren(proj);
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					UIUtils.log(e, "when accessing machine roots of "+proj);
 				}
 			}
 		}
@@ -61,8 +61,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 				try {
 					return ExplorerUtils.getMachineRootChildren(proj).length > 0;
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return false;
 				}
 			}
 		}

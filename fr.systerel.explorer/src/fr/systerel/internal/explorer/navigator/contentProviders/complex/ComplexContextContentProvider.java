@@ -58,8 +58,7 @@ public class ComplexContextContentProvider implements ITreeContentProvider {
 				try {
 					return ExplorerUtils.getContextRootChildren(rodinProject).length > 0;
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return false;
 				}
 			}
 		}

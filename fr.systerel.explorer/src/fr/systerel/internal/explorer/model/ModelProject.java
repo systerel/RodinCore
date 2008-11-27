@@ -31,6 +31,7 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -98,8 +99,7 @@ public class ModelProject implements IModelElement {
 			}
 			
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			UIUtils.log(e, "when processing machine " +machine);
 		}
 		
 	}
@@ -166,8 +166,7 @@ public class ModelProject implements IModelElement {
 				processExtends(ext, ctx);
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			UIUtils.log(e, "when processing context " +context);
 		}
 		
 	}
@@ -566,8 +565,7 @@ public class ModelProject implements IModelElement {
 					return ExplorerUtils.getContextRootChildren(internalProject);
 				}
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				UIUtils.log(e, "when getting machines or contexts of " +internalProject);
 			}
 		} else {
 			if (type == IMachineRoot.ELEMENT_TYPE) {

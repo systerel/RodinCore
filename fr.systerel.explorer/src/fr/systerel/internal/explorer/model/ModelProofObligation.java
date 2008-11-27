@@ -17,6 +17,7 @@ import java.util.List;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -79,8 +80,7 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 			broken = status.isBroken();
 			manual = status.getHasManualProof();
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIUtils.log(e, "when acessing " +status);
 		}
 	}
 

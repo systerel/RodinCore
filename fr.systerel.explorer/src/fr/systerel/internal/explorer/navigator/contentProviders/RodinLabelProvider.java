@@ -29,6 +29,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -106,15 +107,13 @@ public class RodinLabelProvider implements ILabelProvider {
 			try {
 				return ((ILabeledElement) obj).getLabel();
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				UIUtils.log(e, "when getting label for " +obj);
 			}
 		} else if (obj instanceof IIdentifierElement) {
 			try {
 				return ((IIdentifierElement) obj).getIdentifierString();
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				UIUtils.log(e, "when getting identifier for " +obj);
 			}
 		} else if (obj instanceof IRodinElement) {
 			return ((IRodinElement) obj).getElementName();

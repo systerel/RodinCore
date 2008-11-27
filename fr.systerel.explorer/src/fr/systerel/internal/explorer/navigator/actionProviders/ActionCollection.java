@@ -258,9 +258,9 @@ public class ActionCollection {
 		
 									project.delete(true, false, null);
 								} catch (PartInitException e) {
-									e.printStackTrace();
+									MessageDialog.openError(null, "Error", "Could not delete project");
 								} catch (RodinDBException e) {
-									e.printStackTrace();
+									MessageDialog.openError(null, "Error", "Could not delete project");
 								} catch (CoreException e) {
 									MessageDialog.openError(null, "Error", "Could not delete project");
 								}
@@ -288,9 +288,9 @@ public class ActionCollection {
 									((IRodinFile) element).delete(true,
 											new NullProgressMonitor());
 								} catch (PartInitException e) {
-									e.printStackTrace();
+									MessageDialog.openError(null, "Error", "Could not delete file");
 								} catch (RodinDBException e) {
-									e.printStackTrace();
+									MessageDialog.openError(null, "Error", "Could not delete file");
 								}
 							}
 						}

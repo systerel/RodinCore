@@ -29,6 +29,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
@@ -109,8 +110,7 @@ public class ModelController implements IElementChangedListener {
 				prj.needsProcessing = false;
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIUtils.log(e, "when processing project " +project);
 		}
 	}
 	
