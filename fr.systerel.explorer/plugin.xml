@@ -14,7 +14,7 @@
       </view>
       <view
             category="org.eventb.ui"
-            class="fr.systerel.explorer.statistics.StatisticsView"
+            class="fr.systerel.internal.explorer.statistics.StatisticsView"
             id="fr.systerel.explorer.statistics"
             name="%view.statistics">
       </view>
@@ -125,9 +125,9 @@
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.InvariantContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.InvariantContentProvider"
             id="fr.systerel.explorer.navigator.content.invariant"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.invariants"
             priority="normal">
          <triggerPoints>
@@ -136,7 +136,7 @@
                      value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -146,18 +146,18 @@
                      value="org.eventb.core.IInvariant">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.EventContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.EventContentProvider"
             id="fr.systerel.explorer.navigator.content.event"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.events"
             priority="lowest">
          <triggerPoints>
@@ -166,7 +166,7 @@
                      value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -176,17 +176,17 @@
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof></or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.VariableContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.VariableContentProvider"
             id="fr.systerel.explorer.navigator.content.variable"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.variables"
             priority="high">
          <triggerPoints>
@@ -195,7 +195,7 @@
                      value="org.eventb.core.IMachineRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -205,18 +205,18 @@
                      value="org.eventb.core.IVariable">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.TheoremContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.TheoremContentProvider"
             id="fr.systerel.explorer.navigator.content.theorem"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.theorems"
             priority="normal">
          <triggerPoints>
@@ -228,7 +228,7 @@
                      value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -238,18 +238,18 @@
                      value="org.eventb.core.ITheorem">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.AxiomContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider"
             id="fr.systerel.explorer.navigator.content.axiom"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.axioms"
             priority="normal">
          <triggerPoints>
@@ -258,7 +258,7 @@
                      value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -268,18 +268,18 @@
                      value="org.eventb.core.IAxiom">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.ConstantsContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.ConstantsContentProvider"
             id="fr.systerel.explorer.navigator.content.constant"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.constants"
             priority="high">
          <triggerPoints>
@@ -288,7 +288,7 @@
                      value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </triggerPoints>
@@ -298,18 +298,18 @@
                      value="org.eventb.core.IConstant">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.CarrierSetContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.CarrierSetContentProvider"
             id="fr.systerel.explorer.navigator.content.carrierSet"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.carrierSets"
             priority="high">
          <triggerPoints>
@@ -318,7 +318,7 @@
                      value="org.eventb.core.IContextRoot">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof></or>
          </triggerPoints>
          <possibleChildren>
@@ -327,18 +327,18 @@
                      value="org.eventb.core.ICarrierSet">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.POContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.POContentProvider"
             id="fr.systerel.explorer.pofiles"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.poFiles"
             priority="lowest">
          <triggerPoints>
@@ -356,7 +356,7 @@
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
-                     value="fr.systerel.explorer.navigator.IElementNode">
+                     value="fr.systerel.explorer.IElementNode">
                </instanceof>
                <instanceof
                      value="org.eventb.core.IMachineRoot">
@@ -371,15 +371,15 @@
                   value="org.eventb.core.IPSStatus">
             </instanceof>
             <instanceof
-                  value="fr.systerel.explorer.navigator.IElementNode">
+                  value="fr.systerel.explorer.IElementNode">
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.RootActionProvider"
+            class="fr.systerel.internal.explorer.navigator.actionProviders.RootActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.file">
          <enablement>
             <or>
@@ -393,7 +393,7 @@
          </enablement>
       </actionProvider>
       <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.ElementActionProvider"
+            class="fr.systerel.internal.explorer.navigator.actionProviders.ElementActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.element">
          <enablement>
             <or>
@@ -422,7 +422,7 @@
          </enablement>
       </actionProvider>
       <actionProvider
-            class="fr.systerel.explorer.navigator.actionProviders.POActionProvider"
+            class="fr.systerel.internal.explorer.navigator.actionProviders.POActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.po">
          <enablement>
             <instanceof
@@ -432,9 +432,9 @@
       </actionProvider>
       <navigatorContent
             activeByDefault="false"
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.MachineContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.MachineContentProvider"
             id="fr.systerel.explorer.navigator.content.machine"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.machine"
             priority="higher">
          <triggerPoints>
@@ -452,14 +452,14 @@
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
             activeByDefault="false"
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.ContextContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.ContextContentProvider"
             id="fr.systerel.explorer.navigator.content.context"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.context"
             priority="highest">
          <triggerPoints>
@@ -475,13 +475,13 @@
             </or>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexContextContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.complex.ComplexContextContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.context"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.complex.context"
             priority="highest">
          <triggerPoints>
@@ -503,13 +503,13 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider"
+            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.machine"
-            labelProvider="fr.systerel.explorer.navigator.contentProviders.RodinLabelProvider"
+            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.complex.machine"
             priority="higher">
          <triggerPoints>
@@ -528,71 +528,71 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="fr.systerel.explorer.navigator.sorters.AntiSorter">
+               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
          </commonSorter>
       </navigatorContent>
       <commonFilter
             activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.HideNoneRodinFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.HideNoneRodinFilter"
             id="fr.systerel.explorer.navigator.filters.hideNonRodin"
             name="%filters.hideNonRodin">
       </commonFilter>
       <commonFilter
             activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.HideAllResourcesFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.HideAllResourcesFilter"
             id="fr.systerel.explorer.navigator.filters.hideResources"
             name="%filters.hideResources">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$CheckedContextFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$CheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcc"
             name="%filters.hideBcc">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$CheckedMachineFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$CheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcm"
             name="%filters.hideBcm">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$POFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$POFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpo"
             name="%filters.hideBpo">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$PRFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$PRFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpr"
             name="%filters.hideBpr">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$PSFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$PSFilter"
             id="fr.systerel.explorer.navigator.filters.hideBps"
             name="%filters.hideBps">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$UncheckedContextFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$UncheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBuc"
             name="%filters.hideBuc">
       </commonFilter>
       <commonFilter
-            class="fr.systerel.explorer.navigator.filters.FileTypeFilter$UncheckedMachineFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$UncheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBum"
             name="%filters.hideBum">
       </commonFilter>
       <commonFilter
             activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.ObligationTextFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.ObligationTextFilter"
             id="fr.systerel.explorer.navigator.filters.obligationText"
             name="%filters.default">
       </commonFilter>
       <commonFilter
             activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.DischargedFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.DischargedFilter"
             id="fr.systerel.explorer.navigator.filters.discharged"
             name="%filters.default">
       </commonFilter>
       <commonFilter
             activeByDefault="true"
-            class="fr.systerel.explorer.navigator.filters.ContextFilter"
+            class="fr.systerel.internal.explorer.navigator.filters.ContextFilter"
             id="fr.systerel.explorer.navigator.filters.contexts"
             name="%filters.default">
       </commonFilter>
@@ -603,7 +603,7 @@
             id="fr.systerel.explorer.navigator.viewActions.toolbar"
             targetID="fr.systerel.explorer.navigator.view">
          <action
-               class="fr.systerel.explorer.navigator.actionProviders.NewProjectActionDelegate"
+               class="fr.systerel.internal.explorer.navigator.actionProviders.NewProjectActionDelegate"
                icon="icons/full/clcl16/newprj_wiz.gif"
                id="fr.systerel.explorer.navigator.actions.newProject"
                label="%viewActions.newProject.label"
@@ -611,7 +611,7 @@
                tooltip="%viewActions.newProject.tooltip">
          </action>
          <action
-               class="fr.systerel.explorer.navigator.actionProviders.NewComponentActionDelegate"
+               class="fr.systerel.internal.explorer.navigator.actionProviders.NewComponentActionDelegate"
                icon="icons/full/clcl16/newcomp_wiz.gif"
                id="fr.systerel.explorer.navigator.actions.newComponent"
                label="%viewActions.newComponent.label"
