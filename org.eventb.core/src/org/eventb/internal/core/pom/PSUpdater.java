@@ -108,11 +108,11 @@ public class PSUpdater {
 
 		if (! status.exists()) {
 			status.create(null, pm);
-			outOfDateStatuses.add(status);
 		}
 		if (!hasSameStampAsPo(status)) {
-			updateStatus(status, pm);
-			outOfDateStatuses.add(status);
+			if (updateStatus(status, pm)) {
+				outOfDateStatuses.add(status);
+			}
 		}
 		else
 		{
@@ -180,7 +180,8 @@ public class PSUpdater {
 		return poSequent.getPOStamp() == psStatus.getPOStamp();
 	}
 	
-	private void updateStatus(IPSStatus status, IProgressMonitor monitor)
+	// Returns true if the new status is pending or less
+	private boolean updateStatus(IPSStatus status, IProgressMonitor monitor)
 			throws RodinDBException {
 
 		final IPOSequent poSequent = status.getPOSequent();
@@ -219,6 +220,7 @@ public class PSUpdater {
 			status.setPOStamp(poSequent.getPOStamp(), null);
 		}
 		status.setBroken(broken, null);
+		return broken == true || status.getConfidence() <= IConfidence.PENDING; 
 	}
 
 	public IPSStatus[] getOutOfDateStatuses() {

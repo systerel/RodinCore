@@ -287,4 +287,30 @@ public class AutoProverDeltaTests extends BuilderTest {
 		runBuilder(true, PENDING, false, false);
 	}
 
+	/**
+	 * Ensures that the auto-prover is not attempted on a discharged PO
+	 * that has changed (different stamp), but where the proof is reusable.
+	 */
+	public final void testChangedStampDischargedReusable() throws CoreException {
+		createPOFile();
+		setPO(PROVABLE, 1);
+		runBuilder(true, DISCHARGED_MAX, false, false);
+		setPO(PROVABLE, 2);
+		runBuilder(false, DISCHARGED_MAX, false, false);
+	}
+
+	/**
+	 * Ensures that the auto-prover is not attempted on a reviewed PO
+	 * that has changed (different stamp), but where the proof is reusable.
+	 */
+	public final void testChangedStampReviewedReusable() throws CoreException {
+		createPOFile();
+		setPO(UNPROVABLE, 1);
+		runBuilder(true, UNATTEMPTED, false, false);
+		setReviewed();
+		checkPSFile(REVIEWED_MAX, true, false);
+		setPO(UNPROVABLE, 2);
+		runBuilder(false, REVIEWED_MAX, true, false);
+	}
+
 }
