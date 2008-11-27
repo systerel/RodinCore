@@ -13,6 +13,8 @@
 package fr.systerel.explorer.model;
 
 import org.eventb.core.IAxiom;
+import org.eventb.core.IPSStatus;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -35,5 +37,23 @@ public class ModelAxiom extends ModelPOContainer {
 	public IRodinElement getInternalElement() {
 		return internalAxiom;
 	}
+
+	public Object getParent(boolean complex) {
+		if (parent instanceof ModelContext ) {
+			return ((ModelContext) parent).axiom_node;
+		}
+		return parent;
+	}
+
+
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		if (type != IPSStatus.ELEMENT_TYPE) {
+			return new Object[0];
+		}
+		return getIPSStatuses();
+	}
+
+	
+	
 
 }

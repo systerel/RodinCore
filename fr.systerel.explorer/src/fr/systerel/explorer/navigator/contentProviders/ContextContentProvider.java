@@ -25,7 +25,7 @@ import fr.systerel.explorer.navigator.NavigatorController;
 
 /**
  * The simple content provider for Context elements.
- *
+ * 
  */
 public class ContextContentProvider implements ITreeContentProvider {
 

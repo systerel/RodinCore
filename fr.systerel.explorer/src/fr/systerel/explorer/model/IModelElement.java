@@ -12,6 +12,7 @@
 
 package fr.systerel.explorer.model;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -44,4 +45,37 @@ public interface IModelElement {
 	 *         none.
 	 */	
 	public IRodinElement getInternalElement();
+	
+	/**
+	 * This method returns the element that is displayed in the navigator tree
+	 * as the parent of the element that is represented by this model element.
+	 * E.g. if this is an instance of ModelMachine, the returned object is
+	 * either the <code>IRodinProject</code> that contains this machine or the
+	 * <code>IMachineRoot</code> that is the abstract machine.
+	 * 
+	 * @param complex
+	 *            Determines whether the navigator tree show the complex
+	 *            structure of machines or contexts.
+	 * @return The object that is the parent of this element in the navigator
+	 *         tree.
+	 */
+	public Object getParent(boolean complex);
+	
+	/**
+	 * This method returns the elements that are displayed in the navigator tree
+	 * as the children of the element that is represented by this model element.
+	 * E.g. if this is an instance of ModelMachine, the returned objects contain
+	 * the <code>IElementNode</code> of the given type or the
+	 * <code>IMachineRoot</code>s that refine this machine.
+	 * 
+	 * @param type
+	 *            The type the children should be associated with
+	 * @param complex
+	 *            Determines whether the navigator tree show the complex
+	 *            structure of machines or contexts
+	 * @return The objects that are children of this element in the navigator
+	 *         tree.
+	 */
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex);
+	
 }

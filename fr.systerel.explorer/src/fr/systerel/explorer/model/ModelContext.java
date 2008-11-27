@@ -28,6 +28,7 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -445,5 +446,66 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		}
 		
 	}
+	
+	public IModelElement getModelElement(IRodinElement element) {
+		if (element instanceof IAxiom ) {
+			return axioms.get(element);
+		}
+		if (element instanceof ITheorem ) {
+			return theorems.get(element);
+		}
+		return null;
+	}
+
+	/**
+	 * In the complex version this gets the first abstract context of this
+	 * context. If none exist or in the non-complex version this returns the
+	 * containing project.
+	 */
+	public Object getParent(boolean complex) {
+		if (complex) {
+			if (extendsContexts.size() > 0) {
+				return (extendsContexts.get(0).getInternalContext());
+			}
+		}
+		return getModelParent().getInternalElement();
+	}
+
+
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+
+		if (type == IContextRoot.ELEMENT_TYPE) {
+        	List<ModelContext> rest = getRestContexts();
+        	List<ModelContext> result = new LinkedList<ModelContext>();
+        	for (ModelContext ctx : rest) {
+				result.addAll(ctx.getLongestBranch());
+			}
+        	return ModelController.convertToIContext(result).toArray();
+			
+		}
+		
+		if (poNeedsProcessing || psNeedsProcessing) {
+			processPORoot();
+			processPSRoot();
+		}
+		
+		if (type == IAxiom.ELEMENT_TYPE) {
+			return new Object[]{axiom_node};
+		}
+		if (type == IConstant.ELEMENT_TYPE) {
+			return new Object[]{constant_node};
+		}
+		if (type == ITheorem.ELEMENT_TYPE) {
+			return new Object[]{theorem_node};
+		}
+		if (type == ICarrierSet.ELEMENT_TYPE) {
+			return new Object[]{carrierset_node};
+		}
+		if (type == IPSStatus.ELEMENT_TYPE) {
+			return new Object[]{po_node};
+		}
+		return new Object[0];
+	}
+	
 
 }

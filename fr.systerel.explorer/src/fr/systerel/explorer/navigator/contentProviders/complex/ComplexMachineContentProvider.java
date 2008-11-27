@@ -12,10 +12,6 @@
 
 package fr.systerel.explorer.navigator.contentProviders.complex;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,8 +22,8 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.ExplorerUtils;
+import fr.systerel.explorer.model.IModelElement;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.model.ModelMachine;
 import fr.systerel.explorer.model.ModelProject;
 import fr.systerel.explorer.navigator.NavigatorController;
 
@@ -41,25 +37,21 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
 		if (element instanceof IProject) {
 			return getProjectChildren((IProject) element);
 	    }
-        if (element instanceof IMachineRoot) {
-        	return getMachineChildren((IMachineRoot) element);
-        } 
+		
+		IModelElement model = ModelController.getModelElement(element);
+		if (model != null) {
+			return model.getChildren(IMachineRoot.ELEMENT_TYPE, false);
+		}
         return new Object[0];
 	}
 
 	public Object getParent(Object element) {
-        if (element instanceof IMachineRoot) {
-        	ModelMachine machine = ModelController.getMachine((IMachineRoot) element);
-        	if (machine != null) {
-        		//return the first machineRoot that is refined by this machine, if one exists.
-        		if (machine.getRefinesMachines().size() >0) {
-        			return machine.getRefinesMachines().get(0).getInternalMachine();
-        		}
-        	}
-        	//this returns the project
-			return ((IMachineRoot) element).getRodinFile().getParent();
+		IModelElement model = ModelController.getModelElement(element);
+		if (model != null) {
+			return model.getParent(true);
 		}
-        return null;
+
+		return null;
 	}
 
 	public boolean hasChildren(Object element) {
@@ -104,24 +96,5 @@ public class ComplexMachineContentProvider implements ITreeContentProvider {
         	}
 		}
 		return new Object[0];
-	}
-	
-	protected Object[] getMachineChildren(IMachineRoot root) {
-    	ModelMachine machine = ModelController.getMachine(root);
-    	if (machine != null) {
-        	List<ModelMachine> rest = machine.getRestMachines();
-        	List<ModelMachine> machines = new LinkedList<ModelMachine>();
-        	List<Object> result = new LinkedList<Object>();
-
-        	for (Iterator<ModelMachine> iterator = rest.iterator(); iterator.hasNext();) {
-				ModelMachine mach = iterator.next();
-				machines.addAll(mach.getLongestBranch());
-			}
-        	result.addAll(ModelController.convertToIMachine(machines));
-        	
-        	return result.toArray();
-    	}
-    	return new Object[0];
-		
 	}
 }

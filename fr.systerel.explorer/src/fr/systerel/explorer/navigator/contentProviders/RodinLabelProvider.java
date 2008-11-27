@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
+ *******************************************************************************/
 
 package fr.systerel.explorer.navigator.contentProviders;
 
@@ -40,8 +40,7 @@ import fr.systerel.explorer.navigator.IElementNode;
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
  */
-public class RodinLabelProvider implements
-		ILabelProvider{
+public class RodinLabelProvider implements ILabelProvider {
 
 	public Image getImage(Object element) {
 
@@ -51,10 +50,10 @@ public class RodinLabelProvider implements
 		}
 		if (element instanceof IRodinElement) {
 			return EventBImage.getRodinImage((IRodinElement) element);
-			
+
 		} else if (element instanceof IElementNode) {
 			IElementNode node = (IElementNode) element;
-			
+
 			if (node.getChildrenType().equals(IInvariant.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
 			}
@@ -71,33 +70,37 @@ public class RodinLabelProvider implements
 				return EventBImage.getImage(IEventBSharedImages.IMG_AXIOM);
 			}
 			if (node.getChildrenType().equals(ICarrierSet.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_CARRIER_SET);
+				return EventBImage
+						.getImage(IEventBSharedImages.IMG_CARRIER_SET);
 			}
 			if (node.getChildrenType().equals(IConstant.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_CONSTANT);
 			}
 			if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE)) {
-				ModelPOContainer parent = (ModelPOContainer) ((ModelElementNode) node).getModelParent();
+				ModelPOContainer parent = (ModelPOContainer) ((ModelElementNode) node)
+						.getModelParent();
 				boolean discharged = parent.getMinConfidence() > IConfidence.REVIEWED_MAX;
 				boolean reviewed = parent.getMinConfidence() > IConfidence.PENDING;
-				
+
 				if (discharged) {
-					return EventBImage.getImage(IEventBSharedImages.IMG_DISCHARGED);
-				} 
-				else if (reviewed){
-					return EventBImage.getImage(IEventBSharedImages.IMG_REVIEWED);
-				}
-				else {
-					return EventBImage.getImage(IEventBSharedImages.IMG_PENDING);
+					return EventBImage
+							.getImage(IEventBSharedImages.IMG_DISCHARGED);
+				} else if (reviewed) {
+					return EventBImage
+							.getImage(IEventBSharedImages.IMG_REVIEWED);
+				} else {
+					return EventBImage
+							.getImage(IEventBSharedImages.IMG_PENDING);
 				}
 			}
-		
+
 		} else if (element instanceof IContainer) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_OBJS_INFO_TSK);
 		}
 		return null;
 	}
-	
+
 	public String getText(Object obj) {
 		if (obj instanceof ILabeledElement) {
 			try {
@@ -115,29 +118,27 @@ public class RodinLabelProvider implements
 			}
 		} else if (obj instanceof IRodinElement) {
 			return ((IRodinElement) obj).getElementName();
-		
-	
+
 		} else if (obj instanceof ModelPOContainer) {
 			return ModelPOContainer.DISPLAY_NAME;
-			
+
 		} else if (obj instanceof IElementNode) {
 			return ((IElementNode) obj).getLabel();
-		
+
 		} else if (obj instanceof IContainer) {
 			return ((IContainer) obj).getName();
 		}
 		return obj.toString();
 	}
 
-	
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
-		
+
 	}
 
 	public void dispose() {
 		// do nothing
-		
+
 	}
 
 	public boolean isLabelProperty(Object element, String property) {
@@ -146,7 +147,7 @@ public class RodinLabelProvider implements
 
 	public void removeListener(ILabelProviderListener listener) {
 		// do nothing
-		
+
 	}
 
 }

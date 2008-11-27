@@ -13,6 +13,8 @@
 package fr.systerel.explorer.model;
 
 import org.eventb.core.IEvent;
+import org.eventb.core.IPSStatus;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -34,6 +36,21 @@ public class ModelEvent extends ModelPOContainer {
 
 	public IRodinElement getInternalElement() {
 		return internalEvent;
+	}
+
+	public Object getParent(boolean complex) {
+		if (parent instanceof ModelMachine ) {
+			return ((ModelMachine) parent).event_node;
+		}
+		return parent;
+	}
+
+
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		if (type != IPSStatus.ELEMENT_TYPE) {
+			return new Object[0];
+		}
+		return getIPSStatuses();
 	}
 	
 }

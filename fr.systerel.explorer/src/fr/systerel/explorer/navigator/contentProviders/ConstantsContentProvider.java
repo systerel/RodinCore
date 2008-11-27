@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 
 package fr.systerel.explorer.navigator.contentProviders;
 
@@ -16,70 +15,56 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.model.IModelElement;
 import fr.systerel.explorer.model.ModelContext;
 import fr.systerel.explorer.model.ModelController;
 import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Constant elements
- * @author Maria Husmann
- *
  */
 public class ConstantsContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IContextRoot) {
-			Object[] results = new Object[1];
-			//get the intermediary node for constants
-			results[0] = ModelController.getContext((IContextRoot) element).constant_node;
-			return results;
-		}
-		if (element instanceof IElementNode){
-			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
-			if (type.equals(IConstant.ELEMENT_TYPE)) {
-				IContextRoot context = (IContextRoot) ((IElementNode) element).getParent();
-				try {
-					return context.getConstants();
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		IModelElement model = ModelController.getModelElement(element);
+		if (model != null) {
+			return model.getChildren(IConstant.ELEMENT_TYPE, false);
 		}
 		return new Object[0];
 	}
+
 	public Object getParent(Object element) {
-    	if (element instanceof IConstant) {
-    		IConstant cst =  (IConstant) element;
-    		IContextRoot ctx = (IContextRoot) cst.getRodinFile().getRoot();
-     		ModelContext context = ModelController.getContext(ctx);
-     		if (context != null) {
-    			return context.constant_node;
-     		}
+		// there is no ModelElement for constants.
+		if (element instanceof IConstant) {
+			IConstant cst = (IConstant) element;
+			IContextRoot ctx = (IContextRoot) cst.getRodinFile().getRoot();
+			ModelContext context = ModelController.getContext(ctx);
+			if (context != null) {
+				return context.constant_node;
+			}
 		}
-    	if (element instanceof IElementNode) {
-    		return ((IElementNode) element).getParent();
-    	}
-      return null;
+		if (element instanceof IElementNode) {
+			return ((IElementNode) element).getParent();
+		}
+		return null;
 	}
 
 	public boolean hasChildren(Object element) {
-      return getChildren(element).length > 0;
+		return getChildren(element).length > 0;
 	}
 
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
+
 	public void dispose() {
-    	// Do nothing
+		// Do nothing
 
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    	// Do nothing
-		 
+		// Do nothing
+
 	}
 
 }

@@ -31,10 +31,13 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.ExplorerUtils;
 
 /**
  * Represents a RodinProject in the Model. Contains Machines and Context.
@@ -515,6 +518,61 @@ public class ModelProject implements IModelElement {
 			}
 		}
 		
+	}
+
+	public IModelElement getModelElement(IRodinElement element) {
+		if (element instanceof IMachineRoot) {
+			return machines.get(element);
+		}
+		if (element instanceof IContextRoot) {
+			return contexts.get(element);
+		}
+		IEventBRoot parent= element.getAncestor(IMachineRoot.ELEMENT_TYPE);
+		ModelMachine machine = machines.get(parent);
+		if (machine != null) {
+			return machine.getModelElement(element);
+		}
+		parent= element.getAncestor(IContextRoot.ELEMENT_TYPE);
+		ModelContext context = contexts.get(parent);
+		if (context != null) {
+			return context.getModelElement(element);
+		}
+		
+		return null;
+		
+	}
+
+	/**
+	 * Always returns <code>null</code> since projects don't have a parent in
+	 * the model.
+	 */
+	public IModelElement getParent(boolean complex) {
+		return null;
+	}
+
+	
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		if (!complex) {
+			try {
+				if (type == IMachineRoot.ELEMENT_TYPE) {
+						return ExplorerUtils.getMachineRootChildren(internalProject);
+				}
+				if (type == IContextRoot.ELEMENT_TYPE) {
+					return ExplorerUtils.getContextRootChildren(internalProject);
+				}
+			} catch (RodinDBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			if (type == IMachineRoot.ELEMENT_TYPE) {
+				return ModelController.convertToIMachine(getRootMachines());
+			}
+			if (type == IContextRoot.ELEMENT_TYPE) {
+				return ModelController.convertToIContext(getRootContexts());
+			}
+		}
+		return new Object[0];
 	}
 	
 }

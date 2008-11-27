@@ -12,7 +12,9 @@
 
 package fr.systerel.explorer.model;
 
+import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -35,5 +37,23 @@ public class ModelTheorem extends ModelPOContainer {
 	public IRodinElement getInternalElement() {
 		return internalTheorem;
 	}
+
+	public Object getParent(boolean complex) {
+		if (parent instanceof ModelContext ) {
+			return ((ModelContext) parent).theorem_node;
+		}
+		if (parent instanceof ModelMachine ) {
+			return ((ModelMachine) parent).theorem_node;
+		}
+		return parent;
+	}
+	
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		if (type != IPSStatus.ELEMENT_TYPE) {
+			return new Object[0];
+		}
+		return getIPSStatuses();
+	}
+
 	
 }

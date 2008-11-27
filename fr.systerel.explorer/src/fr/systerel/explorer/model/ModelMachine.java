@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.IAction;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -28,6 +29,7 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -441,4 +443,69 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return source;
 	}
 
+	public IModelElement getModelElement(IRodinElement element) {
+		if (element instanceof IInvariant ) {
+			return invariants.get(element);
+		}
+		if (element instanceof IEvent ) {
+			return events.get(element);
+		}
+		if (element instanceof ITheorem ) {
+			return theorems.get(element);
+		}
+		return null;
+	}
+
+	/**
+	 * In the complex version this gets the first abstract machine of this
+	 * machine. If none exist or in the non-complex version this returns the
+	 * containing project.
+	 */
+	public Object getParent(boolean complex) {
+		if (complex) {
+			if (refinesMachines.size() > 0) {
+				return (refinesMachines.get(0).getInternalMachine());
+			}
+		}
+		return getModelParent().getInternalElement();
+	}
+
+	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
+		if (type == IContextRoot.ELEMENT_TYPE) {
+    		return ModelController.convertToIContext(getSeesContexts()).toArray();
+
+		}
+		if (type == IMachineRoot.ELEMENT_TYPE) {
+        	List<ModelMachine> rest = getRestMachines();
+        	List<ModelMachine> machines = new LinkedList<ModelMachine>();
+
+        	for (ModelMachine mach : rest) {
+				machines.addAll(mach.getLongestBranch());
+			}
+        	return ModelController.convertToIMachine(machines).toArray();
+		}
+		
+		if (poNeedsProcessing || psNeedsProcessing) {
+			processPORoot();
+			processPSRoot();
+		}
+		if (type == IInvariant.ELEMENT_TYPE) {
+			return new Object[]{invariant_node};
+		}
+		if (type == IVariable.ELEMENT_TYPE) {
+			return new Object[]{variable_node};
+		}
+		if (type == ITheorem.ELEMENT_TYPE) {
+			return new Object[]{theorem_node};
+		}
+		if (type == IEvent.ELEMENT_TYPE) {
+			return new Object[]{event_node};
+		}
+		if (type == IPSStatus.ELEMENT_TYPE) {
+			return new Object[]{po_node};
+		}
+		return new Object[0];
+	}
+	
+	
 }

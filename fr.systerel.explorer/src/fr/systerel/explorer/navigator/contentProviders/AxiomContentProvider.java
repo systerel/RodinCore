@@ -7,79 +7,55 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 
 package fr.systerel.explorer.navigator.contentProviders;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IAxiom;
-import org.eventb.core.IContextRoot;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinDBException;
 
-import fr.systerel.explorer.model.ModelContext;
+import fr.systerel.explorer.model.IModelElement;
 import fr.systerel.explorer.model.ModelController;
-import fr.systerel.explorer.navigator.IElementNode;
 
 /**
  * The content provider for Axiom elements
- * @author Maria Husmann
  *
  */
 public class AxiomContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
-		if (element instanceof IContextRoot) {
-			Object[] results = new Object[1];
-			//get the intermediary node for axioms
-			results[0] = ModelController.getContext((IContextRoot) element).axiom_node;
-			return results;
-		}
-		if (element instanceof IElementNode){
-			IInternalElementType<?> type = ((IElementNode) element).getChildrenType();
-			if (type.equals(IAxiom.ELEMENT_TYPE)) {
-				IContextRoot context = (IContextRoot) ((IElementNode) element).getParent();
-				try {
-					return context.getAxioms();
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+		IModelElement model = ModelController.getModelElement(element);
+		if (model != null) {
+			return model.getChildren(IAxiom.ELEMENT_TYPE, false);
 		}
 		return new Object[0];
 	}
+
 	public Object getParent(Object element) {
-    	if (element instanceof IAxiom) {
-    		IAxiom axm =  (IAxiom) element;
-    		IContextRoot ctx = (IContextRoot) axm.getRodinFile().getRoot();
-     		ModelContext context = ModelController.getContext(ctx);
-     		if (context != null) {
-    			return context.axiom_node;
-     		}
+		IModelElement model = ModelController.getModelElement(element);
+		if (model != null) {
+			return model.getParent(true);
 		}
-    	if (element instanceof IElementNode) {
-    		return ((IElementNode) element).getParent();
-    	}
-      return null;
+
+		return null;
 	}
 
 	public boolean hasChildren(Object element) {
-      return getChildren(element).length > 0;
+		return getChildren(element).length > 0;
 	}
 
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
+
 	public void dispose() {
-    	// Do nothing
+		// Do nothing
 
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    	// Do nothing
-		 
+		// Do nothing
+
 	}
 
 }

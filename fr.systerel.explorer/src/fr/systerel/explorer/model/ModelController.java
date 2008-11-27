@@ -14,7 +14,6 @@ package fr.systerel.explorer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -244,6 +243,22 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 	
+	public static IModelElement getModelElement(Object element){
+		if (element instanceof IModelElement) {
+			return (IModelElement) element;
+		}
+		if (element instanceof IRodinProject) {
+			return projects.get(element);
+		}
+		if (element instanceof IRodinElement) {
+			ModelProject project = projects.get(((IRodinElement)element).getRodinProject());
+			if (project != null) {
+				return project.getModelElement((IRodinElement)element);
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Removes a ModelContext from the Model for a given ContextRoot
 	 * 
@@ -303,8 +318,8 @@ public class ModelController implements IElementChangedListener {
 	 */
 	public static List<IMachineRoot> convertToIMachine(List<ModelMachine> machs) {
 		List<IMachineRoot> results = new LinkedList<IMachineRoot>();
-		for (Iterator<ModelMachine> iterator = machs.iterator(); iterator.hasNext();) {
-			 results.add(iterator.next().getInternalMachine());
+		for (ModelMachine mach : machs) {
+			 results.add(mach.getInternalMachine());
 		}
 		return results;
 	}
@@ -334,8 +349,8 @@ public class ModelController implements IElementChangedListener {
 	 */
 	public static List<IContextRoot> convertToIContext(List<ModelContext> conts) {
 		List<IContextRoot> results = new LinkedList<IContextRoot>();
-		for (Iterator<ModelContext> iterator = conts.iterator(); iterator.hasNext();) {
-			 results.add(iterator.next().getInternalContext());
+		for (ModelContext ctx : conts) {
+			 results.add(ctx.getInternalContext());
 		}
 		return results;
 	}

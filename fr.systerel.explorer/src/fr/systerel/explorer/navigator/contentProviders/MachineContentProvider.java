@@ -55,7 +55,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
-			
+
 			IRodinProject proj = RodinCore.valueOf((IProject) element);
 			if (proj.exists()) {
 				try {

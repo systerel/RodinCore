@@ -23,6 +23,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.navigator.IElementNode;
 
@@ -32,7 +33,7 @@ import fr.systerel.explorer.navigator.IElementNode;
  *
  */
 public class ModelElementNode implements IModelElement, IElementNode{
-	public ModelElementNode(IInternalElementType<?> type, IModelElement parent) {
+	public ModelElementNode(IInternalElementType<?> type, ModelPOContainer parent) {
 		this.type = type;
 		this.parent = parent;
 		if (parent instanceof ModelMachine) {
@@ -44,7 +45,7 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	}
 	
 	private IInternalElementType<?> type;
-	private IModelElement parent;
+	private ModelPOContainer parent;
 	private IEventBRoot parentRoot;	
 
 	public IModelElement getModelParent() {
@@ -105,6 +106,33 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	public IRodinElement getInternalElement() {
 		return null;
 	}
+
+	public Object getParent(boolean complex) {
+		return parentRoot;
+	}
+
+
+	public Object[] getChildren(IInternalElementType<?> element_type, boolean complex) {
+		
+		if (type != element_type) {
+			return new Object[0];
+		} else {
+			if (type == IPSStatus.ELEMENT_TYPE) {
+				return parent.getIPSStatuses();
+			} else {
+				try {
+					return parentRoot.getChildrenOfType(type);
+				} catch (RodinDBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		return new Object[0];
+		
+	}
+	
 	
 
 }

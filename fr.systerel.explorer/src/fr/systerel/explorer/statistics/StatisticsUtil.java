@@ -35,9 +35,9 @@ import fr.systerel.explorer.navigator.IElementNode;
  * 
  */
 public class StatisticsUtil {
-	private static final String PROJECTS = "PROJECTS";
+	private static final String PROJECTS = "projects";
 	private static final String MACH_CONT = "machines contexts";
-	private static final String NODES = "NODES";
+	private static final String NODES = "nodes";
 	private static final String ELEMS = "elements";
 	private static final String POS = "proof obligations";
 	
@@ -64,7 +64,7 @@ public class StatisticsUtil {
 					ModelProject modelproject = ModelController
 							.getProject(proj);
 					if (modelproject == null) {
-						return "Expand the PROJECTS at least once to see the statistics.";
+						return "Expand the projects at least once to see the statistics.";
 					}
 				} else {
 					return "Must be a Rodin Project and not closed.";
