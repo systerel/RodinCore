@@ -89,10 +89,8 @@ public class FormulaSimplification {
 
 		final Expression neutral;
 		final Expression determinant;
-		IntegerLiteral number0 = ff.makeIntegerLiteral(new BigInteger("0"),
-				null);
-		IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"),
-				null);
+		final Expression number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 		switch (tag) {
 		case Expression.BUNION:
 			neutral = ff.makeEmptySet(expression.getType(), null);
