@@ -12,6 +12,7 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -24,17 +25,14 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -70,9 +68,16 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		setDocumentProvider(documentProvider);
 		setElementStateListener();
 		RodinCore.addElementChangedListener(this);
-		
 	}
 
+	protected void createActions(){
+		super.createActions();
+		IAction action= new DeleteAction(this);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		action.setText("Delete");
+		setAction(ITextEditorActionConstants.DELETE, action);
+	}
+	
 	
 	public void dispose() {
 		colorManager.dispose();
@@ -97,7 +102,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		annotationModel.addAnnotationModelListener(overlayEditor);
 		SelectionController controller = new SelectionController(styledText, mapper, viewer, overlayEditor);
-//		styledText.addSelectionListener(controller);
+		styledText.addSelectionListener(controller);
 //		styledText.addVerifyListener(controller);
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
@@ -105,7 +110,8 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
 		//TODO
-		addButtonTest();
+		ButtonManager buttonManager = new ButtonManager(mapper, styledText, viewer, this);
+		buttonManager.createButtons();
 			
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
@@ -208,18 +214,25 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	 * The editor is refreshed.
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-//		System.out.println(event.getDelta());
+		System.out.println(event.getDelta());
 		final DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
 		Display.getDefault().asyncExec( new Runnable() {
 
 			@Override
 			public void run() {
-				IRodinElement[] elements = proc.getElementsToRefresh();
-				if (elements.length > 0) {
-					for (IRodinElement element : elements) {
+				IRodinElement[] changed = proc.getElementsToRefresh();
+				IRodinElement[] removed = proc.getElementsToRemove();
+				if (changed.length > 0) {
+					for (IRodinElement element : changed) {
 						mapper.elementChanged(element);
 					}
-				} else if (proc.isMustRefreshMarkers()) {
+				}
+				else if (removed.length > 0) {
+					for (IRodinElement element : removed) {
+						mapper.elementRemoved(element);
+					}
+				}
+				else if (proc.isMustRefreshMarkers()) {
 					updateMarkerStructure(documentProvider.getMarkerAnnotations());
 				}
 				else if (proc.isMustRefresh()) {
@@ -262,31 +275,11 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 			
 		});
 	}
-	
-	public void addButtonTest() {
-		Button button = new Button(styledText, SWT.PUSH);
-		button.setLocation(0, 0);
-		button.setSize(15, 15);
-		button.addSelectionListener(new SelectionListener() {
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("button");
-				
-			}
-			
-		});
-		Image image = getDefaultImage();
-		button.setImage(image);
-		
+	public DocumentMapper getDocumentMapper() {
+		return mapper;
 	}
-
+	
 	
 	
 }

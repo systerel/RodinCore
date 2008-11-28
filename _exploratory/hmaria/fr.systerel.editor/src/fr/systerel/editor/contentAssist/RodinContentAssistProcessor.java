@@ -74,8 +74,6 @@ public class RodinContentAssistProcessor implements IContentAssistProcessor {
 				result.add(new CompletionProposal(comp, offset, 0, comp.length()));
 			}
 		}
-//		ICompletionProposal[] result= new ICompletionProposal[1];
-//			result[0]= new CompletionProposal("test", offset, 0, 4);
 		return result.toArray(new ICompletionProposal[result.size()]);
 	}
 

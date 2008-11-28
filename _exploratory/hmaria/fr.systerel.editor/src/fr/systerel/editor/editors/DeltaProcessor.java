@@ -35,6 +35,7 @@ public class DeltaProcessor {
 	private boolean mustRefreshMarkers;
 	// indicates which elements should be refreshed.
 	private ArrayList<IRodinElement> elementsToRefresh;
+	private ArrayList<IRodinElement> elementsToRemove;
 	private IEventBRoot scRoot;
 	
 	
@@ -42,11 +43,16 @@ public class DeltaProcessor {
 		return elementsToRefresh.toArray(new IRodinElement[elementsToRefresh.size()]);
 	}
 
+	public IRodinElement[] getElementsToRemove() {
+		return elementsToRemove.toArray(new IRodinElement[elementsToRemove.size()]);
+	}
+	
 	public DeltaProcessor(IRodinElementDelta delta, IEventBRoot inputRoot) {
 		this.inputRoot = inputRoot;
 		mustRefresh = false;
 		mustRefreshMarkers = false;
 		elementsToRefresh = new ArrayList<IRodinElement>();
+		elementsToRemove = new ArrayList<IRodinElement>();
 		if (inputRoot instanceof IMachineRoot) {
 			scRoot = inputRoot.getSCMachineRoot();
 		} else {
@@ -77,7 +83,12 @@ public class DeltaProcessor {
 		}
 		
 		//TODO: handle additions and removing
-		
+		if (kind == IRodinElementDelta.REMOVED) {
+			if (inputRoot.equals(element.getAncestor(IMachineRoot.ELEMENT_TYPE))
+					||  inputRoot.equals(element.getAncestor(IContextRoot.ELEMENT_TYPE))) {
+				elementsToRemove.add(element);
+			}
+		}
 		
 		//we're only interested in changes to the inputRoot or its file and its statically checked version.
 		if (kind == IRodinElementDelta.CHANGED) {
@@ -99,8 +110,8 @@ public class DeltaProcessor {
 				mustRefreshMarkers = true;
 					
 			} else if ((delta.getFlags() & IRodinElementDelta.F_ATTRIBUTE ) != 0){
-				if (element.getAncestor(IMachineRoot.ELEMENT_TYPE).equals(inputRoot )
-						||  element.getAncestor(IContextRoot.ELEMENT_TYPE).equals(inputRoot )) {
+				if (inputRoot.equals(element.getAncestor(IMachineRoot.ELEMENT_TYPE))
+						||  inputRoot.equals(element.getAncestor(IContextRoot.ELEMENT_TYPE))) {
 					elementsToRefresh.add(element);
 				}
 			

@@ -348,8 +348,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		}
 		else {
 			try {
-				//TODO: can partitions be deleted?
-//				updateIntervals(event);
 	
 				boolean needsCorrection = calculateCorrection(event);
 				
@@ -357,8 +355,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 				//currently there can be no new partitions.
 				fPositionUpdater.update(event);
 
-//				updateIntervals(event);
-				
 				if (needsCorrection) {
 					correctPosition();
 				}
@@ -372,28 +368,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		
 	}
 
-	private void updateIntervals(DocumentEvent event) {
-		int index = mapper.findEditableIntervalIndex(event.getOffset());
-		//adapt the interval in which the change happened
-		if (index >= 0){
-			ArrayList<Interval> intervals = mapper.getIntervals();
-			int change = event.getText().length() -event.getLength();
-			Interval affected = mapper.getIntervals().get(index);
-			if (affected != null) {
-				
-				affected.setLength(affected.getLength() +change);
-				affected.setChanged(true);
-				
-			}
-			
-			//adapt the offsets of the following intervals
-			for (int i = index+1; i < intervals.size(); i++) {
-				intervals.get(i).setOffset(intervals.get(i).getOffset() +change);
-			}
-		} else {
-//			System.out.println("Error: no editable interval as this position. The document change should not have been allowed!");
-		}
-	}
 
 	/**
 	 * Calls {@link #initialize()} if the receiver is not yet initialized.

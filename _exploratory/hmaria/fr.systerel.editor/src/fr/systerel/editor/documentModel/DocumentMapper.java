@@ -149,7 +149,7 @@ public class DocumentMapper {
 	}
 	
 	/**
-	 * Finds the first interval that contains an offset (includes interval
+	 * Finds the first interval that contains an offset (includes intervals
 	 * ending at that position)
 	 * 
 	 * @param offset
@@ -203,6 +203,23 @@ public class DocumentMapper {
 		return null;
 	}
 
+	
+	/**
+	 * Finds the index of the first interval that starts after a given offset.
+	 * 
+	 * @param offset
+	 * @return the index of the first interval after the given offset or
+	 *         <code>-1</code> if none exists.
+	 */
+	public int findIntervalIndexAfter(int offset) {
+		for (Interval interval : intervals) {
+			if (interval.getOffset() > offset) {
+				return intervals.indexOf(interval);
+			}
+		}
+		return -1;
+	}
+	
 	/**
 	 * Finds the last editable interval that ends before a given offset.
 	 * 
@@ -463,7 +480,53 @@ public class DocumentMapper {
 			}
 		}
 	}
+	
+	public void elementRemoved(IRodinElement element){
+		System.out.println("element removed: " +element);
+		EditorElement editorElement = editorElements.get(element);
+		if (editorElement != null) {
+			int offset = editorElement.getOffset();
+			int length =  editorElement.getLength();
+			removeElements(offset, length);
+			removeIntervals(offset, length);
+			adaptFoldingPositions(offset, -length);
+			
+			documentProvider.replaceTextInDocument(offset, length, "");
+		}
+	}
 
+	protected void removeElements(int offset, int length) {
+		ArrayList<EditorElement> toRemove = new ArrayList<EditorElement>();
+		for (EditorElement element : editorElements.values()) {
+			if (element.getOffset() >= offset && element.getOffset() +element.getLength() <= offset +length ) {
+				toRemove.add(element);
+				element.dispose();
+			}
+		}
+		editorElements.values().removeAll(toRemove);
+		toRemove.clear();
+		for (EditorElement element : editorElementsWithType.values()) {
+			toRemove.add(element);
+		}
+		editorElementsWithType.values().removeAll(toRemove);
+	}
+	
+	protected void removeIntervals(int offset, int length) {
+		ArrayList<Interval> toRemove = new ArrayList<Interval>();
+		for (Interval interval : intervals) {
+			int end = interval.getOffset() +interval.getLength();
+			if (interval.getOffset() >= offset && end <=  offset +length) {
+				toRemove.add(interval);
+			}
+			if (interval.getOffset() > offset) {
+				break;
+			}
+		}
+		intervals.removeAll(toRemove);
+		adaptIntervalOffsetsFrom(findIntervalIndexAfter(offset), -length);
+			
+	}
+	
 	private void checkLabeled(ILabeledElement element, Interval interval)
 			throws RodinDBException {
 		if ( element.hasLabel()) {
@@ -523,9 +586,11 @@ public class DocumentMapper {
 	 *            The delta of change to the offset.
 	 */
 	public void adaptIntervalOffsetsFrom(int index, int delta) {
-		for (int i = index; i < intervals.size(); i++) {
-			Interval interval = intervals.get(i);
-			interval.setOffset(interval.getOffset() + delta);
+		if (index > 0 && delta != 0) {
+			for (int i = index; i < intervals.size(); i++) {
+				Interval interval = intervals.get(i);
+				interval.setOffset(interval.getOffset() + delta);
+			}
 		}
 	}
 
@@ -582,7 +647,7 @@ public class DocumentMapper {
 	 * the text area in the document represented by the document is replaced by
 	 * the new_text and the interval length is adapted accordingly. The folding
 	 * positions are adapted to the changes and the interval offsets of the
-	 * follwing intervals too.
+	 * following intervals, too.
 	 * 
 	 * @param interval
 	 *            The interval where the change happened
@@ -604,5 +669,14 @@ public class DocumentMapper {
 		this.documentProvider = documentProvider;
 	}
 	
+	
+	public EditorElement findEditorElement(int offset, int length) {
+		for (EditorElement element : editorElements.values()) {
+			if (element.getOffset() == offset && element.getLength() == length) {
+				return element;
+			}
+		}
+		return null;
+	}
 	
 }

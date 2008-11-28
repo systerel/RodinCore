@@ -57,7 +57,7 @@ import fr.systerel.editor.documentModel.Interval;
 
 
 /**
- *
+ * This class manages the little text field that is used to edit an element.
  */
 public class OverlayEditor implements IAnnotationModelListener, IAnnotationModelListenerExtension, 
 										ExtendedModifyListener, VerifyKeyListener, IMenuListener, PaintListener{

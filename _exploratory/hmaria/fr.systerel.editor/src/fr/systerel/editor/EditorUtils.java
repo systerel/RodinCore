@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 
 package fr.systerel.editor;
 
@@ -20,24 +19,22 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- *         This class contains some utility static methods that are used in this
- *         Explorer plug-in.
- *
+ * This class contains some utility static methods that are used in this
+ * Explorer plug-in.
+ * 
  */
 public class EditorUtils {
 
 	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
-	throws RodinDBException {
-return project.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);
-}
+			throws RodinDBException {
+		return project.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);
+	}
 
+	public static IContextRoot[] getContextRootChildren(IRodinProject project)
+			throws RodinDBException {
+		return project.getRootElementsOfType(IContextRoot.ELEMENT_TYPE);
+	}
 
-public static IContextRoot[] getContextRootChildren(IRodinProject project)
-	throws RodinDBException {
-return project.getRootElementsOfType(IContextRoot.ELEMENT_TYPE);
-}
-	
-	
 	public static IRodinProject getRodinProject(IProject project) {
 		return RodinCore.getRodinDB().getRodinProject(project.getName());
 	}

@@ -36,7 +36,8 @@ import org.rodinp.core.RodinDBException;
 import fr.systerel.editor.editors.RodinConfiguration;
 
 /**
- *
+ * Creates the text for a given root. The intervals and editor elements are
+ * built too and registered with the document mapper.
  */
 public class RodinTextGenerator {
 
@@ -60,7 +61,6 @@ public class RodinTextGenerator {
 	 */
 	public String createText(IEventBRoot root) {
 		builder = new StringBuilder();
-//		documentMapper.resetIntervals();
 		documentMapper.resetPrevious();
 		
 		if (root instanceof IMachineRoot) {
@@ -104,7 +104,8 @@ public class RodinTextGenerator {
 			int length;
 			addTitleRegion("Invariants:");
 			for (IInvariant inv : invariants) {
-				processElement(inv);
+//				processElement(inv);
+				processInvariant(inv);
 			}
 			length = builder.length() - start;
 //			foldingRegions.add(new Position(start,length));
@@ -113,6 +114,8 @@ public class RodinTextGenerator {
 		}
 	}
 
+	
+	
 	private void addVariablesRegion(IMachineRoot machine)
 			throws RodinDBException {
 		
@@ -122,7 +125,8 @@ public class RodinTextGenerator {
 			int length;
 			addTitleRegion("Variables:");
 			for (IVariable var : variables) {
-				processElement(var);
+//				processElement(var);
+				processVariable(var);
 			}
 			length = builder.length() -start;
 //			foldingRegions.add(new Position(start,length));
@@ -294,7 +298,7 @@ public class RodinTextGenerator {
 			} else {
 				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
 			}
-			builder.append(lineSeparator);
+//			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -308,7 +312,7 @@ public class RodinTextGenerator {
 			} else {
 				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
 			}
-			builder.append(lineSeparator);
+//			builder.append(lineSeparator);
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -374,6 +378,32 @@ public class RodinTextGenerator {
 		
 		builder.append(lineSeparator);
 	}
+	
+	private void processInvariant(IInvariant invariant) throws RodinDBException {
+
+		builder.append(tab);
+		processLabeledElement(invariant);
+		
+		builder.append(tab);
+		processCommentedElement(invariant);
+		
+		builder.append(tab);
+		processPredicateElement(invariant);
+		
+		builder.append(lineSeparator);
+	}
+	
+	private void processVariable(IVariable variable) throws RodinDBException {
+
+		builder.append(tab);
+		processIdentifierElement(variable);
+		
+		builder.append(tab);
+		processCommentedElement(variable);
+		
+		builder.append(lineSeparator);
+	}
+
 	
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);

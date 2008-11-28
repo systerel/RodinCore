@@ -15,8 +15,6 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +25,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.Interval;
 
 /**
@@ -74,23 +73,19 @@ public class SelectionController implements SelectionListener, MouseListener,
 	
 	/**
 	 * Checks if a selection is valid.
-	 * A selection is valid, iff at most one editable element is selected.
 	 * @param offset The offset to check, in model coordinates
 	 * @param length
 	 * @return <code>true</code> if the selection is valid, <code>false</code> otherwise.
 	 */
 	public boolean isValidSelection(int offset, int length) {
-		Interval interval = mapper.findEditableInterval(offset);
-		//only editable intervals can be selected
-		if (interval != null) {
-			//selection stays inside the borders of the interval
-			if (offset >= interval.getOffset() &&
-					(offset +length <= interval.getOffset() +interval.getLength())) {
-				return true;
-			}
-		}
+		int modelOffset = viewer.widgetOffset2ModelOffset(offset);
+//		Interval[] intervals = mapper.findIntervals(modelOffset, length);
+//		if (intervals.length ==1 ) {
+//			return true;
+//		}
 		
-		return false;
+		EditorElement element = mapper.findEditorElement(modelOffset, length);
+		return element != null;
 	}
 	
 	/**
@@ -132,7 +127,10 @@ public class SelectionController implements SelectionListener, MouseListener,
 	}
 
 	public void mouseUp(MouseEvent e) {
-		overlayEditor.showAtOffset(styledText.getCaretOffset());		
+		// no selection
+		if (viewer.getSelectedRange().y == 0) {
+			overlayEditor.showAtOffset(styledText.getCaretOffset());		
+		}
 	}
 
 	public void verifyText(VerifyEvent e) {

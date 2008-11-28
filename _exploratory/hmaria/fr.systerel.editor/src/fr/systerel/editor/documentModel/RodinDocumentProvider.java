@@ -207,5 +207,18 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			}
 		}
 	}
+
+	protected void replaceTextInDocument(int offset, int length, String text) {
+		if (doc != null ){
+			try {
+				fireElementContentAboutToBeReplaced(doc);
+				doc.replace(offset, length, text);
+				fireElementContentReplaced(doc);
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 }
