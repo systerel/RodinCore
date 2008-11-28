@@ -12,6 +12,8 @@
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -35,9 +37,14 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.explorer.IElementNode;
+import fr.systerel.internal.explorer.model.IModelElement;
+import fr.systerel.internal.explorer.model.ModelController;
 
 /**
  * This is mostly copied from
@@ -89,46 +96,13 @@ public class RetryAutoProversAction extends Action {
 							continue;
 						}
 						for (IPSRoot root: psRoots) {
-							IProofComponent pc = pm.getProofComponent(root);
-							IPSStatus[] statuses;
-							try {
-								statuses = root.getStatuses();
-							} catch (RodinDBException e) {
-								EventBUIExceptionHandler
-										.handleGetChildrenException(e,
-												UserAwareness.IGNORE);
-								continue;
-							}
-							try {
-								AutoProver.run(pc, statuses, monitor);
-							} catch (RodinDBException e) {
-								EventBUIExceptionHandler.handleRodinException(
-										e, UserAwareness.IGNORE);
-								continue;
-							}							
+							treatRoot(pm, root, monitor);
 						}
+						continue;
 					}
-					if (obj instanceof IRodinFile) {
-						final IRodinFile file = (IRodinFile) obj;
-						final IEventBRoot root = (IEventBRoot) file.getRoot();
-						final IProofComponent pc = pm.getProofComponent(root);
-						IPSStatus[] statuses;
-						try {
-							statuses = pc.getPSRoot().getStatuses();
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler
-									.handleGetChildrenException(e,
-											UserAwareness.IGNORE);
-							continue;
-						}
-						try {
-							AutoProver.run(pc, statuses, monitor);
-							// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler.handleRodinException(
-									e, UserAwareness.IGNORE);
-							continue;
-						}
+					if (obj instanceof IEventBRoot) {
+						treatRoot(pm, (IEventBRoot) obj, monitor);
+						continue;
 					}
 					
 					if (obj instanceof IPSStatus) {
@@ -144,10 +118,23 @@ public class RetryAutoProversAction extends Action {
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
 									e, UserAwareness.IGNORE);
-							continue;
 						}
+						continue;
 
 					}
+					if (obj instanceof IElementNode) {
+						treateNode(monitor, pm, (IElementNode) obj);
+						continue;
+					}
+					
+					//invariants, events, theorems, axioms
+					if (obj instanceof IRodinElement) {
+						IModelElement element = ModelController.getModelElement(obj);
+						treatElement(monitor, element, pm);
+						continue;
+						
+					}
+					
 				}
 			}
 			
@@ -176,5 +163,87 @@ public class RetryAutoProversAction extends Action {
 		}
 	}
 	
+	void treatRoot(IProofManager pm, IEventBRoot root, IProgressMonitor monitor){
+		final IProofComponent pc = pm.getProofComponent(root);
+		IPSStatus[] statuses;
+		try {
+			statuses = pc.getPSRoot().getStatuses();
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler
+					.handleGetChildrenException(e,
+							UserAwareness.IGNORE);
+			return;
+		}
+		try {
+			AutoProver.run(pc, statuses, monitor);
+			// RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleRodinException(
+					e, UserAwareness.IGNORE);
+		}
+		
+	}
+
+	void treateNode(IProgressMonitor monitor, final IProofManager pm,
+			IElementNode node) {
+		if (node.getChildrenType() == IPSStatus.ELEMENT_TYPE) {
+			IEventBRoot root = node.getParent();
+			treatRoot(pm, root, monitor);
+		} else {
+			try {
+				Object[] children=node.getParent().getChildrenOfType(node.getChildrenType());
+				ArrayList<Object> stats = new ArrayList<Object>();
+				
+				for (Object child : children) {
+					IModelElement element = ModelController.getModelElement(child);
+					if (element != null) {
+						stats.addAll(Arrays.asList(element.getChildren(IPSStatus.ELEMENT_TYPE, false)));
+					}
+				}
+				ArrayList<IPSStatus> result = new ArrayList<IPSStatus>();
+				for (Object stat : stats) {
+					if (stat instanceof IPSStatus) {
+						result.add((IPSStatus) stat);
+					}
+				}
+				IPSRoot psRoot = node.getParent().getPSRoot();
+				final IProofComponent pc = pm.getProofComponent(psRoot);
+				AutoProver.run(pc, result.toArray(new IPSStatus[result.size()]), monitor);
+				
+			} catch (RodinDBException e) {
+				EventBUIExceptionHandler.handleRodinException(
+						e, UserAwareness.IGNORE);
+			}
+			
+		}
+	}
+	
+	void treatElement(IProgressMonitor monitor,
+			IModelElement element, IProofManager pm) {
+		if (element != null) {
+			ArrayList<Object> stats = new ArrayList<Object>();
+			stats.addAll(Arrays.asList(element.getChildren(IPSStatus.ELEMENT_TYPE, false)));
+			ArrayList<IPSStatus> result = new ArrayList<IPSStatus>();
+			IPSStatus status = null;
+			for (Object stat : stats) {
+				if (stat instanceof IPSStatus) {
+					result.add((IPSStatus) stat);
+					status = (IPSStatus) stat;
+				}
+			}
+			// at least one status found.
+			if (status != null) {
+				IRodinFile psFile = status.getRodinFile();
+				IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+				try {
+					final IProofComponent pc = pm.getProofComponent(psRoot);
+					AutoProver.run(pc, result.toArray(new IPSStatus[result.size()]), monitor);
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleRodinException(
+							e, UserAwareness.IGNORE);
+				}
+			}
+		}
+	}
 	
 }

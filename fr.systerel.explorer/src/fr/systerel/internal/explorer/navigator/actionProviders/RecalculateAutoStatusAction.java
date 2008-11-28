@@ -13,7 +13,10 @@
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,12 +40,18 @@ import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.explorer.IElementNode;
+import fr.systerel.internal.explorer.model.IModelElement;
+import fr.systerel.internal.explorer.model.ModelController;
+
 /**
- * This is mostly coppied from 
+ * This is mostly copied from 
  * org.eventb.internal.ui.obligationexplorer.actions.ObligationsRecalcuateAutoStatus
  *
  */
@@ -75,68 +84,34 @@ public class RecalculateAutoStatusAction extends Action {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				for (Object obj : objects) {
-					if (obj instanceof IRodinProject) {
-						// Run the Auto Prover on all IPSRoot in this project
-						IRodinProject rodinPrj = (IRodinProject) obj;
-						IPSRoot[] psRoot;
-						try {
-							psRoot = rodinPrj
-									.getChildrenOfType(IPSRoot.ELEMENT_TYPE);
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler
-									.handleGetChildrenException(e,
-											UserAwareness.IGNORE);
-							continue;
+					if (obj instanceof IRodinProject || obj instanceof IProject) {
+						IRodinProject rodinPrj;
+						if (obj instanceof IProject ){
+							rodinPrj = RodinCore.valueOf((IProject) obj);
+						} else{
+							rodinPrj = (IRodinProject) obj;
 						}
-						for (IPSRoot root : psRoot) {
-							IPRRoot prRoot = root.getPRRoot();
-							IPSStatus[] statuses;
+						if (rodinPrj.exists()) {
+							IPSRoot[] psRoot;
 							try {
-								statuses = root.getStatuses();
+								psRoot = rodinPrj
+										.getChildrenOfType(IPSRoot.ELEMENT_TYPE);
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler
 										.handleGetChildrenException(e,
 												UserAwareness.IGNORE);
 								continue;
 							}
-							try {
-								// AutoProver.run(prFile, psFile, statuses, monitor);
-								RecalculateAutoStatus.run(prRoot.getRodinFile(), root.getRodinFile(), statuses, monitor);
-							} catch (RodinDBException e) {
-								EventBUIExceptionHandler.handleRodinException(
-										e, UserAwareness.IGNORE);
-								continue;
-							}							
+							for (IPSRoot root : psRoot) {
+								treatRoot(root, monitor);
+							}
 						}
 					}
-					if (obj instanceof IRodinFile) {
-						IRodinFile rf = (IRodinFile) obj;
-						IInternalElement root = rf.getRoot();
+					if (obj instanceof IEventBRoot) {
+						IEventBRoot root = (IEventBRoot) obj;
 						if (root instanceof IMachineRoot
 								|| root instanceof IContextRoot) {
-							IPSRoot psRoot = ((IEventBRoot) root).getPSRoot();
-							IRodinFile psFile = psRoot.getRodinFile();
-							IRodinFile prFile = psRoot.getPRRoot()
-									.getRodinFile();
-							IPSStatus[] statuses;
-							try {
-								statuses = psRoot.getStatuses();
-							} catch (RodinDBException e) {
-								EventBUIExceptionHandler
-										.handleGetChildrenException(e,
-												UserAwareness.IGNORE);
-								continue;
-							}
-							try {
-								// AutoProver.run(prFile, psFile, statuses,
-								// monitor);
-								RecalculateAutoStatus.run(prFile, psFile,
-										statuses, monitor);
-							} catch (RodinDBException e) {
-								EventBUIExceptionHandler.handleRodinException(
-										e, UserAwareness.IGNORE);
-								continue;
-							}
+							treatRoot(root, monitor);
 						}
 					}
 					
@@ -150,6 +125,7 @@ public class RecalculateAutoStatusAction extends Action {
 						try {
 							// AutoProver.run(prFile, psFile, statuses, monitor);
 							RecalculateAutoStatus.run(prFile, psFile, statuses, monitor);
+							continue;
 						} catch (RodinDBException e) {
 							EventBUIExceptionHandler.handleRodinException(
 									e, UserAwareness.IGNORE);
@@ -157,8 +133,22 @@ public class RecalculateAutoStatusAction extends Action {
 						}
 
 					}
+					
+					if (obj instanceof IElementNode) {
+						treateNode(monitor, (IElementNode) obj);
+						continue;
+					}
+					
+					//invariants, events, theorems, axioms
+					if (obj instanceof IRodinElement) {
+						IModelElement element = ModelController.getModelElement(obj);
+						treatElement(monitor, element);
+						continue;
+						
+					}
 				}
 			}
+
 			
 		};
 		
@@ -183,6 +173,94 @@ public class RecalculateAutoStatusAction extends Action {
 			final String message = realException.getMessage();
 			MessageDialog.openError(shell, "Unexpected Error", message);
 			return;
+		}
+	}
+	
+	void treatRoot(IEventBRoot root, IProgressMonitor monitor) {
+		IPSRoot psRoot = root.getPSRoot();
+		IRodinFile psFile = psRoot.getRodinFile();
+		IRodinFile prFile = psRoot.getPRRoot()
+				.getRodinFile();
+		IPSStatus[] statuses;
+		try {
+			statuses = psRoot.getStatuses();
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler
+					.handleGetChildrenException(e,
+							UserAwareness.IGNORE);
+			return;
+		}
+		try {
+			// AutoProver.run(prFile, psFile, statuses,
+			// monitor);
+			RecalculateAutoStatus.run(prFile, psFile,
+					statuses, monitor);
+		} catch (RodinDBException e) {
+			EventBUIExceptionHandler.handleRodinException(
+					e, UserAwareness.IGNORE);
+		}
+		
+	}
+	
+	void treatElement(IProgressMonitor monitor,
+			IModelElement element) {
+		if (element != null) {
+			ArrayList<Object> stats = new ArrayList<Object>();
+			stats.addAll(Arrays.asList(element.getChildren(IPSStatus.ELEMENT_TYPE, false)));
+			ArrayList<IPSStatus> result = new ArrayList<IPSStatus>();
+			IPSStatus status = null;
+			for (Object stat : stats) {
+				if (stat instanceof IPSStatus) {
+					result.add((IPSStatus) stat);
+					status = (IPSStatus) stat;
+				}
+			}
+			// at least one status found.
+			if (status != null) {
+				IRodinFile psFile = status.getRodinFile();
+				IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+				IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
+				try {
+					RecalculateAutoStatus.run(prFile, psFile, result.toArray(new IPSStatus[result.size()]), monitor);
+				} catch (RodinDBException e) {
+					EventBUIExceptionHandler.handleRodinException(
+							e, UserAwareness.IGNORE);
+				}
+			}
+		}
+	}
+
+
+	void treateNode(IProgressMonitor monitor, IElementNode node) {
+		if (node.getChildrenType() == IPSStatus.ELEMENT_TYPE) {
+			IEventBRoot root = node.getParent();
+			treatRoot(root, monitor);						
+		} else {
+			try {
+				Object[] children=node.getParent().getChildrenOfType(node.getChildrenType());
+				ArrayList<Object> stats = new ArrayList<Object>();
+				
+				for (Object child : children) {
+					IModelElement element = ModelController.getModelElement(child);
+					if (element != null) {
+						stats.addAll(Arrays.asList(element.getChildren(IPSStatus.ELEMENT_TYPE, false)));
+					}
+				}
+				ArrayList<IPSStatus> result = new ArrayList<IPSStatus>();
+				for (Object stat : stats) {
+					if (stat instanceof IPSStatus) {
+						result.add((IPSStatus) stat);
+					}
+				}
+				IRodinFile psFile = node.getParent().getPSRoot().getRodinFile();
+				IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+				IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
+				RecalculateAutoStatus.run(prFile, psFile, result.toArray(new IPSStatus[result.size()]), monitor);
+				
+			} catch (RodinDBException e) {
+				EventBUIExceptionHandler.handleRodinException(
+						e, UserAwareness.IGNORE);
+			}
 		}
 	}
     

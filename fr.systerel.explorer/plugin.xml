@@ -425,9 +425,29 @@
             class="fr.systerel.internal.explorer.navigator.actionProviders.POActionProvider"
             id="fr.systerel.explorer.navigator.actionProviders.po">
          <enablement>
-            <instanceof
-                  value="org.eventb.core.IPSStatus">
-            </instanceof>
+            <or>
+               <instanceof
+                     value="org.eventb.core.IPSStatus">
+               </instanceof>
+               <instanceof
+                     value="org.eclipse.core.resources.IProject">
+               </instanceof>
+               <instanceof
+                     value="fr.systerel.explorer.IElementNode">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IEvent">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IInvariant">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.IAxiom">
+               </instanceof>
+               <instanceof
+                     value="org.eventb.core.ITheorem">
+               </instanceof>
+            </or>
          </enablement>
       </actionProvider>
       <navigatorContent

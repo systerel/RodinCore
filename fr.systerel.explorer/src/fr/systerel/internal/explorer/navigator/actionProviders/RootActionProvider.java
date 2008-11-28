@@ -40,7 +40,9 @@ public class RootActionProvider extends NavigatorActionProvider {
 	public void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(GROUP_MODELLING));
     	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
-    	
+    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRetryAutoProversAction(site));
+    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRecalculateAutoStatusAction(site));
+   	
     }	
     
 	
