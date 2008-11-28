@@ -44,7 +44,7 @@ public abstract class StatisticsColumn {
 	public static class NameColumn extends StatisticsColumn {
 		
 		public NameColumn(Table table){
-			createTableColumn(table, "Name");
+			createTableColumn(table, "Component Name");
 		}
 
 		@Override
