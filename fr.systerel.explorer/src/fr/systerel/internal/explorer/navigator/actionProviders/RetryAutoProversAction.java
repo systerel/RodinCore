@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,6 +41,7 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
@@ -82,21 +84,27 @@ public class RetryAutoProversAction extends Action {
 					throws InvocationTargetException, InterruptedException {
 				final IProofManager pm = EventBPlugin.getProofManager();
 				for (Object obj : objects) {
-					if (obj instanceof IRodinProject) {
-						// Run the Auto Prover on all IPSRoot in this project
-						IRodinProject rodinPrj = (IRodinProject) obj;
-						final IPSRoot[] psRoots;
-						try {
-							psRoots = rodinPrj
-									.getRootElementsOfType(IPSRoot.ELEMENT_TYPE);
-						} catch (RodinDBException e) {
-							EventBUIExceptionHandler
-									.handleGetChildrenException(e,
-											UserAwareness.IGNORE);
-							continue;
+					if (obj instanceof IRodinProject || obj instanceof IProject) {
+						IRodinProject rodinPrj;
+						if (obj instanceof IProject ){
+							rodinPrj = RodinCore.valueOf((IProject) obj);
+						} else{
+							rodinPrj = (IRodinProject) obj;
 						}
-						for (IPSRoot root: psRoots) {
-							treatRoot(pm, root, monitor);
+						if (rodinPrj.exists()) {
+							final IPSRoot[] psRoots;
+							try {
+								psRoots = rodinPrj
+										.getRootElementsOfType(IPSRoot.ELEMENT_TYPE);
+							} catch (RodinDBException e) {
+								EventBUIExceptionHandler
+										.handleGetChildrenException(e,
+												UserAwareness.IGNORE);
+								continue;
+							}
+							for (IPSRoot root: psRoots) {
+								treatRoot(pm, root, monitor);
+							}
 						}
 						continue;
 					}
