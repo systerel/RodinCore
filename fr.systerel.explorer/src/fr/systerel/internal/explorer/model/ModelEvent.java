@@ -17,6 +17,8 @@ import org.eventb.core.IPSStatus;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
+
 /**
  * Represents an Event in the Model
  *
@@ -48,6 +50,9 @@ public class ModelEvent extends ModelPOContainer {
 
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type != IPSStatus.ELEMENT_TYPE) {
+			if (ExplorerUtils.DEBUG) {
+				System.out.println("Unsupported children type for event: " +type);
+			}
 			return new Object[0];
 		}
 		return getIPSStatuses();

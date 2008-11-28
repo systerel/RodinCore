@@ -27,6 +27,9 @@ import org.rodinp.core.RodinDBException;
  */
 public class ExplorerUtils {
 
+	public static boolean DEBUG;
+
+
 	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
 			throws RodinDBException {
 		return project.getRootElementsOfType(IMachineRoot.ELEMENT_TYPE);

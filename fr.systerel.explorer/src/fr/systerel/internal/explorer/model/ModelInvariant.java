@@ -17,6 +17,8 @@ import org.eventb.core.IPSStatus;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
+
 /**
  * Represents an Invariant in the model
  *
@@ -49,6 +51,9 @@ public class ModelInvariant extends ModelPOContainer{
 
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type != IPSStatus.ELEMENT_TYPE) {
+			if (ExplorerUtils.DEBUG) {
+				System.out.println("Unsupported children type for invariant: " +type);
+			}
 			return new Object[0];
 		}
 		return getIPSStatuses();

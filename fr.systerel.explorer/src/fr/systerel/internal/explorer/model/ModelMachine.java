@@ -34,6 +34,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
+
 /**
  * 
  * Represents a Machine in the model
@@ -190,7 +192,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this machine.
 							if (internalMachine.getRodinFile().isAncestorOf(source) ){
-								source = processSource(source, po);
+								processSource(source, po);
 							}
 						}
 					}
@@ -407,7 +409,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return internalMachine;
 	}
 	
-	protected IRodinElement processSource(IRodinElement source, ModelProofObligation po) {
+	protected void processSource(IRodinElement source, ModelProofObligation po) {
 		if (source instanceof IAction) {
 			source =source.getParent();
 		}
@@ -438,7 +440,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				evt.addProofObligation(po);
 			}
 		}
-		return source;
 	}
 
 	public IModelElement getModelElement(IRodinElement element) {
@@ -465,7 +466,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				return (refinesMachines.get(0).getInternalMachine());
 			}
 		}
-		return getModelParent().getInternalElement();
+		return internalMachine.getRodinProject();
 	}
 
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
@@ -501,6 +502,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 		if (type == IPSStatus.ELEMENT_TYPE) {
 			return new Object[]{po_node};
+		}
+		if (ExplorerUtils.DEBUG) {
+			System.out.println("Unsupported children type for machine: " +type);
 		}
 		return new Object[0];
 	}

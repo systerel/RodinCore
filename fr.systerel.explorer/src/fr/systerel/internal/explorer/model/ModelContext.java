@@ -33,6 +33,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
+
 /**
  * This class represents a Context in the model
  *
@@ -466,7 +468,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 				return (extendsContexts.get(0).getInternalContext());
 			}
 		}
-		return getModelParent().getInternalElement();
+		return internalContext.getRodinProject();
 	}
 
 
@@ -501,6 +503,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		}
 		if (type == IPSStatus.ELEMENT_TYPE) {
 			return new Object[]{po_node};
+		}
+		if (ExplorerUtils.DEBUG) {
+			System.out.println("Unsupported children type for context: " +type);
 		}
 		return new Object[0];
 	}

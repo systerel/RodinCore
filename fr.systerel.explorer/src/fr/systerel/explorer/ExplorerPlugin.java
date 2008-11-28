@@ -10,8 +10,11 @@
   *******************************************************************************/
 package fr.systerel.explorer;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -21,6 +24,9 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.explorer";
 
+	// Trace Options
+	private static final String DEBUG_NAVIGATPR = PLUGIN_ID +"/debug/navigator"; //$NON-NLS-1$
+
 	// The shared instance
 	private static ExplorerPlugin plugin;
 
@@ -28,6 +34,7 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		configureDebugOptions();
 	}
 
 	@Override
@@ -44,5 +51,17 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	public static ExplorerPlugin getDefault() {
 		return plugin;
 	}
+	
+	/**
+	 * Process debugging/tracing options coming from Eclipse.
+	 */
+	private void configureDebugOptions() {
+		if (isDebugging()) {
+			String option = Platform.getDebugOption(DEBUG_NAVIGATPR);
+			if (option != null)
+				ExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+	}
+	
 
 }

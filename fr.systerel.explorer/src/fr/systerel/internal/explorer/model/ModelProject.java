@@ -518,7 +518,13 @@ public class ModelProject implements IModelElement {
 					context.addExtendsContext(exendsCtx);
 					context.addAncestor(exendsCtx);
 					context.addAncestors(exendsCtx.getAncestors());
+				} else {
+					if (ExplorerUtils.DEBUG) {
+						System.out.println("Context is in cycle: " +context);
+					}
+					
 				}
+					
 			}
 		}
 		
@@ -559,7 +565,7 @@ public class ModelProject implements IModelElement {
 		if (!complex) {
 			try {
 				if (type == IMachineRoot.ELEMENT_TYPE) {
-						return ExplorerUtils.getMachineRootChildren(internalProject);
+					return ExplorerUtils.getMachineRootChildren(internalProject);
 				}
 				if (type == IContextRoot.ELEMENT_TYPE) {
 					return ExplorerUtils.getContextRootChildren(internalProject);
@@ -574,6 +580,9 @@ public class ModelProject implements IModelElement {
 			if (type == IContextRoot.ELEMENT_TYPE) {
 				return ModelController.convertToIContext(getRootContexts());
 			}
+		}
+		if (ExplorerUtils.DEBUG) {
+			System.out.println("Did not find children of type: "+type +"for project " +internalProject);
 		}
 		return new Object[0];
 	}

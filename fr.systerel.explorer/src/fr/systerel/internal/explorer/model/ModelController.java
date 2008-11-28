@@ -256,6 +256,9 @@ public class ModelController implements IElementChangedListener {
 				return project.getModelElement((IRodinElement)element);
 			}
 		}
+		if (ExplorerUtils.DEBUG) {
+			System.out.println("Element not found by ModelController: " +element);
+		}
 		return null;
 	}
 	
