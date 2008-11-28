@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -216,7 +217,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 	public void elementChanged(ElementChangedEvent event) {
 		System.out.println(event.getDelta());
 		final DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
-		Display.getDefault().asyncExec( new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
 
 			@Override
 			public void run() {
