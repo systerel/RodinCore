@@ -704,11 +704,19 @@ public class UIUtils {
 			if (UIUtils.DEBUG)
 				System.out.println("Interrupt"); //$NON-NLS-1$
 			realException.printStackTrace();
-			final String message = realException.getMessage();
+			final String message = getExceptionMessage(realException);
 			MessageDialog.openError(shell, Messages.uiUtils_unexpectedError,
 					message);
 			return;
 		}
+	}
+
+	private static String getExceptionMessage(Throwable e) {
+		final String msg = e.getLocalizedMessage();
+		if (msg != null) {
+			return msg;
+		}
+		return e.getClass().getName();
 	}
 
 	/**
