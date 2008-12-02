@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - type-checking is now done with class TypeChecker
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.Collection;
@@ -221,26 +232,29 @@ public final class ProverSequent implements IInternalProverSequent{
 	 */
 	public IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents, Collection<Predicate> addhyps, Predicate newGoal) {
 		boolean modified = false;
-		ITypeEnvironment newTypeEnv = typeEnvironment;
+		final ITypeEnvironment newTypeEnv;
 		LinkedHashSet<Predicate> newLocalHypotheses = null;
 		LinkedHashSet<Predicate> newSelectedHypotheses = null;
 		LinkedHashSet<Predicate> newHiddenHypotheses = null;
-		if (freshFreeIdents != null && freshFreeIdents.length != 0)
-		{
-			newTypeEnv = typeEnvironment.clone();
-			for (FreeIdentifier freshFreeIdent : freshFreeIdents) {
-				if (newTypeEnv.contains(freshFreeIdent.getName())) return null;
-				newTypeEnv.add(freshFreeIdent);
-				modified = true;
-			}
-		}
+		
+		final TypeChecker checker = new TypeChecker(
+				typeEnvironment);
+		checker.addIdents(freshFreeIdents);
+		checker.checkFormulas(addhyps);
+		checker.checkFormulaMaybeNull(newGoal);
+		if (checker.hasTypeCheckError())
+			return null;
+		if (!checker.areAddedIdentsFresh())
+			return null;
+		newTypeEnv = checker.getTypeEnvironment();
+		modified |= checker.hasNewTypeEnvironment();
+
 		if (addhyps != null && addhyps.size() != 0) {
 			newLocalHypotheses = new LinkedHashSet<Predicate>(localHypotheses);
 			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
 			for (Predicate hyp : addhyps) {
 				// if (! typeCheckClosed(hyp,newTypeEnv)) return null;
-				if (! ProverChecks.checkTyping(hyp, newTypeEnv)) return null;
 				if (! this.containsHypothesis(hyp)){
 					newLocalHypotheses.add(hyp);
 					modified = true;
@@ -250,8 +264,6 @@ public final class ProverSequent implements IInternalProverSequent{
 			}
 		}
 		if (newGoal != null && ! newGoal.equals(goal)) {
-			// if (! typeCheckClosed(newGoal,newTypeEnv)) return null;
-			if (! ProverChecks.checkTyping(newGoal,newTypeEnv)) return null;
 			modified = true;
 		}
 		
@@ -332,16 +344,18 @@ public final class ProverSequent implements IInternalProverSequent{
 	public IInternalProverSequent performfwdInf(Collection<Predicate> hyps, FreeIdentifier[] addedIdents, Collection<Predicate> infHyps) {
 		boolean modified = false;
 		
-		ITypeEnvironment newTypeEnv = typeEnvironment;
-		if (addedIdents != null)
-		{
-			newTypeEnv = typeEnvironment.clone();
-			for (FreeIdentifier addedIdent : addedIdents) {
-				if (newTypeEnv.contains(addedIdent.getName())) return this;
-				newTypeEnv.add(addedIdent);
-				modified = true;
-			}
-		}
+		final TypeChecker checker = new TypeChecker(
+				typeEnvironment);
+		checker.checkFormulas(hyps);
+		checker.addIdents(addedIdents);
+		checker.checkFormulas(infHyps);
+		if (checker.hasTypeCheckError())
+			return null;
+		if (!checker.areAddedIdentsFresh())
+			return this;
+
+		final ITypeEnvironment newTypeEnv = checker.getTypeEnvironment();
+		modified |= checker.hasNewTypeEnvironment();
 		
 		if (hyps != null && ! this.containsHypotheses(hyps)) return this;
 
@@ -363,7 +377,6 @@ public final class ProverSequent implements IInternalProverSequent{
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
 			for (Predicate infHyp : infHyps) {
 				// if (! typeCheckClosed(infHyp,newTypeEnv)) return this;
-				if (! ProverChecks.checkTyping(infHyp,newTypeEnv)) return this;
 				if (! this.containsHypothesis(infHyp)){
 					newLocalHypotheses.add(infHyp);
 					if (selectInfHyps) newSelectedHypotheses.add(infHyp);

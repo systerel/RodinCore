@@ -1,16 +1,22 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - moved all type-checking code to class TypeChecker
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -19,16 +25,15 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
  * This class contains a collection of static methods that clients can use to check that the input they provide to
- * the sequent prover fulfils the expectations the sequent prover has on them. 
+ * the sequent prover fulfills the expectations the sequent prover has on them. 
  * 
  * <p>
- * The intention of this class is to make explicit (programatically) the assumptions that the sequent prover makes on
+ * The intention of this class is to make explicit (programmatically) the assumptions that the sequent prover makes on
  * the inputs its gets from its environment. The methods included here may be used by clients in test cases and assertion
  * checks.
  * </p>
@@ -56,7 +61,7 @@ public class ProverChecks {
 	 */
 	public static boolean DEBUG;
 	
-	private static void checkFailure(String message){
+	static void checkFailure(String message){
 		if (DEBUG)
 			System.out.println("Prover Check Failure: " + message);
 	}
@@ -65,67 +70,6 @@ public class ProverChecks {
 	// Public Methods :
 	// *******************************************************************************************
 
-
-	/**
-	 * Checks that a formula is well formed, and type checked.
-	 * 
-	 * <p>
-	 * This method also returns debug trace messages in case one of these checks fails.
-	 * </p>
-	 * 
-	 * @param formula
-	 * 			The formula to check
-	 * @return
-	 * 			<code>true</code> iff the given formula is well formed and type checked
-	 */
-	public static boolean checkFormula(Formula<?> formula){
-		if (! formula.isWellFormed()) {
-			checkFailure(" Formula " + formula + " is not well formed.");
-			return false;
-		}
-		if (! formula.isTypeChecked()) {
-			checkFailure(" Formula " + formula + " is not type checked.");
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Checks that all free identifiers defined in a predicate are present and agree in type with the
-	 * identifiers present in the given type environment.
-	 * 
-	 * <p>
-	 * It is assumed that the given predicate is well formed and type checked (i.e. that the {@link #checkFormula(Formula)}
-	 * method returns <code>true</code>) before calling this method.
-	 * </p>
-	 * 
-	 * <p>
-	 * This method also returns debug trace messages in case one of these checks fails.
-	 * </p>
-	 * 
-	 * @param formula
-	 * 			The predicate to check
-	 * @return
-	 * 			<code>true</code> iff the given predicate is well formed and well typed
-	 */
-	public static boolean checkTyping(Formula<?> formula, ITypeEnvironment typeEnv){
-
-		for (FreeIdentifier freeIdent : formula.getFreeIdentifiers()) {
-			if (! typeEnv.contains(freeIdent.getName())) {
-				checkFailure(" Free Identifier " + freeIdent.getName() +
-						" in formula " + formula +
-						" is not defined in the type environment " + typeEnv);
-				return false;
-			}
-			if (! typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType())){
-				checkFailure(" Free Identifier " + freeIdent.getName() +
-						" in formula " + formula +
-						" does not have the same type as in the type environment " + typeEnv);
-				return false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * Checks the assumptions made on a given sequent by the sequent prover.
@@ -151,188 +95,6 @@ public class ProverChecks {
 		return true;
 	}
 
-	/**
-	 * Checks that all predicates in the given rule are well formed, type checked, and well
-	 * typed with respect to the type environment that can be generated from the rule.
-	 * 
-	 * <p>
-	 * This method also returns debug trace messages in case one of these checks fails.
-	 * </p>
-	 * 
-	 * @return <code>true</code> iff all checks pass.
-	 */
-	public static boolean checkRule(IProofRule rule){
-
-		// This check occurs in two passes:
-		//
-		// * In the first pass the type environment that the rule anticipates from the sequent is built. While
-		//		building this type environment it is also checked that this type environment it consistent (i.e. that
-		// 		all free identifiers encountered have a unique type), and that all predicates are well formed and type
-		//		checked. It is also checked that a goal dependent rule has no goal independent antecedents.
-		// * In the second pass it is checked that all free variables contained in all predicates are present and agree
-		//		in type with the type environment that is relevant in their respective contexts.
-		//
-		//	Two passes through the antecedents of the rule are needed since the type environment that the rule expects
-		//  from its consequent sequent is not known a priori since this information is scattered across all antecedents.
-		// 	This type environment is needed to make sure that the added free identifiers in each antecedent are fresh with
-		//	respect to the type environment that the rule anticipates.
-
-		// Pass 1 :
-		// The type environment anticipated by the rule.
-		final ITypeEnvironment ruleTypeEnv = Lib.makeTypeEnvironment();
-		final  boolean goalIndependant = (rule.getGoal() == null);
-
-
-		// Check the goal and all needed hyps and add to the rule type environment from them
-		if (! goalIndependant){
-			if (! checkFormula(rule.getGoal())) return false;
-			if (! checkAndAddToTypeEnvironment(ruleTypeEnv, rule.getGoal().getFreeIdentifiers()))
-				return false;
-		}
-
-		for (Predicate hyp : rule.getNeededHyps()) {
-			if (! checkFormula(hyp)) return false;
-			if (! checkAndAddToTypeEnvironment(ruleTypeEnv, hyp.getFreeIdentifiers()))
-				return false;			
-		}
-
-		// Check the predicates contained in the antecedent and to the rule type environment from them
-		for (IAntecedent antecedent : rule.getAntecedents()){
-
-			// Check the antecedent goal and add to the rule type environment from it			
-			if (antecedent.getGoal() != null){
-				if (! checkFormula(antecedent.getGoal())) return false;
-				// Get the free identifiers that are to be added to the rule type environment
-				List<FreeIdentifier>freeIdents = new ArrayList<FreeIdentifier> (Arrays.asList(antecedent.getGoal().getFreeIdentifiers()));
-				freeIdents.removeAll(Arrays.asList(antecedent.getAddedFreeIdents()));
-				if (! checkAndAddToTypeEnvironment(ruleTypeEnv, freeIdents))
-					return false;
-			} else {
-				if (! goalIndependant){
-					checkFailure(" Antecedent " + antecedent +
-							" is goal independant, but rule " + rule + " is not");
-					return false;
-				}
-			}
-
-			// Check all added hyps and add to the rule type environment from them			
-			for (Predicate hyp : antecedent.getAddedHyps()) {
-				if (! checkFormula(hyp)) return false;
-				// Get the free identifiers that are to be added to the rule type environment
-				List<FreeIdentifier>freeIdents = new ArrayList<FreeIdentifier> (Arrays.asList(hyp.getFreeIdentifiers()));
-				freeIdents.removeAll(Arrays.asList(antecedent.getAddedFreeIdents()));
-				if (! checkAndAddToTypeEnvironment(ruleTypeEnv, freeIdents))
-					return false;
-			}
-			// Check all hyp actions and add to the rule type environment from them
-			for (IHypAction hypAction : antecedent.getHypActions()){
-				if (hypAction instanceof ISelectionHypAction) {
-					ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
-					// Check action type
-					if (! (selHypAction.getActionType().equals(IHypAction.ISelectionHypAction.SELECT_ACTION_TYPE) ||
-							selHypAction.getActionType().equals(IHypAction.ISelectionHypAction.DESELECT_ACTION_TYPE) ||
-							selHypAction.getActionType().equals(IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE) ||
-							selHypAction.getActionType().equals(IHypAction.ISelectionHypAction.SHOW_ACTION_TYPE)
-					)){
-						checkFailure(" Hypothesis selection hyp action " + selHypAction + " in antecedent " + antecedent +
-								" has incorrect action type " + selHypAction.getActionType());
-						return false;
-					}
-					// Check hyps
-					for (Predicate hyp : selHypAction.getHyps()){
-						if (! checkFormula(hyp)) return false;
-						// Get the free identifiers that are to be added to the rule type environment
-						List<FreeIdentifier>freeIdents = new ArrayList<FreeIdentifier> (Arrays.asList(hyp.getFreeIdentifiers()));
-						freeIdents.removeAll(Arrays.asList(antecedent.getAddedFreeIdents()));
-						if (! checkAndAddToTypeEnvironment(ruleTypeEnv, freeIdents))
-							return false;
-					}
-				} else if (hypAction instanceof IForwardInfHypAction) {
-					IForwardInfHypAction fwdHypAction = (IForwardInfHypAction) hypAction;
-					// Check action type
-					if (! fwdHypAction.getActionType().equals(IHypAction.IForwardInfHypAction.ACTION_TYPE)){
-						checkFailure(" Forward inference " + fwdHypAction + " in antecedent " + antecedent +
-								" has incorrect action type " + fwdHypAction.getActionType());
-						return false;
-					}
-					// Check required hyps
-					for (Predicate hyp : fwdHypAction.getHyps()){
-						if (! checkFormula(hyp)) return false;
-						// Get the free identifiers that are to be added to the rule type environment
-						List<FreeIdentifier>freeIdents = new ArrayList<FreeIdentifier> (Arrays.asList(hyp.getFreeIdentifiers()));
-						freeIdents.removeAll(Arrays.asList(antecedent.getAddedFreeIdents()));
-						if (! checkAndAddToTypeEnvironment(ruleTypeEnv, freeIdents))
-							return false;
-					}
-					// Check inferred hyps
-					for (Predicate hyp : fwdHypAction.getInferredHyps()){
-						if (! checkFormula(hyp)) return false;
-						// Get the free identifiers that are to be added to the rule type environment
-						List<FreeIdentifier>freeIdents = new ArrayList<FreeIdentifier> (Arrays.asList(hyp.getFreeIdentifiers()));
-						freeIdents.removeAll(Arrays.asList(antecedent.getAddedFreeIdents()));
-						freeIdents.removeAll(Arrays.asList(fwdHypAction.getAddedFreeIdents()));
-						if (! checkAndAddToTypeEnvironment(ruleTypeEnv, freeIdents))
-							return false;
-					}
-
-				} else {
-					// unknown hyp action type
-					checkFailure(" Unknown hypothesis action " + hypAction + " in antecedent " + antecedent);
-					return false;
-				}
-
-			}
-		}
-
-		// At this point the rule type environment contains all the free identifiers that are used by the rule
-
-		// Check that all predicates contained in the antecedents are well typed with the relevant type environments
-		for (IAntecedent antecedent : rule.getAntecedents()){
-			// Compute the antecedent type environment
-			final ITypeEnvironment antecedentTypeEnv = ruleTypeEnv.clone();
-			if (! checkFreshAndAddToTypeEnvironment(antecedentTypeEnv, antecedent.getAddedFreeIdents()))
-				return false;
-
-			// Check the goal
-			if (antecedent.getGoal() != null){
-				if (! checkTyping(antecedent.getGoal(), antecedentTypeEnv))
-					return false;
-			}
-			// Check all added hypotheses
-			if (! checkTyping(antecedent.getAddedHyps(), antecedentTypeEnv))
-				return false;
-
-			// Check all hyp actions
-
-			// The type environment that is progressively built using forward inferences
-			// Note : since forward inferences are skip-able, the typing check only assumes
-			// the original antecedent type environment, but the non freeness check needs to
-			// check that all added free identifiers are unique.
-			final ITypeEnvironment fwdInfTypeEnv = antecedentTypeEnv.clone();
-
-			for (IHypAction hypAction : antecedent.getHypActions()){
-				if (hypAction instanceof ISelectionHypAction) {
-					ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
-					if (! checkTyping(selHypAction.getHyps(), antecedentTypeEnv))
-						return false;
-				} else if (hypAction instanceof IForwardInfHypAction) {
-					IForwardInfHypAction fwdHypAction = (IForwardInfHypAction) hypAction;
-					if (! checkTyping(fwdHypAction.getHyps(), antecedentTypeEnv))
-						return false;
-					if (! checkFreshAndAddToTypeEnvironment(fwdInfTypeEnv, fwdHypAction.getAddedFreeIdents()))
-						return false;
-					// The type environment that should be used for the inferred hypotheses.
-					final ITypeEnvironment infHypsTypeEnv = antecedentTypeEnv.clone();
-					// no freeness check needed since a stronger check has previously been done.
-					infHypsTypeEnv.addAll(fwdHypAction.getAddedFreeIdents());
-					if (! checkTyping(fwdHypAction.getInferredHyps(), infHypsTypeEnv))
-						return false;
-				}
-			}			
-		}
-		return true;
-	}
-	
 	/**
 	 * Generates the logical justifications for the given proof rule.
 	 * 
@@ -450,13 +212,12 @@ public class ProverChecks {
 	 * 
 	 * @return <code>true</code> iff all checks pass.
 	 */
-	private static boolean checkSequentPredicates(IProverSequent seq){
-		final ITypeEnvironment typeEnv = seq.typeEnvironment();
-		if (! checkTyping(seq.goal(), typeEnv)) return false;
-		for (Predicate hyp : seq.hypIterable()) {
-			if (! checkTyping(hyp,typeEnv)) return false;
-		}	
-		return true;
+	private static boolean checkSequentPredicates(IProverSequent seq) {
+		final TypeChecker checker = new TypeChecker(
+				seq.typeEnvironment());
+		checker.checkFormula(seq.goal());
+		checker.checkFormulas(seq.hypIterable());
+		return !checker.hasTypeCheckError();
 	}
 
 	/**
@@ -492,83 +253,6 @@ public class ProverChecks {
 			}
 		}
 		return true;
-	}
-
-
-	/**
-	 * Collection version of {@link #checkTyping(Formula, ITypeEnvironment)}
-	 */
-	private static boolean checkTyping(Collection<? extends Formula<?>> formulae, ITypeEnvironment typeEnv){
-		for (Formula<?> formula : formulae) {
-			if (!checkTyping(formula, typeEnv)) return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Checks that the given free identifiers are well formed, type checked, and can be successfully added to the
-	 * given type environment (i.e. if the given free identifier already occurs in the type environment, it aggrees
-	 * on its type).
-	 * 
-	 * <p>
-	 * If all checks are successful, this method returns <code>true</code> and adds the given free identifiers
-	 * to the given type environment. If a check fails, the method returns <code>false</code> it means one of the checks 
-	 * failed, and only those free identifiers that could successfully be added are adeed to the type environment. The free
-	 * identifiers are processed in the order in which they occur.
-	 * <p>
-	 *  
-	 *  
-	 * @param typeEnv
-	 * 			the given type environment (may be modified).
-	 * @param freeIdents
-	 * 			the given free identifiers.
-	 * @return
-	 * 			<code>true</code> iff all checks succeed
-	 */
-	private static boolean checkAndAddToTypeEnvironment(ITypeEnvironment typeEnv, FreeIdentifier...freeIdents){
-		for (FreeIdentifier freeIdent : freeIdents) {
-			if (! checkFormula(freeIdent)) return false;
-
-			if (typeEnv.contains(freeIdent.getName()) && ! typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType())){
-				checkFailure(" Free Identifier " + freeIdent.getName() +
-						" with type " + freeIdent.getType() +
-						" does not have the same type as in the type environment " + typeEnv);
-				return false;
-			}
-			typeEnv.add(freeIdent);
-		}
-		return true;
-	}
-
-	/**
-	 * Similar to {@link #checkAndAddToTypeEnvironment(ITypeEnvironment, FreeIdentifier[])} but also checks that the
-	 * free identifiers to add are not already present in the type environment.
-	 */
-	private static boolean checkFreshAndAddToTypeEnvironment(ITypeEnvironment typeEnv, FreeIdentifier...freeIdents){
-		for (FreeIdentifier freeIdent : freeIdents) {
-			if (! checkFormula(freeIdent)) return false;
-
-			if (typeEnv.contains(freeIdent.getName())){
-				checkFailure(" Free Identifier " + freeIdent.getName() +
-						" with type " + freeIdent.getType() +
-						" already present in the type environment " + typeEnv);
-				return false;
-			}
-			typeEnv.add(freeIdent);
-		}
-		return true;
-	}
-
-
-
-	/**
-	 * Identical to {@link #checkAndAddToTypeEnvironment(ITypeEnvironment, FreeIdentifier[])}, except that this method
-	 * accepts a list of free identifiers instead of an array.
-	 */
-	private static boolean checkAndAddToTypeEnvironment(ITypeEnvironment typeEnv, List<FreeIdentifier> freeIdents){
-		FreeIdentifier[] freeIdentsArray = new FreeIdentifier[freeIdents.size()];
-		freeIdentsArray = freeIdents.toArray(freeIdentsArray);
-		return checkAndAddToTypeEnvironment(typeEnv, freeIdentsArray);
 	}
 
 }
