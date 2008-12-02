@@ -1,13 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - moved all type-checking code to class TypeChecker
+ *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -36,31 +45,13 @@ public class ProverChecksTests extends TestCase{
 
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 	
-	IReasoner generatedBy = null;
-	IReasonerInput generatedUsing = null;
+	private static final Predicate p1 = TestLib.genPred("1=1");
 	
-	Predicate p1 = TestLib.genPred("1=1");
-	
-	Predicate px_int = TestLib.genPred("x=1");
-	Predicate py_int = TestLib.genPred("y=1");
-	Predicate px_bool = TestLib.genPred("x=TRUE");
-	Set<Predicate> empty = Collections.emptySet();
-	FreeIdentifier x_int = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
-	FreeIdentifier y_int = factory.makeFreeIdentifier("y", null, factory.makeIntegerType());
-	FreeIdentifier x_bool = factory.makeFreeIdentifier("x", null, factory.makeBooleanType());
-	
-	/**
-	 * Test cases for the {@link ProverChecks#checkFormula(org.eventb.core.ast.Formula)} method.
-	 */
-	@Test
-	public void testCheckFormula(){
-		Formula<?> illFormed = factory.makeBoundIdentifier(0, null);
-		Formula<?> unTyped = factory.makeFreeIdentifier("ident", null);
-		assertFalse(ProverChecks.checkFormula(illFormed));
-		assertFalse(ProverChecks.checkFormula(unTyped));
-		assertTrue(ProverChecks.checkFormula(p1));
-	}
-	
+	private static final Predicate px_int = TestLib.genPred("x=1");
+	private static final Predicate py_int = TestLib.genPred("y=1");
+	private static final Predicate px_bool = TestLib.genPred("x=TRUE");
+	private static final FreeIdentifier x_int = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
+	private static final FreeIdentifier y_int = factory.makeFreeIdentifier("y", null, factory.makeIntegerType());
 	
 	/**
 	 * Tests the correct failure of the {@link ProverChecks#checkSequent(org.eventb.core.seqprover.IProverSequent)} method.
@@ -119,131 +110,7 @@ public class ProverChecksTests extends TestCase{
 		
 		assertTrue(ProverChecks.checkSequent(seq));
 	}
-	
-	/**
-	 * Tests the correct failure of the {@link ProverChecks#checkRule(org.eventb.core.seqprover.IProofRule)} method.
-	 */
-	@Test
-	public void testCheckRuleFailure(){
-		IProofRule rule;
-		IAntecedent[] antecedents;
-		List<IHypAction> hypActions;
-		
-		// Antecedent is goal independent, but rule is not.
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, p1, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Goal and needed hyp do not agree on type environment
-		antecedents = new IAntecedent[]{};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, px_int, px_bool, "", antecedents);
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Duplicate Added free idents with the same type in antecedent.
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(px_bool, null, new FreeIdentifier[] {x_bool, x_bool}, null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, px_bool, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
 
-		// Duplicate Added free idents with different types in antecedent.
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(px_bool, null, new FreeIdentifier[] {x_bool, x_int}, null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, p1, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Added free ident in antecedent is present in goal with a different type.
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(px_bool, null, new FreeIdentifier[] {x_bool}, null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, px_int, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Added free ident in antecedent is present in goal with the same type.
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(px_int, null, new FreeIdentifier[] {x_int}, null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, px_int, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Added free ident in antecedent is present in hyp action of another antecedent.
-		hypActions = new ArrayList<IHypAction>();
-		hypActions.add(ProverFactory.makeSelectHypAction(Collections.singleton(px_int)));
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null, null, new FreeIdentifier[] {x_int}, null),
-				ProverFactory.makeAntecedent(null, null, null, hypActions)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-
-		
-		// Same free identifier added in antecedent and forward inference
-		hypActions = new ArrayList<IHypAction>();
-		hypActions.add(ProverFactory.makeForwardInfHypAction(empty, new FreeIdentifier[] {x_int}, empty));
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null, null, new FreeIdentifier[] {x_int}, hypActions)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, null, "", antecedents);
-
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Same free identifier added in consecutive forward inferences
-		hypActions = new ArrayList<IHypAction>();
-		hypActions.add(ProverFactory.makeForwardInfHypAction(empty, new FreeIdentifier[] {x_int}, empty));
-		hypActions.add(ProverFactory.makeForwardInfHypAction(empty, new FreeIdentifier[] {x_int}, empty));
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, "", hypActions);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		// Same free identifier added in consecutive forward inferences, but with different type
-		hypActions = new ArrayList<IHypAction>();
-		hypActions.add(ProverFactory.makeForwardInfHypAction(empty, new FreeIdentifier[] {x_bool}, empty));
-		hypActions.add(ProverFactory.makeForwardInfHypAction(empty, new FreeIdentifier[] {x_int}, empty));
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, "", hypActions);
-		
-		assertFalse(ProverChecks.checkRule(rule));
-		
-		
-	}
-	
-	/**
-	 * Tests the correct success of the {@link ProverChecks#checkRule(org.eventb.core.seqprover.IProofRule)} method.
-	 */
-	@Test
-	public void testCheckRuleSuccess(){
-		IProofRule rule;
-		IAntecedent[] antecedents;
-		
-		IReasoner generatedBy = null;
-		IReasonerInput generatedUsing = null;
-		
-		// The identity rule
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null)
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
-		
-		assertTrue(ProverChecks.checkRule(rule));
-		
-		// Rule introducing an identical free identifier in two branches 
-		antecedents = new IAntecedent[]{
-				ProverFactory.makeAntecedent(null, null, new FreeIdentifier[] {x_int}, null),
-				ProverFactory.makeAntecedent(null, null, new FreeIdentifier[] {x_int}, null),
-		};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
-		
-		assertTrue(ProverChecks.checkRule(rule));
-	}
-	
 	/**
 	 * Tests the correctness of the {@link ProverChecks#genRuleJustifications(org.eventb.core.seqprover.IProofRule)} method.
 	 */
@@ -293,5 +160,5 @@ public class ProverChecksTests extends TestCase{
 		assertEquals("[{}[][][] |- ⊥⇒⊥, {}[][][1=1] |- ∃x·x=1, {}[][][1=1] |- ∃y·y=1]", justifications.toString());
 		
 	}
-	
+
 }
