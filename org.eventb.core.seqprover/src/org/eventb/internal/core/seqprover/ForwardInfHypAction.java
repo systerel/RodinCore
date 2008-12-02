@@ -48,20 +48,10 @@ public class ForwardInfHypAction implements IInternalHypAction, IForwardInfHypAc
 
 	public IInternalProverSequent perform(IInternalProverSequent seq) {
 		IInternalProverSequent result = seq.performfwdInf(hyps, addedIdents, inferredHyps);
+		if (result == null)
+			return null;
 		skipped = (result == seq);
 		return result;
-		
-//		if (seq.containsHypotheses(hyps) &&
-//				allFresh(seq.typeEnvironment(), addedIdents) &&
-//				(! seq.containsHypotheses(inferredHyps)))
-//		{
-//			// IInternalProverSequent result = seq.addHyps(inferredHyps, nonDestructiveAdd(seq.typeEnvironment(), addedIdents));
-//			IInternalProverSequent result = seq.modify(addedIdents, inferredHyps, null);
-//			skipped = false;
-//			return result;
-//		}
-//		skipped = true;
-//		return seq;
 	}
 
 	public void processDependencies(ProofDependenciesBuilder proofDeps) {

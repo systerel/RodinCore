@@ -129,43 +129,51 @@ public interface IInternalProverSequent extends IProverSequent{
 	
 	
 	/**
-	 * Returns a new sequent after performing the given forward infreence on
-	 * its hypotheses.
+	 * Returns a new sequent after performing the given forward inference on its
+	 * hypotheses.
 	 * 
 	 * <p>
 	 * The original sequent remains unmodified.
 	 * 
 	 * The forward inference is applicable if:
 	 * <ul>
-	 * <li> All <code>hyps</code> are present in the hypotheses of the sequent, and
-	 * <li> All <code>addedIdents</code> do not occur in the type environment of the sequent, and
-	 * <li> All <code>inferredHyps</code> can be successfully type checked using 
-	 * the type environment of the sequent enriched with the <code>addedIdents</code>, and
-	 * <li> All <code>inferredHyps</code> are not already contained in the hypotheses of the sequent.
+	 * <li> All <code>hyps</code> are present in the hypotheses of the
+	 * sequent, and
+	 * <li> All <code>addedIdents</code> do not occur in the type environment
+	 * of the sequent, and
+	 * <li> All <code>inferredHyps</code> can be successfully type checked
+	 * using the type environment of the sequent enriched with the
+	 * <code>addedIdents</code>, and
+	 * <li> All <code>inferredHyps</code> are not already contained in the
+	 * hypotheses of the sequent.
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * In case the forward inference is applicable, the <code>addedIdents</code> are added to the type environment,
-	 * the <code>inferredHyps</code> that are not present are added as new hypotheses, and :
+	 * In case the forward inference is applicable, the <code>addedIdents</code>
+	 * are added to the type environment, the <code>inferredHyps</code> that
+	 * are not present are added as new hypotheses, and :
 	 * <ul>
 	 * <li> Selected iff at least one of the <code>hyps</code> is selected
 	 * <li> Hidden iff all of the <code>hyps</code> are hidden
 	 * </ul>
 	 * <p>
-	 * This operation is always successful. In case the sequent is not modified, 
-	 * a reference to the original sequent is returned. The case of non-modification
-	 * can therefore be checked using <code>==</code>.
+	 * This operation is always successful, as soon as it type-checks. In case
+	 * the sequent is not modified, a reference to the original sequent is
+	 * returned. The case of non-modification can therefore be checked using
+	 * <code>==</code>. In case of type-check error, <code>null</code> is
+	 * returned.
 	 * </p>
+	 * 
 	 * @param hyps
-	 * 		Hypotheses needed to perform the forward inference, or <code>null</code>
-	 * 		if none.
+	 *            Hypotheses needed to perform the forward inference, or
+	 *            <code>null</code> if none.
 	 * @param addedIdents
-	 * 		Free identifiers added by the forward inference, or <code>null</code>
-	 * 		if none.
+	 *            Free identifiers added by the forward inference, or
+	 *            <code>null</code> if none.
 	 * @param inferredHyps
-	 * 		Inferred hypotheses,  or <code>null</code> if none.
-	 * @return
-	 * 		A sequent with the given forward inference performed on the hypotheses.
+	 *            Inferred hypotheses, or <code>null</code> if none.
+	 * @return A sequent with the given forward inference performed on the
+	 *         hypotheses or <code>null</code> in case of type-check error
 	 */
 	IInternalProverSequent performfwdInf(Collection<Predicate> hyps, FreeIdentifier[] addedIdents, Collection<Predicate> inferredHyps);
 	

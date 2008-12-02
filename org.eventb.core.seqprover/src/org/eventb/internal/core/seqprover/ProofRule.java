@@ -232,6 +232,8 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		IInternalProverSequent result = seq;
 		for(IHypAction action : hypActions){
 			result = ((IInternalHypAction) action).perform(result);
+			if (result == null)
+				return null;
 		}
 		return result;
 	}
