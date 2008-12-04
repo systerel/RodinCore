@@ -34,5 +34,5 @@ Export-Package: org.eventb.internal.pp;x-friends:="org.eventb.pp.ui,org.eventb.p
  org.eventb.internal.pp.loader.predicate;x-friends:="org.eventb.pp.tests,org.eventb.rubin,org.eventb.rubin.tests",
  org.eventb.pp
 Bundle-Activator: org.eventb.internal.pp.PPCore
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
