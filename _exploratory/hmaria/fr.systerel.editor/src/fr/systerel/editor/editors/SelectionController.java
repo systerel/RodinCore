@@ -161,7 +161,6 @@ public class SelectionController implements SelectionListener, MouseListener,
 		return viewer.modelOffset2WidgetOffset(modelOffset);
 	}
 	
-	@Override
 	public void verifyKey(VerifyEvent event) {
 		if (event.character == SWT.ESC) {
 			overlayEditor.abortEditing();
@@ -171,7 +170,6 @@ public class SelectionController implements SelectionListener, MouseListener,
 		}
 	}
 
-	@Override
 	public void keyTraversed(TraverseEvent e) {
 		if (e.detail == SWT.TRAVERSE_TAB_NEXT ) {
 			goToNextEditRegion();

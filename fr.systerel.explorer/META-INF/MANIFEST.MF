@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eventb.ui,
  org.eclipse.ui.navigator
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: fr.systerel.explorer,
  fr.systerel.internal.explorer.model;x-friends:="fr.systerel.explorer.tests",

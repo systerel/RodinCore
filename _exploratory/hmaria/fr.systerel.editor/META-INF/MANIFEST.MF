@@ -16,6 +16,6 @@ Require-Bundle: org.eclipse.ui,
  org.eventb.eventBKeyboard,
  org.eclipse.ui.console,
  org.eclipse.core.expressions
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

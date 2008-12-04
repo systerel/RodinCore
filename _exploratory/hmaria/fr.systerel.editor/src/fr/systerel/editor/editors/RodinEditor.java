@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -219,7 +218,6 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		final DeltaProcessor proc = new DeltaProcessor(event.getDelta(), documentProvider.getInputRoot());
 		PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
 
-			@Override
 			public void run() {
 				IRodinElement[] changed = proc.getElementsToRefresh();
 				IRodinElement[] removed = proc.getElementsToRemove();
