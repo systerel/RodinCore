@@ -106,7 +106,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		}
 
 		@Override
-		public void backtrack(@SuppressWarnings("hiding") Level level) {
+		public void backtrack(Level level) {
 			assert false;
 		}
 
