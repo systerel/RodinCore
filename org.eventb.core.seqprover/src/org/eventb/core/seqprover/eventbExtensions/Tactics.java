@@ -127,7 +127,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterD
  * 
  * TODO : complete comments.
  */
-@SuppressWarnings("deprecation")
 public class Tactics {
 
 	private static final EmptyInput EMPTY_INPUT = new EmptyInput();

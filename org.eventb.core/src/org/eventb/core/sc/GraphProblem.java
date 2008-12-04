@@ -44,10 +44,14 @@ public enum GraphProblem implements IRodinProblem {
 	AbstractMachineNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractMachineNotFound),
 	AbstractEventLabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventLabelUndef),
 	AbstractEventNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventNotFound),
+	@SuppressWarnings("deprecation")
 	AbstractEventNotRefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventNotRefined),
 	AbstractEventLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventLabelConflict),
+	@SuppressWarnings("deprecation")
 	EventMergeSplitError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeSplitConflict),
+	@SuppressWarnings("deprecation")
 	EventMergeMergeError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeMergeConflict),
+	@SuppressWarnings("deprecation")
 	EventInheritedMergeSplitError(IMarker.SEVERITY_ERROR, Messages.scuser_EventInheritedMergeSplitConflict),
 	EventExtendedUnrefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_EventExtendedUnrefined),
 	EventExtendedMergeError(IMarker.SEVERITY_ERROR, Messages.scuser_EventExtendedMerge),
@@ -122,6 +126,7 @@ public enum GraphProblem implements IRodinProblem {
 	WitnessLabelMissingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WitnessLabelMissing),
 	WitnessLabelNeedLessError(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNeedLess),
 	WitnessLabelNotPermissible(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNotPermissible),
+	@SuppressWarnings("deprecation")
 	ContextOnlyInAbstractMachineWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ContextOnlyPresentInAbstractMachine),
 	WasAbstractEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WasAbstractEventLabelProblem),
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),

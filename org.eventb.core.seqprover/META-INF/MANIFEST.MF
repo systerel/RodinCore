@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.filesystem,
  org.eventb.core.ast;visibility:=reexport
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.core.seqprover,
  org.eventb.core.seqprover.autoTacticPreference,
  org.eventb.core.seqprover.eventbExtensions,
