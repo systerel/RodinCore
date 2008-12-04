@@ -55,12 +55,11 @@ public class FileElementType
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
-			classObject = (Class<? extends IRodinFile>) clazz.asSubclass(RodinFile.class);
+			classObject = clazz.asSubclass(RodinFile.class);
 		} catch (Exception e) {
 			String message = "Can't find class for element type " + getId();
 			Util.log(null, message);

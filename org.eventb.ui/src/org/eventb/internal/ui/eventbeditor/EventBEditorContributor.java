@@ -100,7 +100,7 @@ public class EventBEditorContributor extends
 	 */
 	protected void createActions() {
 		sampleAction = new RefreshAction(EventBUIPlugin
-				.getActiveWorkbenchShell());
+				.getActiveWorkbenchWindow());
 
 		sampleAction.setToolTipText("Refresh the component");
 		sampleAction.setImageDescriptor(PlatformUI.getWorkbench()

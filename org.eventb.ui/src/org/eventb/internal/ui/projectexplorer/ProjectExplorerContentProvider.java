@@ -318,10 +318,11 @@ public class ProjectExplorerContentProvider implements
 	}
 
 	/**
-	 * Returns the actual Contentprovider for a specific Type of Element
+	 * Returns the actual content provider for a specific Type of Element
 	 * 
 	 * @param o
-	 * @return
+	 *            an object
+	 * @return the actual content provider for the given object
 	 */
 	private ITreeContentProvider getProvider(final Object o) {
 
@@ -372,7 +373,7 @@ public class ProjectExplorerContentProvider implements
 	 * Builds a map of Element Types and corresponding Content-Providers from
 	 * the Extension-Registry
 	 * 
-	 * @return
+	 * @return a map of Element Types and corresponding Content-Providers
 	 */
 	private static Map<IElementType<? extends IRodinElement>, ProjectExplorerContributionProxy> initExtensions() {
 

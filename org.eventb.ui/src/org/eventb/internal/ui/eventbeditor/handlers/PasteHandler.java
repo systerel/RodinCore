@@ -42,10 +42,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class PasteHandler extends AbstractHandler implements IHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
-	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 
 		// Get the current selection from the active page.

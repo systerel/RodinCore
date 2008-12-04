@@ -100,7 +100,6 @@ public class TestOperation extends OperationTest {
 	 * null))</code>
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testCreateAction() throws Exception {
 		final IEvent event = createEvent(mch, "event");

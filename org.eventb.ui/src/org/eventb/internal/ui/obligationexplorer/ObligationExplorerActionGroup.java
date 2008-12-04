@@ -49,8 +49,7 @@ public class ObligationExplorerActionGroup extends ActionGroup {
 		this.explorer = obligationExplorer;
 		drillDownAdapter = new DrillDownAdapter(explorer.getTreeViewer());
 
-		refreshAction = new RefreshAction(obligationExplorer.getSite()
-				.getShell());
+		refreshAction = new RefreshAction(obligationExplorer.getSite());
 
 	}
 

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -44,9 +43,6 @@ public class ExplorerUtilities {
 			if (component == null)
 				return;
 			try {
-				IEditorInput fileInput = new FileEditorInput(component
-						.getResource());
-
 				IEditorDescriptor desc = PlatformUI.getWorkbench()
 						.getEditorRegistry().getDefaultEditor(
 								component.getCorrespondingResource().getName());

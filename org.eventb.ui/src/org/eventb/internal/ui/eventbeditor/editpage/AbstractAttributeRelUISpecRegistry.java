@@ -154,9 +154,6 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 		/**
 		 * Create the default value for this attribute of the given element.
 		 * 
-		 * @param root
-		 *            the root element
-		 * 
 		 * @param element
 		 *            the element whose attribute is in concern
 		 * @param monitor

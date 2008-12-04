@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eventb.eventBKeyboard;visibility:=reexport,
  org.eventb.core;visibility:=reexport,
  org.eclipse.ui.views.properties.tabbed;visibility:=reexport
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
  org.eventb.internal.ui.elementSpecs;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",

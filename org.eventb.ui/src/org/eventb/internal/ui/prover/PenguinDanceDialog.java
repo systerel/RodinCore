@@ -82,7 +82,7 @@ public class PenguinDanceDialog extends Dialog {
 
 		// if the bundle is not ready then there is no image
 		Bundle bundle = Platform.getBundle(EventBUIPlugin.PLUGIN_ID);
-		if ((bundle == null)
+		if ((bundle != null)
 				&& (bundle.getState() & (Bundle.RESOLVED | Bundle.STARTING
 						| Bundle.ACTIVE | Bundle.STOPPING)) != 0)
 			return composite;

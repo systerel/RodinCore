@@ -23,7 +23,6 @@ import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 

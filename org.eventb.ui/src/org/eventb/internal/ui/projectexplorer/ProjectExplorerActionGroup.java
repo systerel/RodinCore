@@ -60,7 +60,7 @@ public class ProjectExplorerActionGroup extends ActionGroup {
 		this.explorer = projectExplorer;
 		drillDownAdapter = new DrillDownAdapter(explorer.getTreeViewer());
 
-		refreshAction = new RefreshAction(projectExplorer.getSite().getShell());
+		refreshAction = new RefreshAction(projectExplorer.getSite());
 
 		// Creating the public action
 		newProjectAction = new Action() {

@@ -9,4 +9,4 @@ Require-Bundle: org.junit4,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eventb.ui.tests.EventBUITestsPlugin
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
