@@ -48,7 +48,7 @@ public class HypothesisSensitivity extends AbstractRodinTest {
 	static final String G = "ai ↦ value((databaseups)(ai))∈conform";
 
 	private static void doTest(String... hyps) {
-		doTest(typenv, mSet(hyps), G, true);
+		doTest(typenv, mSet(hyps), G, true, 10000);
 	}
 	
 	
@@ -119,7 +119,7 @@ public class HypothesisSensitivity extends AbstractRodinTest {
 						"page_selections;pages;contents;fields;attr∈EDD_id ↔ Attr_id",
 						"Update_successful∈MESG",
 						"{ai·ai∈dom(ups)∧¬value(database(ai))=value(ups(ai)) ∣ ai}⊆Attr_id"),
-				"ai ↦ value((databaseups)(ai))∈conform", true);
+				"ai ↦ value((databaseups)(ai))∈conform", true, 10000);
 	}
 
 }
