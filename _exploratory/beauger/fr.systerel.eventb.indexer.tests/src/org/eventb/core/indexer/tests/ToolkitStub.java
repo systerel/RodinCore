@@ -61,14 +61,12 @@ public class ToolkitStub implements IIndexingToolkit {
 		this.exports = new ArrayList<IDeclaration>();
 	}
 
-	@SuppressWarnings("restriction")
 	public IDeclaration declare(IInternalElement element, String name) {
 		final IDeclaration declaration = newDecl(element, name);
 		declarations.add(declaration);
 		return declaration;
 	}
 
-	@SuppressWarnings("restriction")
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
 		final IOccurrence occurrence = newOcc(kind, location, declaration);
