@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
-import org.rodinp.internal.core.index.tables.Node;
+import org.rodinp.internal.core.index.sort.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

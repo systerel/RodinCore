@@ -297,7 +297,7 @@ public final class IndexManager {
 						| IResourceChangeEvent.POST_BUILD);
 		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		indexing.setRule(rodinDB.getSchedulingRule());
-		// indexing.setUser(true);
+		indexing.setPriority(Job.DECORATE);
 
 		boolean stop = false;
 		do {

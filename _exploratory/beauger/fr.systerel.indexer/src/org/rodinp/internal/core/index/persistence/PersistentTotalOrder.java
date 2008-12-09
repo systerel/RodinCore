@@ -13,7 +13,7 @@ package org.rodinp.internal.core.index.persistence;
 import java.util.List;
 import java.util.Map;
 
-import org.rodinp.internal.core.index.tables.Node;
+import org.rodinp.internal.core.index.sort.Node;
 
 /**
  * @author Nicolas Beauger

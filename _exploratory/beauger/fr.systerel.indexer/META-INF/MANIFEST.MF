@@ -9,6 +9,7 @@ Export-Package: org.rodinp.core.index,
  org.rodinp.internal.core.index;x-friends:="fr.systerel.indexer.tests",
  org.rodinp.internal.core.index.persistence;x-friends:="fr.systerel.indexer.tests",
  org.rodinp.internal.core.index.persistence.xml;x-friends:="fr.systerel.indexer.tests",
+ org.rodinp.internal.core.index.sort;x-friends:="fr.systerel.indexer.tests",
  org.rodinp.internal.core.index.tables;x-friends:="fr.systerel.indexer.tests"
 Bundle-Vendor: %Bundle-Vendor.f0
 Bundle-Localization: plugin

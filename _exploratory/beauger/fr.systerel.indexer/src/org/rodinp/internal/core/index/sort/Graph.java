@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.index.tables;
+package org.rodinp.internal.core.index.sort;
 
 import java.util.ArrayList;
 import java.util.Arrays;

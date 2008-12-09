@@ -28,11 +28,11 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.internal.core.RodinDBStatus;
+import org.rodinp.internal.core.index.sort.TotalOrder;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
-import org.rodinp.internal.core.index.tables.TotalOrder;
 
 /**
  * The ProjectIndexManager (PIM) stores and maintains index tables for a single
