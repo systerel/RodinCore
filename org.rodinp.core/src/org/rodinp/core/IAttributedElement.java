@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006-2007 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 
 package org.rodinp.core;
@@ -19,8 +23,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @deprecated This interface is not useful anymore as it corresponds to
+ *             {@link IInternalElement}, now that Rodin files cannot carry any
+ *             attribute (separation of files and root elements). Client should
+ *             thus use directly the {@link IInternalElement} interface.
+ * 
  * @author Laurent Voisin
  */
+@Deprecated
 public interface IAttributedElement extends IRodinElement {
 
 	/**
