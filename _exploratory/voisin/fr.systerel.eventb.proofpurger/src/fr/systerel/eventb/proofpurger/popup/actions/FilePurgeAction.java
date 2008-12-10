@@ -26,7 +26,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eventb.core.IEventBFile;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
@@ -169,11 +169,15 @@ public class FilePurgeAction implements IObjectActionDelegate {
 				selection.size());
 		for (Object o : selection.toList()) {
 			final IRodinElement elem = asRodinElement(o);
-			if (elem instanceof IRodinProject || elem instanceof IEventBFile) {
+			if (isProjectOrEventBRoot(elem)) {
 				result.add(elem);
 			}
 		}
 		return result.toArray(new IRodinElement[result.size()]);
+	}
+
+	private boolean isProjectOrEventBRoot(IRodinElement elem) {
+		return (elem instanceof IRodinProject || elem instanceof IEventBRoot);
 	}
 
 	private IRodinElement asRodinElement(Object o) {

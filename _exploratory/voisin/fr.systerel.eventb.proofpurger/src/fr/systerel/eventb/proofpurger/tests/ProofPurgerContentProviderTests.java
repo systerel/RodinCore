@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.eventb.proofpurger.popup.actions;
+package fr.systerel.eventb.proofpurger.tests;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,13 +18,15 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IMachineFile;
-import org.eventb.core.IPRFile;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+
+import fr.systerel.eventb.proofpurger.popup.actions.ProofPurgerContentProvider;
 
 public class ProofPurgerContentProviderTests extends TestCase {
 
@@ -41,31 +43,31 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	private static final String PO4 = "PO4"; //$NON-NLS-1$
 	
 	/**
-	 * Returns a handle to the IMachineFile with the given barename.
+	 * Returns a handle to the IMachineRoot with the given barename.
 	 * 
 	 * @param rp
 	 *            The enclosing IRodinProject.
 	 * @param bareName
-	 *            The IMachineFile barename.
-	 * @return A handle to the IMachineFile.
+	 *            The IMachineRoot barename.
+	 * @return A handle to the IMachineRoot.
 	 */
-	protected IMachineFile getMachine(IRodinProject rp, String bareName) {
+	protected IMachineRoot getMachineRoot(IRodinProject rp, String bareName) {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		return (IMachineFile) rp.getRodinFile(fileName);
+		return (IMachineRoot) rp.getRodinFile(fileName).getRoot();
 	}
 	
 	/**
-	 * Returns a handle to the IPRFile with the given barename.
+	 * Returns a handle to the IPRRoot with the given barename.
 	 * 
 	 * @param rp
 	 *            The enclosing IRodinProject.
 	 * @param bareName
-	 *            The IPRFile barename.
-	 * @return A handle to the IPRFile.
+	 *            The IPRRoot barename.
+	 * @return A handle to the IPRRoot.
 	 */
-	protected IPRFile getPRFile(IRodinProject rp, String bareName) {
+	protected IPRRoot getPRRoot(IRodinProject rp, String bareName) {
 		final String fileName = EventBPlugin.getPRFileName(bareName);
-		return (IPRFile) rp.getRodinFile(fileName);
+		return (IPRRoot) rp.getRodinFile(fileName).getRoot();
 	}
 
 	/**
@@ -176,7 +178,7 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	 * Tests hasChildren and GetChildren with unexpected input argument type.
 	 */
 	public void testHasGetChildrenUnexpectedType() throws Exception {
-		final IMachineFile m = getMachine(rp1, "m1");
+		final IMachineRoot m = getMachineRoot(rp1, "m1");
 		final ProofPurgerContentProvider cp = initCP();
 		assertChildren("MachineFile", cp, m);
 	}
@@ -185,22 +187,22 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	 * Tests hasChildren and GetChildren with each valid input argument type.
 	 */
 	public void testHasGetChildrenEachType() throws Exception {
-		final IPRFile prFile1 = getPRFile(rp1, "m1");
+		final IPRRoot prFile1 = getPRRoot(rp1, "m1");
 		final IPRProof pr1 = prFile1.getProof(PO1);
 		final ProofPurgerContentProvider cp = initCP(pr1);
 
 		assertChildren("IRodinDB", cp, db, rp1);
 		assertChildren("IRodinProject", cp, rp1, prFile1);
-		assertChildren("IPRFile", cp, prFile1, pr1);
+		assertChildren("IPRRoot", cp, prFile1, pr1);
 	}
 
 	/**
 	 * Tests hasChildren and GetChildren with an empty input PRFile.
 	 */
 	public void testHasGetChildrenEmptyPRFile() throws Exception {
-		final IPRFile prFile1 = getPRFile(rp1, "m1");
+		final IPRRoot prFile1 = getPRRoot(rp1, "m1");
 		final ProofPurgerContentProvider cp = initCP();
-		assertChildren("IPRFile", cp, prFile1);
+		assertChildren("IPRRoot", cp, prFile1);
 	}
 
 	/**
@@ -215,20 +217,20 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	 * Tests getParent with unexpected input argument types.
 	 */
 	public void testGetParentUnexpectedType() throws Exception {
-		final IMachineFile m = getMachine(rp1, "m1");
+		final IMachineRoot m = getMachineRoot(rp1, "m1");
 		final ProofPurgerContentProvider cp = initCP();
-		assertParent("IMachineFile", cp, m, null);
+		assertParent("IMachineRoot", cp, m, null);
 	}
 
 	/**
 	 * Tests getParent with each valid input argument type.
 	 */
 	public void testGetParentEachType() throws Exception {
-		final IPRFile prFile1 = getPRFile(rp1, "m1");
+		final IPRRoot prFile1 = getPRRoot(rp1, "m1");
 		final IPRProof pr1 = prFile1.getProof(PO1);
 		final ProofPurgerContentProvider cp = initCP(pr1);
 		assertParent("IPRProof", cp, pr1, prFile1);
-		assertParent("IPRFile", cp, prFile1, rp1);
+		assertParent("IPRRoot", cp, prFile1, rp1);
 		assertParent("IRodinProject", cp, rp1, db);
 	}
 
@@ -237,7 +239,7 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	 * ContentProvider).
 	 */
 	public void testGetParentNoVisibleParent() throws Exception {
-		final IPRFile prFile1 = getPRFile(rp1, "m1");
+		final IPRRoot prFile1 = getPRRoot(rp1, "m1");
 		final IPRProof pr1 = prFile1.getProof(PO1);
 		final ProofPurgerContentProvider cp = initCP(pr1);
 		assertParent("IRodinDB", cp, db, null);
@@ -247,19 +249,19 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	 * Traverse the entire tree and verify every element.
 	 */
 	public void testTraverse() throws Exception {
-		final IPRFile prFile1 = getPRFile(rp1, "m1");
+		final IPRRoot prFile1 = getPRRoot(rp1, "m1");
 		final IPRProof pr1_1 = prFile1.getProof(PO1);
 
-		final IPRFile prFile2 = getPRFile(rp2, "m2");
+		final IPRRoot prFile2 = getPRRoot(rp2, "m2");
 		final IPRProof pr2_1 = prFile2.getProof(PO1);
 		final IPRProof pr2_2 = prFile2.getProof(PO2);
 
-		final IPRFile prFile3 = getPRFile(rp2, "m3");
+		final IPRRoot prFile3 = getPRRoot(rp2, "m3");
 
-		final IPRFile prFile4 = getPRFile(rp3, "m4");
+		final IPRRoot prFile4 = getPRRoot(rp3, "m4");
 		final IPRProof pr4_2 = prFile4.getProof(PO2);
 
-		final IPRFile prFile5 = getPRFile(rp3, "m5");
+		final IPRRoot prFile5 = getPRRoot(rp3, "m5");
 		final IPRProof pr5_3 = prFile5.getProof(PO3);
 		final IPRProof pr5_4 = prFile5.getProof(PO4);
 		
@@ -272,10 +274,10 @@ public class ProofPurgerContentProviderTests extends TestCase {
 		assertChildren("IRodinProject", cp, rp2, prFile2);
 		assertChildren("IRodinProject", cp, rp3, prFile4, prFile5);
 
-		assertChildren("IPRFile", cp, prFile1, pr1_1);
-		assertChildren("IPRFile", cp, prFile2, pr2_1, pr2_2);
-		assertChildren("IPRFile", cp, prFile3);
-		assertChildren("IPRFile", cp, prFile4, pr4_2);
-		assertChildren("IPRFile", cp, prFile5, pr5_3, pr5_4);
+		assertChildren("IPRRoot", cp, prFile1, pr1_1);
+		assertChildren("IPRRoot", cp, prFile2, pr2_1, pr2_2);
+		assertChildren("IPRRoot", cp, prFile3);
+		assertChildren("IPRRoot", cp, prFile4, pr4_2);
+		assertChildren("IPRRoot", cp, prFile5, pr5_3, pr5_4);
 	}
 }

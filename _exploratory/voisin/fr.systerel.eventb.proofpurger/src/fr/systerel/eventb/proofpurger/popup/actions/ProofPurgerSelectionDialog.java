@@ -13,6 +13,7 @@ package fr.systerel.eventb.proofpurger.popup.actions;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eventb.core.IPRProof;
@@ -52,8 +53,16 @@ public class ProofPurgerSelectionDialog extends CheckedTreeSelectionDialog {
 		setContainerMode(true);
 		super.create();
 		getOkButton().setText(Messages.proofpurgerselectiondialog_delete);
-		getTreeViewer().expandAll();
-		getTreeViewer().setAllChecked(true);
+		
+		expandAndCheckAll();
+	}
+
+	private void expandAndCheckAll() {
+		final CheckboxTreeViewer treeViewer = getTreeViewer();
+		treeViewer.expandAll();
+		
+		final Object[] items = treeViewer.getExpandedElements();
+		treeViewer.setCheckedElements(items);
 	}
 
 	/**

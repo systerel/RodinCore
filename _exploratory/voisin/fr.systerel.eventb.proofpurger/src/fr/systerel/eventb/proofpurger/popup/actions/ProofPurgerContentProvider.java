@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.IPRFile;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
 
@@ -33,8 +33,8 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	private static final Object[] NO_OBJECTS = new Object[0];
 	
 	private final Set<IPRProof> prProofs;
-	private final Map<IPRFile, LinkedHashSet<IPRProof>> mapFileProofs;
-	private final Map<IRodinProject, LinkedHashSet<IPRFile>> mapProjectFiles;
+	private final Map<IPRRoot, LinkedHashSet<IPRProof>> mapFileProofs;
+	private final Map<IRodinProject, LinkedHashSet<IPRRoot>> mapProjectFiles;
 
 	/**
 	 * Constructor. Initializes its underlying tree structure from the given
@@ -45,8 +45,8 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	 */
 	public ProofPurgerContentProvider(IPRProof[] proofs) {
 		this.prProofs = new LinkedHashSet<IPRProof>();
-		this.mapFileProofs = new LinkedHashMap<IPRFile, LinkedHashSet<IPRProof>>();
-		this.mapProjectFiles = new LinkedHashMap<IRodinProject, LinkedHashSet<IPRFile>>();
+		this.mapFileProofs = new LinkedHashMap<IPRRoot, LinkedHashSet<IPRProof>>();
+		this.mapProjectFiles = new LinkedHashMap<IRodinProject, LinkedHashSet<IPRRoot>>();
 
 		updateFromProofs(proofs);
 	}
@@ -65,13 +65,13 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 			return projects.toArray(new IRodinProject[projects.size()]);
 		}
 		if (parent instanceof IRodinProject) {
-			LinkedHashSet<IPRFile> prFiles = mapProjectFiles.get(parent);
+			LinkedHashSet<IPRRoot> prFiles = mapProjectFiles.get(parent);
 			if (prFiles == null) {
 				return NO_OBJECTS;
 			}
-			return prFiles.toArray(new IPRFile[prFiles.size()]);
+			return prFiles.toArray(new IPRRoot[prFiles.size()]);
 		}
-		if (parent instanceof IPRFile) {
+		if (parent instanceof IPRRoot) {
 			LinkedHashSet<IPRProof> proofs = mapFileProofs.get(parent);
 			if (proofs == null) {
 				return NO_OBJECTS;
@@ -88,7 +88,7 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		if (element instanceof IRodinProject) {
 			return mapProjectFiles.containsKey(element);
 		}
-		if (element instanceof IPRFile) {
+		if (element instanceof IPRRoot) {
 			return mapFileProofs.containsKey(element);
 		}
 		return false;
@@ -96,13 +96,13 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 
 	public Object getParent(Object child) {
 		if (child instanceof IRodinProject) {
-			return ((IRodinProject) child).getParent();
+			return ((IRodinProject) child).getRodinDB();
 		}
-		if (child instanceof IPRFile) {
-			return ((IPRFile) child).getParent();
+		if (child instanceof IPRRoot) {
+			return ((IPRRoot) child).getRodinProject();
 		}
 		if (child instanceof IPRProof) {
-			return ((IPRProof) child).getParent();
+			return ((IPRProof) child).getRodinFile().getRoot();
 		}
 		return null;
 	}
@@ -139,14 +139,14 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	private void updateFiles() {
 		mapFileProofs.clear();
 		for (IPRProof pr: prProofs) {
-			final IPRFile prFile = (IPRFile) pr.getRodinFile();
-			updateMap(mapFileProofs, prFile, pr);
+			final IPRRoot prRoot = (IPRRoot) pr.getRodinFile().getRoot();
+			updateMap(mapFileProofs, prRoot, pr);
 		}
 	}
 
 	private void updateProjects() {
 		mapProjectFiles.clear();
-		for (IPRFile f: mapFileProofs.keySet()) {
+		for (IPRRoot f: mapFileProofs.keySet()) {
 			final IRodinProject prj = f.getRodinProject();
 			updateMap(mapProjectFiles, prj, f);
 		}
