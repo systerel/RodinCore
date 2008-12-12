@@ -191,7 +191,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	public void testRodinDBProblem() throws Exception {
 		
 		try {
-			CSCTool.FAULTY = true;
+			CSCTool.FAULTY_AFTER_TARGET_CREATION = true;
 
 			IRodinFile ctx = createRodinFile("P/x.ctx");
 			createData(ctx, "one");
@@ -208,7 +208,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 					"CSC run /P/y.csc"
 			);
 		} finally {
-			CSCTool.FAULTY = false;
+			CSCTool.FAULTY_AFTER_TARGET_CREATION = false;
 		}
 	}
 
@@ -220,7 +220,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 	public void testRodinDBProblemInTool() throws Exception {
 		final IRodinFile ctx;
 		try {
-			CSCTool.FAULTY = true;
+			CSCTool.FAULTY_AFTER_TARGET_CREATION = true;
 		
 			ctx = createRodinFile("P/x.ctx");
 			createData(ctx, "one");
@@ -236,7 +236,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 			hasMarkers("P/x.csc");
 			
 		} finally {
-			CSCTool.FAULTY = false;
+			CSCTool.FAULTY_AFTER_TARGET_CREATION = false;
 		}
 
 		createData(ctx, "three");
@@ -254,6 +254,26 @@ public class CBuilderTest extends AbstractBuilderTest {
 		
 	}
 
+	/**
+	 * Testing Bug #2417502: Tool problem reported for inexistent file
+	 */
+	public void testRodinDBProblemInToolBeforeTargetCreation() throws Exception {
+		try {
+			CSCTool.FAULTY_BEFORE_TARGET_CREATION = true;
+
+			final IRodinFile ctx = createRodinFile("P/x.ctx");
+			createData(ctx, "one");
+			ctx.save(null, true);
+
+			runBuilder(null);
+
+		} finally {
+			CSCTool.FAULTY_BEFORE_TARGET_CREATION = false;
+		}
+
+		hasMarkers("P/x.ctx");
+	}
+	
 	private void hasMarkers(String name) throws CoreException {
 		IRodinFile csc = RodinCore.valueOf(getFile(name));
 		IMarker[] markers = 

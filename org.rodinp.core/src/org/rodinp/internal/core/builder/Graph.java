@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - on tool error, put marker on creator file instead of target
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -329,16 +330,16 @@ public class Graph implements Serializable, Iterable<Node> {
 	}
 
 	private void issueToolError(
-			Node node, 
+			Node node,
 			ToolDescription toolDescription, 
 			Throwable e) {
 		Util.log(e, " while running tool " + node.getToolId() + " on " + 
-				node.getTarget().getName()); //$NON-NLS-1$
+				node.getCreator().getName()); //$NON-NLS-1$
 		if (RodinBuilder.DEBUG_RUN)
 			System.out.println("Error running tool:\n" + e);
 		MarkerHelper.deleteAllProblemMarkers(node.getTarget().getFile());
 		MarkerHelper.addMarker(
-				node.getTarget().getFile(), 
+				node.getCreator().getFile(),
 				false,
 				Messages.build_ToolError, 
 				toolDescription.getName()
@@ -352,7 +353,8 @@ public class Graph implements Serializable, Iterable<Node> {
 			IFile file, 
 			ExtractorDescription extractorDescription, 
 			Exception e) {
-		Util.log(e, " while extracting from " + file.getName()); //$NON-NLS-1$
+		Util.log(e, " while running extractor " + node.getToolId() 
+				+ " on " + file.getFullPath()); //$NON-NLS-1$
 		if (RodinBuilder.DEBUG_RUN)
 			System.out.println("Error extracting:\n" + e);
 		MarkerHelper.deleteAllProblemMarkers(file);

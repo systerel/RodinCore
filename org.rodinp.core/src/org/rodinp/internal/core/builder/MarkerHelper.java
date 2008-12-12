@@ -37,7 +37,7 @@ public class MarkerHelper {
 	 * problem is {@link #SEVERITY_ERROR}.
 	 * 
 	 * @param resource
-	 *            resource to mark
+	 *            resource to mark. This resource must exist
 	 * @param cycle
 	 *            <code>true</code> iff the problem is related to a dependency
 	 *            graph cycle

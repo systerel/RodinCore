@@ -24,7 +24,9 @@ import org.rodinp.core.builder.IGraph;
 
 public class CSCTool extends SCTool {
 	
-	public static boolean FAULTY = false;
+	public static boolean FAULTY_BEFORE_TARGET_CREATION = false;
+	
+	public static boolean FAULTY_AFTER_TARGET_CREATION = false;
 	
 	private static final String CSC = "CSC";
 	
@@ -67,12 +69,15 @@ public class CSCTool extends SCTool {
 		IRodinFile targetFile = RodinCore.valueOf(file);
 		ISCContextRoot target = (ISCContextRoot) targetFile.getRoot();
 		IContextRoot ctx = target.getUncheckedVersion();
+
+		if (FAULTY_BEFORE_TARGET_CREATION)
+			throw new IllegalStateException("internal error before target creation");
 		
 		// First clean up target
 		targetFile.create(true, null);
 		
-		if (FAULTY)
-			target.getInternalElement(RodinCore.getInternalElementType("inexistent"), "X");
+		if (FAULTY_AFTER_TARGET_CREATION)
+			throw new IllegalStateException("internal error after target creation");
 		
 		// Populate with a copy of inputs
 		copyDataElements(ctx, target);

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - create a marker when no configuration for file (no exception)
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -28,10 +29,12 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pog.Messages;
 import org.eventb.internal.core.pog.POGStateRepository;
 import org.eventb.internal.core.pog.POGUtil;
+import org.eventb.internal.core.sc.SCUtil;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.POGModuleManager;
 import org.eventb.internal.core.tool.types.IPOGProcessorModule;
@@ -308,8 +311,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 			return rootModule;
 	
 		} else {
-			throw Util
-					.newCoreException("Configuration missing from statically checked file");
+			SCUtil.createProblemMarker(confElement, 
+					GraphProblem.ConfigurationMissingError, 
+					rodinFile.getBareName());
+			return null;
 		}
 	}
 
@@ -336,11 +341,13 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 					
 					IPOGProcessorModule rootModule = getRootModule(srcRodinFile);
 				
-					runModules(
+					if (rootModule != null) {
+						runModules(
 							rootModule,
 							srcRodinFile, 
 							repository,
 							monitor);
+					}
 					
 					return compareAndSave(poFile, poTmpFile, monitor);
 				} finally {
