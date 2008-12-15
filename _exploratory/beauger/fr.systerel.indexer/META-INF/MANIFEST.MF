@@ -14,4 +14,4 @@ Export-Package: org.rodinp.core.index,
 Bundle-Vendor: %Bundle-Vendor.f0
 Bundle-Localization: plugin
 Bundle-Activator: org.rodinp.core.index.RodinIndexer
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
