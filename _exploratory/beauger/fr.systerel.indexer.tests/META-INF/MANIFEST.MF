@@ -8,3 +8,4 @@ Require-Bundle: org.junit,
  org.rodinp.core.tests,
  fr.systerel.indexer
 Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

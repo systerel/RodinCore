@@ -11,3 +11,4 @@ Require-Bundle: org.rodinp.core,
  org.junit,
  fr.systerel.eventb.indexer,
  fr.systerel.indexer
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
