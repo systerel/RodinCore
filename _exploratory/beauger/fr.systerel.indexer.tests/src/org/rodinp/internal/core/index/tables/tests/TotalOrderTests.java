@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.rodinp.internal.core.index.tables.TotalOrder;
+import org.rodinp.internal.core.index.sort.TotalOrder;
 import org.rodinp.internal.core.index.tests.IndexTests;
 
 public class TotalOrderTests extends IndexTests {

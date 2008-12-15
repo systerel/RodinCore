@@ -36,11 +36,11 @@ import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
 import org.rodinp.internal.core.index.IIndexDelta.Kind;
 import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
+import org.rodinp.internal.core.index.sort.TotalOrder;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
-import org.rodinp.internal.core.index.tables.TotalOrder;
 
 /**
  * @author Nicolas Beauger

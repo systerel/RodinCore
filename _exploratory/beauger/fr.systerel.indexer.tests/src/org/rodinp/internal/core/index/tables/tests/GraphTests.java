@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.rodinp.internal.core.index.tables.Graph;
-import org.rodinp.internal.core.index.tables.Node;
+import org.rodinp.internal.core.index.sort.Graph;
+import org.rodinp.internal.core.index.sort.Node;
 import org.rodinp.internal.core.index.tests.IndexTests;
 import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 

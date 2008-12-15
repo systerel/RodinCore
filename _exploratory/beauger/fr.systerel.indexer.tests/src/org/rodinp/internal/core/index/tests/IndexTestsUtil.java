@@ -29,11 +29,11 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Descriptor;
 import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.index.sort.TotalOrder;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
-import org.rodinp.internal.core.index.tables.TotalOrder;
 
 public class IndexTestsUtil {
 
