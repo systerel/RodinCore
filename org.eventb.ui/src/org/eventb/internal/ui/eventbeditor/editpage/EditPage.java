@@ -281,36 +281,43 @@ public class EditPage extends EventBEditorPage implements
 		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 4;
+		gridLayout.numColumns = 5;
 		comp.setLayout(gridLayout);
 		
-		// Expand all button
-		ImageHyperlink hyperlink = toolkit.createImageHyperlink(comp, SWT.TOP);
-		hyperlink.setImage(EventBImage
-				.getImage(IEventBSharedImages.IMG_EXPAND_ALL));
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
-		hyperlink.setLayoutData(gd);
-		hyperlink.addHyperlinkListener(new IHyperlinkListener() {
-
+		// Expand/Collapse all button
+		final IHyperlinkListener expandAllListener = new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.recursiveExpand();
 				}
 			}
-
 			public void linkEntered(HyperlinkEvent e) {
 				// Do nothing
 			}
-
 			public void linkExited(HyperlinkEvent e) {
 				// Do nothing
 			}
-			
-		});
-		
+		};
+		final IHyperlinkListener collapseAllListener = new IHyperlinkListener() {
+			public void linkActivated(HyperlinkEvent e) {
+				assert sectionComps != null;
+				for (ISectionComposite sectionComp : sectionComps) {
+					sectionComp.recursiveCollapse();
+				}
+			}
+			public void linkEntered(HyperlinkEvent e) {
+				// Do nothing
+			}
+			public void linkExited(HyperlinkEvent e) {
+				// Do nothing
+			}
+		};
+		createHyperLink(toolkit, comp, expandAllListener, IEventBSharedImages.IMG_EXPAND_ALL);
+		createHyperLink(toolkit, comp, collapseAllListener, IEventBSharedImages.IMG_COLLAPSE_ALL);
+
 		FormText widget = toolkit.createFormText(comp, true);
-		gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
 		final IInternalElement rodinInput = editor.getRodinInput();
@@ -361,6 +368,17 @@ public class EditPage extends EventBEditorPage implements
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
 			toolkit.paintBordersFor(comp);
 		}
+	}
+
+	private static void createHyperLink(FormToolkit toolkit, final Composite comp,
+			IHyperlinkListener listener, String image) {
+		ImageHyperlink hyperlinkExpand =
+				toolkit.createImageHyperlink(comp, SWT.TOP);
+		hyperlinkExpand.setImage(EventBImage
+				.getImage(image));
+		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
+		hyperlinkExpand.setLayoutData(gd);
+		hyperlinkExpand.addHyperlinkListener(listener);
 	}
 
 	/**

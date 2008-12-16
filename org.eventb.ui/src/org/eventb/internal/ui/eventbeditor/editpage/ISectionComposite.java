@@ -141,4 +141,9 @@ public interface ISectionComposite {
 	 */
 	void recursiveExpand();
 
+	/**
+	 * Recursively collapse the section composite.
+	 */
+	void recursiveCollapse();
+
 }

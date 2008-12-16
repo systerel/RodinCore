@@ -77,6 +77,8 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_COLLAPSED_HOVER = "Collapsed Hover";
 
+	public static final String IMG_COLLAPSE_ALL = "Collapsed All";
+
 	public static final String IMG_EXPANDED = "Expanded";
 	
 	public static final String IMG_EXPANDED_HOVER = "Expanded Hover";	
