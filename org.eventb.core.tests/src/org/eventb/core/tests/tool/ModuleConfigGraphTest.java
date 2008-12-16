@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eventb.internal.core.tool.ModuleConfig;
 import org.eventb.internal.core.tool.ModuleDesc;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.types.IModule;
 
 /**
@@ -24,7 +25,7 @@ public class ModuleConfigGraphTest extends Declarations {
 	
 	private static class ShortProcDesc extends ProcDesc {
 
-		public ShortProcDesc(String name) {
+		public ShortProcDesc(String name) throws ModuleLoadingException {
 			super(name, null);
 		}
 		
@@ -62,7 +63,7 @@ public class ModuleConfigGraphTest extends Declarations {
 		private List<ModuleDesc<? extends IModule>> modules;
 		private final String name;
 		private final String[] included;
-		public ConfigItem(ModuleDesc<? extends IModule>[] modules, String name, String... included) {
+		public ConfigItem(ModuleDesc<? extends IModule>[] modules, String name, String... included) throws ModuleLoadingException {
 			super("x", new DummyConfigurationElement(), null);
 			this.name = name;
 			this.included = included;
@@ -97,72 +98,86 @@ public class ModuleConfigGraphTest extends Declarations {
 			assertEquals("wrong closure ", "[" + closure + "]", item.computeClosure(map).toString());
 		}
 	}
+
+
+	private static ModuleDesc<?>[][] makeModules() throws ModuleLoadingException {
+
+		return new ModuleDesc[][] {
+				new ModuleDesc[] {
+						new ShortProcDesc("x")
+				},
+				new ModuleDesc[] {
+						new ShortProcDesc("y")
+				},
+				new ModuleDesc[] {
+						new ShortProcDesc("z")
+				},
+				new ModuleDesc[] {
+				},
+				new ModuleDesc[] {
+						new ShortProcDesc("1"),
+						new ShortProcDesc("2")
+				},
+				new ModuleDesc[] {
+						new ShortProcDesc("A"),
+						new ShortProcDesc("B"),
+						new ShortProcDesc("C"),
+						new ShortProcDesc("D"),
+						new ShortProcDesc("E")
+				},
+				new ModuleDesc[] {
+						new ShortProcDesc("K"),
+						new ShortProcDesc("L"),
+						new ShortProcDesc("M"),
+				}
+		};
+	}
 	
-	private static ModuleDesc<?>[][] modules = new ModuleDesc[][] {
-		new ModuleDesc[] {
-				new ShortProcDesc("x")
-		},
-		new ModuleDesc[] {
-				new ShortProcDesc("y")
-		},
-		new ModuleDesc[] {
-				new ShortProcDesc("z")
-		},
-		new ModuleDesc[] {
-		},
-		new ModuleDesc[] {
-				new ShortProcDesc("1"),
-				new ShortProcDesc("2")
-		},
-		new ModuleDesc[] {
-				new ShortProcDesc("A"),
-				new ShortProcDesc("B"),
-				new ShortProcDesc("C"),
-				new ShortProcDesc("D"),
-				new ShortProcDesc("E")
-		},
-		new ModuleDesc[] {
-				new ShortProcDesc("K"),
-				new ShortProcDesc("L"),
-				new ShortProcDesc("M"),
-		}
-	};
-	
-	private static ConfigItem[][] configItems = new ConfigItem[][] {
-		new ConfigItem[] {
-				new ConfigItem(modules[0], "X", "org.t.Y", "org.t.Z"),
-				new ConfigItem(modules[1], "Y"),
-				new ConfigItem(modules[2], "Z")
-		},
-		new ConfigItem[] {
-				new ConfigItem(modules[3], "A"),
-				new ConfigItem(modules[3], "B", "org.t.A"),
-				new ConfigItem(modules[0], "X", "org.t.Y", "org.t.Z"),
-				new ConfigItem(modules[1], "Y"),
-				new ConfigItem(modules[2], "Z")
-		},
-		new ConfigItem[] {
-				new ConfigItem(modules[4], "1"),
-				new ConfigItem(modules[5], "A", "org.t.1"),
-				new ConfigItem(modules[6], "K", "org.t.A")
-		}
-	};
-	
-	private static ConfigTest[] testItems = new ConfigTest[] {
-		// compute some closures
-		new ClosureTest(configItems[0], configItems[0][0], "org.m.y, org.m.z, org.m.x"),
-		new ClosureTest(configItems[1], configItems[1][2], "org.m.y, org.m.z, org.m.x"),
-		new ClosureTest(configItems[1], configItems[1][1], ""),
-		new ClosureTest(configItems[2], configItems[2][2], 
-				"org.m.1, org.m.2, " +
-				"org.m.A, org.m.B, org.m.C, org.m.D, org.m.E, " +
+	private static ConfigItem[][] makeConfigItems() throws ModuleLoadingException {
+		final ModuleDesc<?>[][] modules = makeModules(); 
+
+		return new ConfigItem[][] {
+				new ConfigItem[] {
+						new ConfigItem(modules[0], "X", "org.t.Y", "org.t.Z"),
+						new ConfigItem(modules[1], "Y"),
+						new ConfigItem(modules[2], "Z")
+				},
+				new ConfigItem[] {
+						new ConfigItem(modules[3], "A"),
+						new ConfigItem(modules[3], "B", "org.t.A"),
+						new ConfigItem(modules[0], "X", "org.t.Y", "org.t.Z"),
+						new ConfigItem(modules[1], "Y"),
+						new ConfigItem(modules[2], "Z")
+				},
+				new ConfigItem[] {
+						new ConfigItem(modules[4], "1"),
+						new ConfigItem(modules[5], "A", "org.t.1"),
+						new ConfigItem(modules[6], "K", "org.t.A")
+				}
+		};
+	}
+
+	private static ConfigTest[] makeTestItems() throws ModuleLoadingException {
+		final ConfigItem[][] configItems = makeConfigItems();
+		return new ConfigTest[] {
+
+				// compute some closures
+				new ClosureTest(configItems[0], configItems[0][0], "org.m.y, org.m.z, org.m.x"),
+				new ClosureTest(configItems[1], configItems[1][2], "org.m.y, org.m.z, org.m.x"),
+				new ClosureTest(configItems[1], configItems[1][1], ""),
+				new ClosureTest(configItems[2], configItems[2][2], 
+						"org.m.1, org.m.2, " +
+						"org.m.A, org.m.B, org.m.C, org.m.D, org.m.E, " +
 				"org.m.K, org.m.L, org.m.M")
-	};
+		};
+	}
 	
 	/**
 	 * Test sorting of empty graph
 	 */
 	public void test() throws Exception {
+		final ConfigTest[] testItems = makeTestItems();
+
 		for (int i=0; i<testItems.length; i++) {
 			ConfigTest testItem = testItems[i];
 			testItem.test();

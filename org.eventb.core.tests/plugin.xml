@@ -20,6 +20,12 @@
    <extension
          point="org.eventb.core.pogModuleTypes">
       <filterType
+            class="org.eventb.core.tests.pog.modules.Unloadable"
+            id="unloadableModule"
+            name="Unloadable Module"
+            parent="org.eventb.core.tests.inexistent">
+      </filterType>
+      <filterType
             class="org.eventb.core.tests.pog.modules.MachineEventActionFISFilterModule"
             id="machineEventActionFISFilterModule"
             name="Event Action FIS Filter Module"

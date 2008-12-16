@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 
 /**
  * @author Stefan Hallerstede
@@ -55,9 +57,17 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 			registry.getConfigurationElementsFor(EventBPlugin.PLUGIN_ID, CONFIGURATION_ID);
 		
 		for (IConfigurationElement element: elements) {
-			C config = makeConfig(element);
-			register(config.getId(), config);
-			configList.add(config);
+			try {
+				C config = makeConfig(element);
+				register(config.getId(), config);
+				configList.add(config);
+			} catch (ModuleLoadingException e) {
+				Util.log(e.getCause(), " while loading config "
+						+ element.getName()
+						+ " in "
+						+ element.getNamespaceIdentifier());
+				// ignore module
+			}
 		}
 
 		if (verbose) {
@@ -75,7 +85,7 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 
 	protected abstract void printConfig(C config);
 
-	protected abstract C makeConfig(IConfigurationElement element);
+	protected abstract C makeConfig(IConfigurationElement element) throws ModuleLoadingException;
 
 	protected void analyseConfigs(List<C> configList) {
 		// do nothing by default

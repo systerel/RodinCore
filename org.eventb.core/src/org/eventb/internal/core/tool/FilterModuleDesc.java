@@ -32,8 +32,9 @@ public class FilterModuleDesc<T extends IFilterModule> extends ModuleDesc<T> {
 	 * 
 	 * @param configElement
 	 *            description of this extractor in the Eclipse registry
+	 * @throws ModuleLoadingException 
 	 */
-	public FilterModuleDesc(IConfigurationElement configElement) {
+	public FilterModuleDesc(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 	}
 	

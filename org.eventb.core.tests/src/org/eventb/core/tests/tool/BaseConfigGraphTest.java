@@ -8,6 +8,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eventb.internal.core.tool.BaseConfig;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ConfigGraph;
 
 public class BaseConfigGraphTest extends TestCase {
@@ -39,7 +40,7 @@ public class BaseConfigGraphTest extends TestCase {
 		}
 		private final String name;
 		private final String[] included;
-		public ConfigItem(String name, String... included) {
+		public ConfigItem(String name, String... included) throws ModuleLoadingException {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.included = included;
@@ -110,52 +111,59 @@ public class BaseConfigGraphTest extends TestCase {
 		}
 	}
 	
-	private static ConfigItem[][] configItems = new ConfigItem[][] {
-		new ConfigItem[] {
-		},
-		new ConfigItem[] {
-				new ConfigItem("c", "org.test.c")
-		},
-		new ConfigItem[] {
-				new ConfigItem("c", "?")
-		},
-		new ConfigItem[] {
-				new ConfigItem("2", "org.test.1"),
-				new ConfigItem("1")
-		},
-		new ConfigItem[] {
-				new ConfigItem("X", "org.test.Y", "org.test.Z"),
-				new ConfigItem("Y"),
-				new ConfigItem("Z")
-		},
-		new ConfigItem[] {
-				new ConfigItem("A"),
-				new ConfigItem("B", "org.test.A"),
-				new ConfigItem("X", "org.test.Y", "org.test.Z"),
-				new ConfigItem("Y"),
-				new ConfigItem("Z")
-		}
-	};
-	
-	private static ConfigTest[] testItems = new ConfigTest[] {
-		// empty list should work
-		new SortingTest(configItems[0], ""),
-		// self-loops are not allowed
-		new FailingTest(configItems[1]),
-		// unknown references are not allowed
-		new FailingTest(configItems[2]),
-		// order included first
-		new SortingTest(configItems[3], "org.test.1, org.test.2"),
-		new SortingTest(configItems[4], "org.test.Y, org.test.Z, org.test.X"),
-		// compute some closures
-		new ClosureTest(configItems[4], configItems[4][0], "org.test.X, org.test.Y, org.test.Z"),
-		new ClosureTest(configItems[5], configItems[5][2], "org.test.X, org.test.Y, org.test.Z")
-	};
-	
+	private static ConfigItem[][] makeConfigItems() throws ModuleLoadingException { 
+		return new ConfigItem[][] {
+				new ConfigItem[] {
+				},
+				new ConfigItem[] {
+						new ConfigItem("c", "org.test.c")
+				},
+				new ConfigItem[] {
+						new ConfigItem("c", "?")
+				},
+				new ConfigItem[] {
+						new ConfigItem("2", "org.test.1"),
+						new ConfigItem("1")
+				},
+				new ConfigItem[] {
+						new ConfigItem("X", "org.test.Y", "org.test.Z"),
+						new ConfigItem("Y"),
+						new ConfigItem("Z")
+				},
+				new ConfigItem[] {
+						new ConfigItem("A"),
+						new ConfigItem("B", "org.test.A"),
+						new ConfigItem("X", "org.test.Y", "org.test.Z"),
+						new ConfigItem("Y"),
+						new ConfigItem("Z")
+				}
+		};
+	}
+
+	private static ConfigTest[] makeTestItems() throws ModuleLoadingException {
+		final ConfigItem[][] configItems = makeConfigItems();
+		return new ConfigTest[] {
+				// empty list should work
+				new SortingTest(configItems[0], ""),
+				// self-loops are not allowed
+				new FailingTest(configItems[1]),
+				// unknown references are not allowed
+				new FailingTest(configItems[2]),
+				// order included first
+				new SortingTest(configItems[3], "org.test.1, org.test.2"),
+				new SortingTest(configItems[4], "org.test.Y, org.test.Z, org.test.X"),
+				// compute some closures
+				new ClosureTest(configItems[4], configItems[4][0], "org.test.X, org.test.Y, org.test.Z"),
+				new ClosureTest(configItems[5], configItems[5][2], "org.test.X, org.test.Y, org.test.Z")
+		};
+	}
+
 	/**
 	 * Test sorting of empty graph
 	 */
 	public void test() throws Exception {
+		final ConfigTest[] testItems = makeTestItems();
+		
 		for (int i=0; i<testItems.length; i++) {
 			ConfigTest testItem = testItems[i];
 			testItem.test();

@@ -25,24 +25,27 @@ public class ModuleConfig extends ConfigWithClosure<ModuleDesc<? extends IModule
 	public ModuleConfig(
 			String modulesId,
 			IConfigurationElement configElement, 
-			ModuleManager moduleManager) {
+			ModuleManager moduleManager) throws ModuleLoadingException {
 		super(configElement);
 		
-		IConfigurationElement[] elements = configElement.getChildren(modulesId);
+		IConfigurationElement[] elements = getChildren(configElement, modulesId);
 		loadModules(elements, moduleManager);
 	}
 	
 	private void loadModules(
 			IConfigurationElement[] elements, 
-			ModuleManager moduleManager) {
+			ModuleManager moduleManager) throws ModuleLoadingException {
 		modules = new ArrayList<ModuleDesc<? extends IModule>>(elements.length);
 		for (IConfigurationElement element : elements) {
-			String moduleId = element.getAttribute("id");
+			String moduleId = getAttribute(element, "id");
 			ModuleDesc<? extends IModule> desc = moduleManager.getModuleDesc(moduleId);
-			if (desc == null)
-				throw new IllegalStateException(
-						"Unknown module id" + moduleId + 
-						" in configuration " + getId());
+			if (desc == null) {
+				throw new ModuleDesc.ModuleLoadingException(
+						new IllegalStateException("Unknown module id"
+								+ moduleId
+								+ " in configuration "
+								+ getId()));
+			}
 			modules.add(desc);
 		}
 	}

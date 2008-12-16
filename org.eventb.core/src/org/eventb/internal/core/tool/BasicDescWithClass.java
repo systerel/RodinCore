@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class BasicDescWithClass extends BasicDesc {
 	
-	public BasicDescWithClass(IConfigurationElement configElement) {
+	public BasicDescWithClass(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
-		this.className = configElement.getAttribute("class");		
+		this.className = getAttribute(configElement, "class");		
 	}
 
 	// Fully qualified name of the class implementing the object described by this desc

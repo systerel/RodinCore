@@ -34,10 +34,14 @@ public class RootModuleDesc<T extends IProcessorModule> extends ProcessorModuleD
 
 	private final IInternalElementType<?> rootElementType;
 	
-	public RootModuleDesc(IConfigurationElement configElement) {
+	public RootModuleDesc(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 		String retId = configElement.getAttribute("input");
-		rootElementType = RodinCore.getInternalElementType(retId);
+		try {
+			rootElementType = RodinCore.getInternalElementType(retId);
+		} catch (IllegalArgumentException e) {
+			throw new ModuleLoadingException(e);
+		}
 	}
 	
 	public IInternalElementType<?> getElementType() {

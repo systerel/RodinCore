@@ -28,7 +28,7 @@ public abstract class Declarations extends TestCase {
 	
 	protected static class ProcDesc extends ProcessorModuleDesc<IProcessorModule> {
 
-		public ProcDesc(String name, String parent, String... prereqs) {
+		public ProcDesc(String name, String parent, String... prereqs) throws ModuleLoadingException {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.parent = parent;
@@ -92,7 +92,7 @@ public abstract class Declarations extends TestCase {
 	
 	protected static class RootDesc extends RootModuleDesc<IProcessorModule> {
 
-		public RootDesc(String name, IProcessorModule module, IInternalElementType<?> type) {
+		public RootDesc(String name, IProcessorModule module, IInternalElementType<?> type) throws ModuleLoadingException {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.type = type;
@@ -172,7 +172,7 @@ public abstract class Declarations extends TestCase {
 	
 	protected static class FilterDesc extends FilterModuleDesc<IFilterModule> {
 
-		public FilterDesc(String name, String parent, String... prereqs) {
+		public FilterDesc(String name, String parent, String... prereqs) throws ModuleLoadingException {
 			super(new DummyConfigurationElement());
 			this.name = name;
 			this.parent = parent;

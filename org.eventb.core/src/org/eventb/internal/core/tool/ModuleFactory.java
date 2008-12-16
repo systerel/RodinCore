@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.tool.IModuleType;
+import org.eventb.internal.core.Util;
+import static org.eventb.internal.core.tool.ModuleDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.Node;
 import org.eventb.internal.core.tool.types.IFilterModule;
@@ -31,78 +33,87 @@ import org.rodinp.core.IInternalElementType;
  */
 public class ModuleFactory implements IModuleFactory {
 	
-	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> filterMap;
-	protected Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> processorMap;
-	private Map<IInternalElementType<?>, ModuleDesc<? extends IModule>> rootMap;
+	protected Map<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>> filterMap;
+	protected Map<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>> processorMap;
+	private Map<IInternalElementType<?>, ModuleDesc<?>> rootMap;
 
 	protected void addFilterToFactory(
-			ModuleDesc<? extends IModule> key, 
-			ModuleDesc<? extends IModule> filter) {
-		List<ModuleDesc<? extends IModule>> filters = filterMap.get(key);
-		if (filters == null) {
-			filters = new ArrayList<ModuleDesc<? extends IModule>>();
-			filterMap.put(key, filters);
-		}
-		filters.add(filter);
+			ModuleDesc<?> key, 
+			ModuleDesc<? extends IFilterModule> filter) {
+		addModuleToFactory(filterMap, key, filter);
 	}
 	
 	protected void addProcessorToFactory(
-			ModuleDesc<? extends IModule> key, 
-			ModuleDesc<? extends IModule> processor) {
-		List<ModuleDesc<? extends IModule>> processors = processorMap.get(key);
-		if (processors == null) {
-			processors = new ArrayList<ModuleDesc<? extends IModule>>();
-			processorMap.put(key, processors);
+			ModuleDesc<?> key, 
+			ModuleDesc<? extends IProcessorModule> processor) {
+		addModuleToFactory(processorMap, key, processor);
+	}
+
+	private static <T extends IModule> void addModuleToFactory(
+			Map<ModuleDesc<?>, List<ModuleDesc<? extends T>>> map, ModuleDesc<?> key,
+			ModuleDesc<? extends T> desc) {
+		List<ModuleDesc<? extends T>> descs = map.get(key);
+		if (descs == null) {
+			descs = new ArrayList<ModuleDesc<? extends T>>();
+			map.put(key, descs);
 		}
-		processors.add(processor);
+		descs.add(desc);
+
 	}
 	
 	protected void addRootToFactory(
 			IInternalElementType<?> key, 
-			ModuleDesc<? extends IModule> root) {
-		ModuleDesc<? extends IModule> oldRoot = rootMap.put(key, root);
+			ModuleDesc<?> root) {
+		ModuleDesc<?> oldRoot = rootMap.put(key, root);
 		if (oldRoot != null)
 			throw new IllegalStateException("Non-unique root module for file element " + key.getId());
 	}
 	
-	public ModuleFactory(ModuleGraph graph, Map<String, ModuleDesc<? extends IModule>> modules) {
+	public ModuleFactory(ModuleGraph graph, Map<String, ModuleDesc<?>> modules) {
 		filterMap = 
-			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
+			new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>>();
 		processorMap = 
-			new HashMap<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>>();
+			new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>>();
 		rootMap = 
-			new HashMap<IInternalElementType<?>, ModuleDesc<? extends IModule>>();
-		for (Node<ModuleDesc<? extends IModule>> node : graph.getSorted())
+			new HashMap<IInternalElementType<?>, ModuleDesc<?>>();
+		for (Node<ModuleDesc<?>> node : graph.getSorted())
 			node.getObject().addToModuleFactory(this, modules);
 	}
 	
 	IFilterModule[] NO_FILTERS = new IFilterModule[0];
 	IProcessorModule[] NO_PROCESSORS = new IProcessorModule[0];
 
-	public IFilterModule[] getFilterModules(IModuleType<? extends IModule> parent) {
-		List<ModuleDesc<? extends IModule>> filters = filterMap.get(parent);
-		if (filters == null)
-			return NO_FILTERS;
-		int size = filters.size();
-		IFilterModule[] filterModules = new IFilterModule[size];
-		for (int k=0; k<size; k++) {
-			filterModules[k] = (IFilterModule) filters.get(k).createInstance();
-			setModuleFactory(filterModules[k]);
-		}
-		return filterModules;
+	public IFilterModule[] getFilterModules(IModuleType<?> parent) {
+		List<IFilterModule> list = getModules(filterMap, parent, "filter");
+		return list.toArray(NO_FILTERS);
 	}
 
-	public IProcessorModule[] getProcessorModules(IModuleType<? extends IModule> parent) {
-		List<ModuleDesc<? extends IModule>> processors = processorMap.get(parent);
-		if (processors == null)
-			return NO_PROCESSORS;
-		int size = processors.size();
-		IProcessorModule[] processorModules = new IProcessorModule[size];
-		for (int k=0; k<size; k++) {
-			processorModules[k] = (IProcessorModule) processors.get(k).createInstance();
-			setModuleFactory(processorModules[k]);
+	public IProcessorModule[] getProcessorModules(IModuleType<?> parent) {
+		List<IProcessorModule> list = getModules(processorMap, parent, "processor");
+		return list.toArray(NO_PROCESSORS);
+	}
+
+	private <T extends IModule> List<T> getModules(
+			Map<ModuleDesc<?>, List<ModuleDesc<? extends T>>> map,
+			IModuleType<?> parent, String kind) {
+		final List<T> result = new ArrayList<T>();
+		final List<ModuleDesc<? extends T>> descs = map.get(parent);
+		if (descs == null)
+			return result;
+		for (ModuleDesc<? extends T> desc : descs) {
+			try {
+				final T instance = desc.createInstance();
+				setModuleFactory(instance);
+				result.add(instance);
+			} catch (ModuleLoadingException e) {
+				// ignore module
+				Util.log(e.getCause(), " while getting "
+						+ kind
+						+ " module "
+						+ desc.getId());
+			}
 		}
-		return processorModules;
+		return result;
 	}
 	
 	private void setModuleFactory(IModule module) {
@@ -113,16 +124,20 @@ public class ModuleFactory implements IModuleFactory {
 	}
 
 	public IProcessorModule getRootModule(IInternalElementType<?> type) {
-		ModuleDesc<? extends IModule> desc = rootMap.get(type);
+		ModuleDesc<?> desc = rootMap.get(type);
 		if (desc == null)
 			throw new IllegalArgumentException("No root module for " + type.getId());
-		IProcessorModule module = (IProcessorModule) desc.createInstance();
-		setModuleFactory(module);
-		return module;
+		try {
+			final IProcessorModule module = (IProcessorModule) desc.createInstance();
+			setModuleFactory(module);
+			return module;
+		} catch (ModuleLoadingException e) {
+			return null;
+		}
 	}
 	
 	// for testing purposes
-	private List<String> postfixOrder(ModuleDesc<? extends IModule> root) {
+	private List<String> postfixOrder(ModuleDesc<?> root) {
 		List<String> ids = new LinkedList<String>();
 		ids.addAll(postfixList(root, filterMap));
 		ids.addAll(postfixList(root, processorMap));
@@ -130,27 +145,27 @@ public class ModuleFactory implements IModuleFactory {
 		return ids;
 	}
 
-	private List<String> postfixList(
-			ModuleDesc<? extends IModule> root, 
-			Map<ModuleDesc<? extends IModule>, List<ModuleDesc<? extends IModule>>> map) {
+	private <T extends IModule> List<String> postfixList(
+			ModuleDesc<?> root, 
+			Map<ModuleDesc<?>, List<ModuleDesc<? extends T>>> map) {
 		List<String> mIds = new LinkedList<String>();
-		List<ModuleDesc<? extends IModule>> modules = map.get(root);
+		List<ModuleDesc<? extends T>> modules = map.get(root);
 		if (modules == null)
 			return mIds;
-		for (ModuleDesc<? extends IModule> module : modules) {
+		for (ModuleDesc<?> module : modules) {
 			mIds.addAll(postfixOrder(module));
 		}
 		return mIds;
 	}
 	
-	public String toString(ModuleDesc<? extends IModule> root) {
+	public String toString(ModuleDesc<?> root) {
 		return postfixOrder(root).toString();
 	}
 	
 	// debugging support
 	public String printModuleTree(IInternalElementType<?> type) {
 		StringBuffer buffer = new StringBuffer();
-		ModuleDesc<? extends IModule> desc = rootMap.get(type);
+		ModuleDesc<?> desc = rootMap.get(type);
 		if (desc == null) {
 			return "Module-tree look-up failed!\n";
 		}
@@ -160,7 +175,7 @@ public class ModuleFactory implements IModuleFactory {
 
 	private void printModuleTree(
 			StringBuffer buffer, 
-			ModuleDesc<? extends IModule> desc, 
+			ModuleDesc<?> desc, 
 			int offset,
 			char type) {
 		
@@ -176,14 +191,14 @@ public class ModuleFactory implements IModuleFactory {
 		printModuleTree(buffer, processorMap.get(desc), offset, 'P');
 	}
 
-	private void printModuleTree(
+	private <T extends IModule> void printModuleTree(
 			StringBuffer buffer, 
-			List<ModuleDesc<? extends IModule>> descs, 
+			List<ModuleDesc<? extends T>> descs, 
 			int offset, 
 			char type) {
 		if (descs == null)
 			return;
-		for (ModuleDesc<? extends IModule> desc : descs)
+		for (ModuleDesc<?> desc : descs)
 			printModuleTree(buffer, desc, offset, type);
 	}
 

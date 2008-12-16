@@ -13,7 +13,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.SortingUtil;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.types.IState;
 
 /**
@@ -51,9 +53,13 @@ public abstract class StateTypeManager extends SortingUtil {
 			registry.getConfigurationElementsFor(EventBPlugin.PLUGIN_ID, state_types_id);
 		
 		for (IConfigurationElement element: elements) {
-			StateType<? extends IState> type =
-				new StateType<IState>(element);
-			register(type.getId(), type);
+			try {
+				StateType<? extends IState> type = new StateType<IState>(element);
+				register(type.getId(), type);
+			} catch (ModuleLoadingException e) {
+				Util.log(e.getCause(), " while computing state type " + element.getValue());
+				// ignore module
+			}
 		}
 
 		if (VERBOSE) {

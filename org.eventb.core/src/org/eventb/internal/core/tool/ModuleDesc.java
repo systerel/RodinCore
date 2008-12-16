@@ -50,14 +50,15 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	 * 
 	 * @param configElement
 	 *            description of this module in the Eclipse registry
+	 * @throws ModuleLoadingException 
 	 */
-	public ModuleDesc(IConfigurationElement configElement) {
+	public ModuleDesc(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
-		this.parent = configElement.getAttribute("parent");
-		IConfigurationElement[] prereqElements = configElement.getChildren("prereq");
+		this.parent = getAttribute(configElement, "parent");
+		IConfigurationElement[] prereqElements = getChildren(configElement, "prereq");
 		prereqs = new String[prereqElements.length];
 		for (int i=0; i<prereqElements.length; i++) {
-			prereqs[i] = prereqElements[i].getAttribute("id");
+			prereqs[i] = getAttribute(prereqElements[i], "id");
 		}
 	}
 	
@@ -65,37 +66,35 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 	public abstract Node<ModuleDesc<? extends IModule>> createNode(ModuleGraph graph);
 
 	@SuppressWarnings("unchecked")
-	protected void computeClass() {
+	protected void computeClass() throws ModuleLoadingException {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = (Class<? extends T>) clazz.asSubclass(IModule.class);
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Cannot load module class " + getId(), e);
-		}
+			throw new ModuleLoadingException(e);
+		} 
 	}
 	
-	protected Class<? extends T> getClassObject() {
+	protected Class<? extends T> getClassObject() throws ModuleLoadingException {
 		if (classObject == null) {
 			computeClass();
 		}
 		return classObject;
 	}
 
-	protected void computeConstructor() {
+	protected void computeConstructor() throws ModuleLoadingException {
 		if (classObject == null) {
 			computeClass();
 		}
 		try {
 			constructor = classObject.getConstructor();
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Can't find constructor for element type " + getId(), e);
+			throw new ModuleLoadingException(e);
 		}
 	}
 	
-	public T createInstance() {
+	public T createInstance() throws ModuleLoadingException {
 		if (constructor == null) {
 			computeConstructor();
 		}
@@ -105,8 +104,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		try {
 			return constructor.newInstance();
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Can't create module " + getId(), e);
+			throw new ModuleLoadingException(e);
 		}
 	}
 

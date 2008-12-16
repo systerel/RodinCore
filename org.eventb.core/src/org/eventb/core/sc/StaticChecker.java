@@ -25,6 +25,7 @@ import org.eventb.internal.core.sc.SCUtil;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.SCModuleManager;
 import org.eventb.internal.core.tool.types.ISCProcessorModule;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -159,8 +160,14 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 		printModuleTree(config, rodinFile, moduleFactory);
 	
-		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory.getRootModule(rodinFile.getRoot().getElementType());
-		
+		final IInternalElementType<?> elementType =
+				rodinFile.getRoot().getElementType();
+		final ISCProcessorModule rootModule =
+				(ISCProcessorModule) moduleFactory.getRootModule(elementType);
+		if (rootModule == null) {
+			SCUtil.createProblemMarker(rodinFile,
+					GraphProblem.LoadingRootModuleError);
+		}
 		return rootModule;
 	}
 	
@@ -196,8 +203,10 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 						
 						final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
 					
-						runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(),
-								repository, monitor);
+						if (rootModule != null) {
+							runProcessorModules(rootModule, sourceFile, scTmpFile.getRoot(),
+									repository, monitor);
+						}
 						
 					}
 			

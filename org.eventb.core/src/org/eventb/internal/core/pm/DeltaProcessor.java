@@ -118,7 +118,7 @@ public class DeltaProcessor {
 		// to be called when some are causing grief
 		SafeRunner.run(new ISafeRunnable() {
 			public void handleException(Throwable exception) {
-				Util.log((Exception) exception, 
+				Util.log(exception, 
 						"Exception within user support manager change notification"); //$NON-NLS-1$
 			}
 			public void run() throws Exception {

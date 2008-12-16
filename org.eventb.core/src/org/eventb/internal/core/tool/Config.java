@@ -23,14 +23,15 @@ public class Config extends BasicDesc {
 	 * 
 	 * @param configElement
 	 *            description of this module in the Eclipse registry
+	 * @throws ModuleLoadingException 
 	 */
-	public Config(IConfigurationElement configElement) {
+	public Config(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 		
-		IConfigurationElement[] includedElements = configElement.getChildren("config");
+		IConfigurationElement[] includedElements = getChildren(configElement, "config");
 		included = new String[includedElements.length];
 		for (int i=0; i<includedElements.length; i++) {
-			included[i] = includedElements[i].getAttribute("id");
+			included[i] = getAttribute(includedElements[i], "id");
 		}
 		
 	}

@@ -8,12 +8,22 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 
 /**
  * @author Stefan Hallerstede
  *
  */
 public class BasicDesc {
+
+	public static class ModuleLoadingException extends Exception {
+
+		private static final long serialVersionUID = 8275960586900622227L;
+
+		public ModuleLoadingException(Throwable e) {
+			super(e);
+		}
+	}
 
 	// Fully qualified name of the plugin that provides this module
 	private final String bundleName;
@@ -29,11 +39,39 @@ public class BasicDesc {
 	// Unique identifier of this module
 	private final String id;
 	
-	public BasicDesc(IConfigurationElement configElement) {
-		this.bundleName = configElement.getNamespaceIdentifier();
+	public BasicDesc(IConfigurationElement configElement) throws ModuleLoadingException {
+		final String namespaceIdentifier = getNamespaceIdentifier(configElement);
+		this.bundleName = namespaceIdentifier;
 		this.configElement = configElement;
-		this.name = configElement.getAttribute("name");
-		this.id = configElement.getNamespaceIdentifier() + "." + configElement.getAttribute("id");
+		this.name = getAttribute(configElement, "name");
+		this.id = namespaceIdentifier + "." + getAttribute(configElement, "id");
+	}
+
+	protected String getAttribute(IConfigurationElement confElem,
+			String attribute) throws ModuleLoadingException {
+		try {
+			return confElem.getAttribute(attribute);
+		} catch (InvalidRegistryObjectException e) {
+			throw new ModuleLoadingException(e);
+		}
+	}
+
+	protected IConfigurationElement[] getChildren(
+			IConfigurationElement confElem, String childName)
+			throws ModuleLoadingException {
+		try {
+			return confElem.getChildren(childName);
+		} catch (InvalidRegistryObjectException e) {
+			throw new ModuleLoadingException(e);
+		}
+	}
+
+	private String getNamespaceIdentifier(IConfigurationElement confElem) throws ModuleLoadingException {
+		try {
+			return confElem.getNamespaceIdentifier();
+		} catch (InvalidRegistryObjectException e) {
+			throw new ModuleDesc.ModuleLoadingException(e);
+		}
 	}
 
 	public String getBundleName() {

@@ -8,6 +8,7 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.types.IModule;
 
 /**
@@ -39,7 +40,7 @@ public class POGConfigManager extends ConfigManager<ModuleDesc<? extends IModule
 	}
 
 	@Override
-	protected ModuleConfig makeConfig(IConfigurationElement element) {
+	protected ModuleConfig makeConfig(IConfigurationElement element) throws ModuleLoadingException {
 		return new ModuleConfig(POG_CONFIG_ID, element, POG_MODULE_MANAGER);
 	}
 

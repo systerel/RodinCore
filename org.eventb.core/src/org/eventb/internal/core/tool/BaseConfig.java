@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class BaseConfig extends ConfigWithClosure<String> {
 
-	public BaseConfig(IConfigurationElement configElement) {
+	public BaseConfig(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 	}
 

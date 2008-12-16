@@ -30,18 +30,18 @@ public class Util {
 	 * Logs an internal plug-in error to the platform log, with the given
 	 * exception and message
 	 * 
-	 * @param exc
+	 * @param e
 	 *            exception to report (may be <code>null</code>)
 	 * @param message
 	 *            message giving context of the reported error
 	 */
-	public static void log(Exception exc, String message) {
+	public static void log(Throwable e, String message) {
 		IStatus status = new Status(
 				IStatus.ERROR, 
 				EventBPlugin.PLUGIN_ID, 
 				Platform.PLUGIN_ERROR, 
 				message, 
-				exc);
+				e);
 		EventBPlugin.getDefault().getLog().log(status);
 	}
 

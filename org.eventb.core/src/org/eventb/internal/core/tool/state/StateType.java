@@ -24,20 +24,19 @@ public class StateType<T extends IState> extends BasicDescWithClass implements I
 	// (cached value)
 	protected Class<? extends T> classObject;
 
-	public StateType(IConfigurationElement configElement) {
+	public StateType(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 		computeClass();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void computeClass() {
+	protected void computeClass() throws ModuleLoadingException {
 		Bundle bundle = Platform.getBundle(getBundleName());
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = (Class<? extends T>) clazz.asSubclass(IState.class);
 		} catch (Exception e) {
-			throw new IllegalStateException(
-					"Class is not a state type: " + getId(), e);
+			throw new ModuleLoadingException(e);
 		}
 	}
 

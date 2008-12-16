@@ -9,6 +9,7 @@ package org.eventb.internal.core.tool;
 
 import java.util.List;
 
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IPOGFilterModule;
@@ -40,7 +41,7 @@ public class POGModuleManager extends ModuleManager {
 	}
 
 	@Override
-	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) {
+	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) throws ModuleLoadingException {
 		try {
 			moduleDesc.getClassObject().asSubclass(IPOGFilterModule.class);
 		} catch (ClassCastException e) {
@@ -51,7 +52,7 @@ public class POGModuleManager extends ModuleManager {
 	}
 
 	@Override
-	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) {
+	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) throws ModuleLoadingException {
 		try {
 			moduleDesc.getClassObject().asSubclass(IPOGProcessorModule.class);
 		} catch (ClassCastException e) {

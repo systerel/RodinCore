@@ -21,7 +21,7 @@ public abstract class ConfigWithClosure<T> extends Config {
 	
 	private List<T> closure;
 
-	public ConfigWithClosure(IConfigurationElement configElement) {
+	public ConfigWithClosure(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 	}
 	

@@ -308,6 +308,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	
 			IPOGProcessorModule rootModule = (IPOGProcessorModule) moduleFactory
 					.getRootModule(rodinFile.getRoot().getElementType());
+			if (rootModule == null) {
+				SCUtil.createProblemMarker(rodinFile, 
+						GraphProblem.LoadingRootModuleError);
+			}
 			return rootModule;
 	
 		} else {

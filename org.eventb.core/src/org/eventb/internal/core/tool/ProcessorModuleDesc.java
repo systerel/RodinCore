@@ -27,8 +27,9 @@ public class ProcessorModuleDesc<T extends IProcessorModule> extends ModuleDesc<
 	 * 
 	 * @param configElement
 	 *            description of this extractor in the Eclipse registry
+	 * @throws ModuleLoadingException 
 	 */
-	public ProcessorModuleDesc(IConfigurationElement configElement) {
+	public ProcessorModuleDesc(IConfigurationElement configElement) throws ModuleLoadingException {
 		super(configElement);
 	}
 

@@ -10,6 +10,7 @@ package org.eventb.internal.core.tool;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ConfigGraph;
 
 /**
@@ -44,7 +45,7 @@ public class BaseConfigManager extends ConfigManager<String, BaseConfig> {
 	}
 
 	@Override
-	protected BaseConfig makeConfig(IConfigurationElement element) {
+	protected BaseConfig makeConfig(IConfigurationElement element) throws ModuleLoadingException {
 		return new BaseConfig(element);
 	}
 

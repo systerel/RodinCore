@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.graph.ParentGraph;
 import org.eventb.internal.core.tool.types.IFilterModule;
@@ -27,6 +29,8 @@ import org.eventb.internal.core.tool.types.IProcessorModule;
  */
 public abstract class ModuleManager extends SortingUtil {
 	
+	private static final String ROOT_TYPE = "rootType";
+
 	private static final String FILTER_TYPE = "filterType";
 
 	private static final String PROCESSOR_TYPE = "processorType";
@@ -41,12 +45,12 @@ public abstract class ModuleManager extends SortingUtil {
 	// This table contains all filter and processor modules
 	private HashMap<String, ModuleDesc<? extends IModule>> modules;
 
-	private void register(String id, ModuleDesc<? extends IModule> desc) {
+	private void register(String id, ModuleDesc<? extends IModule> desc) throws ModuleLoadingException {
 		final ModuleDesc<? extends IModule> oldType = modules.put(id, desc);
 		if (oldType != null) {
 			modules.put(id, oldType);
-			throw new IllegalStateException(
-					"Attempt to create twice module type " + id);
+			throw new ModuleLoadingException(new IllegalStateException(
+					"Attempt to create twice module type " + id));
 		}
 	}
 	
@@ -76,9 +80,9 @@ public abstract class ModuleManager extends SortingUtil {
 	
 	protected abstract List<ModuleDesc<? extends IModule>> getModuleListForConfig(String configId);
 
-	protected abstract void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc);
+	protected abstract void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) throws ModuleLoadingException;
 	
-	protected abstract void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc);
+	protected abstract void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) throws ModuleLoadingException;
 	
 	protected abstract String getName();
 
@@ -86,32 +90,48 @@ public abstract class ModuleManager extends SortingUtil {
 		
 		for (IConfigurationElement element: elements) {
 			String name = element.getName();
-			if (name.equals(FILTER_TYPE)) {
-				
-				FilterModuleDesc<? extends IFilterModule> filter = 
-					new FilterModuleDesc<IFilterModule>(element);
-				verifyFilter(filter);
-				register(filter.getId(), filter);
-				
-			} else if (name.equals(PROCESSOR_TYPE)) {
-				
-				ProcessorModuleDesc<? extends IProcessorModule> processor = 
-					new ProcessorModuleDesc<IProcessorModule>(element);
-				verifyProcessor(processor);
-				register(processor.getId(), processor);
-				
-			} else if (name.equals("rootType")) { 
-				
-				RootModuleDesc<IProcessorModule> root =
-					new RootModuleDesc<IProcessorModule>(element);
-				verifyProcessor(root);
-				register(root.getId(), root);
-				
-			} else {
-				throw new IllegalStateException("Unknown module declaration: " + name);
+			try {
+				if (name.equals(FILTER_TYPE)) {
+					registerFilterModule(element);
+				} else if (name.equals(PROCESSOR_TYPE)) {
+					registerProcessorModule(element);
+				} else if (name.equals(ROOT_TYPE)) { 
+					registerRootModule(element);
+				} else {
+					Util.log(null, "Unknown module declaration: " + name);
+				}
+			} catch (ModuleLoadingException e) {
+				Util.log(e.getCause(), " while loading module "
+						+ element.getName()
+						+ " in "
+						+ element.getNamespaceIdentifier());
+				// ignore module
 			}
-			
 		}
+	}
+
+	private void registerRootModule(IConfigurationElement element)
+			throws ModuleLoadingException {
+		RootModuleDesc<IProcessorModule> root =
+			new RootModuleDesc<IProcessorModule>(element);
+		verifyProcessor(root);
+		register(root.getId(), root);
+	}
+
+	private void registerProcessorModule(IConfigurationElement element)
+			throws ModuleLoadingException {
+		ProcessorModuleDesc<? extends IProcessorModule> processor = 
+			new ProcessorModuleDesc<IProcessorModule>(element);
+		verifyProcessor(processor);
+		register(processor.getId(), processor);
+	}
+
+	private void registerFilterModule(IConfigurationElement element)
+			throws ModuleLoadingException {
+		FilterModuleDesc<? extends IFilterModule> filter = 
+			new FilterModuleDesc<IFilterModule>(element);
+		verifyFilter(filter);
+		register(filter.getId(), filter);
 	}
 
 	/**
