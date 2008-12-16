@@ -233,7 +233,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 			runBuilder(null);
 			ToolTrace.flush();
 			
-			hasMarkers("P/x.csc");
+			hasMarkers("P/x.ctx");
 			
 		} finally {
 			CSCTool.FAULTY_AFTER_TARGET_CREATION = false;
@@ -243,7 +243,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctx.save(null, true);
 		runBuilder(null);
 		
-		hasNotMarkers("P/x.csc");
+		hasNotMarkers("P/x.ctx");
 		
 		runBuilder(
 				"CSC extract /P/x.ctx\n" + 
