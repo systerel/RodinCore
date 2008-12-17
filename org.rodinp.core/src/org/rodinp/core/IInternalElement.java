@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods (contents and occurrence count)
  *     Systerel - added method getNextSibling()
+ *     Systerel - Moved method declarations from IAttributedElement
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Laurent Voisin
  */
 //TODO document IInternalElement
+@SuppressWarnings("deprecation")
 public interface IInternalElement extends IRodinElement, IInternalParent,
 		IElementManipulation, IAttributedElement {
 
@@ -153,5 +155,250 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *         if this element is the last child of its parent
 	 */
 	IInternalElement getNextSibling() throws RodinDBException;
+
+	/**
+	 * Returns an array of the types of all attributes currently attached to
+	 * this element. If this element doesn't carry any attribute, an empty array
+	 * is returned.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 * @return the types of all attributes of this element
+	 */
+	IAttributeType[] getAttributeTypes() throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given boolean type and
+	 * carried by this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
+	 */
+	boolean getAttributeValue(IAttributeType.Boolean type)
+			throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given handle type and carried
+	 * by this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
+	 */
+	IRodinElement getAttributeValue(IAttributeType.Handle type)
+			throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given integer type and
+	 * carried by this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
+	 */
+	int getAttributeValue(IAttributeType.Integer type) throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given long integer type and
+	 * carried by this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource or if the given attribute has
+	 *                another kind than <code>long</code>
+	 * @return the value of the attribute with the given type
+	 */
+	long getAttributeValue(IAttributeType.Long type) throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given string type and carried
+	 * by this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
+	 */
+	String getAttributeValue(IAttributeType.String type)
+			throws RodinDBException;
+
+	/**
+	 * Tells whether this element carries an attribute with the given type.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 * @return <code>true</code> iff this element carries an attribute with
+	 *         the given type
+	 */
+	boolean hasAttribute(IAttributeType type) throws RodinDBException;
+
+	/**
+	 * Removes the attribute with the given type from this element. If the
+	 * attribute didn't exist previously, this method returns directly, no
+	 * exception is thrown.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute to remove
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void removeAttribute(IAttributeType type, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given boolean type to the given
+	 * value. If the specified attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeType.Boolean type, boolean newValue,
+			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given handle type to the given
+	 * value. If the specified attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeType.Handle type, IRodinElement newValue,
+			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given integer type to the given
+	 * value. If the specified attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeType.Integer type, int newValue,
+			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given long integer type to the
+	 * given value. If the specified attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeType.Long type, long newValue,
+			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the value of the attribute with the given string type to the given
+	 * value. If the specified attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeType.String type, String newValue,
+			IProgressMonitor monitor) throws RodinDBException;
 
 }
