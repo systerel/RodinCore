@@ -189,10 +189,35 @@ public class IndexingBridgeTests extends IndexTests {
 		assertEquals("Bad occurrences", expected, actual);
 	}
 
-	// TODO test faulty occurrences
-	// not local nor imported
-	// local but not declared
+	public void testAddOccurrenceLocationInOtherFile() throws Exception {
+		IndexingBridge bridge =
+			new IndexingBridge(file2, emptyImports, null);
+
+		final IInternalLocation loc =
+			RodinIndexer.getInternalLocation(file1.getRoot());
+		
+		try {
+			bridge.addOccurrence(declElt2, TEST_KIND, loc);
+			fail("Expected IllegalArgumentException");
+		} catch(IllegalArgumentException e) {
+			// OK
+		}
+	}
 	
+	public void testAddOccurrenceNotLocalNotImported() throws Exception {
+		IndexingBridge bridge =
+			new IndexingBridge(file1, emptyImports, null);
+
+		final IInternalLocation loc =
+			RodinIndexer.getInternalLocation(file1.getRoot());
+		
+		try {
+			bridge.addOccurrence(declElt2, TEST_KIND, loc);
+			fail("Expected IllegalArgumentException");
+		} catch(IllegalArgumentException e) {
+			// OK
+		}
+	}
 	
 	public void testLocalExport() {
 		IndexingBridge bridge =
