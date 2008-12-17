@@ -43,7 +43,7 @@ import org.rodinp.core.IInternalElement;
  * 
  * @author Nicolas Beauger
  */
-public interface IIndexingToolkit {
+public interface IIndexingBridge {
 
 	/**
 	 * Returns the root element of the file which is to be indexed.

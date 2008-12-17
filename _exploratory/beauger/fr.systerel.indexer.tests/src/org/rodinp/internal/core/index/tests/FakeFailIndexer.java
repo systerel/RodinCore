@@ -13,7 +13,7 @@ package org.rodinp.internal.core.index.tests;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger
@@ -33,7 +33,7 @@ public class FakeFailIndexer implements IIndexer {
 		return ID;
 	}
 
-	public boolean index(IIndexingToolkit index) {
+	public boolean index(IIndexingBridge bridge) {
 		return false;
 	}
 

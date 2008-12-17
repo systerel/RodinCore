@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.tests.CancelToolkitStub.*;
+import static org.eventb.core.indexer.tests.CancelBridgeStub.*;
 import static org.eventb.core.indexer.tests.ResourceUtils.*;
 
 import org.eventb.core.IConstant;
@@ -36,7 +36,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		final IMachineRoot context = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
+		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, NO_LIMIT,
 				NO_LIMIT, true, context);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -56,7 +56,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		final IMachineRoot importer = createMachine(project, IMPORTER,
 				VAR_1DECL_1REF_INV);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, NO_LIMIT,
+		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, NO_LIMIT,
 				1, false, importer, declCstExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -71,7 +71,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(1, NO_LIMIT,
+		final CancelBridgeStub tk = new CancelBridgeStub(1, NO_LIMIT,
 				NO_LIMIT, false, machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -101,7 +101,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2INV);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
+		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -129,7 +129,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2VRT);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
+		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -164,7 +164,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 		final IMachineRoot machine = createMachine(project, IMPORTER, VAR_4OCC);
 
-		final CancelToolkitStub tk = new CancelToolkitStub(NO_LIMIT, 2,
+		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);
 
 		final MachineIndexer indexer = new MachineIndexer();

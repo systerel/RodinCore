@@ -24,7 +24,7 @@ import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.RodinDBStatus;
 
@@ -120,8 +120,8 @@ public class FileIndexingManager {
 		}
 	}
 
-	public IIndexingResult doIndexing(IndexingToolkit indexingToolkit) {
-		final IRodinFile file = indexingToolkit.getRodinFile();
+	public IIndexingResult doIndexing(IndexingBridge bridge) {
+		final IRodinFile file = bridge.getRodinFile();
 
 		if (!file.exists()) {
 			return IndexingResult.failed(file);
@@ -131,7 +131,7 @@ public class FileIndexingManager {
 		IIndexingResult prevResult = IndexingResult.failed(file);
 
 		for (IIndexer indexer : indexers) {
-			final IIndexingResult result = doIndexing(indexer, indexingToolkit);
+			final IIndexingResult result = doIndexing(indexer, bridge);
 			if (!result.isSuccess()) {
 				return prevResult;
 			}
@@ -141,11 +141,11 @@ public class FileIndexingManager {
 	}
 
 	private IIndexingResult doIndexing(IIndexer indexer,
-			IndexingToolkit indexingToolkit) {
-		final IRodinFile file = indexingToolkit.getRodinFile();
+			IndexingBridge bridge) {
+		final IRodinFile file = bridge.getRodinFile();
 		printVerbose(makeMessage("indexing", file, indexer));
 
-		final IndexCaller callIndex = new IndexCaller(indexer, indexingToolkit);
+		final IndexCaller callIndex = new IndexCaller(indexer, bridge);
 		Future<Boolean> task =
 				Executors.newSingleThreadExecutor().submit(callIndex);
 
@@ -154,8 +154,8 @@ public class FileIndexingManager {
 			if (!success) {
 				return IndexingResult.failed(file);
 			}
-			indexingToolkit.complete();
-			final IIndexingResult result = indexingToolkit.getResult();
+			bridge.complete();
+			final IIndexingResult result = bridge.getResult();
 			printVerbose(makeMessage("indexing complete", file, indexer));
 			printVerbose("result:\n" + result);
 			return result;
@@ -202,15 +202,15 @@ public class FileIndexingManager {
 
 	private static final class IndexCaller implements Callable<Boolean> {
 		private final IIndexer indexer;
-		private final IIndexingToolkit indexingToolkit;
+		private final IIndexingBridge bridge;
 
-		public IndexCaller(IIndexer indexer, IIndexingToolkit indexingToolkit) {
+		public IndexCaller(IIndexer indexer, IIndexingBridge bridge) {
 			this.indexer = indexer;
-			this.indexingToolkit = indexingToolkit;
+			this.bridge = bridge;
 		}
 
 		public Boolean call() throws Exception {
-			return indexer.index(indexingToolkit);
+			return indexer.index(bridge);
 		}
 
 	}

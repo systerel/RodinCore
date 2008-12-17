@@ -43,7 +43,7 @@ public class ContextIndexer extends EventBIndexer {
 		checkCancel();
 
 		final SymbolTable importST = new SymbolTable(null);
-		processImports(index.getImports(), importST);
+		processImports(bridge.getImports(), importST);
 		checkCancel();
 
 		final SymbolTable totalST = new SymbolTable(importST);

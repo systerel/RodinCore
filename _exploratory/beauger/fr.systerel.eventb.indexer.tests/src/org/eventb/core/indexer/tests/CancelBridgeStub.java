@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrenceKind;
 
@@ -24,7 +24,7 @@ import org.rodinp.core.index.IOccurrenceKind;
  * @author Nicolas Beauger
  * 
  */
-public class CancelToolkitStub implements IIndexingToolkit {
+public class CancelBridgeStub implements IIndexingBridge {
 
 	private final IEventBRoot root;
 	private final IDeclaration[] imports;
@@ -51,7 +51,7 @@ public class CancelToolkitStub implements IIndexingToolkit {
 	 * @param root 
 	 * @param imports 
 	 */
-	public CancelToolkitStub(int maxDecl, int maxOcc, int maxExp,
+	public CancelBridgeStub(int maxDecl, int maxOcc, int maxExp,
 			boolean cancel, IEventBRoot root, IDeclaration... imports) {
 
 		this.root = root;

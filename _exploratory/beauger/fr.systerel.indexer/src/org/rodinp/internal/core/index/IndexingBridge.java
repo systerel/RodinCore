@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IInternalLocation;
 
-public class IndexingToolkit implements IIndexingToolkit {
+public class IndexingBridge implements IIndexingBridge {
 
 	private final IRodinFile file;
 	private final Map<IInternalElement, IDeclaration> imports;
@@ -37,7 +37,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * <p>
 	 * The given ExportTable is assumed to be unchanged since latest indexing of
 	 * the given file (empty if it never was indexed). It will be updated
-	 * through calls to {@link IndexingToolkit#export(IDeclaration)}.
+	 * through calls to {@link IndexingBridge#export(IDeclaration)}.
 	 * </p>
 	 * <p>
 	 * The given RodinIndex, FileTable and NameTable are supposed to be just
@@ -48,7 +48,7 @@ public class IndexingToolkit implements IIndexingToolkit {
 	 * @param imports
 	 * @param monitor
 	 */
-	public IndexingToolkit(IRodinFile file,
+	public IndexingBridge(IRodinFile file,
 			Map<IInternalElement, IDeclaration> imports,
 			IProgressMonitor monitor) {
 

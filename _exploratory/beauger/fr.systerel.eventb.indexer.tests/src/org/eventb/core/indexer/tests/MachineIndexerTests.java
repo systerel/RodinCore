@@ -72,7 +72,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declVar1 =
 				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -93,7 +93,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
 		final IOccurrence occDecl = makeDecl(machine, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -115,7 +115,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IInvariant invariant = machine.getInvariant(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(invariant, 0, 4, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -151,7 +151,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRef1 = makeRefPred(invariant, 0, 4, declVar1);
 		final IOccurrence occRef2 = makeRefPred(invariant, 7, 11, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -170,7 +170,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declVar1 =
 				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -193,7 +193,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, MCH_BARE_NAME, EMPTY_MACHINE);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVar1);
+		final BridgeStub tk = new BridgeStub(importer, declVar1);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -228,7 +228,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, MCH_BARE_NAME, EMPTY_MACHINE);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declSet1, declCst1);
+		final BridgeStub tk = new BridgeStub(importer, declSet1, declCst1);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -264,7 +264,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IInvariant invariant = importer.getInvariant(INTERNAL_ELEMENT1);
 		final IOccurrence occVar1 = makeRefPred(invariant, 0, 4, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVar1);
+		final BridgeStub tk = new BridgeStub(importer, declVar1);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -284,7 +284,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence occDecl = makeRef(importer, declVarExp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
+		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -305,7 +305,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1REF_INV);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -331,8 +331,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, IMPORTER, VAR_1REF_INV);
 
-		final ToolkitStub tk =
-				new ToolkitStub(importer, declVarExp1, declVarExp2);
+		final BridgeStub tk =
+				new BridgeStub(importer, declVarExp1, declVarExp2);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -373,7 +373,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IOccurrence refCst1 = makeRefPred(invariant, 0, 4, declCst1);
 		final IOccurrence refSet1 = makeRefPred(invariant, 7, 11, declSet1);
 
-		final ToolkitStub tk = new ToolkitStub(machine, declCst1, declSet1);
+		final BridgeStub tk = new BridgeStub(machine, declCst1, declSet1);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -408,7 +408,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final ITheorem theorem = machine.getTheorem(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(theorem, 0, 4, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -441,7 +441,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IVariant variant = machine.getVariant(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefExpr(variant, 5, 9, declVar1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -471,7 +471,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IDeclaration declEvt1 = newDecl(event, event.getLabel());
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -514,7 +514,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				eventImp.getRefinesClause(INTERNAL_ELEMENT1);
 		final IOccurrence refEventImp = makeRefTarget(refinesImp, declEventExp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declEventExp);
+		final BridgeStub tk = new BridgeStub(importer, declEventExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -574,7 +574,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IParameter prm1 = event.getParameter(INTERNAL_ELEMENT1);
 		final IDeclaration declPrm1 = newDecl(prm1, prm1.getIdentifierString());
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -595,7 +595,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IGuard guard = event.getGuard(INTERNAL_ELEMENT1);
 		final IOccurrence refPrm1 = makeRefPred(guard, 0, 4, declPrm1);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -623,8 +623,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IParameter paramImp = eventImp.getParameter(INTERNAL_ELEMENT1);
 		final IOccurrence refParamImp = makeRefIdent(paramImp, declPrmExp);
 
-		final ToolkitStub tk =
-				new ToolkitStub(importer, declEventExp, declPrmExp);
+		final BridgeStub tk =
+				new BridgeStub(importer, declEventExp, declPrmExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -674,8 +674,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IOccurrence refPredWitImp =
 				makeRefPred(witness, 0, 4, declPrmExp);
 
-		final ToolkitStub tk =
-				new ToolkitStub(importer, declEventExp, declPrmExp);
+		final BridgeStub tk =
+				new BridgeStub(importer, declEventExp, declPrmExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -726,7 +726,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence refVarExp = makeRef(importer, declVarExp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
+		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -765,7 +765,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot importer =
 				createMachine(project, IMPORTER, VAR_1REF_ACT);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
+		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -822,7 +822,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRefPredWit =
 				makeRefPred(witness, 0, 5, declVarExp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
+		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -875,7 +875,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence occRef = makeRefPred(guard, 7, 11, declVarImp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declVarExp);
+		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -904,7 +904,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declPrmImp = newDecl(prmImp, PRM1);
 		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4, declPrmImp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declPrmExp, declEvExp);
+		final BridgeStub tk = new BridgeStub(importer, declPrmExp, declEvExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -963,7 +963,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IOccurrence refPredWitImp =
 				makeRefPred(witness, 0, 4, declPrmExp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declEvExp, declPrmExp);
+		final BridgeStub tk = new BridgeStub(importer, declEvExp, declPrmExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -1004,7 +1004,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declVarImp = newDecl(varImp, CST1);
 		final IOccurrence refInvImp = makeRefPred(invImp, 0, 4, declVarImp);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declCstExp);
+		final BridgeStub tk = new BridgeStub(importer, declCstExp);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -1030,7 +1030,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_THM);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -1058,7 +1058,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, MALFORMED_MACHINE);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -1080,7 +1080,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_NO_IDENT_ATT);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -1108,7 +1108,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				createMachine(project, MCH_BARE_NAME,
 						VAR_1DECL_INV_DOES_NOT_PARSE);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
 

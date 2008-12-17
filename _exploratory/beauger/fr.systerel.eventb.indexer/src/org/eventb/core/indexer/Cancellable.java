@@ -12,7 +12,7 @@ package org.eventb.core.indexer;
 
 import java.util.concurrent.CancellationException;
 
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger
@@ -20,8 +20,8 @@ import org.rodinp.core.index.IIndexingToolkit;
  */
 public abstract class Cancellable {
 
-	protected static void checkCancel(IIndexingToolkit index) {
-		if (index.isCancelled()) {
+	protected static void checkCancel(IIndexingBridge bridge) {
+		if (bridge.isCancelled()) {
 			throw new CancellationException();
 		}
 	}

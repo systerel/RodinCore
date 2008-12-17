@@ -14,7 +14,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.internal.core.index.Descriptor;
@@ -36,16 +36,16 @@ public class FakeIndexer implements IIndexer {
 		return NO_FILES;
 	}
 
-	public boolean index(IIndexingToolkit index) {
-		final IRodinFile file = index.getRootToIndex().getRodinFile();
-		final IDeclaration[] imports = index.getImports();
+	public boolean index(IIndexingBridge bridge) {
+		final IRodinFile file = bridge.getRootToIndex().getRodinFile();
+		final IDeclaration[] imports = bridge.getImports();
 
 		for (Descriptor desc : localIndex.getDescriptors()) {
 			final IInternalElement element = desc.getDeclaration().getElement();
 			final IDeclaration declaration;
 			if (element.getRodinFile().equals(file)) {
 				declaration =
-						index.declare(element, desc.getDeclaration().getName());
+						bridge.declare(element, desc.getDeclaration().getName());
 			} else {
 				declaration = findDeclaration(element, imports);
 			}
@@ -53,7 +53,7 @@ public class FakeIndexer implements IIndexer {
 				for (IOccurrence occ : desc.getOccurrences()) {
 					final IInternalLocation location = occ.getLocation();
 					if (file.equals(location.getRodinFile())) {
-						index.addOccurrence(declaration, occ.getKind(),
+						bridge.addOccurrence(declaration, occ.getKind(),
 								location);
 					}
 				}

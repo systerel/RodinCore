@@ -101,6 +101,9 @@ public class XMLPersistorTests extends IndexTests {
 
 		assertTrue("error while saving", success);
 		assertFile(expected, file);
+		
+		expected.delete();
+		file.delete();
 	}
 
 	private static void restoreTest(File file, IPersistResource expected) {
@@ -114,6 +117,8 @@ public class XMLPersistorTests extends IndexTests {
 		ps.restore(file, persistIM);
 
 		assertIMData(expected, persistIM);
+		
+		file.delete();
 	}
 
 	public void testRestoreNoPIM() throws Exception {

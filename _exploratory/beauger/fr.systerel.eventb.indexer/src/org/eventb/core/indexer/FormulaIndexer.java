@@ -21,7 +21,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IInternalLocation;
 
@@ -34,15 +34,15 @@ public class FormulaIndexer extends DefaultVisitor {
 	private final IInternalElement visited;
 	private final IAttributeType.String attributeType;
 	private final IdentTable visibleIdents;
-	private final IIndexingToolkit index;
+	private final IIndexingBridge bridge;
 
 	public FormulaIndexer(IInternalElement visited,
 			IAttributeType.String attributeType, IdentTable visibleIdents,
-			IIndexingToolkit index) {
+			IIndexingBridge bridge) {
 		this.visited = visited;
 		this.attributeType = attributeType;
 		this.visibleIdents = visibleIdents;
-		this.index = index;
+		this.bridge = bridge;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class FormulaIndexer extends DefaultVisitor {
 			final IInternalLocation loc =
 					getRodinLocation(visited, attributeType, srcLoc);
 
-			index.addOccurrence(declaration, kind, loc);
+			bridge.addOccurrence(declaration, kind, loc);
 		}
 	}
 

@@ -27,7 +27,7 @@ import org.rodinp.core.IRodinProject;
  * @author Nicolas Beauger
  * 
  */
-public interface IIndexRequester {
+public interface IIndexQuery {
 
 	/**
 	 * Returns the declaration for the given element.

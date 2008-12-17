@@ -55,7 +55,7 @@ public class MachineIndexer extends EventBIndexer {
 		final SymbolTable eventST = new SymbolTable(null);
 		final Map<IEvent, SymbolTable> absParamTables =
 				new HashMap<IEvent, SymbolTable>();
-		processImports(index.getImports(), absParamTables, eventST, importST);
+		processImports(bridge.getImports(), absParamTables, eventST, importST);
 		checkCancel();
 
 		final SymbolTable declImportST = new SymbolTable(importST);
@@ -116,7 +116,7 @@ public class MachineIndexer extends EventBIndexer {
 			if (ident.hasIdentifierString()) {
 				final String name = ident.getIdentifierString();
 				final IDeclaration declaration = indexDeclaration(ident, name);
-				index.export(declaration);
+				bridge.export(declaration);
 				refIfRedeclared(name, declImports);
 				declImports.put(declaration);
 			}
@@ -129,7 +129,7 @@ public class MachineIndexer extends EventBIndexer {
 			final IInternalElement element = previousDecl.getElement();
 			if (element instanceof IVariable) {
 				// re-declaration of abstract variable
-				final IInternalElement root = index.getRootToIndex();
+				final IInternalElement root = bridge.getRootToIndex();
 				indexReference(previousDecl, getInternalLocation(root));
 			}
 		}
@@ -139,7 +139,7 @@ public class MachineIndexer extends EventBIndexer {
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IExpressionElement expr : exprs) {
 			final ExpressionIndexer exprIndexer =
-					new ExpressionIndexer(expr, symbolTable, index);
+					new ExpressionIndexer(expr, symbolTable, bridge);
 			exprIndexer.process();
 
 			checkCancel();
@@ -152,7 +152,7 @@ public class MachineIndexer extends EventBIndexer {
 		for (IEvent event : events) {
 			final EventIndexer eventIndexer =
 					new EventIndexer(event, absParamTables, eventST,
-							declImportST, index);
+							declImportST, bridge);
 			eventIndexer.process();
 		}
 	}

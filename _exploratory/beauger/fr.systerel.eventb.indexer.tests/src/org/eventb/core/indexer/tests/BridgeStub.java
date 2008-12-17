@@ -26,18 +26,18 @@ import org.eventb.core.indexer.EventBIndexUtil;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.IInternalLocation;
 
 /**
- * Stub for the indexing toolkit. Stores the actions performed by an indexer.
+ * Stub for the indexing bridge. Stores the actions performed by an indexer.
  * 
  * @author Nicolas Beauger
  * 
  */
-public class ToolkitStub implements IIndexingToolkit {
+public class BridgeStub implements IIndexingBridge {
 
 	private final IEventBRoot root;
 	private final List<IDeclaration> imports;
@@ -53,7 +53,7 @@ public class ToolkitStub implements IIndexingToolkit {
 	 * @param imports
 	 *            imports for the current root.
 	 */
-	public ToolkitStub(IEventBRoot root, IDeclaration... imports) {
+	public BridgeStub(IEventBRoot root, IDeclaration... imports) {
 		this.root = root;
 		this.imports = Arrays.asList(imports);
 		this.declarations = new ArrayList<IDeclaration>();

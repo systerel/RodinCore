@@ -16,7 +16,7 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger
@@ -27,9 +27,9 @@ public class PredicateIndexer extends ElementIndexer {
 	final IPredicateElement element;
 
 	public PredicateIndexer(IPredicateElement element, SymbolTable symbolTable,
-			IIndexingToolkit index) {
+			IIndexingBridge bridge) {
 
-		super(symbolTable, index);
+		super(symbolTable, bridge);
 		this.element = element;
 	}
 

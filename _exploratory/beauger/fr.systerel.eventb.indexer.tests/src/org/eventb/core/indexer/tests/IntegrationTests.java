@@ -28,7 +28,7 @@ import org.eventb.core.IWitness;
 import org.eventb.core.indexer.EventBIndexerPlugin;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexRequester;
+import org.rodinp.core.index.IIndexQuery;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
@@ -174,7 +174,7 @@ public class IntegrationTests extends AbstractRodinDBTests {
 		final IEvent evtM2 = m2.getEvent(INTERNAL_ELEMENT1);
 		final IWitness witM2 = evtM2.getWitness(INTERNAL_ELEMENT1);
 
-		final IIndexRequester requester = RodinIndexer.getIndexRequester();
+		final IIndexQuery requester = RodinIndexer.getIndexRequester();
 
 		// Thread.sleep(800);
 		requester.waitUpToDate();

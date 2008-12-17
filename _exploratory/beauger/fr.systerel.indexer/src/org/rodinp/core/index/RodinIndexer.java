@@ -28,7 +28,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
 import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.IndexRequester;
+import org.rodinp.internal.core.index.IndexQuery;
 import org.rodinp.internal.core.index.OccurrenceKind;
 import org.rodinp.internal.core.index.DeltaQueuer;
 import org.rodinp.internal.core.index.InternalLocation;
@@ -141,8 +141,8 @@ public class RodinIndexer extends Plugin {
 				"neither location is included in the other");
 	}
 
-	public static IIndexRequester getIndexRequester() {
-		return new IndexRequester();
+	public static IIndexQuery getIndexRequester() {
+		return new IndexQuery();
 	}
 
 	// The plug-in ID

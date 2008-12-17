@@ -21,7 +21,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IInternalLocation;
 
 public abstract class EventBIndexer extends Cancellable implements IIndexer {
@@ -30,11 +30,11 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
-	protected IIndexingToolkit index;
+	protected IIndexingBridge bridge;
 
-	public boolean index(IIndexingToolkit index) {
-		this.index = index;
-		final IInternalElement root = index.getRootToIndex();
+	public boolean index(IIndexingBridge bridge) {
+		this.bridge = bridge;
+		final IInternalElement root = bridge.getRootToIndex();
 
 		try {
 			index(root);
@@ -72,33 +72,33 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected IDeclaration indexDeclaration(IInternalElement element,
 			String name) {
 
-		final IDeclaration declaration = index.declare(element, name);
+		final IDeclaration declaration = bridge.declare(element, name);
 		final IInternalLocation loc =
 				getInternalLocation(element.getRodinFile().getRoot());
 
-		index.addOccurrence(declaration, DECLARATION, loc);
+		bridge.addOccurrence(declaration, DECLARATION, loc);
 
 		return declaration;
 	}
 
 	protected void indexReference(IDeclaration declaration,
 			IInternalLocation location) {
-		index.addOccurrence(declaration, REFERENCE, location);
+		bridge.addOccurrence(declaration, REFERENCE, location);
 	}
 
 	protected void export(IDeclaration declaration) {
-		index.export(declaration);
+		bridge.export(declaration);
 	}
 
 	protected void checkCancel() {
-		checkCancel(index);
+		checkCancel(bridge);
 	}
 
 	protected void processPredicateElements(IPredicateElement[] preds,
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer =
-					new PredicateIndexer(elem, symbolTable, index);
+					new PredicateIndexer(elem, symbolTable, bridge);
 			predIndexer.process();
 
 			checkCancel();

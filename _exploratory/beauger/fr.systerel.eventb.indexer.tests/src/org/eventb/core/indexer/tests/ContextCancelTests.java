@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import static org.eventb.core.indexer.tests.CancelToolkitStub.NO_LIMIT;
+import static org.eventb.core.indexer.tests.CancelBridgeStub.NO_LIMIT;
 import static org.eventb.core.indexer.tests.OccUtils.newDecl;
 import static org.eventb.core.indexer.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
@@ -38,8 +38,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL);
 
-		final CancelToolkitStub tk =
-				new CancelToolkitStub(NO_LIMIT, NO_LIMIT, NO_LIMIT, true,
+		final CancelBridgeStub tk =
+				new CancelBridgeStub(NO_LIMIT, NO_LIMIT, NO_LIMIT, true,
 						context);
 
 		final ContextIndexer indexer = new ContextIndexer();
@@ -59,8 +59,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IContextRoot importer =
 				createContext(project, IMPORTER, CST_1DECL_1REF_AXM);
 
-		final CancelToolkitStub tk =
-				new CancelToolkitStub(NO_LIMIT, NO_LIMIT, 1, false, importer,
+		final CancelBridgeStub tk =
+				new CancelBridgeStub(NO_LIMIT, NO_LIMIT, 1, false, importer,
 						declCstExp);
 
 		final ContextIndexer indexer = new ContextIndexer();
@@ -75,8 +75,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
 
-		final CancelToolkitStub tk =
-				new CancelToolkitStub(1, NO_LIMIT, NO_LIMIT, false, context);
+		final CancelBridgeStub tk =
+				new CancelBridgeStub(1, NO_LIMIT, NO_LIMIT, false, context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -106,8 +106,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1DECL_2REF_2AXM);
 
-		final CancelToolkitStub tk =
-				new CancelToolkitStub(NO_LIMIT, 2, NO_LIMIT, false, context);
+		final CancelBridgeStub tk =
+				new CancelBridgeStub(NO_LIMIT, 2, NO_LIMIT, false, context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 

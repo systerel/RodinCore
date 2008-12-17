@@ -30,7 +30,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger
@@ -42,7 +42,7 @@ public class EventIndexer extends Cancellable {
 	private final Map<IEvent, SymbolTable> absParamTables;
 	private final SymbolTable eventST;
 	private final SymbolTable declImportST;
-	private final IIndexingToolkit index;
+	private final IIndexingBridge bridge;
 
 	/**
 	 * Constructor.
@@ -57,16 +57,16 @@ public class EventIndexer extends Cancellable {
 	 *            <li>local declarations</li>
 	 *            <li>imported declarations</li>
 	 *            </ul>
-	 * @param index
+	 * @param bridge
 	 */
 	public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
 			SymbolTable eventST, SymbolTable declImportST,
-			IIndexingToolkit index) {
+			IIndexingBridge bridge) {
 		this.declImportST = declImportST;
 		this.event = event;
 		this.absParamTables = absParamTables;
 		this.eventST = eventST;
-		this.index = index;
+		this.bridge = bridge;
 	}
 
 	public void process() throws RodinDBException {
@@ -126,7 +126,7 @@ public class EventIndexer extends Cancellable {
 	 */
 	private void addRefAttribute(final IDeclaration declaration,
 			IInternalElement element, IAttributeType.String attribute) {
-		index.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
+		bridge.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
 				attribute));
 	}
 
@@ -149,8 +149,8 @@ public class EventIndexer extends Cancellable {
 	private void processEventLabel() throws RodinDBException {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
-			final IDeclaration declaration = index.declare(event, eventLabel);
-			index.export(declaration);
+			final IDeclaration declaration = bridge.declare(event, eventLabel);
+			bridge.export(declaration);
 		}
 	}
 
@@ -226,9 +226,9 @@ public class EventIndexer extends Cancellable {
 			if (parameter.hasIdentifierString()) {
 				final String ident = parameter.getIdentifierString();
 
-				IDeclaration declaration = index.declare(parameter, ident);
+				IDeclaration declaration = bridge.declare(parameter, ident);
 				totalST.put(declaration);
-				index.export(declaration);
+				bridge.export(declaration);
 
 				refAnyAbstractParam(ident, parameter, totalST);
 			}
@@ -256,7 +256,7 @@ public class EventIndexer extends Cancellable {
 			throws RodinDBException {
 		for (IAction action : actions) {
 			final AssignmentIndexer assignIndexer =
-					new AssignmentIndexer(action, eventTable, index);
+					new AssignmentIndexer(action, eventTable, bridge);
 			assignIndexer.process();
 
 			checkCancel();
@@ -267,7 +267,7 @@ public class EventIndexer extends Cancellable {
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IPredicateElement elem : preds) {
 			final PredicateIndexer predIndexer =
-					new PredicateIndexer(elem, symbolTable, index);
+					new PredicateIndexer(elem, symbolTable, bridge);
 			predIndexer.process();
 
 			checkCancel();
@@ -275,7 +275,7 @@ public class EventIndexer extends Cancellable {
 	}
 
 	protected void checkCancel() {
-		checkCancel(index);
+		checkCancel(bridge);
 	}
 
 }

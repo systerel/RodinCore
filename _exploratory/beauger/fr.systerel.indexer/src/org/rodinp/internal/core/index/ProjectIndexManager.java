@@ -93,11 +93,11 @@ public class ProjectIndexManager {
 
 			final Map<IInternalElement, IDeclaration> fileImports =
 					computeImports(file);
-			final IndexingToolkit indexingToolkit =
-					new IndexingToolkit(file, fileImports, monitor);
+			final IndexingBridge bridge =
+					new IndexingBridge(file, fileImports, monitor);
 
 			final FileIndexingManager fim = FileIndexingManager.getDefault();
-			final IIndexingResult result = fim.doIndexing(indexingToolkit);
+			final IIndexingResult result = fim.doIndexing(bridge);
 
 			checkCancel(monitor);
 			if (result.isSuccess()) {
@@ -153,7 +153,7 @@ public class ProjectIndexManager {
 		for (IInternalElement element : occurrencesMap.keySet()) {
 			final Set<IOccurrence> occurrences = occurrencesMap.get(element);
 			final Descriptor descriptor = index.getDescriptor(element);
-			// not null assumed from toolkit checks
+			// not null assumed from bridge checks
 			for (IOccurrence occurrence : occurrences) {
 				descriptor.addOccurrence(occurrence);
 			}

@@ -17,18 +17,18 @@ import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 public abstract class ElementIndexer extends Cancellable {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	protected final SymbolTable symbolTable;
-	private final IIndexingToolkit index;
+	private final IIndexingBridge bridge;
 
-	public ElementIndexer(SymbolTable symbolTable, IIndexingToolkit index) {
+	public ElementIndexer(SymbolTable symbolTable, IIndexingBridge bridge) {
 		this.symbolTable = symbolTable;
-		this.index = index;
+		this.bridge = bridge;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public abstract class ElementIndexer extends Cancellable {
 
 		if (!identTable.isEmpty()) {
 			final FormulaIndexer formulaIndexer =
-					new FormulaIndexer(element, attribute, identTable, index);
+					new FormulaIndexer(element, attribute, identTable, bridge);
 
 			formula.accept(formulaIndexer);
 		}
@@ -89,6 +89,6 @@ public abstract class ElementIndexer extends Cancellable {
 	}
 
 	private void checkCancel() {
-		checkCancel(index);
+		checkCancel(bridge);
 	}
 }

@@ -62,7 +62,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IDeclaration declCst1 =
 				getDeclCst(context, INTERNAL_ELEMENT1, CST1);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -84,7 +84,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IOccurrence occDecl = makeDecl(context, declCst1);
 
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -108,7 +108,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRef = makeRefPred(axiom, 0, 4, declCst1);
 
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -146,7 +146,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRef2 = makeRefPred(axiom, 7, 11, declCst1);
 
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -165,7 +165,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IDeclaration declCst1 =
 				getDeclCst(context, INTERNAL_ELEMENT1, CST1);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -188,7 +188,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot importer =
 				createContext(project, "importer", EMPTY_CONTEXT);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declCst1);
+		final BridgeStub tk = new BridgeStub(importer, declCst1);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -223,7 +223,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
 		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8, declCst1);
 
-		final ToolkitStub tk = new ToolkitStub(importer, declCst1);
+		final BridgeStub tk = new BridgeStub(importer, declCst1);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -244,7 +244,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, CST_1REF_AXM);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -270,8 +270,8 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot importer =
 				createContext(project, "importer", CST_1REF_AXM);
 
-		final ToolkitStub tk =
-				new ToolkitStub(importer, declCstExp1, declCstExp2);
+		final BridgeStub tk =
+				new BridgeStub(importer, declCstExp1, declCstExp2);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -307,7 +307,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IDeclaration declSet1 =
 				getDeclSet(context, set1IntName, set1Name);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -336,7 +336,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IOccurrence occRef = makeRefPred(thm, 9, 13, declCst1);
 
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -349,7 +349,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IMachineRoot machine =
 				createMachine(project, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
 
-		final ToolkitStub tk = new ToolkitStub(machine);
+		final BridgeStub tk = new BridgeStub(machine);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -377,7 +377,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IContextRoot context =
 				createContext(project, CTX_BARE_NAME, MALFORMED_CONTEXT);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -405,7 +405,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				createContext(project, CTX_BARE_NAME,
 						CST_1DECL_1AXM_NO_PRED_ATT);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 
@@ -434,7 +434,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				createContext(project, CTX_BARE_NAME,
 						CST_1DECL_1AXM_DOES_NOT_PARSE);
 
-		final ToolkitStub tk = new ToolkitStub(context);
+		final BridgeStub tk = new BridgeStub(context);
 
 		final ContextIndexer indexer = new ContextIndexer();
 

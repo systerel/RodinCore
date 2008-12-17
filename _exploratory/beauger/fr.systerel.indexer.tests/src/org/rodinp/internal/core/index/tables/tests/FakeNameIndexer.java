@@ -25,7 +25,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -50,15 +50,15 @@ public class FakeNameIndexer implements IIndexer {
 		indexedElements = new HashMap<String, Set<IInternalElement>>();
 	}
 
-	public boolean index(IIndexingToolkit index) {
+	public boolean index(IIndexingBridge bridge) {
 		indexedElements.clear();
 
-		IRodinFile rodinFile = index.getRootToIndex().getRodinFile();
+		IRodinFile rodinFile = bridge.getRootToIndex().getRodinFile();
 		try {
 			rodinFile.clear(true, null);
 			for (String name : names) {
 				final NamedElement elt = createNamedElement(rodinFile, name);
-				final IDeclaration declaration = index.declare(elt, name);
+				final IDeclaration declaration = bridge.declare(elt, name);
 				final HashSet<IInternalElement> set =
 						new HashSet<IInternalElement>();
 				indexedElements.put(name, set);
@@ -70,7 +70,7 @@ public class FakeNameIndexer implements IIndexer {
 									+ i);
 					final IInternalLocation loc =
 							RodinIndexer.getInternalLocation(element);
-					index.addOccurrence(declaration, TEST_KIND, loc);
+					bridge.addOccurrence(declaration, TEST_KIND, loc);
 					if (DEBUG) {
 						System.out.println(name
 								+ ": "

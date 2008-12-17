@@ -13,7 +13,7 @@ package org.rodinp.internal.core.index;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexRequester;
+import org.rodinp.core.index.IIndexQuery;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
@@ -22,7 +22,7 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
  * @author Nicolas Beauger
  * 
  */
-public class IndexRequester implements IIndexRequester {
+public class IndexQuery implements IIndexQuery {
 
 	private static final IOccurrence[] EMPTY_OCCURRENCES = new IOccurrence[] {};
 

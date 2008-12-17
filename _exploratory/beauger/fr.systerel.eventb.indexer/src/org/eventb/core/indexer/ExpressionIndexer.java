@@ -16,7 +16,7 @@ import org.eventb.core.IExpressionElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger
@@ -27,8 +27,8 @@ public class ExpressionIndexer extends ElementIndexer {
 	private final IExpressionElement element;
 
 	public ExpressionIndexer(IExpressionElement element,
-			SymbolTable symbolTable, IIndexingToolkit index) {
-		super(symbolTable, index);
+			SymbolTable symbolTable, IIndexingBridge bridge) {
+		super(symbolTable, bridge);
 		this.element = element;
 	}
 

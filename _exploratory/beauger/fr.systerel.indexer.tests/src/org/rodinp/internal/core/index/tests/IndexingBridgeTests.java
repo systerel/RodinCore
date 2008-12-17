@@ -29,10 +29,10 @@ import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.IIndexingResult;
-import org.rodinp.internal.core.index.IndexingToolkit;
+import org.rodinp.internal.core.index.IndexingBridge;
 import org.rodinp.internal.core.index.Occurrence;
 
-public class IndexingToolkitTests extends IndexTests {
+public class IndexingBridgeTests extends IndexTests {
 
 	private static IRodinProject project;
 	private static IRodinFile file1;
@@ -47,7 +47,7 @@ public class IndexingToolkitTests extends IndexTests {
 	private static final Map<IInternalElement, IDeclaration> emptyImports =
 			Collections.emptyMap();
 
-	public IndexingToolkitTests(String name) {
+	public IndexingBridgeTests(String name) {
 		super(name, true);
 	}
 
@@ -70,15 +70,15 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testDeclare() {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
-		indexingToolkit.declare(elt1, name1);
+		bridge.declare(elt1, name1);
 
 		final IDeclaration expected = new Declaration(elt1, name1);
 
-		indexingToolkit.complete();
-		final IIndexingResult result = indexingToolkit.getResult();
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
 
 		assertTrue("indexing failed", result.isSuccess());
 
@@ -90,12 +90,12 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testDeclareNullElem() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports,
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports,
 						new NullProgressMonitor());
 
 		try {
-			indexingToolkit.declare(null, name1);
+			bridge.declare(null, name1);
 			fail("NullPointerException expected");
 		} catch (NullPointerException e) {
 			// OK
@@ -103,11 +103,11 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testDeclareNullName() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
 		try {
-			indexingToolkit.declare(elt1, null);
+			bridge.declare(elt1, null);
 			fail("NullPointerException expected");
 		} catch (NullPointerException e) {
 			// OK
@@ -115,11 +115,11 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testDeclareNotLocal() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, f1ImportsElt2, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, f1ImportsElt2, null);
 
 		try {
-			indexingToolkit.declare(elt2, name2);
+			bridge.declare(elt2, name2);
 			fail("IllegalArgumentException expected");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -127,13 +127,13 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testDeclareTwice() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
-		indexingToolkit.declare(elt1, name1);
+		bridge.declare(elt1, name1);
 
 		try {
-			indexingToolkit.declare(elt1, name1);
+			bridge.declare(elt1, name1);
 			fail("IllegalArgumentException expected");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -141,20 +141,20 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testAddLocalOccurrence() {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
-		final IDeclaration declElt1 = indexingToolkit.declare(elt1, name1);
+		final IDeclaration declElt1 = bridge.declare(elt1, name1);
 		final IInternalLocation loc =
 				RodinIndexer.getInternalLocation(file1.getRoot());
-		indexingToolkit.addOccurrence(declElt1, TEST_KIND, loc);
+		bridge.addOccurrence(declElt1, TEST_KIND, loc);
 
 		final IOccurrence expOcc = new Occurrence(TEST_KIND, loc, declElt1);
 		final Set<IOccurrence> expected = new HashSet<IOccurrence>();
 		expected.add(expOcc);
 
-		indexingToolkit.complete();
-		final IIndexingResult result = indexingToolkit.getResult();
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
 
 		assertTrue("indexing failed", result.isSuccess());
 
@@ -166,19 +166,19 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testAddImportOccurrence() {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, f1ImportsElt2, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, f1ImportsElt2, null);
 
 		final IInternalLocation loc =
 				RodinIndexer.getInternalLocation(file1.getRoot());
-		indexingToolkit.addOccurrence(declElt2, TEST_KIND, loc);
+		bridge.addOccurrence(declElt2, TEST_KIND, loc);
 
 		final IOccurrence expOcc = new Occurrence(TEST_KIND, loc, declElt2);
 		final Set<IOccurrence> expected = new HashSet<IOccurrence>();
 		expected.add(expOcc);
 
-		indexingToolkit.complete();
-		final IIndexingResult result = indexingToolkit.getResult();
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
 
 		assertTrue("indexing failed", result.isSuccess());
 
@@ -189,15 +189,20 @@ public class IndexingToolkitTests extends IndexTests {
 		assertEquals("Bad occurrences", expected, actual);
 	}
 
+	// TODO test faulty occurrences
+	// not local nor imported
+	// local but not declared
+	
+	
 	public void testLocalExport() {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
-		final IDeclaration declElt1 = indexingToolkit.declare(elt1, name1);
-		indexingToolkit.export(declElt1);
+		final IDeclaration declElt1 = bridge.declare(elt1, name1);
+		bridge.export(declElt1);
 
-		indexingToolkit.complete();
-		final IIndexingResult result = indexingToolkit.getResult();
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
 
 		assertTrue("indexing failed", result.isSuccess());
 
@@ -210,16 +215,16 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testImportExport() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, f1ImportsElt2, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, f1ImportsElt2, null);
 
-		indexingToolkit.export(declElt2);
+		bridge.export(declElt2);
 
 		final Set<IDeclaration> expected = new HashSet<IDeclaration>();
 		expected.add(declElt2);
 
-		indexingToolkit.complete();
-		final IIndexingResult result = indexingToolkit.getResult();
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
 
 		assertTrue("indexing failed", result.isSuccess());
 
@@ -230,11 +235,11 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testIllegalExport() throws Exception {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, emptyImports, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
 
 		try {
-			indexingToolkit.export(declElt2);
+			bridge.export(declElt2);
 			fail("expected IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			// OK
@@ -242,12 +247,12 @@ public class IndexingToolkitTests extends IndexTests {
 	}
 
 	public void testGetImports() {
-		IndexingToolkit indexingToolkit =
-				new IndexingToolkit(file1, f1ImportsElt2, null);
+		IndexingBridge bridge =
+				new IndexingBridge(file1, f1ImportsElt2, null);
 
 		final IDeclaration[] expected = new IDeclaration[] { declElt2 };
 
-		final IDeclaration[] actual = indexingToolkit.getImports();
+		final IDeclaration[] actual = bridge.getImports();
 		assertSameElements(expected, actual, "imports");
 	}
 

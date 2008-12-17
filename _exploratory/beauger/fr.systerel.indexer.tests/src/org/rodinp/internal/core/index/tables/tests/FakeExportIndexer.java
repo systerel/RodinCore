@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.rodinp.internal.core.index.tests.FakeIndexer;
@@ -30,14 +30,14 @@ public class FakeExportIndexer extends FakeIndexer {
 	}
 
 	@Override
-	public boolean index(IIndexingToolkit index) {
-		final boolean success = super.index(index);
+	public boolean index(IIndexingBridge bridge) {
+		final boolean success = super.index(bridge);
 		if (!success) {
 			return false;
 		}
-		final IRodinFile file = index.getRootToIndex().getRodinFile();
+		final IRodinFile file = bridge.getRootToIndex().getRodinFile();
 		for (IDeclaration declaration : exportTable.get(file)) {
-			index.export(declaration);
+			bridge.export(declaration);
 		}
 		return true;
 	}

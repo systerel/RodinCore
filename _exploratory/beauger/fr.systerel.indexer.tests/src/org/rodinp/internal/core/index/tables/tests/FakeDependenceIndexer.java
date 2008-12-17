@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.internal.core.index.tables.ExportTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 
@@ -37,12 +37,12 @@ public class FakeDependenceIndexer extends FakeExportIndexer {
 	}
 
 	@Override
-	public boolean index(IIndexingToolkit index) {
-		final boolean success = super.index(index);
+	public boolean index(IIndexingBridge bridge) {
+		final boolean success = super.index(bridge);
 		if (!success) {
 			return false;
 		}
-		final IRodinFile file = index.getRootToIndex().getRodinFile();
+		final IRodinFile file = bridge.getRootToIndex().getRodinFile();
 		indexingOrder.add(file);
 		return true;
 	}

@@ -13,7 +13,7 @@ package org.rodinp.internal.core.index.tests;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingToolkit;
+import org.rodinp.core.index.IIndexingBridge;
 
 public class FakeExceptionIndexer implements IIndexer {
 
@@ -29,7 +29,7 @@ public class FakeExceptionIndexer implements IIndexer {
 		return ID;
 	}
 
-	public boolean index(IIndexingToolkit index) {
+	public boolean index(IIndexingBridge bridge) {
 		throw new NullPointerException();
 	}
 
