@@ -30,6 +30,8 @@ import fr.systerel.eventb.proofpurger.popup.actions.ProofPurgerContentProvider;
 
 public class ProofPurgerContentProviderTests extends TestCase {
 
+	private static final IPRRoot[] NO_ROOT = new IPRRoot[0];
+	
 	private static final IRodinDB db = RodinCore.getRodinDB();
 	
 	// variables for testing with several projects
@@ -157,15 +159,24 @@ public class ProofPurgerContentProviderTests extends TestCase {
 	}
 
 	/**
-	 * Creates and initializes a ProofPurgerContentProvider from the given proofs.
+	 * Creates and initializes a ProofPurgerContentProvider from the given
+	 * proofs with no files to delete.
 	 * 
-	 * @param cpProofs The proofs from which to initialize the CP.
+	 * @param cpProofs
+	 *            The proofs from which to initialize the CP.
 	 * @return The newly created ProofPurgerContentProvider
 	 */
-	private ProofPurgerContentProvider initCP(IPRProof... cpProofs) {
-		return new ProofPurgerContentProvider(cpProofs);
+	private static ProofPurgerContentProvider initCP(IPRProof... cpProofs) {
+		return initCP(cpProofs, NO_ROOT);
 	}
 
+	private static ProofPurgerContentProvider initCP(IPRProof[] cpProofs,
+			IPRRoot[] cpFiles) {
+		return new ProofPurgerContentProvider(cpProofs, cpFiles);
+	}
+
+	
+	
 	/**
 	 * Tests hasChildren and GetChildren with null input argument.
 	 */

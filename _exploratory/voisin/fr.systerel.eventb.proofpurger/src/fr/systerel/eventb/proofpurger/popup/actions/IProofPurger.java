@@ -10,8 +10,11 @@
  *******************************************************************************/
 package fr.systerel.eventb.proofpurger.popup.actions;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -26,9 +29,10 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IProofPurger {
 
-	IPRProof[] computeUnusedProofs(IRodinElement[] projectsOrFiles,
-			IProgressMonitor monitor) throws RodinDBException;
+	void computeUnusedProofsOrFiles(IRodinElement[] projectsOrFiles,
+			IProgressMonitor monitor, List<IPRProof> unusedProofs,
+			List<IPRRoot> unusedProofFiles) throws RodinDBException;
 
-	void purgeUnusedProofs(IPRProof[] proofs, IProgressMonitor monitor)
-			throws RodinDBException;
+	void purgeUnusedProofsOrFiles(List<IPRProof> proofs, List<IPRRoot> files,
+			IProgressMonitor monitor) throws RodinDBException;
 }

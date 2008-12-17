@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String proofpurgerselectiondialog_delete;
 	public static String proofpurgerselectiondialog_proofpurgerselection;
 	public static String proofpurgerselectiondialog_selectproofstodelete;
+	public static String proofpurger_tryingtodeleteusedfiles;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

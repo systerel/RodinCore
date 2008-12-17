@@ -10,13 +10,15 @@
  *******************************************************************************/
 package fr.systerel.eventb.proofpurger.popup.actions;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -27,17 +29,21 @@ import org.eventb.ui.EventBUIPlugin;
  */
 public class ProofPurgerSelectionDialog extends CheckedTreeSelectionDialog {
 
+	private final ITreeContentProvider contentProvider;
+	private final List<IPRProof> selectedProofs;
+	private final List<IPRRoot> selectedFiles;
+	
 	/**
 	 * Constructor.
 	 * 
 	 * @param parentShell
 	 *            The shell to parent from.
-	 * @param proofs
-	 *            The proofs from which the user will make his selection.
 	 */
-	ProofPurgerSelectionDialog(Shell parentShell, IPRProof[] proofs) {
-		super(parentShell, new ProofPurgerLabelProvider(), new ProofPurgerContentProvider(
-				proofs));
+	ProofPurgerSelectionDialog(Shell parentShell, ITreeContentProvider contentProvider) {
+		super(parentShell, new ProofPurgerLabelProvider(), contentProvider);
+		this.contentProvider = contentProvider;
+		this.selectedProofs = new ArrayList<IPRProof>();
+		this.selectedFiles = new ArrayList<IPRRoot>();
 		this.setInput(EventBUIPlugin.getRodinDatabase());
 		this.setMessage(Messages.proofpurgerselectiondialog_selectproofstodelete);
 	}
@@ -65,18 +71,46 @@ public class ProofPurgerSelectionDialog extends CheckedTreeSelectionDialog {
 		treeViewer.setCheckedElements(items);
 	}
 
+    @Override
+	protected void computeResult() {
+        final List<Object> result = new ArrayList<Object>();
+    	
+    	final CheckboxTreeViewer treeViewer = getTreeViewer();
+
+    	// filter selected leafs (proofs or files actually)
+		for (Object o : treeViewer.getCheckedElements()) {
+			if (!contentProvider.hasChildren(o)) {
+				result.add(o);
+				addToSpecificList(o);
+			}
+		}
+		setResult(result);
+    }
+
+	private void addToSpecificList(Object o) {
+		if (o instanceof IPRProof) {
+			selectedProofs.add((IPRProof) o);
+		} else if (o instanceof IPRRoot) {
+			selectedFiles.add((IPRRoot) o);
+		}
+	}
+
+	
 	/**
 	 * Extract the proofs from the selected elements of the tree.
 	 * 
 	 * @return The selected proofs.
 	 */
-	public IPRProof[] getSelectedProofs() {
-		Set<IPRProof> result = new LinkedHashSet<IPRProof>();
-		for (Object o: this.getResult()) {
-			if (o instanceof IPRProof) {
-				result.add((IPRProof) o);
-			}
-		}
-		return result.toArray(new IPRProof[result.size()]);
+	public List<IPRProof> getSelectedProofs() {
+		return new ArrayList<IPRProof>(selectedProofs);
+	}
+
+	/**
+	 * Extract the files from the selected elements of the tree.
+	 * 
+	 * @return The selected proofs.
+	 */
+	public List<IPRRoot> getSelectedFiles() {
+		return new ArrayList<IPRRoot>(selectedFiles);
 	}
 }

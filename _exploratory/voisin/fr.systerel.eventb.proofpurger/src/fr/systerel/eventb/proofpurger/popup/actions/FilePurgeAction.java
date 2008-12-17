@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -64,10 +65,13 @@ public class FilePurgeAction implements IObjectActionDelegate {
 
 		private final IRodinElement[] prFiles;
 
-		private IPRProof[] result;
+		private final List<IPRProof> unusedProofs;
+		private final List<IPRRoot> unusedFiles;
 
 		public ComputeUnused(IRodinElement[] prFiles) {
 			this.prFiles = prFiles;
+			this.unusedProofs = new ArrayList<IPRProof>();
+			this.unusedFiles = new ArrayList<IPRRoot>();
 		}
 
 		public void run(IProgressMonitor monitor)
@@ -75,8 +79,8 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			try {
 				if (prFiles == null)
 					return;
-				result = ProofPurger.getDefault().computeUnusedProofs(prFiles,
-						monitor);
+				ProofPurger.getDefault().computeUnusedProofsOrFiles(prFiles,
+						monitor, unusedProofs, unusedFiles);
 				if (monitor.isCanceled()) {
 					wasCancelled = true;
 				}
@@ -89,9 +93,14 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			}
 		}
 
-		public IPRProof[] getResult() {
-			return result;
+		public IPRProof[] getUnusedProofs() {
+			return unusedProofs.toArray(new IPRProof[unusedProofs.size()]);
 		}
+
+		public IPRRoot[] getUnusedProofFiles() {
+			return unusedFiles.toArray(new IPRRoot[unusedFiles.size()]);
+		}
+
 	}
 
 	/**
@@ -100,10 +109,12 @@ public class FilePurgeAction implements IObjectActionDelegate {
 	 */
 	private static class PurgeProofs extends Operation {
 
-		private final IPRProof[] proofs;
+		private final List<IPRProof> proofs;
+		private final List<IPRRoot> files;
 
-		public PurgeProofs(IPRProof[] proofs) {
+		public PurgeProofs(List<IPRProof> proofs, List<IPRRoot> files) {
 			this.proofs = proofs;
+			this.files = files;
 		}
 
 		public void run(IProgressMonitor monitor)
@@ -111,7 +122,7 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			try {
 				if (proofs == null)
 					return;
-				ProofPurger.getDefault().purgeUnusedProofs(proofs, monitor);
+				ProofPurger.getDefault().purgeUnusedProofsOrFiles(proofs, files, monitor);
 				if (monitor.isCanceled()) {
 					wasCancelled = true;
 				}
@@ -149,15 +160,20 @@ public class FilePurgeAction implements IObjectActionDelegate {
 		launchPurgerOperation(computeUnused);
 		if (computeUnused.wasCancelled())
 			return;
-		IPRProof[] prProofs = computeUnused.getResult();
+		final IPRProof[] unusedProofs = computeUnused.getUnusedProofs();
+		final IPRRoot[] unusedFiles = computeUnused.getUnusedProofFiles();
 		// FIXME sometimes null sometimes []
-		if (prProofs.length == 0) {
+		if (unusedProofs.length == 0 && unusedFiles.length == 0) {
 			UIUtils.showInfo(Messages.filepurgeaction_noproofstopurge);
 			return;
 		}
-		final IPRProof[] proofsToDelete = launchPurgerSelectionDialog(prProofs);
-		if (proofsToDelete != null) {
-			launchPurgerOperation(new PurgeProofs(proofsToDelete));
+		final List<IPRProof> selectedProofs = new ArrayList<IPRProof>();
+		final List<IPRRoot> selectedFiles = new ArrayList<IPRRoot>();
+		final boolean purge =
+				launchPurgerSelectionDialog(unusedProofs, unusedFiles,
+						selectedProofs, selectedFiles);
+		if (purge) {
+			launchPurgerOperation(new PurgeProofs(selectedProofs, selectedFiles));
 		}
 	}
 
@@ -191,15 +207,20 @@ public class FilePurgeAction implements IObjectActionDelegate {
 		return null;
 	}
 
-	private IPRProof[] launchPurgerSelectionDialog(IPRProof[] prProofs) {
+	private boolean launchPurgerSelectionDialog(IPRProof[] unusedProofs,
+			IPRRoot[] unusedFiles, List<IPRProof> selectedProofs,
+			List<IPRRoot> selectedFiles) {
 		ProofPurgerSelectionDialog dialog = new ProofPurgerSelectionDialog(site
-				.getShell(), prProofs);
+				.getShell(), new ProofPurgerContentProvider(
+						unusedProofs, unusedFiles));
 		dialog.create();
 		final int userAction = dialog.open();
 		if (userAction == Window.OK) {
-			return dialog.getSelectedProofs();
+			selectedProofs.addAll(dialog.getSelectedProofs());
+			selectedFiles.addAll(dialog.getSelectedFiles());
+			return true;
 		}
-		return null;
+		return false;
 	}
 
 	private void launchPurgerOperation(IRunnableWithProgress operation) {

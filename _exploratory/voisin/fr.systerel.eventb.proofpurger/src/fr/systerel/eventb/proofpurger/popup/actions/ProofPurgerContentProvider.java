@@ -33,8 +33,8 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	private static final Object[] NO_OBJECTS = new Object[0];
 	
 	private final Set<IPRProof> prProofs;
-	private final Map<IPRRoot, LinkedHashSet<IPRProof>> mapFileProofs;
-	private final Map<IRodinProject, LinkedHashSet<IPRRoot>> mapProjectFiles;
+	private final Map<IPRRoot, Set<IPRProof>> mapFileProofs;
+	private final Map<IRodinProject, Set<IPRRoot>> mapProjectFiles;
 
 	/**
 	 * Constructor. Initializes its underlying tree structure from the given
@@ -43,12 +43,13 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	 * @param proofs
 	 *            The proofs that will be provided.
 	 */
-	public ProofPurgerContentProvider(IPRProof[] proofs) {
+	public ProofPurgerContentProvider(IPRProof[] proofs, IPRRoot[] files) {
 		this.prProofs = new LinkedHashSet<IPRProof>();
-		this.mapFileProofs = new LinkedHashMap<IPRRoot, LinkedHashSet<IPRProof>>();
-		this.mapProjectFiles = new LinkedHashMap<IRodinProject, LinkedHashSet<IPRRoot>>();
+		this.mapFileProofs = new LinkedHashMap<IPRRoot, Set<IPRProof>>();
+		this.mapProjectFiles = new LinkedHashMap<IRodinProject, Set<IPRRoot>>();
 
 		updateFromProofs(proofs);
+		updateWithFiles(files);
 	}
 
 	public void dispose() {
@@ -65,14 +66,14 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 			return projects.toArray(new IRodinProject[projects.size()]);
 		}
 		if (parent instanceof IRodinProject) {
-			LinkedHashSet<IPRRoot> prFiles = mapProjectFiles.get(parent);
+			Set<IPRRoot> prFiles = mapProjectFiles.get(parent);
 			if (prFiles == null) {
 				return NO_OBJECTS;
 			}
 			return prFiles.toArray(new IPRRoot[prFiles.size()]);
 		}
 		if (parent instanceof IPRRoot) {
-			LinkedHashSet<IPRProof> proofs = mapFileProofs.get(parent);
+			Set<IPRProof> proofs = mapFileProofs.get(parent);
 			if (proofs == null) {
 				return NO_OBJECTS;
 			}
@@ -124,8 +125,9 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	private <T extends Object, U extends Object> void updateMap(Map<T, LinkedHashSet<U>> map, T t, U u) {
-		LinkedHashSet<U> currentSet = map.get(t);
+	private static <T extends Object, U extends Object> void updateMap(
+			Map<T, Set<U>> map, T t, U u) {
+		Set<U> currentSet = map.get(t);
 		if (currentSet == null) {
 			currentSet = new LinkedHashSet<U>();
 			currentSet.add(u);
@@ -147,6 +149,13 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 	private void updateProjects() {
 		mapProjectFiles.clear();
 		for (IPRRoot f: mapFileProofs.keySet()) {
+			final IRodinProject prj = f.getRodinProject();
+			updateMap(mapProjectFiles, prj, f);
+		}
+	}
+
+	private void updateWithFiles(IPRRoot[] files) {
+		for (IPRRoot f: files) {
 			final IRodinProject prj = f.getRodinProject();
 			updateMap(mapProjectFiles, prj, f);
 		}

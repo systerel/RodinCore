@@ -64,12 +64,11 @@ public class ProofPurger implements IProofPurger {
 	 *            given monitor. Accepts <code>null</code>, indicating that no
 	 *            progress should be reported and that the operation cannot be
 	 *            canceled.
-	 * @return An array containing potentially unused proofs.
 	 * @throws RodinDBException
 	 */
-	public IPRProof[] computeUnusedProofs(IRodinElement[] projectsOrFiles,
-			IProgressMonitor monitor) throws RodinDBException {
-		final IPRProof[] cancelReturnValue = new IPRProof[0];
+	public void computeUnusedProofsOrFiles(IRodinElement[] projectsOrFiles,
+			IProgressMonitor monitor, List<IPRProof> unusedProofs,
+			List<IPRRoot> unusedProofFiles) throws RodinDBException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		progress.beginTask(Messages.proofpurger_computingunusedproofs, 100);
 		progress.subTask(Messages.proofpurger_extractingprooffiles);
@@ -77,18 +76,16 @@ public class ProofPurger implements IProofPurger {
 		Set<IPRRoot> prFilesToProcess =
 				extractProofFiles(projectsOrFiles, progress.newChild(20));
 		if (progress.isCanceled() || prFilesToProcess == null)
-			return cancelReturnValue;
-		// TODO delete already empty proof files with no PS
+			return;
 
 		progress.subTask(Messages.proofpurger_extractingunusedproofs);
 		debugHook();
-		List<IPRProof> unusedProofs =
-				extractUnusedProofs(prFilesToProcess, progress.newChild(80));
+		extractUnusedProofsOrFiles(prFilesToProcess, progress.newChild(80),
+				unusedProofs, unusedProofFiles);
 		if (progress.isCanceled() || unusedProofs == null)
-			return cancelReturnValue;
+			return;
+		
 		debugHook();
-
-		return unusedProofs.toArray(new IPRProof[unusedProofs.size()]);
 	}
 
 	/**
@@ -106,34 +103,103 @@ public class ProofPurger implements IProofPurger {
 	 * @throws IllegalArgumentException
 	 * @throws RodinDBException
 	 */
-	public void purgeUnusedProofs(IPRProof[] proofs, IProgressMonitor monitor)
+	public void purgeUnusedProofsOrFiles(List<IPRProof> proofs,
+			List<IPRRoot> files, IProgressMonitor monitor)
 			throws IllegalArgumentException, RodinDBException {
+		// TODO encapsulate into RodinCore.run()
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		progress.beginTask(Messages.proofpurger_deletingselectedproofs, 100);
 		progress.subTask(Messages.proofpurger_verifyingselectedproofs);
 		debugHook();
-		if (!areAllUnused(proofs)) {
-			throw new IllegalArgumentException(
-					Messages.proofpurger_tryingtodeleteusedproofs);
-		}
-		progress.worked(20);
+		verifyProofsAndFiles(proofs, files, progress);
+		progress.worked(10);
 		if (progress.isCanceled())
 			return;
 
 		progress.subTask(Messages.proofpurger_deleting);
 		debugHook();
-		Set<IPRRoot> openProofFiles = new LinkedHashSet<IPRRoot>();
-		deleteProofs(proofs, openProofFiles, progress.newChild(60));
-		progress.setWorkRemaining(20);
+		final Set<IPRRoot> openProofFiles = new LinkedHashSet<IPRRoot>();
+		deleteProofs(proofs, progress.newChild(50), openProofFiles);
+		progress.setWorkRemaining(40);
 		if (progress.isCanceled())
 			return;
+		debugHook();
+
+		final List<IPRRoot> toDelete = new ArrayList<IPRRoot>();
+		final List<IPRRoot> toSave = new ArrayList<IPRRoot>();
+		computeDeleteSave(openProofFiles, progress.newChild(10), toDelete, toSave);
+		if (progress.isCanceled())
+			return;
+		
+		toDelete.addAll(files);
+		
+		deleteFiles(toDelete, progress.newChild(20));
+		if (progress.isCanceled())
+			return;
+		debugHook();
 
 		progress.subTask(Messages.proofpurger_savingchanges);
 		debugHook();
-		saveProofFiles(openProofFiles, progress.newChild(20));
+		saveFiles(toSave, progress.newChild(10));
+	}
+
+	private static void verifyProofsAndFiles(List<IPRProof> proofs,
+			List<IPRRoot> files, SubMonitor progress) throws RodinDBException {
+		if (!areAllUnusedProofs(proofs)) {
+			throw new IllegalArgumentException(
+					Messages.proofpurger_tryingtodeleteusedproofs);
+		}
 		if (progress.isCanceled())
 			return;
-		debugHook();
+		
+		if (!areAllUnusedFiles(files)) {
+			throw new IllegalArgumentException(
+					Messages.proofpurger_tryingtodeleteusedfiles);
+		}
+	}
+
+	private static void deleteFiles(List<IPRRoot> toDelete, SubMonitor monitor) throws RodinDBException {
+		saveOrDeleteFiles(toDelete, monitor, false);		
+	}
+
+	private static void saveFiles(List<IPRRoot> toSave, SubMonitor monitor) throws RodinDBException {
+		saveOrDeleteFiles(toSave, monitor, true);
+	}
+
+	
+	/**
+	 * @param files
+	 * @param toDelete
+	 * @param toSave
+	 * @throws RodinDBException 
+	 */
+	private static void computeDeleteSave(Set<IPRRoot> files, IProgressMonitor monitor,
+			List<IPRRoot> toDelete, List<IPRRoot> toSave) throws RodinDBException {
+		
+		SubMonitor progress = SubMonitor.convert(monitor);
+		final int size = files.size();
+
+		if (size == 0) {
+			progress.done();
+			return;
+		}
+		progress.setWorkRemaining(size);
+		for (IPRRoot prRoot : files) {
+			final IRodinFile prFile = prRoot.getRodinFile();
+			if (prFile.exists()) {
+				if (noProofNoPS(prRoot)) {
+					toDelete.add(prRoot);
+				} else if (prFile.hasUnsavedChanges()) {
+						toSave.add(prRoot);
+				}
+			}
+			progress.worked(1);
+			if (progress.isCanceled()) {
+				return;
+			}
+		}
+
+		
 	}
 
 	private static void debugHook() {
@@ -152,9 +218,18 @@ public class ProofPurger implements IProofPurger {
 		return poRoot.getSequent(name).exists();
 	}
 
-	private static boolean areAllUnused(IPRProof[] proofs) {
+	private static boolean areAllUnusedProofs(List<IPRProof> proofs) {
 		for (IPRProof pr : proofs) {
 			if (isUsed(pr)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean areAllUnusedFiles(List<IPRRoot> files) throws RodinDBException {
+		for (IPRRoot prRoot: files) {
+			if (!noProofNoPS(prRoot)) {
 				return false;
 			}
 		}
@@ -186,33 +261,43 @@ public class ProofPurger implements IProofPurger {
 		return prFilesToProcess;
 	}
 
-	private static List<IPRProof> extractUnusedProofs(
-			Set<IPRRoot> prFilesToProcess, IProgressMonitor monitor)
+	private static void extractUnusedProofsOrFiles(
+			Set<IPRRoot> prFilesToProcess, IProgressMonitor monitor,
+			List<IPRProof> unusedProofs, List<IPRRoot> unusedProofFiles)
 			throws RodinDBException {
-		List<IPRProof> unusedProofs = new ArrayList<IPRProof>();
 		final int size = prFilesToProcess.size();
 		SubMonitor progress = SubMonitor.convert(monitor);
 
-		if (size > 0) {
-			progress.setWorkRemaining(size);
-			for (IPRRoot currentFile : prFilesToProcess) {
-				IPRProof[] proofs = currentFile.getProofs();
-				for (IPRProof pr : proofs) {
-					if (!isUsed(pr)) {
-						unusedProofs.add(pr);
-					}
-				}
-				progress.worked(1);
-				debugHook();
-				if (progress.isCanceled()) {
-					return null;
-				}
-			}
-		} else {
+		if (size == 0) {
 			progress.done();
+			return;
 		}
-		return unusedProofs;
+
+		progress.setWorkRemaining(size);
+		for (IPRRoot current : prFilesToProcess) {
+
+			if (noProofNoPS(current)) {
+				unusedProofFiles.add(current);
+			} else {				
+				addUnusedProofs(current.getProofs(), unusedProofs);
+			}
+			progress.worked(1);
+			debugHook();
+			if (progress.isCanceled()) {
+				return;
+			}
+		}
 	}
+
+	private static void addUnusedProofs(final IPRProof[] proofs,
+			List<IPRProof> unusedProofs) {
+		for (IPRProof pr : proofs) {
+			if (!isUsed(pr)) {
+				unusedProofs.add(pr);
+			}
+		}
+	} 
+
 
 	private static void addProject(Set<IPRRoot> prFilesToProcess,
 			IRodinProject rodinProjectToAdd) throws RodinDBException {
@@ -221,54 +306,56 @@ public class ProofPurger implements IProofPurger {
 		prFilesToProcess.addAll(Arrays.asList(prRoots));
 	}
 
-	private static void deleteProofs(IPRProof[] proofs,
-			Set<IPRRoot> prOpenFiles, IProgressMonitor monitor)
+	private static void deleteProofs(List<IPRProof> proofs,
+			IProgressMonitor monitor, Set<IPRRoot> prOpenFiles)
 			throws RodinDBException {
 		SubMonitor progress = SubMonitor.convert(monitor);
-		if (proofs.length > 0) {
-			progress.setWorkRemaining(proofs.length);
-			for (IPRProof pr : proofs) {
-				if (pr.exists()) {
-					prOpenFiles.add((IPRRoot) pr.getRodinFile().getRoot());
-					pr.delete(false, null);
-				}
-				progress.worked(1);
-				debugHook();
-				if (progress.isCanceled()) {
-					return;
-				}
-			}
-		} else {
+		final int size = proofs.size();
+		if (size == 0) {
 			progress.done();
+			return;
+		}
+		progress.setWorkRemaining(size);
+		for (IPRProof pr : proofs) {
+			if (pr.exists()) {
+				prOpenFiles.add((IPRRoot) pr.getRodinFile().getRoot());
+				pr.delete(false, null);
+			}
+			progress.worked(1);
+			debugHook();
+			if (progress.isCanceled()) {
+				return;
+			}
+		}
+	}
+	
+	private static void saveOrDeleteFiles(List<IPRRoot> files,
+			IProgressMonitor monitor, boolean save) throws RodinDBException {
+		final int size = files.size();
+		SubMonitor progress = SubMonitor.convert(monitor);
+
+		if (size == 0) {
+			progress.done();
+			return;
+		}
+		progress.setWorkRemaining(size);
+		for (IPRRoot prRoot : files) {
+			final IRodinFile prFile = prRoot.getRodinFile();
+			if(save) {
+				prFile.save(null, false);
+			} else {
+				prFile.delete(false, null);
+			}
+			
+			progress.worked(1);
+			if (progress.isCanceled()) {
+				return;
+			}
 		}
 	}
 
-	private static void saveProofFiles(Set<IPRRoot> openProofFiles,
-			IProgressMonitor monitor) throws RodinDBException {
-		final int size = openProofFiles.size();
-		SubMonitor progress = SubMonitor.convert(monitor);
-
-		if (size > 0) {
-			progress.setWorkRemaining(size);
-			for (IPRRoot prRoot : openProofFiles) {
-				final IRodinFile prFile = prRoot.getRodinFile();
-				if (prFile.exists()) {
-					if (prFile.hasUnsavedChanges()) {
-						if (prRoot.getProofs().length == 0
-								&& !prRoot.getPSRoot().getRodinFile().exists()) {
-							prFile.delete(false, null);
-						} else {
-							prFile.save(null, false);
-						}
-					}
-				}
-				progress.worked(1);
-				if (progress.isCanceled()) {
-					return;
-				}
-			}
-		} else {
-			progress.done();
-		}
+	private static boolean noProofNoPS(IPRRoot prRoot) throws RodinDBException {
+		return prRoot.getProofs().length == 0
+				&& !prRoot.getPSRoot().getRodinFile().exists();
 	}
 }

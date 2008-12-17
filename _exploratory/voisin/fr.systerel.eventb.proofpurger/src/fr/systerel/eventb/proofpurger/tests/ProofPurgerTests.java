@@ -15,7 +15,9 @@ import static org.eventb.core.ast.Formula.*;
 import static org.eventb.core.tests.pom.POUtil.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +27,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -38,6 +41,7 @@ import fr.systerel.eventb.proofpurger.popup.actions.ProofPurger;
 
 public class ProofPurgerTests extends AbstractProofTests {
 
+	private static final String EMPTY = "empty";
 	private static final Predicate GOAL;
 	private static final Predicate GHYP;
 	private static final Predicate LHYP;
@@ -54,22 +58,32 @@ public class ProofPurgerTests extends AbstractProofTests {
 		LHYP = ff.makeRelationalPredicate(EQUAL, one, one, null);
 	}
 
-	/**
-	 * Create a PO file in a Project.
-	 * 
-	 * @param bareName
-	 *            File name.
-	 * @param rp
-	 *            RodinProject to insert the file in.
-	 * @return the created File.
-	 * @throws RodinDBException
-	 */
-	protected IPORoot createPORoot(String bareName, IRodinProject rp)
+	private static <T> List<T> makeList(T... input) {
+		return Arrays.asList(input);
+	}
+	
+	protected static IPORoot createPORoot(String bareName, IRodinProject rp)
 			throws RodinDBException {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
 		IRodinFile rf = rp.getRodinFile(fileName);
 		rf.create(true, null);
 		return (IPORoot) rf.getRoot();
+	}
+
+	protected static IPRRoot createPRRoot(String bareName, IRodinProject rp)
+			throws RodinDBException {
+		final String fileName = EventBPlugin.getPRFileName(bareName);
+		IRodinFile rf = rp.getRodinFile(fileName);
+		rf.create(true, null);
+		return (IPRRoot) rf.getRoot();
+	}
+
+	protected static IPSRoot createPSRoot(String bareName, IRodinProject rp)
+			throws RodinDBException {
+		final String fileName = EventBPlugin.getPSFileName(bareName);
+		IRodinFile rf = rp.getRodinFile(fileName);
+		rf.create(true, null);
+		return (IPSRoot) rf.getRoot();
 	}
 
 	private IPORoot populatePOFile(String barename, IRodinProject rp)
@@ -130,20 +144,18 @@ public class ProofPurgerTests extends AbstractProofTests {
 
 	private void assertUnusedProofs(IRodinElement[] input,
 			IPRProof[] expectedResult) throws RodinDBException {
-		IPRProof[] actualResult =
-				ProofPurger.getDefault().computeUnusedProofs(input, null);
-
+		List<IPRProof> actualResult = new ArrayList<IPRProof>(); 
+		ProofPurger.getDefault().computeUnusedProofsOrFiles(input, null, actualResult, null);
 		assertNotNull("Unexpected null output", actualResult);
 
 		List<IPRProof> expList = Arrays.asList(expectedResult);
-		List<IPRProof> actList = Arrays.asList(actualResult);
 
-		assertTrue("missing proofs in selection", actList.containsAll(expList));
+		assertTrue("missing proofs in selection", actualResult.containsAll(expList));
 		assertTrue("unexpected proofs in selection", expList
-				.containsAll(actList));
+				.containsAll(actualResult));
 
 		assertEquals("result contains several occurrences of the same proof",
-				actualResult.length, expectedResult.length);
+				actualResult.size(), expectedResult.length);
 	}
 
 	@Override
@@ -378,10 +390,10 @@ public class ProofPurgerTests extends AbstractProofTests {
 	 * 
 	 * @throws RodinDBException
 	 */
-	private void assertPurgeSuccess(IPRProof[] delProofs)
+	private void assertPurgeSuccess(List<IPRProof> delProofs, List<IPRRoot> delFiles)
 			throws RodinDBException {
 		try {
-			ProofPurger.getDefault().purgeUnusedProofs(delProofs, null);
+			ProofPurger.getDefault().purgeUnusedProofsOrFiles(delProofs, delFiles, null);
 		} catch (IllegalArgumentException e) {
 			fail("Unexpected exception: " + e.getMessage());
 		}
@@ -391,6 +403,13 @@ public class ProofPurgerTests extends AbstractProofTests {
 					+ ":"
 					+ pr.getElementName(), pr.exists());
 		}
+		assertAllDeleted(delFiles, true);
+	}
+
+	private void assertAllDeleted(List<IPRRoot> delFiles, boolean deleted) {
+		for (IPRRoot root : delFiles) {
+			assertFileDeleted(root.getRodinFile(), deleted);
+		}
 	}
 
 	/**
@@ -398,11 +417,12 @@ public class ProofPurgerTests extends AbstractProofTests {
 	 * 
 	 * @throws RodinDBException
 	 */
-	private void assertPurgeFailure(IPRProof[] delProofs)
+	private void assertPurgeFailure(List<IPRProof> delProofs, List<IPRRoot> delFiles)
 			throws RodinDBException {
 		try {
-			ProofPurger.getDefault().purgeUnusedProofs(delProofs, null);
+			ProofPurger.getDefault().purgeUnusedProofsOrFiles(delProofs, delFiles, null);
 		} catch (IllegalArgumentException e) {
+			assertAllDeleted(delFiles, false);
 			return;
 		}
 		fail("IllegalArgumentException should have been raised.");
@@ -410,13 +430,19 @@ public class ProofPurgerTests extends AbstractProofTests {
 
 	/**
 	 * Asserts that the given proofs exist in the DB.
+	 * @param keepFiles 
 	 */
-	private void assertKeepProofs(IPRProof[] keepProofs) {
+	private void assertKeepProofs(List<IPRProof> keepProofs, List<IPRRoot> keepFiles) {
 		for (IPRProof pr : keepProofs) {
 			assertTrue("Some proofs were erased by error: "
-					+ pr.getRodinFile().getBareName()
+					+ pr.getRodinFile().getPath()
 					+ ":"
 					+ pr.getElementName(), pr.exists());
+		}
+		for (IPRRoot root : keepFiles) {
+			final IRodinFile file = root.getRodinFile();
+			assertTrue("Some files were erased by error: " + file.getPath(),
+					file.exists());
 		}
 	}
 
@@ -433,6 +459,9 @@ public class ProofPurgerTests extends AbstractProofTests {
 				+ file.getBareName(), file.exists() == deleted);
 	}
 
+	protected static final List<IPRProof> NO_PROOF = Collections.emptyList();
+	protected static final List<IPRRoot> NO_ROOT = Collections.emptyList();
+
 	/**
 	 * Ensures that purging with an empty input has no consequence on existing
 	 * proofs.
@@ -440,16 +469,15 @@ public class ProofPurgerTests extends AbstractProofTests {
 	public void testEmpty() throws Exception {
 		initSeveralProjects();
 
-		IPRProof[] delProofs = new IPRProof[0];
-		IPRProof[] keepProofs =
-				{ spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
-						spPRFile2.getProof(PO2), spPRFile2.getProof(PO3),
-						spPRFile2.getProof(PO4), spPRFile4.getProof(PO2),
-						spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
-						spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) };
+		List<IPRProof> keepProofs = makeList(
+				spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
+				spPRFile2.getProof(PO2), spPRFile2.getProof(PO3),
+				spPRFile2.getProof(PO4), spPRFile4.getProof(PO2),
+				spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
+				spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) );
 
-		assertPurgeSuccess(delProofs);
-		assertKeepProofs(keepProofs);
+		assertPurgeSuccess(NO_PROOF, NO_ROOT);
+		assertKeepProofs(keepProofs, NO_ROOT);
 	}
 
 	/**
@@ -458,16 +486,16 @@ public class ProofPurgerTests extends AbstractProofTests {
 	public void testBasicPurge() throws Exception {
 		initSeveralProjects();
 
-		IPRProof[] delProofs =
-				{ spPRFile2.getProof(PO3), spPRFile2.getProof(PO4) };
-		IPRProof[] keepProofs =
-				{ spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
-						spPRFile2.getProof(PO2), spPRFile4.getProof(PO2),
-						spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
-						spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) };
+		List<IPRProof> delProofs = makeList(
+				spPRFile2.getProof(PO3), spPRFile2.getProof(PO4) );
+		List<IPRProof> keepProofs = makeList(
+				spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
+				spPRFile2.getProof(PO2), spPRFile4.getProof(PO2),
+				spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
+				spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) );
 
-		assertPurgeSuccess(delProofs);
-		assertKeepProofs(keepProofs);
+		assertPurgeSuccess(delProofs, NO_ROOT);
+		assertKeepProofs(keepProofs, NO_ROOT);
 	}
 
 	/**
@@ -476,25 +504,25 @@ public class ProofPurgerTests extends AbstractProofTests {
 	public void testHavePO() throws Exception {
 		initSeveralProjects();
 
-		IPRProof[] delProofs =
-				{ spPRFile2.getProof(PO3), spPRFile2.getProof(PO4),
-						spPRFile4.getProof(PO2), spPRFile5.getProof(PO1) };
-		IPRProof[] keepProofs =
-				{ spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
-						spPRFile2.getProof(PO2), spPRFile4.getProof(PO2),
-						spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
-						spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) };
+		List<IPRProof> delProofs = makeList(
+				spPRFile2.getProof(PO3), spPRFile2.getProof(PO4),
+				spPRFile4.getProof(PO2), spPRFile5.getProof(PO1) );
+		List<IPRProof> keepProofs = makeList(
+				spPRFile1.getProof(PO1), spPRFile2.getProof(PO1),
+				spPRFile2.getProof(PO2), spPRFile4.getProof(PO2),
+				spPRFile5.getProof(PO1), spPRFile5.getProof(PO2),
+				spPRFile5.getProof(PO3), spPRFile5.getProof(PO4) );
 
-		assertPurgeFailure(delProofs);
-		assertKeepProofs(delProofs);
-		assertKeepProofs(keepProofs);
+		assertPurgeFailure(delProofs, NO_ROOT);
+		assertKeepProofs(delProofs, NO_ROOT);
+		assertKeepProofs(keepProofs, NO_ROOT);
 	}
 
 	/**
 	 * Ensures that proof files are correctly deleted when they become empty and
 	 * no PS file exists.
 	 */
-	public void testDeleteEmptyFilesNoPS() throws Exception {
+	public void testDeleteNewlyEmptyFilesNoPS() throws Exception {
 		spPOFile2 = populatePOFile("m2");
 		spPRFile2 = spPOFile2.getPRRoot();
 		createProof(spPOFile2.getSequent(PO1));
@@ -502,11 +530,11 @@ public class ProofPurgerTests extends AbstractProofTests {
 		spPOFile2.delete(true, null);
 		spPRFile2.getPSRoot().getRodinFile().delete(true, null);
 
-		IPRProof[] delProofs =
-				{ spPRFile2.getProof(PO1), spPRFile2.getProof(PO2),
-						spPRFile2.getProof(PO3) };
+		List<IPRProof> delProofs = makeList(
+				spPRFile2.getProof(PO1), spPRFile2.getProof(PO2),
+				spPRFile2.getProof(PO3) );
 
-		assertPurgeSuccess(delProofs);
+		assertPurgeSuccess(delProofs, NO_ROOT);
 		assertFileDeleted(spPRFile2.getRodinFile(), true);
 	}
 
@@ -514,7 +542,7 @@ public class ProofPurgerTests extends AbstractProofTests {
 	 * Ensures that proof files are not deleted when they become empty if a PS
 	 * file exists.
 	 */
-	public void testDeleteEmptyFilesWithPS() throws Exception {
+	public void testDeleteNewlyEmptyFilesWithPS() throws Exception {
 		spPOFile2 = populatePOFile("m2");
 		spPRFile2 = spPOFile2.getPRRoot();
 		createProof(spPOFile2.getSequent(PO1));
@@ -522,11 +550,32 @@ public class ProofPurgerTests extends AbstractProofTests {
 		spPOFile2.delete(true, null);
 		// spPRFile2.getPSRoot().getRodinFile().delete(true, null);
 
-		IPRProof[] delProofs =
-				{ spPRFile2.getProof(PO1), spPRFile2.getProof(PO2),
-						spPRFile2.getProof(PO3) };
+		List<IPRProof> delProofs = makeList(
+				 spPRFile2.getProof(PO1), spPRFile2.getProof(PO2),
+						spPRFile2.getProof(PO3) );
 
-		assertPurgeSuccess(delProofs);
+		
+		assertPurgeSuccess(delProofs, NO_ROOT);
 		assertFileDeleted(spPRFile2.getRodinFile(), false);
 	}
+	
+	public void testDeleteAlreadyEmptyFilesNoPS() throws Exception {
+		
+		final IPRRoot emptyPRFile = createPRRoot(EMPTY, rodinProject);
+		
+		List<IPRRoot> delFiles = makeList( emptyPRFile );
+
+		assertPurgeSuccess(NO_PROOF, delFiles);
+	}
+
+	public void testDeleteAlreadyEmptyFilesWithPS() throws Exception {
+		
+		final IPRRoot emptyPRFile = createPRRoot(EMPTY, rodinProject);
+		createPSRoot(EMPTY, rodinProject);
+		
+		List<IPRRoot> delFiles = makeList( emptyPRFile );
+		
+		assertPurgeFailure(NO_PROOF, delFiles);
+	}
+
 }
