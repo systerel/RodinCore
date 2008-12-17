@@ -122,7 +122,8 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			try {
 				if (proofs == null)
 					return;
-				ProofPurger.getDefault().purgeUnusedProofsOrFiles(proofs, files, monitor);
+				ProofPurger.getDefault().purgeUnusedProofsOrFiles(proofs,
+						files, monitor);
 				if (monitor.isCanceled()) {
 					wasCancelled = true;
 				}
