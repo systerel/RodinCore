@@ -60,7 +60,7 @@ public class NameTableTests extends IndexTests {
 	public void testPutGetOneElement() throws Exception {
 		table.add(declN1E1);
 
-		final IInternalElement[] expectedResult = makeIIEArray(element1);
+		final IInternalElement[] expectedResult = makeArray(element1);
 		final IInternalElement[] elements = table.getElements(name1);
 
 		assertSameElements(expectedResult, elements);
@@ -70,7 +70,7 @@ public class NameTableTests extends IndexTests {
 		table.add(declN1E1);
 		table.add(declN1E2);
 
-		final IInternalElement[] expectedResult = makeIIEArray(element1,
+		final IInternalElement[] expectedResult = makeArray(element1,
 				element2);
 		final IInternalElement[] elements = table.getElements(name1);
 
@@ -81,8 +81,8 @@ public class NameTableTests extends IndexTests {
 		table.add(declN1E1);
 		table.add(declN2E2);
 
-		final IInternalElement[] expectedResult1 = makeIIEArray(element1);
-		final IInternalElement[] expectedResult2 = makeIIEArray(element2);
+		final IInternalElement[] expectedResult1 = makeArray(element1);
+		final IInternalElement[] expectedResult2 = makeArray(element2);
 		final IInternalElement[] elements1 = table.getElements(name1);
 		final IInternalElement[] elements2 = table.getElements(name2);
 
@@ -95,7 +95,7 @@ public class NameTableTests extends IndexTests {
 		table.add(declN1E2);
 		table.remove(declN1E1);
 
-		final IInternalElement[] expectedResult = makeIIEArray(element2);
+		final IInternalElement[] expectedResult = makeArray(element2);
 		final IInternalElement[] elements = table.getElements(name1);
 
 		assertSameElements(expectedResult, elements);

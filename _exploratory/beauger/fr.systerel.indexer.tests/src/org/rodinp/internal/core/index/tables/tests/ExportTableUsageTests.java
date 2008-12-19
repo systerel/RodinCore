@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import java.util.Set;
 
@@ -60,8 +58,8 @@ public class ExportTableUsageTests extends IndexTests {
 		exportTable.add(file, declElt2Name2);
 		final IDeclaration declElt1 = new Declaration(elt1, name1);
 		final IDeclaration declElt2 = new Declaration(elt2, name2);
-		rodinIndex.makeDescriptor(declElt1);
-		rodinIndex.makeDescriptor(declElt2);
+		makeDescAndDefaultOcc(rodinIndex, declElt1, file.getRoot());
+		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getRoot().getElementType());
@@ -138,7 +136,7 @@ public class ExportTableUsageTests extends IndexTests {
 		final String eltAddName = "eltAddName";
 		final IDeclaration declEltAdd = new Declaration(eltAdd, eltAddName);
 		exportTable.add(file, declEltAdd);
-		rodinIndex.makeDescriptor(declEltAdd);
+		makeDescAndDefaultOcc(rodinIndex, declEltAdd, file.getRoot());
 		manager.clearIndexers();
 		indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		RodinIndexer.register(indexer, file.getRoot().getElementType());

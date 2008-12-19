@@ -13,16 +13,19 @@ package org.rodinp.internal.core.index;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.RodinIndexer;
@@ -120,13 +123,16 @@ public class FileIndexingManager {
 		}
 	}
 
-	public IIndexingResult doIndexing(IndexingBridge bridge) {
-		final IRodinFile file = bridge.getRodinFile();
-
+	public IIndexingResult doIndexing(IRodinFile file,
+			Map<IInternalElement, IDeclaration> fileImports,
+			IProgressMonitor monitor) {
 		if (!file.exists()) {
 			return IndexingResult.failed(file);
 		}
-
+		
+		final IndexingBridge bridge =
+			new IndexingBridge(file, fileImports, monitor);
+		
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		IIndexingResult prevResult = IndexingResult.failed(file);
 
@@ -140,7 +146,7 @@ public class FileIndexingManager {
 		return prevResult;
 	}
 
-	private IIndexingResult doIndexing(IIndexer indexer,
+	private static IIndexingResult doIndexing(IIndexer indexer,
 			IndexingBridge bridge) {
 		final IRodinFile file = bridge.getRodinFile();
 		printVerbose(makeMessage("indexing", file, indexer));
@@ -178,7 +184,7 @@ public class FileIndexingManager {
 		}
 	}
 
-	private String makeMessage(String context, IRodinFile file,
+	private static String makeMessage(String context, IRodinFile file,
 			final IIndexer indexer) {
 		return "INDEXER: "
 				+ context
@@ -188,13 +194,13 @@ public class FileIndexingManager {
 				+ indexer.getId();
 	}
 
-	private void printVerbose(final String message) {
+	private static void printVerbose(final String message) {
 		if (IndexManager.VERBOSE) {
 			System.out.println(message);
 		}
 	}
 
-	private void printDebug(String message) {
+	private static void printDebug(String message) {
 		if (IndexManager.DEBUG) {
 			System.out.println(message);
 		}

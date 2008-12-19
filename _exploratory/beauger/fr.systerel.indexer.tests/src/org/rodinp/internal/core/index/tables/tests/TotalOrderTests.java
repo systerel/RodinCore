@@ -135,7 +135,7 @@ public class TotalOrderTests extends IndexTests {
 	public void testSetSeveralPreds() throws Exception {
 		setPreds(order, 3, 1, 2);
 
-		assertPartitionOrder(order, makeIntArray(1, 2), makeIntArray(3));
+		assertPartitionOrder(order, makeArray(1, 2), makeArray(3));
 	}
 
 	public void testGetPredecessors() throws Exception {
@@ -509,7 +509,7 @@ public class TotalOrderTests extends IndexTests {
 
 		assertNext(order, second);
 
-		final Integer[] NO_PREDS = makeIntArray();
+		final Integer[] NO_PREDS = makeArray();
 		// second is no more the successor of first => breaks the cycle
 		order.setPredecessors(second, NO_PREDS);
 

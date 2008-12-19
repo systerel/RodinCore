@@ -10,19 +10,41 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IInternalLocation;
 
+/**
+ * Bridge implementation.
+ * <p>
+ * Enforces the following constraints:
+ * <ul>
+ * <li>an element cannot have an occurrence if it has not been declared before</li>
+ * <li>an element cannot be declared more than once</li>
+ * <li>declared elements must be local to the file</li>
+ * <li>occurring elements must be either local or imported</li>
+ * <li>declared elements should have one or more occurrences when indexing
+ * completes</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Calling {@link #complete()} at the end of indexing is mandatory: it checks
+ * the result and sets the success value.
+ * </p>
+ * 
+ */
 public class IndexingBridge implements IIndexingBridge {
 
 	private final IRodinFile file;
@@ -32,29 +54,12 @@ public class IndexingBridge implements IIndexingBridge {
 	private final IndexingResult result;
 	private final IProgressMonitor monitor;
 
-	/**
-	 * The given imports are assumed to be up-to-date.
-	 * <p>
-	 * The given ExportTable is assumed to be unchanged since latest indexing of
-	 * the given file (empty if it never was indexed). It will be updated
-	 * through calls to {@link IndexingBridge#export(IDeclaration)}.
-	 * </p>
-	 * <p>
-	 * The given RodinIndex, FileTable and NameTable are supposed to be just
-	 * coherent with each other. They will be cleaned here.
-	 * </p>
-	 * 
-	 * @param file
-	 * @param imports
-	 * @param monitor
-	 */
 	public IndexingBridge(IRodinFile file,
 			Map<IInternalElement, IDeclaration> imports,
 			IProgressMonitor monitor) {
 
 		this.file = file;
 		this.imports = imports;
-
 		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.result = new IndexingResult(file);
 		this.result.setDeclarations(declarations);
@@ -157,7 +162,33 @@ public class IndexingBridge implements IIndexingBridge {
 
 	// to call before getResult;
 	public void complete() {
+		removeNonOccurringElements();
 		result.setSuccess(!isCancelled());
+	}
+
+	private void removeNonOccurringElements() {
+		final List<IDeclaration> noOccElems = getNonOccurringElements();
+		
+		for (IDeclaration decl : noOccElems) {
+			result.remove(decl);
+			if (IndexManager.DEBUG) {
+				System.out.println("Indexing "
+						+ file.getPath()
+						+ ": Removed non occurring declaration: "
+						+ decl);
+			}
+		}
+	}
+	
+	private final List<IDeclaration> getNonOccurringElements() {
+		final List<IDeclaration> res = new ArrayList<IDeclaration>();
+		final Set<IInternalElement> occElems = result.getOccurrences().keySet();
+		for (IDeclaration decl: declarations.values()) {
+			if (!occElems.contains(decl.getElement())) {
+				res.add(decl);
+			}
+		}
+		return res;
 	}
 
 	public IIndexingResult getResult() {

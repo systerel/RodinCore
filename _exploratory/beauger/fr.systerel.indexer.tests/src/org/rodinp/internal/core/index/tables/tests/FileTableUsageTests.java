@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -59,8 +57,8 @@ public class FileTableUsageTests extends IndexTests {
 		rodinIndex = new RodinIndex();
 		final IDeclaration declElt1 = new Declaration(elt1, elt1Name);
 		final IDeclaration declElt2 = new Declaration(elt2, elt2Name);
-		rodinIndex.makeDescriptor(declElt1);
-		rodinIndex.makeDescriptor(declElt2);
+		makeDescAndDefaultOcc(rodinIndex, declElt1, file.getRoot());
+		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 
 		indexer = new FakeIndexer(rodinIndex);
 		RodinIndexer.register(indexer, file.getRoot().getElementType());

@@ -47,6 +47,10 @@ public class IndexingBridgeTests extends IndexTests {
 	private static final Map<IInternalElement, IDeclaration> emptyImports =
 			Collections.emptyMap();
 
+	private static void assertIndexingSuccess(final IIndexingResult result) {
+		assertTrue("indexing failed", result.isSuccess());
+	}
+
 	public IndexingBridgeTests(String name) {
 		super(name, true);
 	}
@@ -73,20 +77,40 @@ public class IndexingBridgeTests extends IndexTests {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);
 
-		bridge.declare(elt1, name1);
+		final IDeclaration declElt1 = bridge.declare(elt1, name1);
+		final IInternalLocation loc =
+			RodinIndexer.getInternalLocation(file1.getRoot());
+		bridge.addOccurrence(declElt1, TEST_KIND, loc);
 
 		final IDeclaration expected = new Declaration(elt1, name1);
 
 		bridge.complete();
 		final IIndexingResult result = bridge.getResult();
 
-		assertTrue("indexing failed", result.isSuccess());
+		assertIndexingSuccess(result);
 
 		final Map<IInternalElement, IDeclaration> declarations =
 				result.getDeclarations();
 		final IDeclaration actual = declarations.get(elt1);
 		assertNotNull("expected a declaration for: " + elt1, actual);
 		assertEquals("Bad declaration", expected, actual);
+	}
+
+	public void testDeclareNoOccurrence() {
+		IndexingBridge bridge =
+				new IndexingBridge(file1, emptyImports, null);
+
+		bridge.declare(elt1, name1);
+
+		bridge.complete();
+		final IIndexingResult result = bridge.getResult();
+
+		assertIndexingSuccess(result);
+
+		final Map<IInternalElement, IDeclaration> declarations =
+				result.getDeclarations();
+		final IDeclaration actual = declarations.get(elt1);
+		assertNull("expected declaration removed for: " + elt1, actual);
 	}
 
 	public void testDeclareNullElem() throws Exception {
@@ -156,7 +180,7 @@ public class IndexingBridgeTests extends IndexTests {
 		bridge.complete();
 		final IIndexingResult result = bridge.getResult();
 
-		assertTrue("indexing failed", result.isSuccess());
+		assertIndexingSuccess(result);
 
 		final Map<IInternalElement, Set<IOccurrence>> occurrences =
 				result.getOccurrences();
@@ -180,7 +204,7 @@ public class IndexingBridgeTests extends IndexTests {
 		bridge.complete();
 		final IIndexingResult result = bridge.getResult();
 
-		assertTrue("indexing failed", result.isSuccess());
+		assertIndexingSuccess(result);
 
 		final Map<IInternalElement, Set<IOccurrence>> occurrences =
 				result.getOccurrences();
@@ -224,12 +248,15 @@ public class IndexingBridgeTests extends IndexTests {
 				new IndexingBridge(file1, emptyImports, null);
 
 		final IDeclaration declElt1 = bridge.declare(elt1, name1);
+		final IInternalLocation loc =
+			RodinIndexer.getInternalLocation(file1.getRoot());
+		bridge.addOccurrence(declElt1, TEST_KIND, loc);
 		bridge.export(declElt1);
 
 		bridge.complete();
 		final IIndexingResult result = bridge.getResult();
 
-		assertTrue("indexing failed", result.isSuccess());
+		assertIndexingSuccess(result);
 
 		final Set<IDeclaration> expected = new HashSet<IDeclaration>();
 		expected.add(declElt1);
@@ -251,7 +278,7 @@ public class IndexingBridgeTests extends IndexTests {
 		bridge.complete();
 		final IIndexingResult result = bridge.getResult();
 
-		assertTrue("indexing failed", result.isSuccess());
+		assertIndexingSuccess(result);
 
 		final Set<IDeclaration> actual = result.getExports();
 		assertNotNull("expected an occurrence for: " + elt2, actual);
@@ -280,5 +307,28 @@ public class IndexingBridgeTests extends IndexTests {
 		final IDeclaration[] actual = bridge.getImports();
 		assertSameElements(expected, actual, "imports");
 	}
+
+	public void testGetDeclarationsEmpty() throws Exception {
+		IndexingBridge bridge =
+			new IndexingBridge(file1, emptyImports, null);
+
+		final IDeclaration[] declarations = bridge.getDeclarations();
+		
+		assertEquals("expected empty declarations", 0, declarations.length);
+	}
+
+	public void testGetDeclarationsNotEmpty() throws Exception {
+		IndexingBridge bridge =
+			new IndexingBridge(file1, emptyImports, null);
+
+		final IDeclaration declElt1 = bridge.declare(elt1, name1);
+		
+		
+		final IDeclaration[] declarations = bridge.getDeclarations();
+		
+		assertEquals("expected non empty declarations", 1, declarations.length);
+		assertEquals("unexpected declaration", declElt1, declarations[0]);
+	}
+
 
 }

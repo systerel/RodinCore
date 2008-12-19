@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertDescriptor;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createDefaultOccurrence;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -63,14 +59,11 @@ public class IndexManagerTests extends IndexTests {
 		declElt1 = new Declaration(elt1, name1);
 		declElt2 = new Declaration(elt2, name2);
 		declElt3 = new Declaration(elt3, name3);
-		final Descriptor desc1 = rodinIndex.makeDescriptor(declElt1);
-		final IInternalElement root = file.getRoot();
-		desc1.addOccurrence(createDefaultOccurrence(root, declElt1));
-		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(createDefaultOccurrence(root, declElt2));
+		makeDescAndDefaultOcc(rodinIndex, declElt1, file.getRoot());
+		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 		// no desc3
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, root.getElementType());
+		RodinIndexer.register(indexer, file.getRootElementType());
 	}
 
 	@Override
@@ -107,8 +100,7 @@ public class IndexManagerTests extends IndexTests {
 
 		// removing elt1, adding elt2
 		rodinIndex.removeDescriptor(elt1);
-		final Descriptor desc2 = rodinIndex.makeDescriptor(declElt2);
-		desc2.addOccurrence(createDefaultOccurrence(file.getRoot(), declElt2));
+		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
@@ -123,17 +115,14 @@ public class IndexManagerTests extends IndexTests {
 	public void testSeveralIndexers() throws Exception {
 
 		final RodinIndex rodinIndex2 = new RodinIndex();
-
-		final Descriptor fakeDesc3 = rodinIndex2.makeDescriptor(declElt3);
-		final IInternalElement root = file.getRoot();
-		fakeDesc3.addOccurrence(createDefaultOccurrence(root, declElt3));
+		makeDescAndDefaultOcc(rodinIndex, declElt3, file.getRoot());
 
 		manager.clearIndexers();
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, root.getElementType());
+		RodinIndexer.register(indexer, file.getRootElementType());
 		
 		final IIndexer indexer2 = new FakeIndexer(rodinIndex2);
-		RodinIndexer.register(indexer2, root.getElementType());
+		RodinIndexer.register(indexer2, file.getRootElementType());
 
 		manager.scheduleIndexing(file);
 
@@ -168,6 +157,25 @@ public class IndexManagerTests extends IndexTests {
 		assertDescriptor(desc2, declElt2, 1);
 		assertNoSuchDescriptor(index, elt3);
 	}
+	
+	public void testGetDeclarationsSecondIndexer() throws Exception {
+
+		manager.clearIndexers();
+		indexer = new FakeIndexer(rodinIndex);
+		RodinIndexer.register(indexer, file.getRootElementType());
+
+		final IDeclaration[] expected = makeArray(declElt1, declElt2);
+		
+		final FakeGetDeclIndexer indexer2 = new FakeGetDeclIndexer();
+		RodinIndexer.register(indexer2, file.getRootElementType());
+
+		manager.scheduleIndexing(file);
+
+		final IDeclaration[] declarations = indexer2.getDeclarations();
+		
+		assertSameElements(expected, declarations,
+				"declarations obtained by a second indexer");
+	}
 
 	public void testIndexFileDoesNotExist() throws Exception {
 		final IRodinFile inexistentFile =
@@ -184,23 +192,25 @@ public class IndexManagerTests extends IndexTests {
 		final String eltF2Name = "eltF2Name";
 
 		final IRodinProject project2 = createRodinProject("P2");
-		final IRodinFile file2 = createRodinFile(project2, "file2P2.test");
-		final NamedElement eltF2 = createNamedElement(file2, eltF2Name);
+		try {
+			final IRodinFile file2 = createRodinFile(project2, "file2P2.test");
+			final NamedElement eltF2 = createNamedElement(file2, eltF2Name);
 
-		final Declaration declEltF2 = new Declaration(eltF2, eltF2Name);
-		rodinIndex.makeDescriptor(declEltF2);
+			final Declaration declEltF2 = new Declaration(eltF2, eltF2Name);
+			makeDescAndDefaultOcc(rodinIndex, declEltF2, file2.getRoot());
 
-		manager.scheduleIndexing(file, file2);
+			manager.scheduleIndexing(file, file2);
 
-		final RodinIndex index1 = manager.getIndex(project);
-		final Descriptor desc1 = index1.getDescriptor(elt1);
-		final RodinIndex index2 = manager.getIndex(project2);
-		final Descriptor desc2 = index2.getDescriptor(eltF2);
+			final RodinIndex index1 = manager.getIndex(project);
+			final Descriptor desc1 = index1.getDescriptor(elt1);
+			final RodinIndex index2 = manager.getIndex(project2);
+			final Descriptor desc2 = index2.getDescriptor(eltF2);
 
-		assertDescriptor(desc1, declElt1, 1);
-		assertDescriptor(desc2, declEltF2, 0);
-
-		deleteProject("P2");
+			assertDescriptor(desc1, declElt1, 1);
+			assertDescriptor(desc2, declEltF2, 1);
+		} finally {
+			deleteProject("P2");
+		}
 	}
 
 	public void testIndexerException() throws Exception {

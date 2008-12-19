@@ -510,9 +510,14 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				createMachine(project, IMPORTER, EVT_1REF_REFINES);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declEventImp =
+			newDecl(eventImp, eventImp.getLabel());
+		final IOccurrence refEventImp = makeRef(importer, declEventImp);
+		
+	
 		final IRefinesEvent refinesImp =
 				eventImp.getRefinesClause(INTERNAL_ELEMENT1);
-		final IOccurrence refEventImp = makeRefTarget(refinesImp, declEventExp);
+		final IOccurrence refEventExpInImp = makeRefTarget(refinesImp, declEventExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declEventExp);
 
@@ -520,8 +525,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertEmptyOccurrences(eventImp);
-		tk.assertOccurrences(eventExp, refEventImp);
+		tk.assertOccurrences(eventImp, refEventImp);
+		tk.assertOccurrences(eventExp, refEventExpInImp);
 	}
 
 	private static final String PRM_1DECL =

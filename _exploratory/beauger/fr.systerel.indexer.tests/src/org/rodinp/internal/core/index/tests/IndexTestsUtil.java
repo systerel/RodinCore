@@ -63,6 +63,14 @@ public class IndexTestsUtil {
 				.getInternalLocation(element), declaration);
 	}
 
+	// useful when you want to keep a descriptor in the index
+	// (empty descriptors can be removed)
+	public static void makeDescAndDefaultOcc(RodinIndex rodinIndex,
+			IDeclaration declaration, IInternalElement element) {
+		final Descriptor descElt3 = rodinIndex.makeDescriptor(declaration);
+		descElt3.addOccurrence(createDefaultOccurrence(element, declaration));
+	}
+	
 	public static NamedElement createNamedElement(IRodinFile file,
 			String elementName) throws CoreException {
 		NamedElement el = new NamedElement(elementName, file.getRoot());
@@ -264,16 +272,7 @@ public class IndexTestsUtil {
 		}
 	}
 
-	public static Integer[] makeIntArray(Integer... integers) {
-		return integers;
-	}
-
-	public static IInternalElement[] makeIIEArray(IInternalElement... elements) {
+	public static <T> T[] makeArray(T... elements) {
 		return elements;
 	}
-
-	public static IRodinFile[] makeIRFArray(IRodinFile... files) {
-		return files;
-	}
-
 }

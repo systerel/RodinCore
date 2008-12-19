@@ -10,13 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertExports;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertIsEmpty;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertLength;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertNoSuchDescriptor;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createNamedElement;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.makeIRFArray;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +29,7 @@ import org.rodinp.internal.core.index.tables.FileTable;
 import org.rodinp.internal.core.index.tables.NameTable;
 import org.rodinp.internal.core.index.tables.RodinIndex;
 import org.rodinp.internal.core.index.tests.IndexTests;
+import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class TotalOrderUsageTests extends IndexTests {
 
@@ -91,9 +86,9 @@ public class TotalOrderUsageTests extends IndexTests {
 		eltF2 = createNamedElement(file2, "eltF2");
 		
 		declEltF2 = new Declaration(eltF2, eltF2Name);
-		rodinIndex.makeDescriptor(declEltF2);
+		makeDescAndDefaultOcc(rodinIndex, declEltF2, file2.getRoot());
 		f2ExportsElt2.add(file2, declEltF2);
-		f1DepsOnf2.put(file1, makeIRFArray(file2));
+		f1DepsOnf2.put(file1, makeArray(file2));
 
 	}
 
@@ -111,7 +106,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 
-		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
+		IRodinFile[] expectedOrder = makeArray(file2, file1);
 
 		RodinIndexer.register(indexer, file1.getRoot().getElementType());
 		// files to index are presented in the reverse order of the required
@@ -127,8 +122,8 @@ public class TotalOrderUsageTests extends IndexTests {
 	public void testCycle() throws Exception {
 		DependenceTable cycle = new DependenceTable();
 		// cycle: file1 -> file2 -> file1
-		cycle.put(file1, makeIRFArray(file2));
-		cycle.put(file2, makeIRFArray(file1));
+		cycle.put(file1, makeArray(file2));
+		cycle.put(file2, makeArray(file1));
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, cycle, f2ExportsElt2);
@@ -137,7 +132,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file1, file2);
 
-		final IRodinFile[] expectedFiles = makeIRFArray(file1, file2);
+		final IRodinFile[] expectedFiles = makeArray(file1, file2);
 		final IRodinFile[] actualOrder = indexer.getIndexingOrder();
 
 		assertAnyOrder(expectedFiles, actualOrder);
@@ -157,7 +152,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		// only file2 is requested to index, but file1 should also be indexed
 		// again, after file2, as it depends on file2, which has exports changes
 		// (file2 was never indexed and its exports are not empty).
-		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
+		IRodinFile[] expectedOrder = makeArray(file2, file1);
 
 		manager.scheduleIndexing(file2);
 
@@ -179,7 +174,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		// file2 is requested to index, but file1 should not be indexed
 		// again, as it depends on file2 but file2 has no exports
-		IRodinFile[] expectedOrder = makeIRFArray(file2);
+		IRodinFile[] expectedOrder = makeArray(file2);
 
 		manager.scheduleIndexing(file2);
 
@@ -202,7 +197,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		// file2 is requested to index, but file1 should not be indexed
 		// again, even if it depends on file2, because file2 exports are
 		// unchanged
-		IRodinFile[] expectedOrder = makeIRFArray(file2);
+		IRodinFile[] expectedOrder = makeArray(file2);
 
 		manager.scheduleIndexing(file2);
 
@@ -227,7 +222,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		final String eltF2Name2 = "eltF2Name2";
 		final IDeclaration declEltF2Name2 = new Declaration(eltF2, eltF2Name2);
 		rodinIndex.removeDescriptor(eltF2);
-		rodinIndex.makeDescriptor(declEltF2Name2);
+		makeDescAndDefaultOcc(rodinIndex, declEltF2Name2, file2.getRoot());
 		f2ExportsElt2Name2.add(file2, declEltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
@@ -236,7 +231,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		// file2 is requested to index, but file1 should be indexed
 		// again, because it depends on file2 and file2 exports are
 		// changed, even if it concerns only names
-		IRodinFile[] expectedOrder = makeIRFArray(file2, file1);
+		IRodinFile[] expectedOrder = makeArray(file2, file1);
 
 		manager.scheduleIndexing(file2);
 
@@ -275,13 +270,14 @@ public class TotalOrderUsageTests extends IndexTests {
 
 	public void testSerialExports() throws Exception {
 		final DependenceTable f1dF2dF3 = new DependenceTable();
-		f1dF2dF3.put(file1, makeIRFArray(file2));
-		f1dF2dF3.put(file2, makeIRFArray(file3));
+		f1dF2dF3.put(file1, makeArray(file2));
+		f1dF2dF3.put(file2, makeArray(file3));
 
 		final NamedElement elt3 = createNamedElement(file3, "elt3");
 		final String elt3Name = "elt3Name";
 		final IDeclaration declElt3 = new Declaration(elt3, elt3Name);
-		rodinIndex.makeDescriptor(declElt3);
+		IndexTestsUtil.makeDescAndDefaultOcc(rodinIndex, declElt3, file3
+				.getRoot());
 
 		final ExportTable f1f2f3expElt3 = new ExportTable();
 		f1f2f3expElt3.add(file3, declElt3);

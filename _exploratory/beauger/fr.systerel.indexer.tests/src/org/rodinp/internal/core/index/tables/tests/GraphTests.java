@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +19,6 @@ import java.util.List;
 import org.rodinp.internal.core.index.sort.Graph;
 import org.rodinp.internal.core.index.sort.Node;
 import org.rodinp.internal.core.index.tests.IndexTests;
-import org.rodinp.internal.core.index.tests.IndexTestsUtil;
 
 public class GraphTests extends IndexTests {
 
@@ -98,17 +99,17 @@ public class GraphTests extends IndexTests {
 	}
 
 	public void testSetGetPredecessors() {
-		graph.setPredecessors(2, IndexTestsUtil.makeIntArray(1));
+		graph.setPredecessors(2, makeArray(1));
 		final List<Integer> predecessors = graph.getPredecessors(2);
 
-		IndexTestsUtil.assertPredecessors(predecessors, 1);
+		assertPredecessors(predecessors, 1);
 	}
 
 	public void testSetGetSeveralPredecessors() {
-		graph.setPredecessors(3, IndexTestsUtil.makeIntArray(1, 2));
+		graph.setPredecessors(3, makeArray(1, 2));
 		final List<Integer> predecessors = graph.getPredecessors(3);
 
-		IndexTestsUtil.assertPredecessors(predecessors, 1, 2);
+		assertPredecessors(predecessors, 1, 2);
 	}
 
 	public void testGetNoSuchLabel() throws Exception {
@@ -142,8 +143,7 @@ public class GraphTests extends IndexTests {
 			case 2:
 				assertEmptyPreds(graph, 2);
 			case 3:
-				IndexTestsUtil.assertPredecessors(graph.getPredecessors(3), 1,
-						2);
+				assertPredecessors(graph.getPredecessors(3), 1, 2);
 			}
 		}
 	}

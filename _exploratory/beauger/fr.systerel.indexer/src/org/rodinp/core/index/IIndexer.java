@@ -45,6 +45,25 @@ import org.rodinp.core.IRodinFile;
  * given anew.
  * </p>
  * <p>
+ * Please note the following indexing constraints:
+ * <ul>
+ * <li>an element cannot have an occurrence if it has not been declared before</li>
+ * <li>an element cannot be declared more than once</li>
+ * <li>declared elements must be local to the file</li>
+ * <li>occurring elements must be either local or imported</li>
+ * <li>declared elements should have one or more occurrences when indexing
+ * completes</li>
+ * </ul>
+ * The first constraint is implicitly held by the fact that occurrences are
+ * added by giving the declaration of the occurring element.
+ * <br>
+ * Breaking one of the three next ones will result in a
+ * {{class|IllegalArgumentException}} being thrown.
+ * <br>
+ * Finally, when file indexing completes, declared elements with no occurrences
+ * are simply ignored (not put into index tables).
+ * </p>
+ * <p>
  * This interface is intended to be implemented by clients.
  * </p>
  * 

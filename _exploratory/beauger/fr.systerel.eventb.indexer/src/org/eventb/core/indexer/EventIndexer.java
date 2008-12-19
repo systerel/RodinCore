@@ -150,6 +150,8 @@ public class EventIndexer extends Cancellable {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
 			final IDeclaration declaration = bridge.declare(event, eventLabel);
+			bridge.addOccurrence(declaration, REFERENCE,
+					getInternalLocation(event.getRodinFile().getRoot()));
 			bridge.export(declaration);
 		}
 	}

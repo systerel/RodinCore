@@ -90,29 +90,31 @@ public class ProjectIndexManager {
 		}
 		while (order.hasNext()) {
 			final IRodinFile file = order.next();
-
-			final Map<IInternalElement, IDeclaration> fileImports =
-					computeImports(file);
-			final IndexingBridge bridge =
-					new IndexingBridge(file, fileImports, monitor);
-
-			final FileIndexingManager fim = FileIndexingManager.getDefault();
-			final IIndexingResult result = fim.doIndexing(bridge);
-
-			checkCancel(monitor);
-			if (result.isSuccess()) {
-				if (mustReindexDependents(result)) {
-					order.setToIterSuccessors();
-				}
-
-				updateTables(result);
-			} else {
-				order.setToIterSuccessors();
-				order.remove();
-				clean(file);
-			}
+			
+			doIndexing(file, monitor);
 		}
 		order.end();
+	}
+
+	private void doIndexing(final IRodinFile file, IProgressMonitor monitor) {
+		final Map<IInternalElement, IDeclaration> fileImports =
+				computeImports(file);
+
+		final FileIndexingManager fim = FileIndexingManager.getDefault();
+		final IIndexingResult result = fim.doIndexing(file, fileImports, monitor);
+
+		checkCancel(monitor);
+		if (result.isSuccess()) {
+			if (mustReindexDependents(result)) {
+				order.setToIterSuccessors();
+			}
+
+			updateTables(result);
+		} else {
+			order.setToIterSuccessors();
+			order.remove();
+			clean(file);
+		}
 	}
 
 	public boolean mustReindexDependents(IIndexingResult result) {
@@ -153,7 +155,9 @@ public class ProjectIndexManager {
 		for (IInternalElement element : occurrencesMap.keySet()) {
 			final Set<IOccurrence> occurrences = occurrencesMap.get(element);
 			final Descriptor descriptor = index.getDescriptor(element);
-			// not null assumed from bridge checks
+			// not null expected from bridge checks
+			assert descriptor != null;
+
 			for (IOccurrence occurrence : occurrences) {
 				descriptor.addOccurrence(occurrence);
 			}
@@ -180,8 +184,7 @@ public class ProjectIndexManager {
 					// there are import occurrences of the element;
 					// in those files, it is referred to with previousName
 					// => rodinIndex tables are coherent but those files may not
-					// be
-					// indexed again, and the element name is incorrect there
+					// be indexed again, and the element name is incorrect there
 				}
 			}
 
@@ -210,6 +213,8 @@ public class ProjectIndexManager {
 					final IDeclaration declaration =
 							descriptor.getDeclaration();
 					nameTable.remove(declaration);
+					// even imported elements with no remaining occurrences
+					// are removed from index (no more descriptor)
 					index.removeDescriptor(element);
 				}
 			}

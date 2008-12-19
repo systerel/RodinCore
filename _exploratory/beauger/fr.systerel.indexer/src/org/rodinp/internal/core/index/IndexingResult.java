@@ -74,6 +74,13 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		this.success = value;
 	}
 
+	public void remove(IDeclaration declaration) {
+		final IInternalElement element = declaration.getElement();
+		declarations.remove(element);
+		occurrences.remove(element);
+		exports.remove(declaration);
+	}
+	
 	public Map<IInternalElement, IDeclaration> getDeclarations() {
 		return declarations;
 	}

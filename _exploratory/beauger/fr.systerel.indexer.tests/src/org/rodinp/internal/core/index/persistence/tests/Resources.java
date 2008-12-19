@@ -245,8 +245,8 @@ public class Resources {
 		final TotalOrder<IRodinFile> order = pim.getOrder();
 
 		// order
-		order.setPredecessors(file2, makeIRFArray(file1));
-		order.setPredecessors(file3, makeIRFArray(file1, file2));
+		order.setPredecessors(file2, makeArray(file1));
+		order.setPredecessors(file3, makeArray(file1, file2));
 
 		order.setToIter(file1);
 		order.setToIter(file2);
@@ -307,8 +307,8 @@ public class Resources {
 		// fill elements
 
 		// order
-		order.setPredecessors(file2, makeIRFArray(file1));
-		order.setPredecessors(file3, makeIRFArray(file1, file2));
+		order.setPredecessors(file2, makeArray(file1));
+		order.setPredecessors(file3, makeArray(file1, file2));
 
 		order.setToIter(file1);
 		order.setToIter(file2);

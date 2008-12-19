@@ -22,8 +22,8 @@ import org.rodinp.core.IInternalElement;
  * Two methods allow the indexer to query its inputs:
  * <ul>
  * <li><code>getRodinFile</code> returns the file which is currently indexed.</li>
- * <li><code>getImports</code> returns the declarations exported by the files
- * on which the current file depends.</li>
+ * <li><code>getImports</code> returns the declarations exported by the files on
+ * which the current file depends.</li>
  * </ul>
  * </p>
  * <p>
@@ -34,6 +34,10 @@ import org.rodinp.core.IInternalElement;
  * <li><code>export</code> indicates that a declaration is to be exported to
  * files that depend on the current file.</li>
  * </ul>
+ * </p>
+ * <p>
+ * Please note that, when indexing completes, declared elements should have one
+ * or more occurrences. Declared elements with no occurrences will be ignored.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
