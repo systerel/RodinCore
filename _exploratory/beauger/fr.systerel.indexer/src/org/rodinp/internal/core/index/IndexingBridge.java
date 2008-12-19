@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +46,6 @@ public class IndexingBridge implements IIndexingBridge {
 	private final IRodinFile file;
 	private final Map<IInternalElement, IDeclaration> imports;
 
-	private final Map<IInternalElement, IDeclaration> declarations;
 	private final IndexingResult result;
 	private final IProgressMonitor monitor;
 
@@ -60,15 +55,12 @@ public class IndexingBridge implements IIndexingBridge {
 
 		this.file = file;
 		this.imports = imports;
-		this.declarations = new HashMap<IInternalElement, IDeclaration>();
 		this.result = new IndexingResult(file);
-		this.result.setDeclarations(declarations);
 		this.monitor = monitor;
 	}
 
 	public IDeclaration[] getDeclarations() {
-		final Collection<IDeclaration> decls = declarations.values();
-		return decls.toArray(new IDeclaration[decls.size()]);
+		return result.getDeclArray();
 	}
 
 	public IDeclaration declare(IInternalElement element, String name) {
@@ -86,13 +78,13 @@ public class IndexingBridge implements IIndexingBridge {
 							+ element.getRodinFile());
 		}
 
-		if (declarations.containsKey(element)) {
+		if (result.isDeclared(element)) {
 			throw new IllegalArgumentException(
 					"Element has already been declared: " + element);
 		}
 
 		final Declaration declaration = new Declaration(element, name);
-		declarations.put(element, declaration);
+		result.putDeclaration(declaration);
 
 		return declaration;
 	}
@@ -167,30 +159,20 @@ public class IndexingBridge implements IIndexingBridge {
 	}
 
 	private void removeNonOccurringElements() {
-		final List<IDeclaration> noOccElems = getNonOccurringElements();
-		
-		for (IDeclaration decl : noOccElems) {
-			result.remove(decl);
-			if (IndexManager.DEBUG) {
-				System.out.println("Indexing "
-						+ file.getPath()
-						+ ": Removed non occurring declaration: "
-						+ decl);
+		final Set<IInternalElement> occElems = result.getOccurrences().keySet();
+		for (IDeclaration decl: result.getDeclArray()) {
+			if (!occElems.contains(decl.getElement())) {
+				result.remove(decl);
+				if (IndexManager.DEBUG) {
+					System.out.println("Indexing "
+							+ file.getPath()
+							+ ": Removed non occurring declaration: "
+							+ decl);
+				}
 			}
 		}
 	}
 	
-	private final List<IDeclaration> getNonOccurringElements() {
-		final List<IDeclaration> res = new ArrayList<IDeclaration>();
-		final Set<IInternalElement> occElems = result.getOccurrences().keySet();
-		for (IDeclaration decl: declarations.values()) {
-			if (!occElems.contains(decl.getElement())) {
-				res.add(decl);
-			}
-		}
-		return res;
-	}
-
 	public IIndexingResult getResult() {
 		return result.clone();
 	}

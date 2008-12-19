@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,8 +67,17 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		set.add(occurrence);
 	}
 
-	public void setDeclarations(Map<IInternalElement, IDeclaration> declarations) {
-		this.declarations = declarations;
+	public void putDeclaration(IDeclaration declaration) {
+		declarations.put(declaration.getElement(), declaration);
+	}
+	
+	public boolean isDeclared(IInternalElement element) {
+		return declarations.containsKey(element);
+	}
+	
+	public IDeclaration[] getDeclArray() {
+		final Collection<IDeclaration> decls = declarations.values();
+		return decls.toArray(new IDeclaration[decls.size()]);
 	}
 
 	public void setSuccess(boolean value) {
