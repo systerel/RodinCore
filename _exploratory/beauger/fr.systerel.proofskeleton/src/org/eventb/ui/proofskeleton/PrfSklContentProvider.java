@@ -24,15 +24,17 @@ import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
  */
 public class PrfSklContentProvider implements ITreeContentProvider {
 
+	private static final Object[] NO_OBJECTS = new Object[0];
+	
 	public PrfSklContentProvider() {
 		// Do nothing
 	}
-
+	
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IProofTreeNode) {
 			return ((IProofTreeNode) parentElement).getChildNodes();
 		}
-		return new Object[0];
+		return NO_OBJECTS;
 	}
 
 	public Object getParent(Object element) {
@@ -61,7 +63,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		if (inputElement instanceof DefaultMasterInput) {
 			return new Object[] {inputElement};
 		}
-		return new Object[0];
+		return NO_OBJECTS;
 	}
 
 	public void dispose() {

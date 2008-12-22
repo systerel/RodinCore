@@ -12,12 +12,20 @@ package org.eventb.ui.proofskeleton;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -25,6 +33,9 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
+import org.eventb.internal.core.seqprover.TypeChecker;
+import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -66,8 +77,19 @@ public class ProofSkeletonBuilder {
 				goal = deps.getGoal();
 			}
 		}
-		// TODO checks (see makeSequent)
+		
+		if (!check(env, hyps, goal)) {
+			return null;
+		}
 		return ProverFactory.makeSequent(env, hyps, goal);
+	}
+
+	private static boolean check(final ITypeEnvironment env,
+			final Collection<Predicate> hyps, final Predicate goal) {
+		final TypeChecker checker = new TypeChecker(env);
+		checker.checkFormula(goal);
+		checker.checkFormulas(hyps);
+		return !checker.hasTypeCheckError();
 	}
 	
 	/**
@@ -84,24 +106,70 @@ public class ProofSkeletonBuilder {
 	 */
 	public static IProofTree buildProofTree(IPRProof pr, IProofMonitor monitor)
 			throws RodinDBException {
-//		if (pr.getElementName().equals("thm0/THM"))
-//			for (int i = 0; i < 500000000; i++) {
-//				Integer g = new Integer(i);
-//			}
 
 		IProverSequent rootSequent = buildRootSequent(pr);
-		IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);
-		// Reuse method (see below) requires to check that its node is open.
-		// By construction, a newly created root node is open (has no children).
-		assert prTree.getRoot().isOpen();
+		if (rootSequent == null) {
+			return null;
+		}
 
-		IProofSkeleton skel = pr.getSkeleton(FormulaFactory.getDefault(), null);
-
-		 if (ProofBuilder.reuse(prTree.getRoot(), skel, monitor)) {
-			 return prTree;
-		 }
-
+		final IProofComponent pc = getProofComponent(pr);
+		try {
+			IProofSkeleton skel =
+				pc.getProofSkeleton(pr.getElementName(), FormulaFactory
+						.getDefault(), null);
+			IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);
+			assert prTree.getRoot().isOpen();
+			if (ProofBuilder.reuse(prTree.getRoot(), skel, monitor)) {
+				return prTree;
+			}
+		} catch (AssertionError e) {
+			// catching error in reuse (see bug #2355262)
+			if (proposeEmpty(pr, pc)) {
+				RodinCore.run(new MakeEmpty(pr, pc), null);
+				return buildProofTree(pr, monitor);
+			}
+		}
 		return null;
 	}
+
+	private static IProofComponent getProofComponent(IPRProof pr) {
+		final IProofManager pm = EventBPlugin.getProofManager();
+		final IEventBRoot prRoot = (IEventBRoot) pr.getRodinFile().getRoot();
+		return pm.getProofComponent(prRoot);
+	}
+
+	
+	private static boolean proposeEmpty(IPRProof pr, IProofComponent pc) {
+		return UIUtils
+				.showQuestion("Proof Skeleton Builder: errors encountered"
+						+ " when processing proof "
+						+ pr
+						+ "\nWould you like to make this proof empty ?");
+	}
+
+	private static class MakeEmpty implements IWorkspaceRunnable {
+		private final IPRProof pr;
+		private final IProofComponent pc;
+		
+		public MakeEmpty(IPRProof pr, IProofComponent pc) {
+			this.pr = pr;
+			this.pc = pc;
+		}
+		
+		public void run(IProgressMonitor monitor) throws CoreException {
+			makeEmpty(pr, pc);
+		}
+		
+		private static void makeEmpty(IPRProof pr, IProofComponent pc)
+		throws RodinDBException {
+			final IProofAttempt prAttempt =
+				pc.createProofAttempt(pr.getElementName(),
+						"ProofSkeletonBuilder", null);
+			prAttempt.commit(false, null);
+			prAttempt.dispose();
+		}
+		
+	}	
+	
 
 }
