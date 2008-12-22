@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -40,9 +41,11 @@ public class FileIndexingManager {
 	private static FileIndexingManager instance;
 
 	private final IndexerRegistry indexerRegistry;
-
+	private final ExecutorService exec;
+	
 	private FileIndexingManager() {
 		this.indexerRegistry = IndexerRegistry.getDefault();
+		this.exec = Executors.newSingleThreadExecutor();
 	}
 
 	public static final FileIndexingManager getDefault() {
@@ -90,8 +93,9 @@ public class FileIndexingManager {
 
 		final DependCaller callGetDeps =
 				new DependCaller(indexer, file.getRoot());
+		
 		Future<IRodinFile[]> task =
-				Executors.newSingleThreadExecutor().submit(callGetDeps);
+				exec.submit(callGetDeps);
 		try {
 			final IRodinFile[] result = task.get(TIMEOUT, UNIT);
 			printDebugDeps(file, result);
@@ -146,14 +150,14 @@ public class FileIndexingManager {
 		return prevResult;
 	}
 
-	private static IIndexingResult doIndexing(IIndexer indexer,
+	private IIndexingResult doIndexing(IIndexer indexer,
 			IndexingBridge bridge) {
 		final IRodinFile file = bridge.getRodinFile();
 		printVerbose(makeMessage("indexing", file, indexer));
 
 		final IndexCaller callIndex = new IndexCaller(indexer, bridge);
 		Future<Boolean> task =
-				Executors.newSingleThreadExecutor().submit(callIndex);
+				exec.submit(callIndex);
 
 		try {
 			final boolean success = task.get(TIMEOUT, UNIT);
