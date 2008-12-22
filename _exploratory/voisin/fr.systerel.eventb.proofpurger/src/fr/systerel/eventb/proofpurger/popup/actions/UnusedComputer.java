@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IEventBRoot;
-import org.eventb.core.IPORoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
 import org.rodinp.core.IRodinElement;
@@ -110,7 +109,7 @@ public class UnusedComputer implements IWorkspaceRunnable {
 
 	private static void extractUnusedProofsOrFiles(
 			Set<IPRRoot> prFilesToProcess, IProgressMonitor monitor,
-			List<IPRProof> unusedProofs, List<IPRRoot> unusedProofFiles)
+			List<IPRProof> unusedPs, List<IPRRoot> unusedFs)
 			throws RodinDBException {
 		final int size = prFilesToProcess.size();
 		SubMonitor progress = SubMonitor.convert(monitor);
@@ -124,9 +123,9 @@ public class UnusedComputer implements IWorkspaceRunnable {
 		for (IPRRoot current : prFilesToProcess) {
 
 			if (noProofNoPS(current)) {
-				unusedProofFiles.add(current);
+				unusedFs.add(current);
 			} else {				
-				addUnusedProofs(current.getProofs(), unusedProofs);
+				addUnusedProofs(current.getProofs(), unusedPs);
 			}
 			progress.worked(1);
 			debugHook();
@@ -142,20 +141,12 @@ public class UnusedComputer implements IWorkspaceRunnable {
 	}
 	
 	private static void addUnusedProofs(final IPRProof[] proofs,
-			List<IPRProof> unusedProofs) {
+			List<IPRProof> unused) {
 		for (IPRProof pr : proofs) {
-			if (!isUsed(pr)) {
-				unusedProofs.add(pr);
+			if (isToPurge(pr)) {
+				unused.add(pr);
 			}
 		}
-	} 
-
-	private static boolean isUsed(IPRProof pr) {
-		final String name = pr.getElementName();
-		final IPORoot poRoot =
-				((IPRRoot) pr.getRodinFile().getRoot()).getPORoot();
-		return poRoot.getSequent(name).exists();
 	}
-
 
 }

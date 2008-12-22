@@ -29,10 +29,41 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IProofPurger {
 
-	void computeUnusedProofsOrFiles(IRodinElement[] projectsOrFiles,
+	/**
+	 * Computes an array of potentially unused proofs. Actually, it filters on
+	 * proofs which have no associated PO.
+	 * 
+	 * @param projectsOrFiles
+	 *            Selection of projects or files to be searched in. Its elements
+	 *            types should be either IRodinProject or IEventBFile.
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            canceled.
+	 * @throws RodinDBException
+	 */
+	void computeUnused(IRodinElement[] projectsOrFiles,
 			IProgressMonitor monitor, List<IPRProof> unusedProofs,
 			List<IPRRoot> unusedProofFiles) throws RodinDBException;
 
-	void purgeUnusedProofsOrFiles(List<IPRProof> proofs, List<IPRRoot> files,
+	/**
+	 * Deletes all given unused proofs. If any of these proofs are actually
+	 * used, throws IllegalArgumentException.
+	 * 
+	 * @param proofs
+	 *            An array containing proofs to delete.
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            canceled.
+	 * @throws IllegalArgumentException
+	 * @throws RodinDBException
+	 */
+	void purgeUnused(List<IPRProof> proofs, List<IPRRoot> files,
 			IProgressMonitor monitor) throws RodinDBException;
+
 }

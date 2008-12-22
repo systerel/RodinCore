@@ -44,51 +44,32 @@ public class ProofPurger implements IProofPurger {
 		return instance;
 	}
 
-	/**
-	 * Computes an array of potentially unused proofs. Actually, it filters on
-	 * proofs which have no associated PO.
-	 * 
-	 * @param projectsOrFiles
-	 *            Selection of projects or files to be searched in. Its elements
-	 *            types should be either IRodinProject or IEventBFile.
-	 * @param monitor
-	 *            the progress monitor to use for reporting progress to the
-	 *            user. It is the caller's responsibility to call done() on the
-	 *            given monitor. Accepts <code>null</code>, indicating that no
-	 *            progress should be reported and that the operation cannot be
-	 *            canceled.
-	 * @throws RodinDBException
-	 */
-	public void computeUnusedProofsOrFiles(IRodinElement[] projectsOrFiles,
+	public void computeUnused(IRodinElement[] projectsOrFiles,
 			IProgressMonitor monitor, List<IPRProof> unusedProofs,
-			List<IPRRoot> unusedProofFiles) throws RodinDBException {
-		
-		RodinCore.run(new UnusedComputer(projectsOrFiles, unusedProofs,
-				unusedProofFiles), monitor);
+			List<IPRRoot> unusedFiles) throws RodinDBException {
+
+		final UnusedComputer action =
+				new UnusedComputer(projectsOrFiles, unusedProofs,
+						unusedFiles);
+		RodinCore.run(action, monitor);
 	}
 
-	/**
-	 * Deletes all given unused proofs. If any of these proofs are actually
-	 * used, throws IllegalArgumentException.
-	 * 
-	 * @param proofs
-	 *            An array containing proofs to delete.
-	 * @param monitor
-	 *            the progress monitor to use for reporting progress to the
-	 *            user. It is the caller's responsibility to call done() on the
-	 *            given monitor. Accepts <code>null</code>, indicating that no
-	 *            progress should be reported and that the operation cannot be
-	 *            canceled.
-	 * @throws IllegalArgumentException
-	 * @throws RodinDBException
-	 */
-	public void purgeUnusedProofsOrFiles(List<IPRProof> proofs,
+	public void purgeUnused(List<IPRProof> proofs,
 			List<IPRRoot> files, IProgressMonitor monitor)
 			throws IllegalArgumentException, RodinDBException {
-		
-		RodinCore.run(new UnusedPurger(proofs, files), monitor);
+
+		final UnusedPurger action =
+				new UnusedPurger(proofs, files);
+		RodinCore.run(action, monitor);
 	}
 
+	public static boolean isToPurge(IPRProof proof) {
+		final String name = proof.getElementName();
+		final IPORoot poRoot =
+				((IPRRoot) proof.getRodinFile().getRoot()).getPORoot();
+		return !poRoot.getSequent(name).exists();
+	}
+	
 	public static void debugHook() {
 		if (DEBUG) {
 			for (int i = 0; i < 80000000; i++) {
@@ -96,13 +77,6 @@ public class ProofPurger implements IProofPurger {
 				g = g + 1;
 			}
 		}
-	}
-
-	public static boolean isUsed(IPRProof pr) {
-		final String name = pr.getElementName();
-		final IPORoot poRoot =
-				((IPRRoot) pr.getRodinFile().getRoot()).getPORoot();
-		return poRoot.getSequent(name).exists();
 	}
 
 	public static boolean noProofNoPS(IPRRoot prRoot) throws RodinDBException {

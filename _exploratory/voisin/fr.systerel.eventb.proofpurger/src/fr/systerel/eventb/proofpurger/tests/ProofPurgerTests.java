@@ -145,7 +145,7 @@ public class ProofPurgerTests extends AbstractProofTests {
 	private void assertUnusedProofs(IRodinElement[] input,
 			IPRProof[] expectedResult) throws RodinDBException {
 		List<IPRProof> actualResult = new ArrayList<IPRProof>(); 
-		ProofPurger.getDefault().computeUnusedProofsOrFiles(input, null, actualResult, null);
+		ProofPurger.getDefault().computeUnused(input, null, actualResult, null);
 		assertNotNull("Unexpected null output", actualResult);
 
 		List<IPRProof> expList = Arrays.asList(expectedResult);
@@ -393,7 +393,7 @@ public class ProofPurgerTests extends AbstractProofTests {
 	private void assertPurgeSuccess(List<IPRProof> delProofs, List<IPRRoot> delFiles)
 			throws RodinDBException {
 		try {
-			ProofPurger.getDefault().purgeUnusedProofsOrFiles(delProofs, delFiles, null);
+			ProofPurger.getDefault().purgeUnused(delProofs, delFiles, null);
 		} catch (IllegalArgumentException e) {
 			fail("Unexpected exception: " + e.getMessage());
 		}
@@ -420,7 +420,7 @@ public class ProofPurgerTests extends AbstractProofTests {
 	private void assertPurgeFailure(List<IPRProof> delProofs, List<IPRRoot> delFiles)
 			throws RodinDBException {
 		try {
-			ProofPurger.getDefault().purgeUnusedProofsOrFiles(delProofs, delFiles, null);
+			ProofPurger.getDefault().purgeUnused(delProofs, delFiles, null);
 		} catch (IllegalArgumentException e) {
 			assertAllDeleted(delFiles, false);
 			return;

@@ -30,15 +30,16 @@ import org.rodinp.core.RodinDBException;
  * @author Nicolas Beauger
  *
  */
-public class UnusedPurger implements IWorkspaceRunnable {
-	private final List<IPRProof> proofs;
-	private final List<IPRRoot> files;
-	
+public class UnusedPurger  implements IWorkspaceRunnable {
+
+	private final List<IPRProof> proofsToPurge;
+	private final List<IPRRoot> filesToPurge;
 	
 	public UnusedPurger(List<IPRProof> proofs,
 			List<IPRRoot> files) {
-		this.proofs = proofs;
-		this.files = files;
+		super();
+		this.proofsToPurge = proofs;
+		this.filesToPurge = files;
 	}
 	
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -46,7 +47,7 @@ public class UnusedPurger implements IWorkspaceRunnable {
 		progress.beginTask(Messages.proofpurger_deletingselectedproofs, 100);
 		progress.subTask(Messages.proofpurger_verifyingselectedproofs);
 		debugHook();
-		verifyProofsAndFiles(proofs, files, progress);
+		verifyProofsAndFiles(progress);
 		progress.worked(10);
 		if (progress.isCanceled())
 			return;
@@ -54,7 +55,7 @@ public class UnusedPurger implements IWorkspaceRunnable {
 		progress.subTask(Messages.proofpurger_deleting);
 		debugHook();
 		final Set<IPRRoot> openProofFiles = new LinkedHashSet<IPRRoot>();
-		deleteProofs(proofs, progress.newChild(50), openProofFiles);
+		deleteProofs(proofsToPurge, progress.newChild(50), openProofFiles);
 		progress.setWorkRemaining(40);
 		if (progress.isCanceled())
 			return;
@@ -67,7 +68,7 @@ public class UnusedPurger implements IWorkspaceRunnable {
 		if (progress.isCanceled())
 			return;
 		
-		toDelete.addAll(files);
+		toDelete.addAll(filesToPurge);
 		
 		deleteFiles(toDelete, progress.newChild(20));
 		progress.setWorkRemaining(10);
@@ -80,16 +81,15 @@ public class UnusedPurger implements IWorkspaceRunnable {
 		saveFiles(toSave, progress.newChild(10));
 	}
 
-	private static void verifyProofsAndFiles(List<IPRProof> proofs,
-			List<IPRRoot> files, SubMonitor progress) throws RodinDBException {
-		if (!areAllUnusedProofs(proofs)) {
+	private void verifyProofsAndFiles(SubMonitor progress) throws RodinDBException {
+		if (!areAllUnusedProofs(proofsToPurge)) {
 			throw new IllegalArgumentException(
 					Messages.proofpurger_tryingtodeleteusedproofs);
 		}
 		if (progress.isCanceled())
 			return;
 		
-		if (!areAllUnusedFiles(files)) {
+		if (!areAllUnusedFiles(filesToPurge)) {
 			throw new IllegalArgumentException(
 					Messages.proofpurger_tryingtodeleteusedfiles);
 		}
@@ -182,7 +182,7 @@ public class UnusedPurger implements IWorkspaceRunnable {
 
 	private static boolean areAllUnusedProofs(List<IPRProof> proofs) {
 		for (IPRProof pr : proofs) {
-			if (isUsed(pr)) {
+			if (!isToPurge(pr)) {
 				return false;
 			}
 		}

@@ -40,7 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin, Nicolas Beauger
  * 
  */
-public class FilePurgeAction implements IObjectActionDelegate {
+public class PurgeAction implements IObjectActionDelegate {
 
 	private IWorkbenchPartSite site;
 	private IStructuredSelection selection;
@@ -57,9 +57,9 @@ public class FilePurgeAction implements IObjectActionDelegate {
 	/**
 	 * Encapsulates a call to the purger to compute unused proofs. The
 	 * constructor parameter is the list of proof files to be looked at. The
-	 * resulting list of proofs can be obtained from {@link #getResult}, which
-	 * returns <code>null</code> if a problem occurred or the search was
-	 * canceled.
+	 * resulting list of proofs can be obtained from get methods, which
+	 * return an empty list if a problem occurred or the search was
+	 * cancelled.
 	 */
 	private static class ComputeUnused extends Operation {
 
@@ -79,14 +79,15 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			try {
 				if (prFiles == null)
 					return;
-				ProofPurger.getDefault().computeUnusedProofsOrFiles(prFiles,
+				ProofPurger.getDefault().computeUnused(prFiles,
 						monitor, unusedProofs, unusedFiles);
 				if (monitor.isCanceled()) {
 					wasCancelled = true;
 				}
 			} catch (RodinDBException e) {
 				UIUtils.showInfo(Messages.filepurgeaction_rodindberror
-						+ " File: " + e.getMessage());
+						+ " File: "
+						+ e.getMessage());
 				wasCancelled = true;
 			} finally {
 				monitor.done();
@@ -122,7 +123,7 @@ public class FilePurgeAction implements IObjectActionDelegate {
 			try {
 				if (proofs == null)
 					return;
-				ProofPurger.getDefault().purgeUnusedProofsOrFiles(proofs,
+				ProofPurger.getDefault().purgeUnused(proofs,
 						files, monitor);
 				if (monitor.isCanceled()) {
 					wasCancelled = true;
@@ -152,12 +153,13 @@ public class FilePurgeAction implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
-		IRodinElement[] prFiles = getSelectedPRFiles();
-		if (prFiles == null) {
+		IRodinElement[] input = getSelectedElements();
+		if (input == null) {
 			UIUtils.showInfo(Messages.filepurgeaction_invalidselection);
 			return;
 		}
-		final ComputeUnused computeUnused = new ComputeUnused(prFiles);
+		final ComputeUnused computeUnused =
+				new ComputeUnused(input);
 		launchPurgerOperation(computeUnused);
 		if (computeUnused.wasCancelled())
 			return;
@@ -174,16 +176,18 @@ public class FilePurgeAction implements IObjectActionDelegate {
 				launchPurgerSelectionDialog(unusedProofs, unusedFiles,
 						selectedProofs, selectedFiles);
 		if (purge) {
-			launchPurgerOperation(new PurgeProofs(selectedProofs, selectedFiles));
+			final PurgeProofs purgeProofs =
+					new PurgeProofs(selectedProofs, selectedFiles);
+			launchPurgerOperation(purgeProofs);
 		}
 	}
 
-	private IRodinElement[] getSelectedPRFiles() {
+	private IRodinElement[] getSelectedElements() {
 		if (selection == null) {
 			return null;
 		}
-		final List<IRodinElement> result = new ArrayList<IRodinElement>(
-				selection.size());
+		final List<IRodinElement> result =
+				new ArrayList<IRodinElement>(selection.size());
 		for (Object o : selection.toList()) {
 			final IRodinElement elem = asRodinElement(o);
 			if (isProjectOrEventBRoot(elem)) {
@@ -211,9 +215,10 @@ public class FilePurgeAction implements IObjectActionDelegate {
 	private boolean launchPurgerSelectionDialog(IPRProof[] unusedProofs,
 			IPRRoot[] unusedFiles, List<IPRProof> selectedProofs,
 			List<IPRRoot> selectedFiles) {
-		ProofPurgerSelectionDialog dialog = new ProofPurgerSelectionDialog(site
-				.getShell(), new ProofPurgerContentProvider(
-						unusedProofs, unusedFiles));
+		ProofPurgerSelectionDialog dialog =
+				new ProofPurgerSelectionDialog(site.getShell(),
+						new ProofPurgerContentProvider(unusedProofs,
+								unusedFiles));
 		dialog.create();
 		final int userAction = dialog.open();
 		if (userAction == Window.OK) {
@@ -224,14 +229,15 @@ public class FilePurgeAction implements IObjectActionDelegate {
 		return false;
 	}
 
-	private void launchPurgerOperation(IRunnableWithProgress operation) {
+	private void launchPurgerOperation(Operation operation) {
 		try {
 			new ProgressMonitorDialog(site.getShell()).run(true, true,
 					operation);
 		} catch (InvocationTargetException e) {
 			final Throwable cause = e.getCause();
-			final String errorMessage = Messages.filepurgeaction_runningpurgeroperation
-					+ operation.toString();
+			final String errorMessage =
+					Messages.filepurgeaction_runningpurgeroperation
+							+ operation.toString();
 			UIUtils.log(cause, errorMessage);
 			if (cause instanceof CoreException) {
 				UIUtils.showUnexpectedError((CoreException) cause);

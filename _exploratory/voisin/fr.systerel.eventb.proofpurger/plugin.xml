@@ -8,7 +8,7 @@
             id="fr.systerel.eventb.proofpurger.contribution"
             objectClass="org.rodinp.core.IRodinElement">
          <action
-               class="fr.systerel.eventb.proofpurger.popup.actions.FilePurgeAction"
+               class="fr.systerel.eventb.proofpurger.popup.actions.PurgeAction"
                id="fr.systerel.eventb.proofpurger.filePurgeAction"
                label="%action.label"
                tooltip="%action.tooltip">
