@@ -13,6 +13,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - take into account implicit children when computing a free index
  *     Systerel - added history support
+ *     Systerel - added boolean to linkToProverUI() and a showQuestion() method
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -258,6 +259,22 @@ public class UIUtils {
 	 *            the object (e.g. a proof obligation or a Rodin file)
 	 */
 	public static void linkToProverUI(final Object obj) {
+		linkToProverUI(obj, true);
+	}
+	
+	/**
+	 * Link the current object to a Prover UI editor.
+	 * <p>
+	 * 
+	 * @param obj
+	 *            the object (e.g. a proof obligation or a Rodin file)
+	 * @param activateEditor
+	 *            Set to true when the Prover UI editor has to get activated.
+	 *            When this linking is just intended for background overall
+	 *            coherence, setting to false reduces selection listeners
+	 *            pollution.
+	 */
+	public static void linkToProverUI(final Object obj, boolean activateEditor) {
 		final IRodinFile psFile = getPSFileFor(obj);
 		if (psFile == null) {
 			// Not a PS file element
@@ -267,7 +284,7 @@ public class UIUtils {
 		try {
 			IEditorInput fileInput = new FileEditorInput(psFile.getResource());
 			final ProverUI editor = (ProverUI) EventBUIPlugin.getActivePage()
-					.openEditor(fileInput, ProverUI.EDITOR_ID);
+					.openEditor(fileInput, ProverUI.EDITOR_ID, activateEditor);
 			if (obj instanceof IPSStatus)
 				UIUtils.runWithProgressDialog(editor.getSite().getShell(),
 						new IRunnableWithProgress() {
@@ -809,6 +826,32 @@ public class UIUtils {
 			}
 		});
 
+	}
+
+	/**
+	 * Opens an information dialog to the user displaying the given message.
+	 *  
+	 * @param message The dialog message.
+	 */
+	public static boolean showQuestion(final String message) {
+		final String pluginName = getPluginName();
+		class Question implements Runnable {
+			private boolean response;
+
+			public void run() {
+				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
+						.getActiveWorkbenchWindow();
+				response = MessageDialog.openQuestion(activeWorkbenchWindow
+						.getShell(), pluginName, message);
+			}
+			public boolean getResponse() {
+				return response;
+			}
+		}
+		final Question question = new Question();
+
+		syncExec(question);
+		return question.getResponse();
 	}
 
 	/**
