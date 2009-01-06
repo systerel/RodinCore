@@ -112,6 +112,10 @@ public class ProofSkeletonBuilder {
 			return null;
 		}
 
+		if (monitor != null && monitor.isCanceled()) {
+			return null;
+		}
+		
 		final IProofComponent pc = getProofComponent(pr);
 		try {
 			IProofSkeleton skel =

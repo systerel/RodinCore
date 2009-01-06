@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eventb.ui.proofskeleton;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -20,10 +27,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 import org.rodinp.core.RodinDBException;
@@ -73,26 +82,59 @@ public class SelectionManager implements IPartListener2 {
 			}
 		}
 		if (proof != null && proof != currentProof) {
-			processNewProof(proof.getProof());
+						processNewProof(proof.getProof());
+		}
+	}
+
+	private static class BuildRunner implements IRunnableWithProgress {
+
+		private final IPRProof proof;
+		private IProofTree prTree;
+		
+		public BuildRunner(IPRProof proof) {
+			this.proof = proof;
+		}
+		
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			try {
+				prTree =
+					ProofSkeletonBuilder.buildProofTree(proof,
+							new ProofMonitor(monitor));
+			} catch (RodinDBException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		
+		public IProofTree getResult() {
+			return prTree;
 		}
 	}
 
 	private void processNewProof(final IPRProof proof) {
 		try {
-			final IProofTree prTree =
-					ProofSkeletonBuilder.buildProofTree(proof, null);
-			if (prTree != null && !managedForm.getForm().isDisposed()) {
+			final BuildRunner buildRunner = new BuildRunner(proof);
+			final Display display = PlatformUI.getWorkbench().getDisplay();
+			final Shell shell = display.getActiveShell();
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+			dialog.run(true, true, buildRunner);
+			
+			final IProofTree prTree = buildRunner.getResult();
+			if (prTree != null) {
 				setInput(prTree);
 			} else {
 				setInput(DefaultMasterInput.getDefault());
 			}
-		} catch (RodinDBException e) {
+		} catch (InvocationTargetException e) {
 			UIUtils.showInfo(workbenchPart.getPartName()
 					+ ": the following proof could not be computed\n"
 					+ proof.getElementName()
 					+ "\nReason:\n"
-					+ e.getLocalizedMessage());
+					+ e.getCause().getLocalizedMessage());
 			setInput(DefaultMasterInput.getDefault());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	
 	}
@@ -146,7 +188,9 @@ public class SelectionManager implements IPartListener2 {
 	}
 	
 	private void setInput(Object input) {
-		managedForm.setInput(input);
+		if(!managedForm.getForm().isDisposed()) {
+			managedForm.setInput(input);
+		}
 	}
 
 }
