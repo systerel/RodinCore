@@ -52,5 +52,11 @@
             tooltip="Expanding the definition of subset into subset equal">
       </tactic>
    </extension>
+   <extension
+         point="org.eventb.core.pomTactics">
+      <tactic
+            id="org.eventb.contributer.seqprover.fr1834715.autoTactic1">
+      </tactic>
+   </extension>
 
 </plugin>
