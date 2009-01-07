@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBSharedColor
+ *     Systerel - computed size of hypothesis composite
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -210,29 +211,26 @@ public class ProofsPage extends FormPage implements
 			totalWidth += vertical.getSize().x;
 		}
 
-		int selectedHeight = hypComposite.getControl().computeSize(totalWidth,
-				SWT.DEFAULT).y;
+		final Point selectedSize = hypComposite.getControl().computeSize(
+				totalWidth, SWT.DEFAULT);
 
-		if (ProverUIUtils.DEBUG) {
-			ProverUIUtils.debug("Desired Height " + selectedHeight);
-		}
 		if (totalHeight < 1) {
 			totalHeight = DEFAULT_HEIGHT;
 			totalWidth = DEFAULT_WIDTH;
 		}
-		if (selectedHeight < totalHeight) {
-			if (ProverUIUtils.DEBUG) {
-				ProverUIUtils.debug("Total Width " + totalWidth);
-				ProverUIUtils.debug("Total Height " + totalHeight);
-			}
-			control.setBounds(0, 0, totalWidth, totalHeight);
-			control.layout(true);
-			hypComposite.reflow(true);
-		} else {
-			control.setBounds(0, 0, totalWidth, totalHeight);
-			control.layout(true);
-			hypComposite.setSize(totalWidth, totalHeight);
-			hypComposite.reflow(true);
+
+		final int hypHeigth = (selectedSize.y < totalHeight) ? selectedSize.y
+				: totalHeight;
+
+		control.setBounds(0, 0, totalWidth, totalHeight);
+		control.layout(true);
+		hypComposite.setSize(selectedSize.x, hypHeigth);
+		hypComposite.reflow(true);
+
+		if (ProverUIUtils.DEBUG) {
+			ProverUIUtils.debug("Desired Height " + selectedSize.y);
+			ProverUIUtils.debug("Total Width " + totalWidth);
+			ProverUIUtils.debug("Total Height " + totalHeight);
 		}
 		layouting = false;
 	}
