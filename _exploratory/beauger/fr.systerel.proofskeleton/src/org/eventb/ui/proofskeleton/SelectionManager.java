@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eventb.ui.proofskeleton;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -32,7 +26,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.internal.core.ProofMonitor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 import org.rodinp.core.RodinDBException;
@@ -48,7 +41,7 @@ public class SelectionManager implements IPartListener2 {
 	private final IWorkbenchWindow workbenchWindow;
 	private final ISelectionService selectionService;
 	private final IManagedForm managedForm;
-	private IPRProof currentProof;
+	private IPSStatus currentStatus;
 
 	public SelectionManager(IWorkbenchPart2 workbenchPart,
 			IManagedForm managedForm) {
@@ -70,7 +63,7 @@ public class SelectionManager implements IPartListener2 {
 	private void filterAndProcessNewSelection(IWorkbenchPart sourcepart,
 			ISelection selection) {
 	
-		IPSStatus proof = null;
+		IPSStatus status = null;
 		if (sourcepart == workbenchPart) {
 			return;
 		} else if (!selection.isEmpty()
@@ -78,65 +71,40 @@ public class SelectionManager implements IPartListener2 {
 			final Object firstElement =
 					((IStructuredSelection) selection).getFirstElement();
 			if (firstElement instanceof IPSStatus) {
-				proof = (IPSStatus) firstElement;
+				status = (IPSStatus) firstElement;
 			}
 		}
-		if (proof != null && proof != currentProof) {
-						processNewProof(proof.getProof());
-		}
-	}
-
-	private static class BuildRunner implements IRunnableWithProgress {
-
-		private final IPRProof proof;
-		private IProofTree prTree;
-		
-		public BuildRunner(IPRProof proof) {
-			this.proof = proof;
-		}
-		
-		public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
-			try {
-				prTree =
-					ProofSkeletonBuilder.buildProofTree(proof,
-							new ProofMonitor(monitor));
-			} catch (RodinDBException e) {
-				throw new InvocationTargetException(e);
-			}
-		}
-		
-		public IProofTree getResult() {
-			return prTree;
+		if (status != null && !status.equals(currentStatus)) { 
+			final IPRProof proof = status.getProof();
+			processNewProof(proof);
+			currentStatus = status;
 		}
 	}
 
 	private void processNewProof(final IPRProof proof) {
-		try {
-			final BuildRunner buildRunner = new BuildRunner(proof);
-			final Display display = PlatformUI.getWorkbench().getDisplay();
-			final Shell shell = display.getActiveShell();
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-			dialog.run(true, true, buildRunner);
-			
-			final IProofTree prTree = buildRunner.getResult();
-			if (prTree != null) {
-				setInput(prTree);
-			} else {
-				setInput(DefaultMasterInput.getDefault());
+		System.out.println("processing "+proof);
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				try {
+					final IProofTree prTree =
+							ProofSkeletonBuilder.buildProofTree(proof,
+									null);
+					if (prTree != null) {
+						setInput(prTree);
+					} else {
+						setInput(DefaultMasterInput.getDefault());
+					}
+				} catch (RodinDBException e) {
+					UIUtils.showInfo(workbenchPart.getPartName()
+							+ ": the following proof could not be computed\n"
+							+ proof.getElementName()
+							+ "\nReason:\n"
+							+ e.getLocalizedMessage());
+					setInput(DefaultMasterInput.getDefault());
+				}
 			}
-		} catch (InvocationTargetException e) {
-			UIUtils.showInfo(workbenchPart.getPartName()
-					+ ": the following proof could not be computed\n"
-					+ proof.getElementName()
-					+ "\nReason:\n"
-					+ e.getCause().getLocalizedMessage());
-			setInput(DefaultMasterInput.getDefault());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
+		});
 	}
 
 	public void partVisible(IWorkbenchPartReference partRef) {
