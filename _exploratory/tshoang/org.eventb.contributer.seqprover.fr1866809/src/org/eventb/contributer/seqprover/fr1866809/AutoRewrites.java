@@ -5,23 +5,14 @@ package org.eventb.contributer.seqprover.fr1866809;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites;
-
-
-import org.eventb.core.ast.DefaultRewriter;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.UnaryExpression;
 
 public class AutoRewrites extends AbstractAutoRewrites implements IReasoner {
 		 

@@ -24,5 +24,11 @@
             id="org.eventb.contributer.seqprover.fr1866809.autoTactic1">
       </tactic>
    </extension>
+   <extension
+         point="org.eventb.core.pomTactics">
+      <tactic
+            id="org.eventb.contributer.seqprover.fr1866809.autoTactic1">
+      </tactic>
+   </extension>
 
 </plugin>
