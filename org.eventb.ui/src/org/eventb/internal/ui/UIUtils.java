@@ -14,8 +14,11 @@
  *     Systerel - take into account implicit children when computing a free index
  *     Systerel - added history support
  *     Systerel - added boolean to linkToProverUI() and a showQuestion() method
+ *     Systerel - added method to remove MouseWheel Listener of CCombo
  *******************************************************************************/
 package org.eventb.internal.ui;
+
+import static org.eclipse.swt.SWT.MouseWheel;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
@@ -36,9 +39,12 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -884,4 +890,20 @@ public class UIUtils {
 		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 
+	/*
+	 * to fix bug 2417413: CCombo have a child Text. When Text receive a
+	 * MouseWheel event, CCombo send a KeyDown event to his listeners. To fix it
+	 * we remove the listener on MouseWheel event.
+	 */
+	public static void removeTextListener(CCombo cc) {
+		for (Control contol : cc.getTabList()) {
+			if (contol instanceof Text) {
+				Text text = (Text) contol;
+				Listener[] listeners = text.getListeners(MouseWheel);
+				if (listeners.length == 1) {
+					text.removeListener(MouseWheel, listeners[0]);
+				}
+			}
+		}
+	}
 }

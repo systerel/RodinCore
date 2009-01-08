@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - used IAttributeFactory
+ *     Systerel - removed MouseWheel Listener of CCombo
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
@@ -68,7 +69,10 @@ public abstract class CComboSection<E extends IAttributedElement> extends
 		data.right = new FormAttachment(100, 0);
 		data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
 		comboWidget.setLayoutData(data);
-
+		
+		// to fix bug 2417413
+		UIUtils.removeTextListener(comboWidget);
+		
 		comboWidget.addSelectionListener(new SelectionListener() {
 
 			public void widgetDefaultSelected(SelectionEvent e) {

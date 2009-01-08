@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - removed MouseWheel Listener of CCombo
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -111,7 +112,11 @@ public class CComboEditComposite<E extends IAttributedElement> extends
 		if (combo != null)
 			combo.removeAll();
 		else {
-			combo = new CCombo(composite, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY);
+			combo = new CCombo(composite, SWT.BORDER | SWT.FLAT );
+
+			// to fix bug 2417413
+			UIUtils.removeTextListener(combo);
+			
 			combo.addSelectionListener(new SelectionListener() {
 
 				public void widgetDefaultSelected(SelectionEvent e) {
