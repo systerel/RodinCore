@@ -11,6 +11,7 @@
  *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *     Systerel - added history support
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - changed double click behavior
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -32,6 +33,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.internal.ui.AbstractDoubleClickListener;
+import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
@@ -88,6 +91,9 @@ public class TextEditComposite<E extends IAttributedElement> extends
 				undefinedButton = null;
 			}
 			text = new StyledText(composite, style);
+
+			text.addMouseListener(new DoubleClickStyledTextListener(text));
+
 			text.addFocusListener(new FocusListener() {
 
 				public void focusGained(FocusEvent e) {
