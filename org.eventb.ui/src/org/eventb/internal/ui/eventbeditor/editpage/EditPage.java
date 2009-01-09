@@ -11,6 +11,7 @@
  *     Systerel - used EventBSharedColor and EventBPreferenceStore
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - removed focus listener of Hyper Link
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -39,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -370,10 +372,18 @@ public class EditPage extends EventBEditorPage implements
 		}
 	}
 
+	private static void removeFocusListener(ImageHyperlink hyperlink) {
+		for (Listener l : hyperlink.getListeners(SWT.FocusIn)) {
+			hyperlink.removeListener(SWT.FocusIn, l);
+		}
+	}
+	
 	private static void createHyperLink(FormToolkit toolkit, final Composite comp,
 			IHyperlinkListener listener, String image) {
 		ImageHyperlink hyperlinkExpand =
 				toolkit.createImageHyperlink(comp, SWT.TOP);
+		// to fix bug 2420471
+		removeFocusListener(hyperlinkExpand);
 		hyperlinkExpand.setImage(EventBImage
 				.getImage(image));
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
