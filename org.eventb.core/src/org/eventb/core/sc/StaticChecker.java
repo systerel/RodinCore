@@ -160,10 +160,10 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 		printModuleTree(config, rodinFile, moduleFactory);
 	
-		final IInternalElementType<?> elementType =
-				rodinFile.getRoot().getElementType();
-		final ISCProcessorModule rootModule =
-				(ISCProcessorModule) moduleFactory.getRootModule(elementType);
+		final IInternalElementType<?> elementType = rodinFile
+				.getRootElementType();
+		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory
+				.getRootModule(elementType);
 		if (rootModule == null) {
 			SCUtil.createProblemMarker(rodinFile,
 					GraphProblem.LoadingRootModuleError);
