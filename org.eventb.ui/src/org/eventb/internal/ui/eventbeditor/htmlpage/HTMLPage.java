@@ -62,7 +62,7 @@ public class HTMLPage extends EventBEditorPage implements
 
 	private boolean needsUpdate;
 
-	private Ast2HtmlConverter astConverter;
+	private AstConverter astConverter;
 
 	private Browser browser;
 
@@ -103,7 +103,6 @@ public class HTMLPage extends EventBEditorPage implements
 
 		try {
 			browser = new Browser(body, SWT.NONE);
-			initReloadBrowser();
 		} catch (SWTError e) {
 			/* The Browser widget throws an SWTError if it fails to
 			 * instantiate properly. Application code should catch
@@ -190,32 +189,13 @@ public class HTMLPage extends EventBEditorPage implements
 			display.syncExec(new Runnable() {
 				public void run() {
 					// Reset the content string of the form text
-					reloadBrowser();
+					setFormText(new NullProgressMonitor());
 				}
 			});
 			needsUpdate = false;
 		}
 	}
 
-	private void initReloadBrowser() {
-		browser.addStatusTextListener(new StatusTextListener() {
-			public void changed(StatusTextEvent event) {
-				if (haveUpdate)
-					return;
-				haveUpdate = true;
-				astConverter.setScrollVertival(event.text);
-				setFormText(new NullProgressMonitor());
-			}
-		});
-	}
-
-	void reloadBrowser() {
-		haveUpdate = false;
-		browser.setVisible(false);
-		final String script = "window.status = document.body.scrollTop;";
-		browser.execute(script);
-	}
-	
 	private IRodinFile getAbstractMachine(IInternalElement mch) {
 		final IRefinesMachine[] refines;
 		try {
