@@ -10,9 +10,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended, event variable by parameter
  *     Systerel - separation of file and root element
+ *     Systerel - added implicit children for events
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -119,14 +121,20 @@ public abstract class AstConverter {
 	protected String END_CONVERGENCE_SEPARATOR = null;
 	protected String BEGIN_PARAMETER_IDENTIFIER = "";
 	protected String END_PARAMETER_IDENTIFIER = "";
+	protected String BEGIN_IMPLICIT_PARAMETER_IDENTIFIER = "";
+	protected String END_IMPLICIT_PARAMETER_IDENTIFIER = "";
 	protected String BEGIN_PARAMETER_IDENTIFIER_SEPARATOR = null;
 	protected String END_PARAMETER_IDENTIFIER_SEPARATOR = null;
 	protected String BEGIN_GUARD_LABEL = "";
 	protected String END_GUARD_LABEL = "";
+	protected String BEGIN_IMPLICIT_GUARD_LABEL = "";
+	protected String END_IMPLICIT_GUARD_LABEL = "";
 	protected String BEGIN_GUARD_LABEL_SEPARATOR = null;
 	protected String END_GUARD_LABEL_SEPARATOR = ":";
 	protected String BEGIN_GUARD_PREDICATE = "";
 	protected String END_GUARD_PREDICATE = "";
+	protected String BEGIN_IMPLICIT_GUARD_PREDICATE = "";
+	protected String END_IMPLICIT_GUARD_PREDICATE = "";
 	protected String BEGIN_GUARD_PREDICATE_SEPARATOR = null;
 	protected String END_GUARD_PREDICATE_SEPARATOR = null;
 	protected String BEGIN_WITNESS_LABEL = "";
@@ -139,10 +147,14 @@ public abstract class AstConverter {
 	protected String END_WITNESS_PREDICATE_SEPARATOR = null;
 	protected String BEGIN_ACTION_LABEL = "";
 	protected String END_ACTION_LABEL = "";
+	protected String BEGIN_IMPLICIT_ACTION_LABEL = "";
+	protected String END_IMPLICIT_ACTION_LABEL = "";
 	protected String BEGIN_ACTION_LABEL_SEPARATOR = null;
 	protected String END_ACTION_LABEL_SEPARATOR = ":";
 	protected String BEGIN_ACTION_ASSIGNMENT = "";
 	protected String END_ACTION_ASSIGNMENT = "";
+	protected String BEGIN_IMPLICIT_ACTION_ASSIGNMENT = "";
+	protected String END_IMPLICIT_ACTION_ASSIGNMENT = "";
 	protected String BEGIN_ACTION_ASSIGNMENT_SEPARATOR = null;
 	protected String END_ACTION_ASSIGNMENT_SEPARATOR = null;
 	protected String BEGIN_VARIANT_EXPRESSION = "";
@@ -592,18 +604,18 @@ public abstract class AstConverter {
 					EventBUIExceptionHandler.handleGetAttributeException(e);
 					continue;
 				}
-				IParameter[] params;
-				IGuard[] guards;
-				IAction[] actions;
+				List<IParameter> params;
+				List<IGuard> guards;
+				List<IAction> actions;
 				IRefinesEvent[] refinesEvents;
 				IWitness[] witnesses;
 				try {
 					refinesEvents = evt
 							.getChildrenOfType(IRefinesEvent.ELEMENT_TYPE);
-					params = evt.getChildrenOfType(IParameter.ELEMENT_TYPE);
-					guards = evt.getChildrenOfType(IGuard.ELEMENT_TYPE);
+					params = UIUtils.getVisibleChildrenOfType(evt, IParameter.ELEMENT_TYPE);
+					guards = UIUtils.getVisibleChildrenOfType(evt, IGuard.ELEMENT_TYPE);
 					witnesses = evt.getChildrenOfType(IWitness.ELEMENT_TYPE);
-					actions = evt.getChildrenOfType(IAction.ELEMENT_TYPE);
+					actions = UIUtils.getVisibleChildrenOfType(evt, IAction.ELEMENT_TYPE);
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get the children for event "
@@ -640,14 +652,12 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (params.length != 0) {
+				if (params.size() != 0) {
 					keyword("ANY", 1);
 					for (IParameter param: params) {
 						beginLevel3();
 						try {
-							appendParameterIdentifier(makeHyperlink(param
-									.getHandleIdentifier(), wrapString(param
-									.getIdentifierString())));
+							appendParameterIdentifier(param, evt);
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get the identifier string for parameter "
@@ -658,7 +668,7 @@ public abstract class AstConverter {
 					}
 					keyword("WHERE", 1);
 				} else {
-					if (guards.length != 0) {
+					if (guards.size() != 0) {
 						keyword("WHEN", 1);
 					} else if (witnesses.length != 0) {
 						keyword("WITH", 1);
@@ -671,11 +681,7 @@ public abstract class AstConverter {
 				for (IGuard guard: guards) {
 					beginLevel3();
 					try {
-						appendGuardLabel(makeHyperlink(guard
-										.getHandleIdentifier(), wrapString(guard
-										.getLabel())));
-						appendGuardPredicate(wrapString(guard
-												.getPredicateString()));
+						appendGuard(guard, evt);
 					} catch (RodinDBException e) {
 						EventBEditorUtils.debugAndLogError(e,
 								"Cannot get details for guard "
@@ -686,7 +692,7 @@ public abstract class AstConverter {
 				}
 
 				if (witnesses.length != 0) {
-					if (params.length != 0 || guards.length != 0) {
+					if (params.size() != 0 || guards.size() != 0) {
 						keyword("WITH", 1);
 					}
 					for (IWitness witness: witnesses) {
@@ -706,12 +712,12 @@ public abstract class AstConverter {
 					}
 				}
 
-				if (params.length != 0 || guards.length != 0
+				if (params.size() != 0 || guards.size() != 0
 						|| witnesses.length != 0) {
 					keyword("THEN", 1);
 				}
 
-				if (actions.length == 0) {
+				if (actions.size() == 0) {
 					beginLevel3();
 					appendActionAssignment("skip");
 					endLevel3();
@@ -719,11 +725,7 @@ public abstract class AstConverter {
 					for (IAction action: actions) {
 						beginLevel3();
 						try {
-							appendActionLabel(makeHyperlink(action
-									.getHandleIdentifier(), wrapString(action
-									.getLabel())));
-							appendActionAssignment(wrapString(action
-									.getAssignmentString()));
+							appendAction(action, evt);
 						} catch (RodinDBException e) {
 							EventBEditorUtils.debugAndLogError(e,
 									"Cannot get details for action "
@@ -869,12 +871,29 @@ public abstract class AstConverter {
 				END_VARIABLE_IDENTIFIER_SEPARATOR);
 	}
 
-	private void appendParameterIdentifier(String identifier) {
-		append(identifier, BEGIN_PARAMETER_IDENTIFIER, END_PARAMETER_IDENTIFIER,
-				BEGIN_PARAMETER_IDENTIFIER_SEPARATOR,
-				END_PARAMETER_IDENTIFIER_SEPARATOR); 
+
+	
+	private String getBeginParameterIdentifier(IParameter prm, IEvent evt) {
+		return getDirectOrImplicitChild(evt, prm, BEGIN_PARAMETER_IDENTIFIER,
+				BEGIN_IMPLICIT_PARAMETER_IDENTIFIER);
 	}
 
+	private String getEndParameterIdentifier(IParameter prm, IEvent evt) {
+		return getDirectOrImplicitChild(evt, prm, END_PARAMETER_IDENTIFIER,
+				END_IMPLICIT_PARAMETER_IDENTIFIER);
+	}
+
+	private void appendParameterIdentifier(IParameter prm, IEvent evt)
+			throws RodinDBException {
+		final String identifier = makeHyperlink(prm.getHandleIdentifier(),
+				wrapString(prm.getIdentifierString()));
+		final String bpi = getBeginParameterIdentifier(prm, evt);
+		final String epi = getEndParameterIdentifier(prm, evt);
+
+		append(identifier, bpi, epi, BEGIN_PARAMETER_IDENTIFIER_SEPARATOR,
+				END_PARAMETER_IDENTIFIER_SEPARATOR);
+	}
+	
 	private void appendSetIdentifier(String identifier) {
 		append(identifier, BEGIN_SET_IDENTIFIER, END_SET_IDENTIFIER,
 				BEGIN_SET_IDENTIFIER_SEPARATOR,
@@ -902,9 +921,38 @@ public abstract class AstConverter {
 				BEGIN_EVENT_LABEL_SEPARATOR, END_EVENT_LABEL_SEPARATOR);
 	}
 
-	private void appendGuardLabel(String label) {
-		append(label, BEGIN_GUARD_LABEL, END_GUARD_LABEL,
-				BEGIN_GUARD_LABEL_SEPARATOR, END_GUARD_LABEL_SEPARATOR);
+	private String getBeginGuardLabel(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, BEGIN_GUARD_LABEL,
+				BEGIN_IMPLICIT_GUARD_LABEL);
+	}
+
+	private String getEndGuardLabel(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, END_GUARD_LABEL,
+				END_IMPLICIT_GUARD_LABEL);
+	}
+
+	private String getBeginGuardPredicate(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, BEGIN_GUARD_PREDICATE,
+				BEGIN_IMPLICIT_GUARD_PREDICATE);
+	}
+
+	private String getEndGuardPredicate(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, END_GUARD_PREDICATE,
+				END_IMPLICIT_GUARD_PREDICATE);
+	}
+	
+	private void appendGuard(IGuard grd, IEvent evt) throws RodinDBException {
+		final String label = makeHyperlink(grd.getHandleIdentifier(),
+				wrapString(grd.getLabel()));
+		final String predicate = wrapString(grd.getPredicateString());
+		final String bgl = getBeginGuardLabel(grd, evt);
+		final String egl = getEndGuardLabel(grd, evt);
+		final String bgp = getBeginGuardPredicate(grd, evt);
+		final String egp = getEndGuardPredicate(grd, evt);
+		append(label, bgl, egl, BEGIN_GUARD_LABEL_SEPARATOR,
+				END_GUARD_LABEL_SEPARATOR);
+		append(predicate, bgp, egp, BEGIN_GUARD_PREDICATE_SEPARATOR,
+				END_GUARD_PREDICATE_SEPARATOR);
 	}
 
 	private void appendWitnessLabel(String label) {
@@ -923,9 +971,40 @@ public abstract class AstConverter {
 				END_ABSTRACT_EVENT_LABEL_SEPARATOR);
 	}
 
-	private void appendActionLabel(String label) {
-		append(label, BEGIN_ACTION_LABEL, END_ACTION_LABEL,
-				BEGIN_ACTION_LABEL_SEPARATOR, END_ACTION_LABEL_SEPARATOR);
+	private String getBeginActionLabel(IAction act, IEvent evt) {
+		return getDirectOrImplicitChild(evt, act, BEGIN_ACTION_LABEL,
+				BEGIN_IMPLICIT_ACTION_LABEL);
+	}
+
+	private String getEndActionLabel(IAction act, IEvent evt) {
+		return getDirectOrImplicitChild(evt, act, END_ACTION_LABEL,
+				END_IMPLICIT_ACTION_LABEL);
+	}
+
+	private String getBeginActionAssignment(IAction act, IEvent evt) {
+		return getDirectOrImplicitChild(evt, act, BEGIN_ACTION_ASSIGNMENT,
+				BEGIN_IMPLICIT_ACTION_ASSIGNMENT);
+	}
+
+	private String getEndActionAssignment(IAction act, IEvent evt) {
+		return getDirectOrImplicitChild(evt, act, END_ACTION_ASSIGNMENT,
+				END_IMPLICIT_ACTION_ASSIGNMENT);
+	}
+
+	private void appendAction(IAction act, IEvent evt) throws RodinDBException {
+		final String label = makeHyperlink(act.getHandleIdentifier(),
+				wrapString(act.getLabel()));
+		final String assignment = wrapString(act.getAssignmentString());
+
+		final String bal = getBeginActionLabel(act, evt);
+		final String eal = getEndActionLabel(act, evt);
+		final String baa = getBeginActionAssignment(act, evt);
+		final String eaa = getEndActionAssignment(act, evt);
+
+		append(label, bal, eal, BEGIN_ACTION_LABEL_SEPARATOR,
+				END_ACTION_LABEL_SEPARATOR);
+		append(assignment, baa, eaa, BEGIN_ACTION_ASSIGNMENT_SEPARATOR,
+				END_ACTION_ASSIGNMENT_SEPARATOR);
 	}
 
 	private void appendInvariantPredicate(String predicate) {
@@ -938,12 +1017,6 @@ public abstract class AstConverter {
 		append(predicate, BEGIN_THEOREM_PREDICATE, END_THEOREM_PREDICATE,
 				BEGIN_THEOREM_PREDICATE_SEPARATOR,
 				END_THEOREM_PREDICATE_SEPARATOR);
-	}
-
-	private void appendGuardPredicate(String predicate) {
-		append(predicate, BEGIN_GUARD_PREDICATE, END_GUARD_PREDICATE,
-				BEGIN_GUARD_PREDICATE_SEPARATOR,
-				END_GUARD_PREDICATE_SEPARATOR);
 	}
 
 	private void appendWitnessPredicate(String predicate) {
@@ -1037,6 +1110,12 @@ public abstract class AstConverter {
 			htmlString.append(END_MULTILINE);
 		}
 		
+	}
+
+	private String getDirectOrImplicitChild(IEvent event, IInternalElement child,
+			String directChildId, String implicitChildId) {
+		return (child.getParent().equals(event)) ? directChildId
+				: implicitChildId;
 	}
 	
 	protected abstract String makeHyperlink(String link, String text);

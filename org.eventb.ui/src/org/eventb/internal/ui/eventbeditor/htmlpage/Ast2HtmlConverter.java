@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended
+ *     Systerel - added implicit children for events
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -25,16 +26,22 @@ import org.osgi.framework.Bundle;
  */
 public class Ast2HtmlConverter extends AstConverter {
 	
+	private String scrollVertical = "0";
+
+	private String LOCAL_BEGIN_HEADER = "";
+	private String LOCAL_END_HEADER = "";
+	
 	public Ast2HtmlConverter() {
 		Bundle bundle = EventBUIPlugin.getDefault().getBundle();
 		IPath path = new Path("html/style.css");
 		IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
-		HEADER = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
+		LOCAL_BEGIN_HEADER = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
 			"<head>"+
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"+
-			"<link type=\"text/css\" rel=\"stylesheet\" href=\"" + absolutePath.toOSString() +"\" />"+
-			"</head>" +
-			"<body><div class=\"main\">";
+			"<link type=\"text/css\" rel=\"stylesheet\" href=\"" + absolutePath.toOSString() +"\" />";
+		LOCAL_END_HEADER = "</head>" +
+			"<body onLoad=\"load();\"><div class=\"main\">";
+		computeHeader();
 		FOOTER = "</div></body></html>";
 		BEGIN_MASTER_KEYWORD = "<div class=\"masterKeyword\">";
 		BEGIN_KEYWORD_1 = "<div class=\"secondaryKeyword\">";
@@ -77,18 +84,28 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_ABSTRACT_EVENT_LABEL = "</td>";
 		BEGIN_PARAMETER_IDENTIFIER = "<td class=\"parameterIdentifier\" align=\"left\" valign=\"center\">";
 		END_PARAMETER_IDENTIFIER = "</td>";
+		BEGIN_IMPLICIT_PARAMETER_IDENTIFIER = "<td class=\"implicitParameterIdentifier\" align=\"left\" valign=\"center\">";
+		END_IMPLICIT_PARAMETER_IDENTIFIER = "</td>";
 		BEGIN_GUARD_LABEL = "<td class=\"guardLabel\" align=\"left\" valign=\"center\">";
 		END_GUARD_LABEL = "</td>";
+		BEGIN_IMPLICIT_GUARD_LABEL = "<td class=\"implicitGuardLabel\" align=\"left\" valign=\"center\">";
+		END_IMPLICIT_GUARD_LABEL = "</td>";
 		BEGIN_GUARD_PREDICATE = "<td class=\"guardPredicate\" align=\"left\" valign=\"center\">";
 		END_GUARD_PREDICATE = "</td>";
+		BEGIN_IMPLICIT_GUARD_PREDICATE = "<td class=\"implicitGuardPredicate\" align=\"left\" valign=\"center\">";
+		END_IMPLICIT_GUARD_PREDICATE = "</td>";
 		BEGIN_WITNESS_LABEL = "<td class=\"witnessLabel\" align=\"left\" valign=\"center\">";
 		END_WITNESS_LABEL = "</td>";
 		BEGIN_WITNESS_PREDICATE = "<td class=\"witnessPredicate\" align=\"left\" valign=\"center\">";
 		END_WITNESS_PREDICATE = "</td>";
 		BEGIN_ACTION_LABEL = "<td class=\"actionLabel\" align=\"left\" valign=\"center\">";
+		BEGIN_IMPLICIT_ACTION_LABEL = "<td class=\"implicitActionLabel\" align=\"left\" valign=\"center\">";
 		END_ACTION_LABEL = "</td>";
+		END_IMPLICIT_ACTION_LABEL = "</td>";
 		BEGIN_ACTION_ASSIGNMENT = "<td class=\"actionAssignment\" align=\"left\" valign=\"center\">";
+		BEGIN_IMPLICIT_ACTION_ASSIGNMENT = "<td class=\"implicitActionAssignment\" align=\"left\" valign=\"center\">";
 		END_ACTION_ASSIGNMENT = "</td>";
+		END_IMPLICIT_ACTION_ASSIGNMENT = "</td>";
 		BEGIN_VARIANT_EXPRESSION = "<td class=\"variantExpression\" align=\"left\" valign=\"center\">";
 		END_VARIANT_EXPRESSION = "</td>";
 		BEGIN_SET_IDENTIFIER = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
@@ -113,4 +130,20 @@ public class Ast2HtmlConverter extends AstConverter {
 		return UIUtils.HTMLWrapUp(text);
 	}
 
+	public void setScrollVertival(String value) {
+		scrollVertical = value;
+		computeHeader();
+	}
+	
+	private void computeHeader() {
+		HEADER = LOCAL_BEGIN_HEADER + getJavaScript() + LOCAL_END_HEADER;
+	}
+	
+	private String getJavaScript(){
+		return "<SCRIPT language=\"Javascript\">\n"+
+		"function load() {"+
+		"	window.scrollTo(0,"+scrollVertical+");"+
+		"}\n"+
+		"</SCRIPT>";
+	}
 }

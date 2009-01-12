@@ -201,24 +201,24 @@ public class UIUtils {
 		return maxFinder.getAvailable();
 	}
 
-	private static List<IInternalElement> getVisibleChildrenOfType(
-			IInternalParent parent, IInternalElementType<?> type)
+	public static <T extends IInternalElement> List<T> getVisibleChildrenOfType(
+			IInternalParent parent, IInternalElementType<T> type)
 			throws RodinDBException {
-		final List<IInternalElement> result = new ArrayList<IInternalElement>();
+		final List<T> result = new ArrayList<T>();
 		addImplicitChildrenOfType(result, parent, type);
 		result.addAll(Arrays.asList(parent.getChildrenOfType(type)));
 		return result;
 	}
 
-	private static void addImplicitChildrenOfType(
-			List<IInternalElement> result, IInternalParent parent,
-			IInternalElementType<?> type) throws RodinDBException {
+	private static <T extends IInternalElement>void addImplicitChildrenOfType(
+			List<T> result, IInternalParent parent,
+			IInternalElementType<T> type) throws RodinDBException {
 		if (parent instanceof IEvent) {
 			final IInternalElement[] implicitChildren = EventBUtils
 					.getImplicitChildren((IEvent) parent);
 			for (IInternalElement child : implicitChildren) {
 				if (child.getElementType() == type) {
-					result.add(child);
+					result.add((T)child);
 				}
 			}
 		}

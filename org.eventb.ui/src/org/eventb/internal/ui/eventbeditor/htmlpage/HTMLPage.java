@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added implicit children for events
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -16,6 +17,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -23,6 +26,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
@@ -34,6 +38,11 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 public class HTMLPage extends EventBEditorPage implements
 		IElementChangedListener {
@@ -53,11 +62,13 @@ public class HTMLPage extends EventBEditorPage implements
 
 	private boolean needsUpdate;
 
-	private AstConverter astConverter;
+	private Ast2HtmlConverter astConverter;
 
 	private Browser browser;
 
 	private EventBControl eventBBrowser;
+
+	boolean haveUpdate = false;
 	
 	/**
 	 * Constructor: This default constructor will be used to create the page
@@ -75,7 +86,7 @@ public class HTMLPage extends EventBEditorPage implements
 	@Override
 	public void initialize(FormEditor editor) {
 		super.initialize(editor);
-		((IEventBEditor<?>) editor).addElementChangedListener(this);
+		RodinCore.addElementChangedListener(this);
 	}
 
 	/*
@@ -92,6 +103,7 @@ public class HTMLPage extends EventBEditorPage implements
 
 		try {
 			browser = new Browser(body, SWT.NONE);
+			initReloadBrowser();
 		} catch (SWTError e) {
 			/* The Browser widget throws an SWTError if it fails to
 			 * instantiate properly. Application code should catch
@@ -178,23 +190,94 @@ public class HTMLPage extends EventBEditorPage implements
 			display.syncExec(new Runnable() {
 				public void run() {
 					// Reset the content string of the form text
-					setFormText(new NullProgressMonitor());
+					reloadBrowser();
 				}
 			});
 			needsUpdate = false;
 		}
 	}
 
+	private void initReloadBrowser() {
+		browser.addStatusTextListener(new StatusTextListener() {
+			public void changed(StatusTextEvent event) {
+				if (haveUpdate)
+					return;
+				haveUpdate = true;
+				astConverter.setScrollVertival(event.text);
+				setFormText(new NullProgressMonitor());
+			}
+		});
+	}
+
+	void reloadBrowser() {
+		haveUpdate = false;
+		browser.setVisible(false);
+		final String script = "window.status = document.body.scrollTop;";
+		browser.execute(script);
+	}
+	
+	private IRodinFile getAbstractMachine(IInternalElement mch) {
+		final IRefinesMachine[] refines;
+		try {
+			refines = mch.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+			if (refines.length > 0)
+				return refines[0].getAbstractMachine();
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Return <code>true </code> if parent is an abstraction of mch
+	 * */
+	private boolean isAbstractMachine(IRodinFile mch, IRodinFile parent) {
+		final IRodinFile abstractMachine = getAbstractMachine(mch.getRoot());
+		if (abstractMachine == null)
+			return false;
+
+		if (abstractMachine.equals(parent)) {
+			return true;
+		} else {
+			return isAbstractMachine(abstractMachine, parent);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent event) {
-		needsUpdate = true;
+		final IRodinElementDelta delta = event.getDelta();
+		processDelta(delta);
 		refresh();
 	}
 
+	private void processDelta(IRodinElementDelta delta) {
+		final IInternalElement root = ((IEventBEditor<?>) getEditor())
+				.getRodinInput();
+		final IRodinElement element = delta.getElement();
+
+		if (element.equals(root.getRodinDB())) {
+			for (IRodinElementDelta child : delta.getAffectedChildren()) {
+				if (child.getElement().equals(root.getRodinProject())) {
+					processDelta(child);
+				}
+			}
+		} else if (element.equals(root.getRodinProject())) {
+			final IRodinFile rodinFile = root.getRodinFile();
+			for (IRodinElementDelta child : delta.getAffectedChildren()) {
+				final IRodinFile childElement = (IRodinFile) child.getElement();
+				if (childElement.equals(rodinFile)
+						|| isAbstractMachine(rodinFile, childElement)) {
+					needsUpdate = true;
+					return;
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void setFocus() {
 		// Super method try to focus on the first children which is the first
