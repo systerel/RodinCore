@@ -10,8 +10,11 @@
  *     Systerel - Added a constant for the user support manager
  *     Systerel - replaced variable by parameter
  *     Systerel - separation of file and root element
+ *     Systerel - added implicit children for events
  ******************************************************************************/
 package org.eventb.internal.ui.proofinformation;
+
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -194,10 +197,10 @@ public class ProofInformationPage extends Page implements
 							.makeHyperlink(id, evt.getLabel()));
 					formBuilder.append(":</li>");
 					IRefinesEvent[] refinesClauses = evt.getRefinesClauses();
-					IParameter[] params = evt.getParameters();
-					IGuard[] guards = evt.getGuards();
+					List<IParameter> params = UIUtils.getVisibleChildrenOfType(evt, IParameter.ELEMENT_TYPE);
+					List<IGuard> guards = UIUtils.getVisibleChildrenOfType(evt, IGuard.ELEMENT_TYPE);
 					IWitness[] witnesses = evt.getWitnesses();
-					IAction[] actions = evt.getActions();
+					List<IAction> actions = UIUtils.getVisibleChildrenOfType(evt, IAction.ELEMENT_TYPE);
 					
 					if (refinesClauses.length != 0) {
 						formBuilder
@@ -214,7 +217,7 @@ public class ProofInformationPage extends Page implements
 						}
 					}
 					
-					if (params.length != 0) {
+					if (params.size() != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>ANY</b> ");
@@ -227,7 +230,7 @@ public class ProofInformationPage extends Page implements
 									.getIdentifierString()));
 						}
 						formBuilder.append(" <b>WHERE</b></li>");
-					} else if (guards.length != 0) {
+					} else if (guards.size() != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
 						formBuilder.append("<b>WHEN</b></li>");
@@ -264,7 +267,7 @@ public class ProofInformationPage extends Page implements
 						}
 					}
 					
-					if (guards.length != 0) {
+					if (actions.size() != 0) {
 						formBuilder
 								.append("<li style=\"text\" value=\"\" bindent=\"20\">");
 						formBuilder.append("<b>THEN</b></li>");
