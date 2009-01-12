@@ -1,22 +1,22 @@
 /*******************************************************************************
-* Copyright (c) 2008 Systerel and others.
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*     Systerel - initial API and implementation
-*******************************************************************************/
+ * Copyright (c) 2008 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 
-public abstract class AbstractDoubleClickListener implements MouseListener {
+public abstract class AbstractDoubleClickListener extends MouseAdapter {
 
-	interface ITextWidget {
+	interface ITextWrapper {
 		public abstract String getText();
 
 		public abstract Point getSelection();
@@ -24,30 +24,29 @@ public abstract class AbstractDoubleClickListener implements MouseListener {
 		public abstract void setSelection(Point p);
 	}
 
-	public abstract ITextWidget getWidget();
+	public abstract ITextWrapper getWraper();
 
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 
 		try {
-			final Point selection = getWidget().getSelection();
-			final String text = getWidget().getText();
-			getWidget().setSelection(wordPosition(text, selection));
+			final Point selection = getWraper().getSelection();
+			final String text = getWraper().getText();
+			getWraper().setSelection(wordPosition(text, selection));
 		} catch (IllegalArgumentException exception) {
-			// the point is not null, so there is no offset. It's
-			// occurred when position is end of widget
+			// the point is not null, so there is no offset. This can
+			// happen when the current position is at the end of the widget text
 		}
 	}
 
 	private boolean isIdentifierChar(char c) {
-		if(c == '\u03bb')
-			return false;
-		return Character.isJavaIdentifierPart(c);
+		return Character.isJavaIdentifierPart(c) && c != '\u03bb';
 	}
 
 	private int offsetFirstNoId(String text, int offset, boolean increase) {
 		final int step = (increase) ? 1 : -1;
 		int i;
-		for (i = offset; 0 <= i && i < text.length(); i = i + step) {
+		for (i = offset; 0 <= i && i < text.length(); i += step) {
 			if (!isIdentifierChar(text.charAt(i)))
 				return i;
 		}
@@ -65,11 +64,4 @@ public abstract class AbstractDoubleClickListener implements MouseListener {
 		return new Point(beginOfVar, endOfVar);
 	}
 
-	public void mouseDown(MouseEvent e) {
-		// do nothing
-	}
-
-	public void mouseUp(MouseEvent e) {
-		// do nothing
-	}
 }

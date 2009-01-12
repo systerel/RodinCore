@@ -15,21 +15,21 @@ import org.eclipse.swt.graphics.Point;
 
 public class DoubleClickStyledTextListener extends AbstractDoubleClickListener {
 
-	private final ITextWidget widget;
+	private final ITextWrapper wrapper;
 
 	public DoubleClickStyledTextListener(StyledText text) {
-		widget = new StyledWidget(text);
+		wrapper = new StyledTextWrapper(text);
 	}
 
 	@Override
-	public ITextWidget getWidget() {
-		return widget;
+	public ITextWrapper getWraper() {
+		return wrapper;
 	}
 
-	class StyledWidget implements ITextWidget {
+	class StyledTextWrapper implements ITextWrapper {
 		private final StyledText text;
 
-		public StyledWidget(StyledText text) {
+		public StyledTextWrapper(StyledText text) {
 			this.text = text;
 		}
 
