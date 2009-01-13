@@ -28,20 +28,27 @@ public class DeltaListPersistor {
 
 	public static void save(Collection<IIndexDelta> deltas, Document doc,
 			Element indexRoot) {
+		final Element listNode = createElement(doc, DELTA_LIST);
+
 		for (IIndexDelta delta : deltas) {
 
-			final DeltaPersistor persistor = new DeltaPersistor();
 			final Element deltaNode = createElement(doc, DELTA);
-			persistor.save(delta, doc, deltaNode);
+			DeltaPersistor.save(delta, doc, deltaNode);
 
-			indexRoot.appendChild(deltaNode);
+			listNode.appendChild(deltaNode);
 		}
+		indexRoot.appendChild(listNode);
 	}
 
 	public static void restore(Element indexRoot,
 			Collection<IIndexDelta> deltaList) throws PersistenceException {
 		assertName(indexRoot, INDEX_ROOT);
-		final NodeList deltaNodes = getElementsByTagName(indexRoot, DELTA);
+		
+		final NodeList listNodes = getElementsByTagName(indexRoot,
+				DELTA_LIST, 1);
+		final Element listNode = (Element) listNodes.item(0);
+
+		final NodeList deltaNodes = getElementsByTagName(listNode, DELTA);
 
 		for (int i = 0; i < deltaNodes.getLength(); i++) {
 			final Element deltaNode = (Element) deltaNodes.item(i);

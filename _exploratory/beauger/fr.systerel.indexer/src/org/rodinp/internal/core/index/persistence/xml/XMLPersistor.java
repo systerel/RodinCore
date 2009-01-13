@@ -43,10 +43,11 @@ public class XMLPersistor implements IPersistor {
 
 			DeltaListPersistor.restore(indexRoot, data.getDeltas());
 
+			IndexerRegPersistor.restore(indexRoot, data.getIndexerRegistry());
+			
 			return true;
 		} catch (Exception e) {
-			data.getPPPIM().clear();
-			data.getDeltas().clear();
+			data.clear();
 
 			if (IndexManager.DEBUG) {
 				e.printStackTrace();
@@ -64,7 +65,10 @@ public class XMLPersistor implements IPersistor {
 			PPPIMPersistor.save(persistIM.getPPPIM(), doc, indexRoot);
 
 			DeltaListPersistor.save(persistIM.getDeltas(), doc, indexRoot);
-
+			
+			IndexerRegPersistor.save(persistIM.getIndexerRegistry(), doc,
+					indexRoot);
+			
 			doc.appendChild(indexRoot);
 
 			final String xml = serializeDocument(doc);

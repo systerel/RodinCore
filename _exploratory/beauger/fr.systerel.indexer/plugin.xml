@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="fr.systerel.indexer" name="%extension-point.name.0" schema="schema/fr.systerel.indexer.exsd"/>
+   <extension-point id="fr.systerel.occurrenceKind" name="%extension-point.name.1" schema="schema/fr.systerel.occurrenceKind.exsd"/>
+
+</plugin>

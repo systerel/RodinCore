@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.index.persistence;
 
 import java.io.File;
+import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -28,6 +29,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.RodinIndexer;
 import org.rodinp.internal.core.index.DeltaQueuer;
+import org.rodinp.internal.core.index.IIndexDelta;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
@@ -193,6 +195,8 @@ public class PersistenceManager implements ISaveParticipant {
 		if (!success) {
 			return false;
 		}
+		queuer.restore(persistIM.getDeltas());
+		
 		ss.processResourceChangeEvents(new IResourceChangeListener() {
 
 			public void resourceChanged(IResourceChangeEvent event) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -170,6 +172,24 @@ public class DeltaQueuer implements IElementChangedListener,
 		case IResourceDelta.REMOVED:
 			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_DELETED), true);
 			break;
+		}
+	}
+
+	public void restore(Collection<? extends IIndexDelta> deltas) {
+		interrupted.set(false);
+		try {
+			while (true) {
+				try {
+					queue.putAll(deltas);
+					return;
+				} catch (InterruptedException e) {
+					interrupted.set(true);
+				}
+			}
+		} finally {
+			if (interrupted.get()) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 }

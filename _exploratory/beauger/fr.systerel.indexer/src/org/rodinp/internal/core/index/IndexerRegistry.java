@@ -11,10 +11,10 @@
 package org.rodinp.internal.core.index;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
@@ -23,10 +23,10 @@ import org.rodinp.core.index.IIndexer;
 public class IndexerRegistry {
 
 	private static IndexerRegistry instance;
-	private final Map<IInternalElementType<?>, List<IIndexer>> indexers;
+	private final Registry<IInternalElementType<?>, IndexerElement> indexers;
 
 	private IndexerRegistry() {
-		this.indexers = new HashMap<IInternalElementType<?>, List<IIndexer>>();
+		this.indexers = new Registry<IInternalElementType<?>, IndexerElement>();
 	}
 
 	public static IndexerRegistry getDefault() {
@@ -36,33 +36,70 @@ public class IndexerRegistry {
 		return instance;
 	}
 
+	public void addIndexer(IConfigurationElement element, String indexerId,
+			IInternalElementType<?> fileType) {
+		final IndexerElement ind = new ContributedIndexer(element, indexerId);
+		addIndexerElement(ind, fileType);
+	}
+
 	public void addIndexer(IIndexer indexer, IInternalElementType<?> fileType) {
-		List<IIndexer> list = indexers.get(fileType);
-		if (list == null) {
-			list = new ArrayList<IIndexer>();
-			indexers.put(fileType, list);
-		}
-		list.add(indexer);
+		final IndexerElement ind = new InstantiatedIndexer(indexer);
+		addIndexerElement(ind, fileType);
+	}
+
+	private void addIndexerElement(IndexerElement element,
+			IInternalElementType<?> fileType) {
+		indexers.add(fileType, element);
 	}
 
 	public List<IIndexer> getIndexersFor(IRodinFile file) {
-		final IInternalElementType<? extends IInternalElement> fileType =
-				file.getRoot().getElementType();
-		final List<IIndexer> list = indexers.get(fileType);
+		final IInternalElementType<? extends IInternalElement> fileType = file
+				.getRoot().getElementType();
+		final List<IndexerElement> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {
 			throw new IllegalArgumentException(
 					"No known indexers for file type: " + fileType);
 		}
-		return list;
+
+		return makeIndexerList(list);
+	}
+
+	private List<IIndexer> makeIndexerList(List<IndexerElement> list) {
+		final List<IIndexer> result = new ArrayList<IIndexer>();
+		for (IndexerElement element : list) {
+			final IIndexer indexer = element.getIndexer();
+			if (indexer != null) {
+				result.add(indexer);
+			}
+		}
+		return result;
 	}
 
 	public boolean isIndexable(IRodinFile file) {
-		return indexers.containsKey(file.getRoot().getElementType());
+		final List<IndexerElement> list = indexers.get(file
+				.getRootElementType());
+		return list != null && !list.isEmpty();
 	}
 
 	public void clear() {
 		indexers.clear();
 	}
 
+	public Registry<String, String> getPersistentData() {
+		final Registry<String, String> result = new Registry<String, String>();
+		for (Entry<IInternalElementType<?>, List<IndexerElement>> entry : indexers.entrySet()) {
+			final IInternalElementType<?> rootType = entry.getKey();
+			final String rootTypeId = rootType.getId();
+			for (IndexerElement indexer : entry.getValue()) {
+				result.add(rootTypeId, indexer.getIndexerId());
+			}
+		}
+		return result;
+	}
+	
+	public boolean sameAs(
+			Registry<String, String> registry) {
+		return getPersistentData().equals(registry);
+	}
 }

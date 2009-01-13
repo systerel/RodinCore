@@ -66,4 +66,11 @@ public class DeltaQueue {
 	public void awaitEmptyQueue() throws InterruptedException {
 		latch.await();
 	}
+	
+	public void putAll(Collection<? extends IIndexDelta> c)
+			throws InterruptedException {
+		for (IIndexDelta delta : c) {
+			put(delta, false);
+		}
+	}
 }

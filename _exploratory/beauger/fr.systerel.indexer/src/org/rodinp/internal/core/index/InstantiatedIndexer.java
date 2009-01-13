@@ -4,29 +4,32 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.index.persistence;
+package org.rodinp.internal.core.index;
 
-import java.io.File;
-
-import org.rodinp.internal.core.index.PerProjectPIM;
-import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.core.index.IIndexer;
 
 /**
  * @author Nicolas Beauger
+ *
  */
-// TODO consider using org.eclipse.ui.IPersistable/IPersistableElement and
-// IMemento interfaces
-public interface IPersistor {
+public class InstantiatedIndexer extends IndexerElement {
 
-	boolean save(PersistentIndexManager data, File file);
+	private final IIndexer instance;
+	
+	
+	public InstantiatedIndexer(IIndexer instance) {
+		super(instance.getId());
+		this.instance = instance;
+	}
 
-	boolean saveProject(ProjectIndexManager pim, File file);
 
-	boolean restore(File file, PersistentIndexManager data);
+	@Override
+	public IIndexer getIndexer() {
+		return instance;
+	}
 
-	boolean restoreProject(File file, PerProjectPIM pppim);
 }

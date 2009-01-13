@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
  */
 public class DeltaPersistor {
 
-	public void save(IIndexDelta delta, Document doc, Element deltaNode) {
+	public static void save(IIndexDelta delta, Document doc, Element deltaNode) {
 		final String kind = delta.getKind().toString();
 		setAttribute(deltaNode, KIND, kind);
 

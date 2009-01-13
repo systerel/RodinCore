@@ -289,6 +289,7 @@ public final class IndexManager {
 	public void start(IProgressMonitor daemonMonitor) {
 		if (SAVE_RESTORE) {
 			restore();
+			// FIXME restored deltas are not processed
 		}
 		RodinCore.addElementChangedListener(listener, eventMask);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -309,6 +310,8 @@ public final class IndexManager {
 				queue.drainTo(currentDeltas);
 				if (indexingEnabled) {
 					processCurrentDeltas();
+					// TODO consider implementing a DeltaIndexingManager
+					// or DeltaProcessor
 				}
 			} catch (InterruptedException e) {
 				stop = true;
@@ -400,18 +403,20 @@ public final class IndexManager {
 			deltaSet.addAll(currentDeltas);
 			queue.drainTo(deltaSet);
 		}
-		return new PersistentIndexManager(pppim, deltaSet);
+		return new PersistentIndexManager(pppim, deltaSet, indexerRegistry
+				.getPersistentData());
 	}
 
 	private void restore() {
 		lockWriteInitSave();
 		printVerbose("Restoring IndexManager");
-		final PersistentIndexManager persistIM =
-				new PersistentIndexManager(pppim, currentDeltas);
+		final PersistentIndexManager persistIM = new PersistentIndexManager(
+				pppim, currentDeltas, new Registry<String, String>());
 		final boolean success =
 				PersistenceManager.getDefault().restore(persistIM, listener);
-		if (!success) {
+		if (!success || !indexerRegistry.sameAs(persistIM.getIndexerRegistry())) {
 			indexAll();
+			// FIXME run at startup even if we want indexing disabled
 		}
 		unlockWriteInitSave();
 	}

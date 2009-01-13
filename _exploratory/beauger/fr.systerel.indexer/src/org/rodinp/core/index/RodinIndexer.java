@@ -13,6 +13,8 @@ package org.rodinp.core.index;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -27,11 +29,13 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.index.AttributeLocation;
 import org.rodinp.internal.core.index.AttributeSubstringLocation;
+import org.rodinp.internal.core.index.DeltaQueuer;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.IndexQuery;
-import org.rodinp.internal.core.index.OccurrenceKind;
-import org.rodinp.internal.core.index.DeltaQueuer;
+import org.rodinp.internal.core.index.IndexerRegistry;
 import org.rodinp.internal.core.index.InternalLocation;
+import org.rodinp.internal.core.index.OccurrenceKind;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * <em>Temporary class</em>
@@ -47,8 +51,7 @@ public class RodinIndexer extends Plugin {
 	/** To be moved to {@link IRodinDBStatusConstants} */
 	public static final int INDEXER_ERROR = 1100;
 
-	private static final Map<String, IOccurrenceKind> kinds =
-			new HashMap<String, IOccurrenceKind>();
+	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
 
 	/** To be moved to {@link RodinCore} */
 	public static void register(IIndexer indexer,
@@ -57,7 +60,7 @@ public class RodinIndexer extends Plugin {
 	}
 
 	/** To be moved to an extension point */
-	public static IOccurrenceKind addOccurrenceKind(String id, String name) {
+	private static IOccurrenceKind addOccurrenceKind(String id, String name) {
 		final OccurrenceKind kind = new OccurrenceKind(id, name);
 		kinds.put(id, kind);
 		return kind;
@@ -184,9 +187,80 @@ public class RodinIndexer extends Plugin {
 		super.start(context);
 		plugin = this;
 		configurePluginDebugOptions();
+		registerOccurrenceKinds();
+		registerIndexers();
 		indexerJob.setPriority(Job.DECORATE);
 		indexerJob.setSystem(true);
 		indexerJob.schedule();
+	}
+
+	private static void registerOccurrenceKinds() {
+		final String occKindExtPointId = "fr.systerel.occurrenceKind";
+
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IConfigurationElement[] extensions = reg
+				.getConfigurationElementsFor(occKindExtPointId);
+		for (IConfigurationElement element : extensions) {
+			try {
+				final String extensionId = element.getDeclaringExtension()
+						.getUniqueIdentifier();
+
+				final String id = element.getAttribute("id");
+				final String name = element.getAttribute("name");
+				if (id == null || name == null) {
+					Util
+							.log(
+									null,
+									("Unable to get occurrence kind from " + extensionId));
+					continue;
+				}
+
+				addOccurrenceKind(id, name);
+			} catch (Exception e) {
+				Util.log(e, "Exception while loading occurrence kind extension");
+				// continue
+			}
+		}
+
+	}
+
+	private static void registerIndexers() {
+		final String indexerExtPointId = "fr.systerel.indexer";
+
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IConfigurationElement[] extensions = reg
+				.getConfigurationElementsFor(indexerExtPointId);
+		for (IConfigurationElement element : extensions) {
+			try {
+				final String extensionId = element.getDeclaringExtension()
+						.getUniqueIdentifier();
+
+				final String indexerId = element.getAttribute("id");
+				final IInternalElementType<?> rootType = getRootAttribute(
+						element, "root-element-type");
+				if (indexerId == null || rootType == null) {
+					Util.log(null,
+							("Unable to get root type from " + extensionId));
+					continue;
+				}
+
+				IndexerRegistry.getDefault().addIndexer(element, indexerId,
+						rootType);
+			} catch (Exception e) {
+				Util.log(e, "Exception while loading indexer extension");
+				// continue
+			}
+		}
+	}
+
+	private static IInternalElementType<?> getRootAttribute(
+			IConfigurationElement element, String attributeName)
+			throws Exception {
+		final String rootId = element.getAttribute(attributeName);
+		if (rootId == null) {
+			return null;
+		}
+		return RodinCore.getInternalElementType(rootId);
 	}
 
 	@Override
@@ -208,27 +282,23 @@ public class RodinIndexer extends Plugin {
 	// To be integrated with RodinCore option processing
 	public void configurePluginDebugOptions() {
 		if (plugin.isDebugging()) {
-			String option =
-					Platform
-							.getDebugOption("fr.systerel.indexer/debug/indexer");
+			String option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer");
 			if (option != null)
 				IndexManager.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option =
-					Platform
-							.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
+			option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
 			if (option != null)
 				IndexManager.VERBOSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option =
-					Platform
-							.getDebugOption("fr.systerel.indexer/debug/indexer/save_restore");
+			option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer/save_restore");
 			if (option != null)
 				IndexManager.SAVE_RESTORE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
-			option =
-					Platform
-							.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
+			option = Platform
+					.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
 			if (option != null)
 				DeltaQueuer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}

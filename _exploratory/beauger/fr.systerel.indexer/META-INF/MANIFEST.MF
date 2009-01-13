@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.f0
-Bundle-SymbolicName: fr.systerel.indexer
+Bundle-SymbolicName: fr.systerel.indexer;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime, org.rodinp.core
