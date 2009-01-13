@@ -20,17 +20,14 @@ import org.rodinp.core.index.RodinIndexer;
 
 public class EventBIndexUtil {
 
-	public static final IOccurrenceKind DECLARATION =
-			RodinIndexer.addOccurrenceKind(
-					"fr.systerel.eventb.indexer.declaration", "declaration");
+	public static final IOccurrenceKind DECLARATION = RodinIndexer
+			.getOccurrenceKind("fr.systerel.eventb.indexer.declaration");
 
-	public static final IOccurrenceKind REFERENCE =
-			RodinIndexer.addOccurrenceKind(
-					"fr.systerel.eventb.indexer.reference", "reference");
+	public static final IOccurrenceKind REFERENCE = RodinIndexer
+			.getOccurrenceKind("fr.systerel.eventb.indexer.reference");
 
-	public static final IOccurrenceKind MODIFICATION =
-			RodinIndexer.addOccurrenceKind(
-					"fr.systerel.eventb.indexer.modification", "modification");
+	public static final IOccurrenceKind MODIFICATION = RodinIndexer
+			.getOccurrenceKind("fr.systerel.eventb.indexer.modification");
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is

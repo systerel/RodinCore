@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Indexer Plug-in
-Bundle-SymbolicName: fr.systerel.eventb.indexer
+Bundle-SymbolicName: fr.systerel.eventb.indexer;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-Vendor: Systerel
 Export-Package: org.eventb.core.indexer

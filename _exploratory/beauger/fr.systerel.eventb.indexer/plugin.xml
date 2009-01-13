@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="fr.systerel.eventb.indexer"
+         name="Event-B Indexers"
+         point="fr.systerel.indexer">
+      <indexer
+            class="org.eventb.core.indexer.ContextIndexer"
+            id="fr.systerel.eventb.indexer.context"
+            name="Event-B Context Indexer"
+            root-element-type="org.eventb.core.contextFile">
+      </indexer>
+      <indexer
+            class="org.eventb.core.indexer.MachineIndexer"
+            id="fr.systerel.eventb.indexer.machine"
+            name="Event-B Machine Indexer"
+            root-element-type="org.eventb.core.machineFile">
+      </indexer>
+   </extension>
+   <extension
+         point="fr.systerel.occurrenceKind">
+      <occurrenceKind
+            id="fr.systerel.eventb.indexer.declaration"
+            name="declaration">
+      </occurrenceKind>
+      <occurrenceKind
+            id="fr.systerel.eventb.indexer.reference"
+            name="reference">
+      </occurrenceKind>
+      <occurrenceKind
+            id="fr.systerel.eventb.indexer.modification"
+            name="modification">
+      </occurrenceKind>
+   </extension>
+
+</plugin>
