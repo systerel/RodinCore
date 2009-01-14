@@ -15,13 +15,13 @@ import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.index.IAttributeLocation;
-import org.rodinp.core.index.IAttributeSubstringLocation;
-import org.rodinp.core.index.IInternalLocation;
-import org.rodinp.internal.core.index.AttributeLocation;
-import org.rodinp.internal.core.index.AttributeSubstringLocation;
-import org.rodinp.internal.core.index.InternalLocation;
+import org.rodinp.core.location.IAttributeLocation;
+import org.rodinp.core.location.IAttributeSubstringLocation;
+import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
+import org.rodinp.internal.core.location.AttributeLocation;
+import org.rodinp.internal.core.location.AttributeSubstringLocation;
+import org.rodinp.internal.core.location.InternalLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -11,6 +11,7 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * Common protocol for occurrences in indexed files.

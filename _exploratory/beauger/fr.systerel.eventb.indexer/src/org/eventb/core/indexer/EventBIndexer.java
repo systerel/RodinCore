@@ -22,7 +22,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexer;
 import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.core.index.IInternalLocation;
+import org.rodinp.core.location.IInternalLocation;
 
 public abstract class EventBIndexer extends Cancellable implements IIndexer {
 

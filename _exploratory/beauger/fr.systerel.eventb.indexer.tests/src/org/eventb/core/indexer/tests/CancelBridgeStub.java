@@ -17,8 +17,8 @@ import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrenceKind;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger

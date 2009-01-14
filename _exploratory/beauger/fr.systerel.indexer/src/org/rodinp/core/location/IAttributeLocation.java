@@ -8,31 +8,27 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.index;
+package org.rodinp.core.location;
 
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IAttributeType;
 
 /**
- * Common protocol for specifying a location in a {@link IInternalElement} in
- * the Rodin database.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * Common protocol for specifying a location which is an attribute of an
+ * internal element in the Rodin database.
  * 
  * @see IRodinLocation
- * @see IAttributeLocation
+ * @see IInternalLocation
  * @see IAttributeSubstringLocation
  * 
- * @author Nicolas Beauger
  * @author Laurent Voisin
  */
-public interface IInternalLocation extends IRodinLocation {
+public interface IAttributeLocation extends IInternalLocation {
 
 	/**
-	 * Returns the element containing this location.
+	 * Returns the type of the attribute containing this location.
 	 * 
-	 * @return the element containing this location
+	 * @return the type of the attribute of this location
 	 */
-	IInternalElement getElement();
+	IAttributeType getAttributeType();
 
 }

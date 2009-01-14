@@ -25,16 +25,17 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.RodinCore;
-import org.rodinp.internal.core.index.AttributeLocation;
-import org.rodinp.internal.core.index.AttributeSubstringLocation;
+import org.rodinp.core.location.IInternalLocation;
+import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.index.DeltaQueuer;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.IndexQuery;
 import org.rodinp.internal.core.index.IndexerRegistry;
-import org.rodinp.internal.core.index.InternalLocation;
 import org.rodinp.internal.core.index.OccurrenceKind;
+import org.rodinp.internal.core.location.AttributeLocation;
+import org.rodinp.internal.core.location.AttributeSubstringLocation;
+import org.rodinp.internal.core.location.InternalLocation;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -48,16 +49,11 @@ import org.rodinp.internal.core.util.Util;
  */
 public class RodinIndexer extends Plugin {
 
-	/** To be moved to {@link IRodinDBStatusConstants} */
+	// TODO remove after committing IRodinDBStatusConstants
+	// and change references in FIM
 	public static final int INDEXER_ERROR = 1100;
 
 	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
-
-	/** To be moved to {@link RodinCore} */
-	public static void register(IIndexer indexer,
-			IInternalElementType<?> fileType) {
-		IndexManager.getDefault().addIndexer(indexer, fileType);
-	}
 
 	/** To be moved to an extension point */
 	private static IOccurrenceKind addOccurrenceKind(String id, String name) {
@@ -154,13 +150,6 @@ public class RodinIndexer extends Plugin {
 	// The shared instance
 	private static RodinIndexer plugin;
 
-	/**
-	 * The constructor
-	 */
-	public RodinIndexer() {
-		// nothing to do
-	}
-
 	private static Job indexerJob = new Job("Indexer") {
 
 		@Override
@@ -208,16 +197,15 @@ public class RodinIndexer extends Plugin {
 				final String id = element.getAttribute("id");
 				final String name = element.getAttribute("name");
 				if (id == null || name == null) {
-					Util
-							.log(
-									null,
-									("Unable to get occurrence kind from " + extensionId));
+					Util.log(null, ("Unable to get occurrence kind from "
+							+ extensionId));
 					continue;
 				}
 
 				addOccurrenceKind(id, name);
 			} catch (Exception e) {
-				Util.log(e, "Exception while loading occurrence kind extension");
+				Util.log(e,
+						"Exception while loading occurrence kind extension");
 				// continue
 			}
 		}

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.index;
+package org.rodinp.core.location;
 
 /**
  * Common protocol for specifying a location which is a substring of a string

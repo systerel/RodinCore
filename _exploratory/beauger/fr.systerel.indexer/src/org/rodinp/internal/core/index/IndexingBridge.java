@@ -18,9 +18,9 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * Bridge implementation.

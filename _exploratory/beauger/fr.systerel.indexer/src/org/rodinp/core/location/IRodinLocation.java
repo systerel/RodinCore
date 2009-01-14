@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.index;
+package org.rodinp.core.location;
 
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;

@@ -13,10 +13,10 @@ package org.rodinp.internal.core.index.persistence.xml;
 import static org.rodinp.internal.core.index.persistence.xml.XMLAttributeTypes.*;
 
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.internal.core.index.Occurrence;
 import org.rodinp.internal.core.index.persistence.PersistenceException;
 import org.w3c.dom.Document;

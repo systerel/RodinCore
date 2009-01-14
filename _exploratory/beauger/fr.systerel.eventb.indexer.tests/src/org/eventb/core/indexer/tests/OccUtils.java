@@ -25,10 +25,10 @@ import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IInternalLocation;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
 import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.internal.core.index.Declaration;
 import org.rodinp.internal.core.index.Occurrence;
 

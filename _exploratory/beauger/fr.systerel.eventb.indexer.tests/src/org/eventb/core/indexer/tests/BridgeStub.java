@@ -29,7 +29,7 @@ import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IIndexingBridge;
 import org.rodinp.core.index.IOccurrence;
 import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.IInternalLocation;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * Stub for the indexing bridge. Stores the actions performed by an indexer.

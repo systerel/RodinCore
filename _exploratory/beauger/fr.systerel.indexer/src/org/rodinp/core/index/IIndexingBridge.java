@@ -11,6 +11,7 @@
 package org.rodinp.core.index;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * Common protocol for reporting the result of indexing a Rodin file.

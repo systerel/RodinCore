@@ -8,12 +8,12 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.index;
+package org.rodinp.internal.core.location;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.index.IAttributeSubstringLocation;
-import org.rodinp.core.index.IRodinLocation;
+import org.rodinp.core.location.IAttributeSubstringLocation;
+import org.rodinp.core.location.IRodinLocation;
 
 public class AttributeSubstringLocation extends AttributeLocation implements
 		IAttributeSubstringLocation {

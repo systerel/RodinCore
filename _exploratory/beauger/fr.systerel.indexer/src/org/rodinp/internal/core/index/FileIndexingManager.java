@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
+import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IDeclaration;
@@ -111,6 +112,8 @@ public class FileIndexingManager {
 
 			IRodinDBStatus status =
 					new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
+//			IRodinDBStatus status =
+//				new RodinDBStatus(IRodinDBStatusConstants.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
 			throw t;
 		}
@@ -181,6 +184,8 @@ public class FileIndexingManager {
 
 			IRodinDBStatus status =
 					new RodinDBStatus(RodinIndexer.INDEXER_ERROR, t);
+//			IRodinDBStatus status =
+//				new RodinDBStatus(IRodinDBStatusConstants.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
 			printVerbose(makeMessage("indexing failed", file, indexer));
 
