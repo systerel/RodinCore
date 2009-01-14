@@ -17,10 +17,13 @@ import java.util.Set;
 import static junit.framework.TestCase.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.index.IDeclaration;
 import org.rodinp.core.index.IOccurrence;
@@ -37,16 +40,23 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class IndexTestsUtil {
 
+	public static final IAttributeType.String TEST_ATTR_TYPE = RodinCore
+			.getStringAttrType("fr.systerel.indexer.tests.testAttributeType");
+
+	public static final IInternalElementType<?> TEST_FILE_TYPE = RodinCore
+			.getInternalElementType("org.rodinp.core.tests.test");
+
+	public static final IInternalElementType<?> TEST_FILE_TYPE_2 = RodinCore
+			.getInternalElementType("org.rodinp.core.tests.test2");
+
 	public static final IOccurrenceKind TEST_KIND =
-			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test", "test");
+			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test");
 
 	public static final IOccurrenceKind TEST_KIND_1 =
-			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_1",
-					"test_1");
+			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test_1");
 
 	public static final IOccurrenceKind TEST_KIND_2 =
-			RodinIndexer.addOccurrenceKind("fr.systerel.indexer.test_2",
-					"test_2");
+			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test_2");
 
 	public static final String defaultName = "banzai";
 

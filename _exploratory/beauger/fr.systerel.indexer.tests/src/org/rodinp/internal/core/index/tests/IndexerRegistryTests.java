@@ -60,7 +60,7 @@ public class IndexerRegistryTests extends IndexTests {
 	public void testAddGetIndexer() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
 
 		final List<IIndexer> actual = indReg.getIndexersFor(file1);
 
@@ -70,8 +70,8 @@ public class IndexerRegistryTests extends IndexTests {
 	public void testAddGetSeveralFileTypes() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
-		indReg.addIndexer(indexer, file2.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
+		indReg.addIndexer(indexer, TEST_FILE_TYPE_2);
 
 		final List<IIndexer> actual1 = indReg.getIndexersFor(file1);
 		final List<IIndexer> actual2 = indReg.getIndexersFor(file2);
@@ -85,8 +85,8 @@ public class IndexerRegistryTests extends IndexTests {
 		final IIndexer indexer2 = new FakeNameIndexer(1, "name2");
 		final List<IIndexer> indexer2List = Arrays.asList(indexer2);
 
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
-		indReg.addIndexer(indexer2, file2.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
+		indReg.addIndexer(indexer2, TEST_FILE_TYPE_2);
 
 		final List<IIndexer> actual1 = indReg.getIndexersFor(file1);
 		final List<IIndexer> actual2 = indReg.getIndexersFor(file2);
@@ -101,8 +101,8 @@ public class IndexerRegistryTests extends IndexTests {
 		final List<IIndexer> indexer12List = Arrays.asList(indexer, indexer2);
 
 		
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
-		indReg.addIndexer(indexer2, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
+		indReg.addIndexer(indexer2, TEST_FILE_TYPE);
 
 		final List<IIndexer> actual = indReg.getIndexersFor(file1);
 
@@ -123,11 +123,11 @@ public class IndexerRegistryTests extends IndexTests {
 	public void testIsIndexableTrue() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
 		final boolean indexable = indReg.isIndexable(file1);
 
 		assertTrue("File type "
-				+ file1.getElementType()
+				+ TEST_FILE_TYPE
 				+ " should be indexable", indexable);
 	}
 
@@ -137,19 +137,19 @@ public class IndexerRegistryTests extends IndexTests {
 		final boolean indexable = indReg.isIndexable(file1);
 
 		assertFalse("File type "
-				+ file1.getElementType()
+				+ TEST_FILE_TYPE
 				+ " should NOT be indexable", indexable);
 	}
 
 	public void testClear() {
 		final IndexerRegistry indReg = IndexerRegistry.getDefault();
 
-		indReg.addIndexer(indexer, file1.getRoot().getElementType());
+		indReg.addIndexer(indexer, TEST_FILE_TYPE);
 		indReg.clear();
 
 		final boolean indexable = indReg.isIndexable(file1);
 		assertFalse("File type "
-				+ file1.getElementType()
+				+ TEST_FILE_TYPE
 				+ " should NOT be indexable", indexable);
 	}
 

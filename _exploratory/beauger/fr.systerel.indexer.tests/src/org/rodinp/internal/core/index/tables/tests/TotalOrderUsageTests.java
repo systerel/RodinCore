@@ -108,7 +108,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		IRodinFile[] expectedOrder = makeArray(file2, file1);
 
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 		// files to index are presented in the reverse order of the required
 		// indexing order (file2 should be indexed before file1)
 		manager.scheduleIndexing(file1, file2);
@@ -128,7 +128,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, cycle, f2ExportsElt2);
 
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		manager.scheduleIndexing(file1, file2);
 
@@ -142,7 +142,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		// file1 must already be known by the manager to be taken into account
 		// when resolving dependencies
@@ -165,7 +165,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, emptyExports);
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		// file1 must already be known by the manager to be taken into account
 		// when resolving dependencies and export changes
@@ -187,7 +187,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		// file1 and file2 must already be known by the manager to be taken into
 		// account when resolving dependencies and export changes
@@ -211,7 +211,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		// file1 and file2 must already be known by the manager to be taken
 		// into account when resolving dependencies and export changes
@@ -226,7 +226,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		f2ExportsElt2Name2.add(file2, declEltF2Name2);
 		final FakeDependenceIndexer indexerNewName = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2Name2);
-		RodinIndexer.register(indexerNewName, file1.getRoot().getElementType());
+		RodinIndexer.register(indexerNewName, TEST_FILE_TYPE);
 
 		// file2 is requested to index, but file1 should be indexed
 		// again, because it depends on file2 and file2 exports are
@@ -243,7 +243,7 @@ public class TotalOrderUsageTests extends IndexTests {
 	public void testFileRemoved() throws Exception {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
-		RodinIndexer.register(indexer, file2.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		manager.scheduleIndexing(file2);
 
@@ -286,7 +286,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1dF2dF3, f1f2f3expElt3);
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		manager.scheduleIndexing(file1, file2, file3);
 
@@ -302,7 +302,7 @@ public class TotalOrderUsageTests extends IndexTests {
 		final FakeDependenceIndexer indexer = new FakeDependenceIndexer(
 				rodinIndex, f1DepsOnf2, f2ExportsElt2);
 
-		RodinIndexer.register(indexer, file1.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		for (int i = 1; i <= indexingCount; i++) {
 			try {

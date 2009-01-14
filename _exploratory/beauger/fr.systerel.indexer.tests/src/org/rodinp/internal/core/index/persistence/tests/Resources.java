@@ -34,6 +34,7 @@ import org.rodinp.internal.core.index.IIndexDelta;
 import org.rodinp.internal.core.index.IndexDelta;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.Registry;
 import org.rodinp.internal.core.index.IIndexDelta.Kind;
 import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.index.sort.TotalOrder;
@@ -70,7 +71,8 @@ public class Resources {
 		}
 
 		public PersistentIndexManager getIMData() {
-			return new PersistentIndexManager(pppim, deltas);
+			return new PersistentIndexManager(pppim, deltas,
+					new Registry<String, String>());
 		}
 
 		public List<String> getNames() {
@@ -103,6 +105,8 @@ public class Resources {
 						+ "<node label=\"/P/F1.test\" mark=\"true\" order_pos=\"-1\"/>"
 						+ "</graph>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("basic");
 
@@ -184,6 +188,8 @@ public class Resources {
 						+ "<export_table/>"
 						+ "<graph is_sorted=\"false\"/>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("2PIMs");
 
@@ -222,6 +228,8 @@ public class Resources {
 						+ "</node>"
 						+ "</graph>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("sortedFiles");
 
@@ -282,6 +290,8 @@ public class Resources {
 						+ "<iterated label=\"/P/F2.test\"/>"
 						+ "</graph>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("iterating");
 
@@ -332,6 +342,8 @@ public class Resources {
 						+ "<rodin_index/>"
 						+ "<graph is_sorted=\"false\"/>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("noExportNode");
 
@@ -350,6 +362,8 @@ public class Resources {
 						+ "<export_table/>"
 						+ "<graph is_sorted=\"false\"/>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("twoRodinIndexes");
 
@@ -368,6 +382,8 @@ public class Resources {
 						+ "<export_table/>"
 						+ "<graph/>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("missingAttribute");
 
@@ -396,6 +412,8 @@ public class Resources {
 						+ "<node label=\"/P/F1.test\" mark=\"true\" order_pos=\"-1\"/>"
 						+ "</graph>"
 						+ "</pim>"
+						+ "<delta_list/>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("badElementHandle");
 
@@ -408,8 +426,11 @@ public class Resources {
 		final String xml =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<index_root>"
+						+ "<delta_list>"
 						+ "<delta kind=\"FILE_CHANGED\" element=\"/P/F1.test\"/>"
 						+ "<delta kind=\"PROJECT_CLOSED\" element=\"/P\"/>"
+						+ "</delta_list>"
+						+ "<indexer_registry/>"
 						+ "</index_root>";
 		final File file = getNewFile("delta");
 

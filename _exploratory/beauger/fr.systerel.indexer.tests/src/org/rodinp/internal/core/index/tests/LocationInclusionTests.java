@@ -12,10 +12,8 @@ package org.rodinp.internal.core.index.tests;
 
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IRodinLocation;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.index.AttributeLocation;
@@ -29,8 +27,6 @@ import org.rodinp.internal.core.index.RodinLocation;
  */
 public class LocationInclusionTests extends IndexTests {
 
-	private static final IAttributeType.String attrType =
-			RodinCore.getStringAttrType("org.rodinp.core.testAttributeType");
 	private static IRodinProject project;
 	private static IRodinFile file1;
 	private static IRodinFile file2;
@@ -106,7 +102,7 @@ public class LocationInclusionTests extends IndexTests {
 	}
 
 	public void testAttLocInIntLoc() throws Exception {
-		final IRodinLocation loc1 = new AttributeLocation(elt1F1, attrType);
+		final IRodinLocation loc1 = new AttributeLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE);
 		final IRodinLocation loc2 = new InternalLocation(elt1F1);
 
 		final boolean included = loc1.isIncludedIn(loc2);
@@ -116,8 +112,8 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocInAttLoc() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
-		final IRodinLocation loc2 = new AttributeLocation(elt1F1, attrType);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 1, 5);
+		final IRodinLocation loc2 = new AttributeLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 
@@ -128,7 +124,7 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocInProject() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 0, 5);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 0, 5);
 		final IRodinLocation loc2 = new RodinLocation(project);
 
 		final boolean included = loc1.isIncludedIn(loc2);
@@ -139,9 +135,9 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSameSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 1, 5);
 		final IRodinLocation loc2 =
-				new AttributeSubstringLocation(elt1F1, attrType, 1, 5);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 1, 5);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 
@@ -151,9 +147,9 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocInSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 3, 5);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 3, 5);
 		final IRodinLocation loc2 =
-				new AttributeSubstringLocation(elt1F1, attrType, 1, 15);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 1, 15);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 
@@ -163,9 +159,9 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocNotInSubsLoc() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 3, 15);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 3, 15);
 		final IRodinLocation loc2 =
-				new AttributeSubstringLocation(elt1F1, attrType, 8, 11);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 8, 11);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 
@@ -176,9 +172,9 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocApart() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 3, 5);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 3, 5);
 		final IRodinLocation loc2 =
-				new AttributeSubstringLocation(elt1F1, attrType, 8, 11);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 8, 11);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 
@@ -189,9 +185,9 @@ public class LocationInclusionTests extends IndexTests {
 
 	public void testSubsLocOverlap() throws Exception {
 		final IRodinLocation loc1 =
-				new AttributeSubstringLocation(elt1F1, attrType, 3, 9);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 3, 9);
 		final IRodinLocation loc2 =
-				new AttributeSubstringLocation(elt1F1, attrType, 7, 11);
+				new AttributeSubstringLocation(elt1F1, IndexTestsUtil.TEST_ATTR_TYPE, 7, 11);
 
 		final boolean included = loc1.isIncludedIn(loc2);
 

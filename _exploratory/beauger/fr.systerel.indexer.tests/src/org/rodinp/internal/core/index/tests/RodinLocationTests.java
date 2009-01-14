@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tests;
 
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
+
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.index.IAttributeLocation;
 import org.rodinp.core.index.IAttributeSubstringLocation;
 import org.rodinp.core.index.IInternalLocation;
@@ -27,8 +28,6 @@ public class RodinLocationTests extends IndexTests {
 		super(name, true);
 	}
 
-	private static final IAttributeType.String attrType = RodinCore
-			.getStringAttrType("org.rodinp.core.testAttributeType");
 	private static final int defaultStart = 1;
 	private static final int defaultEnd = 3;
 
@@ -72,8 +71,8 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testConstructor() throws Exception {
 		IInternalLocation loc = RodinIndexer.getRodinLocation(locElement,
-				attrType, defaultStart, defaultEnd);
-		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
+				TEST_ATTR_TYPE, defaultStart, defaultEnd);
+		assertLocation(loc, locElement, TEST_ATTR_TYPE, defaultStart, defaultEnd);
 	}
 
 	public void testNullElement() throws Exception {
@@ -98,14 +97,14 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testAttribute() throws Exception {
 		IInternalLocation loc = RodinIndexer
-				.getRodinLocation(locElement, attrType);
-		assertLocation(loc, locElement, attrType);
+				.getRodinLocation(locElement, TEST_ATTR_TYPE);
+		assertLocation(loc, locElement, TEST_ATTR_TYPE);
 	}
 
 	public void testAttributeSubstring() throws Exception {
 		IInternalLocation loc = RodinIndexer.getRodinLocation(locElement,
-				attrType, defaultStart, defaultEnd);
-		assertLocation(loc, locElement, attrType, defaultStart, defaultEnd);
+				TEST_ATTR_TYPE, defaultStart, defaultEnd);
+		assertLocation(loc, locElement, TEST_ATTR_TYPE, defaultStart, defaultEnd);
 	}
 
 	public void testNullAttribute() throws Exception {
@@ -120,7 +119,7 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testInvalidStart() throws Exception {
 		try {
-			RodinIndexer.getRodinLocation(locElement, attrType, -1, 0);
+			RodinIndexer.getRodinLocation(locElement, TEST_ATTR_TYPE, -1, 0);
 			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
 			// Pass
@@ -129,7 +128,7 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testInvalidEnd() throws Exception {
 		try {
-			RodinIndexer.getRodinLocation(locElement, attrType, 0, -1);
+			RodinIndexer.getRodinLocation(locElement, TEST_ATTR_TYPE, 0, -1);
 			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
 			// Pass
@@ -138,7 +137,7 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testEmptySubstring() throws Exception {
 		try {
-			RodinIndexer.getRodinLocation(locElement, attrType, 0, 0);
+			RodinIndexer.getRodinLocation(locElement, TEST_ATTR_TYPE, 0, 0);
 			fail("expected NullPointerException");
 		} catch (IllegalArgumentException e) {
 			// Pass
@@ -151,9 +150,9 @@ public class RodinLocationTests extends IndexTests {
 	public void testDiffers() throws Exception {
 		final IInternalLocation eLoc = RodinIndexer.getInternalLocation(locElement);
 		final IInternalLocation aLoc = RodinIndexer.getRodinLocation(locElement,
-				attrType);
+				TEST_ATTR_TYPE);
 		final IInternalLocation sLoc = RodinIndexer.getRodinLocation(locElement,
-				attrType, defaultStart, defaultEnd);
+				TEST_ATTR_TYPE, defaultStart, defaultEnd);
 
 		assertFalse(eLoc.equals(aLoc));
 		assertFalse(eLoc.equals(sLoc));
@@ -171,17 +170,17 @@ public class RodinLocationTests extends IndexTests {
 
 	public void testEqualsAttribute() throws Exception {
 		final IInternalLocation loc1 = RodinIndexer.getRodinLocation(locElement,
-				attrType);
+				TEST_ATTR_TYPE);
 		final IInternalLocation loc2 = RodinIndexer.getRodinLocation(locElement,
-				attrType);
+				TEST_ATTR_TYPE);
 		assertEquals(loc1, loc2);
 	}
 
 	public void testEqualsSubstring() throws Exception {
 		final IInternalLocation loc1 = RodinIndexer.getRodinLocation(locElement,
-				attrType, defaultStart, defaultEnd);
+				TEST_ATTR_TYPE, defaultStart, defaultEnd);
 		final IInternalLocation loc2 = RodinIndexer.getRodinLocation(locElement,
-				attrType, defaultStart, defaultEnd);
+				TEST_ATTR_TYPE, defaultStart, defaultEnd);
 		assertEquals(loc1, loc2);
 	}
 

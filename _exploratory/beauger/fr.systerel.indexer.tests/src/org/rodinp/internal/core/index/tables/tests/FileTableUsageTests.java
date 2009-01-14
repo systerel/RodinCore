@@ -61,7 +61,7 @@ public class FileTableUsageTests extends IndexTests {
 		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import org.rodinp.internal.core.index.IIndexDelta;
 import org.rodinp.internal.core.index.IndexManager;
 import org.rodinp.internal.core.index.PerProjectPIM;
 import org.rodinp.internal.core.index.ProjectIndexManager;
+import org.rodinp.internal.core.index.Registry;
 import org.rodinp.internal.core.index.persistence.IPersistor;
 import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.index.persistence.tests.Resources.IPersistResource;
@@ -113,7 +114,8 @@ public class XMLPersistorTests extends IndexTests {
 		final PerProjectPIM pppim = new PerProjectPIM();
 		final List<IIndexDelta> deltas = new ArrayList<IIndexDelta>();
 		final PersistentIndexManager persistIM =
-				new PersistentIndexManager(pppim, deltas);
+				new PersistentIndexManager(
+				pppim, deltas, new Registry<String, String>());
 		ps.restore(file, persistIM);
 
 		assertIMData(expected, persistIM);
@@ -158,6 +160,7 @@ public class XMLPersistorTests extends IndexTests {
 	}
 
 	public void testSave2PIMs() throws Exception {
+		// FIXME P1 & P2 might appear reversed between actual and expected order
 		final IRodinProject p1 = createRodinProject("P1");
 		final IRodinProject p2 = createRodinProject("P2");
 		IPersistResource pr = Resources.make2PIMs(p1, p2);

@@ -13,6 +13,7 @@ package org.rodinp.internal.core.index.tests;
 import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.index.IDeclaration;
@@ -62,8 +63,9 @@ public class IndexManagerTests extends IndexTests {
 		makeDescAndDefaultOcc(rodinIndex, declElt1, file.getRoot());
 		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 		// no desc3
+		manager.clear();
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getRootElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 	}
 
 	@Override
@@ -138,14 +140,14 @@ public class IndexManagerTests extends IndexTests {
 
 	public void testSeveralIndexersFail() throws Exception {
 
-		final IInternalElement root = file.getRoot();
+		final IInternalElementType<?> rootType = file.getRootElementType();
 
 		manager.clearIndexers();
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, root.getElementType());
+		RodinIndexer.register(indexer, rootType);
 		
 		final IIndexer indexer2 = new FakeFailIndexer();
-		RodinIndexer.register(indexer2, root.getElementType());
+		RodinIndexer.register(indexer2, rootType);
 
 		manager.scheduleIndexing(file);
 
@@ -162,12 +164,12 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.clearIndexers();
 		indexer = new FakeIndexer(rodinIndex);
-		RodinIndexer.register(indexer, file.getRootElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		final IDeclaration[] expected = makeArray(declElt1, declElt2);
 		
 		final FakeGetDeclIndexer indexer2 = new FakeGetDeclIndexer();
-		RodinIndexer.register(indexer2, file.getRootElementType());
+		RodinIndexer.register(indexer2, TEST_FILE_TYPE);
 
 		manager.scheduleIndexing(file);
 
@@ -218,7 +220,7 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.clearIndexers();
 
-		RodinIndexer.register(exceptIndexer, file.getRoot().getElementType());
+		RodinIndexer.register(exceptIndexer, TEST_FILE_TYPE);
 
 		// should not throw an exception
 		manager.scheduleIndexing(file);
@@ -233,7 +235,7 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.clearIndexers();
 
-		RodinIndexer.register(failIndexer, file.getRoot().getElementType());
+		RodinIndexer.register(failIndexer, TEST_FILE_TYPE);
 
 		// should not throw an exception
 		manager.scheduleIndexing(file);

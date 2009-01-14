@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.index.tables.tests;
 
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.assertSameElements;
-import static org.rodinp.internal.core.index.tests.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.index.tests.IndexTestsUtil.*;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -41,7 +40,7 @@ public class NameTableUsageTests extends IndexTests {
 		super.setUp();
 		final IRodinProject rodinProject = createRodinProject("P");
 		file = createRodinFile(rodinProject, "nameInd.test");
-		RodinIndexer.register(indexer, file.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 	}
 
 	@Override
@@ -87,7 +86,7 @@ public class NameTableUsageTests extends IndexTests {
 		// changing the indexer
 		manager.clearIndexers();
 		indexer = new FakeNameIndexer(1, name1);
-		RodinIndexer.register(indexer, file.getRoot().getElementType());
+		RodinIndexer.register(indexer, TEST_FILE_TYPE);
 
 		// second indexing with 1 element for name1 only
 		manager.scheduleIndexing(file);
