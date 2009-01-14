@@ -18,6 +18,11 @@
       %license
    </license>
 
+   <url>
+      <!-- update label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/-->
+      <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
+   </url>
+
    <requires>
       <import feature="org.eclipse.platform" version="3.4.0" match="compatible"/>
    </requires>
