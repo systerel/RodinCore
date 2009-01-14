@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.ui.tests;singleton:=true
-Bundle-Version: 0.9.0
+Bundle-Version: 0.9.1
 Require-Bundle: org.junit4,
  org.eventb.ui,
  org.rodinp.core.tests
