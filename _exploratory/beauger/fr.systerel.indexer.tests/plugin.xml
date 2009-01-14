@@ -14,49 +14,49 @@
          name="Test Indexers"
          point="fr.systerel.indexer">
       <indexer
-            class="org.rodinp.internal.core.index.tests.FakeExceptionIndexer"
+            class="org.rodinp.core.tests.index.FakeExceptionIndexer"
             id="fr.systerel.indexer.tests.fakeExceptionIndexer"
             name="Fake Exception Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tests.FakeFailIndexer"
+            class="org.rodinp.core.tests.index.FakeFailIndexer"
             id="fr.systerel.indexer.tests.fakeFailIndexer"
             name="Fake Fail Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tests.FakeGetDeclIndexer"
+            class="org.rodinp.core.tests.index.FakeGetDeclIndexer"
             id="fr.systerel.indexer.tests.fakeGetDeclIndexer"
             name="Fake Get Decl Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tests.FakeIndexer"
+            class="org.rodinp.core.tests.index.FakeIndexer"
             id="fr.systerel.indexer.tests.fakeIndexer"
             name="Fake Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tables.tests.FakeExportIndexer"
+            class="org.rodinp.core.tests.index.tables.FakeExportIndexer"
             id="fr.systerel.indexer.tests.fakeExportndexer"
             name="Fake Export Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tables.tests.FakeDependenceIndexer"
+            class="org.rodinp.core.tests.index.tables.FakeDependenceIndexer"
             id="fr.systerel.indexer.tests.fakeDependenceIndexer"
             name="Fake Dependence Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tables.tests.FakeNameIndexer"
+            class="org.rodinp.core.tests.index.tables.FakeNameIndexer"
             id="fr.systerel.indexer.tests.fakeNameIndexer"
             name="Fake Name Indexer"
             root-element-type="org.rodinp.core.tests.test">
       </indexer>
       <indexer
-            class="org.rodinp.internal.core.index.tables.tests.FakeNameIndexer"
+            class="org.rodinp.core.tests.index.tables.FakeNameIndexer"
             id="fr.systerel.indexer.tests.fakeNameIndexer"
             name="Fake Name Indexer"
             root-element-type="org.rodinp.core.tests.test2">
