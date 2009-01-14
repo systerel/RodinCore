@@ -54,7 +54,7 @@ public class IndexerRegistry {
 
 	public List<IIndexer> getIndexersFor(IRodinFile file) {
 		final IInternalElementType<? extends IInternalElement> fileType = file
-				.getRoot().getElementType();
+				.getRootElementType();
 		final List<IndexerElement> list = indexers.get(fileType);
 
 		if (list == null || list.isEmpty()) {
