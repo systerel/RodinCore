@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.StatusTextEvent;
-import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -26,6 +24,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
@@ -41,6 +40,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -196,38 +196,38 @@ public class HTMLPage extends EventBEditorPage implements
 		}
 	}
 
-	private IRodinFile getAbstractMachine(IInternalElement mch) {
-		final IRefinesMachine[] refines;
+	private IMachineRoot getAbstractMachine(IMachineRoot mchRoot) {
+		if (!mchRoot.exists()) {
+			return null;
+		}
 		try {
-			refines = mch.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-			if (refines.length > 0)
-				return refines[0].getAbstractMachine();
+			final IRefinesMachine[] refines = mchRoot.getRefinesClauses();
+			if (refines.length > 0) {
+				return (IMachineRoot) refines[0].getAbstractMachine().getRoot();
+			}
 		} catch (RodinDBException e) {
-			e.printStackTrace();
+			// ignore
 		}
 		return null;
 	}
 
-	/**
-	 * Return <code>true </code> if parent is an abstraction of mch
-	 * */
-	private boolean isAbstractMachine(IRodinFile mch, IRodinFile parent) {
-		final IRodinFile abstractMachine = getAbstractMachine(mch.getRoot());
-		if (abstractMachine == null)
+	// Returns true if rf is a machine and parent is one of its abstractions
+	private boolean isAbstractMachine(IRodinFile rf, IRodinFile parent) {
+		final IInternalElement root = rf.getRoot();
+		if (root.getElementType() != IMachineRoot.ELEMENT_TYPE)
 			return false;
+		final IMachineRoot mchRoot = (IMachineRoot) root;
 
-		if (abstractMachine.equals(parent)) {
-			return true;
-		} else {
-			return isAbstractMachine(abstractMachine, parent);
+		IMachineRoot abstractRoot = getAbstractMachine(mchRoot);
+		while (abstractRoot != null) {
+			if (abstractRoot.equals(parent)) {
+				return true;
+			}
+			abstractRoot = getAbstractMachine(abstractRoot);
 		}
+		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
-	 */
 	public void elementChanged(ElementChangedEvent event) {
 		final IRodinElementDelta delta = event.getDelta();
 		processDelta(delta);
@@ -238,14 +238,15 @@ public class HTMLPage extends EventBEditorPage implements
 		final IInternalElement root = ((IEventBEditor<?>) getEditor())
 				.getRodinInput();
 		final IRodinElement element = delta.getElement();
+		final IRodinProject rodinProject = root.getRodinProject();
 
 		if (element.equals(root.getRodinDB())) {
 			for (IRodinElementDelta child : delta.getAffectedChildren()) {
-				if (child.getElement().equals(root.getRodinProject())) {
+				if (child.getElement().equals(rodinProject)) {
 					processDelta(child);
 				}
 			}
-		} else if (element.equals(root.getRodinProject())) {
+		} else if (element.equals(rodinProject)) {
 			final IRodinFile rodinFile = root.getRodinFile();
 			for (IRodinElementDelta child : delta.getAffectedChildren()) {
 				final IRodinFile childElement = (IRodinFile) child.getElement();
