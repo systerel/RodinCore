@@ -31,6 +31,7 @@ public class AllTests {
 		suite.addTestSuite(TestFileCreation.class);
 		suite.addTestSuite(AdapterFactoryTests.class);
 		suite.addTestSuite(SameContentsTests.class);
+		suite.addTestSuite(RootElementTests.class);
 
 		suite.addTestSuite(MBuilderTest.class);
 		suite.addTestSuite(CBuilderTest.class);
