@@ -41,7 +41,7 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
 public class IndexTestsUtil {
 
 	public static final IAttributeType.String TEST_ATTR_TYPE = RodinCore
-			.getStringAttrType("fr.systerel.indexer.tests.testAttributeType");
+			.getStringAttrType("org.rodinp.core.tests.indexer.testAttributeType");
 
 	public static final IInternalElementType<?> TEST_FILE_TYPE = RodinCore
 			.getInternalElementType("org.rodinp.core.tests.test");
@@ -50,13 +50,13 @@ public class IndexTestsUtil {
 			.getInternalElementType("org.rodinp.core.tests.test2");
 
 	public static final IOccurrenceKind TEST_KIND =
-			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test");
+			RodinIndexer.getOccurrenceKind("testKind");
 
 	public static final IOccurrenceKind TEST_KIND_1 =
-			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test_1");
+			RodinIndexer.getOccurrenceKind("testKind1");
 
 	public static final IOccurrenceKind TEST_KIND_2 =
-			RodinIndexer.getOccurrenceKind("fr.systerel.indexer.test_2");
+			RodinIndexer.getOccurrenceKind("testKind2");
 
 	public static final String defaultName = "banzai";
 

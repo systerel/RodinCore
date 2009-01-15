@@ -1,5 +1,5 @@
-fr.systerel.indexer/debug = true
-fr.systerel.indexer/debug/indexer = false
-fr.systerel.indexer/debug/indexer/verbose = false
-fr.systerel.indexer/debug/indexer/save_restore = true
-fr.systerel.indexer/debug/indexer/delta = false
+org.rodinp.core.indexer/debug = true
+org.rodinp.core.indexer/debug/indexer = false
+org.rodinp.core.indexer/debug/indexer/verbose = false
+org.rodinp.core.indexer/debug/indexer/save_restore = true
+org.rodinp.core.indexer/debug/indexer/delta = false

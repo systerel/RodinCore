@@ -2,7 +2,9 @@
 <?eclipse version="3.2"?>
 <plugin>
     <extension
-         point="org.rodinp.core.attributeTypes">
+          id="testAttributeTypes"
+          name="Test Attribute Types"
+          point="org.rodinp.core.attributeTypes">
       <attributeType
             id="testAttributeType"
             kind="string"
@@ -10,9 +12,9 @@
       </attributeType>
    </extension>
    <extension
-         id="fr.systerel.indexer.tests.testIndexers"
+         id="testIndexers"
          name="Test Indexers"
-         point="fr.systerel.indexer">
+         point="org.rodinp.core.indexer.indexers">
       <indexer
             class="org.rodinp.core.tests.index.FakeExceptionIndexer"
             id="fr.systerel.indexer.tests.fakeExceptionIndexer"
@@ -63,20 +65,20 @@
       </indexer>
    </extension>
    <extension
-         id="fr.systerel.indexer.tests.testOccurrenceKinds"
+         id="testOccurrenceKinds"
          name="Test Occurrence Kinds"
-         point="fr.systerel.occurrenceKind">
+         point="org.rodinp.core.indexer.occurrenceKinds">
       <occurrenceKind
-            id="fr.systerel.indexer.test"
-            name="test">
+            id="testKind"
+            name="Test Kind">
       </occurrenceKind>
       <occurrenceKind
-            id="fr.systerel.indexer.test_1"
-            name="test_1">
+            id="testKind1"
+            name="Test Kind 1">
       </occurrenceKind>
       <occurrenceKind
-            id="fr.systerel.indexer.test_2"
-            name="test_2">
+            id="testKind2"
+            name="test Kind 2">
       </occurrenceKind>
    </extension>
 

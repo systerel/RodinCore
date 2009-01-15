@@ -145,7 +145,7 @@ public class RodinIndexer extends Plugin {
 	}
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "fr.systerel.indexer";
+	public static final String PLUGIN_ID = "org.rodinp.core.indexer";
 
 	// The shared instance
 	private static RodinIndexer plugin;
@@ -184,7 +184,7 @@ public class RodinIndexer extends Plugin {
 	}
 
 	private static void registerOccurrenceKinds() {
-		final String occKindExtPointId = "fr.systerel.occurrenceKind";
+		final String occKindExtPointId = PLUGIN_ID + ".occurrenceKinds";
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] extensions = reg
@@ -213,7 +213,7 @@ public class RodinIndexer extends Plugin {
 	}
 
 	private static void registerIndexers() {
-		final String indexerExtPointId = "fr.systerel.indexer";
+		final String indexerExtPointId = PLUGIN_ID + ".indexers";
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] extensions = reg
@@ -271,22 +271,22 @@ public class RodinIndexer extends Plugin {
 	public void configurePluginDebugOptions() {
 		if (plugin.isDebugging()) {
 			String option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer");
+					.getDebugOption(PLUGIN_ID + "/debug/indexer");
 			if (option != null)
 				IndexManager.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer/verbose");
+					.getDebugOption(PLUGIN_ID + "/debug/indexer/verbose");
 			if (option != null)
 				IndexManager.VERBOSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer/save_restore");
+					.getDebugOption(PLUGIN_ID + "/debug/indexer/save_restore");
 			if (option != null)
 				IndexManager.SAVE_RESTORE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform
-					.getDebugOption("fr.systerel.indexer/debug/indexer/delta");
+					.getDebugOption(PLUGIN_ID + "/debug/indexer/delta");
 			if (option != null)
 				DeltaQueuer.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}

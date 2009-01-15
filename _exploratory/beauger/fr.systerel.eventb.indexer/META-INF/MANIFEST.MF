@@ -6,7 +6,7 @@ Bundle-Version: 0.0.1
 Bundle-Vendor: Systerel
 Export-Package: org.eventb.core.indexer
 Require-Bundle: org.eclipse.core.runtime,
- fr.systerel.indexer,
+ org.rodinp.core.indexer,
  org.rodinp.core,
  org.eventb.core
 Bundle-ActivationPolicy: lazy
