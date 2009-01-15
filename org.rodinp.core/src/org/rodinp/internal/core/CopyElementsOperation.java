@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.internal.core.CopyElementsOperation
  *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
+
+import static org.rodinp.core.IRodinDBStatusConstants.ROOT_ELEMENT;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -214,6 +217,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 *	<li>INVALID_ELEMENT_TYPES - <code>element</code> is not contained within a compilation unit.
 	 *		This operation only operates on elements contained within compilation units.
 	 *  <li>READ_ONLY - <code>element</code> is read only.
+	 *  <li>ROOT_ELEMENT - <code>element</code> is a root element and cannot be modified.
 	 *	<li>INVALID_DESTINATION - The destination parent specified for <code>element</code>
 	 *		is of an incompatible type. The destination for a package declaration or import declaration must
 	 *		be a compilation unit; the destination for a type must be a type or compilation
@@ -233,6 +237,9 @@ public class CopyElementsOperation extends MultiOperation {
 		
 		if (element.isReadOnly() && (isRename() || isMove()))
 			error(IRodinDBStatusConstants.READ_ONLY, element);
+
+		if (element.isRoot() && (isRename() || isMove()))
+			error(ROOT_ELEMENT, element);
 
 		IRodinElement dest = getDestinationParent(element);
 		verifyDestination(element, dest);

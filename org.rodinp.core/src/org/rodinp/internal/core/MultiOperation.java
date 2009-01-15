@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *     		org.eclipse.jdt.core.ICompilationUnit
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed unnamed internal elements
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -266,11 +266,11 @@ public abstract class MultiOperation extends RodinDBOperation {
 
 		if (element instanceof RodinFile) {
 			if (! (destination instanceof RodinProject)) {
-				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
+				error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
 			}
 		} else if (element instanceof InternalElement) {
-			if (! (destination instanceof IInternalParent)) {
-				error(IRodinDBStatusConstants.INVALID_DESTINATION, element);
+			if (! (destination instanceof InternalElement)) {
+				error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
 			}
 		} else {
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
