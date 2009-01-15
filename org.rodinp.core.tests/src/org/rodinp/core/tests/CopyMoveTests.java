@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.tests.model.CopyMoveTests.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.tests.model.CopyMoveTests
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -89,11 +92,20 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			copy = generateHandle(element, rename, container);
 			assertExists("Copy should exist", copy);
 			
+			// ensure that the copy is the same as the source element
+			if (element instanceof IInternalElement) {
+				IInternalElement src = (IInternalElement) element;
+				IInternalElement dst = (IInternalElement) copy;
+				assertTrue(src.hasSameAttributes(dst));
+				assertTrue(src.hasSameChildren(dst));
+			}
+			
 			//ensure correct position
 			if (element instanceof IInternalElement) {
 				ensureCorrectPositioning((IParent) container, sibling, copy);
 			}
-			IRodinElementDelta destDelta = getDeltaFor(container, true);
+			
+			final IRodinElementDelta destDelta = getDeltaFor(container, true);
 			assertTrue("Destination container not changed",
 					destDelta != null
 					&& destDelta.getKind() == IRodinElementDelta.CHANGED);
