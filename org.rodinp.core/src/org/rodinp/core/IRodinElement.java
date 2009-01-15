@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.IRodinElement.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.ICompilationUnit
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -272,5 +275,17 @@ public interface IRodinElement extends IAdaptable {
 	 * @return <code>true</code> iff this element is read-only
 	 */
 	boolean isReadOnly();
+
+	/**
+	 * Returns whether this Rodin element is a root element. A root element is
+	 * an internal element which is the child of a non-internal element (for
+	 * instance, the top-level element of a Rodin file).
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this element is a root element
+	 */
+	boolean isRoot();
 
 }

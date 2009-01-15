@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed deprecated methods
  *     Systerel - removed occurrence count and unnamed elements
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -428,18 +429,20 @@ public abstract class RodinElement extends PlatformObject implements
 	 * otherwise false.
 	 */
 	public boolean isAncestorOf(IRodinElement e) {
-		IRodinElement parentElement = e.getParent();
-		while (parentElement != null && !parentElement.equals(this)) {
-			parentElement = parentElement.getParent();
+		IRodinElement ancestor = e.getParent();
+		while (ancestor != null && !ancestor.equals(this)) {
+			ancestor = ancestor.getParent();
 		}
-		return parentElement != null;
+		return ancestor != null;
 	}
 
-	/*
-	 * @see IRodinElement
-	 */
 	public boolean isReadOnly() {
 		return false;
+	}
+
+	public final boolean isRoot() {
+		return this instanceof IInternalElement
+				&& !(parent instanceof IInternalElement);
 	}
 
 	/**
