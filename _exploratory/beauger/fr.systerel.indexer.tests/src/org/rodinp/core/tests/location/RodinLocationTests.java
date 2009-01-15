@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.location;
 
-import static org.rodinp.core.tests.index.IndexTestsUtil.*;
+import static org.rodinp.core.tests.indexer.IndexTestsUtil.*;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -21,7 +21,7 @@ import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.core.tests.index.IndexTests;
+import org.rodinp.core.tests.indexer.IndexTests;
 
 public class RodinLocationTests extends IndexTests {
 

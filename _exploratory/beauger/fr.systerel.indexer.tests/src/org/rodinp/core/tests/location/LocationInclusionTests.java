@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.rodinp.core.tests.location;
 
-import static org.rodinp.core.tests.index.IndexTestsUtil.*;
+import static org.rodinp.core.tests.indexer.IndexTestsUtil.*;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.core.tests.index.IndexTestsUtil;
+import org.rodinp.core.tests.indexer.IndexTests;
+import org.rodinp.core.tests.indexer.IndexTestsUtil;
 import org.rodinp.internal.core.location.AttributeLocation;
 import org.rodinp.internal.core.location.AttributeSubstringLocation;
 import org.rodinp.internal.core.location.InternalLocation;
