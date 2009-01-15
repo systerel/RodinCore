@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,7 +170,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 */
 	public void testBrokenClean() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
-		poFile.delete(false, null);
+		poFile.getRodinFile().delete(false, null);
 		createPOFile();
 		runBuilder();
 		assertTrue(pa.isBroken());

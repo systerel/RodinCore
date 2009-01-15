@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,9 +86,9 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poFile.delete(true, null);
-		prFile.delete(true, null);
-		psFile.delete(true, null);
+		poFile.getRodinFile().delete(true, null);
+		prFile.getRodinFile().delete(true, null);
+		psFile.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
