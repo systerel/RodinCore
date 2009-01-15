@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.core.IJavaModelStatusConstants
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - cleaned-up unused codes
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -307,4 +308,13 @@ public interface IRodinDBStatusConstants {
 	 * version.
 	 */
 	int CONVERSION_ERROR = 1004;
+
+	/**
+	 * Status indicating that modifying a root element through a
+	 * copy/move/rename/delete operation has been attempted while it is not
+	 * permitted. The root element(s) can be retrieved using
+	 * <code>getElements</code> on the status object.
+	 */
+	int ROOT_ELEMENT = 1005;
+
 }

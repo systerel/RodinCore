@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation as
  * 			org.eclipse.jdt.internal.core.util.Messages
  *     ETH Zurich - adaptation from JDT to Rodin
- *     Systerel - added operation_clearElementProgress
+ *     Systerel - added clear() method
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core.util;
 
@@ -93,6 +94,7 @@ public final class Messages {
 	public static String status_OK;
 	public static String status_pastVersionNumber;
 	public static String status_readOnly;
+	public static String status_rootElement;
 	public static String status_updateConflict;
 	public static String status_upgradedFile;
 

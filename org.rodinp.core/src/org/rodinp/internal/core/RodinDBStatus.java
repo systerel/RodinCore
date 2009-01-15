@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation as
+ *     IBM Corporation - initial API and implementINation as
  *     		org.eclipse.jdt.internal.core.JavaModelStatus
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - added more messages
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -353,6 +354,10 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 			case PAST_VERSION:
 				return Messages.bind(Messages.status_pastVersionNumber,
 						elements[0].getPath(), string);
+
+			case ROOT_ELEMENT:
+				return Messages.bind(Messages.status_rootElement,
+						((RodinElement) elements[0]).toStringWithAncestors());
 
 			}
 			if (string != null) {
