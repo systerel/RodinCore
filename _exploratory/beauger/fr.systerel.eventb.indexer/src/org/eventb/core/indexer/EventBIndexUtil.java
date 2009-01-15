@@ -21,13 +21,13 @@ import org.rodinp.core.location.IInternalLocation;
 public class EventBIndexUtil {
 
 	public static final IOccurrenceKind DECLARATION = RodinIndexer
-			.getOccurrenceKind("fr.systerel.eventb.indexer.declaration");
+			.getOccurrenceKind("declaration");
 
 	public static final IOccurrenceKind REFERENCE = RodinIndexer
-			.getOccurrenceKind("fr.systerel.eventb.indexer.reference");
+			.getOccurrenceKind("reference");
 
 	public static final IOccurrenceKind MODIFICATION = RodinIndexer
-			.getOccurrenceKind("fr.systerel.eventb.indexer.modification");
+			.getOccurrenceKind("modification");
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is
