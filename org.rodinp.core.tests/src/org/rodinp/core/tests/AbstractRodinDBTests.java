@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1043,20 +1043,19 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	}
 
 	protected static void assertError(IWorkspaceRunnable runnable,
-			int expectedCode) throws Exception {
-		assertError(runnable, expectedCode, null);
+			int expectedCode) throws CoreException {
+		assertErrorFor(runnable, expectedCode, null);
 	}
 
-	protected static void assertError(IWorkspaceRunnable runnable,
-			int expectedCode, IRodinElement element) throws Exception {
+	protected static void assertErrorFor(IWorkspaceRunnable runnable,
+			int expectedCode, IRodinElement element) throws CoreException {
 		try {
 			runnable.run(null);
 			fail("Should have raised an exception");
 		} catch (RodinDBException e) {
-			assertError(e, IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
+			assertErrorFor(e, expectedCode, element);
 		}
 	}
-
 
 	protected static void assertError(RodinDBException exception,
 			int expectedCode) {
