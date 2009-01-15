@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import static org.rodinp.core.IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -102,34 +103,6 @@ public class DeleteTests extends ModifyingResourceTests {
 	}
 	
 	/**
-	 * Ensures that a root element cannot be deleted. Verifies that no change
-	 * delta is generated.
-	 */
-	public void testDeleteRoot() throws Exception {
-		try {
-			final IRodinFile file = createRodinFile("P/X.test");
-			final RodinTestRoot root= (RodinTestRoot) file.getRoot();
-			final IInternalElement ne = createNEPositive(root, "foo", null);
-			
-			startDeltas();
-			assertError(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor monitor) throws CoreException {
-					root.delete(false, null);
-				}
-				
-			}, 0);  // TODO: CAN_T_DELETE_ROOT_ELEMENT
-			assertExists("Root should not be deleted", file);
-			assertExists("Root should not be deleted", root);
-			assertExists("All internal elements should be still there", ne);
-			assertNoDeltas("Unexpected delta");
-		} finally {
-			stopDeltas();
-			deleteFile("P/X.test");
-		}
-	}
-
-	/**
 	 * Ensures that a top internal element is deleted, all its descendants are also deleted. 
 	 * Verify that the correct change deltas are generated.
 	 */
@@ -164,19 +137,18 @@ public class DeleteTests extends ModifyingResourceTests {
 	 */
 	public void testDeleteInternalCancelled() throws CoreException {
 		try {
-			IRodinFile file = createRodinFile("P/X.test");
-			RodinTestRoot root= (RodinTestRoot) file.getRoot();
-			IInternalElement ne = createNEPositive(root, "foo", null);
+			final IRodinFile file = createRodinFile("P/X.test");
+			final RodinTestRoot root= (RodinTestRoot) file.getRoot();
+			final IInternalElement ne = createNEPositive(root, "foo", null);
 			
-			boolean isCanceled = false;
 			try {
 				TestProgressMonitor monitor = TestProgressMonitor.getInstance();
 				monitor.setCancelledCounter(0);
 				getRodinDB().delete(new IRodinElement[] {ne}, false, monitor);
+				fail("Should have been canceled");
 			} catch (OperationCanceledException e) {
-				isCanceled = true;
+				// Pass
 			}
-			assertTrue("Operation should have thrown an operation canceled exception", isCanceled);
 		} finally {
 			deleteFile("P/X.test");
 		}
@@ -269,19 +241,19 @@ public class DeleteTests extends ModifyingResourceTests {
 			getRodinDB().delete(null, false, null);
 			fail("Should have raised an exception");
 		} catch (RodinDBException e) {
-			assertError(e, IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
+			assertError(e, NO_ELEMENTS_TO_PROCESS);
 		}
 		try {
 			getRodinDB().delete(new IRodinElement[] {null}, false, null);
 			fail("Should have raised an exception");
 		} catch (RodinDBException e) {
-			assertError(e, IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
+			assertError(e, NO_ELEMENTS_TO_PROCESS);
 		}
 		try {
 			getRodinDB().delete(new IRodinElement[0], false, null);
 			fail("Should have raised an exception");
 		} catch (RodinDBException e) {
-			assertError(e, IRodinDBStatusConstants.NO_ELEMENTS_TO_PROCESS);
+			assertError(e, NO_ELEMENTS_TO_PROCESS);
 		}
 	}
 }
