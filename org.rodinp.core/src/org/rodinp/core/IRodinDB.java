@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.core.IJavaModel
  *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -124,6 +125,7 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                <li>The number of renamings does not match the number of
 	 *                elements (<code>INVALID_RENAMING</code>)</li>
 	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)</li>
+	 *                <li> A destination element is a root element (<code>ROOT_ELEMENT</code>)</li>
 	 *                </ul>
 	 */
 	void copy(IRodinElement[] elements, IRodinElement[] containers,
@@ -140,20 +142,20 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *            a flag controlling whether underlying resources that are not
 	 *            in sync with the local file system will be tolerated
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * @exception RodinDBException
 	 *                if an element could not be deleted. Reasons include:
 	 *                <ul>
-	 *                <li> There is no element to process
-	 *                (NO_ELEMENTS_TO_PROCESS). The given elements is null or
-	 *                empty</li>
-	 *                <li> A specified element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                updating an underlying resource</li>
-	 *                <li> An element is read-only (<code>READ_ONLY</code>)
-	 *                </li>
+	 *                <li>There is no element to process (
+	 *                <code>NO_ELEMENTS_TO_PROCESS</code>). The given elements
+	 *                is null or empty</li>
+	 *                <li>A specified element does not exist (
+	 *                <code>ELEMENT_DOES_NOT_EXIST</code>)</li>
+	 *                <li>A <code>CoreException</code> occurred while updating
+	 *                an underlying resource</li>
+	 *                <li>An element is read-only (<code>READ_ONLY</code>)</li>
+	 *                <li>An element is a root element (<code>ROOT_ELEMENT</code>)</li>
 	 *                </ul>
 	 */
 	void delete(IRodinElement[] elements, boolean force,
@@ -267,8 +269,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                specified as <code>false</code> (<code>NAME_COLLISION</code>)</li>
 	 *                <li>The number of renamings does not match the number of
 	 *                elements (<code>INVALID_RENAMING</code>)</li>
-	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)
-	 *                </li>
+	 *                <li> A container or element is read-only (<code>READ_ONLY</code>)</li>
+	 *                <li> A source or destination element is a root element (<code>ROOT_ELEMENT</code>)</li>
 	 *                </ul>
 	 */
 	void move(IRodinElement[] elements, IRodinElement[] containers,
@@ -306,7 +308,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	 *                <code>false</code> (<code>NAME_COLLISION</code>)
 	 *                <li>The number of renamings does not match the number of
 	 *                elements (<code>INVALID_RENAMING</code>)</li>
-	 *                <li> An element is read-only (<code>READ_ONLY</code>)
+	 *                <li> An element is read-only (<code>READ_ONLY</code>)</li>
+	 *                <li>An element is a root element (<code>ROOT_ELEMENT</code>)</li>
 	 *                </ul>
 	 */
 	void rename(IRodinElement[] elements, String[] names, boolean replace,
