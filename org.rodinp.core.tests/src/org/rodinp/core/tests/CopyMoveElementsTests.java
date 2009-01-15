@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,37 +228,6 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		copyPositive(neSource, neDest, neDestNext, null, false);
 	}
 
-	/**
-	 * Ensures that a root element can be copied to a different file when forcing.
-	 */
-	public void testCopyRootForce() throws CoreException {
-		IRodinFile rfSource = createRodinFile("P/X.test");
-		IInternalElement rSource = rfSource.getRoot();
-		createNEPositive(rSource, "foo", null);
-
-		IRodinFile rfDest = createRodinFile("P/Y.test");
-		IInternalElement rDest = rfDest.getRoot();
-		
-		assertTrue(rfDest.exists());
-		copyPositive(rSource, rfDest, null, null, true);
-		NamedElement neDest = getNamedElement(rDest, "foo");
-		assertExists("Children not copied with parent", neDest);
-	}
-
-	/**
-	 * Ensures that a root element cannot be copied to a different file if not
-	 * forced.
-	 */
-	public void testCopyRootNoForce() throws CoreException {
-		IRodinFile rfSource = createRodinFile("P/X.test");
-		IInternalElement rSource = rfSource.getRoot();
-
-		IRodinFile rfDest = createRodinFile("P/Y.test");
-
-		copyNegative(rSource, rfDest, null, null, false,
-				IRodinDBStatusConstants.INVALID_DESTINATION);
-	}
-	
 	/**
 	 * Ensures that an internal element can be copied to a different file across projects 
 	 * replacing an existing element.
@@ -577,20 +546,6 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 
 	/**
-	 * Ensures that a top-level internal element can be moved to a different file.
-	 */
-	public void testMoveRootFails() throws CoreException {
-		IRodinFile rfSource = createRodinFile("P/X.test");
-		IInternalElement rSource = rfSource.getRoot();
-
-		IRodinFile rfDest = createRodinFile("P/Y.test");
-		
-		// TODO fix error code below
-		moveNegative(rSource, rfDest, null, null, false, 0);
-		moveNegative(rSource, rfDest, null, null, true, 0);
-	}
-
-	/**
 	 * Ensures that a top-level internal element can be moved to a different file in a different project.
 	 */
 	public void testMoveIntInDifferentProject() throws CoreException {
@@ -600,9 +555,10 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			NamedElement neSource = createNEPositive(rSource, "foo", null);
 
 			createRodinProject("P2");
-			IRodinFile rfDest = createRodinFile("P2/Y.test");
+			final IRodinFile rfDest = createRodinFile("P2/Y.test");
+			final IInternalElement rDest = rfDest.getRoot();
 
-			movePositive(neSource, rfDest, null, null, false);
+			movePositive(neSource, rDest, null, null, false);
 		} finally {
 			deleteProject("P2");
 		}
