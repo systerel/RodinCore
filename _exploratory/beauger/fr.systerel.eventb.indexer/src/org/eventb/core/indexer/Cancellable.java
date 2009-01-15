@@ -12,7 +12,7 @@ package org.eventb.core.indexer;
 
 import java.util.concurrent.CancellationException;
 
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger

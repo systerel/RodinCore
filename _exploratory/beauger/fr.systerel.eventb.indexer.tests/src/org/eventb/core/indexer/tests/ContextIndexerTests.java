@@ -21,8 +21,8 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.eventb.core.indexer.ContextIndexer;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IOccurrence;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
 
 /**
  * @author Nicolas Beauger

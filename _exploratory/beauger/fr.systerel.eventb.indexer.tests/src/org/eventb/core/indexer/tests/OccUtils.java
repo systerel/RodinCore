@@ -24,13 +24,13 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.location.IInternalLocation;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.indexer.Declaration;
+import org.rodinp.internal.core.indexer.Occurrence;
 
 /**
  * @author Nicolas Beauger

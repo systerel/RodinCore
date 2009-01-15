@@ -12,13 +12,13 @@ package org.rodinp.core.tests.index;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.core.index.IOccurrence;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexer;
+import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.location.IInternalLocation;
-import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.Descriptor;
+import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
 

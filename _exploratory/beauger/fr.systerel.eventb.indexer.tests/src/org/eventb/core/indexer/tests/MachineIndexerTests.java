@@ -41,8 +41,8 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.indexer.MachineIndexer;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IOccurrence;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
 
 /**
  * @author Nicolas Beauger

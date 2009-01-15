@@ -25,18 +25,18 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.Occurrence;
-import org.rodinp.internal.core.index.sort.TotalOrder;
-import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tables.FileTable;
-import org.rodinp.internal.core.index.tables.NameTable;
-import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.Descriptor;
+import org.rodinp.internal.core.indexer.Occurrence;
+import org.rodinp.internal.core.indexer.sort.TotalOrder;
+import org.rodinp.internal.core.indexer.tables.ExportTable;
+import org.rodinp.internal.core.indexer.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.NameTable;
+import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class IndexTestsUtil {
 

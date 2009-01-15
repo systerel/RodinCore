@@ -17,9 +17,9 @@ import java.util.List;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IIndexer;
+import org.rodinp.core.indexer.IIndexer;
 import org.rodinp.core.tests.index.tables.FakeNameIndexer;
-import org.rodinp.internal.core.index.IndexerRegistry;
+import org.rodinp.internal.core.indexer.IndexerRegistry;
 
 /**
  * @author Nicolas Beauger

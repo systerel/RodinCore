@@ -15,11 +15,11 @@ import static org.rodinp.core.tests.index.IndexTestsUtil.*;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.indexer.Declaration;
+import org.rodinp.internal.core.indexer.tables.NameTable;
 
 public class NameTableTests extends IndexTests {
 

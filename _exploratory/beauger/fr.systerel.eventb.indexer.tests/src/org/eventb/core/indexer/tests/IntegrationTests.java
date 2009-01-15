@@ -27,10 +27,10 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.indexer.EventBIndexerPlugin;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexQuery;
-import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexQuery;
+import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 
 /**

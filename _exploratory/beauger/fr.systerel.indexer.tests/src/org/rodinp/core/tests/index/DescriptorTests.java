@@ -14,11 +14,11 @@ import static org.rodinp.core.tests.index.IndexTestsUtil.*;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.Descriptor;
-import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.indexer.Declaration;
+import org.rodinp.internal.core.indexer.Descriptor;
+import org.rodinp.internal.core.indexer.Occurrence;
 
 public class DescriptorTests extends IndexTests {
 

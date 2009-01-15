@@ -23,7 +23,7 @@ import org.eventb.core.IMachineRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 
 /**
  * @author Nicolas Beauger

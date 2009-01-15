@@ -17,7 +17,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.indexer.MachineIndexer;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 
 /**
  * @author Nicolas Beauger

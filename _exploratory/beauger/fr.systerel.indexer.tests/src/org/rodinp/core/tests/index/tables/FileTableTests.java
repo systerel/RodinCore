@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.FileTable;
 
 public class FileTableTests extends IndexTests {
 

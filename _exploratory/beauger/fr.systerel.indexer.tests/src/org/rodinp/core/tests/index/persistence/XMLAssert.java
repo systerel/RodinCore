@@ -11,7 +11,7 @@
 package org.rodinp.core.tests.index.persistence;
 
 import static junit.framework.Assert.*;
-import static org.rodinp.internal.core.index.persistence.xml.XMLUtils.*;
+import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.*;
 
 import java.io.File;
 import java.util.ArrayList;

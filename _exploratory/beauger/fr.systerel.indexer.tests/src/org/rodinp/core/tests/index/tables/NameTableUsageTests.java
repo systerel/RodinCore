@@ -16,8 +16,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.tables.NameTable;
+import org.rodinp.internal.core.indexer.IndexManager;
+import org.rodinp.internal.core.indexer.tables.NameTable;
 
 public class NameTableUsageTests extends IndexTests {
 

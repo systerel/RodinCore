@@ -13,8 +13,8 @@ package org.eventb.core.indexer;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.index.IOccurrenceKind;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 

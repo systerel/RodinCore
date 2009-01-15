@@ -17,7 +17,7 @@ import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IIndexingBridge;
 
 public abstract class ElementIndexer extends Cancellable {
 

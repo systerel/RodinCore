@@ -15,9 +15,9 @@ import java.util.List;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.internal.core.indexer.tables.ExportTable;
+import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class FakeDependenceIndexer extends FakeExportIndexer {
 

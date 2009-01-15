@@ -23,14 +23,14 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.tests.index.IndexTests;
 import org.rodinp.core.tests.index.persistence.Resources.IPersistResource;
-import org.rodinp.internal.core.index.IIndexDelta;
-import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.PerProjectPIM;
-import org.rodinp.internal.core.index.ProjectIndexManager;
-import org.rodinp.internal.core.index.Registry;
-import org.rodinp.internal.core.index.persistence.IPersistor;
-import org.rodinp.internal.core.index.persistence.PersistentIndexManager;
-import org.rodinp.internal.core.index.persistence.xml.XMLPersistor;
+import org.rodinp.internal.core.indexer.IIndexDelta;
+import org.rodinp.internal.core.indexer.IndexManager;
+import org.rodinp.internal.core.indexer.PerProjectPIM;
+import org.rodinp.internal.core.indexer.ProjectIndexManager;
+import org.rodinp.internal.core.indexer.Registry;
+import org.rodinp.internal.core.indexer.persistence.IPersistor;
+import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
+import org.rodinp.internal.core.indexer.persistence.xml.XMLPersistor;
 
 /**
  * @author Nicolas Beauger

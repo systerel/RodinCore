@@ -11,7 +11,7 @@
 package org.eventb.core.indexer.tests;
 
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 
 /**

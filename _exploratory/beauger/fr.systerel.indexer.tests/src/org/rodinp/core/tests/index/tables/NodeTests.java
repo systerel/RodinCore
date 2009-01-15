@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.rodinp.internal.core.index.sort.Node;
+import org.rodinp.internal.core.indexer.sort.Node;
 
 import junit.framework.TestCase;
 

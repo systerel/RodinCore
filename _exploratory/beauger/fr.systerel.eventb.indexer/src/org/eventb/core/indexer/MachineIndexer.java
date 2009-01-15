@@ -11,7 +11,7 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.EventBPlugin.*;
-import static org.rodinp.core.index.RodinIndexer.*;
+import static org.rodinp.core.indexer.RodinIndexer.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 
 /**
  * @author Nicolas Beauger

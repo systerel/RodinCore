@@ -25,10 +25,10 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.indexer.EventBIndexUtil;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingBridge;
-import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.IOccurrenceKind;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.location.IInternalLocation;
 
 /**

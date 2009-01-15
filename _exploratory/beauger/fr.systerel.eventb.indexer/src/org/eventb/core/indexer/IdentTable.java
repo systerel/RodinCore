@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eventb.core.ast.FreeIdentifier;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 
 public class IdentTable {
 	private final Map<FreeIdentifier, IDeclaration> table;

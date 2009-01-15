@@ -69,7 +69,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.rodinp.core.index.IIndexer"/>
+                  <meta.attribute kind="java" basedOn=":org.rodinp.core.indexer.IIndexer"/>
                </appinfo>
             </annotation>
          </attribute>

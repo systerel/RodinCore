@@ -22,15 +22,15 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IOccurrence;
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.IIndexingResult;
-import org.rodinp.internal.core.index.IndexingBridge;
-import org.rodinp.internal.core.index.Occurrence;
+import org.rodinp.internal.core.indexer.Declaration;
+import org.rodinp.internal.core.indexer.IIndexingResult;
+import org.rodinp.internal.core.indexer.IndexingBridge;
+import org.rodinp.internal.core.indexer.Occurrence;
 
 public class IndexingBridgeTests extends IndexTests {
 

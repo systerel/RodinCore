@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.index;
 
-import org.rodinp.core.index.RodinIndexer;
+import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 
 public abstract class IndexTests extends AbstractRodinDBTests {

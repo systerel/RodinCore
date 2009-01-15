@@ -12,9 +12,9 @@ package org.rodinp.core.tests.index;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexer;
+import org.rodinp.core.indexer.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger

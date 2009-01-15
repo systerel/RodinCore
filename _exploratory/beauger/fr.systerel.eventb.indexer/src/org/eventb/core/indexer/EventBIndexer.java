@@ -11,7 +11,7 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.indexer.EventBIndexUtil.*;
-import static org.rodinp.core.index.RodinIndexer.*;
+import static org.rodinp.core.indexer.RodinIndexer.*;
 
 import java.util.concurrent.CancellationException;
 
@@ -19,9 +19,9 @@ import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexer;
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexer;
+import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IInternalLocation;
 
 public abstract class EventBIndexer extends Cancellable implements IIndexer {

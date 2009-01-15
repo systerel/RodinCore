@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.sort.TotalOrder;
+import org.rodinp.internal.core.indexer.sort.TotalOrder;
 
 public class TotalOrderTests extends IndexTests {
 

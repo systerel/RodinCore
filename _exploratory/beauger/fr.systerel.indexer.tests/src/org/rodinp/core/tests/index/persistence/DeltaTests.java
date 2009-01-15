@@ -11,7 +11,7 @@
 package org.rodinp.core.tests.index.persistence;
 
 import static org.rodinp.core.tests.index.IndexTestsUtil.*;
-import static org.rodinp.internal.core.index.persistence.xml.XMLUtils.*;
+import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.IndexManager;
+import org.rodinp.internal.core.indexer.IndexManager;
 
 /**
  * @author Nicolas Beauger

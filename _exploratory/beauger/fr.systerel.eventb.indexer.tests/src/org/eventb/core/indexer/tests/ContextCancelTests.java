@@ -19,7 +19,7 @@ import static org.eventb.core.indexer.tests.ResourceUtils.createContext;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.indexer.ContextIndexer;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 
 /**
  * @author Nicolas Beauger

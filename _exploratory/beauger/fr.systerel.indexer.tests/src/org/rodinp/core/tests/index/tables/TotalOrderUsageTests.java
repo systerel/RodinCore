@@ -19,16 +19,16 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.index.IDeclaration;
+import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.index.IndexTests;
 import org.rodinp.core.tests.index.IndexTestsUtil;
-import org.rodinp.internal.core.index.Declaration;
-import org.rodinp.internal.core.index.IndexManager;
-import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tables.FileTable;
-import org.rodinp.internal.core.index.tables.NameTable;
-import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.Declaration;
+import org.rodinp.internal.core.indexer.IndexManager;
+import org.rodinp.internal.core.indexer.tables.ExportTable;
+import org.rodinp.internal.core.indexer.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.NameTable;
+import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class TotalOrderUsageTests extends IndexTests {
 

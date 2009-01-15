@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.index.IDeclaration;
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.tests.index.FakeIndexer;
-import org.rodinp.internal.core.index.tables.ExportTable;
-import org.rodinp.internal.core.index.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.ExportTable;
+import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class FakeExportIndexer extends FakeIndexer {
 

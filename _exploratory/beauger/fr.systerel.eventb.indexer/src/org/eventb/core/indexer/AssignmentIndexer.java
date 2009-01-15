@@ -16,7 +16,7 @@ import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.index.IIndexingBridge;
+import org.rodinp.core.indexer.IIndexingBridge;
 
 /**
  * @author Nicolas Beauger

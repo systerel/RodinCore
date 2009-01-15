@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.rodinp.core.tests.index.IndexTests;
-import org.rodinp.internal.core.index.sort.Graph;
-import org.rodinp.internal.core.index.sort.Node;
+import org.rodinp.internal.core.indexer.sort.Graph;
+import org.rodinp.internal.core.indexer.sort.Node;
 
 public class GraphTests extends IndexTests {
 
