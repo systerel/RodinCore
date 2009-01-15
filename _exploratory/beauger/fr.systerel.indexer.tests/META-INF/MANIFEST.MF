@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name.0
+Bundle-Name: %indexerTestsPluginName
 Bundle-SymbolicName: org.rodinp.core.tests.indexer;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Vendor: %Bundle-Vendor.0
+Bundle-Vendor: %systerel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.rodinp.core.indexer;bundle-version="0.0.1",
  org.rodinp.core;bundle-version="0.9.0",

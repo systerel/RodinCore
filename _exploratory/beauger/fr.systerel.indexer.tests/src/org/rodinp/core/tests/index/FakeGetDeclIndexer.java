@@ -22,7 +22,7 @@ import org.rodinp.core.index.IIndexingBridge;
  */
 public class FakeGetDeclIndexer implements IIndexer {
 
-	private static final String ID = "fr.systerel.indexer.tests.fakegetdeclindexer";
+	private static final String ID = "org.rodinp.core.tests.index.fakeGetDeclIndexer";
 
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 	

@@ -22,7 +22,7 @@ import org.rodinp.internal.core.index.tables.RodinIndex;
 
 public class FakeIndexer implements IIndexer {
 
-	private static final String ID = "fr.systerel.indexer.tests.fakeindexer";
+	private static final String ID = "org.rodinp.core.tests.index.fakeIndexer";
 
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 

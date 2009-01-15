@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="fr.systerel.indexer" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.rodinp.core.indexer" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="fr.systerel.indexer" id="fr.systerel.indexer" name="Indexer"/>
+         <meta.schema plugin="org.rodinp.core.indexer" id="indexers" name="Indexers"/>
       </appinfo>
       <documentation>
          This extension point aims at allowing new indexers to be contributed to the indexing system.

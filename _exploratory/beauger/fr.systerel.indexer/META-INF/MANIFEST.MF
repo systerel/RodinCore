@@ -1,19 +1,19 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %Bundle-Name.f0
+Bundle-Name: %indexerPluginName
 Bundle-SymbolicName: org.rodinp.core.indexer;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.core.runtime, org.rodinp.core
 Export-Package: org.rodinp.core.index,
  org.rodinp.core.location,
- org.rodinp.internal.core.index;x-friends:="fr.systerel.indexer.tests",
- org.rodinp.internal.core.index.persistence;x-friends:="fr.systerel.indexer.tests",
- org.rodinp.internal.core.index.persistence.xml;x-friends:="fr.systerel.indexer.tests",
- org.rodinp.internal.core.index.sort;x-friends:="fr.systerel.indexer.tests",
- org.rodinp.internal.core.index.tables;x-friends:="fr.systerel.indexer.tests",
- org.rodinp.internal.core.location;x-friends:="fr.systerel.indexer.tests"
-Bundle-Vendor: %Bundle-Vendor.f0
+ org.rodinp.internal.core.index;x-friends:="org.rodinp.core.tests.indexer",
+ org.rodinp.internal.core.index.persistence;x-friends:="org.rodinp.core.tests.indexer",
+ org.rodinp.internal.core.index.persistence.xml;x-friends:="org.rodinp.core.tests.indexer",
+ org.rodinp.internal.core.index.sort;x-friends:="org.rodinp.core.tests.indexer",
+ org.rodinp.internal.core.index.tables;x-friends:="org.rodinp.core.tests.indexer",
+ org.rodinp.internal.core.location;x-friends:="org.rodinp.core.tests.indexer"
+Bundle-Vendor: %systerel
 Bundle-Localization: plugin
 Bundle-Activator: org.rodinp.core.index.RodinIndexer
 Bundle-ActivationPolicy: lazy

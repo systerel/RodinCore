@@ -35,7 +35,7 @@ public class FakeNameIndexer implements IIndexer {
 	private static final boolean DEBUG = false;
 
 	private static final String ID =
-			"fr.systerel.indexer.tests.fakenameindexer";
+			"org.rodinp.core.tests.index.fakeNameIndexer";
 
 	private final String[] names;
 	private final int numberEach;

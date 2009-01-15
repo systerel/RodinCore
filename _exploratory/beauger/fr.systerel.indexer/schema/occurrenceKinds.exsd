@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="fr.systerel.indexer" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.rodinp.core.indexer" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="fr.systerel.indexer" id="fr.systerel.occurrenceKind" name="Occurrence Kind"/>
+         <meta.schema plugin="org.rodinp.core.indexer" id="occurrenceKinds" name="Occurrence Kinds"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Occurrence kinds can be contributed in order to be used by indexers.
       </documentation>
    </annotation>
 
