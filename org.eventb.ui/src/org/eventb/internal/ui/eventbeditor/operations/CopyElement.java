@@ -56,7 +56,7 @@ public class CopyElement extends OperationLeaf {
 		final IInternalElementType<?> copyType;
 
 		try {
-			copyParent = defaultParent.getRodinFile().getRoot();
+			copyParent = defaultParent.getRoot();
 			if (source instanceof IEvent) {
 				copyId = "evt";
 				copyType = IEvent.ELEMENT_TYPE;

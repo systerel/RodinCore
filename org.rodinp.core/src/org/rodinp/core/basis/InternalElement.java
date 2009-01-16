@@ -11,6 +11,7 @@
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - added method getNextSibling()
  *     Systerel - separation of file and root element
+ *     Systerel - added inquiry methods
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -277,6 +278,14 @@ public abstract class InternalElement extends RodinElement implements
 		return null;
 	}
 
+	public final InternalElement getRoot() {
+		InternalElement elem = this;
+		while (!elem.isRoot()) {
+			elem = (InternalElement) elem.parent;
+		}
+		return elem;
+	}
+	
 	public final InternalElement getSnapshot() {
 		final RodinFile file = getRodinFile();
 		if (file.isSnapshot()) {

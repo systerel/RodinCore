@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
-
+ *******************************************************************************/
 package fr.systerel.internal.explorer.model;
 
 import java.util.ArrayList;
@@ -326,7 +324,7 @@ public class ModelProject implements IModelElement {
 	
 	
 	public ModelInvariant getInvariant(IInvariant invariant){
-		IEventBRoot root = (IEventBRoot) invariant.getRodinFile().getRoot();
+		IEventBRoot root = (IEventBRoot) invariant.getRoot();
 		if (root instanceof IMachineRoot) {
 			ModelMachine machine = machines.get(root);
 			if (machine != null) {
@@ -337,7 +335,7 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelEvent getEvent(IEvent event){
-		IEventBRoot root = (IEventBRoot) event.getRodinFile().getRoot();
+		IEventBRoot root = (IEventBRoot) event.getRoot();
 		if (root instanceof IMachineRoot) {
 			ModelMachine machine = machines.get(root);
 			if (machine != null) {
@@ -348,7 +346,7 @@ public class ModelProject implements IModelElement {
 	}
 
 	public ModelTheorem getTheorem(ITheorem theorem){
-		IEventBRoot root = (IEventBRoot) theorem.getRodinFile().getRoot();
+		IEventBRoot root = (IEventBRoot) theorem.getRoot();
 		if (root instanceof IMachineRoot) {
 			ModelMachine machine = machines.get(root);
 			if (machine != null) {
@@ -365,7 +363,7 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelAxiom getAxiom(IAxiom axiom){
-		IEventBRoot root = (IEventBRoot) axiom.getRodinFile().getRoot();
+		IEventBRoot root = (IEventBRoot) axiom.getRoot();
 		if (root instanceof IContextRoot) {
 			ModelContext context = contexts.get(root);
 			if (context != null) {
@@ -376,7 +374,7 @@ public class ModelProject implements IModelElement {
 	}
 	
 	public ModelProofObligation getProofObligation(IPSStatus status){
-		IEventBRoot root = (IEventBRoot) status.getRodinFile().getRoot();
+		IEventBRoot root = (IEventBRoot) status.getRoot();
 		if (root instanceof IPSRoot) {
 			
 			ModelMachine machine = machines.get(root.getMachineRoot());

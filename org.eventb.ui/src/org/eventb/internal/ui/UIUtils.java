@@ -1,6 +1,5 @@
 /*******************************************************************************
  * Copyright (c) 2005, 2009 ETH Zurich and others.
- * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -530,7 +529,7 @@ public class UIUtils {
 	public static String getFreeElementLabel(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		final IInternalElement root = parent.getRodinFile().getRoot();
+		final IInternalElement root = parent.getRoot();
 		String prefix = getPrefix(root, type, defaultPrefix);
 		return prefix + getFreeElementLabelIndex(parent, type, prefix);
 	}
@@ -561,7 +560,7 @@ public class UIUtils {
 	public static String getFreeElementIdentifier(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type,
 			String defaultPrefix) throws RodinDBException {
-		final IInternalElement root = parent.getRodinFile().getRoot();
+		final IInternalElement root = parent.getRoot();
 		String prefix = getPrefix(root, type, defaultPrefix);
 		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}

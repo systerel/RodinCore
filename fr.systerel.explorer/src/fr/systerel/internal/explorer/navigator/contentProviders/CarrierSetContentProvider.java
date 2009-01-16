@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class CarrierSetContentProvider implements ITreeContentProvider {
 		// there is no ModelElement for carrier sets.
 		if (element instanceof ICarrierSet) {
 			ICarrierSet carr = (ICarrierSet) element;
-			IContextRoot ctx = (IContextRoot) carr.getRodinFile().getRoot();
+			IContextRoot ctx = (IContextRoot) carr.getRoot();
 			ModelContext context = ModelController.getContext(ctx);
 			if (context != null) {
 				return context.carrierset_node;

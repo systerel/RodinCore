@@ -87,6 +87,20 @@ public class RootElementTests extends CopyMoveTests {
 	}
 
 	/**
+	 * Ensure that getRoot() works properly on handles only.
+	 */
+	public void testGetRoot() throws Exception {
+		final IRodinFile rf = getRodinFile("P/inexistent.test");
+		final IInternalElement root = rf.getRoot();
+		final NamedElement child = getNamedElement(root, "inexistent");
+		final NamedElement grandChild = getNamedElement(child, "inexistent");
+
+		assertEquals(root, root.getRoot());
+		assertEquals(root, child.getRoot());
+		assertEquals(root, grandChild.getRoot());
+	}
+
+	/**
 	 * Ensures that copying to a root element is invalid, whatever the
 	 * parameters.
 	 */

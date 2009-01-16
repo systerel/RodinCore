@@ -241,8 +241,8 @@ public class EventBEditorUtils {
 		final IInternalElement newParent = (IInternalElement) movedElement
 				.getParent();
 
-		AtomicOperation operation = OperationFactory.move(first.getRodinFile()
-				.getRoot(), movedElement, newParent, nextSibling);
+		AtomicOperation operation = OperationFactory.move(first.getRoot(),
+				movedElement, newParent, nextSibling);
 		History.getInstance().addOperation(operation);
 	}
 	

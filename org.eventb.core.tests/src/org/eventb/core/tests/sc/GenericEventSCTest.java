@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,9 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public ISCEvent getSCElement(IEvent element) throws RodinDBException {
-		ISCMachineRoot scRoot = ((IMachineRoot) element.getRodinFile().getRoot()).getSCMachineRoot();
-		ISCEvent[] events = 
+		final IMachineRoot mchRoot = (IMachineRoot) element.getRoot();
+		final ISCMachineRoot scRoot = mchRoot.getSCMachineRoot();
+		final ISCEvent[] events = 
 			test.getSCEvents(scRoot, IEvent.INITIALISATION, element.getLabel());
 		return events[1];
 	}

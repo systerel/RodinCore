@@ -10,6 +10,7 @@
  *     Systerel - removed deprecated methods (contents and occurrence count)
  *     Systerel - added method getNextSibling()
  *     Systerel - separation of file and root element
+ *     Systerel - added inquiry methods
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -277,6 +278,20 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	<T extends IInternalElement> T getInternalElement(
 			IInternalElementType<T> childType, String childName);
 
+	/**
+	 * Returns the root ancestor of this element. If this element is a root
+	 * element, it is returned. Otherwise, the nearest ancestor which is a root
+	 * element is returned.
+	 * <p>For an element belonging to a Rodin file, this is fully equivalent to
+	 * <pre>getRodinFile().getRoot()</pre>
+	 * </p>
+	 * 
+	 * @return the root ancestor of this element
+	 * 
+	 * @see #isRoot()
+	 */
+	IInternalElement getRoot();
+	
 	/**
 	 * Returns a handle to the element which has the same relative path as this
 	 * element, but relative to the given file. In particular, if this element

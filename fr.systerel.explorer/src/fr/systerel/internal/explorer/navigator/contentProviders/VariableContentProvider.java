@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class VariableContentProvider implements ITreeContentProvider {
 		// there is no ModelElement for variables.
 		if (element instanceof IVariable) {
 			IVariable var = (IVariable) element;
-			IMachineRoot mach = (IMachineRoot) var.getRodinFile().getRoot();
+			IMachineRoot mach = (IMachineRoot) var.getRoot();
 			ModelMachine machine = ModelController.getMachine(mach);
 			if (machine != null) {
 				return machine.variable_node;

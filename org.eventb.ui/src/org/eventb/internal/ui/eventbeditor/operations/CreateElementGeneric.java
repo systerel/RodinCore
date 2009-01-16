@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 			throws ExecutionException {
 
 		try {
-			final IInternalElement root = parent.getRodinFile().getRoot();
+			final IInternalElement root = parent.getRoot();
 			element = AttributeRelUISpecRegistry.getDefault().createElement(
 					root, parent, type, sibling);
 			// page.recursiveExpand(element);
