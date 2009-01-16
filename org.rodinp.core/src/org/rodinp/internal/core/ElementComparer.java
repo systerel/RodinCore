@@ -1,15 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 
 /**
  * Common implementation for comparing internal parents. Implements the sameness
@@ -25,14 +30,14 @@ public abstract class ElementComparer {
 	protected static class SameAttributesComparer extends ElementComparer {
 
 		@Override
-		protected boolean postExistenceTest(IInternalParentX left,
-				IInternalParentX right) throws RodinDBException {
+		protected boolean postExistenceTest(InternalElement left,
+				InternalElement right) throws RodinDBException {
 			return compareAttributes(left, right);
 		}
 
 		@Override
-		protected boolean preExistenceTest(IInternalParentX left,
-				IInternalParentX right) {
+		protected boolean preExistenceTest(InternalElement left,
+				InternalElement right) {
 			return true;
 		}
 
@@ -41,14 +46,14 @@ public abstract class ElementComparer {
 	protected static class SameChildrenComparer extends ElementComparer {
 
 		@Override
-		protected boolean postExistenceTest(IInternalParentX left,
-				IInternalParentX right) throws RodinDBException {
+		protected boolean postExistenceTest(InternalElement left,
+				InternalElement right) throws RodinDBException {
 			return compareChildren(left, right);
 		}
 
 		@Override
-		protected boolean preExistenceTest(IInternalParentX left,
-				IInternalParentX right) {
+		protected boolean preExistenceTest(InternalElement left,
+				InternalElement right) {
 			return true;
 		}
 
@@ -57,37 +62,37 @@ public abstract class ElementComparer {
 	protected static class SameContentsComparer extends ElementComparer {
 
 		@Override
-		protected boolean postExistenceTest(IInternalParentX left,
-				IInternalParentX right) throws RodinDBException {
+		protected boolean postExistenceTest(InternalElement left,
+				InternalElement right) throws RodinDBException {
 			return compareAttributes(left, right)
 					&& compareChildren(left, right);
 		}
 
 		@Override
-		protected boolean preExistenceTest(IInternalParentX left,
-				IInternalParentX right) {
+		protected boolean preExistenceTest(InternalElement left,
+				InternalElement right) {
 			return compareNameAndType(left, right);
 		}
 
 	}
 
-	public static boolean hasSameAttributes(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	public static boolean hasSameAttributes(InternalElement left,
+			InternalElement right) throws RodinDBException {
 		return new SameAttributesComparer().compare(left, right);
 	}
 
-	public static boolean hasSameChildren(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	public static boolean hasSameChildren(InternalElement left,
+			InternalElement right) throws RodinDBException {
 		return new SameChildrenComparer().compare(left, right);
 	}
 
-	public static boolean hasSameContents(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	public static boolean hasSameContents(InternalElement left,
+			InternalElement right) throws RodinDBException {
 		return new SameContentsComparer().compare(left, right);
 	}
 
-	protected final boolean compare(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	protected final boolean compare(InternalElement left,
+			InternalElement right) throws RodinDBException {
 
 		if (!preExistenceTest(left, right)) {
 			return false;
@@ -103,8 +108,8 @@ public abstract class ElementComparer {
 		return postExistenceTest(left, right);
 	}
 
-	protected final boolean compareAttributes(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	protected final boolean compareAttributes(InternalElement left,
+			InternalElement right) throws RodinDBException {
 
 		// Attributes are not ordered
 		final IAttributeType[] leftAttrs = left.getAttributeTypes();
@@ -125,8 +130,8 @@ public abstract class ElementComparer {
 		return true;
 	}
 
-	protected final boolean compareChildren(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException {
+	protected final boolean compareChildren(InternalElement left,
+			InternalElement right) throws RodinDBException {
 
 		// Children are ordered
 		final IRodinElement[] leftChildren = left.getChildren();
@@ -136,8 +141,8 @@ public abstract class ElementComparer {
 			return false;
 		}
 		for (int i = 0; i < length; ++i) {
-			IInternalParentX leftChild = (IInternalParentX) leftChildren[i];
-			IInternalParentX rightChild = (IInternalParentX) rightChildren[i];
+			InternalElement leftChild = (InternalElement) leftChildren[i];
+			InternalElement rightChild = (InternalElement) rightChildren[i];
 			final boolean sameChildren = compareNameAndType(leftChild,
 					rightChild)
 					&& compareAttributes(leftChild, rightChild)
@@ -149,16 +154,16 @@ public abstract class ElementComparer {
 		return true;
 	}
 
-	protected final boolean compareNameAndType(IInternalParentX left,
-			IInternalParentX right) {
+	protected final boolean compareNameAndType(InternalElement left,
+			InternalElement right) {
 		return left.getElementName().equals(right.getElementName())
 				&& left.getElementType() == right.getElementType();
 	}
 
-	protected abstract boolean postExistenceTest(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException;
+	protected abstract boolean postExistenceTest(InternalElement left,
+			InternalElement right) throws RodinDBException;
 
-	protected abstract boolean preExistenceTest(IInternalParentX left,
-			IInternalParentX right) throws RodinDBException;
+	protected abstract boolean preExistenceTest(InternalElement left,
+			InternalElement right) throws RodinDBException;
 
 }

@@ -33,7 +33,6 @@ import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
 import org.rodinp.internal.core.ElementComparer;
-import org.rodinp.internal.core.IInternalParentX;
 import org.rodinp.internal.core.InternalElementInfo;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MoveElementsOperation;
@@ -56,7 +55,7 @@ import org.rodinp.internal.core.util.Util;
  * @see IInternalElement
  */
 public abstract class InternalElement extends RodinElement implements
-		IInternalElement, IInternalParentX {
+		IInternalElement {
 	
 	/* Name of this internal element */
 	private String name;
@@ -317,18 +316,17 @@ public abstract class InternalElement extends RodinElement implements
 
 	public boolean hasSameAttributes(IInternalElement other)
 			throws RodinDBException {
-		return ElementComparer
-				.hasSameAttributes(this, (IInternalParentX) other);
+		return ElementComparer.hasSameAttributes(this, (InternalElement) other);
 	}
 
 	public boolean hasSameChildren(IInternalElement other)
 			throws RodinDBException {
-		return ElementComparer.hasSameChildren(this, (IInternalParentX) other);
+		return ElementComparer.hasSameChildren(this, (InternalElement) other);
 	}
 
 	public boolean hasSameContents(IInternalElement other)
 			throws RodinDBException {
-		return ElementComparer.hasSameContents(this, (IInternalParentX) other);
+		return ElementComparer.hasSameContents(this, (InternalElement) other);
 	}
 
 	@Override
