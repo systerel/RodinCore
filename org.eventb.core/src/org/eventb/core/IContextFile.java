@@ -45,7 +45,7 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 @Deprecated
-public interface IContextFile extends IEventBFile, ICommentedElement, IConfigurationElement {
+public interface IContextFile extends IEventBFile {
 
 	IFileElementType ELEMENT_TYPE = 
 		RodinCore.getFileElementType(EventBPlugin.PLUGIN_ID + ".contextFileF"); //$NON-NLS-1$
