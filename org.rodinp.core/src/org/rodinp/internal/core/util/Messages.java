@@ -97,7 +97,8 @@ public final class Messages {
 	public static String status_rootElement;
 	public static String status_updateConflict;
 	public static String status_upgradedFile;
-
+	public static String status_indexerError;
+	
 	public static String type_database;
 	public static String type_project;
 	

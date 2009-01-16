@@ -317,4 +317,10 @@ public interface IRodinDBStatusConstants {
 	 */
 	int ROOT_ELEMENT = 1005;
 
+	/**
+	 * Status indicating that an error occurred while performing the indexing of
+	 * some file. The file element can be retrieved using
+	 * <code>getElements</code> on the status object.
+	 */
+	int INDEXER_ERROR = 1100;
 }

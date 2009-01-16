@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementINation as
+ *     IBM Corporation - initial API and implementation as
  *     		org.eclipse.jdt.internal.core.JavaModelStatus
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - added more messages
@@ -358,6 +358,10 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 			case ROOT_ELEMENT:
 				return Messages.bind(Messages.status_rootElement,
 						((RodinElement) elements[0]).toStringWithAncestors());
+
+			case INDEXER_ERROR:
+				return Messages.bind(Messages.status_indexerError,
+						elements[0].getPath(), string);
 
 			}
 			if (string != null) {
