@@ -14,6 +14,7 @@ package org.eventb.internal.core.pog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.ProofObligationGenerator;
@@ -34,7 +35,8 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 		
 		IRodinFile source = RodinCore.valueOf(file);
 		ISCMachineRoot sourceRoot = (ISCMachineRoot) source.getRoot();
-		IRodinFile target = sourceRoot.getMachineRoot().getPORoot().getRodinFile();
+		IMachineRoot mch = sourceRoot.getMachineRoot();
+		IRodinFile target = mch.getPORoot().getRodinFile();
 		
 		graph.addTarget(target.getResource());
 		graph.addToolDependency(
@@ -43,9 +45,8 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 		
 		ISCRefinesMachine[] refinesMachines = sourceRoot.getSCRefinesClauses();
 		if (refinesMachines.length != 0) {
-			graph.addUserDependency(
-					sourceRoot.getMachineRoot().getRodinFile().getResource(), 
-					refinesMachines[0].getAbstractSCMachine().getResource(), 
+			final IRodinFile absSC = refinesMachines[0].getAbstractSCMachine();
+			graph.addUserDependency(mch.getResource(), absSC.getResource(),
 					target.getResource(), false);
 		}
 

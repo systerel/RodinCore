@@ -808,7 +808,7 @@ public class EditPage extends EventBEditorPage implements
 	public void resourceChanged(IResourceChangeEvent event) {
 		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
 		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		IFile rodinInput = editor.getRodinInput().getRodinFile().getResource();
+		IFile rodinInput = editor.getRodinInput().getResource();
 		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
 			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
 		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {

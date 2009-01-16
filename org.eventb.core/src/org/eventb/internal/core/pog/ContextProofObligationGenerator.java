@@ -35,11 +35,9 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 		ISCContextRoot sourceRoot = (ISCContextRoot) source.getRoot();
 		IPORoot target = sourceRoot.getPORoot();
 				
-		graph.addTarget(target.getRodinFile().getResource());
-		graph.addToolDependency(
-				source.getResource(), 
-				target.getRodinFile().getResource(), true);
-
+		graph.addTarget(target.getResource());
+		graph.addToolDependency(source.getResource(), target.getResource(),
+				true);
 	}
 
 }

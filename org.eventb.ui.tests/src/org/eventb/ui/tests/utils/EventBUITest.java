@@ -446,8 +446,7 @@ public abstract class EventBUITest extends TestCase {
 	protected IEventBEditor<?> openEditor(IEventBRoot component)
 			throws PartInitException {
 		
-		IEditorInput fileInput = new FileEditorInput(component.getRodinFile()
-				.getResource());
+		IEditorInput fileInput = new FileEditorInput(component.getResource());
 		String editorId = ""; //$NON-NLS-1$
 		if (component instanceof IMachineRoot) {
 			editorId = EventBMachineEditor.EDITOR_ID;

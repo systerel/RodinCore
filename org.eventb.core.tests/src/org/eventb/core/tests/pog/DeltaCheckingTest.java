@@ -346,8 +346,8 @@ public class DeltaCheckingTest extends EventBPOTest {
 		hasStamp(mac.getPORoot(), IPOStampedElement.INIT_STAMP);
 		hasStamp(mac.getPORoot().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
-		con.getRodinFile().getResource().touch(null);
-		mac.getRodinFile().getResource().touch(null);
+		con.getResource().touch(null);
+		mac.getResource().touch(null);
 		
 		runBuilder();
 		

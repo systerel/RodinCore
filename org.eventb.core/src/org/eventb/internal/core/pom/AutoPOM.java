@@ -179,7 +179,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final IRodinFile poFile = RodinCore.valueOf(poResource);
 		final IPORoot poRoot = (IPORoot) poFile.getRoot();
 		final IPSRoot psRoot = poRoot.getPSRoot();
-		return psRoot.getRodinFile().getResource();
+		return psRoot.getResource();
 	}
 
 	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)
