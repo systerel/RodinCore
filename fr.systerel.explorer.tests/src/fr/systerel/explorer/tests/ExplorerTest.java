@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -173,7 +172,7 @@ public class ExplorerTest {
 	 * @throws RodinDBException
 	 */
 	protected <T extends IInternalElement> T createInternalElement(
-			IInternalParent parent, IInternalElementType<T> childType,
+			IInternalElement parent, IInternalElementType<T> childType,
 			String childName) throws RodinDBException {
 
 		T element = parent.getInternalElement(childType, childName);
@@ -181,7 +180,7 @@ public class ExplorerTest {
 		return element;
 	}
 
-	protected IAxiom createAxiom(IInternalParent parent,
+	protected IAxiom createAxiom(IInternalElement parent,
 			String name) throws RodinDBException {
 			IAxiom axiom =  createInternalElement(parent,
 					IAxiom.ELEMENT_TYPE, name);
@@ -189,7 +188,7 @@ public class ExplorerTest {
 			return axiom;
 		}
 
-	protected ITheorem createTheorem(IInternalParent parent,
+	protected ITheorem createTheorem(IInternalElement parent,
 			String name) throws RodinDBException {
 			ITheorem theorem =  createInternalElement(parent,
 					ITheorem.ELEMENT_TYPE, name);
@@ -197,7 +196,7 @@ public class ExplorerTest {
 			return theorem;
 		}
 	
-	protected IVariable createVariable(IInternalParent parent,
+	protected IVariable createVariable(IInternalElement parent,
 		String name) throws RodinDBException {
 		IVariable variable =  createInternalElement(parent,
 				IVariable.ELEMENT_TYPE, name);
@@ -205,7 +204,7 @@ public class ExplorerTest {
 	}
 	
 	
-	protected IEvent createEvent(IInternalParent parent,
+	protected IEvent createEvent(IInternalElement parent,
 			String name) throws RodinDBException {
 			IEvent event =  createInternalElement(parent,
 					IEvent.ELEMENT_TYPE, name);
@@ -213,7 +212,7 @@ public class ExplorerTest {
 			return event;
 	}
 	
-	protected IInvariant createInvariant(IInternalParent parent,
+	protected IInvariant createInvariant(IInternalElement parent,
 			String name) throws RodinDBException {
 			IInvariant invariant =  createInternalElement(parent,
 					IInvariant.ELEMENT_TYPE, name);
@@ -222,56 +221,56 @@ public class ExplorerTest {
 	}
 	
 
-	protected IConstant createConstant(IInternalParent parent,
+	protected IConstant createConstant(IInternalElement parent,
 			String name) throws RodinDBException {
 		IConstant constant =  createInternalElement(parent,
 				IConstant.ELEMENT_TYPE, name);
 			return constant;
 	}
 	
-	protected ICarrierSet createCarrierSet(IInternalParent parent,
+	protected ICarrierSet createCarrierSet(IInternalElement parent,
 			String name) throws RodinDBException {
 		ICarrierSet carrier =  createInternalElement(parent,
 				ICarrierSet.ELEMENT_TYPE, name);
 			return carrier;
 	}
 
-	protected IPOSequent createSequent(IInternalParent parent,
+	protected IPOSequent createSequent(IInternalElement parent,
 			String name) throws RodinDBException {
 		IPOSequent sequent =  createInternalElement(parent,
 				IPOSequent.ELEMENT_TYPE, name);
 		return sequent;
 	}
 
-	protected IPSStatus createPSStatus(IInternalParent parent,
+	protected IPSStatus createPSStatus(IInternalElement parent,
 			String name) throws RodinDBException {
 		IPSStatus status =  createInternalElement(parent,
 				IPSStatus.ELEMENT_TYPE, name);
 		return status;
 	}
 	
-	protected IPOSource createPOSource(IInternalParent parent,
+	protected IPOSource createPOSource(IInternalElement parent,
 			String name) throws RodinDBException {
 		IPOSource source =  createInternalElement(parent,
 				IPOSource.ELEMENT_TYPE, name);
 		return source;
 	}
 
-	protected IWitness createWitness(IInternalParent parent,
+	protected IWitness createWitness(IInternalElement parent,
 			String name) throws RodinDBException {
 		IWitness witness =  createInternalElement(parent,
 				IWitness.ELEMENT_TYPE, name);
 		return witness;
 	}
 
-	protected IAction createAction(IInternalParent parent,
+	protected IAction createAction(IInternalElement parent,
 			String name) throws RodinDBException {
 		IAction action =  createInternalElement(parent,
 				IAction.ELEMENT_TYPE, name);
 		return action;
 	}
 
-	protected IGuard createGuard(IInternalParent parent,
+	protected IGuard createGuard(IInternalElement parent,
 			String name) throws RodinDBException {
 		IGuard guard =  createInternalElement(parent,
 				IGuard.ELEMENT_TYPE, name);
@@ -338,7 +337,7 @@ public class ExplorerTest {
 	 * Utility method to create a new refines machine clause for a machine.
 	 * 
 	 * @param machine
-	 *            the input machine {@link IMachineFile}.
+	 *            the input machine {@link IMachineRoot}.
 	 * @param abstractMachineName
 	 *            the name of the abstract machine.
 	 * @return the newly created refines machine clause
