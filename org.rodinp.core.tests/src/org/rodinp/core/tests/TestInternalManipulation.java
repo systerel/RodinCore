@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -330,17 +330,6 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertTrue(children instanceof NamedElement[]);
 		assertEquals("Array should contain one element", 1, children.length);
 		assertEquals("Wrong element", ne, children[0]);
-	}
-
-	/**
-	 * Ensures that a similar element for a Rodin file element is constructed
-	 * correctly.
-	 */
-	public void testSimilarFile() {
-		final IRodinFile rf1 = getRodinFile("P/X.test");
-		final IRodinFile rf2 = getRodinFile("P/Y.test");
-		assertEquals(rf1, rf1.getSimilarElement(rf1));
-		assertEquals(rf2, rf1.getSimilarElement(rf2));
 	}
 
 	/**
