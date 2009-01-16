@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class ContextContentProvider implements ITreeContentProvider {
 
 	public Object getParent(Object element) {
 		if (element instanceof IContextRoot) {
-			return ((IContextRoot) element).getRodinFile().getParent();
+			return ((IContextRoot) element).getParent().getParent();
 		}
 		return null;
 	}

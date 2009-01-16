@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eclipse.core.resources.IProject;
@@ -48,7 +47,7 @@ public class MachineContentProvider implements ITreeContentProvider {
 
 	public Object getParent(Object element) {
 		if (element instanceof IMachineRoot) {
-			return ((IMachineRoot) element).getRodinFile().getParent();
+			return ((IMachineRoot) element).getParent().getParent();
 		}
 		return null;
 	}
