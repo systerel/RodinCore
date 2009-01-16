@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ public class RodinFileLabelProvider implements IElementLabelProvider {
 	public String getLabel(Object obj) throws RodinDBException {
 		if (obj instanceof IRodinFile) {
 			return ((IRodinFile) obj).getBareName();
-		}else if (obj instanceof IInternalElement) {
-			return ((IInternalElement) obj).getRodinFile().getBareName();
+		} else if (obj instanceof IInternalElement) {
+			return ((IInternalElement) obj).getRoot().getElementName();
 		}
 		return null;
 	}
