@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -28,7 +29,7 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author htson
@@ -37,7 +38,7 @@ import org.rodinp.core.IAttributedElement;
  *         attribute of a particular element.
  *         </p>
  */
-public abstract class AbstractEditComposite<E extends IAttributedElement>
+public abstract class AbstractEditComposite<E extends IInternalElement>
 		implements IEditComposite<E> {
 
 	// The Event-B Editor.

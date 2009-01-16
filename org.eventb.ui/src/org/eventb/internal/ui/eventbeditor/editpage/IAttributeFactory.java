@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -24,7 +25,7 @@ import org.rodinp.core.RodinDBException;
  *         a specific element type.
  *         </p>
  */
-public interface IAttributeFactory<E extends IAttributedElement> {
+public interface IAttributeFactory<E extends IInternalElement> {
 
 	/**
 	 * Set the default value of the attribute for a given element.

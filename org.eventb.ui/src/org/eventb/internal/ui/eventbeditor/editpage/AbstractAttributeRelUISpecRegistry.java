@@ -31,7 +31,6 @@ import org.eventb.internal.ui.elementSpecs.IElementSpecRegistry;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -90,7 +89,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	 *         attribute relationship.
 	 *         </p>
 	 */
-	private class AttributeRelationshipInfo<E extends IAttributedElement> {
+	private class AttributeRelationshipInfo<E extends IInternalElement> {
 		// The configuration element.
 		IConfigurationElement config;
 
@@ -289,7 +288,7 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	 *         does nothing
 	 *         </p>
 	 */
-	private static class DummyEditComposite<E extends IAttributedElement> extends
+	private static class DummyEditComposite<E extends IInternalElement> extends
 			AbstractEditComposite<E> {
 
 		public DummyEditComposite(IAttributeUISpec<E> uiSpec) {

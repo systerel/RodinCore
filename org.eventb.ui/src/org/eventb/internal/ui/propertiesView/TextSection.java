@@ -34,12 +34,12 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class TextSection<E extends IAttributedElement> extends
+public abstract class TextSection<E extends IInternalElement> extends
 		AbstractPropertySection implements IElementChangedListener {
 
 	Text textWidget;
@@ -146,7 +146,7 @@ public abstract class TextSection<E extends IAttributedElement> extends
 		super.setInput(part, selection);
 		if (selection instanceof IStructuredSelection) {
 			Object input = ((IStructuredSelection) selection).getFirstElement();
-			if (input instanceof IAttributedElement) {
+			if (input instanceof IInternalElement) {
 				this.element = (E) input;
 			}
 		}

@@ -18,7 +18,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -262,7 +261,7 @@ public class OperationFactory {
 	 * @param value
 	 *            if value is null, the attribute is removed. Else it is changed
 	 */
-	public static <E extends IAttributedElement> AtomicOperation changeAttribute(
+	public static <E extends IInternalElement> AtomicOperation changeAttribute(
 			IRodinFile file, IAttributeFactory<E> factory, E element,
 			String value) {
 		final OperationBuilder builder = new OperationBuilder();

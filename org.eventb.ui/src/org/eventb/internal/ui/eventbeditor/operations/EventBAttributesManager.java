@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eventb.internal.ui.Pair;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -29,7 +28,7 @@ public class EventBAttributesManager {
 
 	private ArrayList<IAttributeType> attributeTypes;
 
-	public EventBAttributesManager(IAttributedElement element)
+	public EventBAttributesManager(IInternalElement element)
 			throws RodinDBException {
 		initList();
 		attributeTypes = new ArrayList<IAttributeType>();
@@ -52,7 +51,7 @@ public class EventBAttributesManager {
 		listString = new ArrayList<Pair<IAttributeType.String, String>>();
 	}
 
-	private void getAttributes(final IAttributedElement element,
+	private void getAttributes(final IInternalElement element,
 			IAttributeType type) throws RodinDBException {
 		if (type instanceof IAttributeType.Boolean) {
 			final IAttributeType.Boolean attrType = (IAttributeType.Boolean) type;

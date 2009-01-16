@@ -45,11 +45,11 @@ import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
-public class TextEditComposite<E extends IAttributedElement> extends
+public class TextEditComposite<E extends IInternalElement> extends
 		AbstractEditComposite<E> {
 
 	protected StyledText text;

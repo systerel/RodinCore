@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.internal.ui.Pair;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 class ChangeAttribute extends OperationLeaf {
 
-	private IAttributedElement element;
+	private IInternalElement element;
 	final private EventBAttributesManager managerDo;
 	private EventBAttributesManager managerUndo;
 	// TODO effacer les attributs ( cree par execute ou redo ) lors du Undo
@@ -38,7 +37,7 @@ class ChangeAttribute extends OperationLeaf {
 		attributeToDelete = new ArrayList<IAttributeType>();
 	}
 
-	public ChangeAttribute(IAttributedElement element,
+	public ChangeAttribute(IInternalElement element,
 			EventBAttributesManager manager) {
 		super("ChangeAttribute");
 		this.element = element;
@@ -73,7 +72,7 @@ class ChangeAttribute extends OperationLeaf {
 		return computeSetAllAttributes(element, managerUndo, monitor);
 	}
 
-	private IStatus computeSetAllAttributes(IAttributedElement elem,
+	private IStatus computeSetAllAttributes(IInternalElement elem,
 			EventBAttributesManager manager, IProgressMonitor monitor) {
 		try {
 			setAllAttributes(elem, manager, monitor);
@@ -84,7 +83,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
-	private void setAllAttributes(IAttributedElement element,
+	private void setAllAttributes(IInternalElement element,
 			EventBAttributesManager manager, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (manager == managerUndo) {
@@ -104,7 +103,7 @@ class ChangeAttribute extends OperationLeaf {
 		
 	}
 
-	private void setBooleanAttributes(IAttributedElement element,
+	private void setBooleanAttributes(IInternalElement element,
 			ArrayList<Pair<IAttributeType.Boolean, Boolean>> list,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (Pair<IAttributeType.Boolean, Boolean> pair : list) {
@@ -117,7 +116,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
-	private void setHandleAttributes(IAttributedElement element,
+	private void setHandleAttributes(IInternalElement element,
 			ArrayList<Pair<IAttributeType.Handle, IRodinElement>> list,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (Pair<IAttributeType.Handle, IRodinElement> pair : list) {
@@ -127,7 +126,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
-	private void setIntegerAttributes(IAttributedElement element,
+	private void setIntegerAttributes(IInternalElement element,
 			ArrayList<Pair<IAttributeType.Integer, Integer>> list,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (Pair<IAttributeType.Integer, Integer> pair : list) {
@@ -137,7 +136,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
-	private void setLongAttributes(IAttributedElement element,
+	private void setLongAttributes(IInternalElement element,
 			ArrayList<Pair<IAttributeType.Long, Long>> list,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (Pair<IAttributeType.Long, Long> pair : list) {
@@ -147,7 +146,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
-	private void setStringAttributes(IAttributedElement element,
+	private void setStringAttributes(IInternalElement element,
 			ArrayList<Pair<IAttributeType.String, String>> list,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (Pair<IAttributeType.String, String> pair : list) {

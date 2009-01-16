@@ -36,7 +36,6 @@ import org.eventb.core.IVariant;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -435,13 +434,13 @@ class OperationBuilder {
 		return cmd;
 	}
 
-	public OperationTree changeAttribute(IAttributedElement element,
+	public OperationTree changeAttribute(IInternalElement element,
 			EventBAttributesManager manager) {
 		final ChangeAttribute op = new ChangeAttribute(element, manager);
 		return op;
 	}
 
-	public <E extends IAttributedElement> OperationTree changeAttribute(
+	public <E extends IInternalElement> OperationTree changeAttribute(
 			IAttributeFactory<E> factory, E element, String value) {
 		final ChangeAttributeWithFactory<E> op = new ChangeAttributeWithFactory<E>(
 				factory, element, value);

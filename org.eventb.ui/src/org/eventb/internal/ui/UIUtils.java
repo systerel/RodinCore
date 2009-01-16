@@ -92,7 +92,6 @@ import org.eventb.ui.projectexplorer.TreeNode;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IOpenable;
@@ -592,7 +591,7 @@ public class UIUtils {
 	}
 
 	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
-			IAttributedElement element) {
+			IInternalElement element) {
 		if (element instanceof ICarrierSet) {
 			return new CarrierSetIdentifierAttributeFactory();
 		} else if (element instanceof IConstant) {
@@ -623,7 +622,7 @@ public class UIUtils {
 	}
 	
 	public static LabelAttributeFactory getLabelAttributeFactory(
-			IAttributedElement element) {
+			IInternalElement element) {
 		if (element instanceof IAction) {
 			return new ActionLabelAttributeFactory();
 		} else if (element instanceof IAxiom) {
@@ -664,7 +663,7 @@ public class UIUtils {
 		}
 	}
 
-	public static <E extends IAttributedElement> void setStringAttribute(
+	public static <E extends IInternalElement> void setStringAttribute(
 			E element, IAttributeFactory<E> factory, String value,
 			IProgressMonitor monitor) {
 		try {
@@ -683,7 +682,7 @@ public class UIUtils {
 		}
 	}
 
-	private static <E extends IAttributedElement> boolean attributeHasChanged(
+	private static <E extends IInternalElement> boolean attributeHasChanged(
 			E element, IAttributeFactory<E> factory, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (value == null) {

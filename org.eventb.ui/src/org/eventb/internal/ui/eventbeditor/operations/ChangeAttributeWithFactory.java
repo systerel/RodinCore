@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-class ChangeAttributeWithFactory<E extends IAttributedElement> extends
+class ChangeAttributeWithFactory<E extends IInternalElement> extends
 		OperationLeaf {
 
 	private final IAttributeFactory<E> factory;

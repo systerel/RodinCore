@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -18,7 +19,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author htson
@@ -31,7 +32,7 @@ import org.rodinp.core.IAttributedElement;
  *         </p>
  * 
  */
-public interface IEditComposite<E extends IAttributedElement> {
+public interface IEditComposite<E extends IInternalElement> {
 
 	/**
 	 * Refresh the information display within this edit composite.
@@ -49,7 +50,7 @@ public interface IEditComposite<E extends IAttributedElement> {
 
 	/**
 	 * Create the actual widgets. This should be called after
-	 * {@link #setElement(IAttributedElement)} and
+	 * {@link #setElement(IInternalElement)} and
 	 * {@link #setForm(ScrolledForm)} has been called.
 	 * 
 	 * @param editor

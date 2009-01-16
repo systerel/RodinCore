@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLab
 import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
 import org.eventb.ui.tests.utils.EventBUITest;
-import org.rodinp.core.IAttributedElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public class TestAttributeFactory extends EventBUITest {
@@ -357,7 +357,7 @@ public class TestAttributeFactory extends EventBUITest {
 			fail(messageFail);
 	}
 
-	private <E extends IAttributedElement> void assertHasValue(
+	private <E extends IInternalElement> void assertHasValue(
 			IAttributeFactory<E> factory, E element, boolean expected)
 			throws RodinDBException {
 		String msg = (expected) ? "Element should have value"

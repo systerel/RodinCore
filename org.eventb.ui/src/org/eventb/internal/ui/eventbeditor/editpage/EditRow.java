@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -24,8 +25,8 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 public class EditRow {
@@ -72,7 +73,7 @@ public class EditRow {
 				.getElementType());
 		for (IEditComposite editComposite : editComposites) {
 			editComposite.setForm(form);
-			editComposite.setElement((IAttributedElement) element);
+			editComposite.setElement((IInternalElement) element);
 			editComposite.createComposite(editor, toolkit, composite);
 		}
 		toolkit.paintBordersFor(composite);
@@ -86,7 +87,7 @@ public class EditRow {
 	public void refresh() {
 		IRodinElement element = elementComp.getElement();
 		for (IEditComposite editComposite : editComposites) {
-			editComposite.setElement((IAttributedElement) element);
+			editComposite.setElement((IInternalElement) element);
 			editComposite.refresh(false);
 		}
 		buttonComp.updateLinks();
@@ -149,7 +150,7 @@ public class EditRow {
 	public void refresh(Set<IAttributeType> set) {
 		IRodinElement element = elementComp.getElement();
 		for (IEditComposite editComposite : editComposites) {
-			editComposite.setElement((IAttributedElement) element);
+			editComposite.setElement((IInternalElement) element);
 			editComposite.refresh(set);
 		}
 		buttonComp.updateLinks();		
