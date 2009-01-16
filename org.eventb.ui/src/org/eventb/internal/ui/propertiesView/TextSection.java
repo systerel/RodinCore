@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
@@ -26,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eventb.internal.ui.AbstractDoubleClickListener;
 import org.eventb.internal.ui.DoubleClickTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
