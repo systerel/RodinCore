@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ import org.eventb.core.ast.Type;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
@@ -589,9 +588,9 @@ public abstract class EventBTest extends BuilderTest {
 			assertTrue("source reference must be in unchecked file",
 					isContextOrMachine(sourceElement.getOpenable()));
 		}
-		if (element instanceof IInternalParent) {
+		if (element instanceof IInternalElement) {
 		
-			IInternalParent parent = (IInternalParent) element;
+			IInternalElement parent = (IInternalElement) element;
 			
 			IRodinElement[] elements = parent.getChildren();
 			

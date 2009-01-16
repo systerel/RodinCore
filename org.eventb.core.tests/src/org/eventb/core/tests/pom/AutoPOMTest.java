@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -174,8 +174,8 @@ public class AutoPOMTest extends BuilderTest {
 
 	// TODO : make simpler and add check for PO stamps
 	private void checkPOsConsistent(
-			IInternalParent poElement,
-			IInternalParent prElement) throws RodinDBException {
+			IInternalElement poElement,
+			IInternalElement prElement) throws RodinDBException {
 		
 		if (poElement instanceof IPORoot) {
 			// No comparison to do
@@ -195,8 +195,8 @@ public class AutoPOMTest extends BuilderTest {
 			int poIdx = 0;
 			int prIdx = 0;
 			while (poIdx < poChildren.length && prIdx < prChildren.length) {
-				final IInternalParent poChild = (IInternalParent) poChildren[poIdx];
-				final IInternalParent prChild = (IInternalParent) prChildren[prIdx];
+				final IInternalElement poChild = (IInternalElement) poChildren[poIdx];
+				final IInternalElement prChild = (IInternalElement) prChildren[prIdx];
 				if (prChild instanceof IPRProof) {
 					++ prIdx;
 				} else {

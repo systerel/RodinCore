@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -326,9 +325,9 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 	}
 
 	protected abstract ISCInternalContext getSCInternalContext(
-			IInternalParent target, String elementName);
+			IInternalElement target, String elementName);
 
-	protected void createInternalContexts(IInternalParent target,
+	protected void createInternalContexts(IInternalElement target,
 			List<ISCContext> scContexts, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 

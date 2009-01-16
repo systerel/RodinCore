@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -21,7 +25,7 @@ import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IInternalElement;
 
 /**
  * @author Stefan Hallerstede
@@ -79,13 +83,13 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 	}
 
 	protected final void copySCPredicates(
-			ISCPredicateElement[] predicateElements, IInternalParent target,
+			ISCPredicateElement[] predicateElements, IInternalElement target,
 			IProgressMonitor monitor) throws CoreException {
 		for (ISCPredicateElement predicate : predicateElements)
 			predicate.copy(target, null, null, false, monitor);
 	}
 
-	protected final int createSCPredicates(IInternalParent target,
+	protected final int createSCPredicates(IInternalElement target,
 			String namePrefix, int index, IProgressMonitor monitor)
 			throws CoreException {
 		int k = index;

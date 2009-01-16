@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,8 @@ import org.eventb.internal.core.sc.SCUtil;
 import org.eventb.internal.core.tool.IModuleFactory;
 import org.eventb.internal.core.tool.SCModuleManager;
 import org.eventb.internal.core.tool.types.ISCProcessorModule;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -80,7 +80,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	private void runProcessorModules(
 			ISCProcessorModule rootModule,
 			IRodinFile file, 
-			IInternalParent target, 
+			IInternalElement target, 
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		

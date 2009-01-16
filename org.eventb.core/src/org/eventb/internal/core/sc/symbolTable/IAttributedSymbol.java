@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
+ * Copyright (c) 2006, 2009 ETH Zurich and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Soton - redesign of symbol table
+ *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.rodinp.core.IAttributeType;
@@ -14,7 +18,7 @@ import org.rodinp.core.IRodinElement;
 /**
  * Protocol for managing attributes of symbols.
  * <p>
- * This is a simplified variant of {@link org.rodinp.core.IAttributedElement}
+ * This is a simplified variant of {@link org.rodinp.core.IInternalElement}
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.

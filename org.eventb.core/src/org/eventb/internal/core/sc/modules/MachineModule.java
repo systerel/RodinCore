@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eventb.core.sc.state.ISCStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.MachineAccuracyInfo;
 import org.eventb.internal.core.sc.symbolTable.MachineLabelSymbolTable;
-import org.rodinp.core.IInternalParent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -61,7 +61,7 @@ public class MachineModule extends BaseModule {
 	}
 
 	@Override
-	public void process(IRodinElement element, IInternalParent target,
+	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		machineFile = (ISCMachineRoot) target;

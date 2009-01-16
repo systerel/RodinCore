@@ -1,9 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
+ * Copyright (c) 2006, 2009 ETH Zurich and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Soton - redesign of symbol table
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -15,7 +20,6 @@ import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -112,9 +116,9 @@ public interface ISymbolInfo<E extends IInternalElement, T extends IInternalElem
 	 * Returns whether the symbol is persistent. That is whether it can be
 	 * serialized.
 	 * 
-	 * @see ILabelSymbolInfo#createSCElement(IInternalParent, String,
+	 * @see ILabelSymbolInfo#createSCElement(IInternalElement, String,
 	 *      IProgressMonitor)
-	 * @see IIdentifierSymbolInfo#createSCElement(IInternalParent,
+	 * @see IIdentifierSymbolInfo#createSCElement(IInternalElement,
 	 *      IProgressMonitor)
 	 * 
 	 * @return whether the symbol is persistent

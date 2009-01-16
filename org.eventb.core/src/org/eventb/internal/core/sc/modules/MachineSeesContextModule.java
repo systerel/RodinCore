@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.ContextPointerArray;
 import org.eventb.internal.core.sc.Messages;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -110,7 +109,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 		return MODULE_TYPE;
 	}
 
-	public void process(IRodinElement element, IInternalParent target,
+	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
@@ -139,7 +138,7 @@ public class MachineSeesContextModule extends ContextPointerModule {
 	}
 
 	@Override
-	protected ISCInternalContext getSCInternalContext(IInternalParent target,
+	protected ISCInternalContext getSCInternalContext(IInternalElement target,
 			String elementName) {
 		return ((ISCMachineRoot) target).getSCSeenContext(elementName);
 	}

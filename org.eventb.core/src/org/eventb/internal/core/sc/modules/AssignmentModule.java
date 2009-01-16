@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -22,7 +26,6 @@ import org.eventb.core.ast.IResult;
 import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 
 /**
  * @author Stefan Hallerstede
@@ -91,7 +94,7 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 		return new Assignment[size];
 	}
 
-	protected final int createSCAssignments(IInternalParent target,
+	protected final int createSCAssignments(IInternalElement target,
 			String namePrefix, int index, IProgressMonitor monitor)
 			throws CoreException {
 		int k = index;

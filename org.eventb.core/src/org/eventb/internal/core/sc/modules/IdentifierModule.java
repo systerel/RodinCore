@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -24,7 +28,6 @@ import org.eventb.core.sc.state.IIdentifierSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -106,7 +109,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	 *             if there was a problem accessing the symbol table
 	 */
 	protected void fetchSymbols(IIdentifierElement[] elements,
-			IInternalParent target, ISCStateRepository repository,
+			IInternalElement target, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 
 		initFilterModules(repository, null);
