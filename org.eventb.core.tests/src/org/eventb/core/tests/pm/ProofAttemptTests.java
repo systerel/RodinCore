@@ -57,7 +57,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 		LHYP = ff.makeRelationalPredicate(EQUAL, one, one, null);
 	}
 
-	private IPORoot poFile;
+	private IPORoot poRoot;
 
 	private IProofComponent pc;
 
@@ -66,7 +66,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 		super.setUp();
 		createPOFile();
 		runBuilder();
-		pc = pm.getProofComponent(poFile);
+		pc = pm.getProofComponent(poRoot);
 	}
 
 	@Override
@@ -159,8 +159,8 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 */
 	public void testBrokenNoPO() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
-		poFile.getSequent(PO1).delete(false, null);
-		poFile.getRodinFile().save(null, false);
+		poRoot.getSequent(PO1).delete(false, null);
+		poRoot.getRodinFile().save(null, false);
 		runBuilder();
 		assertTrue(pa.isBroken());
 	}
@@ -170,7 +170,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 */
 	public void testBrokenClean() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
-		poFile.getRodinFile().delete(false, null);
+		poRoot.getRodinFile().delete(false, null);
 		createPOFile();
 		runBuilder();
 		assertTrue(pa.isBroken());
@@ -258,12 +258,12 @@ public class ProofAttemptTests extends AbstractProofTests {
 	private void createPOFile() throws RodinDBException {
 		IRodinFile file = rodinProject.getRodinFile("m.bpo");
 		file.create(true, null);
-		poFile = (IPORoot) file.getRoot();
+		poRoot = (IPORoot) file.getRoot();
 		final ITypeEnvironment typenv = mTypeEnvironment();
-		final IPOPredicateSet hyp = addPredicateSet(poFile, "hyp", null,
+		final IPOPredicateSet hyp = addPredicateSet(poRoot, "hyp", null,
 				typenv, GHYP.toString());
-		addSequent(poFile, PO1, GOAL.toString(), hyp, typenv, LHYP.toString());
-		addSequent(poFile, PO2, GOAL.toString(), hyp, typenv, LHYP.toString());
+		addSequent(poRoot, PO1, GOAL.toString(), hyp, typenv, LHYP.toString());
+		addSequent(poRoot, PO2, GOAL.toString(), hyp, typenv, LHYP.toString());
 		file.save(null, true);
 	}
 
@@ -275,7 +275,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	}
 
 	private void increasePOStamp(String poName) throws RodinDBException {
-		final IPOSequent sequent = poFile.getSequent(poName);
+		final IPOSequent sequent = poRoot.getSequent(poName);
 		final long stamp;
 		if (sequent.hasPOStamp()) {
 			stamp = sequent.getPOStamp();
@@ -283,12 +283,12 @@ public class ProofAttemptTests extends AbstractProofTests {
 			stamp = 0;
 		}
 		sequent.setPOStamp(stamp + 1, null);
-		poFile.setPOStamp(stamp + 1, null);
+		poRoot.setPOStamp(stamp + 1, null);
 	}
 
 	private void removePOStamps() throws RodinDBException {
-		poFile.removeAttribute(POSTAMP_ATTRIBUTE, null);
-		for (IPOSequent s : poFile.getSequents()) {
+		poRoot.removeAttribute(POSTAMP_ATTRIBUTE, null);
+		for (IPOSequent s : poRoot.getSequents()) {
 			s.removeAttribute(POSTAMP_ATTRIBUTE, null);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,11 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportChanges extends TestPM {
 
-	IPORoot poFile;
+	IPORoot poRoot;
 
-	IPSRoot psFile;
+	IPSRoot psRoot;
 
-	IPRRoot prFile;
+	IPRRoot prRoot;
 
 	IUserSupport userSupport;
 
@@ -61,13 +61,13 @@ public class TestUserSupportChanges extends TestPM {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		poFile = createPOFile("x");
-		psFile = poFile.getPSRoot();
-		prFile = poFile.getPRRoot();
+		poRoot = createPOFile("x");
+		psRoot = poRoot.getPSRoot();
+		prRoot = poRoot.getPRRoot();
 
-		hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null, mTypeEnvironment(
+		hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null, mTypeEnvironment(
 				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ");
-		hyp1 = POUtil.addPredicateSet(poFile, "hyp1", null, mTypeEnvironment(
+		hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", null, mTypeEnvironment(
 				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ",
 				"f(x)∈ℕ", "x∈dom(f)");
 
@@ -87,27 +87,27 @@ public class TestUserSupportChanges extends TestPM {
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poFile.getRodinFile().delete(true, null);
-		prFile.getRodinFile().delete(true, null);
-		psFile.getRodinFile().delete(true, null);
+		poRoot.getRodinFile().delete(true, null);
+		prRoot.getRodinFile().delete(true, null);
+		psRoot.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
 	public void testRemoveCurrentPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
+		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, originalPO);
 		// Check the status of the User Support here
 		assertString(
 				"Original PO has been removed first ",
@@ -124,7 +124,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
-		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
+		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, dischargedPO);
 		// Check the status of the User Support here
 		assertString(
 				"Discharged PO has been removed ",
@@ -137,18 +137,18 @@ public class TestUserSupportChanges extends TestPM {
 
 	public void testRemoveOtherPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		PSWrapperUtil.removePO(poFile, psFile, prFile, dischargedPO);
+		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, dischargedPO);
 		// Check the status of the User Support here
 		assertString(
 				"Dicharged PO has been removed first ",
@@ -169,7 +169,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "****************************\n"
 						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
-		PSWrapperUtil.removePO(poFile, psFile, prFile, originalPO);
+		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, originalPO);
 		// Check the status of the User Support here
 		assertString(
 				"Original PO has been removed ",
@@ -182,18 +182,18 @@ public class TestUserSupportChanges extends TestPM {
 
 	public void testAddPO() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil
-				.copyPO(poFile, psFile, prFile, originalPO, copyOriginalPO);
+				.copyPO(poRoot, psRoot, prRoot, originalPO, copyOriginalPO);
 		assertString(
 				"Copied original PO ",
 				userSupport.toString(),
@@ -239,18 +239,18 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePONotLoaded() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		String original = userSupport.toString();
-		PSWrapperUtil.copyPO(poFile, psFile, prFile, originalPO, dischargedPO);
+		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, originalPO, dischargedPO);
 		assertString("Changed: PO is not loaded ", userSupport.toString(),
 				original);
 	}
@@ -265,17 +265,17 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePONotModified() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
+		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
 		assertString(
 				"Change: PO is loaded and NOT modified ",
 				userSupport.toString(),
@@ -315,14 +315,14 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndDischargedAutoInDB() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -333,7 +333,7 @@ public class TestUserSupportChanges extends TestPM {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		PSWrapperUtil.copyPO(poFile, psFile, prFile, dischargedPO, originalPO);
+		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
 		assertString(
 				"Change: PO is modified and discharged automatically in DB ",
 				userSupport.toString(),
@@ -372,17 +372,17 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndReusable() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x = 2", hyp0,
+				.addSequent(poRoot, originalPO, "x = 2", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		POUtil
-				.addSequent(poFile, reusablePO, "x = 2", hyp1,
+				.addSequent(poRoot, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -393,7 +393,7 @@ public class TestUserSupportChanges extends TestPM {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		PSWrapperUtil.copyPO(poFile, psFile, prFile, reusablePO, originalPO);
+		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, reusablePO, originalPO);
 		assertString(
 				"Change: PO is modified and reusable ",
 				userSupport.toString(),
@@ -440,20 +440,20 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndNotReusable() throws Exception {
 		POUtil
-				.addSequent(poFile, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id(ℤ)", hyp0,
+				.addSequent(poRoot, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id(ℤ)", hyp0,
 						mTypeEnvironment());
-		POUtil.addSequent(poFile, dischargedPO, "x = 1", hyp1,
+		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
 		POUtil
-		.addSequent(poFile, rebuiltPO, "x = 2", hyp1,
+		.addSequent(poRoot, rebuiltPO, "x = 2", hyp1,
 				mTypeEnvironment());
 		POUtil
-				.addSequent(poFile, reusablePO, "x = 2", hyp1,
+				.addSequent(poRoot, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poFile.getRodinFile().save(null, true);
+		poRoot.getRodinFile().save(null, true);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -464,7 +464,7 @@ public class TestUserSupportChanges extends TestPM {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		PSWrapperUtil.copyPO(poFile, psFile, prFile, rebuiltPO, originalPO);
+		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, rebuiltPO, originalPO);
 		assertString(
 				"Change: PO is modified and NOT reusable ",
 				userSupport.toString(), "****** User Support for: x ******\n" + 

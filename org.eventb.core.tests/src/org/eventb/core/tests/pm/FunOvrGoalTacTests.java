@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	}
 
 	private IPORoot poRoot;
-	private IPSRoot psFile;
+	private IPSRoot psRoot;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -76,7 +76,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		disableAutoProver();
 		disablePostTactic();
 		createPOFile();
-		psFile = poRoot.getPSRoot();
+		psRoot = poRoot.getPSRoot();
 	}
 	
 	private void createPOFile() throws RodinDBException {
@@ -126,7 +126,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	public void testAutoDischarge() throws Exception {
 		enableAutoProver(tactics);
 		runBuilder();
-		assertDischarged(psFile.getStatus(PO1));
+		assertDischarged(psRoot.getStatus(PO1));
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * post tactic.
 	 */
 	public void testPostDischarge() throws Exception {
-		final IPSStatus status = psFile.getStatus(PO1);
+		final IPSStatus status = psRoot.getStatus(PO1);
 
 		runBuilder();
 		assertNotDischarged(status);
@@ -143,7 +143,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
 		final IUserSupport us = usm.newUserSupport();
 		try {
-			us.setInput(psFile.getRodinFile());
+			us.setInput(psRoot.getRodinFile());
 			us.setCurrentPO(status, null);
 			assertTrue(us.getCurrentPO().isClosed());
 		} finally {

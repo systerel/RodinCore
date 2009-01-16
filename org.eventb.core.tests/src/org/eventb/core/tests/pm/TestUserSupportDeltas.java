@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSetInput() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IPSRoot psRoot = poFile.getPSRoot();
+		IPORoot poRoot = createPOFile("x");
+		IPSRoot psRoot = poRoot.getPSRoot();
 
 		runBuilder();
 
@@ -78,8 +78,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testNextUndischargedPOUnforce() throws RodinDBException,
 			CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -119,8 +119,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testNextUndischargedPOForce() throws RodinDBException,
 			CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -174,8 +174,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testUserSupportPrevUndischargedPOUnforce()
 			throws RodinDBException, CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -214,8 +214,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 
 	public void testUserSupportPrevUndischargedPOForce()
 			throws RodinDBException, CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -267,8 +267,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSetAndGetCurrentPO() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -311,8 +311,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testRemoveCachedHypotheses() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -368,8 +368,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSearchHypotheses() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -398,8 +398,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -445,8 +445,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testSelectNode() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -506,8 +506,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testApplyTactic() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -531,8 +531,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testApplyTacticHypothesis() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -570,8 +570,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	}
 
 	public void testBacktrack() throws CoreException {
-		IPORoot poFile = createPOFile("x");
-		IRodinFile psFile = poFile.getPSRoot().getRodinFile();
+		IPORoot poRoot = createPOFile("x");
+		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
 
 		runBuilder();
 

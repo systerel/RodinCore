@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class PSWrapperUtil {
 
-	public static void removePO(final IPORoot poRoot, final IPSRoot psFile,
+	public static void removePO(final IPORoot poRoot, final IPSRoot psRoot,
 			final IPRRoot prRoot, final String name) {
 		final IProgressMonitor monitor = new NullProgressMonitor();
 
@@ -53,21 +53,20 @@ public class PSWrapperUtil {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
-					IPSStatus psStatus = psFile.getStatus(name);
+					IPSStatus psStatus = psRoot.getStatus(name);
 					psStatus.delete(true, monitor);
-					psFile.getRodinFile().save(monitor, true);
-					// Do not remove corresponding the prProof
+					psRoot.getRodinFile().save(monitor, true);
+					// Do not remove the corresponding prProof
 				}
 
 			}, monitor);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public static void copyPO(final IPORoot poRoot, final IPSRoot psFile,
-			final IPRRoot prFile, final String from, final String to) {
+	public static void copyPO(final IPORoot poRoot, final IPSRoot psRoot,
+			final IPRRoot prRoot, final String from, final String to) {
 		final IProgressMonitor monitor = new NullProgressMonitor();
 
 		try {
@@ -100,13 +99,13 @@ public class PSWrapperUtil {
 			RodinCore.run(new IWorkspaceRunnable() {
 
 				public void run(IProgressMonitor monitor) throws CoreException {
-					IPSStatus psStatusFrom = psFile.getStatus(from);
+					IPSStatus psStatusFrom = psRoot.getStatus(from);
 
 					// Find the correct sibling
-					IPSStatus psStatusTo = psFile.getStatus(to);
+					IPSStatus psStatusTo = psRoot.getStatus(to);
 					IPSStatus psSibling = null;
 					if (psStatusTo != null) {
-						IPSStatus[] psStatuses = psFile.getStatuses();
+						IPSStatus[] psStatuses = psRoot.getStatuses();
 						for (int i = psStatuses.length - 1; i >= 0; --i) {
 							if (psStatuses[i].equals(psStatusTo))
 								break;
@@ -114,15 +113,15 @@ public class PSWrapperUtil {
 								psSibling = psStatuses[i];
 						}
 					}
-					psStatusFrom.copy(psFile, psSibling, to, true, monitor);
-					psFile.getRodinFile().save(monitor, true);
+					psStatusFrom.copy(psRoot, psSibling, to, true, monitor);
+					psRoot.getRodinFile().save(monitor, true);
 
-					IPRProof prProofFrom = prFile.getProof(from);
+					IPRProof prProofFrom = prRoot.getProof(from);
 					// Find the correct sibling
-					IPRProof prProofTo = prFile.getProof(to);
+					IPRProof prProofTo = prRoot.getProof(to);
 					IPRProof prSibling = null;
 					if (prProofTo != null) {
-						IPRProof[] prProofs = prFile.getProofs();
+						IPRProof[] prProofs = prRoot.getProofs();
 						for (int i = prProofs.length - 1; i >= 0; --i) {
 							if (prProofs[i].equals(prProofTo))
 								break;
@@ -130,8 +129,8 @@ public class PSWrapperUtil {
 								prSibling = prProofs[i];
 						}
 					}
-					prProofFrom.copy(prFile, prSibling, to, true, monitor);
-					prFile.getRodinFile().save(monitor, true);
+					prProofFrom.copy(prRoot, prSibling, to, true, monitor);
+					prRoot.getRodinFile().save(monitor, true);
 				}
 
 			}, monitor);

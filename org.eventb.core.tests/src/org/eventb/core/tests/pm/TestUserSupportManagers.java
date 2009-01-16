@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,11 @@ import org.rodinp.core.RodinDBException;
 public class TestUserSupportManagers extends TestPM {
 
 	public void testUserSupportManager() throws RodinDBException, CoreException {
-		IPORoot poFile1 = createPOFile("x");
-		IPSRoot psFile1 = poFile1.getPSRoot();
+		IPORoot poRoot1 = createPOFile("x");
+		IPSRoot psRoot1 = poRoot1.getPSRoot();
 
-		IPORoot poFile2 = createPOFile("y");
-		IPSRoot psFile2 = poFile2.getPSRoot();
+		IPORoot poRoot2 = createPOFile("y");
+		IPSRoot psRoot2 = poRoot2.getPSRoot();
 
 		runBuilder();
 
@@ -50,11 +50,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
-		userSupport1.setInput(psFile1.getRodinFile());
+		userSupport1.setInput(psRoot1.getRodinFile());
 
 		assertEquals(
 				"The input for first user support has been set correctly ",
-				psFile1.getRodinFile(), userSupport1.getInput());
+				psRoot1.getRodinFile(), userSupport1.getInput());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -70,11 +70,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The second user support is stored ", userSupports
 				.contains(userSupport2));
 
-		userSupport2.setInput(psFile2.getRodinFile());
+		userSupport2.setInput(psRoot2.getRodinFile());
 
 		assertEquals(
 				"The input for second user support has been set correctly ",
-				psFile2.getRodinFile(), userSupport2.getInput());
+				psRoot2.getRodinFile(), userSupport2.getInput());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();

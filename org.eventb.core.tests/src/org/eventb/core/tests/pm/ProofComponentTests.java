@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,6 @@ public class ProofComponentTests extends AbstractProofTests {
 	private IRodinFile mchFile;
 	private IProofComponent pc;
 	private IPORoot poRoot;
-	private IRodinFile poFile;
 	private IPRRoot prRoot;
 	private IPSRoot psRoot;
 
@@ -67,8 +66,8 @@ public class ProofComponentTests extends AbstractProofTests {
 	}
 
 	private void createPOFile() throws RodinDBException {
+		final IRodinFile poFile = poRoot.getRodinFile();
 		poFile.create(true, null);
-		poRoot = (IPORoot) poFile.getRoot();
 		addSequent(poRoot, PO1, "⊤", null, mTypeEnvironment()); //$NON-NLS-1$
 		addSequent(poRoot, PO2, "⊥", null, mTypeEnvironment()); //$NON-NLS-1$
 		poFile.save(null, true);
@@ -92,7 +91,6 @@ public class ProofComponentTests extends AbstractProofTests {
 		IMachineRoot root = (IMachineRoot) mchFile.getRoot();
 		scFile = root.getSCMachineRoot();
 		poRoot = root.getPORoot();
-		poFile = root.getPORoot().getRodinFile();
 		prRoot = root.getPRRoot();
 		psRoot = root.getPSRoot();
 		pc = pm.getProofComponent(root);
