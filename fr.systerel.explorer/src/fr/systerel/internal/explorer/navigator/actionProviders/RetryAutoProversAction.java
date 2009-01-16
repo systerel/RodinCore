@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import java.lang.reflect.InvocationTargetException;
@@ -116,7 +115,7 @@ public class RetryAutoProversAction extends Action {
 					if (obj instanceof IPSStatus) {
 						
 						IPSStatus status = (IPSStatus)obj;
-						IRodinFile psFile = (IRodinFile) status.getOpenable();
+						IRodinFile psFile = status.getOpenable();
 						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 						final IProofComponent pc = pm.getProofComponent(psRoot);
 						IPSStatus[] statuses = new IPSStatus[]{status};

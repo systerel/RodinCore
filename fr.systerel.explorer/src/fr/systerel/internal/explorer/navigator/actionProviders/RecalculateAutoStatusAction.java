@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-
-
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import java.lang.reflect.InvocationTargetException;
@@ -116,7 +114,7 @@ public class RecalculateAutoStatusAction extends Action {
 					if (obj instanceof IPSStatus) {
 						
 						IPSStatus status = (IPSStatus)obj;
-						IRodinFile psFile = (IRodinFile) status.getOpenable();
+						IRodinFile psFile = status.getOpenable();
 						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 						IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 						IPSStatus[] statuses = new IPSStatus[]{status};
@@ -177,8 +175,7 @@ public class RecalculateAutoStatusAction extends Action {
 	void treatRoot(IEventBRoot root, IProgressMonitor monitor) {
 		IPSRoot psRoot = root.getPSRoot();
 		IRodinFile psFile = psRoot.getRodinFile();
-		IRodinFile prFile = psRoot.getPRRoot()
-				.getRodinFile();
+		IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 		IPSStatus[] statuses;
 		try {
 			statuses = psRoot.getStatuses();
@@ -216,7 +213,7 @@ public class RecalculateAutoStatusAction extends Action {
 			// at least one status found.
 			if (status != null) {
 				IRodinFile psFile = status.getRodinFile();
-				IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+				IPSRoot psRoot = (IPSRoot) status.getRoot();
 				IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 				try {
 					RecalculateAutoStatus.run(prFile, psFile, result.toArray(new IPSStatus[result.size()]), monitor);
