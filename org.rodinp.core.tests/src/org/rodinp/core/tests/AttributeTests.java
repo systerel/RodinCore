@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -81,7 +80,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				status.getCode());
 	}
 	
-	static void assertAttributeNames(IAttributedElement element,
+	static void assertAttributeNames(IInternalElement element,
 			IAttributeType... expectedTypes) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -103,7 +102,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
-	static void assertBooleanValue(IAttributedElement element,
+	static void assertBooleanValue(IInternalElement element,
 			IAttributeType.Boolean type, boolean expected)
 			throws RodinDBException {
 		
@@ -112,7 +111,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertHandleValue(IAttributedElement element,
+	static void assertHandleValue(IInternalElement element,
 			IAttributeType.Handle type, IRodinElement expected)
 			throws RodinDBException {
 		
@@ -121,7 +120,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertIntegerValue(IAttributedElement element,
+	static void assertIntegerValue(IInternalElement element,
 			IAttributeType.Integer type, int expected) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -129,7 +128,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertLongValue(IAttributedElement element,
+	static void assertLongValue(IInternalElement element,
 			IAttributeType.Long type, long expected) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
@@ -137,7 +136,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	static void assertStringValue(IAttributedElement element,
+	static void assertStringValue(IInternalElement element,
 			IAttributeType.String type, String expected)
 			throws RodinDBException {
 		
@@ -146,7 +145,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				element.getAttributeValue(type));
 	}
 	
-	void removeAttrPositive(IAttributedElement element, IAttributeType type)
+	void removeAttrPositive(IInternalElement element, IAttributeType type)
 			throws RodinDBException {
 
 		assertExists("Element should exist", element);
@@ -167,12 +166,12 @@ public class AttributeTests extends ModifyingResourceTests {
 				.hasAttribute(type));
 	}
 
-	private void assertNoDelta(IAttributedElement element) {
+	private void assertNoDelta(IInternalElement element) {
 		final IRodinElementDelta delta = getDeltaFor(element, true);
 		assertNull("No delta should have been generated", delta);
 	}
 
-	private void assertAttributeDelta(IAttributedElement element) {
+	private void assertAttributeDelta(IInternalElement element) {
 		final IRodinElementDelta delta = getDeltaFor(element, true);
 		assertNotNull("No delta", delta);
 		assertEquals("Wrong delta kind", IRodinElementDelta.CHANGED,
@@ -181,7 +180,7 @@ public class AttributeTests extends ModifyingResourceTests {
 				IRodinElementDelta.F_ATTRIBUTE, delta.getFlags());
 	}
 
-	void removeAttrNegative(IAttributedElement element, IAttributeType type,
+	void removeAttrNegative(IInternalElement element, IAttributeType type,
 			int failureCode) throws RodinDBException {
 		
 		try {
@@ -196,7 +195,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setBoolAttrPositive(IAttributedElement element,
+	void setBoolAttrPositive(IInternalElement element,
 			IAttributeType.Boolean type, boolean newValue)
 			throws RodinDBException {
 		assertExists("Element should exist", element);
@@ -213,7 +212,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setHandleAttrPositive(IAttributedElement element,
+	void setHandleAttrPositive(IInternalElement element,
 			IAttributeType.Handle type, IRodinElement newValue)
 			throws RodinDBException {
 		assertExists("Element should exist", element);
@@ -230,7 +229,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setIntAttrPositive(IAttributedElement element,
+	void setIntAttrPositive(IInternalElement element,
 			IAttributeType.Integer type, int newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		try {
@@ -246,7 +245,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setLongAttrPositive(IAttributedElement element,
+	void setLongAttrPositive(IInternalElement element,
 			IAttributeType.Long type, long newValue) throws RodinDBException {
 		assertExists("Element should exist", element);
 		try {
@@ -262,7 +261,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setStringAttrPositive(IAttributedElement element,
+	void setStringAttrPositive(IInternalElement element,
 			IAttributeType.String type, String newValue)
 			throws RodinDBException {
 		assertExists("Element should exist", element);
@@ -279,7 +278,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setBoolAttrNegative(IAttributedElement element,
+	void setBoolAttrNegative(IInternalElement element,
 			IAttributeType.Boolean type, boolean newValue, int failureCode)
 			throws RodinDBException {
 
@@ -295,7 +294,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setHandleAttrNegative(IAttributedElement element,
+	void setHandleAttrNegative(IInternalElement element,
 			IAttributeType.Handle type, IRodinElement newValue, int failureCode)
 			throws RodinDBException {
 
@@ -311,7 +310,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setIntAttrNegative(IAttributedElement element,
+	void setIntAttrNegative(IInternalElement element,
 			IAttributeType.Integer type, int newValue, int failureCode)
 			throws RodinDBException {
 
@@ -327,7 +326,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setLongAttrNegative(IAttributedElement element,
+	void setLongAttrNegative(IInternalElement element,
 			IAttributeType.Long type, long newValue, int failureCode)
 			throws RodinDBException {
 
@@ -343,7 +342,7 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 
-	void setStringAttrNegative(IAttributedElement element,
+	void setStringAttrNegative(IInternalElement element,
 			IAttributeType.String type, String newValue, int failureCode)
 			throws RodinDBException {
 
