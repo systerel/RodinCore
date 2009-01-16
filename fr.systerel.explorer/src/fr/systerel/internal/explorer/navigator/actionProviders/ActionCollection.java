@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-
-
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
@@ -214,16 +211,15 @@ public class ActionCollection {
 					IStructuredSelection ssel = (IStructuredSelection) site.getStructuredViewer().getSelection();
 		
 					for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
-						Object obj = it.next();
-						// Ignore element which is not Rodin Element
-						if (!(obj instanceof IRodinElement))
+						final Object obj = it.next();
+						if (!(obj instanceof IRodinElement)) {
 							continue;
-						else {
-							if (obj instanceof IEventBRoot) {
-								obj = ((IEventBRoot) obj).getRodinFile();
-							}
-							set = UIUtils.addToTreeSet(set, (IRodinElement) obj);
 						}
+						IRodinElement elem = (IRodinElement) obj;
+						if (elem.isRoot()) {
+							elem = elem.getParent();
+						}
+						set = UIUtils.addToTreeSet(set, elem);
 					}
 		
 					int answer = YesToAllMessageDialog.YES;
@@ -248,12 +244,12 @@ public class ActionCollection {
 								IProject project = rodinProject.getProject();
 		
 								try {
-									// Close all the open file which is the children of
+									// Close all the open files which are children of
 									// this project
-									IRodinElement[] files = rodinProject.getChildren();
-									for (IRodinElement file : files) {
-										if (file instanceof IRodinFile)
-											closeOpenedEditor((IRodinFile) file);
+									final IRodinFile[] rfs = rodinProject
+											.getRodinFiles();
+									for (IRodinFile rf : rfs) {
+										closeOpenedEditor(rf);
 									}
 		
 									project.delete(true, false, null);
