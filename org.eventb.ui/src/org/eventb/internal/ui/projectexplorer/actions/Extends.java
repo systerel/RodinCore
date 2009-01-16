@@ -94,11 +94,11 @@ public class Extends implements IObjectActionDelegate {
 	}
 
 	/**
-	 * Returns the selected machine if the selection is structured and contains
-	 * exactly one element which is adaptable to a machine file. Otherwise,
+	 * Returns the selected context if the selection is structured and contains
+	 * exactly one element which is adaptable to a context file. Otherwise,
 	 * returns <code>null</code>.
 	 * 
-	 * @return the selected machine or <code>null</code>
+	 * @return the selected context or <code>null</code>
 	 */
 	private IRodinFile getSelectedContext() {
 		if (selection instanceof IStructuredSelection) {
