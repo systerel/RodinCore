@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Laurent Voisin
  */
-public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
-		IElementManipulation {
+public interface IRodinFile extends IRodinElement, IOpenable, IParent,
+		IElementManipulation, ISnapshotable {
 
 	/**
 	 * Creates this file in the database. As a side effect, all ancestors of
@@ -89,26 +89,9 @@ public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 	 */
 	String getBareName();
 	
-	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinElement#getElementType()
-	 */
 	IFileElementType getElementType();
 	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinElement#getResource()
-	 */
 	IFile getResource();
-
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IInternalParent#getSnapshot()
-	 */
-	IRodinFile getSnapshot();
-	
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IInternalParent#getMutableCopy()
-	 */
-	IRodinFile getMutableCopy();
 
 	/**
 	 * Reverts this file. Reverting a file has the effect of forgetting any
@@ -140,5 +123,9 @@ public interface IRodinFile extends IRodinElement, IOpenable, IInternalParent,
 	 * 
 	 */
 	IInternalElementType<?> getRootElementType();
+
+	// Methods from ISnapshotable with specialized return types
+	IRodinFile getSnapshot();
+	IRodinFile getMutableCopy();
 
 }

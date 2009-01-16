@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinDBStatus;
@@ -110,7 +109,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * handle to a child from a memento.
 	 */
 	protected static final IRodinElement getInternalHandleFromMemento(
-			MementoTokenizer memento, IInternalParent parent) {
+			MementoTokenizer memento, IRodinElement parent) {
 
 		if (! memento.hasMoreTokens()) return parent;
 		String childTypeId = memento.nextToken();
@@ -142,8 +141,8 @@ public abstract class RodinElement extends PlatformObject implements
 			childName = "";
 			lookahead = null;
 		}
-		final RodinElement child =
-			(RodinElement) parent.getInternalElement(childType, childName);
+		final RodinElement child = (RodinElement) childType.createInstance(
+				childName, parent);
 		if (child == null) {
 			return null;
 		}

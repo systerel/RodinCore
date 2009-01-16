@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods (contents and occurrence count)
  *     Systerel - added method getNextSibling()
- *     Systerel - Moved method declarations from IAttributedElement
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 //TODO document IInternalElement
 @SuppressWarnings("deprecation")
-public interface IInternalElement extends IRodinElement, IInternalParent,
-		IElementManipulation, IAttributedElement {
+public interface IInternalElement extends IRodinElement, IElementManipulation,
+		ISnapshotable, IAttributedElement, IInternalParent {
 
 	/**
 	 * Creates this internal element in the database. As a side effect, all
@@ -261,6 +261,38 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 			throws RodinDBException;
 
 	/**
+	 * Returns a handle to a child internal element with the given type and
+	 * name.
+	 * <p>
+	 * This is a handle-only method. The child element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param childType
+	 *            type of the child element
+	 * @param childName
+	 *            name of the child element
+	 * @return the child internal element with the given type and name
+	 */
+	<T extends IInternalElement> T getInternalElement(
+			IInternalElementType<T> childType, String childName);
+
+	/**
+	 * Returns a handle to the element which has the same relative path as this
+	 * element, but relative to the given file. In particular, if this element
+	 * is a file, then the given file is returned.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param newFile
+	 *            file in which to construct the new handle
+	 * @return an element with the same path relative to the given file as this
+	 *         element
+	 */
+	IInternalElement getSimilarElement(IRodinFile newFile);
+
+	/**
 	 * Tells whether this element carries an attribute with the given type.
 	 * <p>
 	 * The file containing this element is opened by this operation.
@@ -275,6 +307,69 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	 *         the given type
 	 */
 	boolean hasAttribute(IAttributeType type) throws RodinDBException;
+
+	/**
+	 * Returns whether this element and the given element have the same attributes
+	 * in the Rodin database. Two elements have the same attributes if and only
+	 * if:
+	 * <ul>
+	 * <li>they both don't exist or they both exist and
+	 * <li>they carry the same attributes (if any) with the same values.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar attributes
+	 * @return <code>true</code> iff this element and the given element
+	 *         have the same attributes in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 */
+	boolean hasSameAttributes(IInternalElement other) throws RodinDBException;
+
+	/**
+	 * Returns whether this element and the given element have the same children
+	 * in the Rodin database. Two elements have the same children if and only
+	 * if:
+	 * <ul>
+	 * <li>they both don't exist or they both exist and
+	 * <li>their children (if any, and taken in order) have the same contents</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar children
+	 * @return <code>true</code> iff this element and the given element
+	 *         contain the same children in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 *                or their descendants.
+	 */
+	boolean hasSameChildren(IInternalElement other) throws RodinDBException;
+
+	/**
+	 * Returns whether this element and the given element have the same contents
+	 * in the Rodin database. Two elements have the same contents if and only
+	 * if:
+	 * <ul>
+	 * <li>they have the same element name and element type.</li>
+	 * <li>they both don't exist or they both exist and:
+	 * <ul>
+	 * <li>they carry the same attributes (if any) with the same values;</li>
+	 * <li>their children (if any, and taken in order) have the same contents.</li>
+	 * </ul>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param other
+	 *            the element to test for similar contents
+	 * @return <code>true</code> iff this element and the given element
+	 *         contain the same subtree in the Rodin database
+	 * @exception RodinDBException
+	 *                if an error was encountered while comparing the elements
+	 *                or their descendants.
+	 */
+	boolean hasSameContents(IInternalElement other) throws RodinDBException;
 
 	/**
 	 * Removes the attribute with the given type from this element. If the
@@ -401,4 +496,8 @@ public interface IInternalElement extends IRodinElement, IInternalParent,
 	void setAttributeValue(IAttributeType.String type, String newValue,
 			IProgressMonitor monitor) throws RodinDBException;
 
+	// Methods from ISnapshotable with specialized return types
+	IInternalElement getSnapshot();
+	IInternalElement getMutableCopy();
+	
 }

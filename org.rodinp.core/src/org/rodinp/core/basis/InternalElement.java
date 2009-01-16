@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -297,8 +296,7 @@ public abstract class InternalElement extends RodinElement implements
 		}
 		
 		final IInternalElement myParent = (IInternalElement) getParent();
-		final IInternalElement newParent = (IInternalElement) myParent
-				.getSimilarElement(newFile);
+		final IInternalElement newParent = myParent.getSimilarElement(newFile);
 		final IInternalElementType<?> newType = getElementType();
 		final String newName = getElementName();
 		return newParent.getInternalElement(newType, newName);
@@ -317,18 +315,18 @@ public abstract class InternalElement extends RodinElement implements
 		return getChildren().length > 0;
 	}
 
-	public boolean hasSameAttributes(IInternalParent other)
+	public boolean hasSameAttributes(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer
 				.hasSameAttributes(this, (IInternalParentX) other);
 	}
 
-	public boolean hasSameChildren(IInternalParent other)
+	public boolean hasSameChildren(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer.hasSameChildren(this, (IInternalParentX) other);
 	}
 
-	public boolean hasSameContents(IInternalParent other)
+	public boolean hasSameContents(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer.hasSameContents(this, (IInternalParentX) other);
 	}

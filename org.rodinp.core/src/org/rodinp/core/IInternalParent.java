@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,9 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods (occurrence count)
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;
-
 
 /**
  * Common protocol for elements that can contain internal elements.
@@ -30,8 +30,12 @@ package org.rodinp.core;
  * </p>
  * 
  * @author Laurent Voisin
+ * 
+ * @deprecated Use {@link IInternalElement}, {@IParent} or
+ *             {@link ISnapshotable} instead
  */
-public interface IInternalParent extends IParent, IAttributedElement {
+@Deprecated
+public interface IInternalParent extends IParent, ISnapshotable, IAttributedElement {
 
 	/**
 	 * Returns a handle to a child internal element with the given type and
@@ -51,28 +55,6 @@ public interface IInternalParent extends IParent, IAttributedElement {
 			IInternalElementType<T> childType, String childName);
 
 	/**
-	 * Returns a handle to this element in the snapshot of its Rodin file.
-	 * 
-	 * <p>
-	 * This is a handle-only method. The element may or may not be present.
-	 * </p>
-	 * 
-	 * @return this element in the snapshot of its Rodin file
-	 */
-	IInternalParent getSnapshot();
-
-	/**
-	 * Returns a handle to this element in the mutable copy of its Rodin file.
-	 * 
-	 * <p>
-	 * This is a handle-only method. The element may or may not be present.
-	 * </p>
-	 * 
-	 * @return this element in the mutable copy of its Rodin file
-	 */
-	IInternalParent getMutableCopy();
-
-	/**
 	 * Returns whether this element and the given element have the same attributes
 	 * in the Rodin database. Two elements have the same attributes if and only
 	 * if:
@@ -89,7 +71,7 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	 * @exception RodinDBException
 	 *                if an error was encountered while comparing the elements
 	 */
-	boolean hasSameAttributes(IInternalParent other) throws RodinDBException;
+	boolean hasSameAttributes(IInternalElement other) throws RodinDBException;
 	
 	/**
 	 * Returns whether this element and the given element have the same children
@@ -109,7 +91,7 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	 *                if an error was encountered while comparing the elements
 	 *                or their descendants.
 	 */
-	boolean hasSameChildren(IInternalParent other) throws RodinDBException;
+	boolean hasSameChildren(IInternalElement other) throws RodinDBException;
 	
 	/**
 	 * Returns whether this element and the given element have the same contents
@@ -133,19 +115,8 @@ public interface IInternalParent extends IParent, IAttributedElement {
 	 *                if an error was encountered while comparing the elements
 	 *                or their descendants.
 	 */
-	boolean hasSameContents(IInternalParent other) throws RodinDBException;
+	boolean hasSameContents(IInternalElement other) throws RodinDBException;
 	
-	/**
-	 * Returns whether this is a handle in a file snapshot.
-	 * <p>
-	 * This is a handle-only method. The element may or may not be present.
-	 * </p>
-	 * 
-	 * @return <code>true</code> iff the corresponding element is or belongs
-	 *         to the stable snapshot of a Rodin file
-	 */
-	boolean isSnapshot();
-
 	/**
 	 * Returns a handle to the element which has the same relative path as this
 	 * element, but relative to the given file. In particular, if this element
