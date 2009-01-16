@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IElementManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinFile;
@@ -160,18 +160,25 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 	 * its new container.
 	 */
 	public IRodinElement generateHandle(IRodinElement original, String rename, IRodinElement container) {
-		String name = original.getElementName();
-		if (rename != null) {
+		final String name;
+		if (rename == null) {
+			name = original.getElementName();
+		} else {
 			name = rename;
 		}
 		if (container instanceof IRodinProject) {
 			assertTrue("illegal child type", original instanceof RodinFile);
 			return ((IRodinProject) container).getRodinFile(name);
-		} else if (container instanceof IInternalParent) {
+		} else if (container instanceof IRodinFile) {
+			final IInternalElement root = ((IRodinFile) container).getRoot();
+			assertEquals(root.getElementType(), original.getElementType());
+			assertEquals(root.getElementName(), name);
+			return root;
+		} else if (container instanceof IInternalElement) {
 			assertTrue("illegal child type", original instanceof IInternalElement);
 			final IInternalElementType<? extends IInternalElement> type =
 				((IInternalElement) original).getElementType();
-			return ((IInternalParent) container).getInternalElement(type, name);
+			return ((IInternalElement) container).getInternalElement(type, name);
 		} else {
 			assertTrue("illegal container type", false);
 			return null;

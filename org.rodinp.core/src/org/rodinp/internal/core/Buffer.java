@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -313,7 +312,7 @@ public class Buffer {
 	}
 	
 	public LinkedHashMap<InternalElement, Element> getChildren(
-			IInternalParent element, Element domElement) {
+			IInternalElement element, Element domElement) {
 
 		assert domElement.getParentNode() != null;
 		LinkedHashMap<InternalElement, Element> result = 
@@ -350,7 +349,7 @@ public class Buffer {
 	 * @return the Rodin element corresponding to the given DOM child, or
 	 *         <code>null</code> in case of error
 	 */
-	private InternalElement getElement(IInternalParent parent,
+	private InternalElement getElement(IInternalElement parent,
 			Element domChild) {
 		
 		try {

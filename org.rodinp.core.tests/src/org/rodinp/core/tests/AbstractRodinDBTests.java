@@ -49,7 +49,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IElementManipulation;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDB;
@@ -222,7 +221,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * Assert that the given element has been cleared (doesn't have any
 	 * attribute or children)
 	 */
-	protected static void assertCleared(String message, IInternalParent element)
+	protected static void assertCleared(String message, IInternalElement element)
 			throws RodinDBException {
 		assertEquals(message, 0, element.getAttributeTypes().length);
 		assertEquals(message, 0, element.getChildren().length);
@@ -484,7 +483,7 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	 * successful, and ensures the element has no longer any attribute nor child
 	 * present in the database.
 	 */
-	public static void assertClearing(IInternalParent elementToClear)
+	public static void assertClearing(IInternalElement elementToClear)
 			throws RodinDBException {
 		assertExists("Element must be present to be cleared", elementToClear);
 		((IElementManipulation) elementToClear).clear(false, null);
