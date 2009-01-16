@@ -64,7 +64,8 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	private List<ModelMachine> seenByMachines = new LinkedList<ModelMachine>();
 	
-	private IContextRoot internalContext;
+	private IContextRoot contextRoot;
+
 	private HashMap<IAxiom, ModelAxiom> axioms = new HashMap<IAxiom, ModelAxiom>();
 	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	// CarrierSets and Constants are not taken into the model
@@ -93,7 +94,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * @param root	The ContextRoot that this ModelContext is based on.
 	 */
 	public ModelContext(IContextRoot root){
-		internalContext = root;
+		contextRoot = root;
 		carrierset_node = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
 		constant_node = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
 		axiom_node = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
@@ -153,14 +154,14 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		axioms.clear();
 		theorems.clear();
 		try {
-			for (IAxiom axm : internalContext.getAxioms()) {
+			for (IAxiom axm : contextRoot.getAxioms()) {
 				addAxiom(axm);
 			}
-			for (ITheorem thm :  internalContext.getTheorems()) {
+			for (ITheorem thm :  contextRoot.getTheorems()) {
 				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when accessing axioms and theorems of "+internalContext);
+			UIUtils.log(e, "when accessing axioms and theorems of "+contextRoot);
 		}
 	}
 	
@@ -175,7 +176,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 			try {
 				//clear old POs
 				proofObligations.clear();
-				IPORoot root = internalContext.getPORoot();
+				IPORoot root = contextRoot.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
 					int pos = 1;
@@ -189,14 +190,14 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this context.
-							if (internalContext.getRodinFile().isAncestorOf(source)) {
+							if (contextRoot.isAncestorOf(source)) {
 								processSource(source, po);
 							}
 						}
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof obligations of " +internalContext);
+				UIUtils.log(e, "when processing proof obligations of " +contextRoot);
 			}
 			poNeedsProcessing = false;
 		}
@@ -210,7 +211,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public void processPSRoot(){
 		if (psNeedsProcessing) {
 			try {
-				IPSRoot root = internalContext.getPSRoot();
+				IPSRoot root = contextRoot.getPSRoot();
 				if (root.exists()) {
 					IPSStatus[] stats = root.getStatuses();
 					for (IPSStatus status : stats) {
@@ -222,7 +223,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof statuses of " +internalContext);
+				UIUtils.log(e, "when processing proof statuses of " +contextRoot);
 			}
 			psNeedsProcessing = false;
 		}
@@ -358,7 +359,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 
 
 	public IContextRoot getInternalContext(){
-		return internalContext;
+		return contextRoot;
 	}
 
 	public ModelTheorem getTheorem(ITheorem theorem){
@@ -374,7 +375,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	@Override
 	public IModelElement getModelParent() {
-		return ModelController.getProject(internalContext.getRodinProject());
+		return ModelController.getProject(contextRoot.getRodinProject());
 	}
 	
 	
@@ -415,7 +416,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	
 
 	public IRodinElement getInternalElement() {
-		return internalContext;
+		return contextRoot;
 	}
 	
 	/**
@@ -468,7 +469,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 				return (extendsContexts.get(0).getInternalContext());
 			}
 		}
-		return internalContext.getRodinProject();
+		return contextRoot.getRodinProject();
 	}
 
 

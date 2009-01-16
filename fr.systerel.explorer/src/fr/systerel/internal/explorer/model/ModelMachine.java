@@ -62,7 +62,9 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * Machines that this Machine refines.
 	 */
 	private List<ModelMachine> refinesMachines = new LinkedList<ModelMachine>();
-	private IMachineRoot internalMachine ;
+
+	private IMachineRoot machineRoot ;
+
 	private HashMap<IInvariant, ModelInvariant> invariants = new HashMap<IInvariant, ModelInvariant>();
 	private HashMap<IEvent, ModelEvent> events = new HashMap<IEvent, ModelEvent>();
 	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
@@ -92,7 +94,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 *            The MachineRoot that this ModelMachine is based on.
 	 */
 	public ModelMachine(IMachineRoot root){
-		internalMachine = root;
+		machineRoot = root;
 		variable_node = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
 		invariant_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
 		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
@@ -105,7 +107,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 */
 	@Override
 	public IModelElement getModelParent() {
-		return ModelController.getProject(internalMachine.getRodinProject());
+		return ModelController.getProject(machineRoot.getRodinProject());
 	}
 	
 	public void addAncestor(ModelMachine machine){
@@ -149,20 +151,20 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		events.clear();
 		theorems.clear();
 		try {
-			IInvariant[] invs = internalMachine.getChildrenOfType(IInvariant.ELEMENT_TYPE);
+			IInvariant[] invs = machineRoot.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 			for (int i = 0; i < invs.length; i++) {
 				addInvariant(invs[i]);
 			}
-			IEvent[] evts = internalMachine.getChildrenOfType(IEvent.ELEMENT_TYPE);
+			IEvent[] evts = machineRoot.getChildrenOfType(IEvent.ELEMENT_TYPE);
 			for (IEvent evt :  evts) {
 				addEvent(evt);
 			}
-			ITheorem[] thms = internalMachine.getChildrenOfType(ITheorem.ELEMENT_TYPE);
+			ITheorem[] thms = machineRoot.getChildrenOfType(ITheorem.ELEMENT_TYPE);
 			for (ITheorem thm : thms) {
 				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when accessing events, invariants and theorems of "+internalMachine);
+			UIUtils.log(e, "when accessing events, invariants and theorems of "+machineRoot);
 		}
 		
 	}
@@ -178,7 +180,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 			try {
 				//clear old POs
 				proofObligations.clear();
-				IPORoot root = internalMachine.getPORoot();
+				IPORoot root = machineRoot.getPORoot();
 				if (root.exists()) {
 					IPOSequent[] sequents = root.getSequents();
 					int pos = 1;
@@ -191,14 +193,14 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 						for (int j = 0; j < sources.length; j++) {
 							IRodinElement source = sources[j].getSource();
 							//only process sources that belong to this machine.
-							if (internalMachine.getRodinFile().isAncestorOf(source) ){
+							if (machineRoot.isAncestorOf(source) ){
 								processSource(source, po);
 							}
 						}
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof obligations of " +internalMachine);
+				UIUtils.log(e, "when processing proof obligations of " +machineRoot);
 			}
 			poNeedsProcessing = false;
 		}
@@ -213,7 +215,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	public void processPSRoot() {
 		if (psNeedsProcessing) {
 			try {
-				IPSRoot root = internalMachine.getPSRoot();
+				IPSRoot root = machineRoot.getPSRoot();
 				if (root.exists()) {
 					IPSStatus[] stats = root.getStatuses();
 					for (int i = 0; i < stats.length; i++) {
@@ -226,7 +228,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 					}
 				}
 			} catch (RodinDBException e) {
-				UIUtils.log(e, "when processing proof statuses of " +internalMachine);
+				UIUtils.log(e, "when processing proof statuses of " +machineRoot);
 			}
 			psNeedsProcessing = false;
 		}
@@ -344,7 +346,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 
 	public IMachineRoot getInternalMachine() {
-		return internalMachine;
+		return machineRoot;
 	}
 
 	public List<ModelContext> getSeesContexts() {
@@ -366,7 +368,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	@Override
 	public String toString(){
-		return ("ModelMachine: "+internalMachine.getComponentName());
+		return ("ModelMachine: "+machineRoot.getComponentName());
 	}
 	
 	/**
@@ -406,7 +408,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 
 	public IRodinElement getInternalElement() {
-		return internalMachine;
+		return machineRoot;
 	}
 	
 	protected void processSource(IRodinElement source, ModelProofObligation po) {
@@ -466,7 +468,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				return (refinesMachines.get(0).getInternalMachine());
 			}
 		}
-		return internalMachine.getRodinProject();
+		return machineRoot.getRodinProject();
 	}
 
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
