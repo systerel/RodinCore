@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.rodinp.core;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -511,8 +512,12 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	void setAttributeValue(IAttributeType.String type, String newValue,
 			IProgressMonitor monitor) throws RodinDBException;
 
-	// Methods from ISnapshotable with specialized return types
+	// Methods with specialized return types
 	IInternalElement getSnapshot();
 	IInternalElement getMutableCopy();
 	
+	IRodinFile getOpenable();
+	IFile getResource();
+	IFile getUnderlyingResource();
+
 }
