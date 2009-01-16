@@ -414,26 +414,17 @@ public abstract class EventBTest extends BuilderTest {
 
 	// generic methods
 	
-	public void addNonTheorems(IRodinFile rodinFile, String[] names, String[] predicates) throws RodinDBException {
-			IInternalElement root = rodinFile.getRoot();
+	public void addNonTheorems(IRodinFile rodinFile, String[] names,
+			String[] predicates) throws RodinDBException {
+		IInternalElement root = rodinFile.getRoot();
 		assert (root instanceof IMachineRoot) || (root instanceof IContextRoot);
-		if(root instanceof IMachineRoot){
-			addInvariants((IMachineRoot)root, names, predicates);
-		}else{
-			addAxioms((IContextRoot)root, names, predicates);
+		if (root instanceof IMachineRoot) {
+			addInvariants((IMachineRoot) root, names, predicates);
+		} else {
+			addAxioms((IContextRoot) root, names, predicates);
 		}
 	}
-	
-	
-//	public void addNonTheorems(IRodinFile<IContextRoot> rodinFile, String[] names, String[] axioms) throws RodinDBException {
-//		addAxioms(rodinFile, names, axioms);
-//	}
-//	
-//	public void addNonTheorems(IRodinFile<IMachineRoot> rodinFile, String[] names, String[] invariants) throws RodinDBException {
-//		addInvariants(rodinFile, names, invariants);
-//	}
 
-	
 	public void addIdents(IRodinFile rodinFile, String... names)
 			throws RodinDBException {
 		IInternalElement root = rodinFile.getRoot();
@@ -445,33 +436,6 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
-//	
-//	public void addIdents(IContextFile rodinFile, String... names) throws RodinDBException {
-//		addConstants(rodinFile, names);
-//	}
-//
-//	public void addIdents(IRodinFile<IMachineRoot> rodinFile, String... names) throws RodinDBException {
-//		addVariables(rodinFile, names);
-//	}
-
-	public IRodinFile createComponent(String bareName, IRodinFile dummy) throws RodinDBException {
-		IInternalElement root = dummy.getRoot();
-		assert (root instanceof IMachineRoot) || (root instanceof IContextRoot);
-		if (root instanceof IMachineRoot) {
-			return createMachine(bareName).getRodinFile();
-		} else {
-			return createContext(bareName).getRodinFile();
-		}
-	}
-	
-//	public IRodinFile<IContextRoot> createComponent(String bareName, IContextFile dummy) throws RodinDBException {
-//		return createContext(bareName);
-//	}
-//
-//	public IRodinFile<IMachineRoot> createComponent(String bareName, IRodinFile<IMachineRoot> dummy) throws RodinDBException {
-//		return createMachine(bareName);
-//	}
-	
 	public void addSuper(IRodinFile rodinFile, String name)
 			throws RodinDBException {
 		IInternalElement root = rodinFile.getRoot();
@@ -482,15 +446,6 @@ public abstract class EventBTest extends BuilderTest {
 			addContextExtends((IContextRoot)root, name);
 		}
 	}
-	
-	
-//	public void addSuper(IContextFile rodinFile, String name) throws RodinDBException {
-//		addContextExtends(rodinFile, name);
-//	}
-//
-//	public void addSuper(IRodinFile<IMachineRoot> rodinFile, String name) throws RodinDBException {
-//		addMachineRefines(rodinFile, name);
-//	}
 
 	public String getNormalizedExpression(String input, ITypeEnvironment environment) {
 		Expression expr = factory.parseExpression(input).getParsedExpression();
