@@ -52,12 +52,10 @@ public abstract class POTool extends SCTool {
 		
 		final IRodinFile prvFile = RodinCore.valueOf(file);
 		final ISCProvableRoot prv = (ISCProvableRoot) prvFile.getRoot();
-		
 		final IPORoot po = prv.getPORoot();
-		final IRodinFile poFile = po.getRodinFile();
 
-		graph.addTarget(poFile.getResource());
-		graph.addToolDependency(prvFile.getResource(), poFile.getResource(), true);
+		graph.addTarget(po.getResource());
+		graph.addToolDependency(prv.getResource(), po.getResource(), true);
 				
 	}
 

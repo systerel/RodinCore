@@ -48,13 +48,13 @@ public class CSCTool extends SCTool {
 		IContextRoot ctx = (IContextRoot) ctxFile.getRoot();
 		
 		ISCContextRoot sctx = ctx.getCheckedVersion();
-		IFile scFile = sctx.getRodinFile().getResource();
+		IFile scFile = sctx.getResource();
 		graph.addTarget(scFile);
 		graph.addToolDependency(ctxFile.getResource(), scFile, true);
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(ctx.getUsedContexts().length * 4 / 3 + 1);
 		for (IContextRoot usedContext: ctx.getUsedContexts()) {
-			IFile source = usedContext.getCheckedVersion().getRodinFile().getResource();
+			IFile source = usedContext.getCheckedVersion().getResource();
 			newSources.add(source);
 		}
 		for (IFile newFile : newSources)

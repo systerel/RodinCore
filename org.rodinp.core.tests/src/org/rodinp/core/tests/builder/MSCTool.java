@@ -47,24 +47,23 @@ public class MSCTool extends SCTool {
 		IMachineRoot mch = (IMachineRoot) mchFile.getRoot();
 		
 		ISCMachineRoot smch = mch.getCheckedVersion();
-		IFile scFile = smch.getRodinFile().getResource();
+		IFile scFile = smch.getResource();
 		graph.addTarget(scFile);
 		graph.addToolDependency(mchFile.getResource(), scFile, true);
 		
 		ISCMachineRoot machine = mch.getReferencedMachine();
 		if (machine != null) {
-			IRodinFile machineFile = machine.getRodinFile();
 			graph.addUserDependency(
-					mchFile.getResource(), machineFile.getResource(), scFile, false);
+					mchFile.getResource(), machine.getResource(), scFile, false);
 		}
 		
 		HashSet<IFile> newSources = new HashSet<IFile>(mch.getUsedContexts().length * 4 / 3 + 1);
 		for (IContextRoot usedContext: mch.getUsedContexts()) {
-			IFile source = usedContext.getCheckedVersion().getRodinFile().getResource();
+			IFile source = usedContext.getCheckedVersion().getResource();
 			newSources.add(source);
 		}
 		for (IFile newSrc : newSources)
-			graph.addUserDependency(mch.getRodinFile().getResource(), newSrc, scFile, false);
+			graph.addUserDependency(mch.getResource(), newSrc, scFile, false);
 		
 	}
 	
