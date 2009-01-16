@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,24 +17,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
 public class Move extends OperationLeaf {
 
 	final IInternalElement movedElement;
-	final IInternalParent oldParent;
+	final IInternalElement oldParent;
 	final IInternalElement oldSibling;
-	final IInternalParent newParent;
+	final IInternalElement newParent;
 	final IInternalElement newSibling;
 
-	public Move(IInternalElement movedElement, IInternalParent newParent,
+	public Move(IInternalElement movedElement, IInternalElement newParent,
 			IInternalElement newSibling) {
 		super("Move");
 		this.movedElement = movedElement;
 		this.newParent = newParent;
 		this.newSibling = newSibling;
-		oldParent = (IInternalParent) movedElement.getParent();
+		oldParent = (IInternalElement) movedElement.getParent();
 		oldSibling = getNextSibling(movedElement);
 
 	}
@@ -48,7 +47,7 @@ public class Move extends OperationLeaf {
 		}
 	}
 
-	private IStatus move(IInternalParent lNewParent,
+	private IStatus move(IInternalElement lNewParent,
 			IInternalElement lNewSibling, IProgressMonitor monitor) {
 		try {
 			movedElement.move(lNewParent, lNewSibling, movedElement

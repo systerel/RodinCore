@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - removed focus listener of Hyper Link
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -77,7 +78,6 @@ import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -242,9 +242,9 @@ public class EditPage extends EventBEditorPage implements
 		IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
 		IRodinElement parent = firstElement.getParent();
 
-		if (parent != null && parent instanceof IInternalParent) {
+		if (parent != null && parent instanceof IInternalElement) {
 
-			IInternalParent iparent = (IInternalParent) parent;
+			IInternalElement iparent = (IInternalElement) parent;
 
 			final IInternalElementType<?> type = firstElement.getElementType();
 			try {
@@ -745,9 +745,9 @@ public class EditPage extends EventBEditorPage implements
 		IRodinElement parent = firstElement.getParent();
 		IElementType<? extends IRodinElement> type = firstElement
 				.getElementType();
-		assert parent instanceof IInternalParent;
+		assert parent instanceof IInternalElement;
 		try {
-			IRodinElement[] children = ((IInternalParent) parent)
+			IRodinElement[] children = ((IInternalElement) parent)
 					.getChildrenOfType(type);
 			boolean found = false;
 			List<IRodinElement> selected = new ArrayList<IRodinElement>();

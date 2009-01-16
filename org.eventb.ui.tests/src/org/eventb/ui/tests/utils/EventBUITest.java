@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,7 +12,6 @@
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
  *******************************************************************************/
-
 package org.eventb.ui.tests.utils;
 
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
@@ -52,7 +51,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -471,7 +469,7 @@ public abstract class EventBUITest extends TestCase {
 	 * @throws RodinDBException
 	 */
 	protected <T extends IInternalElement> T createInternalElement(
-			IInternalParent parent, IInternalElementType<T> childType,
+			IInternalElement parent, IInternalElementType<T> childType,
 			String childName) throws RodinDBException {
 
 		T element = parent.getInternalElement(childType, childName);
@@ -479,7 +477,7 @@ public abstract class EventBUITest extends TestCase {
 		return element;
 	}
 
-	protected void createNAxioms(IInternalParent parent,
+	protected void createNAxioms(IInternalElement parent,
 			String childNamePrefix, String elementAttributePrefix, long n,
 			long beginIndex) throws RodinDBException {
 

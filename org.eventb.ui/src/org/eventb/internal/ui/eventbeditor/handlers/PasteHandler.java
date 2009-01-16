@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     Rodin @ ETH Zurich
-******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -30,7 +29,6 @@ import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -96,7 +94,7 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 						IInternalElement internalElement = (IInternalElement) element;
 						(internalElement).copy(parent, sibling, "element"
 								+ EventBUtils.getFreeChildNameIndex(
-										(IInternalParent) parent,
+										(IInternalElement) parent,
 										internalElement.getElementType(),
 										"element"), false, null);
 					}

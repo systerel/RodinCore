@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
 import java.util.ArrayList;
@@ -15,7 +26,6 @@ import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -48,9 +58,9 @@ public abstract class MoveHandler extends AbstractHandler implements IHandler {
 		IRodinElement parent = firstElement.getParent();
 		IInternalElementType<?> type = firstElement.getElementType();
 
-		if (parent != null && parent instanceof IInternalParent) {
+		if (parent != null && parent instanceof IInternalElement) {
 			try {
-				IInternalElement[] children = ((IInternalParent) parent)
+				IInternalElement[] children = ((IInternalElement) parent)
 						.getChildrenOfType(type);
 				assert (children.length > 0);
 				IInternalElement prevElement = null;

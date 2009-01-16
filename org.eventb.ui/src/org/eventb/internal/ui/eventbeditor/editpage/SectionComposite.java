@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -42,7 +43,6 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -58,7 +58,7 @@ public class SectionComposite implements ISectionComposite {
 	Composite compParent;
 
 	// The Rodin parent of this section
-	IInternalParent parent;
+	IInternalElement parent;
 
 	// The element relationship associated with this section composite
 	IElementRelationship rel;
@@ -95,7 +95,7 @@ public class SectionComposite implements ISectionComposite {
 	int severity = IMarker.SEVERITY_INFO;
 	
 	public SectionComposite(EditPage page, FormToolkit toolkit,
-			ScrolledForm form, Composite compParent, IInternalParent parent,
+			ScrolledForm form, Composite compParent, IInternalElement parent,
 			IElementRelationship rel, int level) {
 		this.page = page;
 		this.toolkit = toolkit;

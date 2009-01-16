@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -484,7 +483,7 @@ class OperationBuilder {
 	}
 
 	public OperationTree move(IInternalElement movedElement,
-			IInternalParent newParent, IInternalElement newSibling) {
+			IInternalElement newParent, IInternalElement newSibling) {
 		return new Move(movedElement, newParent, newSibling);
 	}
 

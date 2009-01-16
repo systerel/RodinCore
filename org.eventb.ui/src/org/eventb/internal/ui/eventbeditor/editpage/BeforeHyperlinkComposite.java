@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -26,14 +27,13 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 
 public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 
 	ImageHyperlink addBeforeHyperlink;
 	
-	public BeforeHyperlinkComposite(EditPage page, IInternalParent parent,
+	public BeforeHyperlinkComposite(EditPage page, IInternalElement parent,
 			IInternalElementType<?> type,
 			FormToolkit toolkit, Composite compParent) {
 		super(page, parent, type, toolkit, compParent);
@@ -60,8 +60,7 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 					assert (children.length != 0);
 					IInternalElement first = children[0];
 					AtomicOperation operation = OperationFactory
-							.createElementGeneric((IInternalElement) parent,
-									type, first);
+							.createElementGeneric(parent, type, first);
 					History.getInstance().addOperation(operation);
 
 				} catch (RodinDBException exception) {

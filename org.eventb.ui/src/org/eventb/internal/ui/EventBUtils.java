@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich and others.
+ * Copyright (c) 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -31,7 +31,6 @@ import org.eventb.core.IRefinesMachine;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -85,7 +84,7 @@ public class EventBUtils {
 	 *            an internal element class (i.e. extends
 	 *            {@link IInternalElement}.
 	 * @param parent
-	 *            the internal parent ({@link IInternalParent}).
+	 *            the internal parent ({@link IInternalElement}).
 	 * @param type
 	 *            the type of the child ({@link IInternalElementType}).
 	 * @param label
@@ -220,7 +219,7 @@ public class EventBUtils {
 	 *            an internal element class (i.e. extends
 	 *            {@link IInternalElement}.
 	 * @param parent
-	 *            the internal parent ({@link IInternalParent}).
+	 *            the internal parent ({@link IInternalElement}).
 	 * @param type
 	 *            the type of the child ({@link IInternalElementType}).
 	 * @param prefix
@@ -231,7 +230,7 @@ public class EventBUtils {
 	 *             if some problems occur.
 	 */
 	public static <T extends IInternalElement> String getFreeChildName(
-			IInternalParent parent, IInternalElementType<T> type, String prefix)
+			IInternalElement parent, IInternalElementType<T> type, String prefix)
 			throws RodinDBException {
 		return prefix + getFreeChildNameIndex(parent, type, prefix);
 	}
@@ -249,7 +248,7 @@ public class EventBUtils {
 	 *            an internal element class (i.e. extends
 	 *            {@link IInternalElement}.
 	 * @param parent
-	 *            the internal parent ({@link IInternalParent}).
+	 *            the internal parent ({@link IInternalElement}).
 	 * @param type
 	 *            the type of the child ({@link IInternalElementType}).
 	 * @param prefix
@@ -260,7 +259,7 @@ public class EventBUtils {
 	 *             if some problems occur.
 	 */
 	public static <T extends IInternalElement> String getFreeChildNameIndex(
-			IInternalParent parent, IInternalElementType<T> type,
+			IInternalElement parent, IInternalElementType<T> type,
 			String prefix) throws RodinDBException {
 		return UIUtils.getFreePrefixIndex(parent, type, null, prefix);		
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -381,10 +380,10 @@ public abstract class AbstractAttributeRelUISpecRegistry implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecReigstry#createElement(org.eventb.ui.eventbeditor.IEventBEditor, org.rodinp.core.IInternalParent, org.rodinp.core.IInternalElementType, org.rodinp.core.IInternalElement)
+	 * @see org.eventb.internal.ui.eventbeditor.editpage.IAttributeRelUISpecReigstry#createElement(org.eventb.ui.eventbeditor.IEventBEditor, org.rodinp.core.IInternalElement, org.rodinp.core.IInternalElementType, org.rodinp.core.IInternalElement)
 	 */
 	public <T extends IInternalElement> T createElement(
-			final IInternalElement root, IInternalParent parent,
+			final IInternalElement root, IInternalElement parent,
 			final IInternalElementType<T> type, final IInternalElement sibling)
 			throws CoreException {
 		if (attributeRelationships == null)

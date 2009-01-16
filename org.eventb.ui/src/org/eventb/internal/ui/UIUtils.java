@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -95,7 +95,6 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -172,7 +171,7 @@ public class UIUtils {
 	 *         type already exists, returns beginIndex)
 	 * @throws RodinDBException
 	 */
-	public static String getFreePrefixIndex(IInternalParent parent,
+	public static String getFreePrefixIndex(IInternalElement parent,
 			IInternalElementType<?> type, IAttributeType.String attributeType,
 			String prefix) throws RodinDBException, IllegalStateException {
 
@@ -202,7 +201,7 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> List<T> getVisibleChildrenOfType(
-			IInternalParent parent, IInternalElementType<T> type)
+			IInternalElement parent, IInternalElementType<T> type)
 			throws RodinDBException {
 		final List<T> result = new ArrayList<T>();
 		addImplicitChildrenOfType(result, parent, type);
@@ -211,7 +210,7 @@ public class UIUtils {
 	}
 
 	private static <T extends IInternalElement>void addImplicitChildrenOfType(
-			List<T> result, IInternalParent parent,
+			List<T> result, IInternalElement parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		if (parent instanceof IEvent) {
 			final IInternalElement[] implicitChildren = EventBUtils
@@ -522,7 +521,7 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeElementName(
-			IInternalElement root, IInternalParent parent,
+			IInternalElement root, IInternalElement parent,
 			IInternalElementType<T> type, String defaultPrefix)
 			throws RodinDBException {
 		String prefix = getNamePrefix(root, type, defaultPrefix);
@@ -553,7 +552,7 @@ public class UIUtils {
 	 *         beginIndex)
 	 * @throws RodinDBException
 	 */
-	public static String getFreeElementLabelIndex(IInternalParent parent,
+	public static String getFreeElementLabelIndex(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type, String prefix)
 			throws RodinDBException {
 		return getFreePrefixIndex(parent, type,
@@ -568,7 +567,7 @@ public class UIUtils {
 		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 	}
 
-	public static String getFreeElementIdentifierIndex(IInternalParent parent,
+	public static String getFreeElementIdentifierIndex(IInternalElement parent,
 			IInternalElementType<?> type, String prefix)
 			throws RodinDBException {
 		return getFreePrefixIndex(parent, type, 
@@ -696,7 +695,7 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
-			IRodinFile file, IInternalParent parent,
+			IRodinFile file, IInternalElement parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
 		String prefix = getNamePrefix(file, type, defaultPrefix);
@@ -704,7 +703,7 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
-			IInternalElement root, IInternalParent parent,
+			IInternalElement root, IInternalElement parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		return getFreeChildName(root.getRodinFile(), parent, type);
 	}

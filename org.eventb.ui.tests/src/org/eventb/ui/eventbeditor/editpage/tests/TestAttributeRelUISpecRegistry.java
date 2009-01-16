@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 
 /**
  * @author htson
@@ -59,7 +58,7 @@ public class TestAttributeRelUISpecRegistry extends EventBUITest {
 		editor = openEditor(m0);
 	}
 
-	public <T extends IInternalElement> T createElement(IInternalParent parent,
+	public <T extends IInternalElement> T createElement(IInternalElement parent,
 			IInternalElementType<T> type) throws Exception {
 		final T e = registry.createElement(editor.getRodinInput(), parent,
 				type, null);

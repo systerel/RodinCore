@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich and others.
+ * Copyright (c) 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,8 +27,8 @@ import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -258,7 +258,7 @@ public class TestEventBUtils extends EventBUITest {
 	}
 
 	private void assertFreeChildName(final int expected,
-			final IInternalParent parent, final IInternalElementType<?> type,
+			final IInternalElement parent, final IInternalElementType<?> type,
 			final String prefix) throws RodinDBException {
 		final String actual = EventBUtils.getFreeChildNameIndex(parent, type,
 				prefix);
@@ -271,9 +271,9 @@ public class TestEventBUtils extends EventBUITest {
 	/**
 	 * Ensures that the first free child name is numbered "1".
 	 * 
-	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 * @see EventBUtils#getFreeChildName(IInternalElement, IInternalElementType,
 	 *      String)
-	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalElement,
 	 *      IInternalElementType, String)
 	 */
 	@Test
@@ -286,9 +286,9 @@ public class TestEventBUtils extends EventBUITest {
 	/**
 	 * Ensures that the second free child name is numbered "2".
 	 * 
-	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 * @see EventBUtils#getFreeChildName(IInternalElement, IInternalElementType,
 	 *      String)
-	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalElement,
 	 *      IInternalElementType, String)
 	 */
 	@Test
@@ -303,9 +303,9 @@ public class TestEventBUtils extends EventBUITest {
 	 * Ensures that the nth free child name is numbered 1 greater than the
 	 * greatest children.
 	 * 
-	 * @see EventBUtils#getFreeChildName(IInternalParent, IInternalElementType,
+	 * @see EventBUtils#getFreeChildName(IInternalElement, IInternalElementType,
 	 *      String)
-	 * @see EventBUtils#getFreeChildNameIndex(IInternalParent,
+	 * @see EventBUtils#getFreeChildNameIndex(IInternalElement,
 	 *      IInternalElementType, String)
 	 */
 	@Test

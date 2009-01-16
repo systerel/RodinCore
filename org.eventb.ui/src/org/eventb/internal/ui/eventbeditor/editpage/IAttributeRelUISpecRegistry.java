@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import org.eclipse.core.runtime.CoreException;
@@ -17,7 +16,6 @@ import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 
 /**
  * @author htson
@@ -54,7 +52,7 @@ public interface IAttributeRelUISpecRegistry {
 	 *             if some problems occurred.
 	 */
 	public abstract <T extends IInternalElement> T createElement(
-			IInternalElement root, IInternalParent parent,
+			IInternalElement root, IInternalElement parent,
 			IInternalElementType<T> type, IInternalElement sibling)
 			throws CoreException;
 

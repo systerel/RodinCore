@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -28,7 +29,6 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinElement;
 
 public class ElementComposite implements IElementComposite {
@@ -148,7 +148,7 @@ public class ElementComposite implements IElementComposite {
 		for (IElementRelationship rel : rels) {
 			// Create the section composite
 			sectionComps.add(new SectionComposite(page, toolkit, form,
-					mainSectionComposite, (IInternalParent) rElement, rel,
+					mainSectionComposite, (IInternalElement) rElement, rel,
 					level + 1));
 		}
 	}

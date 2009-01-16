@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eventb.core.IVariant;
 import org.eventb.internal.ui.EventBUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
@@ -49,7 +48,7 @@ public class CopyElement extends OperationLeaf {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		IInternalParent copyParent;
+		IInternalElement copyParent;
 		String nameCopy;
 		final OperationBuilder builder;
 		final IInternalElement element;
