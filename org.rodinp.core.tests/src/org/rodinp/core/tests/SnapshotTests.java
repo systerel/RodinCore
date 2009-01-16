@@ -12,7 +12,6 @@
 package org.rodinp.core.tests;
 
 import org.eclipse.core.runtime.CoreException;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.ISnapshotable;

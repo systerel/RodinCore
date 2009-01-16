@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributedElement;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;

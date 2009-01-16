@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRegion;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -136,7 +135,7 @@ public class ClearElementsOperation extends MultiOperation {
 	}
 
 	private void clearElementAttributes(final RodinFileElementInfo fileInfo,
-			IInternalParent e, RodinElementDelta delta) throws RodinDBException {
+			IInternalElement e, RodinElementDelta delta) throws RodinDBException {
 		final IAttributeType[] attrs = fileInfo.getAttributeTypes(e);
 		for (final IAttributeType attr : attrs) {
 			fileInfo.removeAttribute(e, attr);
@@ -171,7 +170,7 @@ public class ClearElementsOperation extends MultiOperation {
 	@Override
 	protected void verify(IRodinElement element) throws RodinDBException {
 		for (IRodinElement child : childrenToClear.get(element).getElements()) {
-			if (! (child instanceof IInternalParent))
+			if (! (child instanceof IInternalElement))
 				error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, child);
 
 			if (child.isReadOnly())
