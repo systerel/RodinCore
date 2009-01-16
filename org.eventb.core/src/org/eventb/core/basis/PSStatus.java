@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,7 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	
 	
 	public IPRProof getProof(){
-		final IRodinFile psFile = getRodinFile();
-		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+		final IPSRoot psRoot = (IPSRoot) getRoot();
 		final IPRRoot prRoot = psRoot.getPRRoot();
 		return prRoot.getProof(getElementName());
 	}
@@ -102,8 +101,7 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	}
 	
 	public IPOSequent getPOSequent() {
-		final IRodinFile psFile = getRodinFile();
-		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
+		final IPSRoot psRoot = (IPSRoot) getRoot();
 		return psRoot.getPORoot().getSequent(getElementName());
 	}
 

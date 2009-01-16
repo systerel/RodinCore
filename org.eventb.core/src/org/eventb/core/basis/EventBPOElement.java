@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public abstract class EventBPOElement extends EventBElement {
 			IInternalElement iElement = (IInternalElement) element;
 			
 			IRodinFile file = getRodinFile();
-			IPORoot root = (IPORoot) file.getRoot();
+			IPORoot root = (IPORoot) getRoot();
 		
 			if (isPlainPOFile(root)) {
 				return element;
@@ -66,8 +66,7 @@ public abstract class EventBPOElement extends EventBElement {
 		
 			IInternalElement iElement = (IInternalElement) element;
 			
-			IRodinFile iFile = iElement.getRodinFile();
-			IPORoot iRoot= (IPORoot) iFile.getRoot();
+			IPORoot iRoot= (IPORoot) iElement.getRoot();
 			
 			if (isPlainPOFile(iRoot)) {
 				setAttributeValue(attrType, element, monitor);
