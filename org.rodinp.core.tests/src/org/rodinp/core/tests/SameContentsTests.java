@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.rodinp.core.tests;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
@@ -28,7 +27,7 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
 public class SameContentsTests extends ModifyingResourceTests {
 
 	public static void assertSameContents(IInternalElement left,
-			IInternalParent right, boolean sameContents,
+			IInternalElement right, boolean sameContents,
 			boolean sameAttributes, boolean sameChildren)
 			throws RodinDBException {
 

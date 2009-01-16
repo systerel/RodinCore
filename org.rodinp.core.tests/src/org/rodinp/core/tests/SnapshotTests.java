@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.ISnapshotable;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
@@ -89,9 +90,9 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that the isSnapshot() method works properly.
 	 */
-	private void testIsSnapshot(IInternalParent mutable) {
-		final IInternalParent snapshot = mutable.getSnapshot();
-		final IInternalParent mutable2 = snapshot.getMutableCopy();
+	private void testIsSnapshot(ISnapshotable mutable) {
+		final ISnapshotable snapshot = mutable.getSnapshot();
+		final ISnapshotable mutable2 = snapshot.getMutableCopy();
 		assertFalse("Mutable should not be a snapshot", mutable.isSnapshot());
 		assertTrue("Snapshot should be a snapshot", snapshot.isSnapshot());
 		assertFalse("Mutable should not be a snapshot", mutable2.isSnapshot());
@@ -100,8 +101,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot exists if its mutable copy exists.
 	 */
-	private void testSnapshotExists(IInternalParent mutable) {
-		final IInternalParent snapshot = mutable.getSnapshot();
+	private void testSnapshotExists(ISnapshotable mutable) {
+		final ISnapshotable snapshot = mutable.getSnapshot();
 		assertExists("Mutable should exist", mutable);
 		assertExists("Snapshot should exist", snapshot);
 	}
@@ -111,8 +112,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	 * vice-versa. Also, ensures that a snapshot is different from a mutable
 	 * copy.
 	 */
-	private void testSnapshotInvolutive(IInternalParent mutable) {
-		final IInternalParent snapshot = mutable.getSnapshot();
+	private void testSnapshotInvolutive(ISnapshotable mutable) {
+		final ISnapshotable snapshot = mutable.getSnapshot();
 		assertDiffers("Mutable and snapshot should differ",
 				mutable, snapshot);
 		assertSame("Snapshot of a snapshot should be identical",
@@ -128,8 +129,8 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot doesn't exist if its mutable copy doesn't.
 	 */
-	private void testSnapshotNotExists(IInternalParent mutable) {
-		final IInternalParent snapshot = mutable.getSnapshot();
+	private void testSnapshotNotExists(ISnapshotable mutable) {
+		final ISnapshotable snapshot = mutable.getSnapshot();
 		assertNotExists("Mutable should not exist", mutable);
 		assertNotExists("Snapshot should not exist", snapshot);
 	}
@@ -137,9 +138,9 @@ public class SnapshotTests extends ModifyingResourceTests {
 	/**
 	 * Ensures that a snapshot is readonly and a mutable copy is not.
 	 */
-	private void testSnapshotReadonly(IInternalParent mutable) {
-		final IInternalParent snapshot = mutable.getSnapshot();
-		final IInternalParent mutable2 = snapshot.getMutableCopy();
+	private void testSnapshotReadonly(ISnapshotable mutable) {
+		final ISnapshotable snapshot = mutable.getSnapshot();
+		final ISnapshotable mutable2 = snapshot.getMutableCopy();
 		assertFalse("Mutable should not be readonly", mutable.isReadOnly());
 		assertTrue("Snapshot should be readonly", snapshot.isReadOnly());
 		assertFalse("Mutable should not be readonly", mutable2.isReadOnly());
