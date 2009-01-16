@@ -31,7 +31,6 @@ import org.eventb.core.IRefinesMachine;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -96,7 +95,7 @@ public class EventBUtils {
 	 *             or the label attributes of child elements.
 	 */
 	private static <T extends ILabeledElement> T getFirstChildOfTypeWithLabel(
-			IParent parent, IInternalElementType<T> type, String label)
+			IInternalElement parent, IInternalElementType<T> type, String label)
 			throws RodinDBException {
 		for (T child : parent.getChildrenOfType(type)) {
 			if (child.hasAttribute(EventBAttributes.LABEL_ATTRIBUTE)
