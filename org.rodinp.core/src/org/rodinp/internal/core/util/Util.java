@@ -51,35 +51,41 @@ public class Util {
 			exc); 
 		RodinCore.getPlugin().getLog().log(status);
 	}
-	
+
+	private static boolean isSpaceChar(int codePoint) {
+		return Character.isWhitespace(codePoint)
+				|| Character.isSpaceChar(codePoint) || codePoint == '\u00A0'
+				|| codePoint == '\u2007' || codePoint == '\u202F';
+	}
+
 	/**
-	 * Trims leading and trailing Unicode space characters from the given
-	 * string.
+	 * Trims leading and trailing Unicode and Java space characters from the
+	 * given string.
 	 * <p>
-	 * Unicode space characters are detected using
-	 * {@link Character#isSpaceChar(int)}.
+	 * Space characters are detected using both
+	 * {@link Character#isSpaceChar(int)} and
+	 * {@link Character#isWhitespace(int)}.
 	 * </p>
 	 * 
 	 * @param string
 	 *            a string to trim
-	 * @return the given string trimmed of Unicode space characters
+	 * @return the given string trimmed of space characters
 	 */
 	public static String trimSpaceChars(String string) {
-		
-		int length = string.length();
-		if (length == 0) return string;
-		
-		int firstCP = string.codePointAt(0);
-		int lastCP = string.codePointBefore(length);
-		
-		if (! Character.isWhitespace(firstCP) && ! Character.isWhitespace(lastCP)) {
-			// Nothing to do.
+		final int len = string.length();
+		int first = 0;
+		int last = len;
+
+		while ((first < len) && isSpaceChar(string.codePointAt(first))) {
+			first = string.offsetByCodePoints(first, 1);
+		}
+		while ((first < last) && isSpaceChar(string.codePointBefore(last))) {
+			last = string.offsetByCodePoints(last, -1);
+		}
+		if (first == 0 && last == len) {
 			return string;
 		}
-		
-		// TODO Implement using Unicode space characters
-		// This is only a shortcut, cause I'm in a hurry
-		return string.trim();
+		return string.substring(first, last);
 	}
 
 }
