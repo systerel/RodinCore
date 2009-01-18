@@ -7,6 +7,7 @@ import org.rodinp.core.tests.builder.CBuilderTest;
 import org.rodinp.core.tests.builder.MBuilderTest;
 import org.rodinp.core.tests.version.BasicVersionTest;
 import org.rodinp.core.tests.version.FaultyVersionTest;
+import org.rodinp.internal.core.util.tests.UtilTests;
 
 public class AllTests {
 
@@ -32,6 +33,8 @@ public class AllTests {
 		suite.addTestSuite(AdapterFactoryTests.class);
 		suite.addTestSuite(SameContentsTests.class);
 		suite.addTestSuite(RootElementTests.class);
+		suite.addTestSuite(AncestryTests.class);
+		suite.addTestSuite(UtilTests.class);
 
 		suite.addTestSuite(MBuilderTest.class);
 		suite.addTestSuite(CBuilderTest.class);
