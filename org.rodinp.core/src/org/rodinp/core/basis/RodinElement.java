@@ -465,12 +465,6 @@ public abstract class RodinElement extends PlatformObject implements
 	}
 
 	/**
-	 */
-	public String readableName() {
-		return this.getElementName();
-	}
-
-	/**
 	 * Configures and runs the <code>MultiOperation</code>.
 	 */
 	protected void runOperation(MultiOperation op, IRodinElement sibling,
