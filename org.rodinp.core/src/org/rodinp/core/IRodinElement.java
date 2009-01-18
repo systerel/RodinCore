@@ -251,7 +251,9 @@ public interface IRodinElement extends IAdaptable {
 	IResource getUnderlyingResource();
 
 	/**
-	 * Returns whether this element is an ancestor of the given element.
+	 * Returns whether this element is an ancestor of the given element. This
+	 * method implements the strict relationship: an element is not considered
+	 * an ancestor of itself.
 	 * <p>
 	 * This is a handle-only method.
 	 * </p>
