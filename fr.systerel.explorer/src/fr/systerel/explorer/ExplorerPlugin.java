@@ -25,7 +25,7 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "fr.systerel.explorer";
 
 	// Trace Options
-	private static final String DEBUG_NAVIGATPR = PLUGIN_ID +"/debug/navigator"; //$NON-NLS-1$
+	private static final String DEBUG_NAVIGATOR = PLUGIN_ID +"/debug/navigator"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ExplorerPlugin plugin;
@@ -57,9 +57,8 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	 */
 	private void configureDebugOptions() {
 		if (isDebugging()) {
-			String option = Platform.getDebugOption(DEBUG_NAVIGATPR);
-			if (option != null)
-				ExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			String option = Platform.getDebugOption(DEBUG_NAVIGATOR);
+			ExplorerUtils.DEBUG = "true".equalsIgnoreCase(option); //$NON-NLS-1$
 		}
 	}
 	
