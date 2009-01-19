@@ -90,7 +90,7 @@ public abstract class BasicSCTest extends EventBTest {
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		IContextRoot root = super.createContext(bareName);
 		sourceFiles.add(root.getRodinFile());
-		addFile(root.getSCContextRoot().getRodinFile());
+		addRoot(root.getSCContextRoot());
 		return root;
 	}
 
@@ -98,7 +98,7 @@ public abstract class BasicSCTest extends EventBTest {
 	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		IMachineRoot root = super.createMachine(bareName);
 		sourceFiles.add(root.getRodinFile());
-		addFile(root.getSCMachineRoot().getRodinFile());
+		addRoot(root.getSCMachineRoot());
 		return root;
 	}
 

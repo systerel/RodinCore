@@ -12,6 +12,8 @@
 package org.eventb.core.tests;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAction;
@@ -21,6 +23,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -468,13 +471,13 @@ public abstract class EventBTest extends BuilderTest {
 		return assn.toStringWithTypes();
 	}
 
-	public ArrayList<IRodinFile> files;
+	public Set<IEventBRoot> roots;
 	
 	@Override
 	protected void runBuilder() throws CoreException {
 		super.runBuilder();
 		checkSources();
-		files = new ArrayList<IRodinFile>(); // forget
+		roots.clear(); // forget
 	}
 
 	public static class DeltaListener implements IElementChangedListener {
@@ -520,9 +523,9 @@ public abstract class EventBTest extends BuilderTest {
 	}
 
 	private void checkSources() throws RodinDBException {
-		for (IRodinFile file : files) {
-			if (file.exists())
-				checkSources(file);
+		for (IEventBRoot root : roots) {
+			if (root.exists())
+				checkSources(root);
 		}
 	}
 
@@ -531,7 +534,7 @@ public abstract class EventBTest extends BuilderTest {
 		if (element instanceof IRodinFile){
 			IInternalElement root = ((IRodinFile)element).getRoot();
 			return (root instanceof IContextRoot || root instanceof IMachineRoot);
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -555,20 +558,20 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
-	protected void addFile(IRodinFile file) {
-		if (!files.contains(file))
-			files.add(file);
+	protected void addRoot(IEventBRoot root) {
+		if (!roots.contains(root))
+			roots.add(root);
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		files = new ArrayList<IRodinFile>();
+		roots = new HashSet<IEventBRoot>();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		files = null;
+		roots = null;
 		super.tearDown();
 	}
 

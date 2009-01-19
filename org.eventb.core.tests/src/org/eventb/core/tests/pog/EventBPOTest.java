@@ -45,7 +45,7 @@ public abstract class EventBPOTest extends EventBTest {
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		IContextRoot root = super.createContext(bareName);
 		root.setConfiguration(FWD_CONFIG, null);
-		addFile(root.getPORoot().getRodinFile());
+		addRoot(root.getPORoot());
 		return root;
 	}
 
@@ -53,7 +53,7 @@ public abstract class EventBPOTest extends EventBTest {
 	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		IMachineRoot root = super.createMachine(bareName);
 		root.setConfiguration(FWD_CONFIG, null);
-		addFile(root.getPORoot().getRodinFile());
+		addRoot(root.getPORoot());
 		return root;
 	}
 
