@@ -23,7 +23,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
