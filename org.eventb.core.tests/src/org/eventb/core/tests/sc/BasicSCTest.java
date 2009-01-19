@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAccuracyElement;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCAction;
@@ -68,28 +69,28 @@ public abstract class BasicSCTest extends EventBTest {
 	@Override
 	protected void runBuilder() throws CoreException {
 		super.runBuilder();
-		for (IRodinFile file : sourceFiles)
-			assertTrue("ill-formed markers", GraphProblemTest.check(file));
+		for (IEventBRoot root : sourceRoots)
+			assertTrue("ill-formed markers", GraphProblemTest.check(root));
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		sourceFiles.clear();
+		sourceRoots.clear();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		sourceFiles.clear();
+		sourceRoots.clear();
 		super.tearDown();
 	}
 
-	private final List<IRodinFile> sourceFiles = new ArrayList<IRodinFile>();
+	private final List<IEventBRoot> sourceRoots = new ArrayList<IEventBRoot>();
 	
 	@Override
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		IContextRoot root = super.createContext(bareName);
-		sourceFiles.add(root.getRodinFile());
+		sourceRoots.add(root);
 		addRoot(root.getSCContextRoot());
 		return root;
 	}
@@ -97,7 +98,7 @@ public abstract class BasicSCTest extends EventBTest {
 	@Override
 	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		IMachineRoot root = super.createMachine(bareName);
-		sourceFiles.add(root.getRodinFile());
+		sourceRoots.add(root);
 		addRoot(root.getSCMachineRoot());
 		return root;
 	}

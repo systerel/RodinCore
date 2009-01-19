@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.sc.GraphProblem;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -213,10 +213,10 @@ public class GraphProblemTest extends TestCase {
 	}
 
 	
-	public static boolean check(IRodinFile file) throws CoreException {
+	public static boolean check(IEventBRoot root) throws CoreException {
 		boolean ok = true;
 		IMarker[] markers = 
-			file.getResource().findMarkers(
+			root.getResource().findMarkers(
 					RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
 					true, 
 					IResource.DEPTH_INFINITE);
