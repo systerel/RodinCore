@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.RodinTestFile;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
@@ -43,6 +48,7 @@ public class HandleTests extends AbstractRodinDBTests {
 	public void testDBHandle() throws Exception {
 		final IRodinDB rodinDB = getRodinDB();
 		assertNameTypeParent(rodinDB, "", IRodinDB.ELEMENT_TYPE, null);
+		assertNull(RodinCore.valueOf((IWorkspaceRoot) null));
 	}
 
 	public void testProjectHandle() throws Exception {
@@ -51,6 +57,7 @@ public class HandleTests extends AbstractRodinDBTests {
 		final IRodinProject rodinProject = getRodinProject(projectName);
 		assertNameTypeParent(rodinProject, projectName,
 				IRodinProject.ELEMENT_TYPE, rodinDB);
+		assertNull(RodinCore.valueOf((IProject) null));
 	}
 
 	public void testFileHandle() throws Exception {
@@ -59,6 +66,11 @@ public class HandleTests extends AbstractRodinDBTests {
 		final IRodinFile rodinFile = rodinProject.getRodinFile(fileName);
 		assertNameTypeParent(rodinFile, fileName, RodinTestFile.ELEMENT_TYPE,
 				rodinProject);
+		assertNull(RodinCore.valueOf((IFile) null));
+	}
+
+	public void testResourceHandle() throws Exception {
+		assertNull(RodinCore.valueOf((IResource) null));		
 	}
 
 	public void testRootHandle() throws Exception {
