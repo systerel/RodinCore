@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class TestAccuracy extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 		addInvariants(mac, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"));
 		addTheorems(mac, makeSList("T"), makeSList("0>0"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -51,7 +51,7 @@ public class TestAccuracy extends EventBPOTest {
 		addEvent(mac, "evt", makeSList(), 
 				makeSList("G"), makeSList("p<m"), 
 				makeSList("A"), makeSList("m:∣ m'>m"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -71,7 +71,7 @@ public class TestAccuracy extends EventBPOTest {
 		addEvent(abs, "evt", makeSList(), 
 				makeSList("G"), makeSList("p<m"), 
 				makeSList(), makeSList());
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -83,7 +83,7 @@ public class TestAccuracy extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("m:∣ m'>m"));
 		addEventRefines(evt, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -106,7 +106,7 @@ public class TestAccuracy extends EventBPOTest {
 		addEvent(abs, "fvt", makeSList(), 
 				makeSList("G"), makeSList("p<m"), 
 				makeSList(), makeSList());
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -118,7 +118,7 @@ public class TestAccuracy extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("m:∣ m'>m"));
 		addEventRefines(evt, "evt", "fvt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -136,7 +136,7 @@ public class TestAccuracy extends EventBPOTest {
 		IContextRoot ctx = createContext("ctx");
 		addAxioms(ctx, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"));
 		addTheorems(ctx, makeSList("T"), makeSList("0>0"));
-		ctx.getRodinFile().save(null, true);
+		saveRodinFileOf(ctx);
 		
 		runBuilder();
 		
@@ -156,7 +156,7 @@ public class TestAccuracy extends EventBPOTest {
 		addEvent(aab, "evt", makeSList(), 
 				makeSList("G"), makeSList("0<m"), 
 				makeSList(), makeSList());
-		aab.getRodinFile().save(null, true);
+		saveRodinFileOf(aab);
 		
 		IMachineRoot abs =  createMachine("abs");
 		addMachineRefines(abs, "aab");
@@ -164,7 +164,7 @@ public class TestAccuracy extends EventBPOTest {
 				makeSList("G"), makeSList("9÷9>0"), 
 				makeSList(), makeSList());
 		addEventRefines(eet, "evt");
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac =  createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -176,7 +176,7 @@ public class TestAccuracy extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("m:∣ m'>m"));
 		addEventRefines(evt, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

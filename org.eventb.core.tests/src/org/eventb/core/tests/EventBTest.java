@@ -492,10 +492,10 @@ public abstract class EventBTest extends BuilderTest {
 			deltas.add(event.getDelta());
 		}
 
-		public void assertNotChanged(IRodinFile... rfs) {
-			for (IRodinFile rf : rfs) {
+		public void assertNotChanged(IEventBRoot... roots) {
+			for (IEventBRoot root : roots) {
 				for (IRodinElementDelta delta : deltas) {
-					assertNotChanged(delta, rf);
+					assertNotChanged(delta, root.getRodinFile());
 				}
 			}
 		}
@@ -514,7 +514,7 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
-	protected void runBuilderNotChanged(IRodinFile... rfs) throws CoreException {
+	protected void runBuilderNotChanged(IEventBRoot... rfs) throws CoreException {
 		final DeltaListener listener = new DeltaListener();
 		RodinCore.addElementChangedListener(listener);
 		super.runBuilder();

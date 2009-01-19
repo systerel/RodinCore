@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.sc;
+
+import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
@@ -47,11 +49,11 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 	}
 
 	public void save(IContextRoot element) throws RodinDBException {
-		element.getRodinFile().save(null, true);
+		saveRodinFileOf(element);
 	}
 
 	public void containsMarkers(IContextRoot element, boolean yes) throws CoreException {
-		test.containsMarkers(element.getRodinFile(), yes);
+		test.containsMarkers(element, yes);
 	}
 
 	public IRodinElement[] getIdents(IContextRoot element) throws RodinDBException {

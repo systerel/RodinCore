@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class TestMachineSeesContext extends EventBPOTest {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -43,7 +43,7 @@ public class TestMachineSeesContext extends EventBPOTest {
 		typeEnvironment.addGivenSet("S1");
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

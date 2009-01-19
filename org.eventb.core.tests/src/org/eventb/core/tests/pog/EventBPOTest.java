@@ -30,7 +30,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -107,8 +106,7 @@ public abstract class EventBPOTest extends EventBTest {
 		
 		Set<String> nameSet = new HashSet<String>(43);
 		
-		IRodinFile file = sequent.getRodinFile();
-		IPORoot root = (IPORoot) file.getRoot();
+		IPORoot root = (IPORoot) sequent.getRoot();
 		
 		getIdentifiersFromPredSets(nameSet, root, predicateSet, true);
 		

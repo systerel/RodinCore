@@ -21,7 +21,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -96,7 +95,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 				"¬ x ∈ dom(g) ⇒ f(x) ∈ ℕ");
 		final ITypeEnvironment empty = mTypeEnvironment();
 		POUtil.addSequent(poRoot, PO1, "(fg)(x) ∈ ℕ", h0, empty);
-		poFile.save(null, true);
+		saveRodinFileOf(poRoot);
 	}
 
 	/**
@@ -140,10 +139,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 		assertNotDischarged(status);
 
 		enablePostTactic(tactics);
-		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
-		final IUserSupport us = usm.newUserSupport();
+		final IUserSupport us = newUserSupport(psRoot);
 		try {
-			us.setInput(psRoot.getRodinFile());
 			us.setCurrentPO(status, null);
 			assertTrue(us.getCurrentPO().isClosed());
 		} finally {

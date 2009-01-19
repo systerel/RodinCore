@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,14 +34,14 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		final IPORoot po = root.getPORoot();
 		
 		addCarrierSets(root, makeSList("S1"));
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 
 		runBuilder();
 
 		root.getCarrierSets()[0].setComment("foo", null);
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 
-		runBuilderNotChanged(sc.getRodinFile(), po.getRodinFile());
+		runBuilderNotChanged(sc, po);
 	}
 
 	/**
@@ -54,22 +54,21 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 				.getSCContextRoot();
 		final IPORoot poAbs = rootAbs.getPORoot();
 		addCarrierSets(rootAbs, makeSList("S1"));
-		rootAbs.getRodinFile().save(null, true);
+		saveRodinFileOf(rootAbs);
 
 		final IContextRoot rootCon = createContext("con");
 		final ISCContextRoot scCon = rootCon.getSCContextRoot();
 		final IPORoot poCon = rootCon.getPORoot();
 		addContextExtends(rootCon, "abs");
 		addCarrierSets(rootCon, makeSList("S11"));
-		rootCon.getRodinFile().save(null, true);
+		saveRodinFileOf(rootCon);
 
 		runBuilder();
 
 		rootAbs.getCarrierSets()[0].setComment("foo", null);
-		rootAbs.getRodinFile().save(null, true);
+		saveRodinFileOf(rootAbs);
 
-		runBuilderNotChanged(scAbs.getRodinFile(), poAbs.getRodinFile(), scCon
-				.getRodinFile(), poCon.getRodinFile());
+		runBuilderNotChanged(scAbs, poAbs, scCon, poCon);
 	}
 
 	/**
@@ -83,14 +82,14 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈BOOL"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
 		mac.getVariables()[0].setComment("foo", null);
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
-		runBuilderNotChanged(sc.getRodinFile(), po.getRodinFile());
+		runBuilderNotChanged(sc, po);
 	}
 
 	/**
@@ -103,22 +102,21 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		final IPORoot poAbs = abs.getPORoot();
 		addVariables(abs, makeSList("V1"));
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈BOOL"));
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		final IMachineRoot con = createMachine("con");
 		final ISCMachineRoot scCon = con.getSCMachineRoot();
 		final IPORoot poCon = con.getPORoot();
 		addMachineRefines(con, "abs");
 		addVariables(con, makeSList("V1"));
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 
 		abs.getVariables()[0].setComment("foo", null);
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
-		runBuilderNotChanged(scAbs.getRodinFile(), poAbs.getRodinFile(), scCon
-				.getRodinFile(), poCon.getRodinFile());
+		runBuilderNotChanged(scAbs, poAbs, scCon, poCon);
 	}
 
 }

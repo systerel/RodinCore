@@ -160,7 +160,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	public void testBrokenNoPO() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		poRoot.getSequent(PO1).delete(false, null);
-		poRoot.getRodinFile().save(null, false);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		assertTrue(pa.isBroken());
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -72,7 +72,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -105,7 +105,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -138,7 +138,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -176,7 +176,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("L1", powIntType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -223,7 +223,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("L1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -267,7 +267,7 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -306,7 +306,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
 				makeSList("A1"), makeSList("V1 :∈ L1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -346,7 +346,7 @@ public class TestMachineEvents extends EventBPOTest {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -366,7 +366,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("C1", given("S1"));
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -406,7 +406,7 @@ public class TestMachineEvents extends EventBPOTest {
 		typeEnvironment.addName("V2", boolType);
 		typeEnvironment.addName("V3", powIntType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -464,7 +464,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("v"), 
 				makeSList("g1"), makeSList(g1), 
 				makeSList("a1"), makeSList("x ≔ x + v"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 	
 		runBuilder();
 
@@ -504,7 +504,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), 
 				makeSList("g1", "g2"), makeSList(g1, g2), 
 				makeSList("a1"), makeSList("x ≔ x + 1"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 	
 		runBuilder();
 
@@ -552,7 +552,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), 
 				makeSList("g1", "g2", "g3"), makeSList(g1, g2, g3), 
 				makeSList("a1"), makeSList("x ≔ x + 1"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 	
 		runBuilder();
 
@@ -599,7 +599,7 @@ public class TestMachineEvents extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

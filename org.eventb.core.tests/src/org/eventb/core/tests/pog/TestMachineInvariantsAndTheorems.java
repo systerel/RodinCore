@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 		
 		addTheorems(ctx, makeSList("N0"), makeSList("2>9"));
 		
-		ctx.getRodinFile().save(null, true);
+		saveRodinFileOf(ctx);
 		
 		IMachineRoot mac = createMachine("mac");
 
@@ -38,7 +38,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 		addInvariants(mac, makeSList("N1"), makeSList("7<1"));
 		addTheorems(mac, makeSList("T1"), makeSList("1<0"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -59,13 +59,13 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 		
 		addTheorems(abs, makeSList("T0"), makeSList("5>9"));	
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IContextRoot ctx = createContext("ctx");
 		
 		addTheorems(ctx, makeSList("N0"), makeSList("2>9"));
 		
-		ctx.getRodinFile().save(null, true);
+		saveRodinFileOf(ctx);
 		
 
 		IMachineRoot mac = createMachine("mac");
@@ -75,7 +75,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 		addInvariants(mac, makeSList("N1"), makeSList("7<1"));
 		addTheorems(mac, makeSList("T1"), makeSList("1<0"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

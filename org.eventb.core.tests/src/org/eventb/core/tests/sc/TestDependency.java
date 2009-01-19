@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.rodinp.core.IRodinFile;
 
 /**
  * @author Stefan Hallerstede
@@ -27,31 +26,30 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	public void testDep_01_checkMarkersDeleted() throws Exception {
 		IContextRoot con = createContext("con");
 
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
 		IMachineRoot mac = (IMachineRoot) createMachine("mac");
-		IRodinFile macFile = mac.getRodinFile();
 		
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
 
-		macFile.save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
-		containsMarkers(macFile, true);
+		containsMarkers(mac, true);
 		
 		addCarrierSets(con, makeSList("S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(macFile, false);
+		containsMarkers(mac, false);
 
 	}
 	
@@ -60,7 +58,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		
 		addContextExtends(con, "abs");
 
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -68,7 +66,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		
 		IContextRoot abs = createContext("abs");
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -77,10 +75,9 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	
 	public void testDep_03_nonexistentAbstractMachine() throws Exception {
 		IMachineRoot con = createMachine("con");
-		IRodinFile conFile = con.getRodinFile();
 		addMachineRefines(con, "abs");
 
-		conFile.save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -88,7 +85,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot abs = createMachine("abs");
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -97,10 +94,9 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	
 	public void testDep_03_nonexistentSeenContext() throws Exception {
 		IMachineRoot con = createMachine("con");
-		IRodinFile conFile = con.getRodinFile();
 		addMachineSees(con, "abs");
 
-		conFile.save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -108,7 +104,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		
 		IContextRoot abs = createContext("abs");
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		

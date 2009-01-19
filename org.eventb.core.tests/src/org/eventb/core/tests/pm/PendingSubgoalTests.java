@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.eventb.internal.core.pm.UserSupport;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -107,9 +106,9 @@ public class PendingSubgoalTests extends TestPM {
 	}
 	
 	// Handles to the proof files
-	IPORoot poFile;
-	IPSRoot psFile;
-	IPRRoot prFile;
+	IPORoot poRoot;
+	IPSRoot psRoot;
+	IPRRoot prRoot;
 
 	// UserSupport for the proof files
 	IUserSupport userSupport;
@@ -117,13 +116,13 @@ public class PendingSubgoalTests extends TestPM {
 	private IPORoot createPOFile() throws RodinDBException {
 		IRodinFile file = rodinProject.getRodinFile("x.bpo");
 		file.create(true, null);
-		poFile = (IPORoot) file.getRoot();
-		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poFile, "hyp0", null,
+		poRoot = (IPORoot) file.getRoot();
+		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"));
-		POUtil.addSequent(poFile, "PO1", G.toString(), hyp0,
+		POUtil.addSequent(poRoot, "PO1", G.toString(), hyp0,
 				mTypeEnvironment());
 		file.save(null, true);
-		return poFile;
+		return poRoot;
 	}
 	
 	@Override
@@ -138,28 +137,24 @@ public class PendingSubgoalTests extends TestPM {
 //				.setPostTactics(
 //						new String[] { "org.eventb.core.seqprover.normTac" });
 
-		poFile = createPOFile();
-		prFile = poFile.getPRRoot();
-		psFile = poFile.getPSRoot();
+		poRoot = createPOFile();
+		prRoot = poRoot.getPRRoot();
+		psRoot = poRoot.getPSRoot();
 
 		enableAutoProver(true);
 		runBuilder();
 
-		userSupport = new UserSupport();
-		userSupport.setInput(psFile.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poFile.getRodinFile().delete(true, null);
-		prFile.getRodinFile().delete(true, null);
-		psFile.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
 	private void setCurrentPO(String poName) throws RodinDBException {
-		userSupport.setCurrentPO(psFile.getStatus(poName), null);
+		userSupport.setCurrentPO(psRoot.getStatus(poName), null);
 		IProofState ps = userSupport.getCurrentPO();
 		assertNotNull("PO not found", ps);
 	}

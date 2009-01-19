@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class TestMachineInit extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -67,7 +67,7 @@ public class TestMachineInit extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -80,7 +80,7 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔2"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -111,7 +111,7 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList("A1"), makeSList("x≔0"));
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		runBuilder();
 		
 		IMachineRoot con = createMachine("con");
@@ -122,7 +122,7 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("y ≔ 1"));
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		runBuilder();
 		
 		IPORoot po = con.getPORoot();

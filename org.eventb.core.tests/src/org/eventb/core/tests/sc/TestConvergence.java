@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		IEvent gvt = addEvent(mac, "gvt");
 		setConvergent(gvt);
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -53,7 +53,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		isAnticipated(events[2]);
 		isConvergent(events[3]);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		IEvent gvt = addEvent(mac, "gvt");
 		setConvergent(gvt);
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -98,7 +98,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -116,7 +116,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setOrdinary(mgvt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -128,7 +128,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		isOrdinary(events[2]);
 		isOrdinary(events[3]);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -162,7 +162,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setAnticipated(mgvt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -190,7 +190,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -207,7 +207,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mgvt, "gvt");
 		setConvergent(mgvt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -235,7 +235,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent gvt = addEvent(abs, "gvt");
 		setConvergent(gvt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -248,7 +248,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mevt, "gvt");
 		setConvergent(mevt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -270,7 +270,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setOrdinary(init);
 		addVariant(mac, "1");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -279,7 +279,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		isOrdinary(events[0]);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setAnticipated(init);
 		addVariant(mac, "1");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -314,7 +314,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		setConvergent(init);
 		addVariant(mac, "1");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -338,7 +338,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(abs, "evt");
 		setConvergent(evt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -349,7 +349,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		addEventRefines(mevt, "evt");
 		setConvergent(mevt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -358,7 +358,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		isConvergent(events[1]);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -372,11 +372,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(abs, "evt");
 		setConvergent(evt);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
+		containsMarkers(abs, false);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -387,7 +387,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IEvent mfvt = addEvent(mac, "fvt");
 		setConvergent(mfvt);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -442,11 +442,11 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 			IEvent fvt = addEvent(abs, "fvt");
 			fvt.setConvergence(cvgs[1], null);
 
-			abs.getRodinFile().save(null, true);
+			saveRodinFileOf(abs);
 
 			runBuilder();
 
-			containsMarkers(abs.getRodinFile(), false);
+			containsMarkers(abs, false);
 
 			IMachineRoot mac = createMachine("mac");
 			addMachineRefines(mac, "abs");
@@ -457,7 +457,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 			addEventRefines(mevt, "evt", "fvt");
 			mevt.setConvergence(cvgs[2], null);
 
-			mac.getRodinFile().save(null, true);
+			saveRodinFileOf(mac);
 
 			runBuilder();
 
@@ -472,7 +472,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 				isOrdinary(events[1]);
 			}
 			if (cvgs[0] == cvgs[2] && cvgs[1] == cvgs[2]) {
-				containsMarkers(mac.getRodinFile(), false);			
+				containsMarkers(mac, false);			
 			} else {
 				IRefinesEvent[] refinesClauses = mevt.getRefinesClauses();
 				hasMarker(refinesClauses[0], EventBAttributes.TARGET_ATTRIBUTE);

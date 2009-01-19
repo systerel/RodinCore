@@ -15,9 +15,9 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
-import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -28,11 +28,11 @@ import org.rodinp.core.RodinDBException;
 public class TestUserSupportManagers extends TestPM {
 
 	public void testUserSupportManager() throws RodinDBException, CoreException {
-		IPORoot poRoot1 = createPOFile("x");
-		IPSRoot psRoot1 = poRoot1.getPSRoot();
+		final IPORoot poRoot1 = createPOFile("x");
+		final IRodinFile psFile1 = poRoot1.getPSRoot().getRodinFile();
 
-		IPORoot poRoot2 = createPOFile("y");
-		IPSRoot psRoot2 = poRoot2.getPSRoot();
+		final IPORoot poRoot2 = createPOFile("y");
+		final IRodinFile psFile2 = poRoot2.getPSRoot().getRodinFile();
 
 		runBuilder();
 
@@ -50,11 +50,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
-		userSupport1.setInput(psRoot1.getRodinFile());
+		userSupport1.setInput(psFile1);
 
 		assertEquals(
 				"The input for first user support has been set correctly ",
-				psRoot1.getRodinFile(), userSupport1.getInput());
+				psFile1, userSupport1.getInput());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -70,11 +70,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The second user support is stored ", userSupports
 				.contains(userSupport2));
 
-		userSupport2.setInput(psRoot2.getRodinFile());
+		userSupport2.setInput(psFile2);
 
 		assertEquals(
 				"The input for second user support has been set correctly ",
-				psRoot2.getRodinFile(), userSupport2.getInput());
+				psFile2, userSupport2.getInput());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();

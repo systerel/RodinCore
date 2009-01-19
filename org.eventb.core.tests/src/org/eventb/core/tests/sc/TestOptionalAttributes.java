@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		public abstract void createFile() throws Exception;
 		public abstract void removeAttr() throws Exception;
 		public void saveFile() throws Exception {
-			f.getRodinFile().save(null, true);
+			saveRodinFileOf(f);
 		}
 		public abstract void checkAttr() throws Exception;
 	}
@@ -79,9 +79,9 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(e, makeSList("a"), makeSList("⊤"));
 		addInitialisation(m, "v");
 		
-		a.getRodinFile().save(null, true);
-		c.getRodinFile().save(null, true);
-		m.getRodinFile().save(null, true);
+		saveRodinFileOf(a);
+		saveRodinFileOf(c);
+		saveRodinFileOf(m);
 		
 		return m;
 	}
@@ -95,8 +95,8 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		addAxioms(c, makeSList("A"), makeSList("C∈S"));
 		addTheorems(c, makeSList("T"), makeSList("⊤"));
 		
-		a.getRodinFile().save(null, true);
-		c.getRodinFile().save(null, true);
+		saveRodinFileOf(a);
+		saveRodinFileOf(c);
 		
 		return c;
 	}
@@ -110,7 +110,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		containsMarkers(m.getRodinFile(), false);
+		containsMarkers(m, false);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		containsMarkers(c.getRodinFile(), false);
+		containsMarkers(c, false);
 	}
 	
 	private OptAttrTest<?>[] tests = new OptAttrTest[] {

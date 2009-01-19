@@ -22,7 +22,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.eventb.internal.core.pm.UserSupport;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -74,7 +73,6 @@ public class TestUserSupportChanges extends TestPM {
 		// Turn on beginner mode
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
 		enableAutoProver(true);
-		userSupport = new UserSupport();
 	}
 
 	@Override
@@ -87,9 +85,6 @@ public class TestUserSupportChanges extends TestPM {
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poRoot.getRodinFile().delete(true, null);
-		prRoot.getRodinFile().delete(true, null);
-		psRoot.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
@@ -99,10 +94,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -141,10 +136,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -186,10 +181,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil
@@ -243,10 +238,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		String original = userSupport.toString();
@@ -269,10 +264,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
@@ -319,10 +314,10 @@ public class TestUserSupportChanges extends TestPM {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -379,10 +374,10 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil
 				.addSequent(poRoot, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -450,10 +445,10 @@ public class TestUserSupportChanges extends TestPM {
 		POUtil
 				.addSequent(poRoot, reusablePO, "x = 2", hyp1,
 						mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO

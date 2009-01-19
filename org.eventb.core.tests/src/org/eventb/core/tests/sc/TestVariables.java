@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		addCarrierSets(con, makeSList("S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -46,7 +46,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -64,7 +64,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addConstants(con, makeSList("C1"));
 		addAxioms(con, makeSList("A1"), makeSList("C1∈BOOL"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -87,7 +87,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addVariables(mac, makeSList("C1"));
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -117,7 +117,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addVariables(abs, makeSList("V1"));
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -127,7 +127,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		addVariables(mac, makeSList("V1"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -140,7 +140,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -151,37 +151,37 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addVariables(m0, "v1");
 		addInvariants(m0, makeSList("I1"), makeSList("v1 ∈ ℕ"));
 		addInitialisation(m0, "v1");
-		m0.getRodinFile().save(null, true);
+		saveRodinFileOf(m0);
 		
 		final IMachineRoot m1 = createMachine("m1");
 		addMachineRefines(m1, "m0");
 		addVariables(m1, "v2");
 		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"));
 		addInitialisation(m1, "v2");
-		m1.getRodinFile().save(null, true);
+		saveRodinFileOf(m1);
 
 		final IMachineRoot m2 = createMachine("m2");
 		addMachineRefines(m2, "m1");
 		addVariables(m2, "v1");
 		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"));
 		addInitialisation(m2, "v1");
-		m2.getRodinFile().save(null, true);
+		saveRodinFileOf(m2);
 		
 		runBuilder();
 
 		final ISCMachineRoot m0c = m0.getSCMachineRoot();
 		containsVariables(m0c, "v1");
-		containsMarkers(m0c.getRodinFile(), false);
+		containsMarkers(m0c, false);
 
 		final ISCMachineRoot m1c = m1.getSCMachineRoot();
 		containsVariables(m1c, "v1", "v2");
 		forbiddenVariables(m1c, "v1");
-		containsMarkers(m1c.getRodinFile(), false);
+		containsMarkers(m1c, false);
 		
 		final ISCMachineRoot m2c = m2.getSCMachineRoot();
 		containsVariables(m2c, "v1", "v2");
 		forbiddenVariables(m2c, "v1", "v2");
-		containsMarkers(m2.getRodinFile(), true);
+		containsMarkers(m2, true);
 		
 		ISCEvent[] events = getSCEvents(m2c, IEvent.INITIALISATION);
 		containsActions(events[0], emptyEnv, makeSList(), makeSList());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 		addAxioms(root, makeSList("A"), makeSList("x∈ℕ"));
 		
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 		
 		runBuilder();
 		
@@ -44,7 +44,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 		addTheorems(root, makeSList("T"), makeSList("x∈ℕ"));
 		
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 		
 		runBuilder();
 		
@@ -59,18 +59,18 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 		isNotAccurate(abs.getSCContextRoot());
 	}
 
@@ -82,7 +82,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 		addInvariants(con, makeSList("I"), makeSList("x∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -97,7 +97,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 
 		addTheorems(con, makeSList("T"), makeSList("x∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -112,18 +112,18 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineSees(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 		isNotAccurate(con.getSCMachineRoot());
 	}
 
@@ -135,18 +135,18 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 		isNotAccurate(con.getSCMachineRoot());
 	}
 
@@ -162,7 +162,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -190,7 +190,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -202,7 +202,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("x"), makeSList("y"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -222,7 +222,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -233,7 +233,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -253,7 +253,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A"), makeSList("x≔0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -272,7 +272,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
 		addInitialisation(con);
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -294,7 +294,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -305,7 +305,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addExtendedEvent(con, "fvt");
 		addEventRefines(fvt, "fvt");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -324,13 +324,13 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		addTheorems(abs, makeSList("T"), makeSList("1<0"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IContextRoot bbs = createContext("bbs");
 		
 		addTheorems(bbs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		bbs.getRodinFile().save(null, true);
+		saveRodinFileOf(bbs);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
@@ -338,11 +338,11 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 		isNotAccurate(con.getSCContextRoot());
 	}
 
@@ -356,25 +356,25 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IContextRoot bbs = createContext("bbs");
 		addContextExtends(bbs, "abs");
 	
 		addTheorems(bbs, makeSList("T"), makeSList("1<0"));
 		
-		bbs.getRodinFile().save(null, true);
+		saveRodinFileOf(bbs);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "bbs");
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 		isNotAccurate(abs.getSCContextRoot());
 	}
 
@@ -398,7 +398,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		setAnticipated(fvt);
 		addVariant(con, "x");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -426,7 +426,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		setAnticipated(fvt);
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -449,7 +449,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		setOrdinary(evt);
 		addVariant(abs, "1");
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -461,7 +461,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		setConvergent(fvt);
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -482,7 +482,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
@@ -493,7 +493,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList());
 		addEventRefines(fvt, "evt");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -513,7 +513,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 				makeSList("G"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		

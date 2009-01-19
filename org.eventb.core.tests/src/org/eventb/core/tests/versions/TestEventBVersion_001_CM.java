@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton and others.
+ * Copyright (c) 2009 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	public void testVersion_03_contextSC() throws Exception {
 		IContextRoot root = createContext("ctx");
 		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 		
 		runBuilder();
 		
@@ -98,7 +98,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	public void testVersion_04_machineSC() throws Exception {
 		IMachineRoot root = createMachine("mch");
 		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);
-		root.getRodinFile().save(null, true);
+		saveRodinFileOf(root);
 		
 		runBuilder();
 		

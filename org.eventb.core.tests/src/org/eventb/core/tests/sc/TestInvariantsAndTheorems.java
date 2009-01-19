@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		IContextRoot con =  createContext("con");
 		addCarrierSets(con, "S1");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -42,7 +42,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -61,7 +61,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		IContextRoot con =  createContext("con");
 		addCarrierSets(con, "S1");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -76,7 +76,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 				makeSList("I1", "I2", "I3", "I4"), 
 				makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

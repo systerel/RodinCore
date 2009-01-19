@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addCarrierSets(con, makeSList("S1"));
 		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -49,7 +49,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"));
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -60,7 +60,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
 		
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		runBuilder();
 		
@@ -70,7 +70,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(con, makeSList("C2"));
 		addAxioms(con, makeSList("A1"), makeSList("C2∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -82,7 +82,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		containsConstants(contexts[0], "C1");
 
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(abs1, makeSList("C1"));
 		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
 		
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		runBuilder();
 		
@@ -104,7 +104,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(con, makeSList("C1"));
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -132,7 +132,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("d", factory.makeIntegerType());
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -141,7 +141,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		containsConstants(file, "d");
 		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -151,19 +151,19 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		final IContextRoot root1 = createContext("c1");
 		addConstants(root1, makeSList("C1"));
 		addAxioms(root1, makeSList("A1"), makeSList("C1∈ℕ"));
-		root1.getRodinFile().save(null, true);
+		saveRodinFileOf(root1);
 		runBuilder();
 		
 		final IContextRoot root2 = createContext("c2");
 		addContextExtends(root2, root1.getComponentName());
-		root2.getRodinFile().save(null, true);
+		saveRodinFileOf(root2);
 		runBuilder();
 
 		final IContextRoot root3 = createContext("c3");
 		addContextExtends(root3, root2.getComponentName());
 		addConstants(root3, makeSList("C1"));
 		addAxioms(root3, makeSList("A1"), makeSList("C1∈ℕ"));
-		root3.getRodinFile().save(null, true);
+		saveRodinFileOf(root3);
 		runBuilder();
 
 		final ISCContextRoot file = root3.getSCContextRoot();

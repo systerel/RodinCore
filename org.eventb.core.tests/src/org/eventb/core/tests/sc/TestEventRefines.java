@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(abs);
 		addEvent(abs, "evt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -44,7 +44,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -53,7 +53,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -65,7 +65,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(abs);
 		addEvent(abs, "evt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -77,7 +77,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt2 = addEvent(mac, "evt2");
 		addEventRefines(evt2, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -88,7 +88,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		refinesEvents(events[1], "evt");
 		refinesEvents(events[2], "evt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -102,7 +102,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"),
 				makeSList("L1∈ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -113,7 +113,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("L1∈ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -123,7 +123,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		refinesEvents(events[1], "evt");
 		containsParameters(events[1], "L1");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -136,7 +136,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("L1"), makeSList("G1"),
 				makeSList("L1∈ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -146,7 +146,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("L1⊆ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -172,7 +172,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("L1", "L3"), makeSList("G1", "G3"),
 				makeSList("L1∈ℕ", "L3∈ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -182,7 +182,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("L2⊆ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("L1"), makeSList("L1∈L2"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -216,7 +216,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -228,7 +228,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("L2∈ℕ"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=L2"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -246,7 +246,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"),
 				makeSList("V1'=L2"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -262,7 +262,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -276,7 +276,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList("A2"), makeSList("V2:∣V2'⊆ℕ"));
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'∈V2'"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -295,7 +295,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsWitnesses(events[1], typeEnvironment, makeSList("V1'"),
 				makeSList("V1'∈V2'"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -307,7 +307,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("L1", "L3"), makeSList("G1", "G3"),
 				makeSList("L1∈ℕ", "L3∈ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -317,7 +317,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				"G1", "G2"), makeSList("L1=1", "L2⊆ℕ"), makeSList(),
 				makeSList());
 		addEventRefines(evt, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -349,7 +349,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -362,7 +362,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		IEvent gvt = addEvent(mac, "gvt");
 		addEventRefines(gvt, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -374,7 +374,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		refinesEvents(events[2], "evt");
 		refinesEvents(events[3], "evt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -387,7 +387,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -397,7 +397,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(mac, "evt");
 		addEventRefines(evt, "evt");
 		addEventRefines(evt, "fvt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -406,7 +406,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt", "fvt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -418,7 +418,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(abs);
 		addEvent(abs, "evt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -427,7 +427,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		IEvent event = addExtendedEvent(mac, "evt");
 		addEventRefines(event, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -436,7 +436,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 		refinesEvents(events[1], "evt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -447,7 +447,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, "evt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -457,7 +457,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addExtendedEvent(mac, "fvt");
 		addEventRefines(fvt, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -479,7 +479,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt");
 		addEvent(abs, "fvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -491,7 +491,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent fvt = addEvent(mac, "fvt");
 		addEventRefines(fvt, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -514,7 +514,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "fvt");
 		addEvent(abs, "gvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -527,7 +527,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		addEventRefines(fvt, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -552,7 +552,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "gvt");
 		addEvent(abs, "hvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -568,7 +568,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(hvt, "hvt");
 		addEvent(mac, "ivt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -581,7 +581,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		refinesEvents(events[3], "hvt");
 		refinesEvents(events[4]);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -595,7 +595,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "gvt");
 		addEvent(abs, "hvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -610,7 +610,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(hvt, "hvt");
 		IEvent ivt = addEvent(mac, "ivt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -632,7 +632,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, IEvent.INITIALISATION);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -640,7 +640,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addEvent(mac, IEvent.INITIALISATION);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -649,7 +649,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		refinesEvents(events[0], IEvent.INITIALISATION);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 
 	}
 
@@ -661,7 +661,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, IEvent.INITIALISATION);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -670,7 +670,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent init = addEvent(mac, IEvent.INITIALISATION);
 		addEventRefines(init, IEvent.INITIALISATION);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -690,7 +690,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, IEvent.INITIALISATION);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -698,7 +698,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addExtendedEvent(mac, IEvent.INITIALISATION);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -707,7 +707,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		refinesEvents(events[0], IEvent.INITIALISATION);
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -718,7 +718,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, IEvent.INITIALISATION);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -728,7 +728,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, IEvent.INITIALISATION);
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -751,7 +751,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "gvt");
 		addEvent(abs, "hvt");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -769,7 +769,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(gvt, "evt");
 		IEvent fvt = addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -801,7 +801,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"),
 				makeSList("y∈BOOL"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -815,7 +815,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "hvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -823,7 +823,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -841,7 +841,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "hvt", makeSList("y"), makeSList("G1"),
 				makeSList("y∈BOOL"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -853,7 +853,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "hvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -884,7 +884,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("y∈BOOL"), makeSList("A2", "A1"), makeSList("q:∈ℕ",
 						"p≔TRUE"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -899,7 +899,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "hvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -907,7 +907,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		getSCEvents(file, IEvent.INITIALISATION, "evt", "fvt");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -927,7 +927,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("y∈BOOL"), makeSList("A1", "A2"), makeSList("q:∈ℕ",
 						"p≔TRUE"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -939,7 +939,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "hvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -963,7 +963,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1"), makeSList("p:∈{x}"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -976,7 +976,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		addEventWitnesses(fvt, makeSList("x"), makeSList("x=p"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -990,7 +990,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsWitnesses(events[1], typeEnvironment, makeSList("x"),
 				makeSList("x=p"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -1005,7 +1005,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1"), makeSList("p:∈{x}"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1021,7 +1021,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(fvt, "evt");
 		addEventWitnesses(fvt, makeSList("x"), makeSList("x=p"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1036,7 +1036,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsWitnesses(events[2], typeEnvironment, makeSList("x"),
 				makeSList("x=p"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -1051,7 +1051,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(
 				"A1", "A2"), makeSList("V1:∈ℕ", "V2:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1063,7 +1063,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("V1'=V2'+V3"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1092,14 +1092,14 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(abs);
 		addEvent(abs, "evt", makeSList("x"), makeSList("G"), makeSList("x∈ℕ"),
 				makeSList(), makeSList());
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addInitialisation(ref);
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 		runBuilder();
 
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -1111,7 +1111,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		containsWitnesses(events[1], emptyEnv, makeSList(), makeSList());
 
-		containsMarkers(ref.getRodinFile(), false);
+		containsMarkers(ref, false);
 	}
 
 	/*
@@ -1125,7 +1125,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(abs, "A");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G"), makeSList("x∈ℕ"),
 				makeSList("S"), makeSList("A≔A+1"));
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1133,7 +1133,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInvariants(ref, makeSList("J"), makeSList("A=B"));
 		addInitialisation(ref, "B");
 		IEvent evt = addExtendedEvent(ref, "evt");
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 		runBuilder();
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
@@ -1154,7 +1154,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("x", "y"), makeSList("G", "H"),
 				makeSList("x∈ℕ", "y∈ℕ"), makeSList("S", "T"), makeSList(
 						"A≔A+1", "B≔B+1"));
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1162,7 +1162,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInitialisation(ref, "A", "B");
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 		runBuilder();
 
 		ITypeEnvironment environment = factory.makeTypeEnvironment();
@@ -1180,7 +1180,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsActions(events[1], environment, makeSList("S", "T"), makeSList(
 				"A≔A+1", "B≔B+1"));
 
-		containsMarkers(ref.getRodinFile(), false);
+		containsMarkers(ref, false);
 	}
 
 	/*
@@ -1200,7 +1200,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("y∈BOOL"), makeSList("A1", "A2"), makeSList("p≔TRUE",
 						"q:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1211,7 +1211,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "gvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1238,7 +1238,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList("y∈BOOL"), makeSList("A1", "A2"), makeSList("p≔TRUE",
 						"q:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1255,7 +1255,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "gvt");
 		addEvent(mac, "fvt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1280,7 +1280,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
 		addInitialisation(abs, "p");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1294,7 +1294,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(mac, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A"), makeSList("p≔TRUE"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1304,7 +1304,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsActions(events[1], environment, makeSList("A"),
 				makeSList("p≔TRUE"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -1319,7 +1319,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("x", "y"), makeSList("G1", "G2"),
 				makeSList("x∈ℕ", "y∈ℕ"), makeSList("A1"), makeSList("p:∈{x}"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1333,7 +1333,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventWitnesses(fvt, makeSList("x", "y", "p'"), makeSList("x=p'",
 				"y=q'", "q'≠p'"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1360,7 +1360,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1372,7 +1372,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), makeSList());
 		addEventRefines(fvt, "evt");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1397,7 +1397,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1409,7 +1409,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList("A2", "A3"), makeSList("V1:∈ℕ", "V2≔V1"));
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("V1'"), makeSList("⊤"));
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1440,7 +1440,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList("G1"), makeSList("V1>0"),
 				makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -1451,7 +1451,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList("G2", "G3"),
 				makeSList("V1>0", "V2>0"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1482,7 +1482,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"),
 				makeSList("a ∈ ℕ"), makeSList("A"), makeSList("x ≔ a"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1496,7 +1496,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		addEventWitnesses(evt, makeSList("a"), makeSList("a÷1=y'"));
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "ref");
@@ -1506,13 +1506,13 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent evt1 = addExtendedEvent(con, "evt");
 		addEventRefines(evt1, "evt");
 
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), false);
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		containsMarkers(con, false);
 
 		ISCMachineRoot file = con.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1531,7 +1531,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"),
 				makeSList("a ∈ ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1542,12 +1542,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), true);
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1567,7 +1567,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList("G"), makeSList("1 ∈ ℕ"),
 				makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1582,12 +1582,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), true);
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1618,7 +1618,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A"), makeSList("x:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1632,12 +1632,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), true);
+		containsMarkers(abs, false);
+		containsMarkers(ref, true);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1666,7 +1666,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"),
 				makeSList("a ∈ ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1677,12 +1677,12 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1700,7 +1700,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"),
 				makeSList("a ∈ ℕ"), makeSList(), makeSList());
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1711,7 +1711,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
@@ -1719,8 +1719,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		environment.addName("a", intType);
 		environment.addName("b", intType);
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1741,7 +1741,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A"), makeSList("x≔x+1"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1754,7 +1754,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		runBuilder();
 
@@ -1762,8 +1762,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1784,7 +1784,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"), makeSList("a<x"),
 				makeSList("A"), makeSList("x≔x+1"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
@@ -1797,7 +1797,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt);
 		addEventRefines(evt, "evt");
 
-		ref.getRodinFile().save(null, true);
+		saveRodinFileOf(ref);
 
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "ref");
@@ -1810,7 +1810,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		setExtended(evt1);
 		addEventRefines(evt1, "evt");
 
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 
@@ -1822,9 +1822,9 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		environment.addName("b", intType);
 		environment.addName("c", intType);
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(ref.getRodinFile(), false);
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(ref, false);
+		containsMarkers(con, false);
 
 		ISCMachineRoot file = con.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
@@ -1845,14 +1845,14 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addEvent(abs, IEvent.INITIALISATION);
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		IEvent ini = addEvent(mac, IEvent.INITIALISATION);
 		setExtended(ini);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -1861,8 +1861,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION);
 		refinesEvents(events[0], IEvent.INITIALISATION);
 
-		containsMarkers(abs.getRodinFile(), false);
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(abs, false);
+		containsMarkers(mac, false);
 
 	}
 
@@ -1876,7 +1876,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEvent(abs, IEvent.INITIALISATION, makeSList(), makeSList(),
 				makeSList(), makeSList("A", "B"), makeSList("x:∈ℕ", "y:∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x", "y", "z");
@@ -1886,7 +1886,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList("B", "C"), makeSList("y:∈{0,1}", "z:∈ℕ"));
 		setExtended(ini);
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 		
@@ -1902,7 +1902,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsActions(events[0], environment, 
 				makeSList("A", "B", "C"), makeSList("x:∈ℕ", "y:∈ℕ", "z:∈ℕ"));
 
-		containsMarkers(abs.getRodinFile(), false);
+		containsMarkers(abs, false);
 
 		hasMarker(ini, EventBAttributes.EXTENDED_ATTRIBUTE);
 	}

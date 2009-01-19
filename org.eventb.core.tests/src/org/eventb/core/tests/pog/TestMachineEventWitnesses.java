@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("ax,ay :∣ ax'>ay' ∧ ax'=5 ∧ ay'=7"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -51,7 +51,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("A1", "A2"), makeSList("cx≔8", "ay ≔ 7"));
 		addEventWitnesses(event, makeSList("ax'"), makeSList("ax'=cx'+4"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -86,7 +86,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("pp⊆ℕ∖{0}"), 
 				makeSList("A1", "A2"), makeSList("ax:∈pp", "ay≔7"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -102,7 +102,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("pp", "ax'"), makeSList("cx÷qq∈pp", "ax'=qq÷ay'"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -163,7 +163,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("pp⊆ℕ"), 
 				makeSList("A1", "A2"), makeSList("ax:∈pp", "ay,az :∣ ay'=az'"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -181,7 +181,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("pp", "ax'", "ay'", "az'"), 
 				makeSList("qq∈pp∪{0}", "ax'=cx'", "ay'=cx'+ay'", "cz'=az'"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -237,7 +237,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("ax:∈{0,1}"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -255,7 +255,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("ax'"), 
 				makeSList("(qq=0 ⇒ ax'=cy') ∧ (qq'=1 ⇒ ax'=cy'+1)"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -291,7 +291,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				makeSList("G1"), makeSList("az>0"), 
 				makeSList("A1", "A2"), makeSList("ax:∈{0,1}", "ay≔1"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -311,7 +311,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 				// important: the types of cz' and az' cannot be inferred
 				makeSList("(cz'=az' ⇒ ax'=1) ∧ (cz'≠az' ⇒ ax'=0)"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 		

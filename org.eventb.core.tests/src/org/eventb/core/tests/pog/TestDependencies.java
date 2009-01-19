@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class TestDependencies extends EventBPOTest {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 
@@ -43,7 +43,7 @@ public class TestDependencies extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+1"));
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		runBuilder();
 		
 		IPORoot po = mac.getPORoot();
@@ -58,7 +58,7 @@ public class TestDependencies extends EventBPOTest {
 		
 		// check if abstract invariant propagates
 		addInvariants(abs, makeSList("I2"), makeSList("V1∈{2}"));
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		runBuilder();
 	
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈{1}", "V1∈{2}");	

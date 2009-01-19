@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -97,6 +98,10 @@ public abstract class BuilderTest extends TestCase {
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
 		return (ISCMachineRoot) result;
+	}
+	
+	public static void saveRodinFileOf(IInternalElement elem) throws RodinDBException {
+		elem.getRodinFile().save(null, false);
 	}
 	
 	protected void runBuilder() throws CoreException {

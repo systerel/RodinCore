@@ -39,6 +39,14 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupports extends TestPM {
 
+	private static final NullProgressMonitor monitor = new NullProgressMonitor();
+	
+	private IPORoot poRoot;
+
+	private IUserSupport userSupport;
+
+	private IPSRoot psRoot;
+
 	private void assertDischarged(IProofState state) throws RodinDBException {
 		assertTrue("PR " + state.getPSStatus().getElementName()
 				+ " should be closed", state.isClosed());
@@ -55,18 +63,20 @@ public class TestUserSupports extends TestPM {
 		// Turn on beginner mode
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
 		enableAutoProver(true);
+		
+		poRoot = createPOFile("x");
+		psRoot = poRoot.getPSRoot();
+		runBuilder();
+		userSupport = newUserSupport(psRoot);
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		userSupport.dispose();
+		super.tearDown();
 	}
 
 	public void testSetInput() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -80,40 +90,18 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO", states[states.length - 1],
 				userSupport.getCurrentPO());
-		userSupport.dispose();
 	}
 
 	public void testGetInput() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
+		final IUserSupport fresh = new UserSupport();
+		assertNull("Input for user support has not been set ", fresh.getInput());
+		fresh.dispose();
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		IRodinFile input = userSupport.getInput();
-
-		assertNull("Input for user support has not been set ", input);
-
-		userSupport.setInput(psRoot.getRodinFile());
-
-		input = userSupport.getInput();
-
+		final IRodinFile input = userSupport.getInput();
 		assertEquals("Input for user support has been set ", psRoot, input.getRoot());
-
-		userSupport.dispose();
 	}
 
 	public void testNextUndischargedPOUnforce() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		userSupport.loadProofStates();
 
 		// Checks that all POs are discharged except the last one.
@@ -138,21 +126,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-
-		userSupport.dispose();
 	}
 
 	public void testNextUndischargedPOForce() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
-
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -189,20 +165,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-
-		userSupport.dispose();
 	}
 
 	public void testPrevUndischargedPOUnforce() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		userSupport.loadProofStates();
 
 		IProofState[] states = userSupport.getPOs();
@@ -225,20 +190,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the first PO", states[0],
 				userSupport.getCurrentPO());
-
-		userSupport.dispose();
 	}
 
 	public void testPrevUndischargedPOForce() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -280,20 +234,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current Proof State is now the first PO", userSupport
 				.getCurrentPO(), states[0]);
-
-		userSupport.dispose();
 	}
 
 	public void testSetAndGetCurrentPO() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -314,20 +257,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current PO is the last PO again ",
 				states[states.length - 1], userSupport.getCurrentPO());
-
-		userSupport.dispose();
 	}
 
 	public void testGetPOs() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		userSupport.setInput(psRoot.getRodinFile());
-		
 		// Check that the POs are not yet loaded
 		assertEquals("There should be no PO loaded ", 0,
 				userSupport.getPOs().length);
@@ -337,20 +269,9 @@ public class TestUserSupports extends TestPM {
 		IProofState[] states = userSupport.getPOs();
 		assertEquals("There should be 7 POs ", 7, states.length);
 		// TODO add test on PO statuses?
-
-		userSupport.dispose();
 	}
 
 	public void testHasUnsavedChanges() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -378,20 +299,9 @@ public class TestUserSupports extends TestPM {
 
 		assertTrue("There are unsaved changes after pruning a proof ",
 				userSupport.hasUnsavedChanges());
-
-		userSupport.dispose();
 	}
 
 	public void testGetUnsavedPOs() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -429,9 +339,6 @@ public class TestUserSupports extends TestPM {
 		assertContain("The first PO is unsaved ", unsavedPOs, states[0]);
 		assertContain("The last PO is unsaved ", unsavedPOs,
 				states[states.length - 1]);
-
-		userSupport.dispose();
-
 	}
 
 	private void assertContain(String msg, IProofState[] unsavedPOs,
@@ -448,15 +355,6 @@ public class TestUserSupports extends TestPM {
 	}
 
 	public void testRemoveCachedHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -499,20 +397,9 @@ public class TestUserSupports extends TestPM {
 		userSupport.removeCachedHypotheses(hyps2);
 		cached = currentPO.getCached();
 		assertTrue("Cache is now empty ", cached.size() == 0);
-
-		userSupport.dispose();
 	}
 
 	public void testSearchHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -527,20 +414,9 @@ public class TestUserSupports extends TestPM {
 
 		searched = currentPO.getSearched();
 		assertTrue("Search is empty ", searched.size() == 0);
-
-		userSupport.dispose();
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -571,20 +447,9 @@ public class TestUserSupports extends TestPM {
 		userSupport.removeSearchedHypotheses(hyps13);
 		searched = currentPO.getSearched();
 		assertTrue("Search has no elements ", searched.size() == 0);
-
-		userSupport.dispose();
 	}
 
 	public void testSelectNode() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -618,20 +483,9 @@ public class TestUserSupports extends TestPM {
 
 		assertEquals("Current node is node 1 ", node1, currentPO
 				.getCurrentNode());
-
-		userSupport.dispose();
 	}
 
 	public void testApplyTactic() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -644,20 +498,9 @@ public class TestUserSupports extends TestPM {
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 		assertTrue("Node 2 is open ", node2.isOpen());
 		assertTrue("Node 2 is a child of node 1 ", node2.getParent() == node1);
-
-		userSupport.dispose();
 	}
 
 	public void testApplyTacticToHypothesis() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -679,20 +522,9 @@ public class TestUserSupports extends TestPM {
 
 		Collection<Predicate> cached = currentPO.getCached();
 		assertTrue("Hypothesis is added to the cache ", cached.contains(hyp1));
-
-		userSupport.dispose();
 	}
 
 	public void testBack() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -704,8 +536,6 @@ public class TestUserSupports extends TestPM {
 		userSupport.back(monitor);
 		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
 		assertTrue("Node 1 is open again ", node1.isOpen());
-
-		userSupport.dispose();
 	}
 
 }

@@ -52,6 +52,7 @@ import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
@@ -398,8 +399,8 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	public void containsMarkers(IRodinFile rodinFile, boolean yes) throws CoreException {
-		IFile file = rodinFile.getResource();
+	public void containsMarkers(IInternalElement element, boolean yes) throws CoreException {
+		IFile file = element.getResource();
 		IMarker[] markers = 
 			file.findMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 		

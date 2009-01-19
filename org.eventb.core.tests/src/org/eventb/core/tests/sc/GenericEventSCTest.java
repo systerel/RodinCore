@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -19,7 +21,6 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.GenericEventTest;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,8 +39,7 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public void containsMarkers(IEvent element, boolean yes) throws CoreException {
-		IRodinFile rodinFile = element.getRodinFile();
-		test.containsMarkers(rodinFile, yes);
+		test.containsMarkers(element, yes);
 	}
 
 	public void containsNonTheorems(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
@@ -60,7 +60,7 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public void save(IEvent element) throws RodinDBException {
-		element.getRodinFile().save(null, true);
+		saveRodinFileOf(element);
 	}
 
 	public IRodinElement[] getIdents(IEvent element) throws RodinDBException {

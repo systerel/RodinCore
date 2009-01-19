@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -163,6 +165,18 @@ public abstract class BasicTest extends TestCase {
 
 	protected static void disableAutoProver() {
 		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+	}
+	
+	protected static IUserSupport newUserSupport(IPSRoot psRoot) {
+		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
+		final IUserSupport us = usm.newUserSupport();
+		us.setInput(psRoot.getRodinFile());
+		return us;
+	}
+
+	protected static void saveRodinFileOf(IInternalElement elem)
+			throws RodinDBException {
+		elem.getRodinFile().save(null, false);
 	}
 
 	@Override

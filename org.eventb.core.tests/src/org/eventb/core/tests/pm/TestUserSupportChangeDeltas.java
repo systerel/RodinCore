@@ -23,7 +23,6 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.eventb.internal.core.pm.UserSupport;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -72,8 +71,6 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		// Turn on beginner mode
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
 		enableAutoProver(true);
-
-		userSupport = new UserSupport();
 	}
 
 	@Override
@@ -86,9 +83,6 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	@Override
 	protected void tearDown() throws Exception {
 		userSupport.dispose();
-		poRoot.getRodinFile().delete(true, null);
-		prRoot.getRodinFile().delete(true, null);
-		psRoot.getRodinFile().delete(true, null);
 		super.tearDown();
 	}
 
@@ -98,10 +92,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 
 		runBuilder();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		userSupport.loadProofStates();
 
 		startDeltas();
@@ -124,9 +118,9 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		userSupport.loadProofStates();
 
 		startDeltas();
@@ -149,9 +143,9 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		userSupport.loadProofStates();
 
 		startDeltas();
@@ -174,9 +168,9 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		startDeltas();
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, originalPO, dischargedPO);
 		assertDeltas("Changed: PO is not loaded ", "");
@@ -197,10 +191,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		startDeltas();
@@ -229,10 +223,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "1 = 1", hyp1,
 				mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -271,10 +265,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil
 				.addSequent(poRoot, reusablePO, "1 = 2", hyp1,
 						mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO
@@ -314,10 +308,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		POUtil
 				.addSequent(poRoot, reusablePO, "1 = 2", hyp1,
 						mTypeEnvironment());
-		poRoot.getRodinFile().save(null, true);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 		// Modified current PO

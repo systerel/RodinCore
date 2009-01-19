@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -37,7 +37,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(file, "S1");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S1", "S2"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -56,7 +56,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(file, "S1", "S2");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S1", "S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -87,7 +87,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S>", "k-1", "#"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -109,7 +109,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(abs, makeSList("S1"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -118,7 +118,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		addCarrierSets(con, makeSList("S2"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -130,7 +130,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(contexts[0], "S1");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -149,7 +149,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		addCarrierSets(con, makeSList("S1"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		

@@ -66,11 +66,10 @@ public class ProofComponentTests extends AbstractProofTests {
 	}
 
 	private void createPOFile() throws RodinDBException {
-		final IRodinFile poFile = poRoot.getRodinFile();
-		poFile.create(true, null);
+		poRoot.getRodinFile().create(true, null);
 		addSequent(poRoot, PO1, "⊤", null, mTypeEnvironment()); //$NON-NLS-1$
 		addSequent(poRoot, PO2, "⊥", null, mTypeEnvironment()); //$NON-NLS-1$
-		poFile.save(null, true);
+		saveRodinFileOf(poRoot);
 	}
 
 	private Set<IProofAttempt> filter(Set<IProofAttempt> set, String poName) {
@@ -170,7 +169,7 @@ public class ProofComponentTests extends AbstractProofTests {
 		assertLivePAs(pa);
 
 		poRoot.getSequent(PO1).delete(false, null);
-		poRoot.getRodinFile().save(null, false);
+		saveRodinFileOf(poRoot);
 		runBuilder();
 		assertLivePAs(pa);
 	}

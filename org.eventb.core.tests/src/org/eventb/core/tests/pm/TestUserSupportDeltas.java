@@ -30,9 +30,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.core.pm.UserSupport;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Unit tests for class {@link IUserSupportManager}
@@ -41,22 +38,34 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportDeltas extends TestPMDelta {
 
+	private static final NullProgressMonitor monitor = new NullProgressMonitor();
+
+	private IPORoot poRoot;
+	private IPSRoot psRoot;
+	private IUserSupport userSupport;
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
 		EventBPlugin.getPostTacticPreference().setEnabled(false);
 		enableAutoProver(true);
+		
+		poRoot = createPOFile("x");
+		psRoot = poRoot.getPSRoot();
+		runBuilder();
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		stopDeltas();
+		userSupport.dispose();
+		super.tearDown();
 	}
 
 	public void testSetInput() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IPSRoot psRoot = poRoot.getPSRoot();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
+		userSupport = EventBPlugin.getUserSupportManager().newUserSupport();
+		
 		startDeltas();
 		userSupport.setInput(psRoot.getRodinFile());
 		assertDeltas("No deltas should have been produced", "");
@@ -72,21 +81,10 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"  [+] PO5[org.eventb.core.psStatus] []\n" + 
 				"  [+] PO6[org.eventb.core.psStatus] []\n" + 
 				"  [+] PO7[org.eventb.core.psStatus] []");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
-	public void testNextUndischargedPOUnforce() throws RodinDBException,
-			CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
-
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
+	public void testNextUndischargedPOUnforce() throws CoreException {
+		userSupport = newUserSupport(psRoot);
 
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -113,21 +111,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO to the first PO",
 				"[*] x.bps [CURRENT|INFORMATION]\n"
 						+ "New current obligation (priority 2)");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
-	public void testNextUndischargedPOForce() throws RodinDBException,
-			CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+	public void testNextUndischargedPOForce() throws CoreException {
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -168,21 +156,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO to the first PO ",
 				"[*] x.bps [CURRENT|INFORMATION]\n"
 						+ "New current obligation (priority 2)");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
-	public void testUserSupportPrevUndischargedPOUnforce()
-			throws RodinDBException, CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+	public void testUserSupportPrevUndischargedPOUnforce() throws CoreException {
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -208,21 +186,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Previous PO to the first PO",
 				"[*] x.bps [CURRENT|INFORMATION]\n"
 						+ "New current obligation (priority 2)");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
-	public void testUserSupportPrevUndischargedPOForce()
-			throws RodinDBException, CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+	public void testUserSupportPrevUndischargedPOForce() throws CoreException {
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -262,20 +230,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Next PO to the first PO ",
 				"[*] x.bps [CURRENT|INFORMATION]\n"
 						+ "New current obligation (priority 2)");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testSetAndGetCurrentPO() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -305,21 +264,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		assertDeltas("Current PO is the last PO again ",
 				"[*] x.bps [CURRENT|INFORMATION]\n"
 						+ "New current obligation (priority 2)");
-
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testRemoveCachedHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -362,21 +311,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Removed hypotheses from cache (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE]");
-
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testSearchHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -393,20 +332,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Search hypotheses (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -440,20 +370,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Removed hypotheses from search (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testSelectNode() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -500,21 +421,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE]");
-
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testApplyTactic() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -526,20 +437,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "Tactic applied successfully (priority 2)\n"
 						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testApplyTacticHypothesis() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -564,21 +466,11 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "Tactic applied successfully (priority 2)\n"
 						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE|NODE|PROOFTREE]");
-
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 	public void testBacktrack() throws CoreException {
-		IPORoot poRoot = createPOFile("x");
-		IRodinFile psFile = poRoot.getPSRoot().getRodinFile();
+		userSupport = newUserSupport(psRoot);
 
-		runBuilder();
-
-		IUserSupport userSupport = new UserSupport();
-
-		NullProgressMonitor monitor = new NullProgressMonitor();
-		userSupport.setInput(psFile);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
@@ -593,9 +485,6 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "Tactic applied successfully (priority 2)\n"
 						+ "Select a new proof node (priority 1)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
-
-		stopDeltas();
-		userSupport.dispose();
 	}
 
 }

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.tests.BuilderTest.*;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,7 +42,7 @@ public class PSWrapperUtil {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPOSequent poSequent = poRoot.getSequent(name);
 					poSequent.delete(true, monitor);
-					poRoot.getRodinFile().save(monitor, true);
+					saveRodinFileOf(poRoot);
 				}
 
 			}, monitor);
@@ -55,7 +56,7 @@ public class PSWrapperUtil {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPSStatus psStatus = psRoot.getStatus(name);
 					psStatus.delete(true, monitor);
-					psRoot.getRodinFile().save(monitor, true);
+					saveRodinFileOf(psRoot);
 					// Do not remove the corresponding prProof
 				}
 
@@ -87,7 +88,7 @@ public class PSWrapperUtil {
 						}
 					}
 					poSequentFrom.copy(poRoot, poSibling, to, true, monitor);
-					poRoot.getRodinFile().save(monitor, true);
+					saveRodinFileOf(poRoot);
 				}
 
 			}, monitor);
@@ -114,7 +115,7 @@ public class PSWrapperUtil {
 						}
 					}
 					psStatusFrom.copy(psRoot, psSibling, to, true, monitor);
-					psRoot.getRodinFile().save(monitor, true);
+					saveRodinFileOf(psRoot);
 
 					IPRProof prProofFrom = prRoot.getProof(from);
 					// Find the correct sibling
@@ -130,7 +131,7 @@ public class PSWrapperUtil {
 						}
 					}
 					prProofFrom.copy(prRoot, prSibling, to, true, monitor);
-					prRoot.getRodinFile().save(monitor, true);
+					saveRodinFileOf(prRoot);
 				}
 
 			}, monitor);

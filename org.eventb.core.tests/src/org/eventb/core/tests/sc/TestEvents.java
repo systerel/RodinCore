@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 
 		addEvent(mac, "evt", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -41,7 +41,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsEvents(file, IEvent.INITIALISATION, "evt");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -54,7 +54,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		addEvent(mac, "evt2", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -62,7 +62,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsEvents(file, IEvent.INITIALISATION, "evt1", "evt2");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -74,7 +74,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		IEvent f = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -95,7 +95,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		addEvent(mac, "evt1", makeSList(), makeSList("G1"), makeSList("1∈ℕ"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -105,7 +105,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsGuards(scEvents[1], emptyEnv, makeSList("G1"), makeSList("1∈ℕ"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -117,7 +117,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		addEvent(mac, "evt1", makeSList(), makeSList("G1", "G2"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -127,7 +127,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsGuards(scEvents[1], emptyEnv, makeSList("G1", "G2"), makeSList("1∈ℕ", "2∈ℕ"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -141,7 +141,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 					makeSList(), 
 					makeSList("G1", "G1"), makeSList("1∈ℕ", "2∈ℕ"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -167,7 +167,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac);
 		addEvent(mac, "evt1", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -178,7 +178,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsParameters(scEvents[1], "L1");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/*
@@ -195,7 +195,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac, "V1");
 		addEvent(mac, "evt1", makeSList("L1"), makeSList("G1"), makeSList("L1∈V1"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -208,7 +208,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsParameters(scEvents[1], "L1");
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈V1"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -227,7 +227,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 					makeSList("L1"), 
 					makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -259,7 +259,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addEvent(mac, "evt1", makeSList("L2"), makeSList("G1"), makeSList("L2∈ℕ"), makeSList(), makeSList());
 		addEvent(mac, "evt2", makeSList("L2"), makeSList("G1"), makeSList("L2⊆ℕ"), makeSList(), makeSList());
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -275,7 +275,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsParameters(scEvents[2], "L2");
 		containsGuards(scEvents[2], typeEnvironment, makeSList("G1"), makeSList("L2⊆ℕ"));	
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -292,7 +292,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		addInitialisation(mac, "L1");
 		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList("A1"), makeSList("L1≔1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -304,7 +304,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsActions(scEvents[1], typeEnvironment, makeSList("A1"), makeSList("L1≔1"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 		
 	}
 	
@@ -322,7 +322,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), 
 				makeSList("A1","A1"), makeSList("L1≔1", "L1≔2"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -352,7 +352,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList("A1"), makeSList("1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -386,7 +386,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("G1"), makeSList("L1∈ℕ"), 
 				makeSList("A1"), makeSList("V1≔L1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -402,7 +402,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsGuards(scEvents[1], typeEnvironment, makeSList("G1"), makeSList("L1∈ℕ"));
 		containsActions(scEvents[1], typeEnvironment, makeSList("A1"), makeSList("V1≔L1"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -420,7 +420,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("G1"), makeSList("L1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔V1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -456,7 +456,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1:∣V1'∈ℕ"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -472,7 +472,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		containsGuards(scEvents[1], typeEnvironment, makeSList(), makeSList());
 		containsActions(scEvents[1], typeEnvironment, makeSList("A1"), makeSList("V1:∣V1'∈ℕ"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -492,7 +492,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("A1", "A2", "A3", "A4", "A5"), 
 				makeSList("u≔1", "v,w:∣⊤", "v≔1", "x≔u", "y,z,w≔v,w,1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -519,7 +519,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("G1"), makeSList("x∈ℕ"), 
 				makeSList(), makeSList());
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -549,7 +549,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("G1", "G2"), makeSList("x∈ℕ", "⊤"), 
 				makeSList(), makeSList());
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -579,7 +579,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ y'=x"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -607,7 +607,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ x'=1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -617,7 +617,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		containsActions(scEvents[0], typeEnvironment, makeSList("A1"), makeSList("x :∣ x'=1"));
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -635,7 +635,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ x=1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -663,7 +663,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList(), makeSList());
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -688,7 +688,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'=1"));
 	
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -706,7 +706,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'=2"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -732,7 +732,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'∈{1}"));
 	
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -751,7 +751,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				makeSList("A1"), makeSList("y≔2"));
 		addEventWitnesses(evt, makeSList("x'"), makeSList("x'=y−1"));
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

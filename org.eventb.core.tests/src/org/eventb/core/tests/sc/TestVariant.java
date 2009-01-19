@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		addVariant(mac, "1");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -38,7 +38,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		
 		containsVariant(file, emptyEnv, "1");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		addVariant(mac, "{TRUE}");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -57,7 +57,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		
 		containsVariant(file, emptyEnv, "{TRUE}");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 		addVariant(mac, "V1");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -81,7 +81,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		
 		containsVariant(file, typeEnvironment, "V1");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		addVariant(mac, "TRUE");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -111,7 +111,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
 
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -121,7 +121,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 		addVariant(mac, "V1+C1");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -133,7 +133,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		
 		containsVariant(file, typeEnvironment, "V1+C1");
 		
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addVariables(abs, "V0");
 		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
@@ -154,7 +154,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 		addVariant(mac, "V1+V0");
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

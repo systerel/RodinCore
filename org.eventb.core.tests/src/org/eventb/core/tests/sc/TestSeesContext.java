@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -48,7 +48,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1=C1"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -69,7 +69,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1=C1"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -78,15 +78,15 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testSeesContext_01() throws Exception {
 		IContextRoot con1 = createContext("con1");
-		con1.getRodinFile().save(null, true);
+		saveRodinFileOf(con1);
 		
 		IContextRoot con2 = createContext("con2");
 		addContextExtends(con2, "con1");
-		con2.getRodinFile().save(null, true);
+		saveRodinFileOf(con2);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineSees(mac, "con2");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -94,7 +94,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		seesContexts(file, "con2");
 		containsContexts(file, "con1", "con2");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 
 	/**
@@ -103,15 +103,15 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testSeesContext_02() throws Exception {
 		IContextRoot con = createContext("con");
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "con");
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -129,19 +129,19 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testSeesContext_03() throws Exception {
 		IContextRoot con1 = createContext("con1");
-		con1.getRodinFile().save(null, true);
+		saveRodinFileOf(con1);
 		
 		IContextRoot con2 = createContext("con2");
 		addContextExtends(con2, "con1");
-		con2.getRodinFile().save(null, true);
+		saveRodinFileOf(con2);
 		
 		IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "con2");
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -156,21 +156,21 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testSeesContext_04() throws Exception {
 		IContextRoot acon = createContext("acon");
-		acon.getRodinFile().save(null, true);
+		saveRodinFileOf(acon);
 		
 		IContextRoot ccon = createContext("ccon");
 		addContextExtends(ccon, "acon");
-		ccon.getRodinFile().save(null, true);
+		saveRodinFileOf(ccon);
 		
 		IMachineRoot abs = createMachine("abs");
 		addMachineSees(abs, "acon");
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addMachineSees(mac, "acon");
 		addMachineSees(mac, "ccon");
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -187,7 +187,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	public void testSeesContext_05() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
-		cab.getRodinFile().save(null, true);
+		saveRodinFileOf(cab);
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
@@ -195,8 +195,8 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cab");
 
-		cco.getRodinFile().save(null, true);
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(cco);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -213,8 +213,8 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cco");
 
-		cco.getRodinFile().save(null, true);
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(cco);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -231,7 +231,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	public void testSeesContext_07() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
-		cab.getRodinFile().save(null, true);
+		saveRodinFileOf(cab);
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
@@ -241,8 +241,8 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(con, "cab");
 		addMachineSees(con, "cab");
 
-		cco.getRodinFile().save(null, true);
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(cco);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -269,12 +269,12 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
-		containsMarkers(con.getRodinFile(), true);
-		containsMarkers(mac.getRodinFile(), true);
+		containsMarkers(con, true);
+		containsMarkers(mac, true);
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		

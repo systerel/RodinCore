@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IContextRoot con =  createContext("con");
 		addCarrierSets(con, "V1");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -41,7 +41,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(abs, makeSList("V1"));
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -53,7 +53,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(mac, makeSList("V2"));
 		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -83,7 +83,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IContextRoot con =  createContext("con");
 		addCarrierSets(con, "S1");
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -92,7 +92,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addMachineSees(abs, "con");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -102,7 +102,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con");
 		addMachineRefines(mac, "abs");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -112,7 +112,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(contexts[0], "S1");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -124,7 +124,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -132,7 +132,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addMachineSees(abs, "con");
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -141,7 +141,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con");
 		addMachineRefines(mac, "abs");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -151,7 +151,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		containsConstants(contexts[0], "C1");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -164,7 +164,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
 	
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 
@@ -174,7 +174,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -185,7 +185,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -195,7 +195,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		containsConstants(contexts[0], "C1");
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -207,7 +207,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 
@@ -217,7 +217,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -230,7 +230,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		containsVariables(file, "V1", "V2");
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"));
 
-		containsMarkers(mac.getRodinFile(), false);
+		containsMarkers(mac, false);
 	}
 	
 	/*
@@ -249,7 +249,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addVariables(mac, makeSList("V2"));
 		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -260,8 +260,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V2", factory.makeIntegerType());
 		
-		containsMarkers(abs.getRodinFile(), true);
-		containsMarkers(mac.getRodinFile(), true);
+		containsMarkers(abs, true);
+		containsMarkers(mac, true);
 	
 		containsInvariants(file, typeEnvironment, 
 				makeSList("I2"), makeSList("V2∈ℕ"));

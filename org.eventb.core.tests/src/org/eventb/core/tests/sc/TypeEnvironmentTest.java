@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addCarrierSets(ctx, makeSList("S"));
 		addConstants(ctx, "s");
 		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"));
-		ctx.getRodinFile().save(null, true);
+		saveRodinFileOf(ctx);
 
 		runBuilder();
 		final ISCContextRoot scCtxFile = ctx.getSCContextRoot();
@@ -61,14 +61,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
 		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
-		actx.getRodinFile().save(null, true);
+		saveRodinFileOf(actx);
 
 		final IContextRoot cctx = createContext("cctx");
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
 		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
-		cctx.getRodinFile().save(null, true);
+		saveRodinFileOf(cctx);
 
 		runBuilder();
 		final ISCContextRoot scCtxFile = cctx.getSCContextRoot();
@@ -91,7 +91,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addVariables(mch, "v");
 		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"));
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
-		mch.getRodinFile().save(null, true);
+		saveRodinFileOf(mch);
 
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
@@ -111,14 +111,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addCarrierSets(ctx, makeSList("S"));
 		addConstants(ctx, "s");
 		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"));
-		ctx.getRodinFile().save(null, true);
+		saveRodinFileOf(ctx);
 
 		final IMachineRoot mch = createMachine("mch");
 		addMachineSees(mch, "ctx");
 		addVariables(mch, "v");
 		addInvariants(mch, makeSList("I"), makeSList("v ∈ S"));
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ s"));
-		mch.getRodinFile().save(null, true);
+		saveRodinFileOf(mch);
 
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
@@ -140,21 +140,21 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
 		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
-		actx.getRodinFile().save(null, true);
+		saveRodinFileOf(actx);
 
 		final IContextRoot cctx = createContext("cctx");
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
 		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
-		cctx.getRodinFile().save(null, true);
+		saveRodinFileOf(cctx);
 
 		final IMachineRoot mch = createMachine("mch");
 		addMachineSees(mch, "cctx");
 		addVariables(mch, "v");
 		addInvariants(mch, makeSList("I"), makeSList("v ∈ T"));
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ t"));
-		mch.getRodinFile().save(null, true);
+		saveRodinFileOf(mch);
 
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
@@ -178,14 +178,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addVariables(amch, "v");
 		addInvariants(amch, makeSList("I"), makeSList("v ∈ BOOL"));
 		addInitialisation(amch, makeSList("A"), makeSList("v ≔ TRUE"));
-		amch.getRodinFile().save(null, true);
+		saveRodinFileOf(amch);
 
 		final IMachineRoot cmch = createMachine("cmch");
 		addMachineRefines(cmch, "amch");
 		addVariables(cmch, "w");
 		addInvariants(cmch, makeSList("I"), makeSList("w ∈ BOOL"));
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ TRUE"));
-		cmch.getRodinFile().save(null, true);
+		saveRodinFileOf(cmch);
 
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
@@ -206,21 +206,21 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
 		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
-		actx.getRodinFile().save(null, true);
+		saveRodinFileOf(actx);
 
 		final IMachineRoot amch = createMachine("amch");
 		addMachineSees(amch, "actx");
 		addVariables(amch, "v");
 		addInvariants(amch, makeSList("I"), makeSList("v ∈ S"));
 		addInitialisation(amch, makeSList("A"), makeSList("v ≔ s"));
-		amch.getRodinFile().save(null, true);
+		saveRodinFileOf(amch);
 
 		final IContextRoot cctx = createContext("cctx");
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
 		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
-		cctx.getRodinFile().save(null, true);
+		saveRodinFileOf(cctx);
 
 		final IMachineRoot cmch = createMachine("cmch");
 		addMachineRefines(cmch, "amch");
@@ -228,7 +228,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addVariables(cmch, "w");
 		addInvariants(cmch, makeSList("I"), makeSList("w ∈ T"));
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ t"));
-		cmch.getRodinFile().save(null, true);
+		saveRodinFileOf(cmch);
 
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
@@ -254,7 +254,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		addEvent(mch, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList(), makeSList());
-		mch.getRodinFile().save(null, true);
+		saveRodinFileOf(mch);
 
 		runBuilder();
 
@@ -283,7 +283,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		addEvent(mch, "evt", makeSList("l"), makeSList("G"), makeSList("l ∈ BOOL"),
 				makeSList(), makeSList());
-		mch.getRodinFile().save(null, true);
+		saveRodinFileOf(mch);
 
 		runBuilder();
 

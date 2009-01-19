@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addTheorems(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
-		cmp.getRodinFile().save(null, true);
+		saveRodinFileOf(cmp);
 		
 		runBuilder();
 		
@@ -62,7 +62,7 @@ extends GenericEventBPOTest<F> {
 
 		getGeneric().addNonTheorems(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
 		
-		cmp.getRodinFile().save(null, true);
+		saveRodinFileOf(cmp);
 		
 		runBuilder();
 		

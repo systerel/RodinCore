@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,14 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -48,7 +48,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(contexts[0], "S");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -58,14 +58,14 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1", "S2"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		runBuilder();
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -75,7 +75,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		containsCarrierSets(contexts[0], "S1", "S2");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -85,14 +85,14 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		runBuilder();
 		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
-		abs2.getRodinFile().save(null, true);
+		saveRodinFileOf(abs2);
 		
 		runBuilder();
 		
@@ -100,7 +100,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -121,14 +121,14 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		runBuilder();
 		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S21", "S22"));
 		
-		abs2.getRodinFile().save(null, true);
+		saveRodinFileOf(abs2);
 		
 		runBuilder();
 		
@@ -136,7 +136,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -152,7 +152,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 
 		containsCarrierSets(contexts[1], "S21", "S22");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 	
 	/**
@@ -163,19 +163,19 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
 		
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		runBuilder();
 		
 		IContextRoot abs2 = createContext("abs2");
 		addCarrierSets(abs2, makeSList("S11", "S22"));
 		
-		abs2.getRodinFile().save(null, true);
+		saveRodinFileOf(abs2);
 		
 		IContextRoot abs3 = createContext("abs3");
 		addCarrierSets(abs3, makeSList("S31", "S32"));
 		
-		abs3.getRodinFile().save(null, true);
+		saveRodinFileOf(abs3);
 		
 		runBuilder();
 		
@@ -184,7 +184,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs2");
 		addContextExtends(con, "abs3");
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -208,16 +208,16 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	public void testExtendsContext_06_transitive() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S1"));
-		abs1.getRodinFile().save(null, true);
+		saveRodinFileOf(abs1);
 		
 		IContextRoot abs2 = createContext("abs2");
 		addContextExtends(abs2, "abs1");
 		addCarrierSets(abs2, makeSList("S2"));
-		abs2.getRodinFile().save(null, true);
+		saveRodinFileOf(abs2);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs2");
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 
 		runBuilder();
 		
@@ -226,7 +226,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		extendsContexts(file, "abs2");
 		containsContexts(file, "abs1", "abs2");
 		
-		containsMarkers(con.getRodinFile(), false);
+		containsMarkers(con, false);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	public void testExtendsContext_07_redundant() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
-		cab.getRodinFile().save(null, true);
+		saveRodinFileOf(cab);
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
@@ -245,8 +245,8 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cab");
 
-		cco.getRodinFile().save(null, true);
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(cco);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -263,8 +263,8 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cco");
 
-		cco.getRodinFile().save(null, true);
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(cco);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
@@ -282,15 +282,15 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs");
 		addCarrierSets(con, makeSList("T"));
 		
-		con.getRodinFile().save(null, true);
+		saveRodinFileOf(con);
 		
 		runBuilder();
 		
 
 		ISCContextRoot file = con.getSCContextRoot();
 		
-		containsMarkers(abs.getRodinFile(), true);
-		containsMarkers(con.getRodinFile(), true);
+		containsMarkers(abs, true);
+		containsMarkers(con, true);
 		
 		containsCarrierSets(file, "T");
 		

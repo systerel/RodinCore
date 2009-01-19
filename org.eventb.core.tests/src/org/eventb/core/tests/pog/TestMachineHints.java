@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -78,7 +78,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -117,7 +117,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -152,7 +152,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList(), makeSList());
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -169,7 +169,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -203,7 +203,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -226,7 +226,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("z'", boolType);
 		typeEnvironment.addName("zc'", boolType);
 	
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -264,7 +264,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -287,7 +287,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("z'", boolType);
 		typeEnvironment.addName("zc'", boolType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -329,7 +329,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("z", relIntType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		
@@ -375,7 +375,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 		
 		runBuilder();
 		

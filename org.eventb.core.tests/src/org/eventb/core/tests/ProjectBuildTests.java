@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -80,11 +79,6 @@ public class ProjectBuildTests extends EventBTest {
 		stream.println();
 	}
 
-	private static void saveRodinFileFor(IInternalElement element)
-			throws RodinDBException {
-		element.getRodinFile().save(null, true);
-	}
-
 	public ProjectBuildTests() {
 		super();
 	}
@@ -107,17 +101,17 @@ public class ProjectBuildTests extends EventBTest {
 	public void testTwoConcrete() throws Exception {
 		final IMachineRoot abs = createMachine("M1");
 		addInitialisation(abs);
-		saveRodinFileFor(abs);
+		saveRodinFileOf(abs);
 
 		final IMachineRoot con1 = createMachine("A1");
 		addMachineRefines(con1, abs.getElementName());
 		addInitialisation(con1);
-		saveRodinFileFor(con1);
+		saveRodinFileOf(con1);
 
 		final IMachineRoot con2 = createMachine("A2");
 		addMachineRefines(con2, abs.getElementName());
 		addInitialisation(con2);
-		saveRodinFileFor(con2);
+		saveRodinFileOf(con2);
 
 		runBuilder();
 		assertNoMarker(abs.getRodinProject());
