@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.rodinp.core.RodinCore;
  * Tests of the file manipulation routines provided by the event-B plugin.
  * 
  * @author Laurent Voisin
- * @see IEventBFile
  * @see IEventBProject
  */
 public class EventBFileTest extends TestCase {
@@ -44,6 +43,11 @@ public class EventBFileTest extends TestCase {
 		assertEquals("Invalid file name", name, file.getElementName());
 	}
 
+	private void assertRootFileName(String extension, IEventBRoot root) {
+		final String fileName = root.getElementName() + "." + extension;
+		assertFileName(fileName, root.getRodinFile());
+	}
+
 	/**
 	 * Check all file conversions from the given file.
 	 * 
@@ -54,13 +58,13 @@ public class EventBFileTest extends TestCase {
 		IEventBRoot root = (IEventBRoot)file.getRoot();
 		final String bareName = file.getBareName();
 		assertEquals(bareName, root.getComponentName());
-		assertFileName(bareName + ".buc", root.getContextRoot().getRodinFile());
-		assertFileName(bareName + ".bum", root.getMachineRoot().getRodinFile());
-		assertFileName(bareName + ".bcc", root.getSCContextRoot().getRodinFile());
-		assertFileName(bareName + ".bcm", root.getSCMachineRoot().getRodinFile());
-		assertFileName(bareName + ".bpo", root.getPORoot().getRodinFile());
-		assertFileName(bareName + ".bpr", root.getPRRoot().getRodinFile());
-		assertFileName(bareName + ".bps", root.getPSRoot().getRodinFile());
+		assertRootFileName("buc", root.getContextRoot());
+		assertRootFileName("bum", root.getMachineRoot());
+		assertRootFileName("bcc", root.getSCContextRoot());
+		assertRootFileName("bcm", root.getSCMachineRoot());
+		assertRootFileName("bpo", root.getPORoot());
+		assertRootFileName("bpr", root.getPRRoot());
+		assertRootFileName("bps", root.getPSRoot());
 	}
 
 	/**
