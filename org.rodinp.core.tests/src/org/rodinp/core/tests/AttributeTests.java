@@ -25,6 +25,7 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
@@ -538,5 +539,49 @@ public class AttributeTests extends ModifyingResourceTests {
 	public void testAttributePersistentInternal() throws CoreException {
 		assertAttributePersistent(ne);
 	}
+	
+	private void assertIllegalArgument(Runnable runnable) {
+		try {
+			runnable.run();
+			fail("should have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// success
+		}
+	}
 
+	public void testInvalidAttrType() {
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getAttributeType("invalid");
+			}
+		});
+	}
+	
+	public void testWrongAttrType() {
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getBooleanAttrType(fHandle.getId());
+			}
+		});
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getHandleAttrType(fInt.getId());
+			}
+		});
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getIntegerAttrType(fLong.getId());
+			}
+		});
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getLongAttrType(fString.getId());
+			}
+		});
+		assertIllegalArgument(new Runnable() {
+			public void run() {
+				RodinCore.getStringAttrType(fBool.getId());
+			}
+		});
+	}
 }
