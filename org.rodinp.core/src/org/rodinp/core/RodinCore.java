@@ -408,7 +408,6 @@ public class RodinCore extends Plugin {
 	 *    reporting and cancellation are not desired
 	 * @exception RodinDBException if the operation failed.
 	 */
-	// TODO throw a Rodin DB Exception instead (possibly encapsulating the core exception)
 	public static void run(IWorkspaceRunnable action, ISchedulingRule rule,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
