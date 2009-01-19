@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests;
 
-import static org.eclipse.core.resources.IWorkspaceRoot.*;
+import static org.eclipse.core.resources.IContainer.INCLUDE_HIDDEN;
+import static org.rodinp.core.ElementChangedEvent.POST_CHANGE;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,6 +26,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -561,4 +564,25 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		);
 	}
 	
+	public void testEventType() throws Exception {
+		final EventTypeListener listener = new EventTypeListener();
+		try {
+			RodinCore.addElementChangedListener(listener);
+			createProject("P");
+		} finally {
+			RodinCore.removeElementChangedListener(listener);
+		}
+		assertTrue(listener.done);
+	}
+
+	private static final class EventTypeListener implements
+			IElementChangedListener {
+		public boolean done;
+
+		public void elementChanged(ElementChangedEvent event) {
+			assertEquals(POST_CHANGE, event.getType());
+			done = true;
+		}
+	}
+
 }
