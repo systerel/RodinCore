@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,6 +188,21 @@ public class MementoTests extends ModifyingResourceTests {
 		// Top and child with empty name
 		ne = top.getInternalElement(nType, "");
 		assertMemento(prefix + "|" + nType.getId() + "#", ne);
+	}
+
+	public void testNullMemento() {
+		assertNull(RodinCore.valueOf((String) null));
+	}
+	
+	public void testPartialMemento() {
+		final String typeId = NamedElement.ELEMENT_TYPE.getId();
+		final IRodinFile rf = getRodinFile("/P/X.test");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final String prefix = expectedRootMemento(root);
+		assertEquals(RodinCore.valueOf(prefix + "|"), root);
+		assertEquals(RodinCore.valueOf(prefix + "/"), root);
+		assertEquals(RodinCore.valueOf(prefix + "|" + typeId), root);
+		assertEquals(RodinCore.valueOf(prefix + "|" + typeId + "|"), root);
 	}
 
 }
