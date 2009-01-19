@@ -35,6 +35,7 @@ public class AllTests {
 		suite.addTestSuite(RootElementTests.class);
 		suite.addTestSuite(AncestryTests.class);
 		suite.addTestSuite(UtilTests.class);
+		suite.addTestSuite(RunnableTests.class);
 
 		suite.addTestSuite(MBuilderTest.class);
 		suite.addTestSuite(CBuilderTest.class);
