@@ -1332,5 +1332,35 @@
             version="3">
       </source>
    </extension>
+   <extension
+         point="org.rodinp.core.indexers">
+      <indexer
+            class="org.eventb.internal.core.indexers.ContextIndexer"
+            id="contextIndexer"
+            name="%contextIndexerName"
+            root-element-type="org.eventb.core.contextFile">
+      </indexer>
+      <indexer
+            class="org.eventb.internal.core.indexers.MachineIndexer"
+            id="machineIndexer"
+            name="%machineIndexerName"
+            root-element-type="org.eventb.core.machineFile">
+      </indexer>
+   </extension>
+   <extension
+         point="org.rodinp.core.occurrenceKinds">
+      <occurrenceKind
+            id="declaration"
+            name="%declarationKindName">
+      </occurrenceKind>
+      <occurrenceKind
+            id="reference"
+            name="%referenceKindName">
+      </occurrenceKind>
+      <occurrenceKind
+            id="modification"
+            name="%modificationKindName">
+      </occurrenceKind>
+   </extension>
 
 </plugin>
