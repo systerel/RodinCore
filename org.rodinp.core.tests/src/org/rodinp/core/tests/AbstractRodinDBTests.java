@@ -63,6 +63,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.Util;
+import org.rodinp.internal.core.debug.DebugHelpers;
 
 public abstract class AbstractRodinDBTests extends TestCase {
 
@@ -954,8 +955,11 @@ public abstract class AbstractRodinDBTests extends TestCase {
 			description.setAutoBuilding(false);
 			getWorkspace().setDescription(description);
 		}
+		
+		// disable indexer
+		DebugHelpers.disableIndexing();
 	}
-
+	
 	protected static void sortElements(IRodinElement[] elements) {
 		Comparator<IRodinElement> comparer = new Comparator<IRodinElement>() {
 			public int compare(IRodinElement a, IRodinElement b) {
@@ -1102,6 +1106,10 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	
 	protected void tearDown() throws Exception {
 		super.tearDown();
+	}
+
+	protected static void enableIndexing() {
+		DebugHelpers.enableIndexing();
 	}
 
 //	public static void waitUntilIndexesReady() {
