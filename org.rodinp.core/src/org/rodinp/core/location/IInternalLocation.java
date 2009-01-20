@@ -11,6 +11,7 @@
 package org.rodinp.core.location;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Common protocol for specifying a location in a {@link IInternalElement} in
@@ -27,6 +28,17 @@ import org.rodinp.core.IInternalElement;
  * @author Laurent Voisin
  */
 public interface IInternalLocation extends IRodinLocation {
+
+	/**
+	 * Returns the file containing this location. This is a shorthand method for
+	 * 
+	 * <pre>
+	 * getElement().getRodinFile()
+	 * </pre>
+	 * 
+	 * @return the file containing this location
+	 */
+	IRodinFile getRodinFile();
 
 	/**
 	 * Returns the element containing this location.

@@ -34,8 +34,7 @@ public class IndexQuery implements IIndexQuery {
 		final Descriptor descriptor = index.getDescriptor(element);
 
 		if (descriptor == null) {
-			throw new IllegalArgumentException("element is not indexed: "
-					+ element);
+			return null;
 		}
 		return descriptor.getDeclaration();
 	}

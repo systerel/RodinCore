@@ -14,18 +14,18 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 
 /**
- * Common protocol for performing requests to the indexing system.
+ * Common protocol for performing queries to the indexing system.
  * <p>
- * Requests results may be obsolete if the indexing system is performing a new
- * indexing. Clients should call {@link #waitUpToDate()} before sending requests
- * in order to get the most accurate result.
+ * Query results may be obsolete if the indexing system has performed a new
+ * indexing since they were computed. Clients should call
+ * {@link #waitUpToDate()} before performing queries in order to get the most
+ * accurate result.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Nicolas Beauger
- * 
  */
 public interface IIndexQuery {
 
@@ -33,23 +33,21 @@ public interface IIndexQuery {
 	 * Returns the declaration for the given element.
 	 * 
 	 * @param element
-	 *            the element for which to get the declaration.
-	 * @return the declaration of the element if it was found in the index.
+	 *            the element for which to get the declaration
+	 * @return the declaration of the given element or <code>null</code> if not
+	 *         found
 	 * @throws InterruptedException
-	 * @throws IllegalArgumentException
-	 *             if the element is not known by the indexing system.
 	 * @see #waitUpToDate()
 	 */
 	IDeclaration getDeclaration(IInternalElement element)
 			throws InterruptedException;
 
 	/**
-	 * Returns the occurrences of the given element.
+	 * Returns all occurrences of the given declaration.
 	 * 
 	 * @param declaration
-	 *            the declaration of the element for which to get the
-	 *            occurrences.
-	 * @return the indexed occurrences of the element.
+	 *            the declaration for which occurrences are desired
+	 * @return the indexed occurrences of the given declaration
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
@@ -57,25 +55,30 @@ public interface IIndexQuery {
 			throws InterruptedException;
 
 	/**
-	 * Returns all elements declared with the given user-visible name.
+	 * Returns all elements declared within the given project with the given
+	 * user-visible name.
 	 * 
 	 * @param project
-	 *            the project in which to search.
+	 *            the project in which to search
 	 * @param name
-	 *            the researched name.
-	 * @return the found elements with the given name.
+	 *            the name to search for
+	 * @return the elements found in the given project with the given name
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
+	// TODO return an array of declarations instead.
 	IInternalElement[] getElements(IRodinProject project, String name)
 			throws InterruptedException;
 
 	/**
 	 * Returns when the indexing system is up to date, else blocks until it
-	 * becomes up to date. Throws a InterruptedException if the indexing has
-	 * been canceled.
-	 * 
-	 * Calling this method before any other request makes the result valid.
+	 * becomes up to date. Throws an <code>InterruptedException</code> if the
+	 * indexing has been canceled.
+	 * <p>
+	 * To ensure accurate results, clients should call this method before
+	 * querying the index, while locking the appropriate part of the Rodin
+	 * database.
+	 * </p>
 	 * 
 	 * @throws InterruptedException
 	 */

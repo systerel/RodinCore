@@ -18,9 +18,9 @@ import org.rodinp.core.IRodinFile;
  * at a time, declaring elements found in it and adding occurrences through the
  * given {@link IIndexingBridge}.
  * <p>
- * Indexers declare themselves as being able to index one or more
- * IFileElementType. Thus, they will only be asked to index files of the types
- * they support.
+ * Indexers declare themselves as being able to index file whose root is of a
+ * given type. Thus, they will only be asked to index files of the type they
+ * support.
  * </p>
  * <p>
  * Files can export elements to other files, making them visible outside their
@@ -36,8 +36,8 @@ import org.rodinp.core.IRodinFile;
  * export it itself).
  * </p>
  * <p>
- * The same file will undoubtedly be indexed several times during its life in
- * the database, either because of local changes or because files on which it
+ * The same file will undoubtedly be indexed several times during its lifetime
+ * in the database, either because of local changes or because files on which it
  * depends have been modified. Each time a file gets indexed anew, indexers can
  * assume that everything is just as if it was the first indexing. For example,
  * any element declared by a previous indexing is to be declared again;
@@ -55,13 +55,11 @@ import org.rodinp.core.IRodinFile;
  * completes</li>
  * </ul>
  * The first constraint is implicitly held by the fact that occurrences are
- * added by giving the declaration of the occurring element.
- * <br>
+ * added by giving the declaration of the occurring element. <br>
  * Breaking one of the three next ones will result in a
- * {{class|IllegalArgumentException}} being thrown.
- * <br>
- * Finally, when file indexing completes, declared elements with no occurrences
- * are simply ignored (not put into index tables).
+ * {@link IllegalArgumentException} being thrown. <br>
+ * Finally, when file indexing completes, declarations with no occurrence are
+ * simply ignored (not entered into the index tables).
  * </p>
  * <p>
  * This interface is intended to be implemented by clients.
@@ -82,6 +80,8 @@ public interface IIndexer {
 	 * </p>
 	 * 
 	 * @param root
+	 *            the root element of the file for which dependencies have to be
+	 *            extracted
 	 * @return an array containing the file dependencies.
 	 */
 	public IRodinFile[] getDependencies(IInternalElement root);
@@ -89,18 +89,18 @@ public interface IIndexer {
 	/**
 	 * Returns the unique id of this indexer. The string returned must be the
 	 * the full id of the indexer, that is its plugin id + its local id as
-	 * declared in the extension point.
+	 * declared in extension point <code>org.rodinp.core.indexers</code>.
 	 * 
 	 * @return the unique id of this indexer
 	 */
 	public String getId();
 
 	/**
-	 * Indexes the given file and sends the results through calls to the given
+	 * Indexes the given file and sends results through calls to the given
 	 * IIndexingBridge.
 	 * 
 	 * @param bridge
-	 *            the indexing facility to which to send the results.
+	 *            the indexing facility to which to send results
 	 * @see IIndexingBridge
 	 */
 	public boolean index(IIndexingBridge bridge);

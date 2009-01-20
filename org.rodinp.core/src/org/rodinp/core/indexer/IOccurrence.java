@@ -24,44 +24,40 @@ import org.rodinp.core.location.IInternalLocation;
  * </p>
  * 
  * @author Nicolas Beauger
- * 
  */
 public interface IOccurrence {
 
 	/**
-	 * Returns the kind of the occurrence.
+	 * Returns the kind of this occurrence.
 	 * 
-	 * @return the kind of the occurrence.
-	 * @see IOccurrenceKind
+	 * @return the kind of this occurrence
 	 */
 	IOccurrenceKind getKind();
 
 	/**
-	 * Returns the location of the occurrence.
+	 * Returns the location of this occurrence.
 	 * 
-	 * @return the location of the occurrence.
-	 * @see IInternalLocation
+	 * @return the location of this occurrence
 	 */
 	IInternalLocation getLocation();
 
 	/**
-	 * Returns the file containing the location of the occurrence, if any. If
-	 * the location is a Rodin file or occurs within a Rodin file, then this
-	 * Rodin file is returned. Otherwise, <code>null</code> is returned.
-	 * <p>
-	 * Equivalent to <code>getLocation().getRodinFile()</code>.
-	 * </p>
+	 * Returns the file containing the location of this occurrence. This is a
+	 * shorthand method for
 	 * 
-	 * @return the file containing the location or <code>null</code>
-	 * @see IInternalLocation#getRodinFile()
+	 * <pre>
+	 * getLocation().getRodinFile()
+	 * </pre>
+	 * 
+	 * @return the file containing the location of this occurrence
 	 */
 	IRodinFile getRodinFile();
 
 	/**
 	 * Returns the declaration of the element associated with this occurrence.
 	 * 
-	 * @return the declaration associated with this occurrence.
-	 * @see IDeclaration
+	 * @return the declaration associated with this occurrence
 	 */
 	IDeclaration getDeclaration();
+
 }

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.rodinp.core.indexer" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.rodinp.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.rodinp.core.indexer" id="indexers" name="Indexers"/>
+         <meta.schema plugin="org.rodinp.core" id="indexers" name="Indexers"/>
       </appinfo>
       <documentation>
          This extension point allows clients to contribute new indexers to the indexing system of the Rodin database.
@@ -110,7 +110,7 @@ for indexers within the extension namespace). The token cannot contain dot (.) o
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         The specified class must implement &lt;code&gt;org.rodinp.core.indexer.IIndexer&lt;/code&gt; and provide a parameterless constructor. 
+         The specified class must implement &lt;code&gt;org.rodinp.core.indexer.IIndexer&lt;/code&gt; and provide a parameterless constructor.
       </documentation>
    </annotation>
 
@@ -133,7 +133,6 @@ All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
-
       </documentation>
    </annotation>
 

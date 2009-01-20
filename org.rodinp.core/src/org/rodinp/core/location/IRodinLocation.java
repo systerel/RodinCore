@@ -11,7 +11,6 @@
 package org.rodinp.core.location;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 
 /**
  * Common protocol for specifying a location in the Rodin database. A location
@@ -20,7 +19,8 @@ import org.rodinp.core.IRodinFile;
  * <li>either a Rodin element ({@link IRodinLocation}),</li>
  * <li>or an internal element ({@link IInternalLocation}),</li>
  * <li>or an attribute of an internal element ({@link IAttributeLocation}),</li>
- * <li>or a substring of a string attribute of an internal element ({@link IAttributeSubstringLocation}).</li>
+ * <li>or a substring of a string attribute of an internal element (
+ * {@link IAttributeSubstringLocation}).</li>
  * </ul>
  * <p>
  * Locations are handle-only. The items referenced by a location may exist or
@@ -41,16 +41,6 @@ import org.rodinp.core.IRodinFile;
 public interface IRodinLocation {
 
 	/**
-	 * Returns the file containing the location, if any. If the location is a
-	 * Rodin file or occurs within a Rodin file, then this Rodin file is
-	 * returned. Otherwise, <code>null</code> is returned.
-	 * 
-	 * @return the file containing the location or <code>null</code>
-	 */
-	// TODO move this method to IRodinElement
-	IRodinFile getRodinFile();
-
-	/**
 	 * Returns the element containing this location.
 	 * 
 	 * @return the element containing this location
@@ -58,11 +48,23 @@ public interface IRodinLocation {
 	IRodinElement getElement();
 
 	/**
-	 * Returns true iff this location is included in the given one.
+	 * Returns whether this location is included in the given one. A location A
+	 * is considered as included in location B if and only if
+	 * <ul>
+	 * <li>either the element contained in B is an ancestor of the element
+	 * contained in A;</li>
+	 * <li>or A and B contain the same element and B does not contain an
+	 * attribute type;</li>
+	 * <li>or A and B contain the same element and attribute type, and B does
+	 * not contain a substring specification;</li>
+	 * <li>or A and B contain the same element and attribute type, both A and B
+	 * contain a substring specification, and the substring of A is included
+	 * non-strictly in the substring of B.</li>
+	 * </ul>
 	 * 
 	 * @param other
-	 *            the checked location.
-	 * @return whether this location is included in the given one.
+	 *            a location to compare to for inclusion
+	 * @return <code>true</code> iff this location is included in the given one
 	 */
 	boolean isIncludedIn(IRodinLocation other);
 

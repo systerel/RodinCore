@@ -13,7 +13,8 @@ package org.rodinp.core.indexer;
 /**
  * Common protocol for kinds of occurrences found while indexing files.
  * <p>
- * Clients should add their own kinds through the extension point mechanism.
+ * Clients should contribute their own kinds through the extension point
+ * <code>org.rodinp.core.occurrenceKinds</code>.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -24,16 +25,16 @@ package org.rodinp.core.indexer;
 public interface IOccurrenceKind {
 
 	/**
-	 * Returns the identifier of the kind.
+	 * Returns the unique identifier of this occurrence kind.
 	 * 
-	 * @return the identifier of the kind.
+	 * @return the identifier of this occurrence kind.
 	 */
 	String getId();
 
 	/**
-	 * Returns the name of the kind.
+	 * Returns the human-readable name of this occurrence kind.
 	 * 
-	 * @return the name of the kind.
+	 * @return the name of this occurrence kind.
 	 */
 	String getName();
 

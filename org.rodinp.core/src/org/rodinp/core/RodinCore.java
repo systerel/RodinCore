@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.osgi.framework.BundleContext;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.location.IInternalLocation;
@@ -634,11 +633,14 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Gets the occurrence kind corresponding to the given id.
+	 * Returns the occurrence kind declared with the given id in an extension of
+	 * the extension point <code>org.rodinp.core.occurrenceKinds</code>. Returns
+	 * <code>null</code> if no extension declares the given id.
 	 * 
 	 * @param id
 	 *            the occurrence kind identifier
-	 * @return the occurrence kind.
+	 * @return the occurrence kind of the given id or <code>null</code> if there
+	 *         is none
 	 */
 	public static IOccurrenceKind getOccurrenceKind(String id) {
 		return RodinIndexer.getOccurrenceKind(id);
@@ -693,7 +695,7 @@ public class RodinCore extends Plugin {
 	/**
 	 * Returns the location pointing at the specified substring of the attribute
 	 * of the given type in the given internal element. The substring is
-	 * specified by giving its start and end position.
+	 * specified by giving its start and end positions.
 	 * <p>
 	 * This is a handle-only method.
 	 * </p>
@@ -704,14 +706,17 @@ public class RodinCore extends Plugin {
 	 *            the type of the attribute to point at
 	 * @param start
 	 *            the start position of the substring in the attribute value,
-	 *            that is the index of the first character. Must be less than
-	 *            <code>end</code>
+	 *            that is the index of the first character. Must be non-negative
+	 *            and less than <code>end</code>
 	 * @param end
 	 *            the end position of the substring in the attribute value, that
 	 *            is the index of the last character plus one. Must be greater
 	 *            than <code>start</code>
 	 * @return the location pointing at the specified substring of the given
 	 *         attribute of the given element
+	 * @throws IllegalArgumentException
+	 *             if the constraints on <code>start</code> and <code>end</code>
+	 *             are not fulfilled
 	 */
 	public static IInternalLocation getInternalLocation(
 			IInternalElement element, IAttributeType.String attributeType,

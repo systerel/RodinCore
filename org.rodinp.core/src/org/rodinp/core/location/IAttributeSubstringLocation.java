@@ -26,8 +26,8 @@ public interface IAttributeSubstringLocation extends IAttributeLocation {
 	 * Returns the start position of the substring of this location.
 	 * <p>
 	 * The value returned is the index of the first character of the substring
-	 * in the attribute value. It is guaranteed to be strictly less than the
-	 * value returned by {@link #getCharEnd()}.
+	 * in the attribute value. It is guaranteed to be non-negative and less than
+	 * the value returned by {@link #getCharEnd()}.
 	 * </p>
 	 * 
 	 * @return the start position of this location
@@ -40,8 +40,8 @@ public interface IAttributeSubstringLocation extends IAttributeLocation {
 	 * Returns the end position of the substring of this location.
 	 * <p>
 	 * The value returned is the index plus one of the last character of the
-	 * substring in the attribute value. It is guaranteed to be strictly greater
-	 * than the value returned by {@link #getCharStart()}.
+	 * substring in the attribute value. It is guaranteed to be greater than the
+	 * value returned by {@link #getCharStart()}.
 	 * </p>
 	 * 
 	 * @return the end position of the location.
