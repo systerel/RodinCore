@@ -14,13 +14,23 @@ package org.rodinp.core.tests;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_MARKER_LOCATION;
+import static org.rodinp.core.RodinMarkerUtil.ARGUMENTS;
+import static org.rodinp.core.RodinMarkerUtil.ATTRIBUTE_ID;
+import static org.rodinp.core.RodinMarkerUtil.CHAR_END;
+import static org.rodinp.core.RodinMarkerUtil.CHAR_START;
+import static org.rodinp.core.RodinMarkerUtil.ELEMENT;
+import static org.rodinp.core.RodinMarkerUtil.ERROR_CODE;
+import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -122,7 +132,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		final Map<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put(IMarker.SEVERITY, pb.getSeverity());
 		attrs.put(IMarker.MESSAGE, pb.getLocalizedMessage(args));
-		attrs.put(RodinMarkerUtil.ERROR_CODE, pb.getErrorCode());
+		attrs.put(ERROR_CODE, pb.getErrorCode());
 		StringBuilder builder = new StringBuilder();
 		for (Object arg : args) {
 			final String string = arg.toString();
@@ -130,18 +140,18 @@ public class MarkerTests extends ModifyingResourceTests {
 			builder.append(':');
 			builder.append(string);
 		}
-		attrs.put(RodinMarkerUtil.ARGUMENTS, builder.toString());
+		attrs.put(ARGUMENTS, builder.toString());
 		if (elem instanceof IInternalElement) {
 			// We don't want to check the element exactly (in case of file
 			// renaming).
-			attrs.put(RodinMarkerUtil.ELEMENT, null);
+			attrs.put(ELEMENT, null);
 		}
 		if (attrType != null) {
-			attrs.put(RodinMarkerUtil.ATTRIBUTE_ID, attrType.getId());
+			attrs.put(ATTRIBUTE_ID, attrType.getId());
 		}
 		if (0 <= charStart) {
-			attrs.put(RodinMarkerUtil.CHAR_START, charStart);
-			attrs.put(RodinMarkerUtil.CHAR_END, charEnd);
+			attrs.put(CHAR_START, charStart);
+			attrs.put(CHAR_END, charEnd);
 		}
 		return attrs;
 	}
@@ -150,8 +160,7 @@ public class MarkerTests extends ModifyingResourceTests {
 			IAttributeType attrType, int charStart, int charEnd,
 			IRodinProblem pb, Object... args) throws Exception {
 
-		final IMarker marker = getMarker(elem,
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER);
+		final IMarker marker = getMarker(elem, RODIN_PROBLEM_MARKER);
 
 		// Check attributes directly
 		final Map<String, Object> attrs = getAttributes(elem, attrType,
@@ -715,6 +724,130 @@ public class MarkerTests extends ModifyingResourceTests {
 				TestProblem.err0.getErrorCode());
 		assertEquals("Unexpected problem object", TestProblem.warn1,
 				TestProblem.valueOfErrorCode(TestProblem.warn1.getErrorCode()));
+	}
+
+	/**
+	 * Ensures that passing a null marker to an inquiry method throws an
+	 * exception.
+	 */
+	public void testNullMarkerAccess() throws Exception {
+		for (MarkerMethod m: MarkerMethod.values()) {
+			m.invokeNull();
+		}
+	}
+
+	/**
+	 * Ensures that passing a non-Rodin marker throws an exception.
+	 */
+	public void testNonRodinMarker() throws Exception {
+		final IProject project = rodinProject.getProject();
+		final IMarker marker = project.createMarker(IMarker.MARKER);
+		for (MarkerMethod m: MarkerMethod.values()) {
+			m.invokeNonRodin(marker);
+		}
+	}
+	
+	/**
+	 * Ensures that passing an inexistent marker returns null.
+	 */
+	public void testInexistentMarker() throws Exception {
+		rodinProject.createProblemMarker(TestProblem.err0);
+		final IMarker marker = getMarker(rodinProject, RODIN_PROBLEM_MARKER);
+		marker.delete();
+		for (MarkerMethod m: MarkerMethod.values()) {
+			m.invokeDefaultResult(marker, rodinProject);
+		}
+	}
+	
+	private enum DefaultResult {
+		NULL {
+			@Override
+			public void check(Object result, IRodinElement element) {
+				assertNull(result);
+			}
+		}, ELEMENT {
+			@Override
+			public void check(Object result, IRodinElement element) {
+				assertEquals(element, result);
+			}
+		}, MINUS_ONE {
+			@Override
+			public void check(Object result, IRodinElement element) {
+				assertEquals(-1, result);
+			}
+		};
+		
+		public abstract void check(Object result, IRodinElement element);
+	}
+	
+	private enum MarkerMethod {
+
+		GET_ARGUMENTS("getArguments", DefaultResult.NULL), //
+		GET_ERROR_CODE("getErrorCode", DefaultResult.NULL), //
+		GET_ELEMENT("getElement", DefaultResult.ELEMENT), //
+		GET_INTERNAL_ELEMENT("getInternalElement", DefaultResult.NULL), //
+		GET_ATTRIBUTE_TYPE("getAttributeType", DefaultResult.NULL), //
+		GET_CHAR_START("getCharStart", DefaultResult.MINUS_ONE), //
+		GET_CHAR_END("getCharEnd", DefaultResult.MINUS_ONE), //
+		;
+
+		public final Method method;
+		public final DefaultResult defaultResult;
+
+		private MarkerMethod(String methodName, DefaultResult dr) {
+			Method m = null;
+			try {
+				m = RodinMarkerUtil.class.getMethod(methodName, IMarker.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				fail(e.toString());
+			}
+			this.method = m;
+			this.defaultResult = dr;
+		}
+
+		public void invokeNull() throws Exception {
+			try {
+				method.invoke(null, (Object) null);
+				fail("Should have raised an exception");
+			} catch (InvocationTargetException e) {
+				assertTrue(e.getCause() instanceof NullPointerException);
+			}
+		}
+
+		public void invokeNonRodin(IMarker marker) throws Exception {
+			try {
+				method.invoke(null, marker);
+				fail("Should have raised an exception");
+			} catch (InvocationTargetException e) {
+				assertTrue(e.getCause() instanceof IllegalArgumentException);
+			}
+		}
+		
+		public void invokeDefaultResult(IMarker marker, IRodinElement element)
+				throws Exception {
+			defaultResult.check(method.invoke(null, marker), element);
+		}
+
+		public static void checkPresent(Method other) {
+			for (MarkerMethod mm: values()) {
+				if (other.equals(mm.method)) {
+					return;
+				}
+			}
+			fail("Method " + other.getName() + " is missing.");
+		}
+	}
+
+	// Ensures that all marker methods are in the MarkerMethod enumeration
+	static {
+		for (Method method : RodinMarkerUtil.class.getMethods()) {
+			Class<?>[] types = method.getParameterTypes();
+			if (types.length == 1 && types[0] == IMarker.class) {
+				MarkerMethod.checkPresent(method);
+			}
+		}
+		
 	}
 
 }
