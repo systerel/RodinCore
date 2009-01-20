@@ -11,8 +11,8 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.core.indexer.EventBIndexUtil.*;
-import static org.rodinp.core.indexer.RodinIndexer.*;
+import static org.eventb.core.indexer.EventBIndexUtil.REFERENCE;
+import static org.rodinp.core.RodinCore.*;
 
 import java.util.Map;
 
@@ -126,7 +126,7 @@ public class EventIndexer extends Cancellable {
 	 */
 	private void addRefAttribute(final IDeclaration declaration,
 			IInternalElement element, IAttributeType.String attribute) {
-		bridge.addOccurrence(declaration, REFERENCE, getRodinLocation(element,
+		bridge.addOccurrence(declaration, REFERENCE, getInternalLocation(element,
 				attribute));
 	}
 

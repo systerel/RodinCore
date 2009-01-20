@@ -10,24 +10,22 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
+import static org.rodinp.core.RodinCore.*;
+
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IOccurrenceKind;
-import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 
 public class EventBIndexUtil {
 
-	public static final IOccurrenceKind DECLARATION = RodinIndexer
-			.getOccurrenceKind("declaration");
+	public static final IOccurrenceKind DECLARATION = getOccurrenceKind("declaration");
 
-	public static final IOccurrenceKind REFERENCE = RodinIndexer
-			.getOccurrenceKind("reference");
+	public static final IOccurrenceKind REFERENCE = getOccurrenceKind("reference");
 
-	public static final IOccurrenceKind MODIFICATION = RodinIndexer
-			.getOccurrenceKind("modification");
+	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind("modification");
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is
@@ -42,8 +40,8 @@ public class EventBIndexUtil {
 	 */
 	public static IInternalLocation getRodinLocation(IInternalElement element,
 			IAttributeType.String attributeType, SourceLocation location) {
-		return RodinIndexer.getRodinLocation(element, attributeType, location
-				.getStart(), location.getEnd() + 1);
+		return getInternalLocation(element, attributeType, location.getStart(),
+				location.getEnd() + 1);
 	}
 
 }

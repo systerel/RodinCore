@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.indexer;
 
-import static org.eventb.core.EventBPlugin.*;
-import static org.rodinp.core.indexer.RodinIndexer.*;
+import static org.eventb.core.EventBPlugin.getContextFileName;
+import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

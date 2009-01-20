@@ -4,7 +4,7 @@
    <extension
          id="fr.systerel.eventb.indexer.Indexers"
          name="Event-B Indexers"
-         point="org.rodinp.core.indexer.indexers">
+         point="org.rodinp.core.indexers">
       <indexer
             class="org.eventb.core.indexer.ContextIndexer"
             id="contextIndexer"
@@ -21,7 +21,7 @@
    <extension
          id="fr.systerel.eventb.indexer.occurrenceKinds"
          name="Event-B Occurrence Kinds"
-         point="org.rodinp.core.indexer.occurrenceKinds">
+         point="org.rodinp.core.occurrenceKinds">
       <occurrenceKind
             id="declaration"
             name="Declaration">

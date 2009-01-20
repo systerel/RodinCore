@@ -11,7 +11,7 @@
 package org.eventb.core.indexer;
 
 import static org.eventb.core.indexer.EventBIndexUtil.*;
-import static org.rodinp.core.indexer.RodinIndexer.*;
+import static org.rodinp.core.RodinCore.*;
 
 import java.util.concurrent.CancellationException;
 
