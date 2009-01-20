@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.indexer.tests;
 
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.indexer.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
+import org.eventb.core.tests.BuilderTest;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public abstract class EventBIndexerTests extends AbstractRodinDBTests {
+public abstract class EventBIndexerTests extends BuilderTest {
 
 	protected static final String EVT1 = "evt1";
 	protected static final String IMPORTER = "importer";
@@ -87,24 +85,8 @@ public abstract class EventBIndexerTests extends AbstractRodinDBTests {
 					+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
 					+ "</org.eventb.core.machineFile>";
 
-	protected static IRodinProject project;
-
-	/**
-	 * @param name
-	 */
 	public EventBIndexerTests(String name) {
 		super(name);
-		RodinIndexer.disableIndexing();
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		project = createRodinProject("P");
-	}
-
-	protected void tearDown() throws Exception {
-		deleteProject("P");
-		super.tearDown();
 	}
 
 }

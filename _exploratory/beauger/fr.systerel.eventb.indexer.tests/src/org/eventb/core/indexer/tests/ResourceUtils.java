@@ -41,6 +41,7 @@ public class ResourceUtils {
 	private static IRodinFile createRodinFile(IRodinProject project,
 			String fileName) throws RodinDBException {
 		IRodinFile file = project.getRodinFile(fileName);
+		assert file != null;
 		file.create(true, null);
 		return file;
 	}
@@ -66,7 +67,7 @@ public class ResourceUtils {
 		initFile(rFile, contents);
 		return (IMachineRoot) rFile.getRoot();
 	}
-
+	
 	public static final String MCH_BARE_NAME = "machine";
 	public static final List<IDeclaration> EMPTY_DECL = Collections.emptyList();
 	public static final String INTERNAL_ELEMENT1 = "internal_element1";

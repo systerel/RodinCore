@@ -11,7 +11,7 @@
 package org.eventb.core.indexer.tests;
 
 import static org.eventb.core.indexer.tests.OccUtils.*;
-import static org.eventb.core.indexer.tests.ResourceUtils.*;
+import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
 
 import java.util.List;
 
@@ -25,19 +25,17 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.core.indexer.EventBIndexerPlugin;
-import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
-import org.rodinp.core.indexer.RodinIndexer;
-import org.rodinp.core.tests.AbstractRodinDBTests;
+import org.rodinp.internal.core.debug.DebugHelpers;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class IntegrationTests extends AbstractRodinDBTests {
+public class IntegrationTests extends EventBIndexerTests {
 
 	private static final String C1 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -129,8 +127,6 @@ public class IntegrationTests extends AbstractRodinDBTests {
 					+ "		</org.eventb.core.event>"
 					+ "</org.eventb.core.machineFile>";
 
-	private static IRodinProject project;
-
 	/**
 	 * @param name
 	 */
@@ -140,24 +136,20 @@ public class IntegrationTests extends AbstractRodinDBTests {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		EventBIndexerPlugin.getDefault(); // fix to register indexers only once
-		RodinIndexer.enableIndexing();
-		project = createRodinProject("P");
+		DebugHelpers.enableIndexing();
 	}
 
 	protected void tearDown() throws Exception {
-		deleteProject("P");
-		RodinIndexer.disableIndexing();
 		super.tearDown();
 	}
 
 	public void testIntegration() throws Exception {
 
-		final IMachineRoot m2 = createMachine(project, "M2", M2);
-		final IContextRoot c3 = createContext(project, "C3", C3);
-		final IMachineRoot m1 = createMachine(project, "M1", M1);
-		final IContextRoot c1 = createContext(project, "C1", C1);
-		final IContextRoot c2 = createContext(project, "C2", C2);
+		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2", M2);
+		final IContextRoot c3 = ResourceUtils.createContext(rodinProject, "C3", C3);
+		final IMachineRoot m1 = ResourceUtils.createMachine(rodinProject, "M1", M1);
+		final IContextRoot c1 = ResourceUtils.createContext(rodinProject, "C1", C1);
+		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2", C2);
 
 		final ICarrierSet set1 = c1.getCarrierSet(INTERNAL_ELEMENT1);
 		final IConstant cst2C2 = c2.getConstant(INTERNAL_ELEMENT1);
@@ -174,7 +166,7 @@ public class IntegrationTests extends AbstractRodinDBTests {
 		final IEvent evtM2 = m2.getEvent(INTERNAL_ELEMENT1);
 		final IWitness witM2 = evtM2.getWitness(INTERNAL_ELEMENT1);
 
-		final IIndexQuery requester = RodinIndexer.getIndexRequester();
+		final IIndexQuery requester = RodinCore.makeIndexQuery();
 
 		// Thread.sleep(800);
 		requester.waitUpToDate();

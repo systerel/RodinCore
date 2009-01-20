@@ -33,7 +33,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelImmediately() throws Exception {
-		final IMachineRoot context = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot context = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, NO_LIMIT,
@@ -48,12 +48,12 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterImports() throws Exception {
-		final IContextRoot exporter = createContext(project, EXPORTER,
+		final IContextRoot exporter = ResourceUtils.createContext(rodinProject, EXPORTER,
 				CST_1DECL);
 		final IConstant cstExp = exporter.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCstExp = OccUtils.newDecl(cstExp, CST1);
 
-		final IMachineRoot importer = createMachine(project, IMPORTER,
+		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject, IMPORTER,
 				VAR_1DECL_1REF_INV);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, NO_LIMIT,
@@ -68,7 +68,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 	}
 
 	public void testCancelAfterDecl() throws Exception {
-		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(1, NO_LIMIT,
@@ -98,7 +98,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2INV);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
@@ -126,7 +126,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		org.eventb.core.expression=\"5 − var1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL_2REF_2VRT);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
@@ -162,7 +162,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 				+ "		</org.eventb.core.event>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineRoot machine = createMachine(project, IMPORTER, VAR_4OCC);
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, IMPORTER, VAR_4OCC);
 
 		final CancelBridgeStub tk = new CancelBridgeStub(NO_LIMIT, 2,
 				NO_LIMIT, false, machine);

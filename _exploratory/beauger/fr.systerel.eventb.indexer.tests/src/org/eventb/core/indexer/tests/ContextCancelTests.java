@@ -12,9 +12,7 @@ package org.eventb.core.indexer.tests;
 
 import static org.eventb.core.indexer.tests.CancelBridgeStub.NO_LIMIT;
 import static org.eventb.core.indexer.tests.OccUtils.newDecl;
-import static org.eventb.core.indexer.tests.ResourceUtils.CTX_BARE_NAME;
-import static org.eventb.core.indexer.tests.ResourceUtils.INTERNAL_ELEMENT1;
-import static org.eventb.core.indexer.tests.ResourceUtils.createContext;
+import static org.eventb.core.indexer.tests.ResourceUtils.*;
 
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
@@ -36,7 +34,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 
 	public void testCancelImmediately() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL);
+			ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
 
 		final CancelBridgeStub tk =
 				new CancelBridgeStub(NO_LIMIT, NO_LIMIT, NO_LIMIT, true,
@@ -52,12 +50,12 @@ public class ContextCancelTests extends EventBIndexerTests {
 
 	public void testCancelAfterImports() throws Exception {
 		final IContextRoot exporter =
-				createContext(project, EXPORTER, CST_1DECL);
+				ResourceUtils.createContext(rodinProject, EXPORTER, CST_1DECL);
 		final IConstant cst = exporter.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCstExp = newDecl(cst, CST1);
 
 		final IContextRoot importer =
-				createContext(project, IMPORTER, CST_1DECL_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, IMPORTER, CST_1DECL_1REF_AXM);
 
 		final CancelBridgeStub tk =
 				new CancelBridgeStub(NO_LIMIT, NO_LIMIT, 1, false, importer,
@@ -73,7 +71,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 
 	public void testCancelAfterDecl() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
 
 		final CancelBridgeStub tk =
 				new CancelBridgeStub(1, NO_LIMIT, NO_LIMIT, false, context);
@@ -104,7 +102,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL_2REF_2AXM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_2REF_2AXM);
 
 		final CancelBridgeStub tk =
 				new CancelBridgeStub(NO_LIMIT, 2, NO_LIMIT, false, context);

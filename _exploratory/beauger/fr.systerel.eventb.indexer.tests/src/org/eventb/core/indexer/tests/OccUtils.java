@@ -24,10 +24,10 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IOccurrenceKind;
-import org.rodinp.core.indexer.RodinIndexer;
 import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.Occurrence;
@@ -40,7 +40,7 @@ public class OccUtils {
 
 	public static IOccurrence makeDecl(IInternalElement element,
 			IDeclaration declaration) {
-		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
+		final IInternalLocation loc = RodinCore.getInternalLocation(element);
 		return newOcc(DECLARATION, loc, declaration);
 	}
 
@@ -48,7 +48,7 @@ public class OccUtils {
 			IAttributeType.String attributeType, int start, int end,
 			IDeclaration declaration) {
 		final IInternalLocation loc =
-				RodinIndexer.getRodinLocation(element, attributeType, start,
+				RodinCore.getInternalLocation(element, attributeType, start,
 						end);
 		return newOcc(REFERENCE, loc, declaration);
 	}
@@ -56,13 +56,13 @@ public class OccUtils {
 	public static IOccurrence makeRef(IInternalElement element,
 			IAttributeType.String attributeType, IDeclaration declaration) {
 		final IInternalLocation loc =
-				RodinIndexer.getRodinLocation(element, attributeType);
+				RodinCore.getInternalLocation(element, attributeType);
 		return newOcc(REFERENCE, loc, declaration);
 	}
 
 	public static IOccurrence makeRef(IInternalElement element,
 			IDeclaration declaration) {
-		final IInternalLocation loc = RodinIndexer.getInternalLocation(element);
+		final IInternalLocation loc = RodinCore.getInternalLocation(element);
 		return newOcc(REFERENCE, loc, declaration);
 	}
 
@@ -70,7 +70,7 @@ public class OccUtils {
 			IAttributeType.String attributeType, int start, int end,
 			IDeclaration declaration) {
 		final IInternalLocation loc =
-				RodinIndexer.getRodinLocation(element, attributeType, start,
+				RodinCore.getInternalLocation(element, attributeType, start,
 						end);
 		return newOcc(MODIFICATION, loc, declaration);
 	}
@@ -109,13 +109,11 @@ public class OccUtils {
 		return makeRef(refines, EventBAttributes.TARGET_ATTRIBUTE, declaration);
 	}
 
-	@SuppressWarnings("restriction")
 	public static IDeclaration newDecl(IInternalElement elt, String name) {
 		final IDeclaration declCst1 = new Declaration(elt, name);
 		return declCst1;
 	}
 
-	@SuppressWarnings("restriction")
 	public static IOccurrence newOcc(IOccurrenceKind kind,
 			IInternalLocation location, IDeclaration declaration) {
 		return new Occurrence(kind, location, declaration);

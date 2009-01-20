@@ -61,7 +61,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testNoDependencies() throws Exception {
 
-		final IMachineRoot file = createMachine(project, M1_NAME, EMPTY_MACHINE);
+		final IMachineRoot file = ResourceUtils.createMachine(rodinProject, M1_NAME, EMPTY_MACHINE);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -72,9 +72,9 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testOneRefines() throws Exception {
 
-		final IMachineRoot parent = createMachine(project, M1_NAME, EMPTY_MACHINE);
+		final IMachineRoot parent = ResourceUtils.createMachine(rodinProject, M1_NAME, EMPTY_MACHINE);
 
-		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1REFINES);
+		final IMachineRoot child = ResourceUtils.createMachine(rodinProject, M2_NAME, MCH_1REFINES);
 
 		final List<IRodinFile> expected = Arrays.asList(parent.getRodinFile());
 
@@ -87,9 +87,9 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testOneSees() throws Exception {
 
-		final IContextRoot parent = createContext(project, C1_NAME, EMPTY_CONTEXT);
+		final IContextRoot parent = ResourceUtils.createContext(rodinProject, C1_NAME, EMPTY_CONTEXT);
 
-		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1SEES);
+		final IMachineRoot child = ResourceUtils.createMachine(rodinProject, M2_NAME, MCH_1SEES);
 
 		final List<IRodinFile> expected = Arrays.asList(parent.getRodinFile());
 
@@ -105,7 +105,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 */
 	public void testFileDoesNotExist() throws Exception {
 
-		final IMachineRoot child = createMachine(project, M2_NAME, MCH_1REFINES);
+		final IMachineRoot child = ResourceUtils.createMachine(rodinProject, M2_NAME, MCH_1REFINES);
 
 		final MachineIndexer indexer = new MachineIndexer();
 
@@ -115,7 +115,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 
 	public void testBadFileType() throws Exception {
 
-		final IContextRoot context = createContext(project, CTX_BARE_NAME,
+		final IContextRoot context = ResourceUtils.createContext(rodinProject, CTX_BARE_NAME,
 				CST_1DECL_1REF_THM);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -140,7 +140,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 				+ "		org.eventb.core.target=\"exporter\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				MALFORMED_MACHINE);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -159,7 +159,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 				+ "		name=\"internal_element1\"/>"
 				+ "</org.eventb.core.machineFile>";
 
-		final IMachineRoot machine = createMachine(project, MCH_BARE_NAME,
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				MCH_1REFINES_NO_TARGET_ATT);
 
 		final MachineIndexer indexer = new MachineIndexer();

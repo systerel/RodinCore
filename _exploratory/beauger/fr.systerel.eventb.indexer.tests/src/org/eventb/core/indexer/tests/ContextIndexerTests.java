@@ -57,7 +57,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testDeclaration() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
 
 		final IDeclaration declCst1 =
 				getDeclCst(context, INTERNAL_ELEMENT1, CST1);
@@ -76,7 +76,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testRefDeclaration() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
 
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
@@ -99,7 +99,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testOccurrenceOtherThanDecl() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
 
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
@@ -136,7 +136,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL_2OCC_SAME_AXM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_2OCC_SAME_AXM);
 
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
@@ -160,7 +160,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testExportLocal() throws Exception {
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
 
 		final IDeclaration declCst1 =
 				getDeclCst(context, INTERNAL_ELEMENT1, CST1);
@@ -180,13 +180,13 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testExportImported() throws Exception {
 
 		final IContextRoot exporter =
-				createContext(project, "exporter", CST_1DECL);
+				ResourceUtils.createContext(rodinProject, "exporter", CST_1DECL);
 
 		final IDeclaration declCst1 =
 				getDeclCst(exporter, INTERNAL_ELEMENT1, CST1);
 
 		final IContextRoot importer =
-				createContext(project, "importer", EMPTY_CONTEXT);
+				ResourceUtils.createContext(rodinProject, "importer", EMPTY_CONTEXT);
 
 		final BridgeStub tk = new BridgeStub(importer, declCst1);
 
@@ -212,13 +212,13 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testImportedOccurrence() throws Exception {
 		final IContextRoot exporter =
-				createContext(project, "exporter", CST_1DECL);
+				ResourceUtils.createContext(rodinProject, "exporter", CST_1DECL);
 
 		final IDeclaration declCst1 =
 				getDeclCst(exporter, INTERNAL_ELEMENT1, CST1);
 
 		final IContextRoot importer =
-				createContext(project, "importer", CST_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, "importer", CST_1REF_AXM);
 
 		final IAxiom axiom = importer.getAxiom(INTERNAL_ELEMENT1);
 		final IOccurrence occCst1 = makeRefPred(axiom, 4, 8, declCst1);
@@ -237,12 +237,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testUnknownElement() throws Exception {
 		final IContextRoot independent =
-				createContext(project, "independent", CST_1DECL);
+				ResourceUtils.createContext(rodinProject, "independent", CST_1DECL);
 		final IDeclaration declCst1 =
 				getDeclCst(independent, INTERNAL_ELEMENT1, CST1);
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1REF_AXM);
 
 		final BridgeStub tk = new BridgeStub(context);
 
@@ -258,17 +258,17 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 */
 	public void testTwoImportsSameName() throws Exception {
 		final IContextRoot exporter1 =
-				createContext(project, "exporter1", CST_1DECL);
+				ResourceUtils.createContext(rodinProject, "exporter1", CST_1DECL);
 		final IDeclaration declCstExp1 =
 				getDeclCst(exporter1, INTERNAL_ELEMENT1, CST1);
 
 		final IContextRoot exporter2 =
-				createContext(project, "exporter2", CST_1DECL);
+				ResourceUtils.createContext(rodinProject, "exporter2", CST_1DECL);
 		final IDeclaration declCstExp2 =
 				getDeclCst(exporter2, INTERNAL_ELEMENT1, CST1);
 
 		final IContextRoot importer =
-				createContext(project, "importer", CST_1REF_AXM);
+				ResourceUtils.createContext(rodinProject, "importer", CST_1REF_AXM);
 
 		final BridgeStub tk =
 				new BridgeStub(importer, declCstExp1, declCstExp2);
@@ -302,7 +302,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final String set1Name = "set1";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, SET_1DECL);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, SET_1DECL);
 
 		final IDeclaration declSet1 =
 				getDeclSet(context, set1IntName, set1Name);
@@ -327,7 +327,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testOccThm() throws Exception {
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, CST_1DECL_1REF_THM);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_THM);
 
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
@@ -347,7 +347,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 	public void testBadFileType() throws Exception {
 		final IMachineRoot machine =
-				createMachine(project, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
+			ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
 
 		final BridgeStub tk = new BridgeStub(machine);
 
@@ -375,7 +375,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME, MALFORMED_CONTEXT);
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, MALFORMED_CONTEXT);
 
 		final BridgeStub tk = new BridgeStub(context);
 
@@ -402,7 +402,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME,
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME,
 						CST_1DECL_1AXM_NO_PRED_ATT);
 
 		final BridgeStub tk = new BridgeStub(context);
@@ -431,7 +431,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
-				createContext(project, CTX_BARE_NAME,
+				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME,
 						CST_1DECL_1AXM_DOES_NOT_PARSE);
 
 		final BridgeStub tk = new BridgeStub(context);
