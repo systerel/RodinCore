@@ -43,6 +43,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.internal.core.debug.DebugHelpers;
 
 /**
  * Abstract class for builder tests.
@@ -170,6 +171,8 @@ public abstract class BuilderTest extends TestCase {
 		rodinProject = createRodinProject("P");
 		
 		disableAutoProver();
+		
+		DebugHelpers.disableIndexing();
 	}
 
 	protected IRodinProject createRodinProject(String projectName)
