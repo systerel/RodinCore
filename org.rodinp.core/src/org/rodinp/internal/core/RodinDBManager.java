@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     		org.eclipse.jdt.internal.core.JavaModelManager
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - separation of file and root element
+ *     Systerel - added database indexer
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -33,6 +34,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ISavedState;
@@ -62,6 +64,7 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.builder.BuildState;
 import org.rodinp.internal.core.builder.RodinBuilder;
+import org.rodinp.internal.core.indexer.RodinIndexer;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -752,6 +755,8 @@ public class RodinDBManager implements ISaveParticipant {
 	 */
 	public void saving(ISaveContext context) throws CoreException {
 		
+		RodinIndexer.saving(context);
+		
 		if (context.getKind() == ISaveContext.FULL_SAVE) {
 			// will need delta since this save (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38658)
 			context.needDelta();
@@ -857,6 +862,58 @@ public class RodinDBManager implements ISaveParticipant {
 //		}
 //	}
 //		
+	
+	public static class SavedStateProcessor extends Job {
+
+		final RodinDBManager dbManager;
+		ISavedState savedState;
+
+		public SavedStateProcessor(String name, RodinDBManager dbManager) {
+			super(name);
+			this.dbManager = dbManager;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				// add save participant and process delta atomically
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59937
+				workspace.run(
+					new IWorkspaceRunnable() {
+						public void run(IProgressMonitor progress) throws CoreException {
+							savedState = workspace.addSaveParticipant(RodinCore.getRodinCore(), dbManager);
+							if (savedState != null) {
+								// the event type coming from the saved state is always POST_AUTO_BUILD
+								// force it to be POST_CHANGE so that the delta processor can handle it
+								dbManager.deltaState.getDeltaProcessor().overridenEventType = IResourceChangeEvent.POST_CHANGE;
+								savedState
+								.processResourceChangeEvents(new IResourceChangeListener() {
+									public void resourceChanged(
+											IResourceChangeEvent event) {
+										dbManager.deltaState
+										.resourceChanged(event);
+										RodinIndexer.resourceChangedAtStartup(event);
+										// TODO see if possible to listen to RodinDB state changes
+										// rather than directly to the workspace
+									}
+								});
+							}
+						}
+					},
+					monitor);
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+
+		public ISavedState getSavedState() {
+			return savedState;
+		}
+	}
+	
+	
 	public void startup() {
 		try {
 			configurePluginDebugOptions();
@@ -884,38 +941,16 @@ public class RodinDBManager implements ISaveParticipant {
 					| IResourceChangeEvent.PRE_DELETE
 					| IResourceChangeEvent.PRE_CLOSE);
 
-//			startIndexing();
+			RodinIndexer.load();
 			
 			// process deltas since last activated in indexer thread so that indexes are up-to-date.
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=38658
-			Job processSavedState = new Job(Messages.savedState_jobName) { 
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						// add save participant and process delta atomically
-						// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59937
-						workspace.run(
-							new IWorkspaceRunnable() {
-								public void run(IProgressMonitor progress) throws CoreException {
-									ISavedState savedState = workspace.addSaveParticipant(RodinCore.getRodinCore(), RodinDBManager.this);
-									if (savedState != null) {
-										// the event type coming from the saved state is always POST_AUTO_BUILD
-										// force it to be POST_CHANGE so that the delta processor can handle it
-										RodinDBManager.this.deltaState.getDeltaProcessor().overridenEventType = IResourceChangeEvent.POST_CHANGE;
-										savedState.processResourceChangeEvents(RodinDBManager.this.deltaState);
-									}
-								}
-							},
-							monitor);
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-					return Status.OK_STATUS;
-				}
-			};
+			SavedStateProcessor processSavedState = new SavedStateProcessor(
+					Messages.savedState_jobName, RodinDBManager.this);
 			processSavedState.setSystem(true);
 			processSavedState.setPriority(Job.SHORT); // process asap
 			processSavedState.schedule();
+			RodinIndexer.startAfter(processSavedState);
 		} catch (RuntimeException e) {
 			shutdown();
 			throw e;
@@ -928,6 +963,8 @@ public class RodinDBManager implements ISaveParticipant {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(this.deltaState);
 		workspace.removeSaveParticipant(javaCore);
+		
+		RodinIndexer.stop();
 	
 		// wait for the initialization job to finish
 		try {

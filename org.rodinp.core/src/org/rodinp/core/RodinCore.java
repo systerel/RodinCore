@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - removed deprecated methods
  *     Systerel - added asRodinElement()
  *     Systerel - separation of file and root element
+ *     Systerel - added database indexer
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -30,11 +31,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.osgi.framework.BundleContext;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.indexer.IIndexQuery;
+import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.location.IInternalLocation;
+import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.BatchOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
+import org.rodinp.internal.core.indexer.IndexQuery;
+import org.rodinp.internal.core.indexer.RodinIndexer;
+import org.rodinp.internal.core.location.AttributeLocation;
+import org.rodinp.internal.core.location.AttributeSubstringLocation;
+import org.rodinp.internal.core.location.InternalLocation;
+import org.rodinp.internal.core.location.RodinLocation;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.version.ConversionResult;
 
@@ -609,6 +621,103 @@ public class RodinCore extends Plugin {
 	 */
 	public static IRodinDB getRodinDB() {
 		return RodinDBManager.getRodinDBManager().getRodinDB();
+	}
+
+	/**
+	 * Returns a fresh object that allows querying the indexer database.
+	 * 
+	 * @see IIndexQuery
+	 * @return a fresh query object
+	 */
+	public static IIndexQuery makeIndexQuery() {
+		return new IndexQuery();
+	}
+
+	/**
+	 * Gets the occurrence kind corresponding to the given id.
+	 * 
+	 * @param id
+	 *            the occurrence kind identifier
+	 * @return the occurrence kind.
+	 */
+	public static IOccurrenceKind getOccurrenceKind(String id) {
+		return RodinIndexer.getOccurrenceKind(id);
+	}
+
+	/**
+	 * Returns the location pointing at the given element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 * @return the location pointing at the given element
+	 */
+	public static IRodinLocation getRodinLocation(IInternalElement element) {
+		return new RodinLocation(element);
+	}
+
+	/**
+	 * Returns the location pointing at the given internal element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @return the location pointing at the given element
+	 */
+	public static IInternalLocation getInternalLocation(IInternalElement element) {
+		return new InternalLocation(element);
+	}
+
+	/**
+	 * Returns the location pointing at the attribute of the given type in the
+	 * given internal element.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @param attributeType
+	 *            the type of the attribute to point at
+	 * @return the location pointing at the given attribute of the given element
+	 */
+	public static IInternalLocation getInternalLocation(
+			IInternalElement element, IAttributeType attributeType) {
+		return new AttributeLocation(element, attributeType);
+	}
+
+	/**
+	 * Returns the location pointing at the specified substring of the attribute
+	 * of the given type in the given internal element. The substring is
+	 * specified by giving its start and end position.
+	 * <p>
+	 * This is a handle-only method.
+	 * </p>
+	 * 
+	 * @param element
+	 *            a Rodin internal element
+	 * @param attributeType
+	 *            the type of the attribute to point at
+	 * @param start
+	 *            the start position of the substring in the attribute value,
+	 *            that is the index of the first character. Must be less than
+	 *            <code>end</code>
+	 * @param end
+	 *            the end position of the substring in the attribute value, that
+	 *            is the index of the last character plus one. Must be greater
+	 *            than <code>start</code>
+	 * @return the location pointing at the specified substring of the given
+	 *         attribute of the given element
+	 */
+	public static IInternalLocation getInternalLocation(
+			IInternalElement element, IAttributeType.String attributeType,
+			int start, int end) {
+		return new AttributeSubstringLocation(element, attributeType, start,
+				end);
 	}
 
 }
