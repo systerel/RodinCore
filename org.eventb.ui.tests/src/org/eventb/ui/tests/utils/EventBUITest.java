@@ -11,6 +11,7 @@
  *     Systerel - added methods for creating elements
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
+ *     Systerel - disabled database indexer in setup 
  *******************************************************************************/
 package org.eventb.ui.tests.utils;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
@@ -55,6 +57,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.debug.DebugHelpers;
 
 /**
  * @author htson
@@ -414,21 +417,30 @@ public abstract class EventBUITest extends TestCase {
 			workspace.setDescription(wsDescription);
 		}
 		
+		// disable indexing
+		DebugHelpers.disableIndexing();
+		
 		// Create a new project
-		IProject project = workspace.getRoot().getProject("P"); //$NON-NLS-1$
+		rodinProject = createRodinProject("P"); //$NON-NLS-1$
+	}
+
+	protected IRodinProject createRodinProject(String name) throws CoreException {
+		IProject project = workspace.getRoot().getProject(name);
 		project.create(null);
 		project.open(null);
 		IProjectDescription pDescription = project.getDescription();
 		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.valueOf(project);
+		final IRodinProject rodinPrj = RodinCore.valueOf(project);
+		assertNotNull(rodinPrj);
+		return rodinPrj;
 	}
 	
 	@After
 	@Override
 	protected void tearDown() throws Exception {
 		EventBUIPlugin.getActivePage().closeAllEditors(false);
-		rodinProject.getProject().delete(true, true, null);
+		workspace.getRoot().delete(true, null);
 		super.tearDown();
 	}
 
