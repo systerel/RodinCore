@@ -108,6 +108,25 @@ public class Messages {
 	public static String uiUtils_errorOpeningProvingEditor;
 	public static String uiUtils_unexpectedError;
 
+	// Proof Purger
+	public static String filepurgeaction_rodindberror;
+	public static String filepurgeaction_invalidselection;
+	public static String filepurgeaction_noproofstopurge;
+	public static String filepurgeaction_usedproofs;
+	public static String filepurgeaction_runningpurgeroperation;
+	public static String proofpurger_computingunusedproofs;
+	public static String proofpurger_deleting;
+	public static String proofpurger_deletingselectedproofs;
+	public static String proofpurger_extractingprooffiles;
+	public static String proofpurger_extractingunusedproofs;
+	public static String proofpurger_savingchanges;
+	public static String proofpurger_tryingtodeleteusedproofs;
+	public static String proofpurger_verifyingselectedproofs;
+	public static String proofpurgerselectiondialog_delete;
+	public static String proofpurgerselectiondialog_proofpurgerselection;
+	public static String proofpurgerselectiondialog_selectproofstodelete;
+	public static String proofpurger_tryingtodeleteusedfiles;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

@@ -931,6 +931,17 @@
                tooltip="%action.autoProver.tooltip">
          </action>
       </viewerContribution>
+      <objectContribution
+            id="org.eventb.ui.ProofPurger"
+            objectClass="org.rodinp.core.IRodinElement">
+         <action
+               class="org.eventb.internal.ui.proofpurger.PurgeAction"
+               id="org.eventb.ui.purge"
+               label="%popupMenu.purge.label"
+               menubarPath="proving"
+               tooltip="%popupMenu.purge.tooltip">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eventb.ui.proofTactics">
