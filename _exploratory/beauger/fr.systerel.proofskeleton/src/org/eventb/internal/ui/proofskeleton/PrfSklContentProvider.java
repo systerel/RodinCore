@@ -8,13 +8,13 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
+import org.eventb.internal.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 
 /**
  * Content provider for the proof skeleton viewer.

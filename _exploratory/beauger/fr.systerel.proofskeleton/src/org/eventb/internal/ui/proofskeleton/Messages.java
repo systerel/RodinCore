@@ -1,9 +1,9 @@
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eventb.ui.proofskeleton.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eventb.internal.ui.proofskeleton.messages"; //$NON-NLS-1$
 	public static String PrfSklLabelProvider_noproof;
 	public static String PrfSklLabelProvider_pendingnode;
 	public static String SequentDetailsPage_turnstile;

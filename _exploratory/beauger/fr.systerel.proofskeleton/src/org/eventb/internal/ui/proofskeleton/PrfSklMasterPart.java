@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
+import org.eventb.internal.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.

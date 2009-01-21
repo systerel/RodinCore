@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,7 +27,7 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
+import org.eventb.internal.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 import org.rodinp.core.RodinDBException;
 
 /**

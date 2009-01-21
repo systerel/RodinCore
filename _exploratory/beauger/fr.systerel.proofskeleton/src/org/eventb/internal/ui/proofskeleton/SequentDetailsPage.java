@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -8,14 +8,14 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton;
+package org.eventb.internal.ui.proofskeleton;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
+import org.eventb.internal.ui.proofskeleton.PrfSklMasterDetailsBlock.DefaultMasterInput;
 
 /**
  * LabelProvider for the proof skeleton viewer. 
