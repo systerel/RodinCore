@@ -809,14 +809,12 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		predicateTest("A ⊆ {x ∣ x > 0} ∪ B", "A ∖ B ⊆ {x ∣ x > 0} ");
 
 		
-		// r[{}] == {}
-		inputExp = makeInputExpression("{x + 2 ↦ 3}[∅]");
-		expressionTest(emptySetInteger, inputExp);
-		expressionTest("{∅, {FALSE}}",
-				"{({(0 ↦ 1) ↦ FALSE, (2 ↦ 1) ↦ TRUE})[∅], {FALSE}}");
-		expressionTest("{∅, {1 ↦ TRUE}}",
-				"{({0 ↦ (1 ↦ FALSE), 2 ↦ (1 ↦ TRUE)})[∅], {1 ↦ TRUE}}");
-		
+		// r[∅] == ∅
+		expressionTest("(∅ ⦂ ℙ(T))", "r[(∅ ⦂ ℙ(S))]", "r", "ℙ(S×T)");
+		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[(∅ ⦂ ℙ(S))]");
+
+		// ∅[A] == ∅
+		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[A]", "A", "ℙ(S)");
 		
 		// dom({}) == {}
 		Type domainType = intType;
