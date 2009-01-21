@@ -10,7 +10,6 @@ package org.eventb.contributer.seqprover.fr1798741;
 import java.math.BigInteger;
 
 import org.eventb.core.ast.*;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
  * Generated formula rewriter for the Event-B sequent prover.
@@ -18,8 +17,17 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 @SuppressWarnings("unused")
 public class AutoRewriterImpl extends DefaultRewriter {
 
-	protected AtomicExpression makeEmptySet(Type type) {
-		return ff.makeEmptySet(type, null);
+	/**
+	 * Returns the empty subset of <code>T</code>, given a relation
+	 * <code>rel</code> of type <code>S ↔ T</code>.
+	 * 
+	 * @param rel
+	 *            an expression denoting a relation
+	 * @return the empty subset of the relation range
+	 */
+	private AtomicExpression makeEmptyRange(Expression rel) {
+		final Type rangeType = rel.getType().getTarget();
+		return ff.makeEmptySet(ff.makePowerSetType(rangeType), null);
 	}
 
 	public AutoRewriterImpl() {
@@ -33,21 +41,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    %match (Expression expression) {
 	    	/**
 			 * Relation image with empty set:	r[∅]  =  ∅
-			 * 									∅[a]  =  ∅
 			 */
-	    	RelImage(left, right) -> {
+	    	RelImage(rel, EmptySet()) -> {
+				return makeEmptyRange(`rel);
+			}
 
-	    		if (`left.equals(makeEmptySet(`left.getType()))
-	    			|| `right.equals(makeEmptySet(`right.getType())))
-	    		{
-	    			// left has a PowerSetType. the base type of that
-	    			// is a ProductType of which we need the right type
-	    			Type rangeType = ((PowerSetType) `left.getType()).getBaseType();
-	    			rangeType = ((ProductType) rangeType).getRight();
-	    			
-	    			return makeEmptySet(ff.makePowerSetType(rangeType));
-	    		}
-	    		
+	    	/**
+			 * Relation image with empty set:	∅[a]  =  ∅
+			 */
+	    	RelImage(rel@EmptySet(), _) -> {
+				return makeEmptyRange(`rel);
     		}
 	    }
 	    return expression;
