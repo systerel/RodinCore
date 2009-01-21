@@ -15,10 +15,20 @@ import org.rodinp.internal.core.indexer.IndexManager;
 
 /**
  * @author Nicolas Beauger
- *
  */
 public class DebugHelpers {
 
+	//////////////////////////////////////////////////////////////////////////
+	//																		//
+	//						  IMPORTANT NOTICE								//
+	//																		//
+	//	Methods of this class are intended to be used for testing purposes	//
+	//	only. Do not call in operational code.								//
+	//																		//
+	//////////////////////////////////////////////////////////////////////////
+
+
+	
 	public static void disableIndexing() {
 		IndexManager.getDefault().disableIndexing();
 	}
