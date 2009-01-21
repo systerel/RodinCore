@@ -127,6 +127,12 @@ public class Messages {
 	public static String proofpurgerselectiondialog_selectproofstodelete;
 	public static String proofpurger_tryingtodeleteusedfiles;
 	
+	// Proof Skeleton
+	public static String proofskeleton_noproof;
+	public static String proofskeleton_pendingnode;
+	public static String proofskeleton_turnstile;
+
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

@@ -73,6 +73,12 @@
             icon="icons/full/ctool16/problems_view.gif"
             id="org.eventb.ui.views.RodinProblemView"
             name="%view.RodinProblemView"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView"
+            icon="icons/full/clcl16/prf_tree.gif"
+            id="org.eventb.ui.views.ProofSkeleton"
+            name="%view.ProofSkeleton"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -2668,6 +2674,24 @@
                id="org.eventb.ui.views.ProofTree.toolbar.expandAll"
                label="%action.ExpandAll.label"
                toolbarPath="navigationGroup"/>
+      </viewContribution>
+      <viewContribution
+            id="org.eventb.ui.ProofSkeleton.toolbar"
+            targetID="org.eventb.ui.views.ProofSkeleton">
+         <action
+               class="org.eventb.internal.ui.proofSkeletonView.ProofSkeletonCollapseAllAction"
+               icon="icons/full/elcl16/collapseall.gif"
+               id="org.eventb.ui.views.ProofSkeleton.toolbar.collapseAll"
+               label="%action.CollapseAll.label"
+               toolbarPath="navigationGroup">
+         </action>
+         <action
+               class="org.eventb.internal.ui.proofSkeletonView.ProofSkeletonExpandAllAction"
+               icon="icons/full/elcl16/expandall.gif"
+               id="org.eventb.ui.views.ProofSkeleton.toolbar.expandAll"
+               label="%action.ExpandAll.label"
+               toolbarPath="navigationGroup">
+         </action>
       </viewContribution>
    </extension>
    <extension
