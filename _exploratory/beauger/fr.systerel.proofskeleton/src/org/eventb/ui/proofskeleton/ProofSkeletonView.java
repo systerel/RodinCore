@@ -8,15 +8,13 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.proofskeleton.views;
+package org.eventb.ui.proofskeleton;
 
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
-import org.eventb.ui.proofskeleton.PrfSklMasterDetailsBlock;
-import org.eventb.ui.proofskeleton.SelectionManager;
 
 /**
  * ViewPart for displaying proof skeletons.

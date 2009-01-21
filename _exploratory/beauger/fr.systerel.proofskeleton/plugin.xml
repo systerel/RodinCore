@@ -8,8 +8,8 @@
             name="%view.name"
             category="org.eventb.ui"
             icon="icons/prf_tree.gif"
-            class="org.eventb.ui.proofskeleton.views.ProofSkeletonView"
-            id="org.eventb.ui.proofskeleton.views.ProofSkeletonView">
+            class="org.eventb.ui.proofskeleton.ProofSkeletonView"
+            id="proofSkeletonView">
       </view>
    </extension>
    <extension
@@ -20,10 +20,10 @@
                ratio="0.5"
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"
-               id="org.eventb.ui.proofskeleton.views.ProofSkeletonView">
+               id="proofSkeletonView">
          </view>
          <viewShortcut
-               id="org.eventb.ui.proofskeleton.views.ProofSkeletonView">
+               id="proofSkeletonView">
          </viewShortcut>
       </perspectiveExtension>
    </extension>
@@ -31,16 +31,16 @@
          point="org.eclipse.ui.viewActions">
       <viewContribution
             id="org.eventb.ui.proofskeleton.toolbar"
-            targetID="org.eventb.ui.proofskeleton.views.ProofSkeletonView">
+            targetID="proofSkeletonView">
          <action
-               class="org.eventb.ui.proofskeleton.views.ProofSkeletonCollapseAllAction"
+               class="org.eventb.ui.proofskeleton.ProofSkeletonCollapseAllAction"
                icon="icons/collapseall.gif"
                id="org.eventb.ui.proofskeleton.toolbar.collapseAll"
                label="%action.collapseall.label"
                toolbarPath="navigationGroup">
          </action>
          <action
-               class="org.eventb.ui.proofskeleton.views.ProofSkeletonExpandAllAction"
+               class="org.eventb.ui.proofskeleton.ProofSkeletonExpandAllAction"
                icon="icons/expandall.gif"
                id="org.eventb.ui.proofskeleton.toolbar.expandAll"
                label="%action.expandall.label"
