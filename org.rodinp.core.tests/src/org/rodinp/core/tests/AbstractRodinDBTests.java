@@ -1108,10 +1108,6 @@ public abstract class AbstractRodinDBTests extends TestCase {
 		super.tearDown();
 	}
 
-	protected static void enableIndexing() {
-		DebugHelpers.enableIndexing();
-	}
-
 //	public static void waitUntilIndexesReady() {
 //		// dummy query for waiting until the indexes are ready
 //		SearchEngine engine = new SearchEngine();
