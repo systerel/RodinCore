@@ -43,7 +43,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.rodinp.core.RodinDBException;
 
 public class CommentToolTip {
@@ -69,7 +69,7 @@ public class CommentToolTip {
 
 	Listener labelListener;
 
-	static final CommentAttributeFactory FACTORY = new CommentAttributeFactory();
+	static final CommentAttributeManipulation FACTORY = new CommentAttributeManipulation();
 
 	/**
 	 * Creates a new tooltip handler

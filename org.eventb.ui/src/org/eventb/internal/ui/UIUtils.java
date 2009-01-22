@@ -14,6 +14,7 @@
  *     Systerel - added history support
  *     Systerel - added boolean to linkToProverUI() and a showQuestion() method
  *     Systerel - added method to remove MouseWheel Listener of CCombo
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -51,36 +52,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
-import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.IParameter;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
-import org.eventb.core.IWitness;
-import org.eventb.internal.ui.eventbeditor.editpage.ActionLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.AxiomLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.CarrierSetIdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ConstantIdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.DefaultIdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.DefaultLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.GuardLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.InvariantLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.LabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ParameterIdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.TheoremLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.VariableIdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.WitnessLabelAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -487,50 +464,76 @@ public class UIUtils {
 		}
 	}
 
+	/**
+	 * Return the internal name prefix. Use extension point to get the
+	 * autoNamePrefix.
+	 * */
 	public static String getNamePrefix(IRodinFile rodinFile,
-			IInternalElementType<?> type, String defaultPrefix) {
-		return "internal_" + getPrefix(rodinFile, type, defaultPrefix); //$NON-NLS-1$
+			IInternalElementType<?> type) {
+		return "internal_" + getAutoNamePrefix(rodinFile, type); //$NON-NLS-1$
 	}
 
 	public static String getNamePrefix(IInternalElement root,
-			IInternalElementType<?> type, String defaultPrefix) {
-		return getNamePrefix(root.getRodinFile(), type, defaultPrefix);
+			IInternalElementType<?> type) {
+		return getNamePrefix(root.getRodinFile(), type);
 	}
 
-	public static String getPrefix(IRodinFile inputFile,
-			IInternalElementType<?> type, String defaultPrefix) {
-		String prefix = null;
-		try {
-			prefix = inputFile.getResource().getPersistentProperty(
-					getQualifiedName(type));
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		if (prefix == null)
-			prefix = defaultPrefix;
-		return prefix;
+	/**
+	 * Return the prefix setting by user or the default prefix if there is not.
+	 * 
+	 * @param inputFile
+	 *            a {@link IRodinFile}
+	 * @param type
+	 *            a {@link IInternalElementType}. Type of the element of the
+	 *            attribute
+	 * */
+	public static String getAutoNamePrefix(IRodinFile inputFile,
+			IInternalElementType<?> type) {
+		final String defaultPrefix = ElementDescRegistry.getInstance()
+				.getElementDesc(type).getAutoNamePrefix();
+		try {
+			final String prefix = inputFile.getResource()
+					.getPersistentProperty(getQualifiedName(type));
+			if (prefix == null)
+				return defaultPrefix;
+			return prefix;
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return defaultPrefix;
+		}
 	}
 	
-	public static String getPrefix(IInternalElement root,
-			IInternalElementType<?> type, String defaultPrefix) {
-		return getPrefix(root.getRodinFile(), type, defaultPrefix);
+	/**
+	 * Set the prefix
+	 * 
+	 * @param inputFile
+	 *            a {@link IRodinFile}
+	 * @param type
+	 *            a {@link IInternalElementType}. Type of the element of the
+	 *            attribute
+	 * */
+	public static void setAutoNamePrefix(IRodinFile inputFile,
+			IInternalElementType<?> type, String newPrefix) {
+		final QualifiedName qualifiedName = UIUtils.getQualifiedName(type);
+		try {
+			if (newPrefix != null)
+				inputFile.getResource().setPersistentProperty(qualifiedName,
+						newPrefix);
+		} catch (CoreException e) {
+			EventBUIExceptionHandler.handleSetPersistentPropertyException(e);
+		}
 	}
-
-	public static <T extends IInternalElement> String getFreeElementName(
-			IInternalElement root, IInternalElement parent,
-			IInternalElementType<T> type, String defaultPrefix)
-			throws RodinDBException {
-		String prefix = getNamePrefix(root, type, defaultPrefix);
-		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
+	
+	public static String getAutoNamePrefix(IInternalElement root,
+			IInternalElementType<?> type) {
+		return getAutoNamePrefix(root.getRodinFile(), type);
 	}
 
 	public static String getFreeElementLabel(IInternalElement parent,
-			IInternalElementType<? extends IInternalElement> type,
-			String defaultPrefix) throws RodinDBException {
-		final IInternalElement root = parent.getRoot();
-		String prefix = getPrefix(root, type, defaultPrefix);
+			IInternalElementType<? extends IInternalElement> type) {
+		final IInternalElement root = parent.getRodinFile().getRoot();
+		String prefix = getAutoNamePrefix(root, type);
 		return prefix + getFreeElementLabelIndex(parent, type, prefix);
 	}
 
@@ -548,21 +551,29 @@ public class UIUtils {
 	 * @return a non already used integer identifier intended for a new element
 	 *         of that type (if no element of that type already exists, returns
 	 *         beginIndex)
-	 * @throws RodinDBException
 	 */
 	public static String getFreeElementLabelIndex(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type, String prefix)
-			throws RodinDBException {
-		return getFreePrefixIndex(parent, type,
-				EventBAttributes.LABEL_ATTRIBUTE, prefix);
+			{
+		try {
+			return getFreePrefixIndex(parent, type,
+					EventBAttributes.LABEL_ATTRIBUTE, prefix);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return "1";
+		}
 	}
 
 	public static String getFreeElementIdentifier(IInternalElement parent,
-			IInternalElementType<? extends IInternalElement> type,
-			String defaultPrefix) throws RodinDBException {
-		final IInternalElement root = parent.getRoot();
-		String prefix = getPrefix(root, type, defaultPrefix);
-		return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
+			IInternalElementType<? extends IInternalElement> type) {
+		final IInternalElement root = parent.getRodinFile().getRoot();
+		final String prefix = getAutoNamePrefix(root, type);
+		try {
+			return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return prefix;
+		}
 	}
 
 	public static String getFreeElementIdentifierIndex(IInternalElement parent,
@@ -589,86 +600,12 @@ public class UIUtils {
 		return set;
 	}
 
-	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
-			IInternalElement element) {
-		if (element instanceof ICarrierSet) {
-			return new CarrierSetIdentifierAttributeFactory();
-		} else if (element instanceof IConstant) {
-			return new ConstantIdentifierAttributeFactory();
-		} else if (element instanceof IParameter) {
-			return new ParameterIdentifierAttributeFactory();
-		} else if (element instanceof IVariable) {
-			return new VariableIdentifierAttributeFactory();
-		} else {
-			return new DefaultIdentifierAttributeFactory();
-		}
-	}
-	
-
-	public static IdentifierAttributeFactory getIdentifierAttributeFactory(
-			IInternalElementType<?> type) {
-		if (type == ICarrierSet.ELEMENT_TYPE) {
-			return new CarrierSetIdentifierAttributeFactory();
-		} else if (type == IConstant.ELEMENT_TYPE) {
-			return new ConstantIdentifierAttributeFactory();
-		} else if (type == IParameter.ELEMENT_TYPE) {
-			return new ParameterIdentifierAttributeFactory();
-		} else if (type == IVariable.ELEMENT_TYPE) {
-			return new VariableIdentifierAttributeFactory();
-		} else {
-			return new DefaultIdentifierAttributeFactory();
-		}
-	}
-	
-	public static LabelAttributeFactory getLabelAttributeFactory(
-			IInternalElement element) {
-		if (element instanceof IAction) {
-			return new ActionLabelAttributeFactory();
-		} else if (element instanceof IAxiom) {
-			return new AxiomLabelAttributeFactory();
-		} else if (element instanceof IEvent) {
-			return new EventLabelAttributeFactory();
-		} else if (element instanceof IGuard) {
-			return new GuardLabelAttributeFactory();
-		} else if (element instanceof IInvariant) {
-			return new InvariantLabelAttributeFactory();
-		} else if (element instanceof ITheorem) {
-			return new TheoremLabelAttributeFactory();
-		} else if (element instanceof IWitness) {
-			return new WitnessLabelAttributeFactory();
-		} else {
-			return new DefaultLabelAttributeFactory();
-		}
-	}
-
-	public static LabelAttributeFactory getLabelAttributeFactory(
-			IInternalElementType<?> type) {
-		if (type == IAction.ELEMENT_TYPE) {
-			return new ActionLabelAttributeFactory();
-		} else if (type == IAxiom.ELEMENT_TYPE) {
-			return new AxiomLabelAttributeFactory();
-		} else if (type == IEvent.ELEMENT_TYPE) {
-			return new EventLabelAttributeFactory();
-		} else if (type == IGuard.ELEMENT_TYPE) {
-			return new GuardLabelAttributeFactory();
-		} else if (type == IInvariant.ELEMENT_TYPE) {
-			return new InvariantLabelAttributeFactory();
-		} else if (type == ITheorem.ELEMENT_TYPE) {
-			return new TheoremLabelAttributeFactory();
-		} else if (type == IWitness.ELEMENT_TYPE) {
-			return new WitnessLabelAttributeFactory();
-		} else {
-			return new DefaultLabelAttributeFactory();
-		}
-	}
-
-	public static <E extends IInternalElement> void setStringAttribute(
-			E element, IAttributeFactory<E> factory, String value,
+	public static void setStringAttribute(
+			IInternalElement element, IAttributeManipulation factory, String value,
 			IProgressMonitor monitor) {
 		try {
 			if (attributeHasChanged(element, factory, value, monitor)) {
-				final IRodinFile rodinFile = ((IInternalElement) element)
-						.getRodinFile();
+				final IRodinFile rodinFile = element.getRodinFile();
 				History.getInstance().addOperation(
 						OperationFactory.changeAttribute(rodinFile, factory,
 								element, value));
@@ -681,8 +618,8 @@ public class UIUtils {
 		}
 	}
 
-	private static <E extends IInternalElement> boolean attributeHasChanged(
-			E element, IAttributeFactory<E> factory, String value,
+	private static boolean attributeHasChanged(
+			IInternalElement element, IAttributeManipulation factory, String value,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (value == null) {
 			return factory.hasValue(element, monitor);
@@ -695,8 +632,7 @@ public class UIUtils {
 	public static <T extends IInternalElement> String getFreeChildName(
 			IRodinFile file, IInternalElement parent,
 			IInternalElementType<T> type) throws RodinDBException {
-		String defaultPrefix = "element"; // TODO Get this from extensions //$NON-NLS-1$
-		String prefix = getNamePrefix(file, type, defaultPrefix);
+		String prefix = getNamePrefix(file, type);
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 

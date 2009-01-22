@@ -35,10 +35,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixCstName;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -48,7 +45,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 
-	final private String axmPrefix;
+	private final String axmPrefix;
 	
 	String identifier;
 
@@ -82,19 +79,7 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	private String getAxiomPrefix(IContextRoot root) {
-		final String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-				.getDefaultPrefix("org.eventb.core.axiomLabel");
-		return UIUtils.getPrefix(root, IAxiom.ELEMENT_TYPE, defaultPrefix);
-	}
-	
-	private String getFirstFreeAxiomPrefix(IContextRoot root, String prefix) {
-		try {
-			return UIUtils.getFreeElementLabelIndex(root, IAxiom.ELEMENT_TYPE,
-					prefix);
-		} catch (RodinDBException e1) {
-			e1.printStackTrace();
-			return "1";
-		}
+		return UIUtils.getAutoNamePrefix(root, IAxiom.ELEMENT_TYPE);
 	}
 	
 	/*
@@ -165,19 +150,10 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 		axiomPairTexts.add(new Pair<IEventBInputText, IEventBInputText>(
 				axiomNameText, axiomPredicateText));
 
-		textWidget.addModifyListener(
-				new GuardListener(axiomPredicateText.getTextWidget()));
-
-		
-		String cstLabel = "defaultLabel";
-		try {
-			cstLabel = UIUtils.getFreeElementIdentifier(root,
-					IConstant.ELEMENT_TYPE, PrefixCstName.DEFAULT_PREFIX);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		textWidget.setText(cstLabel);
+		textWidget.addModifyListener(new GuardListener(axiomPredicateText
+				.getTextWidget()));
+		textWidget.setText(UIUtils.getFreeElementIdentifier(root,
+				IConstant.ELEMENT_TYPE));
 		textWidget.selectAll();
 		textWidget.setFocus();
 	}
@@ -218,8 +194,8 @@ public class IntelligentNewConstantInputDialog extends EventBInputDialog {
 	}
 
 	private String getNewAxiomName() {
-		String axmIndex = getFirstFreeAxiomPrefix(editor.getRodinInput(),
-				axmPrefix);
+		final String axmIndex = UIUtils.getFreeElementLabelIndex(editor
+				.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
 		final int index = Integer.parseInt(axmIndex) + axiomPairTexts.size();
 		return axmPrefix + index;
 	}

@@ -11,27 +11,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eventb.core.IExpressionElement;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.manipulation.ExpressionAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 
-public class ExpressionSection extends TextSection<IExpressionElement> {
+public class ExpressionSection extends TextSection {
 
+	private final IAttributeManipulation factory = new ExpressionAttributeManipulation();
+	
 	@Override
 	String getLabel() {
 		return "Expression";
-	}
-
-	@Override
-	String getText() throws RodinDBException {
-		if (element == null)
-			return null;
-		if (element == null)
-			return null;
-		return element.getExpressionString();
 	}
 
 	@Override
@@ -41,9 +31,8 @@ public class ExpressionSection extends TextSection<IExpressionElement> {
 	}
 
 	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, new ExpressionAttributeFactory(),
-				text, monitor);
+	protected IAttributeManipulation getFactory() {
+		return factory;
 	}
 
 }

@@ -19,8 +19,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.AbstractContextManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -40,7 +40,7 @@ public class SeesSection extends
 
 	private static final String SECTION_DESCRIPTION = "Select the seen contexts of this machine";
 
-	final private static AbstractContextFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+	private final static AbstractContextManipulation<ISeesContext> factory = new SeesContextNameAttributeManipulation();
 
 	public SeesSection(IEventBEditor<IMachineRoot> editor, FormToolkit toolkit,
 			Composite parent) {
@@ -73,7 +73,7 @@ public class SeesSection extends
 	}
 
 	@Override
-	protected AbstractContextFactory<ISeesContext> getFactory() {
+	protected AbstractContextManipulation<ISeesContext> getManipulation() {
 		return factory;
 	}
 

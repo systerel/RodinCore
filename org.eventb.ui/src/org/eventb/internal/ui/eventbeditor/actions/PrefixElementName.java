@@ -8,63 +8,64 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinFile;
 
-public abstract class PrefixElementName implements IEditorActionDelegate {
+public class PrefixElementName implements IEditorActionDelegate {
 
-	IEventBEditor<?> editor;
+	//TODO in the longer term all subclasses should disappear and be replaced by instances
 
+	private IEventBEditor<?> editor;
+
+	private final IInternalElementType<?> elementType;
+
+	private final String dialogTitle;
+
+	private final String dialogMessage;
+	
+	public PrefixElementName(IInternalElementType<?> elementType,
+			String dialogTitle, String dialogMessage) {
+		this.elementType = elementType;
+		this.dialogTitle = dialogTitle;
+		this.dialogMessage = dialogMessage;
+	}
+	
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		editor = (IEventBEditor<?>) targetEditor;
 	}
 
-	public void setPrefix(String attributeID, String dialogTitle, String message) {
-		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
-				.getType(attributeID);
-		QualifiedName qualifiedName = UIUtils.getQualifiedName(type);
-		IRodinFile inputFile = editor.getRodinInput().getRodinFile();
-		String prefix = null;
-		try {
-			prefix = inputFile.getResource().getPersistentProperty(
-					qualifiedName);
-		} catch (CoreException e) {
-			EventBUIExceptionHandler.handleGetPersistentPropertyException(e);
-		}
+	public void setPrefix(IInternalElementType<?> type, String dialogTitle,
+			String message) {
+		final IInternalElement root = editor.getRodinInput();
+		final String prefix = UIUtils.getAutoNamePrefix(root, type);
 
-		if (prefix == null)
-			prefix = AttributeRelUISpecRegistry.getDefault().getDefaultPrefix(
-					attributeID);
-		InputDialog dialog = new InputDialog(editor.getSite().getShell(),
+		final InputDialog dialog = new InputDialog(editor.getSite().getShell(),
 				dialogTitle, message, prefix, null);
 		dialog.open();
-		prefix = dialog.getValue();
 
-		try {
-			if (prefix != null)
-				inputFile.getResource().setPersistentProperty(qualifiedName,
-						prefix);
-		} catch (CoreException e) {
-			EventBUIExceptionHandler.handleSetPersistentPropertyException(e);
-		}
+		UIUtils.setAutoNamePrefix(root.getRodinFile(), type, dialog.getValue());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Do nothing
 	}
 
+	public void run(IAction action) {
+		setPrefix(elementType, dialogTitle, dialogMessage);
+	}
+	
+	public IInternalElementType<?> getElementType(){
+		return elementType;
+	}
 }

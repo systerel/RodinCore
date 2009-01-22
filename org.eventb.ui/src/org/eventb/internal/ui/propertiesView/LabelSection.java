@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ILabeledElement;
-import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
 
-public class LabelSection extends TextSection<ILabeledElement> {
+public class LabelSection extends TextSection {
+
+	private final IAttributeManipulation manipulation = new LabelAttributeManipulation();
 
 	@Override
 	String getLabel() {
@@ -24,16 +24,8 @@ public class LabelSection extends TextSection<ILabeledElement> {
 	}
 
 	@Override
-	String getText() throws RodinDBException {
-		if (element == null)
-			return null;
-		return element.getLabel();
-	}
-
-	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, UIUtils
-				.getLabelAttributeFactory(element), text, monitor);
+	protected IAttributeManipulation getFactory() {
+		return manipulation;
 	}
 
 }

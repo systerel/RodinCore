@@ -10,9 +10,12 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - made IAttributeFactory generic
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -23,6 +26,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
@@ -35,7 +42,7 @@ public class EditRow {
 
 	ScrolledForm form;
 
-	IEditComposite<?>[] editComposites;
+	IEditComposite[] editComposites;
 
 	IElementComposite elementComp;
 
@@ -61,21 +68,26 @@ public class EditRow {
 		IRodinElement element = elementComp.getElement();
 		IElementType<? extends IRodinElement> type = element.getElementType();
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		IAttributeRelUISpecRegistry attributeRegistry = AttributeRelUISpecRegistry
-				.getDefault();
-		int numColumns = 1 + 3 * attributeRegistry.getNumberOfAttributes(type);
+		final int numberOfAttributes = ElementDescRegistry.getInstance()
+				.getElementDesc(type).getAttributeDescription().length;
+		int numColumns = 1 + 3 * numberOfAttributes;
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = numColumns + 1;
 		composite.setLayout(gridLayout);
 
 		createButtons(toolkit, level);
-		editComposites = attributeRegistry.getEditComposites(element
-				.getElementType());
-		for (IEditComposite editComposite : editComposites) {
+
+		final IElementDescRegistry registry = ElementDescRegistry.getInstance();
+		final IElementDesc elemDesc = registry.getElementDesc(type);
+		final List<IEditComposite> list = new ArrayList<IEditComposite>();
+		for (IAttributeDesc attrDesc : elemDesc.getAttributeDescription()) {
+			final IEditComposite editComposite = attrDesc.createWidget();
 			editComposite.setForm(form);
 			editComposite.setElement((IInternalElement) element);
 			editComposite.createComposite(editor, toolkit, composite);
+			list.add(editComposite);
 		}
+		editComposites = list.toArray(new IEditComposite[list.size()]);
 		toolkit.paintBordersFor(composite);
 	}
 

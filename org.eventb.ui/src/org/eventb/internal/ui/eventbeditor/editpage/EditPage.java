@@ -13,6 +13,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - removed focus listener of Hyper Link
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -61,9 +62,11 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
+import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -350,7 +353,7 @@ public class EditPage extends EventBEditorPage implements
 				if (rodinInput instanceof ICommentedElement) {
 					ICommentedElement ce = (ICommentedElement) rodinInput;
 					UIUtils.setStringAttribute(ce,
-							new CommentAttributeFactory(), commentWidget
+							new CommentAttributeManipulation(), commentWidget
 									.getText(), null);
 				}
 			}
@@ -402,19 +405,22 @@ public class EditPage extends EventBEditorPage implements
 	private void createSections(final Composite parent) {
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		IInternalElement rodinInput = editor.getRodinInput();
-		IElementRelUISpecRegistry editSectionRegistry = ElementRelUISpecRegistry
-				.getDefault();
+		
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 
-		// Get the list of element relationships depending on the type (e.g.
+		// Get the list of possible element type depending on the type (e.g.
 		// IMachineFile or IContextFile) of the input file.
-		List<IElementRelationship> rels = editSectionRegistry
-				.getElementRelationships(rodinInput.getElementType());
-
+		final IElementType<?>[] childTypes = registry.getChildTypes(rodinInput
+				.getElementType());
 		// Create the section composite corresponding with each relationship.
-		sectionComps = new ArrayList<ISectionComposite>(rels.size());
-		for (IElementRelationship rel : rels) {
+		sectionComps = new ArrayList<ISectionComposite>(childTypes.length);
+	    for (IElementType<?> childType : childTypes) {
 			// Create the section composite
+			final ElementDescRelationship rel = new ElementDescRelationship(
+					rodinInput.getElementType(),
+					(IInternalElementType<?>) childType);
 			SectionComposite sectionComp = new SectionComposite(this, toolkit,
 					form, parent, rodinInput, rel, 0);
 			sectionComps.add(sectionComp);

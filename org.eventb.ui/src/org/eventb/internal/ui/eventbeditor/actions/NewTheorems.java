@@ -17,7 +17,6 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
 
 public class NewTheorems implements IEditorActionDelegate {
 
@@ -29,8 +28,7 @@ public class NewTheorems implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {
-		IRodinFile rodinFile = editor.getRodinInput().getRodinFile();
-		EventBEditorUtils.newTheorems(editor, rodinFile);
+		EventBEditorUtils.newTheorems(editor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

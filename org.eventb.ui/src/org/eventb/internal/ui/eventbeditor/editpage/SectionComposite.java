@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -35,8 +36,9 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
@@ -119,10 +121,10 @@ public class SectionComposite implements ISectionComposite {
 					SWT.COLOR_DARK_CYAN));
 		}
 		
-		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry.getDefault();
-
-		String prefix = registry.getPrefix(rel);
-		if (prefix != null)
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+		
+		final String prefix = registry.getPrefix(rel.getChildType());
+		if (prefix != null || prefix != "")
 			createPrefixLabel(prefix);
 
 		gridLayout = new GridLayout();
@@ -146,10 +148,11 @@ public class SectionComposite implements ISectionComposite {
 		afterHyperlinkComposite = new AfterHyperlinkComposite(page, parent, rel
 				.getChildType(), toolkit, composite);
 
-		String postfix = registry.getPostfix(rel);
+		final String suffix = registry.getChildrenSuffix(rel.getParentType(),
+				rel.getChildType());
 
-		if (postfix != null)
-			createPostfixLabel(postfix);
+		if (suffix != null && suffix != "")
+			createPostfixLabel(suffix);
 
 		setExpand(false);
 		return;

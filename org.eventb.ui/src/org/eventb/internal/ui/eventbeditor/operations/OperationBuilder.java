@@ -34,7 +34,7 @@ import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -197,8 +197,6 @@ class OperationBuilder {
 			for (Pair<String, String> pair : invariants) {
 				cmd.addCommande(createInvariant(root, pair.getFirst(), pair
 						.getSecond()));
-				// new CreateInvariantWizard(editor, pair.getFirst(),
-				// pair.getSecond()));
 			}
 		}
 		return cmd;
@@ -223,23 +221,11 @@ class OperationBuilder {
 				predicates);
 	}
 
-	/*
-	 * private <T extends IInternalElement> OperationCreateElement
-	 * getOperationCreateElementWithAttribut( IEventBEditor<?> editor,
-	 * IInternalElementType<T> type, EventBAttributesManager manager, boolean
-	 * defaultLabel) { OperationCreateElement op = new OperationCreateElement(
-	 * new CreateElementGeneric<T>(editor, editor.getRodinInput(), type,
-	 * null)); op.addCommande(new ChangeAttribute(manager)); if (defaultLabel) {
-	 * op.addCommande(new ChangeDefaultLabel(editor)); }
-	 * 
-	 * return op; }
-	 */
-
 	private <T extends IInternalElement> OperationCreateElement getCreateElement(
 			IInternalElement parent, IInternalElementType<T> type,
 			IInternalElement sibling, EventBAttributesManager manager) {
 		OperationCreateElement op = new OperationCreateElement(
-				new CreateElementGeneric<T>(parent, type, sibling));
+				createDefaultElement(parent, type, sibling));
 		op.addSubCommande(new ChangeAttribute(manager));
 		return op;
 	}
@@ -441,8 +427,8 @@ class OperationBuilder {
 	}
 
 	public <E extends IInternalElement> OperationTree changeAttribute(
-			IAttributeFactory<E> factory, E element, String value) {
-		final ChangeAttributeWithFactory<E> op = new ChangeAttributeWithFactory<E>(
+			IAttributeManipulation factory, E element, String value) {
+		final ChangeAttributeWithManipulation op = new ChangeAttributeWithManipulation(
 				factory, element, value);
 		return op;
 	}
@@ -486,13 +472,13 @@ class OperationBuilder {
 		return new Move(movedElement, newParent, newSibling);
 	}
 
-	public <E extends IInternalElement, T extends E> OperationTree renameElement(
+	public <T extends IInternalElement> OperationTree renameElement(
 			IInternalElement root, IInternalElementType<T> type,
-			IAttributeFactory<E> factory, String prefix) {
+			IAttributeManipulation factory, String prefix) {
 		final OperationNode op = new OperationNode();
 		int counter = 1;
 		try {
-			for (E element : root.getChildrenOfType(type)) {
+			for (IInternalElement element : root.getChildrenOfType(type)) {
 				op.addCommande(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;

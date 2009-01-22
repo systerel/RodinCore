@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -23,10 +24,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -80,41 +83,11 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		// try {
-
-		if (columnIndex == 0) {
-			return ElementUIRegistry.getDefault().getLabel(element);
-			/*
-			 * if (element instanceof ISeesContext) return ((ISeesContext)
-			 * element).getSeenContextName(); if (element instanceof
-			 * IRefinesMachine) return ((IRefinesMachine)
-			 * element).getAbstractMachineName(); if (element instanceof
-			 * IExtendsContext) return ((IExtendsContext)
-			 * element).getAbstractContextName(); if (element instanceof
-			 * IRefinesEvent) return ((IRefinesEvent)
-			 * element).getAbstractEventLabel();
-			 * 
-			 * if (element instanceof ILabeledElement) return ((ILabeledElement)
-			 * element).getLabel(null);
-			 * 
-			 * if (element instanceof IIdentifierElement) return
-			 * ((IIdentifierElement) element).getIdentifierString();
-			 * 
-			 * if (element instanceof IVariant) return "Variant";
-			 */
-
-			// if (rodinElement instanceof IInternalElement)
-			// return ((IInternalElement)
-			// rodinElement).getElementName();
-			// return "";
-		}
-
-		if (columnIndex == 1) {
-			return ElementUIRegistry.getDefault().getLabelAtColumn(viewer.getColumnID(columnIndex), element);
-		}
-
-		return element.toString();
-
+		if (!(element instanceof IInternalElement))
+			return element.toString();
+		final IInternalElement aElement = (IInternalElement) element;
+		final ElementDescRegistry reg = ElementDescRegistry.getInstance();
+		return reg.getValueAtColumn(aElement, Column.valueOf(columnIndex));
 	}
 
 	/*

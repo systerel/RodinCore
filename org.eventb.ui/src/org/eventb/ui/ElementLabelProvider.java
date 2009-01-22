@@ -8,9 +8,12 @@
  *
  * Contributors:
  *     Rodin @ ETH Zurich
+ *     Systerel - used ElementDescRegistry
  ******************************************************************************/
 
 package org.eventb.ui;
+
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,12 +39,13 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.projectexplorer.TreeNode;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -70,24 +74,16 @@ public class ElementLabelProvider extends LabelProvider implements
 				IResourceChangeEvent.POST_BUILD
 						| IResourceChangeEvent.POST_CHANGE);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
+
 	@Override
 	public String getText(Object obj) {
-		if (obj instanceof TreeNode)
+		if (!(obj instanceof IInternalElement))
 			return obj.toString();
-		return ElementUIRegistry.getDefault().getLabel(obj);
+		final IInternalElement element = (IInternalElement) obj;
+		final ElementDescRegistry reg = ElementDescRegistry.getInstance();
+		return reg.getValueAtColumn(element, LABEL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof TreeNode)
@@ -135,9 +131,6 @@ public class ElementLabelProvider extends LabelProvider implements
 		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
 			if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {

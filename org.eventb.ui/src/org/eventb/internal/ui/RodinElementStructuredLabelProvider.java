@@ -8,9 +8,12 @@
  *
  * Contributors:
  *     Rodin @ ETH Zurich
+ *     Systerel - used ElementDescRegistry
  ******************************************************************************/
 
 package org.eventb.internal.ui;
+
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 
 import java.util.Set;
 
@@ -31,8 +34,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.projectexplorer.TreeNode;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -64,9 +69,16 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public String getText(Object obj) {
-		if (obj instanceof TreeNode)
+		// for project in "project explorer" and "obligation explorer"
+		if (!(obj instanceof IInternalElement))
 			return obj.toString();
-		return ElementUIRegistry.getDefault().getLabel(obj);
+		final IInternalElement element = (IInternalElement) obj;
+		// for machine and context in "project explorer" and
+		// "obligation explorer"
+		if (!(element.getParent() instanceof IInternalElement))
+			return element.getRodinFile().getBareName();
+		final ElementDescRegistry reg = ElementDescRegistry.getInstance();
+		return reg.getValueAtColumn(element, LABEL);
 	}
 
 	/*

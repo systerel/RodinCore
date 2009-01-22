@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.viewers.TreeViewer;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.CONTENT;import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -179,7 +179,7 @@ public class InvariantMasterSection extends EventBTreePartWithButtons {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
-		selectItem(item, 1);
+		selectItem(item, CONTENT.getId());
 	}
 
 	/*

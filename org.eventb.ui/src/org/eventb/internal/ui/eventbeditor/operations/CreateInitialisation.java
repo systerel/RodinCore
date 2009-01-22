@@ -21,8 +21,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -52,14 +50,10 @@ class CreateInitialisation extends OperationLeaf {
 		try {
 			// EventBEditorUtils.createNewInitialisationAction(editor, actLabel,
 			// actSub, monitor);
-			final String name;
-			final String defaultPrefix;
 
 			event = getInitialisationEvent(monitor);
-			defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-					.getDefaultPrefix("org.eventb.core.actionLabel");
-			name = UIUtils.getFreeElementName(root, event,
-					IAction.ELEMENT_TYPE, defaultPrefix);
+			final String name = UIUtils.getFreeChildName(root, event,
+					IAction.ELEMENT_TYPE);
 			action = event.getInternalElement(IAction.ELEMENT_TYPE, name);
 
 			action.create(null, monitor);
@@ -104,8 +98,8 @@ class CreateInitialisation extends OperationLeaf {
 		}
 
 		newInit = true;
-		final String evtName = UIUtils.getFreeElementName(root, root,
-				IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
+		final String evtName = UIUtils.getFreeChildName(root, root,
+				IEvent.ELEMENT_TYPE);
 		result = root.getEvent(evtName);
 
 		result.create(null, monitor);

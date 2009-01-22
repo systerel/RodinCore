@@ -26,9 +26,9 @@ import org.rodinp.core.RodinDBException;
 class ChangeAttribute extends OperationLeaf {
 
 	private IInternalElement element;
-	final private EventBAttributesManager managerDo;
+	private final EventBAttributesManager managerDo;
 	private EventBAttributesManager managerUndo;
-	// TODO effacer les attributs ( cree par execute ou redo ) lors du Undo
+	// to remove created attributes when Undo
 	private ArrayList<IAttributeType> attributeToDelete;
 
 	public ChangeAttribute(EventBAttributesManager manager) {

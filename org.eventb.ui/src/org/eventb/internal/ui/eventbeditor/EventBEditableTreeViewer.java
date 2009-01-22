@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,16 +41,18 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.internal.ui.ElementUIRegistry;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -64,9 +69,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	// abstract method createTreeColumns().
 	protected int numColumn;
 
-	// Listener to the changes for element moving.
-	// private Collection<IElementMovedListener> elementMovedListeners;
-
 	// List of elements need to be refresh (when processing Delta of changes).
 	private Collection<IRodinElement> toRefresh;
 
@@ -76,47 +78,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 	private static final int DEFAULT_COLUMN = 0;
 
-	// private Collection<StatusObject> newStatus;
-
-	/**
-	 * @author htson
-	 *         <p>
-	 *         This class is used to keep the status of the new object (when
-	 *         process element moving)
-	 */
-	// private class StatusObject {
-	// Object object;
-	//
-	// Object moveFrom;
-	//
-	// boolean expanded;
-	//
-	// boolean selected;
-	//
-	// StatusObject(Object object, Object moveFrom, boolean expanded,
-	// boolean selected) {
-	// this.object = object;
-	// this.moveFrom = moveFrom;
-	// this.expanded = expanded;
-	// this.selected = selected;
-	// }
-	//
-	// Object getObject() {
-	// return object;
-	// }
-	//
-	// Object getMoveFrom() {
-	// return moveFrom;
-	// }
-	//
-	// boolean getExpandedStatus() {
-	// return expanded;
-	// }
-	//
-	// boolean getSelectedStatus() {
-	// return selected;
-	// }
-	// }
 	/**
 	 * Create the tree column for this tree viewer.
 	 */
@@ -133,11 +94,38 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 * @return <code>true</code> if the object is editable at the current
 	 *         column
 	 */
-	protected final boolean isNotSelectable(Object object, int column) {
-		return ElementUIRegistry.getDefault().isNotSelectable(object,
-				this.getColumnID(column));
+	protected final boolean isSelectable(Object object, int column) {
+		final IElementDesc desc = getElementDesc(object);
+		if(desc == null)
+			return false;
+		return desc.isSelectable(column);
 	}
 
+	/**
+	 * If the given object is an internal element, the method return an element
+	 * description. Else the method return <code>null</code>
+	 */
+	private IElementDesc getElementDesc(Object o) {
+		if (!(o instanceof IRodinElement))
+			return null;
+		final IRodinElement element = (IRodinElement) o;
+		return ElementDescRegistry.getInstance().getElementDesc(element);
+	}
+	
+	private IAttributeDesc getAttributeDesc(IRodinElement element, int col) {
+		final IElementDesc desc = getElementDesc(element);
+		if (desc == null)
+			return null;
+		final IAttributeDesc attrDesc = desc.atColumn(col);
+		return attrDesc;
+	}
+	
+	private void trace(String msg) {
+		if (EventBEditorUtils.DEBUG) {
+			System.out.println(msg);
+		}
+	}
+	
 	/**
 	 * Commit the change for an element at the column with the new information
 	 * "text".
@@ -152,13 +140,13 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 */
 	protected final void commit(IRodinElement element, int col, String text,
 			IProgressMonitor monitor) {
-
-		try {
-			ElementUIRegistry.getDefault().modify(element,
-					this.getColumnID(col), text);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
+		final IAttributeDesc attrDesc = getAttributeDesc(element, col);
+		if (!(element instanceof IInternalElement) || attrDesc == null){
+			trace("Error when committing change on " + element);
+			return;
 		}
+		UIUtils.setStringAttribute((IInternalElement) element, attrDesc
+				.getManipulation(), text, monitor);
 	}
 
 	/**
@@ -170,46 +158,14 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 */
 	protected final void edit(IRodinElement element) {
 		this.reveal(element);
-		TreeItem item = TreeSupports.findItem(this.getTree(), element);
-
-		int column = getColumnNumber(ElementUIRegistry.getDefault()
-				.getDefaultColumn(element));
+		final IElementDesc desc = getElementDesc(element);
+		if (desc == null)
+			return;
+ 		final int column = desc.getDefaultColumn();
+		final TreeItem item = TreeSupports.findItem(this.getTree(), element);
 		selectItem(item, column);
 	}
 
-	/**
-	 * Add new listener to element moving.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            an element moved listener
-	 */
-	// public void addElementMovedListener(IElementMovedListener listener) {
-	// elementMovedListeners.add(listener);
-	// }
-	/**
-	 * Remove listener for element moving.
-	 * <p>
-	 * 
-	 * @param listener
-	 *            an element moved listner
-	 */
-	// public void removeElementMovedListener(IElementMovedListener listener) {
-	// elementMovedListeners.remove(listener);
-	// }
-	/**
-	 * Notified the element moved listeners with the map of moving elements.
-	 * <p>
-	 * 
-	 * @param moved
-	 *            a set of mapping from old elements to new elements.
-	 */
-	// public void notifyElementMovedListener(
-	// HashMap<IRodinElement, IRodinElement> moved) {
-	// for (IElementMovedListener listener : elementMovedListeners) {
-	// listener.elementMoved(moved);
-	// }
-	// }
 	/**
 	 * Constructor.
 	 * <p>
@@ -238,22 +194,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		treeEditor.grabHorizontal = true;
 		tree.addMouseListener(new MouseAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-			 */
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-			 */
 			@Override
 			public void mouseDown(MouseEvent e) {
 				Control old = treeEditor.getEditor();
@@ -320,7 +260,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		final Object itemData = item.getData();
 
 		/* Check if the cell is editable or not */
-		if (isNotSelectable(itemData, column))
+		if (!isSelectable(itemData, column))
 			return;
 
 		final Color black = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
@@ -333,23 +273,13 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 		new ElementText(new EventBMath(text), treeEditor1, tree, item,
 				(IRodinElement) itemData, column, 1000) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eventb.internal.ui.eventbeditor.ElementText#commit(org.rodinp.core.IRodinElement,
-			 *      int, java.lang.String)
-			 */
+
 			@Override
 			public void commit(IRodinElement elm, int col, String contents) {
 				EventBEditableTreeViewer.this.commit(elm, col, contents,
 						new NullProgressMonitor());
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eventb.internal.ui.eventbeditor.ElementText#nextEditableCell()
-			 */
 			@Override
 			public void nextEditableCell() {
 				selectNextEditableCell(item, column);
@@ -357,7 +287,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 			private void selectNextEditableCell(TreeItem item1, int col) {
 				Rectangle rec = item1.getBounds();
-				// UIUtils.debug("Bound: " + rec);
 
 				if (col == numColumn - 1) {
 					TreeItem next = tree
@@ -365,26 +294,22 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 									+ rec.height / 2 + tree.getItemHeight()));
 					if (next != null) {
 						// UIUtils.debug("Found item: " + next);
-						if (isNotSelectable(next.getData(), 0))
-							selectNextEditableCell(next, 0);
+						if (isSelectable(next.getData(), LABEL.getId()))
+							selectItem(next, LABEL.getId());
 						else
-							selectItem(next, 0);
+							selectNextEditableCell(next, 0);
+
 					} else
 						return;
 				} else {
-					if (isNotSelectable(item1.getData(), col + 1))
-						selectNextEditableCell(item1, col + 1);
-					else
+					if (isSelectable(item1.getData(), col + 1))
 						selectItem(item1, col + 1);
+					else
+						selectNextEditableCell(item1, col + 1);
 				}
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eventb.internal.ui.eventbeditor.ElementText#prevEditableCell()
-			 */
 			@Override
 			public void prevEditableCell() {
 				selectPrevEditableCell(item, column);
@@ -400,19 +325,18 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 									+ rec.height / 2 - tree.getItemHeight()));
 					if (next != null) {
 						// UIUtils.debug("Found item: " + next);
-						if (isNotSelectable(next.getData(), numColumn - 1))
-							selectPrevEditableCell(next, numColumn - 1);
-						else
+						if (isSelectable(next.getData(), numColumn - 1))
 							selectItem(next, numColumn - 1);
+						else
+							selectPrevEditableCell(next, numColumn - 1);
 					} else
 						return;
 				} else {
-					if (isNotSelectable(item1.getData(), col - 1))
-						selectPrevEditableCell(item1, col - 1);
-					else
+					if (isSelectable(item1.getData(), col - 1))
 						selectItem(item1, col - 1);
+					else
+						selectPrevEditableCell(item1, col - 1);
 				}
-
 			}
 
 		};
@@ -431,11 +355,6 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		text.setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
-	 */
 	public void elementChanged(ElementChangedEvent event) {
 		toRefresh = new HashSet<IRodinElement>();
 		// newStatus = new HashSet<StatusObject>();
@@ -453,69 +372,16 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		postRefresh(toRefresh, true);
 	}
 
-	// private HashMap<IRodinElement, IRodinElement> moved;
-
-	// private void processMoveRecursive(IRodinElement oldElement,
-	// IRodinElement newElement) {
-	// UIUtils.debugEventBEditor("from: " + oldElement.getElementName()
-	// + " expanded " + this.getExpandedState(oldElement) + "\n to: "
-	// + newElement.getElementName() + "\n Expanded elements "
-	// + this.getExpandedElements());
-	//
-	// IStructuredSelection ssel = (IStructuredSelection) this.getSelection();
-	// boolean selected = ssel.toList().contains(oldElement);
-	//
-	// // moved.put(oldElement, newElement);
-	// newStatus.add(new StatusObject(newElement, oldElement, this
-	// .getExpandedState(oldElement), selected));
-	//
-	// if (newElement instanceof IInternalElement) {
-	// IRodinElement[] elements;
-	// try {
-	// elements = ((IInternalElement) newElement).getChildren();
-	// for (IRodinElement element : elements) {
-	// IRodinElement oldChild = ((IInternalElement) oldElement)
-	// .getInternalElement(element.getElementType(),
-	// element.getElementName(),
-	// ((IInternalElement) element)
-	// .getOccurrenceCount());
-	// processMoveRecursive(oldChild, element);
-	// }
-	// } catch (RodinDBException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// }
-	// }
-
 	private void processDelta(IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
-			// Handle move operation
-			// if ((delta.getFlags() & IRodinElementDelta.F_MOVED_FROM) != 0) {
-			// UIUtils.debugEventBEditor("Moved: " + element.getElementName()
-			// + " from: " + delta.getMovedFromElement());
-			// IRodinElement oldElement = delta.getMovedFromElement();
-			// UIUtils.debugEventBEditor("--- Process Move ---");
-			// processMoveRecursive(oldElement, element);
-			// } else {
-			// UIUtils.debugEventBEditor("Added: " + element.getElementName());
-			// }
-			// IRodinElement parent = element.getParent();
 			toRefresh.add(element.getParent());
 			return;
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
-			// Ignore the move operation
-			// if ((delta.getFlags() & IRodinElementDelta.F_MOVED_TO) == 0) {
-			// UIUtils.debugEventBEditor("Removed: " +
-			// element.getElementName());
-			// IRodinElement parent = element.getParent();
 			toRefresh.add(element.getParent());
-			// }
 			return;
 		}
 
@@ -580,59 +446,13 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 					for (IRodinElement element : toRefresh1) {
 						viewer.refresh(element);
 					}
-					// refreshViewer(toRefresh);
 					ctrl.setRedraw(true);
-					// for (Iterator iter = toRefresh.iterator();
-					// iter.hasNext();) {
-					// IRodinElement element = (IRodinElement) iter.next();
-					// UIUtils.debugEventBEditor("Refresh element " + element);
-					//						
-					// viewer.refresh(element, updateLabels);
-					// }
-
-					// // Processing the Moved elements
-					// for (Iterator iter = newStatus.iterator();
-					// iter.hasNext();) {
-					// StatusObject state = (StatusObject) iter.next();
-					// Object newElement = state.getObject();
-					// UIUtils.debugEventBEditor("Object: " + newElement
-					// + " expanded: " + state.getExpandedStatus());
-					// viewer.setExpandedState(newElement, state
-					// .getExpandedStatus());
-					// viewer.update(newElement, null);
-					//
-					// if (state.getSelectedStatus()) {
-					// IStructuredSelection ssel = (IStructuredSelection) viewer
-					// .getSelection();
-					// ArrayList<Object> list = new ArrayList<Object>(ssel
-					// .size() + 1);
-					// for (Iterator it = ssel.iterator(); it.hasNext();) {
-					// list.add(it.next());
-					// }
-					// list.add(newElement);
-					// viewer.setSelection(new StructuredSelection(list));
-					// }
-
-					// Object oldElement = state.getMoveFrom();
-					// if (EventBEditableTreeViewer.this.editor
-					// .isNewElement((IRodinElement) oldElement)) {
-					// EventBEditableTreeViewer.this.editor
-					// .addNewElement((IRodinElement) newElement);
-					// }
-
-					// }
-
 				}
 			}
 
 		}, viewer.getControl());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
-	 */
 	public void statusChanged(final IRodinElement element) {
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {

@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eventb.core.IConvergenceElement;
-import org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 
-public class ConvergenceSection extends CComboSection<IConvergenceElement> {
+public class ConvergenceSection extends CComboSection {
 
 	@Override
 	String getLabel() {
@@ -24,7 +23,7 @@ public class ConvergenceSection extends CComboSection<IConvergenceElement> {
 	}
 
 	@Override
-	protected IAttributeFactory<IConvergenceElement> createFactory() {
-		return new ConvergenceAttributeFactory();
+	protected IAttributeManipulation createFactory() {
+		return new ConvergenceAttributeManipulation();
 	}
 }

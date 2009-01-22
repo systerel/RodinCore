@@ -1,12 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.jface.action.IAction;
+import org.eventb.core.IWitness;
 
 public class PrefixWitName extends PrefixElementName {
-
-	public void run(IAction action) {
-		setPrefix("org.eventb.core.witnessLabel", "Witness Name Prefix",
+	public PrefixWitName() {
+		super(IWitness.ELEMENT_TYPE, "Witness Name Prefix",
 				"Please specify the prefix for witness names");
 	}
-
 }

@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -25,6 +26,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -140,11 +142,10 @@ public class ButtonComposite {
 	}
 
 	public void updateLinks() {
-		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
-				.getDefault();
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 		IRodinElement element = elementComp.getElement();
 
-		if (registry.getElementRelationships(element.getElementType()).size() != 0) {
+		if (registry.getChildTypes(element.getElementType()).length != 0) {
 			foldingHyperlink.setVisible(true);
 		} else
 			foldingHyperlink.setVisible(false);

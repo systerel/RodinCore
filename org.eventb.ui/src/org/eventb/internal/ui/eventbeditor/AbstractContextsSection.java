@@ -46,7 +46,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.AbstractContextManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -269,7 +269,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	 */
 	protected IInternalElement[] getClauses() {
 		try {
-			return getFactory().getClauses(getFreeElementContext());
+			return getManipulation().getClauses(getFreeElementContext());
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when getting free child name for " + rodinRoot);
 			return new IInternalElement[0];
@@ -298,7 +298,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	 */
 	private Set<String> getUsedContextNames() {
 		try {
-			return getFactory().getUsedContextNames(getFreeElementContext());
+			return getManipulation().getUsedContextNames(getFreeElementContext());
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when getting used context names");
 			return new HashSet<String>();
@@ -330,7 +330,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	 * @return an array of all context names to display
 	 */
 	private String[] getContext() throws RodinDBException {
-		return getFactory().getPossibleValues(getFreeElementContext(), null);
+		return getManipulation().getPossibleValues(getFreeElementContext(), null);
 	}
 
 	public final void selectionChanged(SelectionChangedEvent event) {
@@ -352,6 +352,6 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	 */
 	protected abstract E getFreeElementContext() throws RodinDBException;
 
-	protected abstract AbstractContextFactory<E> getFactory();
+	protected abstract AbstractContextManipulation<E> getManipulation();
 
 }

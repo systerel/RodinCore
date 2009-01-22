@@ -33,8 +33,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -69,7 +69,7 @@ public class RefinesSection extends SectionPart implements
 
 	private final static String NULL_VALUE = "--- None ---";
 
-	final private static IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+	private final static IAttributeManipulation factory = new RefinesMachineAbstractMachineNameAttributeManipulation();
 	
 	// Buttons.
 	// private Button nullButton;
@@ -317,7 +317,7 @@ public class RefinesSection extends SectionPart implements
 			refined = (IRefinesMachine) operation.getCreatedElement();
 		} else { // Change the element
 			UIUtils.setStringAttribute(refined,
-					new RefinesMachineAbstractMachineNameAttributeFactory(),
+					new RefinesMachineAbstractMachineNameAttributeManipulation(),
 					machine, null);
 		}
 	}

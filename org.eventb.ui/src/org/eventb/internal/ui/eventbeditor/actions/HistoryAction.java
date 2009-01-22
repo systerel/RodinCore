@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -22,7 +25,8 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
  * Common protocol for classes that manipulate the history within an event-B
  * editor.
  */
-public abstract class HistoryAction extends Action {
+public abstract class HistoryAction extends Action implements
+		IOperationHistoryListener {
 
 	public static class Undo extends HistoryAction {
 
@@ -34,6 +38,30 @@ public abstract class HistoryAction extends Action {
 		public void doRun(IUndoContext context) {
 			history.undo(context);
 		}
+
+		@Override
+		public String getActionName() {
+			return "Undo";
+		}
+
+		@Override
+		public String getLabel() {
+			final IUndoContext context = getUndoContext();
+			if (context != null) {
+				return history.getNextUndoLabel(context);
+			}
+			return "";
+		}
+
+		@Override
+		protected boolean historyIsEnabled() {
+			final IUndoContext context = getUndoContext();
+			if (context == null)
+				return false;
+
+			return history.isUndo(context);
+		}
+
 	}
 
 	public static class Redo extends HistoryAction {
@@ -47,6 +75,28 @@ public abstract class HistoryAction extends Action {
 			history.redo(context);
 		}
 
+		@Override
+		public String getActionName() {
+			return "Redo";
+		}
+
+		@Override
+		public String getLabel() {
+			final IUndoContext context = getUndoContext();
+			if (context != null) {
+				return history.getNextRedoLabel(context);
+			}
+			return "";
+		}
+
+		@Override
+		protected boolean historyIsEnabled() {
+			final IUndoContext context = getUndoContext();
+			if (context == null)
+				return false;
+
+			return history.isRedo(context);
+		}
 	}
 
 	// The workbench window where to look for an open editor
@@ -58,13 +108,17 @@ public abstract class HistoryAction extends Action {
 	public HistoryAction(IWorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;
+		history.addOperationHistoryListener(this);
 	}
 
 	private IEditorPart getActiveEditor() {
-		return workbenchWindow.getActivePage().getActiveEditor();
+		final IWorkbenchPage page = workbenchWindow.getActivePage();
+		if (page == null)
+			return null;
+		return page.getActiveEditor();
 	}
 
-	private IUndoContext getUndoContext() {
+	protected IUndoContext getUndoContext() {
 		final IEditorPart editor = getActiveEditor();
 		if (!(editor instanceof IEventBEditor<?>))
 			return null;
@@ -80,5 +134,19 @@ public abstract class HistoryAction extends Action {
 		}
 	}
 
+	public void historyNotification(OperationHistoryEvent event) {
+		final String text = getActionName() + " " + getLabel();
+		if (!text.equals(getText())) {
+			setText(text);
+		}
+		setEnabled(historyIsEnabled());
+	}
+
 	protected abstract void doRun(IUndoContext context);
+
+	protected abstract String getActionName();
+
+	protected abstract String getLabel();
+
+	protected abstract boolean historyIsEnabled();
 }

@@ -32,7 +32,7 @@ import org.rodinp.core.IInternalElement;
  *         </p>
  * 
  */
-public interface IEditComposite<E extends IInternalElement> {
+public interface IEditComposite {
 
 	/**
 	 * Refresh the information display within this edit composite.
@@ -74,7 +74,7 @@ public interface IEditComposite<E extends IInternalElement> {
 	 */
 	// TODO To see if this should be set as part of the constructor and since
 	// the element should not be changed after initialising.
-	public abstract void setElement(E element);
+	public abstract void setElement(IInternalElement element);
 
 	/**
 	 * Set the scrolled form of the main edit page. This should be called after

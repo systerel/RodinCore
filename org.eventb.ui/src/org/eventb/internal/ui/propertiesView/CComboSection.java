@@ -33,21 +33,20 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class CComboSection<E extends IInternalElement> extends
-		AbstractPropertySection implements IElementChangedListener {
-
+public abstract class CComboSection extends AbstractPropertySection implements
+		IElementChangedListener {
 	CCombo comboWidget;
 
-	private IAttributeFactory<E> factory = null;
+	private IAttributeManipulation factory = null;
 
-	E element;
+	private IInternalElement element;
 
 	public CComboSection() {
 		// Do nothing
@@ -137,7 +136,7 @@ public abstract class CComboSection<E extends IInternalElement> extends
 			Object input = ((IStructuredSelection) selection).getFirstElement();
 			if (input instanceof IInternalElement) {
 				// TODO should check compatibility from the factory.
-				this.element = (E) input;
+				this.element = (IInternalElement) input;
 			}
 		}
 		refresh();
@@ -169,12 +168,12 @@ public abstract class CComboSection<E extends IInternalElement> extends
 		super.aboutToBeShown();
 	}
 
-	private IAttributeFactory<E> getFactory() {
+	private IAttributeManipulation getFactory() {
 		if (factory == null)
 			factory = createFactory();
 		return factory;
 	}
 
-	abstract protected IAttributeFactory<E> createFactory();
+	abstract protected IAttributeManipulation createFactory();
 
 }

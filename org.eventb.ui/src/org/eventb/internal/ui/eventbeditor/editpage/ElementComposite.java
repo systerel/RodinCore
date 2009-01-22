@@ -9,11 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -23,12 +23,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.elementSpecs.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 public class ElementComposite implements IElementComposite {
@@ -139,14 +141,16 @@ public class ElementComposite implements IElementComposite {
 	}
 
 	protected void createSectionComposites() {
-		IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
-				.getDefault();
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 
-		List<IElementRelationship> rels = registry
-				.getElementRelationships(rElement.getElementType());
-		sectionComps = new ArrayList<ISectionComposite>(rels.size());
-		for (IElementRelationship rel : rels) {
+		final IElementType<?>[] rels = registry.getChildTypes(rElement
+				.getElementType());
+		sectionComps = new ArrayList<ISectionComposite>(rels.length);
+		
+		 for (IElementType<?> type : rels) {
 			// Create the section composite
+			 final ElementDescRelationship rel = new ElementDescRelationship(
+					rElement.getElementType(), (IInternalElementType<?>) type);
 			sectionComps.add(new SectionComposite(page, toolkit, form,
 					mainSectionComposite, (IInternalElement) rElement, rel,
 					level + 1));
@@ -166,18 +170,17 @@ public class ElementComposite implements IElementComposite {
 				return;
 
 			// Refresh sub section composite as well?
-			IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
-					.getDefault();
-			List<IElementRelationship> rels = registry
-					.getElementRelationships(element.getElementType());
+			final ElementDescRegistry registry = ElementDescRegistry
+					.getInstance();
+			final IElementType<?>[] rels = registry.getChildTypes(element
+					.getElementType());
 
 			boolean recreate = false;
-			if (rels.size() != sectionComps.size()) {
+			if (rels.length != sectionComps.size()) {
 				recreate = true;
 			} else {
-				for (int i = 0; i < rels.size(); ++i) {
-					if (sectionComps.get(i).getElementType() != rels.get(i)
-							.getChildType()) {
+				for (int i = 0; i < rels.length; ++i) {
+					if (sectionComps.get(i).getElementType() != rels[i]) {
 						recreate = true;
 						break;
 					}
@@ -330,17 +333,16 @@ public class ElementComposite implements IElementComposite {
 				return;
 
 			// Refresh sub section composite as well?
-			IElementRelUISpecRegistry registry = ElementRelUISpecRegistry
-					.getDefault();
-			List<IElementRelationship> rels = registry
-					.getElementRelationships(element.getElementType());
+			final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+			final IElementType<?>[] rels = registry.getChildTypes(element
+					.getElementType());
 
 			boolean recreate = false;
-			if (rels.size() != sectionComps.size()) {
+			if (rels.length != sectionComps.size()) {
 				recreate = true;
 			} else {
-				for (int i = 0; i < rels.size(); ++i) {
-					if (sectionComps.get(i).getElementType() != rels.get(i)) {
+				for (int i = 0; i < rels.length; ++i) {
+					if (sectionComps.get(i).getElementType() != rels[i]) {
 						recreate = true;
 						break;
 					}

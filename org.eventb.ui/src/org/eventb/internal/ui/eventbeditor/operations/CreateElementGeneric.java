@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
@@ -47,8 +47,8 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 
 		try {
 			final IInternalElement root = parent.getRoot();
-			element = AttributeRelUISpecRegistry.getDefault().createElement(
-					root, parent, type, sibling);
+			element = ElementDescRegistry.getInstance().createElement(root,
+					parent, type, sibling);
 			// page.recursiveExpand(element);
 		} catch (CoreException e) {
 			return e.getStatus();
@@ -72,10 +72,6 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 		} else {
 			return operationDelete.redo(monitor, info);
 		}
-	}
-
-	public IInternalElement getElement() {
-		return element;
 	}
 
 	public void setParent(IInternalElement element) {

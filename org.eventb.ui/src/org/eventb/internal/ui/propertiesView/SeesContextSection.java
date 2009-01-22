@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eventb.core.ISeesContext;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 
-public class SeesContextSection extends CComboSection<ISeesContext> {
+public class SeesContextSection extends CComboSection {
 
 	@Override
 	String getLabel() {
@@ -25,8 +24,8 @@ public class SeesContextSection extends CComboSection<ISeesContext> {
 	}
 
 	@Override
-	protected IAttributeFactory<ISeesContext> createFactory() {
-		return new SeesContextNameAttributeFactory();
+	protected IAttributeManipulation createFactory() {
+		return new SeesContextNameAttributeManipulation();
 	}
 
 }

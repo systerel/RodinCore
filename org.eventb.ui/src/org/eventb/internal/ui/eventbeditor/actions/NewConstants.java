@@ -18,7 +18,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
 
 public class NewConstants implements IEditorActionDelegate {
 
@@ -31,9 +30,7 @@ public class NewConstants implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {
-		IContextRoot root = editor.getRodinInput();
-		IRodinFile rodinFile = root.getRodinFile();
-		EventBEditorUtils.intelligentNewConstant(editor, rodinFile);
+		EventBEditorUtils.intelligentNewConstant(editor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

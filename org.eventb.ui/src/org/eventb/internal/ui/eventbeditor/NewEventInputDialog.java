@@ -36,7 +36,6 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -182,16 +181,10 @@ public class NewEventInputDialog extends EventBInputDialog {
 		layout.horizontalSpacing = 10;
 		layout.numColumns = 1;
 		comp.setLayout(layout);
-		
-		String evtLabel = "defaultEvt";
-		try {
-			final IMachineRoot root = editor.getRodinInput();
-			evtLabel = UIUtils.getFreeElementLabel(root,
-					IEvent.ELEMENT_TYPE, PrefixEvtName.DEFAULT_PREFIX);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		final IMachineRoot root = editor.getRodinInput();
+		final String evtLabel = UIUtils.getFreeElementLabel(root,
+				IEvent.ELEMENT_TYPE);
 
 		labelText = new EventBText(toolkit.createText(comp, evtLabel));
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);

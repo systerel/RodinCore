@@ -33,20 +33,22 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public abstract class TextSection<E extends IInternalElement> extends
-		AbstractPropertySection implements IElementChangedListener {
+public abstract class TextSection extends AbstractPropertySection implements
+		IElementChangedListener {
 
 	Text textWidget;
 
 	IEventBInputText inputText;
 	
-	E element; // This can be null
+	IInternalElement element; // This can be null
 
 	int style;
 
@@ -91,8 +93,7 @@ public abstract class TextSection<E extends IInternalElement> extends
 				try {
 					setText(text.getText(), new NullProgressMonitor());
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					EventBUIExceptionHandler.handleSetAttributeException(e);
 				}
 			}
 
@@ -121,9 +122,19 @@ public abstract class TextSection<E extends IInternalElement> extends
 
 	abstract String getLabel();
 
-	abstract void setText(String text, IProgressMonitor monitor) throws RodinDBException;
+	void setText(String text, IProgressMonitor monitor)
+			throws RodinDBException {
+		UIUtils.setStringAttribute(element, getFactory(), text, monitor);
+	}
 
-	abstract String getText() throws RodinDBException;
+	private String getText() throws RodinDBException {
+		final IAttributeManipulation factory = getFactory();
+		if (!factory.hasValue(element, null))
+			return "";
+		return factory.getValue(element, null);
+	}
+
+	protected abstract IAttributeManipulation getFactory();
 
 	@Override
 	public void refresh() {
@@ -147,7 +158,7 @@ public abstract class TextSection<E extends IInternalElement> extends
 		if (selection instanceof IStructuredSelection) {
 			Object input = ((IStructuredSelection) selection).getFirstElement();
 			if (input instanceof IInternalElement) {
-				this.element = (E) input;
+				this.element = (IInternalElement) input;
 			}
 		}
 		refresh();

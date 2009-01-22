@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -176,7 +177,7 @@ public class ConstantMasterSection extends EventBTreePartWithButtons {
 		TreeViewer viewer = (TreeViewer) this.getViewer();
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
-		selectItem(item, 0);
+		selectItem(item, LABEL.getId());
 	}
 
 	/*

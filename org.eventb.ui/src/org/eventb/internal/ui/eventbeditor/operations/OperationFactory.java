@@ -16,7 +16,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -32,19 +32,21 @@ public class OperationFactory {
 	public static AtomicOperation createTheoremWizard(IInternalElement parent,
 			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createTheorem(
+		final AtomicOperation op = new AtomicOperation(builder.createTheorem(
 				parent, label, content));
-		cmd.addContext(getContext(parent));
-		return cmd;
+		op.addContext(getContext(parent));
+		op.setLabel("Create Theorem");
+		return op;
 	}
 
 	public static AtomicOperation createTheoremWizard(IInternalElement root,
 			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createTheorem(
+		final AtomicOperation op = new AtomicOperation(builder.createTheorem(
 				root, labels, contents));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Theorem");
+		return op;
 	}
 
 	/**
@@ -55,29 +57,32 @@ public class OperationFactory {
 	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String label, String predicate) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(root,
+		AtomicOperation op = new AtomicOperation(builder.createAxiom(root,
 				label, predicate));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Theorem");
+		return op;
 	}
 
 	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String[] labels, String[] predicates) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation cmd = new AtomicOperation(builder.createAxiom(root,
+		AtomicOperation op = new AtomicOperation(builder.createAxiom(root,
 				labels, predicates));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Axiom");
+		return op;
 	}
 
 	public static AtomicOperation createConstantWizard(IContextRoot root,
 			String identifier, String[] labels, String[] predicates) {
-		final AtomicOperation cmd;
+		final AtomicOperation op;
 		final OperationBuilder builder = new OperationBuilder();
-		cmd = new AtomicOperation(builder.createConstant(root, identifier,
+		op = new AtomicOperation(builder.createConstant(root, identifier,
 				labels, predicates));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Constant");
+		return op;
 	}
 
 	/**
@@ -87,20 +92,22 @@ public class OperationFactory {
 	public static AtomicOperation createEnumeratedSetWizard(IContextRoot root,
 			String identifier, String[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
+		final AtomicOperation op = new AtomicOperation(builder
 				.createEnumeratedSet(root, identifier, elements));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Enumerated Set");
+		return op;
 
 	}
 
 	public static AtomicOperation createVariantWizard(IMachineRoot root,
 			String expression) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createVariant(
+		final AtomicOperation op = new AtomicOperation(builder.createVariant(
 				root, expression));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Variant");
+		return op;
 	}
 
 	public static AtomicOperation createVariableWizard(final IMachineRoot root,
@@ -108,10 +115,11 @@ public class OperationFactory {
 			final Collection<Pair<String, String>> invariant,
 			final String actName, final String actSub) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createVariable(
+		final AtomicOperation op = new AtomicOperation(builder.createVariable(
 				root, varName, invariant, actName, actSub));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Constant");
+		return op;
 	}
 
 	/**
@@ -127,37 +135,41 @@ public class OperationFactory {
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
 			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
-				.createInvariant(root, label, content));
-		cmd.addContext(getContext(root));
-		return cmd;
+		final AtomicOperation op = new AtomicOperation(builder.createInvariant(
+				root, label, content));
+		op.addContext(getContext(root));
+		op.setLabel("Create Invariant");
+		return op;
 	}
 
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
 			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
-				.createInvariant(root, labels, contents));
-		cmd.addContext(getContext(root));
-		return cmd;
+		final AtomicOperation op = new AtomicOperation(builder.createInvariant(
+				root, labels, contents));
+		op.addContext(getContext(root));
+		op.setLabel("Create Invariant");
+		return op;
 	}
 
 	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
 			String identifier) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
+		final AtomicOperation op = new AtomicOperation(builder
 				.createCarrierSet(root, identifier));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Carrier set");
+		return op;
 	}
 
 	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
 			String[] identifier) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
+		final AtomicOperation op = new AtomicOperation(builder
 				.createCarrierSet(root, identifier));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Carrier Set");
+		return op;
 	}
 
 	/**
@@ -177,10 +189,11 @@ public class OperationFactory {
 			IInternalElement parent, final IInternalElementType<T> type,
 			final IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
+		final AtomicOperation op = new AtomicOperation(builder
 				.createDefaultElement(parent, type, sibling));
-		cmd.addContext(getContext(parent));
-		return cmd;
+		op.addContext(getContext(parent));
+		op.setLabel("Create Element");
+		return op;
 	}
 
 	/**
@@ -208,31 +221,34 @@ public class OperationFactory {
 			String[] varNames, String[] grdNames, String[] grdPredicates,
 			String[] actNames, String[] actSubstitutions) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createEvent(
+		final AtomicOperation op = new AtomicOperation(builder.createEvent(
 				root, name, varNames, grdNames, grdPredicates, actNames,
 				actSubstitutions));
-		cmd.addContext(getContext(root));
-		return cmd;
+		op.addContext(getContext(root));
+		op.setLabel("Create Event");
+		return op;
 	}
 
 	public static AtomicOperation deleteElement(IInternalElement element) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.deleteElement(
+		final AtomicOperation op = new AtomicOperation(builder.deleteElement(
 				element, true));
-		cmd.addContext(getContext(element));
-		return cmd;
+		op.addContext(getContext(element));
+		op.setLabel("Delete Element");
+		return op;
 	}
 
 	public static AtomicOperation deleteElement(IInternalElement[] elements,
 			boolean force) {
 		assert elements != null;
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.deleteElement(
+		final AtomicOperation op = new AtomicOperation(builder.deleteElement(
 				elements, force));
 		if (elements.length > 0) {
-			cmd.addContext(getContext(elements[0]));
+			op.addContext(getContext(elements[0]));
 		}
-		return cmd;
+		op.setLabel("Delete Element");
+		return op;
 	}
 
 	private static IUndoContext getContext(IRodinFile rodinFile) {
@@ -262,50 +278,55 @@ public class OperationFactory {
 	 *            if value is null, the attribute is removed. Else it is changed
 	 */
 	public static <E extends IInternalElement> AtomicOperation changeAttribute(
-			IRodinFile file, IAttributeFactory<E> factory, E element,
+			IRodinFile file, IAttributeManipulation factory, E element,
 			String value) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder
-				.changeAttribute(factory, element, value));
-		cmd.addContext(getContext(file));
-		return cmd;
+		final AtomicOperation op = new AtomicOperation(builder.changeAttribute(
+				factory, element, value));
+		op.addContext(getContext(file));
+		op.setLabel("Change Attribute");
+		return op;
 	}
 
-	public static <E extends IInternalElement, T extends E> AtomicOperation renameElements(
+	public static <T extends IInternalElement> AtomicOperation renameElements(
 			IInternalElement parent, IInternalElementType<T> type,
-			IAttributeFactory<E> factory, String prefix) {
+			IAttributeManipulation factory, String prefix) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(builder.renameElement(
 				parent, type, factory, prefix));
 		op.addContext(getContext(parent));
+		op.setLabel("Rename Element");
 		return op;
 	}
 
 	public static AtomicOperation createGuard(IInternalElement event,
 			String label, String predicate, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createGuard(
+		final AtomicOperation op = new AtomicOperation(builder.createGuard(
 				event, label, predicate, sibling));
-		cmd.addContext(getContext(event));
-		return cmd;
+		op.addContext(getContext(event));
+		op.setLabel("Create Guard");
+		return op;
 	}
 
 	public static AtomicOperation createAction(IInternalElement event,
 			String label, String assignement, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
+		final AtomicOperation op = new AtomicOperation(builder.createAction(
 				event, label, assignement, sibling));
-		cmd.addContext(getContext(event));
-		return cmd;
+		op.addContext(getContext(event));
+		op.setLabel("Create Action");
+		return op;
 	}
 
 	public static AtomicOperation createAction(IInternalElement event,
 			String label[], String predicate[], IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.createAction(
+		final AtomicOperation op = new AtomicOperation(builder.createAction(
 				event, label, predicate, sibling));
-		cmd.addContext(getContext(event));
-		return cmd;
+		op.addContext(getContext(event));
+		op.setLabel("Create Action");
+		return op;
 	}
 
 	/**
@@ -314,10 +335,11 @@ public class OperationFactory {
 	public static AtomicOperation copyElements(IInternalElement parent,
 			IRodinElement[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation cmd = new AtomicOperation(builder.copyElements(
+		final AtomicOperation op = new AtomicOperation(builder.copyElements(
 				parent, elements));
-		cmd.addContext(getContext(parent));
-		return cmd;
+		op.addContext(getContext(parent));
+		op.setLabel("Copy Element");
+		return op;
 	}
 
 	/**
@@ -344,6 +366,7 @@ public class OperationFactory {
 				.createElementOneStringAttribute(parent, internalElementType,
 						null, attribute, value));
 		op.addContext(getContext(parent));
+		op.setLabel("Create Element");
 		return op;
 	}
 
@@ -378,6 +401,7 @@ public class OperationFactory {
 		final AtomicOperation op = new AtomicOperation(builder.move(
 				movedElement, newParent, nextSibling));
 		op.addContext(getContext(root));
+		op.setLabel("Move");
 		return op;
 
 	}

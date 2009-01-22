@@ -9,105 +9,52 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used ElementDescRegistry
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinFile;
 
+// TODO in the longer term, all subclasses shall disappear in favor of instances
 public abstract class AutoElementNaming implements IEditorActionDelegate {
 
-	IEventBEditor<?> editor;
+	private IEventBEditor<?> editor;
+	private final PrefixElementName prefixElementName;
+
+	public AutoElementNaming(PrefixElementName prefixElementName) {
+		this.prefixElementName = prefixElementName;
+	}
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor)
 			editor = (IEventBEditor<?>) targetEditor;
 	}
 
-	public abstract String getAttributeRelationshipID();
-	
-	private void rename(final String prefix, final String attributeID) {
-		IInternalElement root = editor.getRodinInput();
-		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
-				.getType(attributeID);
-		IAttributeFactory factory = null;
-		if (isIdentifierAttribute(attributeID)) {
-			factory = UIUtils.getIdentifierAttributeFactory(type);
-		} else if (isLabelAttribute(attributeID)) {
-			factory = UIUtils.getLabelAttributeFactory(type);
-		}
-		if (factory != null) {
-			History.getInstance().addOperation(
-					OperationFactory
-							.renameElements(root, type, factory, prefix));
-		}
-	}
-
-	boolean isLabelAttribute(String attributeID) {
-		return isBelongToList(labelAttributes, attributeID);
-	}
-
-	boolean isIdentifierAttribute(String attributeID) {
-		return isBelongToList(identifierAttributes, attributeID);
-	}
-
-	private boolean isBelongToList(String[] attributes,
-			String attributeID) {
-		for (String attribute : attributes)
-			if (attribute.equals(attributeID))
-				return true;
-		return false;
-	}
-
-	protected String[] identifierAttributes = new String []{
-			"org.eventb.core.variableIdentifier",
-			"org.eventb.core.carrierSetIdentifier",
-			"org.eventb.core.constantIdentifier",
-	};
-	
-	protected String[] labelAttributes = new String []{
-			"org.eventb.core.invariantLabel",
-			"org.eventb.core.axiomLabel",
-			"org.eventb.core.theoremLabel",
-			"org.eventb.core.guardLabel",
-			"org.eventb.core.eventLabel",
-			"org.eventb.core.actionLabel",
-	};
-	
 	public void selectionChanged(IAction action, ISelection selection) {
 		return; // Do nothing
 	}
 
 	public void run(IAction action) {
-		String attributeID = getAttributeRelationshipID();
-		IInternalElementType<?> type = AttributeRelUISpecRegistry.getDefault()
-				.getType(attributeID);
-		IRodinFile inputFile = editor.getRodinInput().getRodinFile();
-		String prefix = null;
-		try {
-			prefix = inputFile.getResource().getPersistentProperty(
-					UIUtils.getQualifiedName(type));
-		} catch (CoreException e) {
-			EventBUIExceptionHandler.handleGetPersistentPropertyException(e);
-		}
+		final IInternalElementType<?> type = prefixElementName.getElementType();
+		final IInternalElement root = editor.getRodinInput();
 
-		if (prefix == null)
-			prefix = AttributeRelUISpecRegistry.getDefault().getDefaultPrefix(
-					attributeID);
+		final String prefix = UIUtils.getAutoNamePrefix(root, type);
+		final IAttributeDesc desc = ElementDescRegistry.getInstance()
+				.getElementDesc(type).getAutoNameAttribute();
 
-		rename(prefix, attributeID);
+		History.getInstance().addOperation(
+				OperationFactory.renameElements(root, type, desc.getManipulation(),
+						prefix));
 	}
 }

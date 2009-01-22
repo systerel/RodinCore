@@ -1,12 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.jface.action.IAction;
+import org.eventb.core.IAxiom;
 
 public class PrefixAxmName extends PrefixElementName {
-
-	public void run(IAction action) {
-		setPrefix("org.eventb.core.axiomLabel", "Axiom Label Prefix",
+	public PrefixAxmName() {
+		super(IAxiom.ELEMENT_TYPE, "Axiom Label Prefix",
 				"Please specify the prefix for axiom labels");
 	}
-
 }

@@ -18,7 +18,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IRodinFile;
 
 public class NewAxioms implements IEditorActionDelegate {
 
@@ -31,8 +30,7 @@ public class NewAxioms implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {
-		IRodinFile rodinFile = editor.getRodinInput().getRodinFile();
-		EventBEditorUtils.newAxioms(editor, rodinFile);
+		EventBEditorUtils.newAxioms(editor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

@@ -8,13 +8,17 @@
  *
  * Contributors:
  *     Rodin @ ETH Zurich
+ *     Systerel - used ElementDescRegistry
  ******************************************************************************/
 
 package org.eventb.ui;
 
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eventb.internal.ui.ElementUIRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -28,20 +32,18 @@ import org.rodinp.core.IRodinProject;
  */
 public class ElementSorter extends ViewerSorter {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		int cat1 = category(e1);
 		int cat2 = category(e2);
 		if (cat1 == cat2) {
 			if (e1 instanceof IRodinProject || e1 instanceof IRodinFile) {
-				String label1 = ElementUIRegistry.getDefault().getLabel(e1);
-				String label2 = ElementUIRegistry.getDefault().getLabel(e2);
+				final ElementDescRegistry registry = ElementDescRegistry
+						.getInstance();
+				final String label1 = registry.getValueAtColumn(
+						(IRodinElement) e1, LABEL);
+				final String label2 = registry.getValueAtColumn(
+						(IRodinElement) e2, LABEL);
 				return label1.compareTo(label2);
 			} else {
 				return e1.getClass().toString().compareTo(
@@ -58,7 +60,7 @@ public class ElementSorter extends ViewerSorter {
 	 */
 	@Override
 	public int category(Object element) {
-		return ElementUIRegistry.getDefault().getPriority(element);
+		return ElementDescRegistry.getInstance().getPriority(element);
 	}
 
 }

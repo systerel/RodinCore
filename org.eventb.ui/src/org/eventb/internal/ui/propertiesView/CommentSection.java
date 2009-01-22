@@ -11,27 +11,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eventb.core.ICommentedElement;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 
-public class CommentSection extends TextSection<ICommentedElement> {
+public class CommentSection extends TextSection {
 
+	private final IAttributeManipulation factory = new CommentAttributeManipulation();
+	
 	@Override
 	String getLabel() {
 		return "Comment";
-	}
-
-	@Override
-	String getText() throws RodinDBException {
-		if (element == null)
-			return null;
-		if (element.exists() && element.hasComment())
-			return element.getComment();
-		return "";
 	}
 
 	@Override
@@ -41,9 +31,8 @@ public class CommentSection extends TextSection<ICommentedElement> {
 	}
 
 	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, new CommentAttributeFactory(),
-				text, monitor);
+	protected IAttributeManipulation getFactory() {
+		return factory;
 	}
 
 }

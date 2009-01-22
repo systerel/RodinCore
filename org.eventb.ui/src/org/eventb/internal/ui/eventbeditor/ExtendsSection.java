@@ -19,8 +19,8 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AbstractContextFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.AbstractContextManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -40,7 +40,7 @@ public class ExtendsSection extends
 
 	private static final String SECTION_DESCRIPTION = "Select abstract contexts of this context";
 
-	final private static AbstractContextFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+	private final static AbstractContextManipulation<IExtendsContext> manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
 
 	/**
 	 * Constructor.
@@ -83,7 +83,7 @@ public class ExtendsSection extends
 	}
 
 	@Override
-	protected AbstractContextFactory<IExtendsContext> getFactory() {
-		return factory;
+	protected AbstractContextManipulation<IExtendsContext> getManipulation() {
+		return manipulation;
 	}
 }

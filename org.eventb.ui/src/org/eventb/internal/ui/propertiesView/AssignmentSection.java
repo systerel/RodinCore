@@ -11,25 +11,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eventb.core.IAssignmentElement;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 
-public class AssignmentSection extends TextSection<IAssignmentElement> {
+public class AssignmentSection extends TextSection {
 
+	private final IAttributeManipulation factory = new AssignmentAttributeManipulation();
+	
 	@Override
 	String getLabel() {
 		return "Assignment";
-	}
-
-	@Override
-	String getText() throws RodinDBException {
-		if (element == null)
-			return null;
-		return element.getAssignmentString();
 	}
 
 	@Override
@@ -39,9 +31,8 @@ public class AssignmentSection extends TextSection<IAssignmentElement> {
 	}
 
 	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, new AssignmentAttributeFactory(),
-				text, monitor);
+	protected IAttributeManipulation getFactory() {
+		return factory;
 	}
 
 }

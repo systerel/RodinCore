@@ -35,7 +35,6 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AttributeRelUISpecRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
@@ -85,7 +84,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		super(parentShell, title);
 		this.editor = editor;
 		this.invPrefix = invPrefix;
-		this.invIndex = getInvarianFirstIndex(editor.getRodinInput(), invPrefix);
+		this.invIndex = UIUtils.getFreeElementLabelIndex(
+				editor.getRodinInput(), IInvariant.ELEMENT_TYPE, invPrefix);
 		invariantPairTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 	}
 
@@ -179,17 +179,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 				new GuardListener(invariantPredicateText.getTextWidget()));
 
 		Text nameTextWidget = identifierText.getTextWidget();
-		String varName = "var";
-		try {
-			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-					.getDefaultPrefix("org.eventb.core.variableIdentifier");
-			varName = UIUtils.getFreeElementIdentifier(root,
-					IVariable.ELEMENT_TYPE, defaultPrefix);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		nameTextWidget.setText(varName);
+		nameTextWidget.setText(UIUtils.getFreeElementIdentifier(root,
+				IVariable.ELEMENT_TYPE));
 		nameTextWidget.selectAll();
 		nameTextWidget.setFocus();
 	}
@@ -231,16 +222,6 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		}
 		super.buttonPressed(buttonId);
 	}
-
-	private String getInvarianFirstIndex(IMachineRoot root, String prefix) {
-		try {
-			return UIUtils.getFreeElementLabelIndex(root,
-					IInvariant.ELEMENT_TYPE, prefix);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-			return "1";
-		}
-	}
 	
 	private String getNewInvariantName(String prefix, String firstIndex, int num) {
 		final int index = Integer.parseInt(firstIndex) + num;
@@ -261,7 +242,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 	private void initialise() {
 		final IMachineRoot root = editor.getRodinInput();
 		clearDirtyTexts();
-		invIndex = getInvarianFirstIndex(root, invPrefix);
+		invIndex = UIUtils.getFreeElementLabelIndex(root,
+				IInvariant.ELEMENT_TYPE, invPrefix);
 		int num = 0 ;
 		for (Pair<IEventBInputText, IEventBInputText> pair : invariantPairTexts) {
 			IEventBInputText invariantPredicateText = pair.getSecond();
@@ -282,17 +264,8 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		initLabelText.getTextWidget().setText(actionName);
 		initSubstitutionText.getTextWidget().setText("");
 		Text nameTextWidget = identifierText.getTextWidget();
-		String varName = "var";
-		try {
-			String defaultPrefix = AttributeRelUISpecRegistry.getDefault()
-					.getDefaultPrefix("org.eventb.core.variableIdentifier");
-			varName = UIUtils.getFreeElementIdentifier(root,
-					IVariable.ELEMENT_TYPE, defaultPrefix);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		nameTextWidget.setText(varName);
+		nameTextWidget.setText(UIUtils.getFreeElementIdentifier(root,
+				IVariable.ELEMENT_TYPE));
 		nameTextWidget.selectAll();
 		nameTextWidget.setFocus();
 	}

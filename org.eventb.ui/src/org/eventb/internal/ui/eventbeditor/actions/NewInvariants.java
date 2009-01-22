@@ -30,8 +30,7 @@ public class NewInvariants implements IEditorActionDelegate {
 	}
 
 	public void run(IAction action) {
-		IMachineRoot root = editor.getRodinInput();
-		EventBEditorUtils.newInvariants(editor, root.getRodinFile());
+		EventBEditorUtils.newInvariants(editor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

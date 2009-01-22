@@ -18,92 +18,95 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 public class AtomicOperation extends AbstractOperation {
 
-	protected final OperationTree operation ;
-	
-	public AtomicOperation(OperationTree command) {
-		super("AtomicCommand");
-		this.operation = command ;
+	abstract class AbstractNavigation {
+
+		IStatus status;
+
+		abstract IStatus doRun(IProgressMonitor monitor, final IAdaptable info)
+				throws ExecutionException;
+
+		IStatus run(IProgressMonitor monitor, final IAdaptable info) {
+			try {
+				RodinCore.run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor m) throws RodinDBException {
+						try {
+							status = doRun(m, info);
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				}, monitor);
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+				return e.getStatus();
+			}
+			return status;
+		}
+	}
+
+	protected final OperationTree operation;
+
+	private final AbstractNavigation execute = new AbstractNavigation() {
+		@Override
+		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return operation.execute(monitor, info);
+		}
+
+	};
+
+	private final AbstractNavigation undo = new AbstractNavigation() {
+		@Override
+		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return operation.undo(monitor, info);
+		}
+
+	};
+
+	private final AbstractNavigation redo = new AbstractNavigation() {
+		@Override
+		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return operation.redo(monitor, info);
+		}
+
+	};
+
+	public AtomicOperation(OperationTree operation) {
+		super(operation.getLabel());
+		this.operation = operation;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, final IAdaptable info)
 			throws ExecutionException {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor m) throws RodinDBException {
-					try {
-						operation.execute(m, info) ;
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				}, monitor);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Status.OK_STATUS;
+		return execute.run(monitor, info);
 	}
-
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, final IAdaptable info)
 			throws ExecutionException {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor m) throws RodinDBException {
-					try {
-						operation.redo(m, info) ;
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					}
-				}
-				}, monitor);
-			return Status.OK_STATUS;
-		} catch (RodinDBException e) {
-			return e.getStatus();
-		}
+		return redo.run(monitor, info);
 	}
 
 	@Override
 	public IStatus undo(IProgressMonitor monitor, final IAdaptable info)
 			throws ExecutionException {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor m) throws RodinDBException {
-					try {
-						operation.undo(m, info) ;
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				}, monitor);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// TODO Auto-generated method stub
-		return Status.OK_STATUS;
+		return undo.run(monitor, info);
 	}
-	
-	public IInternalElement getCreatedElement(){
+
+	public IInternalElement getCreatedElement() {
 		return operation.getCreatedElement();
 	}
-	public Collection<IInternalElement> getCreatedElements(){
+
+	public Collection<IInternalElement> getCreatedElements() {
 		return operation.getCreatedElements();
 	}
-
 }

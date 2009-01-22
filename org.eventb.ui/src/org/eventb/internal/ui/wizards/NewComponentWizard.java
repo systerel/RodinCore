@@ -39,7 +39,6 @@ import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -169,8 +168,9 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 						DEFAULT_CONFIGURATION, pMonitor);
 				if (rodinRoot instanceof IMachineRoot) {
 					IEvent init = rodinRoot.getInternalElement(
-							IEvent.ELEMENT_TYPE, "internal_"
-									+ PrefixEvtName.DEFAULT_PREFIX + 1);
+							IEvent.ELEMENT_TYPE, UIUtils
+							.getFreeChildName(rodinRoot, rodinRoot,
+									IEvent.ELEMENT_TYPE) + 1);
 					init.create(null, pMonitor);
 					init.setLabel(IEvent.INITIALISATION, pMonitor);
 					init.setConvergence(

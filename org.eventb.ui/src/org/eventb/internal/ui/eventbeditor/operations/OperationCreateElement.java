@@ -20,20 +20,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IInternalElement;
 
 /**
- * Operation Node avec une operation parent pour creer un element Les operations
- * fils dependent de l'element cree.
- * <p>
- * Lors de execute, l'element creer de vient le pere de chaque fils.
- * <p>
- * la methode setParent de OperationCreateElement ne s'applique que sur
- * operationCreate
+ * Operation Node to create an element. A root operation create the element and
+ * the children operation set the attribute.
  */
 public class OperationCreateElement extends AbstractOperation implements
 		OperationTree {
 
-	final private CreateElementGeneric<?> operationCreate;
+	private final CreateElementGeneric<?> operationCreate;
 
-	final private OperationNode operationChildren;
+	private final OperationNode operationChildren;
 
 	public OperationCreateElement(CreateElementGeneric<?> operationCreate) {
 		super("OperationCreatedElement");
@@ -45,7 +40,7 @@ public class OperationCreateElement extends AbstractOperation implements
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		operationCreate.execute(monitor, info);
-		final IInternalElement element = operationCreate.getElement();
+		final IInternalElement element = operationCreate.getCreatedElement();
 		for (OperationTree op : operationChildren) {
 			op.setParent(element);
 		}

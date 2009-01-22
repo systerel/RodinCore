@@ -145,7 +145,7 @@ public class ObligationsRecalcuateAutoStatus implements IViewActionDelegate {
 					if (obj instanceof IPSStatus) {
 						
 						IPSStatus status = (IPSStatus)obj;
-						IRodinFile psFile = (IRodinFile) status.getOpenable();
+						IRodinFile psFile = status.getOpenable();
 						IPSRoot psRoot = (IPSRoot) psFile.getRoot();
 						IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 						IPSStatus[] statuses = new IPSStatus[]{status};

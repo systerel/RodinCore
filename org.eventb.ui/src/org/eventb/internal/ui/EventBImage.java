@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Rodin @ ETH Zurich
+ *     Systerel : used element description in getImageDescriptor()
  ******************************************************************************/
 
 package org.eventb.internal.ui;
@@ -22,6 +23,8 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.markers.IMarkerRegistry;
 import org.eventb.internal.ui.markers.MarkerRegistry;
 import org.eventb.ui.EventBUIPlugin;
@@ -265,9 +268,8 @@ public class EventBImage {
 	 * @return The image for displaying corresponding to the input element
 	 */
 	public static Image getRodinImage(IRodinElement element) {
-		
-		ImageDescriptor desc = ElementUIRegistry.getDefault()
-				.getImageDescriptor(element.getElementType());
+		final ImageDescriptor desc = getImageDescriptor(element
+				.getElementType());
 		if (desc == null)
 			return null;
 
@@ -294,54 +296,21 @@ public class EventBImage {
 					e.printStackTrace();
 			}
 		}
-		
-//		if (element instanceof IRodinProject) {
-//			IRodinProject rodinProj = (IRodinProject) element;
-//			try {
-//				IMarker[] errorMarkers = rodinProj.getResource().findMarkers(
-//						RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-//						IResource.DEPTH_INFINITE);
-//				if (errorMarkers.length != 0) {
-//					overlay = overlay | F_ERROR;
-//				}
-//			} catch (CoreException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		else if (element instanceof IRodinFile) {
-//			IRodinFile rodinFile = (IRodinFile) element;
-//			try {
-//				IMarker[] errorMarkers = rodinFile.getResource().findMarkers(
-//						RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-//						IResource.DEPTH_ZERO);
-//				if (errorMarkers.length != 0) {
-//					overlay = overlay | F_ERROR;
-//				}
-//			} catch (CoreException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		else {
-			IMarkerRegistry registry = MarkerRegistry.getDefault();
-			try {
-				int severity = registry.getMaxMarkerSeverity(element);
-				if (severity == IMarker.SEVERITY_ERROR) {
-					overlay = overlay | F_ERROR;
-				}
-				else if (severity == IMarker.SEVERITY_WARNING) {
-					overlay = overlay | F_WARNING;
-				}
-				else if (severity == IMarker.SEVERITY_INFO) {
-					overlay = overlay | F_INFO;
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+		IMarkerRegistry registry = MarkerRegistry.getDefault();
+		try {
+			int severity = registry.getMaxMarkerSeverity(element);
+			if (severity == IMarker.SEVERITY_ERROR) {
+				overlay = overlay | F_ERROR;
+			} else if (severity == IMarker.SEVERITY_WARNING) {
+				overlay = overlay | F_WARNING;
+			} else if (severity == IMarker.SEVERITY_INFO) {
+				overlay = overlay | F_INFO;
 			}
-//		}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return getImage(desc, overlay);
 	}
@@ -548,7 +517,9 @@ public class EventBImage {
 
 	public static ImageDescriptor getImageDescriptor(
 			IElementType<?> type) {
-		return ElementUIRegistry.getDefault().getImageDescriptor(type);
+		IElementDesc elementDesc = ElementDescRegistry.getInstance()
+				.getElementDesc(type);
+		return getImageDescriptor(elementDesc.getImageName());
 	}
 
 	public static Image getImage(ImageDescriptor desc, int overlay) {

@@ -11,24 +11,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.RodinDBException;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IdentifierAttributeManipulation;
 
-public class IdentifierSection extends TextSection<IIdentifierElement> {
+public class IdentifierSection extends TextSection {
+
+	private IAttributeManipulation manipulation = new IdentifierAttributeManipulation();
 
 	@Override
 	String getLabel() {
 		return "Identifier";
-	}
-
-	@Override
-	String getText() throws RodinDBException {
-		if (element == null)
-			return null;
-		return element.getIdentifierString();
 	}
 
 	@Override
@@ -38,9 +31,7 @@ public class IdentifierSection extends TextSection<IIdentifierElement> {
 	}
 
 	@Override
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
-		UIUtils.setStringAttribute(element, UIUtils
-				.getIdentifierAttributeFactory(element), text, monitor);
+	protected IAttributeManipulation getFactory() {
+		return manipulation;
 	}
-
 }

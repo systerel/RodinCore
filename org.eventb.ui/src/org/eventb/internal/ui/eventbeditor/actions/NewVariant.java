@@ -46,7 +46,7 @@ public class NewVariant implements IEditorActionDelegate {
 			MessageDialog.openError(editor.getEditorSite().getShell(),
 					"Variant Exist", "Variant already exists in this machine");
 		else
-			EventBEditorUtils.newVariant(editor, root.getRodinFile());
+			EventBEditorUtils.newVariant(editor);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

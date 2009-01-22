@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.CONTENT;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -335,13 +338,13 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		viewer.reveal(element);
 		TreeItem item = TreeSupports.findItem(viewer.getTree(), element);
 		if (element instanceof IVariable)
-			selectItem(item, 0);
+			selectItem(item, LABEL.getId());
 		else if (element instanceof IParameter)
-			selectItem(item, 0);
+			selectItem(item, LABEL.getId());
 		else if (element instanceof IEvent)
-			selectItem(item, 0);
+			selectItem(item, LABEL.getId());
 		else
-			selectItem(item, 1);
+			selectItem(item, CONTENT.getId());
 	}
 
 	/*

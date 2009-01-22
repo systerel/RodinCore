@@ -1,12 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
-import org.eclipse.jface.action.IAction;
+import org.eventb.core.ITheorem;
 
 public class PrefixThmName extends PrefixElementName {
-
-	public void run(IAction action) {
-		setPrefix("org.eventb.core.theoremLabel", "Theorem Label Prefix",
+	public PrefixThmName() {
+		super(ITheorem.ELEMENT_TYPE, "Theorem Label Prefix",
 				"Please specify the prefix for theorem labels");
 	}
-
 }

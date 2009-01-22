@@ -1,10 +1,10 @@
 package org.eventb.internal.ui.eventbeditor.actions;
 
-public class PrefixActName extends PrefixElementName {
+import org.eventb.core.IAction;
 
-	public void run(org.eclipse.jface.action.IAction action) {
-		setPrefix("org.eventb.core.actionLabel", "Action Label Prefix",
+public class PrefixActName extends PrefixElementName {
+	public PrefixActName() {
+		super(IAction.ELEMENT_TYPE, "Action Label Prefix",
 				"Please specify the prefix for action labels");
 	}
-
 }

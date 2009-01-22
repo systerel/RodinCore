@@ -100,9 +100,9 @@ public class Messages {
 	public static String preferencepage_colorsandfonts_boxbordercolor;
 	
 
-	// Attribute Factory
-	public static String attributeFactory_extended_true;
-	public static String attributeFactory_extended_false;
+	// Attribute Manipulation
+	public static String attributeManipulation_extended_true;
+	public static String attributeManipulation_extended_false;
 
 	// UIUtils
 	public static String uiUtils_errorOpeningProvingEditor;
