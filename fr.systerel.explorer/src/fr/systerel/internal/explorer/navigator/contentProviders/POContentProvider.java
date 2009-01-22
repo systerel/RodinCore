@@ -10,50 +10,24 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IPSStatus;
-
-import fr.systerel.internal.explorer.model.IModelElement;
-import fr.systerel.internal.explorer.model.ModelController;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * 
  * The content provider for proof obligations
  * 
  */
-public class POContentProvider implements ITreeContentProvider {
-
-	public Object[] getChildren(Object element) {
-		IModelElement model = ModelController.getModelElement(element);
-		if (model != null) {
-			return model.getChildren(IPSStatus.ELEMENT_TYPE, false);
-		}
-
-		return new Object[0];
-	}
+public class POContentProvider extends AbstractContentProvider {
 
 	// proof obligations can have multiple parents. return none at all.
 	public Object getParent(Object element) {
 		return null;
 	}
 
-	public boolean hasChildren(Object element) {
-		return (getChildren(element).length > 0);
-	}
-
-	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
-	}
-
-	public void dispose() {
-		// do nothing
-
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// do nothing
-
+	@Override
+	protected IInternalElementType<?> getElementType() {
+		return IPSStatus.ELEMENT_TYPE;
 	}
 
 }

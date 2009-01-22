@@ -55,6 +55,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.debug.DebugHelpers;
 
 import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
@@ -279,6 +280,7 @@ public class ExplorerTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		DebugHelpers.disableIndexing();
 		rodinProject = createRodinProject("P");
 	}
 	

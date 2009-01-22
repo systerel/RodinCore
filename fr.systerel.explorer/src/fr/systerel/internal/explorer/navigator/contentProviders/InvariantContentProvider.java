@@ -11,9 +11,8 @@
 
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.IInvariant;
+import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
@@ -22,15 +21,7 @@ import fr.systerel.internal.explorer.model.ModelController;
  * The content provider for Invariant elements
  * 
  */
-public class InvariantContentProvider implements ITreeContentProvider {
-
-	public Object[] getChildren(Object element) {
-		IModelElement model = ModelController.getModelElement(element);
-		if (model != null) {
-			return model.getChildren(IInvariant.ELEMENT_TYPE, false);
-		}
-		return new Object[0];
-	}
+public class InvariantContentProvider extends AbstractContentProvider {
 
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
@@ -40,21 +31,8 @@ public class InvariantContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	public boolean hasChildren(Object element) {
-		return getChildren(element).length > 0;
-	}
-
-	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
-	}
-
-	public void dispose() {
-		// Do nothing
-
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// Do nothing
-
+	@Override
+	protected IInternalElementType<?> getElementType() {
+		return IInvariant.ELEMENT_TYPE;
 	}
 }

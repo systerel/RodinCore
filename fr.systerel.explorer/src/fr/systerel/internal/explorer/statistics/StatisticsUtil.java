@@ -35,11 +35,11 @@ import fr.systerel.internal.explorer.model.ModelProject;
  * 
  */
 public class StatisticsUtil {
-	private static final String PROJECTS = "projects";
-	private static final String MACH_CONT = "machines contexts";
-	private static final String NODES = "nodes";
-	private static final String ELEMS = "elements";
-	private static final String POS = "proof obligations";
+	private static final String PROJECTS = "projects"; //$NON-NLS-1$
+	private static final String MACH_CONT = "machines contexts"; //$NON-NLS-1$
+	private static final String NODES = "nodes"; //$NON-NLS-1$
+	private static final String ELEMS = "elements"; //$NON-NLS-1$
+	private static final String POS = "proof obligations"; //$NON-NLS-1$
 	
 	/**
 	 * Decides, if a given selection is valid for statistics
@@ -51,7 +51,7 @@ public class StatisticsUtil {
 	 */
 	public static String isValidSelection(Object[] elements) {
 		//describes the level of previous elements.
-		String level = "";
+		String level = ""; //$NON-NLS-1$
 		//describes the level of the current element.
 		String new_level;
 
@@ -64,10 +64,10 @@ public class StatisticsUtil {
 					ModelProject modelproject = ModelController
 							.getProject(proj);
 					if (modelproject == null) {
-						return "Expand the projects at least once to see the statistics.";
+						return Messages.getString("statistics.expandAtLeastOnce"); //$NON-NLS-1$
 					}
 				} else {
-					return "Must be a Rodin Project and not closed.";
+					return Messages.getString("statistics.mustBeRodinProject"); //$NON-NLS-1$
 				}
 
 			} else if (el instanceof IMachineRoot || el instanceof IContextRoot) {
@@ -79,7 +79,7 @@ public class StatisticsUtil {
 				if (type == IVariable.ELEMENT_TYPE
 						|| type == ICarrierSet.ELEMENT_TYPE
 						|| type == IConstant.ELEMENT_TYPE) {
-					return "No statistics for this selection.";
+					return Messages.getString("statistics.noStatisticsForThisSelection"); //$NON-NLS-1$
 				}
 				// for the proof obligation node only other proof obligations
 				// nodes are allowed
@@ -94,14 +94,14 @@ public class StatisticsUtil {
 					|| el instanceof ITheorem || el instanceof IAxiom) {
 				new_level = ELEMS;
 			} else
-				return "No statistics for this selection.";
+				return "No statistics for this selection."; //$NON-NLS-1$
 			
 			// check the levels. all elements must be of the same level for the
 			// selection to be valid
 			if (level.length() == 0) {
 				level = new_level;
 			} else if (level != new_level) {
-				return "Selection is not a valid combination of elements.";
+				return Messages.getString("statistics.selectionIsNotValidCombinationOfElements"); //$NON-NLS-1$
 			}
 		}
 		return null;

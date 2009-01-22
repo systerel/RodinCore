@@ -10,39 +10,21 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IContextRoot;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.navigator.ExplorerUtils;
-import fr.systerel.internal.explorer.navigator.NavigatorController;
 
 /**
  * The simple content provider for Context elements.
  * 
  */
-public class ContextContentProvider implements ITreeContentProvider {
+public class ContextContentProvider extends AbstractRootContentProvider {
 
-	public Object[] getChildren(Object element) {
-		if (element instanceof IProject) {
-			IRodinProject proj = RodinCore.valueOf((IProject) element);
-			if (proj.exists()) {
-				ModelController.processProject(proj);
-				try {
-					return ExplorerUtils.getContextRootChildren(proj);
-				} catch (RodinDBException e) {
-					UIUtils.log(e, "when accessing context roots of "+proj);
-				}
-			}
-		}
-		return new Object[0];
+	public ContextContentProvider() {
+		super("context");
 	}
 
 	public Object getParent(Object element) {
@@ -52,34 +34,10 @@ public class ContextContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	public boolean hasChildren(Object element) {
-		if (element instanceof IProject) {
-			IRodinProject proj = RodinCore.valueOf((IProject) element);
-			if (proj.exists()) {
-				try {
-					return ExplorerUtils.getContextRootChildren(proj).length > 0;
-				} catch (RodinDBException e) {
-					return false;
-				}
-			}
-
-		}
-		return false;
-	}
-
-	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
-	}
-
-	public void dispose() {
-		// Do nothing
-
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (viewer instanceof CommonViewer) {
-			NavigatorController.setUpNavigator((CommonViewer) viewer);
-		}
+	@Override
+	protected IEventBRoot[] getRootChildren(IRodinProject project)
+			throws RodinDBException {
+		return ExplorerUtils.getContextRootChildren(project);
 	}
 
 }
