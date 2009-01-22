@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - in project+name search, return an array of IDeclaration
  *******************************************************************************/
 package org.rodinp.core.indexer;
 
