@@ -165,7 +165,7 @@ public class PersistenceManager implements ISaveParticipant {
 		}
 		final File saveFile = getFullSaveFile(savedState);
 
-		if (!saveFile.exists()) {
+		if (saveFile == null || !saveFile.exists()) {
 			return false;
 		}
 		final IPersistor ps = chooseStrategy();
