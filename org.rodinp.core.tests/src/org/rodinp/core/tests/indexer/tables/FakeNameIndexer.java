@@ -32,6 +32,8 @@ import org.rodinp.core.tests.util.IndexTestsUtil;
 
 public class FakeNameIndexer implements IIndexer {
 
+	private static final IDeclaration[] NO_DECLARATION = new IDeclaration[0];
+
 	private static final boolean DEBUG = false;
 
 	private static final String ID =
@@ -39,14 +41,14 @@ public class FakeNameIndexer implements IIndexer {
 
 	private final String[] names;
 	private final int numberEach;
-	private final Map<String, Set<IInternalElement>> indexedElements;
+	private final Map<String, Set<IDeclaration>> indexedElements;
 
 	public FakeNameIndexer(int numberEach, String... names) {
 		TestCase.assertTrue("numberEach is not positive", numberEach > 0);
 
 		this.numberEach = numberEach;
 		this.names = names;
-		indexedElements = new HashMap<String, Set<IInternalElement>>();
+		indexedElements = new HashMap<String, Set<IDeclaration>>();
 	}
 
 	public boolean index(IIndexingBridge bridge) {
@@ -58,10 +60,10 @@ public class FakeNameIndexer implements IIndexer {
 			for (String name : names) {
 				final NamedElement elt = createNamedElement(fileRoot, name);
 				final IDeclaration declaration = bridge.declare(elt, name);
-				final HashSet<IInternalElement> set =
-						new HashSet<IInternalElement>();
+				final HashSet<IDeclaration> set =
+						new HashSet<IDeclaration>();
 				indexedElements.put(name, set);
-				set.add(elt);
+				set.add(declaration);
 				for (int i = 0; i < numberEach; i++) {
 					final NamedElement element =
 							IndexTestsUtil.createNamedElement(fileRoot, name
@@ -88,12 +90,12 @@ public class FakeNameIndexer implements IIndexer {
 		}
 	}
 
-	public IInternalElement[] getIndexedElements(String name) {
-		Set<IInternalElement> elements = indexedElements.get(name);
+	public IDeclaration[] getIndexedElements(String name) {
+		Set<IDeclaration> elements = indexedElements.get(name);
 		if (elements == null || elements.size() == 0) {
-			return new IInternalElement[0];
+			return NO_DECLARATION;
 		}
-		return elements.toArray(new IInternalElement[elements.size()]);
+		return elements.toArray(new IDeclaration[elements.size()]);
 	}
 
 	public IRodinFile[] getDependencies(IInternalElement root) {

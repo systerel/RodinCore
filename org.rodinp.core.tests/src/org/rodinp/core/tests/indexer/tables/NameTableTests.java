@@ -12,12 +12,12 @@ package org.rodinp.core.tests.indexer.tables;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.indexer.IndexTests;
+import org.rodinp.core.tests.util.IndexTestsUtil;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.tables.NameTable;
 
@@ -60,34 +60,34 @@ public class NameTableTests extends IndexTests {
 	public void testPutGetOneElement() throws Exception {
 		table.add(declN1E1);
 
-		final IInternalElement[] expectedResult = makeArray(element1);
-		final IInternalElement[] elements = table.getElements(name1);
+		final IDeclaration[] expectedResult = makeArray(declN1E1);
+		final IDeclaration[] elements = table.getDeclarations(name1);
 
-		assertSameElements(expectedResult, elements);
+		IndexTestsUtil.assertSameElements(expectedResult, elements, "declarations");
 	}
 
 	public void testPutGetSeveralSameName() throws Exception {
 		table.add(declN1E1);
 		table.add(declN1E2);
 
-		final IInternalElement[] expectedResult = makeArray(element1,
-				element2);
-		final IInternalElement[] elements = table.getElements(name1);
+		final IDeclaration[] expectedResult = makeArray(declN1E1,
+				declN1E2);
+		final IDeclaration[] elements = table.getDeclarations(name1);
 
-		assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements, "declarations");
 	}
 
 	public void testPutGetVariousNames() throws Exception {
 		table.add(declN1E1);
 		table.add(declN2E2);
 
-		final IInternalElement[] expectedResult1 = makeArray(element1);
-		final IInternalElement[] expectedResult2 = makeArray(element2);
-		final IInternalElement[] elements1 = table.getElements(name1);
-		final IInternalElement[] elements2 = table.getElements(name2);
+		final IDeclaration[] expectedResult1 = makeArray(declN1E1);
+		final IDeclaration[] expectedResult2 = makeArray(declN2E2);
+		final IDeclaration[] elements1 = table.getDeclarations(name1);
+		final IDeclaration[] elements2 = table.getDeclarations(name2);
 
-		assertSameElements(expectedResult1, elements1);
-		assertSameElements(expectedResult2, elements2);
+		assertSameElements(expectedResult1, elements1, "declarations");
+		assertSameElements(expectedResult2, elements2, "declarations");
 	}
 
 	public void testRemove() throws Exception {
@@ -95,10 +95,10 @@ public class NameTableTests extends IndexTests {
 		table.add(declN1E2);
 		table.remove(declN1E1);
 
-		final IInternalElement[] expectedResult = makeArray(element2);
-		final IInternalElement[] elements = table.getElements(name1);
+		final IDeclaration[] expectedResult = makeArray(declN1E2);
+		final IDeclaration[] elements = table.getDeclarations(name1);
 
-		assertSameElements(expectedResult, elements);
+		assertSameElements(expectedResult, elements, "declarations");
 	}
 
 	public void testClear() throws Exception {
@@ -107,7 +107,7 @@ public class NameTableTests extends IndexTests {
 
 		table.clear();
 
-		final IInternalElement[] elements = table.getElements(name1);
+		final IDeclaration[] elements = table.getDeclarations(name1);
 
 		assertIsEmpty(elements);
 	}

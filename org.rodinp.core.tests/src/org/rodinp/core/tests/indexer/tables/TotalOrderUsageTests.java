@@ -257,8 +257,8 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		final Set<IDeclaration> exports = exportTable.get(file2);
 		final IInternalElement[] fileElements = fileTable.get(file2);
-		final IInternalElement[] nameElements = nameTable
-				.getElements(eltF2Name);
+		final IDeclaration[] nameElements = nameTable
+				.getDeclarations(eltF2Name);
 
 		assertTrue("exports should be empty after file deletion", exports
 				.isEmpty());

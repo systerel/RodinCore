@@ -10,6 +10,7 @@ import org.rodinp.core.tests.indexer.DescriptorTests;
 import org.rodinp.core.tests.indexer.IndexManagerTests;
 import org.rodinp.core.tests.indexer.IndexerRegistryTests;
 import org.rodinp.core.tests.indexer.IndexingBridgeTests;
+import org.rodinp.core.tests.indexer.QueryTests;
 import org.rodinp.core.tests.indexer.RodinIndexTests;
 import org.rodinp.core.tests.indexer.persistence.DeltaTests;
 import org.rodinp.core.tests.indexer.persistence.XMLPersistorTests;
@@ -69,6 +70,7 @@ public class AllTests {
 		suite.addTestSuite(IndexingBridgeTests.class);
 		suite.addTestSuite(IndexManagerTests.class);
 		suite.addTestSuite(RodinIndexTests.class);
+		suite.addTestSuite(QueryTests.class);
 		
 		suite.addTestSuite(DeltaTests.class);
 		suite.addTestSuite(XMLPersistorTests.class);

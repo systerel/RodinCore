@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.rodinp.core.tests.util;
 
+import static junit.framework.Assert.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import static junit.framework.TestCase.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -57,8 +56,6 @@ public class IndexTestsUtil {
 	public static final IOccurrenceKind TEST_KIND_2 =
 			RodinCore.getOccurrenceKind("testKind2");
 
-	public static final String defaultName = "banzai";
-
 	public static IRodinFile createRodinFile(IRodinProject project,
 			String fileName) throws RodinDBException {
 		IRodinFile file = project.getRodinFile(fileName);
@@ -74,10 +71,12 @@ public class IndexTestsUtil {
 
 	// useful when you want to keep a descriptor in the index
 	// (empty descriptors can be removed)
-	public static void makeDescAndDefaultOcc(RodinIndex rodinIndex,
+	public static IOccurrence makeDescAndDefaultOcc(RodinIndex rodinIndex,
 			IDeclaration declaration, IInternalElement element) {
 		final Descriptor descElt3 = rodinIndex.makeDescriptor(declaration);
-		descElt3.addOccurrence(createDefaultOccurrence(element, declaration));
+		final Occurrence occ = createDefaultOccurrence(element, declaration);
+		descElt3.addOccurrence(occ);
+		return occ;
 	}
 	
 	public static NamedElement createNamedElement(IInternalElement parent,
@@ -189,14 +188,14 @@ public class IndexTestsUtil {
 				desc.getDeclaration());
 	}
 
-	public static void assertLength(IRodinElement[] elements, int length) {
+	public static <T> void assertLength(T[] elements, int length) {
 		assertEquals("incorrect number of elements in: "
 				+ elements
 				+ "="
 				+ Arrays.asList(elements), length, elements.length);
 	}
 
-	public static void assertIsEmpty(IInternalElement[] elements) {
+	public static <T> void assertIsEmpty(T[] elements) {
 		assertLength(elements, 0);
 	}
 
@@ -273,8 +272,8 @@ public class IndexTestsUtil {
 	public static void assertNameTable(NameTable expected, NameTable actual,
 			List<String> names) {
 		for (String name : names) {
-			assertSameElements(expected.getElements(name), actual
-					.getElements(name), "name table");
+			assertSameElements(expected.getDeclarations(name), actual
+					.getDeclarations(name), "name table");
 		}
 	}
 

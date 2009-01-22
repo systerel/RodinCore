@@ -12,9 +12,9 @@ package org.rodinp.core.tests.indexer.tables;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.tables.NameTable;
@@ -50,23 +50,23 @@ public class NameTableUsageTests extends IndexTests {
 	}
 
 	private void assertNameTable(IRodinFile rodinFile, String name,
-			IInternalElement[] expectedElements, String message) throws InterruptedException {
+			IDeclaration[] expectedElements, String message) throws InterruptedException {
 
 		final NameTable table = manager.getNameTable(rodinFile
 				.getRodinProject());
-		IInternalElement[] actualElements = table.getElements(name);
+		IDeclaration[] actualElements = table.getDeclarations(name);
 
 		if (DEBUG && message != null) {
 			System.out.println(getName() + ": " + message);
 			System.out.println(table.toString());
 		}
-		assertSameElements(expectedElements, actualElements);
+		assertSameElements(expectedElements, actualElements, "declarations");
 	}
 
 	public void testNameTableFilling() throws Exception {
 		manager.scheduleIndexing(file);
-		IInternalElement[] expectedName1 = indexer.getIndexedElements(name1);
-		IInternalElement[] expectedName2 = indexer.getIndexedElements(name2);
+		IDeclaration[] expectedName1 = indexer.getIndexedElements(name1);
+		IDeclaration[] expectedName2 = indexer.getIndexedElements(name2);
 
 		assertNameTable(file, name1, expectedName1, "");
 		assertNameTable(file, name2, expectedName2, null);
@@ -76,8 +76,8 @@ public class NameTableUsageTests extends IndexTests {
 
 		// first indexing with 2 elements for both name1 and name2
 		manager.scheduleIndexing(file);
-		IInternalElement[] expectedName1 = indexer.getIndexedElements(name1);
-		IInternalElement[] expectedName2 = indexer.getIndexedElements(name2);
+		IDeclaration[] expectedName1 = indexer.getIndexedElements(name1);
+		IDeclaration[] expectedName2 = indexer.getIndexedElements(name2);
 
 		assertNameTable(file, name1, expectedName1, "Before");
 		assertNameTable(file, name2, expectedName2, null);
@@ -89,8 +89,8 @@ public class NameTableUsageTests extends IndexTests {
 
 		// second indexing with 1 element for name1 only
 		manager.scheduleIndexing(file);
-		IInternalElement[] expectedName1Bis = indexer.getIndexedElements(name1);
-		IInternalElement[] expectedName2Bis = indexer.getIndexedElements(name2);
+		IDeclaration[] expectedName1Bis = indexer.getIndexedElements(name1);
+		IDeclaration[] expectedName2Bis = indexer.getIndexedElements(name2);
 
 		assertNameTable(file, name1, expectedName1Bis, "After");
 		assertNameTable(file, name2, expectedName2Bis, null);

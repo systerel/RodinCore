@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - in project+name search, return an array of IDeclaration
  *******************************************************************************/
 package org.rodinp.core.indexer;
 
@@ -66,8 +67,7 @@ public interface IIndexQuery {
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	// TODO return an array of declarations instead.
-	IInternalElement[] getElements(IRodinProject project, String name)
+	IDeclaration[] getDeclarations(IRodinProject project, String name)
 			throws InterruptedException;
 
 	/**

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - in project+name search, return an array of IDeclaration
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
@@ -53,12 +54,12 @@ public class IndexQuery implements IIndexQuery {
 		return descriptor.getOccurrences();
 	}
 
-	public IInternalElement[] getElements(IRodinProject project, String name)
+	public IDeclaration[] getDeclarations(IRodinProject project, String name)
 			throws InterruptedException {
 		final NameTable nameTable =
 				IndexManager.getDefault().getNameTable(project);
 
-		return nameTable.getElements(name);
+		return nameTable.getDeclarations(name);
 	}
 
 	public void waitUpToDate() throws InterruptedException {

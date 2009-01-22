@@ -33,6 +33,7 @@ public class RodinIndexTests extends IndexTests {
 	private static NamedElement elt2;
 
 	private static final RodinIndex index = new RodinIndex();
+	private static final String defaultName = "defaultName";
 	private static final String name1 = "eltName1";
 	private static final String name2 = "eltName2";
 	private static IDeclaration declElt1;

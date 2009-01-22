@@ -15,53 +15,52 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 
 public class NameTable {
 
-	private static final IInternalElement[] NO_ELEMENTS =
-			new IInternalElement[0];
+	private static final IDeclaration[] NO_DECLARATIONS =
+			new IDeclaration[0];
 
-	private Map<String, Set<IInternalElement>> table;
+	private Map<String, Set<IDeclaration>> table;
 
 	public NameTable() {
-		table = new HashMap<String, Set<IInternalElement>>();
+		table = new HashMap<String, Set<IDeclaration>>();
 	}
 
-	private void add(String name, IInternalElement element) {
-		Set<IInternalElement> elements = table.get(name);
-		if (elements == null) {
-			elements = new HashSet<IInternalElement>();
-			table.put(name, elements);
+	private void add(String name, IDeclaration declaration) {
+		Set<IDeclaration> declarations = table.get(name);
+		if (declarations == null) {
+			declarations = new HashSet<IDeclaration>();
+			table.put(name, declarations);
 		}
-		elements.add(element);
+		declarations.add(declaration);
 	}
 
 	public void add(IDeclaration declaration) {
-		add(declaration.getName(), declaration.getElement());
+		add(declaration.getName(), declaration);
 	}
 
-	private void remove(String name, IInternalElement element) {
-		Set<IInternalElement> elements = table.get(name);
-		if (elements != null) {
-			elements.remove(element);
-			if (elements.size() == 0) {
+	private void remove(String name, IDeclaration declaration) {
+		Set<IDeclaration> declarations = table.get(name);
+		if (declarations != null) {
+			declarations.remove(declaration);
+			if (declarations.size() == 0) {
 				table.remove(name);
 			}
 		}
 	}
 
 	public void remove(IDeclaration declaration) {
-		remove(declaration.getName(), declaration.getElement());
+		remove(declaration.getName(), declaration);
 	}
 
-	public IInternalElement[] getElements(String name) {
-		final Set<IInternalElement> elements = table.get(name);
-		if (elements == null || elements.size() == 0) {
-			return NO_ELEMENTS;
+	public IDeclaration[] getDeclarations(String name) {
+		final Set<IDeclaration> declarations = table.get(name);
+		if (declarations == null || declarations.size() == 0) {
+			return NO_DECLARATIONS;
 		}
-		return elements.toArray(new IInternalElement[elements.size()]);
+		return declarations.toArray(new IDeclaration[declarations.size()]);
 	}
 
 	public void clear() {
@@ -74,8 +73,8 @@ public class NameTable {
 		StringBuilder sb = new StringBuilder("NameTable\n");
 		for (String name : table.keySet()) {
 			sb.append(name + ": ");
-			for (IInternalElement elem : table.get(name)) {
-				sb.append(elem.getElementName() + "; ");
+			for (IDeclaration decl : table.get(name)) {
+				sb.append(decl.getElement().getElementName() + "; ");
 			}
 			sb.append("\n");
 		}
