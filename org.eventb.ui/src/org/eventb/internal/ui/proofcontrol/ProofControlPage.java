@@ -10,6 +10,7 @@
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBPreferenceStore
  *     Systerel - added direct access to preference pages
+ *     Systerel - passed the focus request to the text field
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -838,14 +839,14 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	/**
-	 * Passing the focus request to the button bar.
+	 * Passing the focus request to the text field.
 	 * <p>
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	@Override
 	public void setFocus() {
-		pgComp.setFocus();
+		textInput.getTextWidget().setFocus();
 	}
 
 	/*

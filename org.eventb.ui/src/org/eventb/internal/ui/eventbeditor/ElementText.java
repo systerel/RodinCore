@@ -9,6 +9,7 @@
  * Contributors:
  *     Rodin @ ETH Zurich
  *     Systerel - changed double click behavior
+ *     Systerel - set tree focus when dispose
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
@@ -114,12 +115,14 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					textWidget.getParent().dispose();
 					text.dispose();
 					event.doit = false;
+					tree.setFocus();
 					break;
 				case SWT.TRAVERSE_ESCAPE:
 					commit(element, column, original);
 					textWidget.getParent().dispose();
 					text.dispose();
 					event.doit = false;
+					tree.setFocus();
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
 					commit(element, column, Text2EventBMathTranslator
