@@ -25,7 +25,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.tests.utils.EventBUITest;
@@ -134,17 +133,6 @@ public abstract class OperationTest extends EventBUITest {
 			String predicate) {
 		return addElementWithLabelPredicate(parent, IInvariant.ELEMENT_TYPE,
 				label, predicate);
-	}
-
-	protected Element addDefaultElement(Element parentElement,
-			IInternalElementType<?> type, IInternalElement root,
-			IInternalElement parent, String prefix) throws RodinDBException {
-		Element result = new Element(type);
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.LABEL_ATTRIBUTE, UIUtils.getFreeElementLabel(
-						parent, type, prefix)));
-		parentElement.addChild(result, null);
-		return result;
 	}
 
 	protected Element addVariant(Element parent, String expression) {

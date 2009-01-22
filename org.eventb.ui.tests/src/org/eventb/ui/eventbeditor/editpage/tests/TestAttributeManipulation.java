@@ -33,28 +33,28 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.editpage.AssignmentAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.CommentAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ConvergenceAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ExpressionAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ExtendedAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.ExtendsContextAbstractContextNameAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IdentifierAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.LabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.RefinesEventAbstractEventLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.RefinesMachineAbstractMachineNameAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.SeesContextNameAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.ExpressionAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.ExtendedAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IdentifierAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEventLabelAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class TestAttributeFactory extends EventBUITest {
+public class TestAttributeManipulation extends EventBUITest {
 
 	public void testExtendsContextGetPossibleValueWithoutExtendsClause()
 			throws RodinDBException {
-		final IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
 		createContext("ctx0");
 		createContext("ctx1");
 		createContext("ctx2");
@@ -62,7 +62,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 		final IExtendsContext seeCtx = ctx3.getExtendsClause("extends_ctx0");
 
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 
 		// context doesn't have extends context clause so expected all context
 		assertPossibleValues("Error in getPossibleValue for Extends Context",
@@ -71,7 +71,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 	public void testExtendsContextGetPossibleValueWithExtendsClause()
 			throws RodinDBException {
-		final IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
 		createContext("ctx0");
 		createContext("ctx1");
 		createContext("ctx2");
@@ -83,14 +83,14 @@ public class TestAttributeFactory extends EventBUITest {
 		final IExtendsContext seeCtx = ctx3.getExtendsClause("extends_ctx0");
 
 		// ctx3 extends ctx1 and ctx2 context clause so expected ctx0
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 		assertPossibleValues("Error in getPossibleValue for Extends Context",
 				possibleValues, "ctx0");
 	}
 
 	public void testExtendsContextGetPossibleValueWithExtendsClauseCalledWithExistingClause()
 			throws RodinDBException {
-		final IAttributeFactory<IExtendsContext> factory = new ExtendsContextAbstractContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
 		createContext("ctx0");
 		createContext("ctx1");
 		createContext("ctx2");
@@ -101,7 +101,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 		// ctx3 extends ctx1 and ctx2 context clause and call with existing
 		// clause so expected ctx0, ctx2
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 		assertPossibleValues("Error in getPossibleValue for Extends Context",
 				possibleValues, "ctx0", "ctx2");
 
@@ -109,7 +109,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 	public void testSeeContextGetPossibleValueWithoutSeesClause()
 			throws RodinDBException {
-		final IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
 		final IMachineRoot mch = createMachine("mch");
 		createContext("ctx0");
 		createContext("ctx1");
@@ -118,7 +118,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 		final ISeesContext seeCtx = mch.getSeesClause("see_ctx0");
 
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 
 		// machine doesn't have see context clause so expected all context
 		assertPossibleValues("Error in getPossibleValue for SeesContext",
@@ -127,7 +127,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 	public void testSeeContextGetPossibleValueWithSeesClause()
 			throws RodinDBException {
-		final IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
 		final IMachineRoot mch = createMachine("mch");
 		createContext("ctx0");
 		createContext("ctx1");
@@ -137,7 +137,7 @@ public class TestAttributeFactory extends EventBUITest {
 		final ISeesContext seeCtx = mch.getSeesClause("extends_ctx0");
 		createSeesContextClause(mch, "ctx1");
 
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 		// machine have 2 sees context clause so expected 2 context
 		assertPossibleValues("Error in getPossibleValue for SeesContext",
 				possibleValues, "ctx0", "ctx2", "ctx3");
@@ -145,7 +145,7 @@ public class TestAttributeFactory extends EventBUITest {
 
 	public void testSeeContextGetPossibleValueWithSeesClauseCalledWithExistingClause()
 			throws RodinDBException {
-		final IAttributeFactory<ISeesContext> factory = new SeesContextNameAttributeFactory();
+		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
 		final IMachineRoot mch = createMachine("mch");
 		createContext("ctx0");
 		createContext("ctx1");
@@ -155,21 +155,21 @@ public class TestAttributeFactory extends EventBUITest {
 		final ISeesContext seeCtx = createSeesContextClause(mch, "ctx2");
 		createSeesContextClause(mch, "ctx1");
 
-		final String[] possibleValues = factory.getPossibleValues(seeCtx, null);
+		final String[] possibleValues = manipulation.getPossibleValues(seeCtx, null);
 		// machine have 2 sees context clause so expected 2 context
 		assertPossibleValues("Error in getPossibleValue for SeesContext",
 				possibleValues, "ctx0", "ctx2", "ctx3");
 	}
 
 	public void testRefineMachineGetPossibleValue() throws RodinDBException {
-		final IAttributeFactory<IRefinesMachine> factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+		final IAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();
 		createMachine("mch0");
 		createMachine("mch1");
 		final IMachineRoot mch2 = createMachine("mch2");
 
 		final IRefinesMachine refined = createRefinesMachineClause(mch2, "mch0");
 
-		final String[] possibleValues = factory
+		final String[] possibleValues = manipulation
 				.getPossibleValues(refined, null);
 
 		assertPossibleValues("Error in getPossibleValue for RefineMachine",
@@ -177,7 +177,7 @@ public class TestAttributeFactory extends EventBUITest {
 	}
 
 	public void testRefineEventGetPossibleValue() throws RodinDBException {
-		final IAttributeFactory<IRefinesEvent> factory = new RefinesEventAbstractEventLabelAttributeFactory();
+		final IAttributeManipulation manipulation = new RefinesEventAbstractEventLabelAttributeManipulation();
 		final IMachineRoot mch0 = createMachine("mch0");
 		final IMachineRoot mch1 = createMachine("mch1");
 		final IMachineRoot mch2 = createMachine("mch2");
@@ -191,7 +191,7 @@ public class TestAttributeFactory extends EventBUITest {
 		createRefinesMachineClause(mch2, "mch0");
 		IRefinesEvent refined = createRefinesEventClause(event21, "event01");
 
-		String[] possibleValues = factory.getPossibleValues(refined, null);
+		String[] possibleValues = manipulation.getPossibleValues(refined, null);
 
 		assertPossibleValues("Error in getPossibleValue for RefineEvent",
 				possibleValues, "event01", "event02");
@@ -200,149 +200,147 @@ public class TestAttributeFactory extends EventBUITest {
 
 	public void testExtendsContextHasValueTrue() throws Exception {
 		final IExtendsContext extendsContext = createExtendsContext();
-		final ExtendsContextAbstractContextNameAttributeFactory factory = new ExtendsContextAbstractContextNameAttributeFactory();
+		final ExtendsContextAbstractContextNameAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, extendsContext, false);
+		assertHasValue(manipulation, extendsContext, false);
 
 		extendsContext.setAbstractContextName("ctx1", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, extendsContext, true);
+		assertHasValue(manipulation, extendsContext, true);
 	}
 
 	public void testSeesContextHasValue() throws Exception {
 		final ISeesContext seesContext = createSeesContext();
-		final SeesContextNameAttributeFactory factory = new SeesContextNameAttributeFactory();
+		final SeesContextNameAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, seesContext, false);
+		assertHasValue(manipulation, seesContext, false);
 
 		seesContext.setSeenContextName("ctx1", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, seesContext, true);
+		assertHasValue(manipulation, seesContext, true);
 	}
 
 	public void testAssignmentHasValue() throws Exception {
 		final IAssignmentElement assignment = createAssignment();
-		final AssignmentAttributeFactory factory = new AssignmentAttributeFactory();
+		final AssignmentAttributeManipulation manipulation = new AssignmentAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, assignment, false);
+		assertHasValue(manipulation, assignment, false);
 
 		assignment.setAssignmentString("var1 := 4", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, assignment, true);
+		assertHasValue(manipulation, assignment, true);
 	}
 
 	public void testCommentAttributeHasValue() throws Exception {
 		final ICommentedElement commented = createCommented();
-		final CommentAttributeFactory factory = new CommentAttributeFactory();
+		final CommentAttributeManipulation manipulation = new CommentAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, commented, false);
+		assertHasValue(manipulation, commented, false);
 
 		commented.setComment("my comment", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, commented, true);
+		assertHasValue(manipulation, commented, true);
 	}
 
 	public void testConvergenceHasValue() throws Exception {
 		final IConvergenceElement convergence = createConvergence();
-		final ConvergenceAttributeFactory factory = new ConvergenceAttributeFactory();
+		final ConvergenceAttributeManipulation manipulation = new ConvergenceAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, convergence, false);
+		assertHasValue(manipulation, convergence, false);
 
 		convergence.setConvergence(IConvergenceElement.Convergence.CONVERGENT,
 				null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, convergence, true);
+		assertHasValue(manipulation, convergence, true);
 	}
 
 	public void testExpressionHasValue() throws Exception {
 		final IExpressionElement expression = createExpression();
-		final ExpressionAttributeFactory factory = new ExpressionAttributeFactory();
+		final ExpressionAttributeManipulation manipulation = new ExpressionAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, expression, false);
+		assertHasValue(manipulation, expression, false);
 
 		expression.setExpressionString("var1", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, expression, true);
+		assertHasValue(manipulation, expression, true);
 	}
 
 	public void testExtendedHasValue() throws Exception {
 		final IEvent event = createEvent();
-		final ExtendedAttributeFactory factory = new ExtendedAttributeFactory();
+		final ExtendedAttributeManipulation manipulation = new ExtendedAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, event, false);
+		assertHasValue(manipulation, event, false);
 
 		event.setExtended(true, null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, event, true);
+		assertHasValue(manipulation, event, true);
 	}
 
 	public void testIdentifierHasValue() throws Exception {
 		final IIdentifierElement identifier = createIdentifier();
-		final IdentifierAttributeFactory factory = UIUtils
-				.getIdentifierAttributeFactory(identifier);
+		final IdentifierAttributeManipulation manipulation = new IdentifierAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, identifier, false);
+		assertHasValue(manipulation, identifier, false);
 
 		identifier.setIdentifierString("identifier", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, identifier, true);
+		assertHasValue(manipulation, identifier, true);
 	}
 
 	public void testLabelHasValue() throws Exception {
 		final ILabeledElement labeled = createLabeled();
-		final LabelAttributeFactory factory = UIUtils
-				.getLabelAttributeFactory(labeled);
+		final LabelAttributeManipulation manipulation = new LabelAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, labeled, false);
+		assertHasValue(manipulation, labeled, false);
 
 		labeled.setLabel("label", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, labeled, true);
+		assertHasValue(manipulation, labeled, true);
 	}
 
 	public void testPredicateHasValue() throws Exception {
 		final IPredicateElement predicate = createPredicate();
-		final PredicateAttributeFactory factory = new PredicateAttributeFactory();
+		final PredicateAttributeManipulation manipulation = new PredicateAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, predicate, false);
+		assertHasValue(manipulation, predicate, false);
 
 		predicate.setPredicateString("a < b", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, predicate, true);
+		assertHasValue(manipulation, predicate, true);
 	}
 
 	public void testRefinesEventHasValue() throws Exception {
 		final IRefinesEvent refines = createRefinesEvent();
-		final RefinesEventAbstractEventLabelAttributeFactory factory = new RefinesEventAbstractEventLabelAttributeFactory();
+		final RefinesEventAbstractEventLabelAttributeManipulation manipulation = new RefinesEventAbstractEventLabelAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, refines, false);
+		assertHasValue(manipulation, refines, false);
 
 		refines.setAbstractEventLabel("event1", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, refines, true);
+		assertHasValue(manipulation, refines, true);
 	}
 
 	public void testRefinesMachineHasValue() throws Exception {
 		final IRefinesMachine refines = createRefinesMachine();
-		final RefinesMachineAbstractMachineNameAttributeFactory factory = new RefinesMachineAbstractMachineNameAttributeFactory();
+		final RefinesMachineAbstractMachineNameAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();
 
 		// the attribute value is not set so must return false
-		assertHasValue(factory, refines, false);
+		assertHasValue(manipulation, refines, false);
 
 		refines.setAbstractMachineName("mch1", null);
 		// the attribute value is set so must return true
-		assertHasValue(factory, refines, true);
+		assertHasValue(manipulation, refines, true);
 	}
 
 	private void assertPossibleValues(String msg, String[] actual,
@@ -357,12 +355,11 @@ public class TestAttributeFactory extends EventBUITest {
 			fail(messageFail);
 	}
 
-	private <E extends IInternalElement> void assertHasValue(
-			IAttributeFactory<E> factory, E element, boolean expected)
-			throws RodinDBException {
+	private void assertHasValue(IAttributeManipulation manipulation,
+			IInternalElement element, boolean expected) throws RodinDBException {
 		String msg = (expected) ? "Element should have value"
 				: "Element should not have value";
-		assertEquals(msg, expected, factory.hasValue(element, null));
+		assertEquals(msg, expected, manipulation.hasValue(element, null));
 	}
 
 	/**

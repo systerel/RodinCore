@@ -21,16 +21,14 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
-import org.eventb.core.IPredicateElement;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.eventbeditor.editpage.EventLabelAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.IAttributeFactory;
-import org.eventb.internal.ui.eventbeditor.editpage.PredicateAttributeFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.eventbeditor.operation.tests.utils.Element;
@@ -48,7 +46,7 @@ public class TestOperation extends OperationTest {
 
 	@Test
 	public void testChangeAttribute() throws Exception {
-		final IAttributeFactory<IPredicateElement> factory = new PredicateAttributeFactory();
+		final IAttributeManipulation factory = new PredicateAttributeManipulation();
 
 		IInvariant invariant = createInvariant(mch, "myInvariant", "predicate");
 
@@ -202,7 +200,7 @@ public class TestOperation extends OperationTest {
 
 	@Test
 	public void testCreateElementGeneric() throws Exception, RodinDBException {
-		addDefaultElement(mchElement, IInvariant.ELEMENT_TYPE, mch, mch, "inv");
+		addInvariant(mchElement, "inv1", "true");
 
 		final AtomicOperation op = OperationFactory.createElementGeneric(mch,
 				IInvariant.ELEMENT_TYPE, null);
@@ -450,7 +448,7 @@ public class TestOperation extends OperationTest {
 	 */
 	@Test
 	public void testRenameElements() throws Exception {
-		final IAttributeFactory<ILabeledElement> factory = new EventLabelAttributeFactory();
+		final IAttributeManipulation factory = new LabelAttributeManipulation();
 
 		// at beginning and after undo
 		final IEvent event = createEvent(mch, "myEvent1");
