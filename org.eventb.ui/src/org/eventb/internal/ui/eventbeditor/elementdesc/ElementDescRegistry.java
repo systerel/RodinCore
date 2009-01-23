@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
@@ -92,7 +93,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			return (AttributeDesc) nullAttribute;
 		}
 
-		public ImageDescriptor createImageDescriptor() {
+		public ImageDescriptor getImageDescriptor() {
 			return null;
 		}
 
@@ -110,10 +111,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		public int getDefaultColumn() {
 			return -1;
-		}
-
-		public String getImageName() {
-			return "";
 		}
 
 		public boolean isSelectable(int i) {
@@ -259,35 +256,27 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	private void computeAttributeDesc() {
 		final List<IConfigurationElement> elementFromExt = new ArrayList<IConfigurationElement>();
-		final List<IConfigurationElement> attributeFromExt = new ArrayList<IConfigurationElement>();
+		final AttributeMap attributeDescs = new AttributeMap();
+		final ChildRelationMap childRelation = new ChildRelationMap();
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(EDITOR_ITEMS_ID);
 		for (IConfigurationElement element : elements) {
 			if (element.getName().equals("element")) {
 				elementFromExt.add(element);
-			} else if (element.getName().equals("textAttribute")) {
-				attributeFromExt.add(element);
-			} else if (element.getName().equals("choiceAttribute")) {
-				attributeFromExt.add(element);
+			} else if (element.getName().equals("textAttribute")
+					|| element.getName().equals("choiceAttribute")) {
+				attributeDescs.put(element);
+			} else if (element.getName().equals("childRelation")) {
+				childRelation.put(element);
 			}
 		}
 
-		final AttributeMap attributeDescs = new AttributeMap();
-		attributeDescs.put(attributeFromExt);
-		elementDescs = new ElementMap(attributeDescs);
+		elementDescs = new ElementMap(attributeDescs, childRelation);
 		elementDescs.put(elementFromExt);
 	}
 
 	abstract class ItemMap {
-		public abstract void put(IConfigurationElement element);
-
-		public void put(List<IConfigurationElement> elements) {
-			for (IConfigurationElement configurationElement : elements) {
-				put(configurationElement);
-			}
-		}
-
 		/**
 		 * Return the value of a string attribute with the given name, or "" is
 		 * there is not.
@@ -300,6 +289,33 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			if (value == null)
 				return "";
 			return value;
+		}
+	}
+
+	class ChildRelationMap extends ItemMap {
+		final HashMap<IElementType<?>, ArrayList<IElementType<?>>> map = new HashMap<IElementType<?>, ArrayList<IElementType<?>>>();
+		final IElementType<?>[] noChildren = new IElementType<?>[0];
+
+		public void put(IConfigurationElement element) {
+			final IElementType<?> parent = RodinCore.getElementType(element
+					.getAttribute("parentId"));
+			ArrayList<IElementType<?>> children = map.get(parent);
+			if (children == null) {
+				children = new ArrayList<IElementType<?>>();
+				map.put(parent, children);
+			}
+			for (IConfigurationElement child : element.getChildren("childType")) {
+				children.add(RodinCore.getElementType(child
+						.getAttribute("typeId")));
+			}
+		}
+
+		public IElementType<?>[] get(IElementType<?> parent) {
+			final ArrayList<IElementType<?>> children = map.get(parent);
+			if (children == null || children.size() == 0) {
+				return noChildren;
+			}
+			return children.toArray(new IElementType<?>[children.size()]);
 		}
 	}
 
@@ -332,7 +348,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		}
 
-		@Override
 		public void put(IConfigurationElement element) {
 			try {
 				final IAttributeManipulation manipulation = getManipulation(element);
@@ -385,22 +400,33 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	class ElementMap extends ItemMap {
 		final HashMap<IElementType<?>, ElementDesc> elementMap = new HashMap<IElementType<?>, ElementDesc>();
 		final AttributeMap attributeMap;
+		final ChildRelationMap childRelationMap;
 
-		public ElementMap(AttributeMap attributeMap) {
+		public ElementMap(AttributeMap attributeMap,
+				ChildRelationMap childRelationMap) {
 			this.attributeMap = attributeMap;
+			this.childRelationMap = childRelationMap;
 		}
 
-		@Override
+		public void put(List<IConfigurationElement> elements) {
+			for (IConfigurationElement configurationElement : elements) {
+				put(configurationElement);
+			}
+		}
+
 		public void put(IConfigurationElement element) {
 
 			final String prefix = getStringAttribute(element, "prefix");
 			final String childrenSuffix = getStringAttribute(element,
 					"childrenSuffix");
-			final String image = getStringAttribute(element, "imagePath");
+			final String imageName = getStringAttribute(element, "imagePath");
+			final ImageDescriptor imageDesc = EventBImage.getImageDescriptor(
+					element.getContributor().getName(), imageName);
 			final int defaultColumn = getDefaultColumn(element);
 			final IElementType<?> elementType = getElementType(element);
 
-			final IElementType<?>[] childrenType = getChildrenType(element);
+			final IElementType<?>[] childrenType = childRelationMap
+					.get(elementType);
 
 			final List<IAttributeDesc> attributesList = new ArrayList<IAttributeDesc>();
 			final List<IAttributeDesc> atColumnList = new ArrayList<IAttributeDesc>();
@@ -413,7 +439,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IAttributeDesc autoNameAttribute = getAutoNamingAttribute(autoNamingConfig);
 
 			final ElementDesc elementDesc = new ElementDesc(prefix,
-					childrenSuffix, image, attributeDesc, atColumn,
+					childrenSuffix, imageDesc, attributeDesc, atColumn,
 					childrenType, autoNamePrefix, autoNameAttribute,
 					defaultColumn);
 
@@ -468,16 +494,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		private void initAtColumn(List<IAttributeDesc> atColumn, int length) {
 			for (int i = 0; i < length; i++)
 				atColumn.add(nullAttribute);
-		}
-
-		private IElementType<?>[] getChildrenType(IConfigurationElement parent) {
-			final IConfigurationElement[] children = parent
-					.getChildren("childType");
-			final List<IElementType<?>> list = new ArrayList<IElementType<?>>();
-			for (IConfigurationElement element : children) {
-				list.add(getElementType(element));
-			}
-			return list.toArray(new IElementType<?>[list.size()]);
 		}
 
 		/**

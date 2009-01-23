@@ -22,6 +22,7 @@
                <element ref="element"/>
                <element ref="textAttribute"/>
                <element ref="choiceAttribute"/>
+               <element ref="childRelation"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -60,7 +61,6 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="attributeReference" minOccurs="0" maxOccurs="1"/>
-            <element ref="childType" minOccurs="0" maxOccurs="1"/>
             <choice minOccurs="0" maxOccurs="1">
                <element ref="autoNaming"/>
             </choice>
@@ -284,6 +284,21 @@
             <annotation>
                <documentation>
                   Element type of the child, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="childRelation">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="childType"/>
+         </sequence>
+         <attribute name="parentId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the parent, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
                </documentation>
             </annotation>
          </attribute>

@@ -15,14 +15,12 @@ import org.rodinp.core.IElementType;
 
 public interface IElementDesc extends IItemDesc {
 
-	public ImageDescriptor createImageDescriptor();
-
 	/**
 	 * The suffix for the last child of the element
 	 */
 	public String getChildrenSuffix();
 
-	public String getImageName();
+	public ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Return an array of attribute description.

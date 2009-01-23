@@ -519,7 +519,7 @@ public class EventBImage {
 			IElementType<?> type) {
 		IElementDesc elementDesc = ElementDescRegistry.getInstance()
 				.getElementDesc(type);
-		return getImageDescriptor(elementDesc.getImageName());
+		return elementDesc.getImageDescriptor();
 	}
 
 	public static Image getImage(ImageDescriptor desc, int overlay) {

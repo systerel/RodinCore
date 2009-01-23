@@ -478,13 +478,10 @@ public class TestElementDescRegistry extends TestCase {
 
 		final ImageDescriptor imageDescriptor = EventBImage
 				.getImageDescriptor(imageName);
-		if (!imageDescriptor.equals(actualDesc.createImageDescriptor()))
+		if (!imageDescriptor.equals(actualDesc.getImageDescriptor()))
 			fail("Image descriptor should be equals - expected: "
 					+ imageDescriptor + ", but was : "
-					+ actualDesc.createImageDescriptor());
-		if (!imageName.equals(actualDesc.getImageName()))
-			fail("Image descriptor should be equals - expected: " + imageName
-					+ ", but was : " + actualDesc.getImageName());
+					+ actualDesc.getImageDescriptor());
 	}
 
 	private void assertChildrens(String msg, IElementType<?>[] actual,

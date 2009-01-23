@@ -11,7 +11,6 @@
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eventb.internal.ui.EventBImage;
 import org.rodinp.core.IElementType;
 
 /**
@@ -21,7 +20,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final String childrenSuffix;
 
-	private final String image;
+	private final ImageDescriptor image;
 
 	private final IAttributeDesc[] attributeDesc;
 
@@ -35,7 +34,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final IAttributeDesc autoNameAttribute;
 
-	public ElementDesc(String prefix, String childrenSuffix, String image,
+	public ElementDesc(String prefix, String childrenSuffix, ImageDescriptor image,
 			IAttributeDesc[] attributeDesc, IAttributeDesc[] atColumn,
 			IElementType<?>[] childrenType, String autoNamePrefix,
 			IAttributeDesc autoNameAttribute, int defaultColumn) {
@@ -50,10 +49,6 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		this.autoNameAttribute = autoNameAttribute;
 	}
 
-	public ImageDescriptor createImageDescriptor() {
-		return EventBImage.getImageDescriptor(image);
-	}
-
 	/**
 	 * The suffix for the last child of the element
 	 */
@@ -61,7 +56,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		return childrenSuffix;
 	}
 
-	public String getImageName() {
+	public ImageDescriptor getImageDescriptor() {
 		return image;
 	}
 
