@@ -1,5 +1,7 @@
 package org.eventb.contributer.seqprover.fr1834715.manual;
 
+import static org.eventb.core.ast.Formula.SUBSET;
+
 import java.util.List;
 
 import org.eventb.core.ast.DefaultFilter;
@@ -15,30 +17,23 @@ import org.eventb.ui.prover.ITacticProvider;
 public class RewriterTacticProvider extends DefaultTacticProvider implements
 		ITacticProvider {
 
+	private final class SubsetFilter extends DefaultFilter {
+		@Override
+		public boolean select(RelationalPredicate predicate) {
+			return predicate.getTag() == SUBSET;
+		}
+	}
+
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		if (node != null) {
-			if (hyp == null)
-				hyp = node.getSequent().goal();
-			List<IPosition> positions = hyp.getPositions(new DefaultFilter() {
-
-				@Override
-				public boolean select(RelationalPredicate predicate) {
-					if (predicate.getTag() == Predicate.SUBSET) {
-						return true;
-					}
-					return super.select(predicate);
-				}
-
-			});
-			if (positions.size() == 0)
-				return null;
-			return positions;
-		}
-		return null;
+		final Predicate pred = hyp != null ? hyp : node.getSequent().goal();
+		final List<IPosition> positions = pred.getPositions(new SubsetFilter());
+		if (positions.size() == 0)
+			return null;
+		return positions;
 	}
-	
+
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs, String globalInput) {
