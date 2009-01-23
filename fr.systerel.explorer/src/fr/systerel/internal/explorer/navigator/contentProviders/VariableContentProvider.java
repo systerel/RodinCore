@@ -13,7 +13,6 @@ package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
-import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.internal.explorer.model.ModelController;
@@ -23,6 +22,10 @@ import fr.systerel.internal.explorer.model.ModelMachine;
  * The content provider for Variable elements
  */
 public class VariableContentProvider extends AbstractContentProvider {
+
+	public VariableContentProvider() {
+		super(IVariable.ELEMENT_TYPE);
+	}
 
 	public Object getParent(Object element) {
 		// there is no ModelElement for variables.
@@ -40,8 +43,4 @@ public class VariableContentProvider extends AbstractContentProvider {
 		return null;
 	}
 
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return IVariable.ELEMENT_TYPE;
-	}
 }

@@ -12,7 +12,6 @@
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.IEvent;
-import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
@@ -23,6 +22,10 @@ import fr.systerel.internal.explorer.model.ModelController;
  */
 public class EventContentProvider extends AbstractContentProvider {
 
+	public EventContentProvider() {
+		super(IEvent.ELEMENT_TYPE);
+	}
+
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {
@@ -31,8 +34,4 @@ public class EventContentProvider extends AbstractContentProvider {
 		return null;
 	}
 
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return IEvent.ELEMENT_TYPE;
-	}
 }

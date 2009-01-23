@@ -24,7 +24,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 public class ContextContentProvider extends AbstractRootContentProvider {
 
 	public ContextContentProvider() {
-		super("context");
+		super(IContextRoot.ELEMENT_TYPE);
 	}
 
 	public Object getParent(Object element) {

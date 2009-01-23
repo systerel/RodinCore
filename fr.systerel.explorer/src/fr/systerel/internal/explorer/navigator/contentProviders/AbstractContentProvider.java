@@ -20,19 +20,17 @@ import fr.systerel.internal.explorer.model.ModelController;
 public abstract class AbstractContentProvider implements ITreeContentProvider {
 
 	protected static final Object[] NO_OBJECT = new Object[0];
+	
+	protected final IInternalElementType<?> type;
 
-	public AbstractContentProvider() {
-		super();
+	public AbstractContentProvider(IInternalElementType<?> type) {
+		this.type = type;
 	}
-
-	protected abstract IInternalElementType<?> getElementType();
-	
-	
 	
 	public Object[] getChildren(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {
-			return model.getChildren(getElementType(), false);
+			return model.getChildren(type, false);
 		}
 		return NO_OBJECT;
 	}
@@ -46,13 +44,12 @@ public abstract class AbstractContentProvider implements ITreeContentProvider {
 	}
 
 	public void dispose() {
-		// Do nothing
+		// ignore
 	
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// Do nothing
-	
+		// ignore
 	}
 
 }

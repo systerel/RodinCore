@@ -7,9 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
-
+ *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.contentProviders.complex;
 
 import org.eclipse.core.resources.IProject;
@@ -26,21 +24,20 @@ import fr.systerel.internal.explorer.navigator.contentProviders.AbstractRootCont
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
-public abstract class AbstractComplexContentProvider extends AbstractRootContentProvider {
+public abstract class AbstractComplexContentProvider extends
+		AbstractRootContentProvider {
 
-	public AbstractComplexContentProvider() {
-		super("");
+	public AbstractComplexContentProvider(
+			IInternalElementType<? extends IEventBRoot> rootType) {
+		super(rootType);
 	}
-
 
 	protected static final Object[] NO_OBJECT = new Object[0];
 
-	protected abstract IInternalElementType<?> getElementType();
-
 	protected Object[] getProjectChildren(IProject project) {
-		//if it is a RodinProject return the IRodinProject from the DB.
+		// if it is a RodinProject return the IRodinProject from the DB.
 		IRodinProject proj = RodinCore.valueOf(project);
 		if (proj.exists()) {
 			ModelController.processProject(proj);
@@ -49,7 +46,7 @@ public abstract class AbstractComplexContentProvider extends AbstractRootContent
 				return convertToElementType(prj);
 			}
 		}
-		return new Object[0];
+		return NO_OBJECT;
 	}
 
 	@Override
@@ -59,7 +56,7 @@ public abstract class AbstractComplexContentProvider extends AbstractRootContent
 		}
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {
-			return model.getChildren(getElementType(), false);
+			return model.getChildren(rootType, false);
 		}
 		return NO_OBJECT;
 	}
@@ -73,7 +70,7 @@ public abstract class AbstractComplexContentProvider extends AbstractRootContent
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean hasChildren(Object element) {
 		// TODO could factorize with super.hasChildren

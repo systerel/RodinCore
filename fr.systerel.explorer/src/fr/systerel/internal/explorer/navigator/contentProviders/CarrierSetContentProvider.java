@@ -13,7 +13,6 @@ package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
-import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.internal.explorer.model.ModelContext;
@@ -23,6 +22,10 @@ import fr.systerel.internal.explorer.model.ModelController;
  * The content provider for CarrierSet elements
  */
 public class CarrierSetContentProvider extends AbstractContentProvider {
+
+	public CarrierSetContentProvider() {
+		super(ICarrierSet.ELEMENT_TYPE);
+	}
 
 	public Object getParent(Object element) {
 
@@ -39,11 +42,6 @@ public class CarrierSetContentProvider extends AbstractContentProvider {
 			return ((IElementNode) element).getParent();
 		}
 		return null;
-	}
-
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return ICarrierSet.ELEMENT_TYPE;
 	}
 
 }

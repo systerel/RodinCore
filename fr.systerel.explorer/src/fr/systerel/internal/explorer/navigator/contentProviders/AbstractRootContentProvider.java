@@ -8,8 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
-
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eclipse.core.resources.IProject;
@@ -18,6 +16,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -27,17 +26,20 @@ import fr.systerel.internal.explorer.navigator.NavigatorController;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
-public abstract class AbstractRootContentProvider implements ITreeContentProvider {
+public abstract class AbstractRootContentProvider implements
+		ITreeContentProvider {
 
 	private static final Object[] NO_OBJECT = new Object[0];
-	private final String rootType;
-	
-	public AbstractRootContentProvider(String rootType) {
-		this.rootType = rootType;	
+
+	protected final IInternalElementType<? extends IEventBRoot> rootType;
+
+	public AbstractRootContentProvider(
+			IInternalElementType<? extends IEventBRoot> rootType) {
+		this.rootType = rootType;
 	}
-	
+
 	protected abstract IEventBRoot[] getRootChildren(IRodinProject project)
 			throws RodinDBException;
 
@@ -49,8 +51,8 @@ public abstract class AbstractRootContentProvider implements ITreeContentProvide
 				try {
 					return getRootChildren(proj);
 				} catch (RodinDBException e) {
-					UIUtils.log(e, "when accessing " + rootType + " roots of "
-							+ proj);
+					UIUtils.log(e, "when accessing " + rootType.getName()
+							+ " roots of " + proj);
 				}
 			}
 		}
@@ -71,14 +73,12 @@ public abstract class AbstractRootContentProvider implements ITreeContentProvide
 		return false;
 	}
 
-
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
 	public void dispose() {
-		// Do nothing
-
+		// ignore
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

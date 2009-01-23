@@ -11,7 +11,6 @@
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.IPSStatus;
-import org.rodinp.core.IInternalElementType;
 
 /**
  * 
@@ -20,14 +19,13 @@ import org.rodinp.core.IInternalElementType;
  */
 public class POContentProvider extends AbstractContentProvider {
 
+	public POContentProvider() {
+		super(IPSStatus.ELEMENT_TYPE);
+	}
+
 	// proof obligations can have multiple parents. return none at all.
 	public Object getParent(Object element) {
 		return null;
-	}
-
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return IPSStatus.ELEMENT_TYPE;
 	}
 
 }

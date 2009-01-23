@@ -12,7 +12,6 @@
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.ITheorem;
-import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
@@ -22,6 +21,10 @@ import fr.systerel.internal.explorer.model.ModelController;
  */
 public class TheoremContentProvider extends AbstractContentProvider {
 
+	public TheoremContentProvider() {
+		super(ITheorem.ELEMENT_TYPE);
+	}
+
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {
@@ -30,8 +33,4 @@ public class TheoremContentProvider extends AbstractContentProvider {
 		return null;
 	}
 
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return ITheorem.ELEMENT_TYPE;
-	}
 }

@@ -13,7 +13,6 @@
 package fr.systerel.internal.explorer.navigator.contentProviders.complex;
 
 import org.eventb.core.IMachineRoot;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -27,9 +26,8 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  */
 public class ComplexMachineContentProvider extends AbstractComplexContentProvider {
 
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return IMachineRoot.ELEMENT_TYPE;
+	public ComplexMachineContentProvider() {
+		super(IMachineRoot.ELEMENT_TYPE);
 	}
 
 	@Override

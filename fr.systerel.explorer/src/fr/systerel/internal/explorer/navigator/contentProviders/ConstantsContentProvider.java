@@ -13,7 +13,6 @@ package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
-import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.internal.explorer.model.ModelContext;
@@ -23,6 +22,10 @@ import fr.systerel.internal.explorer.model.ModelController;
  * The content provider for Constant elements
  */
 public class ConstantsContentProvider extends AbstractContentProvider {
+
+	public ConstantsContentProvider() {
+		super(IConstant.ELEMENT_TYPE);
+	}
 
 	public Object getParent(Object element) {
 		// there is no ModelElement for constants.
@@ -38,11 +41,6 @@ public class ConstantsContentProvider extends AbstractContentProvider {
 			return ((IElementNode) element).getParent();
 		}
 		return null;
-	}
-
-	@Override
-	protected IInternalElementType<?> getElementType() {
-		return IConstant.ELEMENT_TYPE;
 	}
 
 }

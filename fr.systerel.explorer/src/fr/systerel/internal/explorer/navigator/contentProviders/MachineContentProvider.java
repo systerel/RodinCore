@@ -24,7 +24,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 public class MachineContentProvider extends AbstractRootContentProvider {
 
 	public MachineContentProvider() {
-		super("machine");
+		super(IMachineRoot.ELEMENT_TYPE);
 	}
 
 	public Object getParent(Object element) {
