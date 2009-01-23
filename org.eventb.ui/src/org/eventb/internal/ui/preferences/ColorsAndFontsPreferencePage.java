@@ -46,6 +46,9 @@ public class ColorsAndFontsPreferencePage extends FieldEditorPreferencePage impl
 		addField(new ColorFieldEditor(PreferenceConstants.P_TEXT_FOREGROUND,
 				Messages.preferencepage_colorsandfonts_textForeground,
 				getFieldEditorParent()));
+		addField(new ColorFieldEditor(PreferenceConstants.P_COMMENT_FOREGROUND,
+				Messages.preferencepage_colorsandfonts_commentForeground,
+				getFieldEditorParent()));
 //		addField(new ColorFieldEditor(PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,
 //				Messages.preferencepage_colorsandfonts_requiredfieldbackground,
 //				getFieldEditorParent()));

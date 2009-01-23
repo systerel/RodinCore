@@ -112,6 +112,11 @@ public class PreferenceConstants {
 	public static final String P_TEXT_FOREGROUND = "Text foreground"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key for the choice of font color for comment.
+	 */
+	public static final String P_COMMENT_FOREGROUND = "Comment foreground"; //$NON-NLS-1$
+	
+	/**
 	 * Preference key for the choice of required field background color
 	 */
 	public static final String P_REQUIRED_FIELD_BACKGROUND = "Required field background";

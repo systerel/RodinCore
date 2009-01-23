@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eventb.core.EventBAttributes;
 import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
@@ -139,9 +140,7 @@ public class TextEditComposite extends AbstractEditComposite {
 
 			};
 			// TODO implement a listener on the preference store
-			Color textForeground = EventBPreferenceStore
-					.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND);
-			text.setForeground(textForeground);
+			text.setForeground(getForegroundColor());
 			new TimerStyledText(text, 200) {
 				@Override
 				protected void response() {
@@ -156,6 +155,17 @@ public class TextEditComposite extends AbstractEditComposite {
 		}
 		if (!text.getText().equals(value))
 			text.setText(value);
+	}
+	
+	// TODO Get the preference from extension
+	private Color getForegroundColor() {
+		if (attrDesc.getAttributeType() == EventBAttributes.COMMENT_ATTRIBUTE) {
+			return EventBPreferenceStore
+					.getColorPreference(PreferenceConstants.P_COMMENT_FOREGROUND);
+		} else {
+			return EventBPreferenceStore
+					.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND);
+		}
 	}
 
 	private void displayMarkers() {

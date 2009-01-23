@@ -82,6 +82,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				PreferenceConstants.P_TEXT_FOREGROUND, EventBSharedColor
 						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
 		
+		PreferenceConverter.setDefault(store,
+				PreferenceConstants.P_COMMENT_FOREGROUND, EventBSharedColor
+						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
+		
 		PreferenceConverter
 				.setDefault(store,
 						PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,

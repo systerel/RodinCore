@@ -95,6 +95,7 @@ public class Messages {
 	public static String preferencepage_colorsandfonts_description;
 	public static String preferencepage_colorsandfonts_showborders;
 	public static String preferencepage_colorsandfonts_textForeground;
+	public static String preferencepage_colorsandfonts_commentForeground;
 	public static String preferencepage_colorsandfonts_requiredfieldbackground;
 	public static String preferencepage_colorsandfonts_dirtystatecolor;
 	public static String preferencepage_colorsandfonts_boxbordercolor;

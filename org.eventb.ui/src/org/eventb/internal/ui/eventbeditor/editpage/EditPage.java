@@ -344,7 +344,7 @@ public class EditPage extends EventBEditorPage implements
 		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false));
 		commentWidget.setForeground(EventBPreferenceStore
-				.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND));
+				.getColorPreference(PreferenceConstants.P_COMMENT_FOREGROUND));
 		commentText = new EventBText(commentWidget);
 		new TimerText(commentWidget, 1000) {
 
