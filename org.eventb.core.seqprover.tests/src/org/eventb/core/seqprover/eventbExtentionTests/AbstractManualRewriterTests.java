@@ -23,7 +23,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
  */
 public abstract class AbstractManualRewriterTests extends AbstractManualReasonerTests {
 
-	class SuccessfulTest {
+	protected static class SuccessfulTest {
 		
 		String predicateImage;
 		String positionImage;
