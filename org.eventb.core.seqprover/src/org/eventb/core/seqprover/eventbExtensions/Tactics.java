@@ -116,6 +116,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.StrictInclusionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites;
 
 /**
@@ -1178,6 +1179,23 @@ public class Tactics {
 	public static ITactic removeInclusion(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveInclusion(),
 				new RemoveInclusion.Input(hyp, position));
+	}
+	
+	public static List<IPosition> sirGetPositions(Predicate pred) {
+		return pred.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				return predicate.getTag() == Predicate.SUBSET;
+			}
+
+		});
+	}
+
+	public static ITactic removeStrictInclusion(Predicate hyp,
+			IPosition position) {
+		return BasicTactics.reasonerTac(new StrictInclusionRewrites(),
+				new StrictInclusionRewrites.Input(hyp, position));
 	}
 	
 	public static List<IPosition> disjToImplGetPositions(Predicate pred) {

@@ -153,6 +153,10 @@
             id="ri"
             name="%riName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.StrictInclusionRewrites"
+            id="sir"
+            name="%sirName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites"
             id="inclusionSetMinusRightRewrites"
             name="%inclusionSetMinusRightRewritesName"/>

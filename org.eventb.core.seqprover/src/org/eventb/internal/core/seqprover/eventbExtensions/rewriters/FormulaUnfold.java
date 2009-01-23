@@ -1,5 +1,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.ast.Formula.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -266,6 +268,14 @@ public class FormulaUnfold {
 				.shiftBoundIdentifiers(identDecls.length, ff), null);
 		return ff.makeQuantifiedPredicate(Predicate.FORALL, identDecls, ff
 				.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
+	}
+
+	public static Predicate subset(Expression S, Expression T) {
+		Predicate incl = ff.makeRelationalPredicate(SUBSETEQ, S, T, null);
+		Predicate eq = ff.makeRelationalPredicate(EQUAL, S, T, null);
+		Predicate neq = ff.makeUnaryPredicate(NOT, eq, null);
+		return ff.makeAssociativePredicate(LAND, new Predicate[] { incl, neq },
+				null);
 	}
 
 	public static Predicate inRelImage(Expression F, Expression r, Expression S) {

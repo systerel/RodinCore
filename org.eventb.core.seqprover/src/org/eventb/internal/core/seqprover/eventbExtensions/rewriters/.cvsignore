@@ -23,5 +23,6 @@ RemoveNegationRewriterImpl.java
 RemoveMembershipRewriterImpl.java
 SetEqlRewriterImpl.java
 SetMinusRewriterImpl.java
+StrictInclusionRewriterImpl.java
 TypeRewriterImpl.java
 UnionInterDistRewriterImpl.java
