@@ -35,7 +35,7 @@ public class StateType<T extends IState> extends BasicDescWithClass implements I
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = (Class<? extends T>) clazz.asSubclass(IState.class);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}

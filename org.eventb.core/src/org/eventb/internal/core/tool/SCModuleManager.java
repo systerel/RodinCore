@@ -44,7 +44,7 @@ public class SCModuleManager extends ModuleManager {
 	protected void verifyFilter(FilterModuleDesc<? extends IFilterModule> moduleDesc) throws ModuleLoadingException {
 		try {
 			moduleDesc.getClassObject().asSubclass(ISCFilterModule.class);
-		} catch (ClassCastException e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 		
@@ -54,7 +54,7 @@ public class SCModuleManager extends ModuleManager {
 	protected void verifyProcessor(ProcessorModuleDesc<? extends IProcessorModule> moduleDesc) throws ModuleLoadingException {
 		try {
 			moduleDesc.getClassObject().asSubclass(ISCProcessorModule.class);
-		} catch (ClassCastException e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}

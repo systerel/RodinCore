@@ -71,7 +71,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		try {
 			Class<?> clazz = bundle.loadClass(getClassName());
 			classObject = (Class<? extends T>) clazz.asSubclass(IModule.class);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		} 
 	}
@@ -89,7 +89,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		}
 		try {
 			constructor = classObject.getConstructor();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}
@@ -103,7 +103,7 @@ public abstract class ModuleDesc<T extends IModule> extends BasicDescWithClass i
 		}
 		try {
 			return constructor.newInstance();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}

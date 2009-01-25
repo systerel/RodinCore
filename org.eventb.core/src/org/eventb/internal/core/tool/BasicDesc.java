@@ -8,7 +8,6 @@
 package org.eventb.internal.core.tool;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 
 /**
  * @author Stefan Hallerstede
@@ -51,7 +50,7 @@ public class BasicDesc {
 			String attribute) throws ModuleLoadingException {
 		try {
 			return confElem.getAttribute(attribute);
-		} catch (InvalidRegistryObjectException e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}
@@ -61,7 +60,7 @@ public class BasicDesc {
 			throws ModuleLoadingException {
 		try {
 			return confElem.getChildren(childName);
-		} catch (InvalidRegistryObjectException e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}
@@ -69,7 +68,7 @@ public class BasicDesc {
 	private String getNamespaceIdentifier(IConfigurationElement confElem) throws ModuleLoadingException {
 		try {
 			return confElem.getNamespaceIdentifier();
-		} catch (InvalidRegistryObjectException e) {
+		} catch (Throwable e) {
 			throw new ModuleDesc.ModuleLoadingException(e);
 		}
 	}

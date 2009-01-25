@@ -39,7 +39,7 @@ public class RootModuleDesc<T extends IProcessorModule> extends ProcessorModuleD
 		String retId = configElement.getAttribute("input");
 		try {
 			rootElementType = RodinCore.getInternalElementType(retId);
-		} catch (IllegalArgumentException e) {
+		} catch (Throwable e) {
 			throw new ModuleLoadingException(e);
 		}
 	}
