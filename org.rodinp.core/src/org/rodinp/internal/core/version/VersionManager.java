@@ -18,10 +18,12 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * @author Stefan Hallerstede
@@ -105,29 +107,39 @@ public class VersionManager {
 		HashMap<IInternalElementType<?>, Converter> fc = 
 			new HashMap<IInternalElementType<?>, Converter>(17);
 		for (IConfigurationElement configElement : elements) {
-			IInternalElementType<?> type = getFileElementType(configElement, "type");
-			
-			if (canConvert(descs, configElement.getContributor().getName(), type)) {
-
-				Converter converter = fc.get(type);
-				if (converter == null) {
-					converter = new Converter();
-					fc.put(type, converter);
-				}
-
-				ConversionSheet sheet = converter.addConversionSheet(configElement, type);
-
-				if (DEBUG)
-					System.out.println("LOADED " + sheet);
-			} else {
-				throw new IllegalStateException(
-						"Conversion contributed by plugin without file element version");
+			try {
+				computeConverter(configElement, descs, fc);
+			} catch (Throwable e) {
+				Util.log(e, "When computing a version converter");
 			}
 		}
 		
 		addMissingConverters(fc, descs);
 		
 		return fc;
+	}
+
+	private void computeConverter(IConfigurationElement configElement,
+			List<VersionDesc> descs,
+			HashMap<IInternalElementType<?>, Converter> fc) throws Exception {
+		IInternalElementType<?> type = getFileElementType(configElement, "type");
+		if (canConvert(descs, configElement.getContributor().getName(), type)) {
+
+			Converter converter = fc.get(type);
+			if (converter == null) {
+				converter = new Converter();
+				fc.put(type, converter);
+			}
+
+			ConversionSheet sheet = converter.addConversionSheet(configElement,
+					type);
+
+			if (DEBUG)
+				System.out.println("LOADED " + sheet);
+		} else {
+			throw new IllegalStateException(
+					"Conversion contributed by plugin without file element version");
+		}
 	}
 
 	private void addMissingConverters(
