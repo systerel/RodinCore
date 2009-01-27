@@ -19,10 +19,8 @@
       <complexType>
          <sequence>
             <choice minOccurs="1" maxOccurs="unbounded">
-               <element ref="element"/>
-               <element ref="textAttribute"/>
-               <element ref="choiceAttribute"/>
-               <element ref="childRelation"/>
+               <element ref="declaration"/>
+               <element ref="relation"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -59,12 +57,6 @@
          </documentation>
       </annotation>
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="attributeReference" minOccurs="0" maxOccurs="1"/>
-            <choice minOccurs="0" maxOccurs="1">
-               <element ref="autoNaming"/>
-            </choice>
-         </sequence>
          <attribute name="typeId" type="string" use="required">
             <annotation>
                <documentation>
@@ -257,11 +249,18 @@
    <element name="autoNaming">
       <annotation>
          <documentation>
-            Describes how to rename automatically an element
+            Describes how to rename automatically an element. It can&apos;t be two autonaming with the same element type.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="descriptionId" type="string" use="required">
+         <attribute name="elementTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the element, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="attributeDescriptionId" type="string" use="required">
             <annotation>
                <documentation>
                   Id of an attribute description in this extension point
@@ -295,13 +294,52 @@
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="childType"/>
          </sequence>
-         <attribute name="parentId" type="string" use="required">
+         <attribute name="parentTypeId" type="string" use="required">
             <annotation>
                <documentation>
                   Element type of the parent, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="attributeRelation">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="attributeReference"/>
+         </sequence>
+         <attribute name="elementTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the element, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="declaration">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="element"/>
+               <element ref="textAttribute"/>
+               <element ref="choiceAttribute"/>
+            </choice>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="relation">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="childRelation"/>
+               <element ref="attributeRelation"/>
+               <element ref="autoNaming"/>
+            </choice>
+         </sequence>
       </complexType>
    </element>
 

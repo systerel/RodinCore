@@ -2200,6 +2200,7 @@
    </extension>
    <extension
          point="org.eventb.ui.editorItems">
+	<declaration>
       <element
             imagePath="icons/full/obj16/prj_obj.gif"
             typeId="org.rodinp.core.project">
@@ -2209,16 +2210,12 @@
             childrenSuffix="END"
             prefix="MACHINE"
             typeId="org.eventb.core.machineFile">
-     </element>
+      </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/mch_obj.gif"
             prefix="REFINES"
             typeId="org.eventb.core.refinesMachine">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.refinesMachine">
-         </attributeReference>
       </element>
       <element
             childrenSuffix="END"
@@ -2231,79 +2228,30 @@
             imagePath="icons/full/obj16/ctx_obj.gif"
             prefix="SEES"
             typeId="org.eventb.core.seesContext">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.seenContext">
-         </attributeReference>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/var_obj.gif"
             prefix="VARIABLES"
             typeId="org.eventb.core.variable">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.identifier">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.identifier"
-               namePrefix="var">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/inv_obj.gif"
             prefix="INVARIANTS"
             typeId="org.eventb.core.invariant">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="inv">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/thm_obj.gif"
             prefix="THEOREMS"
             typeId="org.eventb.core.theorem">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="thm">
-         </autoNaming>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/sample.gif"
             prefix="VARIANT"
             typeId="org.eventb.core.variant">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.expression">
-         </attributeReference>
       </element>
       <element
             childrenSuffix="END"
@@ -2311,178 +2259,60 @@
             imagePath="icons/full/obj16/evt_obj.gif"
             prefix="EVENTS"
             typeId="org.eventb.core.event">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.extended">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.convergence">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="evt">
-         </autoNaming>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/evt_obj.gif"
             prefix="REFINES"
             typeId="org.eventb.core.refinesEvent">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.refinesEvent">
-         </attributeReference>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/var_obj.gif"
             prefix="ANY"
             typeId="org.eventb.core.parameter">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.identifier">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.identifier"
-               namePrefix="prm">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/grd_obj.gif"
             prefix="WHERE"
             typeId="org.eventb.core.guard">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="grd">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/sample.gif"
             prefix="WITH"
             typeId="org.eventb.core.witness">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="wit">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/act_obj.gif"
             prefix="THEN"
             typeId="org.eventb.core.action">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.assignment">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="act">
-         </autoNaming>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/ctx_obj.gif"
             prefix="EXTENDS"
             typeId="org.eventb.core.extendsContext">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.extendsContext">
-         </attributeReference>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/set_obj.gif"
             prefix="SETS"
             typeId="org.eventb.core.carrierSet">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.identifier">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.identifier"
-               namePrefix="set">
-         </autoNaming>
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/cst_obj.gif"
             prefix="CONSTANTS"
             typeId="org.eventb.core.constant">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.identifier">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.identifier"
-               namePrefix="cst">
-         </autoNaming>
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/axm_obj.gif"
             prefix="AXIOMS"
             typeId="org.eventb.core.axiom">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
-         </attributeReference>
-         <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-         <autoNaming
-               descriptionId="org.eventb.ui.label"
-               namePrefix="axm">
-         </autoNaming>
       </element>
       <textAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation"
@@ -2570,8 +2400,10 @@
             id="org.eventb.ui.seenContext"
             typeId="org.eventb.core.target">
       </choiceAttribute>
+      </declaration>
+      <relation>
       <childRelation
-            parentId="org.eventb.core.machineFile">
+            parentTypeId="org.eventb.core.machineFile">
          <childType
                typeId="org.eventb.core.refinesMachine">
          </childType>
@@ -2595,7 +2427,7 @@
          </childType>
       </childRelation>
       <childRelation
-            parentId="org.eventb.core.contextFile">
+            parentTypeId="org.eventb.core.contextFile">
          <childType
                typeId="org.eventb.core.extendsContext">
          </childType>
@@ -2613,7 +2445,7 @@
          </childType>
       </childRelation>
       <childRelation
-            parentId="org.eventb.core.event">
+            parentTypeId="org.eventb.core.event">
          <childType
                typeId="org.eventb.core.refinesEvent">
          </childType>
@@ -2630,5 +2462,236 @@
                typeId="org.eventb.core.action">
          </childType>
       </childRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.refinesMachine">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.refinesMachine">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.seesContext">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.seenContext">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.variable">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.identifier">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.invariant">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.theorem">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.variant">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.expression">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.event">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.extended">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.convergence">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.refinesEvent">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.refinesEvent">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.parameter">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.identifier">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.guard">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.witness">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.action">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.assignment">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.extendsContext">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.extendsContext">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.carrierSet">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.identifier">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.constant">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.identifier">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.axiom">
+         <attributeReference
+               column="0"
+               descriptionId="org.eventb.ui.label">
+         </attributeReference>
+         <attributeReference
+               column="1"
+               descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <autoNaming
+            elementTypeId="org.eventb.core.variable"
+            attributeDescriptionId="org.eventb.ui.identifier"
+            namePrefix="var">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.invariant"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="inv">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.theorem"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="thm">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.event"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="evt">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.parameter"
+            attributeDescriptionId="org.eventb.ui.identifier"
+            namePrefix="prm">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.guard"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="grd">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.witness"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="wit">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.action"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="act">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.carrierSet"
+            attributeDescriptionId="org.eventb.ui.identifier"
+            namePrefix="set">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.constant"
+            attributeDescriptionId="org.eventb.ui.identifier"
+            namePrefix="cst">
+      </autoNaming>
+      <autoNaming
+            elementTypeId="org.eventb.core.axiom"
+            attributeDescriptionId="org.eventb.ui.label"
+            namePrefix="axm">
+      </autoNaming>
+      </relation>
    </extension>
 </plugin>
