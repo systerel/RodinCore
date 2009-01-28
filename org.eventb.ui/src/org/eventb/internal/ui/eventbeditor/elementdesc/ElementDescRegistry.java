@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
@@ -325,16 +323,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		private IAttributeManipulation getManipulation(
-				IConfigurationElement element)
-				throws InvalidRegistryObjectException, ClassNotFoundException,
-				IllegalArgumentException, SecurityException,
-				InstantiationException, IllegalAccessException,
-				InvocationTargetException, NoSuchMethodException {
-			Class<? extends IAttributeManipulation> c = Class.forName(
-					element.getAttribute("class")).asSubclass(
-					IAttributeManipulation.class);
-			return c.getConstructor().newInstance();
-
+				IConfigurationElement element) throws CoreException {
+			final Object obj = element.createExecutableExtension("class");
+			return (IAttributeManipulation) obj;
 		}
 
 		@Override
