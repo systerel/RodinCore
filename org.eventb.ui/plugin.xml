@@ -2200,7 +2200,6 @@
    </extension>
    <extension
          point="org.eventb.ui.editorItems">
-	<declaration>
       <element
             imagePath="icons/full/obj16/prj_obj.gif"
             typeId="org.rodinp.core.project">
@@ -2400,8 +2399,6 @@
             id="org.eventb.ui.seenContext"
             typeId="org.eventb.core.target">
       </choiceAttribute>
-      </declaration>
-      <relation>
       <childRelation
             parentTypeId="org.eventb.core.machineFile">
          <childType
@@ -2692,6 +2689,5 @@
             attributeDescriptionId="org.eventb.ui.label"
             namePrefix="axm">
       </autoNaming>
-      </relation>
    </extension>
 </plugin>

@@ -186,28 +186,23 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				.getConfigurationElementsFor(EDITOR_ITEMS_ID);
 
 		for (IConfigurationElement element : elements) {
-			if (element.getName().equals("declaration")) {
-				addArrayToList(elementFromExt, element.getChildren("element"));
-				attributeDescs.putAll(element.getChildren("textAttribute"));
-				attributeDescs.putAll(element.getChildren("choiceAttribute"));
-			} else if (element.getName().equals("relation")) {
-				childRelation.putAll(element.getChildren("childRelation"));
-				autoNaming.putAll(element.getChildren("autoNaming"));
-				attributeRelation.putAll(element
-						.getChildren("attributeRelation"));
+			if (element.getName().equals("element")) {
+				elementFromExt.add(element);
+			} else if (element.getName().equals("textAttribute")
+					|| element.getName().equals("choiceAttribute")) {
+				attributeDescs.put(element);
+			} else if (element.getName().equals("childRelation")) {
+				childRelation.put(element);
+			} else if (element.getName().equals("autoNaming")) {
+				autoNaming.put(element);
+			} else if (element.getName().equals("attributeRelation")) {
+				attributeRelation.put(element);
 			}
 		}
 
 		elementDescs = new ElementMap(attributeDescs, attributeRelation,
 				childRelation, autoNaming);
 		elementDescs.put(elementFromExt);
-	}
-
-	private void addArrayToList(List<IConfigurationElement> list,
-			IConfigurationElement[] elements) {
-		for (IConfigurationElement element : elements) {
-			list.add(element);
-		}
 	}
 
 	abstract class ItemMap {
