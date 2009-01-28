@@ -105,7 +105,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
-		addVariant(mac, "1");
 		IEvent mevt = addEvent(mac, "evt");
 		addEventRefines(mevt, "evt");
 		setOrdinary(mevt);
@@ -268,7 +267,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		IEvent init = addInitialisation(mac);
 		setOrdinary(init);
-		addVariant(mac, "1");
 
 		saveRodinFileOf(mac);
 
@@ -451,8 +449,6 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 			IMachineRoot mac = createMachine("mac");
 			addMachineRefines(mac, "abs");
 			addInitialisation(mac);
-			if (cvgs[2] == Convergence.CONVERGENT)
-				addVariant(mac, "1");
 			IEvent mevt = addEvent(mac, "evt");
 			addEventRefines(mevt, "evt", "fvt");
 			mevt.setConvergence(cvgs[2], null);

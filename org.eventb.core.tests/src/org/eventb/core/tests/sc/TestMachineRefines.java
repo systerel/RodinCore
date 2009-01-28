@@ -13,6 +13,7 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
@@ -131,6 +132,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		
 		addMachineSees(abs, "con");
+		
+		addInitialisation(abs);
 
 		saveRodinFileOf(abs);
 		
@@ -140,6 +143,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addMachineSees(mac, "con");
 		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
 
 		saveRodinFileOf(mac);
 		
@@ -173,6 +177,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineSees(abs, "con");
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
 		
@@ -184,6 +189,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		
@@ -206,6 +212,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
 		
@@ -216,7 +223,9 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
 		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"));
-
+		IEvent ini = addInitialisation(mac, "V2");
+		addEventWitness(ini, "V1'", "⊤");
+		
 		saveRodinFileOf(mac);
 		
 		runBuilder();

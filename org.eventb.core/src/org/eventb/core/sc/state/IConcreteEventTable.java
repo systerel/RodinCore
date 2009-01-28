@@ -18,7 +18,7 @@ import org.eventb.core.tool.IStateType;
  * @author Stefan Hallerstede
  *
  */
-public interface IConcreteEventTable extends ISCState {
+public interface IConcreteEventTable extends ISCState, Iterable<IConcreteEventInfo> {
 	
 	final static IStateType<IConcreteEventInfo> STATE_TYPE = 
 		SCCore.getToolStateType(EventBPlugin.PLUGIN_ID + ".concreteEventTable");

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import org.eventb.core.IAction;
+import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.rodinp.core.RodinDBException;
 
@@ -22,8 +24,17 @@ public abstract class GenericMachineTest<T extends EventBTest>
 extends GenericTest<T>
 implements IGenericElementTest<IMachineRoot> {
 	
+	IEvent init;
+	int k = 0;
+	
 	public void addIdents(IMachineRoot element, String... names) throws RodinDBException {
 		test.addVariables(element, names);
+		IAction action = init.getAction(test.getUniqueName());
+		action.create(null, null);
+		for (String name : names) {
+			action.setLabel(name + k++, null);
+			action.setAssignmentString(name + ":∣ ⊤", null);
+		}
 	}
 
 	public void addNonTheorems(IMachineRoot element, String[] names, String[] nonTheorems) throws RodinDBException {
@@ -35,7 +46,9 @@ implements IGenericElementTest<IMachineRoot> {
 	}
 
 	public IMachineRoot createElement(String bareName) throws RodinDBException {
-		return test.createMachine(bareName);
+		IMachineRoot mac = test.createMachine(bareName);
+		init = test.addInitialisation(mac);
+		return mac;
 	}
 
 	public GenericMachineTest(final T test) {

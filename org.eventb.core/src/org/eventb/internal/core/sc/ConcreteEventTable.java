@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -45,6 +46,10 @@ public class ConcreteEventTable extends State implements IConcreteEventTable {
 		assertMutable();
 		assert table.get(info.getEventLabel()) == null;
 		table.put(info.getEventLabel(), info);
+	}
+
+	public Iterator<IConcreteEventInfo> iterator() {
+		return table.values().iterator();
 	}
 
 }

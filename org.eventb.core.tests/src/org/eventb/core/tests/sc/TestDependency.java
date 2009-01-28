@@ -36,6 +36,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		

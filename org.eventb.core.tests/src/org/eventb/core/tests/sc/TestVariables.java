@@ -45,6 +45,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		
@@ -116,6 +117,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		addVariables(abs, makeSList("V1"));
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
 		
@@ -126,6 +128,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V1"));
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		

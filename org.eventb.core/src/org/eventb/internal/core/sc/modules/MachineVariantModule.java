@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IConvergenceElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
@@ -24,7 +27,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
+import org.eventb.core.sc.state.IAbstractEventInfo;
 import org.eventb.core.sc.state.IAccuracyInfo;
+import org.eventb.core.sc.state.IConcreteEventInfo;
+import org.eventb.core.sc.state.IConcreteEventTable;
 import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -35,12 +41,16 @@ import org.eventb.internal.core.sc.symbolTable.SymbolFactory;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
  * 
  */
 public class MachineVariantModule extends ExpressionModule<IVariant> {
+
+	private static final int CVG_CODE = IConvergenceElement.Convergence.CONVERGENT
+			.getCode();
 
 	public static final IModuleType<MachineVariantModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
@@ -67,16 +77,55 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	@Override
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+
+		checkForRedundantVariant(repository);
+
 		variantInfo = null;
 		factory = null;
 		super.endModule(element, repository, monitor);
 	}
 
+	private void checkForRedundantVariant(ISCStateRepository repository)
+			throws CoreException, RodinDBException {
+		IConcreteEventTable concreteEventTable = (IConcreteEventTable) repository
+				.getState(IConcreteEventTable.STATE_TYPE);
+
+		boolean noCvgEvent = true;
+		for (IConcreteEventInfo info : concreteEventTable) {
+			ILabelSymbolInfo symbolInfo = info.getSymbolInfo();
+			if (symbolInfo.hasError())
+				continue;
+			else {
+				int cvg = symbolInfo
+						.getAttributeValue(EventBAttributes.CONVERGENCE_ATTRIBUTE);
+				if (cvg == CVG_CODE) {
+					List<IAbstractEventInfo> infoList = info
+							.getAbstractEventInfos();
+					if (infoList.size() == 0) {
+						boolean nc = true;
+						for (IAbstractEventInfo absInfo : infoList) {
+							nc &= absInfo.getConvergence() != IConvergenceElement.Convergence.CONVERGENT;
+						}
+						if (nc) {
+							noCvgEvent = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (noCvgEvent && variantInfo.getExpression() != null) {
+			createProblemMarker(formulaElements[0],
+					EventBAttributes.EXPRESSION_ATTRIBUTE,
+					GraphProblem.NoConvergentEventButVariantWarning);
+		}
+	}
+
 	@Override
 	protected ILabelSymbolInfo fetchLabel(IInternalElement internalElement,
 			String component, IProgressMonitor monitor) throws CoreException {
-		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance().makeLocalVariant(
-				"VARIANT", true, internalElement, component);
+		ILabelSymbolInfo symbolInfo = SymbolFactory.getInstance()
+				.makeLocalVariant("VARIANT", true, internalElement, component);
 		symbolInfo.setAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE,
 				internalElement);
 		return symbolInfo;

@@ -763,5 +763,18 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		
 		hasMarker(evt.getWitnesses()[0]);
 	}
+	
+	/**
+	 * an empty machine must have an initialisation
+	 */
+	public void testEvents_25_emptyMachineWithoutInit() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		mac.getRodinFile().save(null, true);
+		
+		runBuilder();
+		
+		containsMarkers(mac, true);
+	}
 
 }

@@ -47,6 +47,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1=C1"));
+		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
 		
@@ -85,6 +86,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(con2);
 		
 		IMachineRoot mac = createMachine("mac");
+		addInitialisation(mac);
 		addMachineSees(mac, "con2");
 		saveRodinFileOf(mac);
 		

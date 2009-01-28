@@ -116,6 +116,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot con = createMachine("con");
 		addMachineSees(con, "abs");
+		addInitialisation(con);
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		
@@ -132,6 +133,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 */
 	public void testAcc_07() throws Exception {
 		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
 		
 		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
 		
@@ -139,6 +141,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
+		addInitialisation(con);
 		
 		addTheorems(con, makeSList("X"), makeSList("1<0"));
 		

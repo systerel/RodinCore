@@ -75,6 +75,8 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 				makeSList("b"), 
 				makeSList("G"), makeSList("b∈ℤ"), 
 				makeSList("A"), makeSList("v≔b"));
+		IEvent f = addEvent(m, "f");
+		setConvergent(f);
 		addEventRefines(e, "e");
 		addEventWitnesses(e, makeSList("a"), makeSList("⊤"));
 		addInitialisation(m, "v");
@@ -107,7 +109,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 */
 	public void testMachine() throws Exception {
 		IMachineRoot m = createMachine();
-		
+
 		runBuilder();
 		
 		containsMarkers(m, false);

@@ -79,9 +79,6 @@ public class MachineEventModule extends LabeledElementModule {
 		IRodinFile machineFile = (IRodinFile) element;
 		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
 		
-		if (events.length == 0)
-			return;
-
 		monitor.subTask(Messages.bind(Messages.progress_MachineEvents));
 
 		ILabelSymbolInfo[] symbolInfos = fetchEvents(machineFile, repository,
