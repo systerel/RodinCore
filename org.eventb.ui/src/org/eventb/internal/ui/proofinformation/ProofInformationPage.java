@@ -14,6 +14,8 @@
  ******************************************************************************/
 package org.eventb.internal.ui.proofinformation;
 
+import static org.eventb.ui.EventBUIPlugin.NAVIGATOR_VIEW_ID;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,6 +56,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBFormText;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBFormText;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -309,7 +312,7 @@ public class ProofInformationPage extends Page implements
 					IRodinElement element = RodinCore.valueOf(id);
 					UIUtils.linkToEventBEditor(element);
 					UIUtils.activateView(IPageLayout.ID_PROBLEM_VIEW);
-					UIUtils.activateView(ProjectExplorer.VIEW_ID);
+					UIUtils.activateView(NAVIGATOR_VIEW_ID);
 				}
 
 			});

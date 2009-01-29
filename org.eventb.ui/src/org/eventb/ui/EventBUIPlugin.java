@@ -63,6 +63,30 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String PLUGIN_ID = "org.eventb.ui"; //$NON-NLS-1$
 
+	/**
+	 * The identifier of the Proof Tree UI View (value
+	 * <code>"org.eventb.ui.views.ProofTreeUI"</code>).
+	 */
+	public static final String PROOF_TREE_VIEW_ID = PLUGIN_ID
+			+ ".views.ProofTreeUI";
+
+	/**
+	 * The identifier of the Proof Control View (value
+	 * <code>"org.eventb.ui.views.ProofControl"</code>).
+	 */
+	public static final String PROOF_CONTROL_VIEW_ID = PLUGIN_ID + ".views.ProofControl";
+	
+	/**
+	 * The identifier of the Rodin Problem View (value
+	 * <code>"org.eventb.ui.views.RodinProblemView"</code>).
+	 */
+	public static final String RODIN_PROBLEM_VIEW_ID = PLUGIN_ID
+			+ ".views.RodinProblemView"; 		
+	
+	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ide.perspective.eventb";
+
+	public static final String NAVIGATOR_VIEW_ID = "fr.systerel.explorer.navigator.view";
+
 	// Trace Options
 	private static final String GLOBAL_TRACE = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 

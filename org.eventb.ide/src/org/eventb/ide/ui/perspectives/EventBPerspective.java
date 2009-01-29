@@ -10,14 +10,14 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.internal.ui.perspectives;
+package org.eventb.ide.ui.perspectives;
+
+import static fr.systerel.explorer.ExplorerPlugin.NAVIGATOR_ID;
+import static org.eventb.ui.EventBUIPlugin.RODIN_PROBLEM_VIEW_ID;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
-import org.eventb.internal.ui.rodinproblems.RodinProblemView;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -27,17 +27,12 @@ import org.eventb.ui.EventBUIPlugin;
 
 public class EventBPerspective implements IPerspectiveFactory {
 
-	/**
-	 * The identifier of the modelling perspective (value
-	 * <code>"org.eventb.ui.perspective.eventb"</code>).
-	 */
-	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".perspective.eventb";
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
+	 * @see
+	 * org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui
+	 * .IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		defineLayout(layout);
@@ -57,12 +52,12 @@ public class EventBPerspective implements IPerspectiveFactory {
 		// Place the project explorer to left of editor area.
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT,
 				0.20f, editorArea);
-		left.addView(ProjectExplorer.VIEW_ID);
+		left.addView(NAVIGATOR_ID);
 
 		// Place the Problems / Task to the bottom of the editor area.
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.75f, editorArea);
-		bottom.addView(RodinProblemView.VIEW_ID);
+		bottom.addView(RODIN_PROBLEM_VIEW_ID);
 
 		// Place the outline to right of editor area.
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,

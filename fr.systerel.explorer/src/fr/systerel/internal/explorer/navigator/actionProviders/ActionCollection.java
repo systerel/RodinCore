@@ -10,6 +10,9 @@
   *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
+import static org.eventb.ui.EventBUIPlugin.PROOF_CONTROL_VIEW_ID;
+import static org.eventb.ui.EventBUIPlugin.PROOF_TREE_VIEW_ID;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,9 +42,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
-import org.eventb.internal.ui.proofcontrol.ProofControl;
-import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
@@ -50,6 +50,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 import fr.systerel.internal.explorer.navigator.wizards.NewProjectWizard;
 
 /**
@@ -234,8 +235,8 @@ public class ActionCollection {
 												"Are you sure you want to delete project '"
 														+ rodinProject.getElementName()
 														+ "' ?");
-								if (ProjectExplorerUtils.DEBUG)
-									ProjectExplorerUtils.debug("Answer: " + answer);
+								if (ExplorerUtils.DEBUG)
+									ExplorerUtils.debug("Answer: " + answer);
 							}
 							if (answer == YesToAllMessageDialog.NO_TO_ALL)
 								break;
@@ -372,8 +373,8 @@ public class ActionCollection {
 	
 	static void selectPO(IPSStatus ps) {
 		UIUtils.linkToProverUI(ps);
-		UIUtils.activateView(ProofControl.VIEW_ID);
-		UIUtils.activateView(ProofTreeUI.VIEW_ID);
+		UIUtils.activateView(PROOF_CONTROL_VIEW_ID);
+		UIUtils.activateView(PROOF_TREE_VIEW_ID);
 	}
 
 	

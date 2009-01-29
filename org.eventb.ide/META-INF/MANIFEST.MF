@@ -5,4 +5,12 @@ Bundle-SymbolicName: org.eventb.ide; singleton:=true
 Bundle-Version: 0.9.1
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui.cheatsheets
+Require-Bundle: org.eclipse.ui.cheatsheets,
+ org.eclipse.ui.workbench,
+ org.eclipse.ui;bundle-version="3.4.1",
+ org.eclipse.core.runtime;bundle-version="3.4.0",
+ org.eventb.ui;bundle-version="0.9.1",
+ fr.systerel.explorer;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eventb.ide

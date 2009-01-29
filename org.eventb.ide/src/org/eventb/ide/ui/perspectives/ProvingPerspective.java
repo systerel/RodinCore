@@ -9,16 +9,15 @@
  * Contributors:
  *     Rodin @ ETH Zurich
  ******************************************************************************/
+package org.eventb.ide.ui.perspectives;
 
-package org.eventb.internal.ui.perspectives;
+import static fr.systerel.explorer.ExplorerPlugin.NAVIGATOR_ID;
+import static org.eventb.ui.EventBUIPlugin.PROOF_CONTROL_VIEW_ID;
+import static org.eventb.ui.EventBUIPlugin.PROOF_TREE_VIEW_ID;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
-import org.eventb.internal.ui.proofcontrol.ProofControl;
-import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -27,17 +26,12 @@ import org.eventb.ui.EventBUIPlugin;
  */
 public class ProvingPerspective implements IPerspectiveFactory {
 
-	/**
-	 * The identifier of the proving perspective (value
-	 * <code>"org.eventb.ui.perspective.proving"</code>).
-	 */
-	public static final String PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".perspective.proving";
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
+	 * @see
+	 * org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui
+	 * .IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		defineLayout(layout);
@@ -57,17 +51,17 @@ public class ProvingPerspective implements IPerspectiveFactory {
 		// Place the Obligation/Project explorer to left of editor area.
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT,
 				0.25f, editorArea);
-		left.addView(ProofTreeUI.VIEW_ID);
+		left.addView(PROOF_TREE_VIEW_ID);
 
 		// Place the ProofTree / Outline to right of editor area.
 		IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT,
 				0.75f, editorArea);
-		right.addView(ObligationExplorer.VIEW_ID);
+		right.addView(NAVIGATOR_ID);
 
 		// Place the Proof Control / Problems to the bottom of the editor area.
 		IFolderLayout bottom = layout.createFolder("bottom",
 				IPageLayout.BOTTOM, 0.60f, editorArea);
-		bottom.addView(ProofControl.VIEW_ID);
+		bottom.addView(PROOF_CONTROL_VIEW_ID);
 	}
 
 }

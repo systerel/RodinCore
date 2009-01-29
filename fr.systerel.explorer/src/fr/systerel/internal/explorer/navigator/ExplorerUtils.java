@@ -29,6 +29,7 @@ public class ExplorerUtils {
 
 	public static boolean DEBUG;
 
+	public final static String DEBUG_PREFIX = "*** Event-B Explorer *** ";
 
 	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
 			throws RodinDBException {
@@ -54,4 +55,9 @@ public class ExplorerUtils {
 			}
 		});
 	}
+	
+	public static void debug(String message) {
+		System.out.println(DEBUG_PREFIX + message);
+	}
+
 }

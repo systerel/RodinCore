@@ -39,8 +39,6 @@ import org.eclipse.ui.views.markers.internal.ProblemView;
 @SuppressWarnings("restriction")
 public class RodinProblemView extends ProblemView {
 	
-	public static final String VIEW_ID = "org.eventb.ui.views.RodinProblemView"; 
-
 	private final static String[] ROOT_TYPES = { IMarker.PROBLEM };
 
 	@Override

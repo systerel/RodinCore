@@ -31,7 +31,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 
 /**
@@ -41,13 +40,6 @@ import org.eventb.ui.IEventBSharedImages;
  */
 public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 		ISelectionChangedListener {
-
-	/**
-	 * The identifier of the Proof Tree UI View (value
-	 * <code>"org.eventb.ui.views.ProofTreeUI"</code>).
-	 */
-	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".views.ProofTreeUI";
 
 	// A default text when not available (depends on the current editor).
 	private String defaultText = "A proof tree is not available";

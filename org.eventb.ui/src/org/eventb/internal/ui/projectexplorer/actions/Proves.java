@@ -1,5 +1,7 @@
 package org.eventb.internal.ui.projectexplorer.actions;
 
+import static org.eventb.ui.EventBUIPlugin.PROVING_PERSPECTIVE_ID;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -8,7 +10,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.WorkbenchException;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.perspectives.ProvingPerspective;
 import org.eventb.ui.EventBUIPlugin;
 
 public class Proves implements IObjectActionDelegate {
@@ -30,7 +31,7 @@ public class Proves implements IObjectActionDelegate {
 				UIUtils.linkToProverUI(obj);
 				try {
 					EventBUIPlugin.getActiveWorkbenchWindow().getWorkbench()
-							.showPerspective(ProvingPerspective.PERSPECTIVE_ID,
+							.showPerspective(PROVING_PERSPECTIVE_ID,
 									EventBUIPlugin.getActiveWorkbenchWindow());
 				} catch (WorkbenchException e) {
 					e.printStackTrace();

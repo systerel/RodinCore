@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui.obligationexplorer;
 
+import static org.eventb.ui.EventBUIPlugin.PROOF_CONTROL_VIEW_ID;
+import static org.eventb.ui.EventBUIPlugin.PROOF_TREE_VIEW_ID;
+
 import java.util.Collection;
 
 import org.eclipse.jface.action.Action;
@@ -69,8 +72,6 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.proofcontrol.ProofControl;
-import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.EventBUIPlugin;
@@ -519,8 +520,8 @@ public class ObligationExplorer extends ViewPart implements
 
 	void selectPO(IPSStatus ps) {
 		UIUtils.linkToProverUI(ps);
-		UIUtils.activateView(ProofControl.VIEW_ID);
-		UIUtils.activateView(ProofTreeUI.VIEW_ID);
+		UIUtils.activateView(PROOF_CONTROL_VIEW_ID);
+		UIUtils.activateView(PROOF_TREE_VIEW_ID);
 	}
 
 	/**

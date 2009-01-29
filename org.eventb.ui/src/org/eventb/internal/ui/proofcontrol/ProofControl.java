@@ -27,7 +27,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
@@ -36,13 +35,6 @@ import org.eventb.ui.EventBUIPlugin;
  */
 public class ProofControl extends PageBookView implements ISelectionProvider,
 		ISelectionChangedListener {
-
-	/**
-	 * The identifier of the Proof Control View (value
-	 * <code>"org.eventb.ui.views.ProofControl"</code>).
-	 */
-	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".views.ProofControl";
 
 	// The default text when it is not available (depend on the current editor)
 	private String defaultText = "Proof Control is not available";

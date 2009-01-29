@@ -24,6 +24,8 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.explorer";
 
+	public static final String NAVIGATOR_ID = PLUGIN_ID + ".navigator.view";
+	
 	// Trace Options
 	private static final String DEBUG_NAVIGATOR = PLUGIN_ID +"/debug/navigator"; //$NON-NLS-1$
 

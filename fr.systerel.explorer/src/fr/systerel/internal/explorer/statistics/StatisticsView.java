@@ -12,6 +12,8 @@
 
 package fr.systerel.internal.explorer.statistics;
 
+import static fr.systerel.explorer.ExplorerPlugin.NAVIGATOR_ID;
+
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
@@ -66,8 +68,6 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 		new StatisticsContentProvider();
 	private IStructuredContentProvider statisticsDetailsContentProvider =
 		new StatisticsDetailsContentProvider();
-
-	private static final String NAVIGATOR_ID = "fr.systerel.explorer.navigator.view";
 
 	/**
 	 * 
