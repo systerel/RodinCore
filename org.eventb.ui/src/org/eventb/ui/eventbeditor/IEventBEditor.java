@@ -91,8 +91,7 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * <p>
 	 * 
 	 * @param ssel
-	 *            the current selecting element. It can be an IRodinElement or a
-	 *            TreeNode (from the ProjectExplorer).
+	 *            the current selecting element. It can be an IRodinElement.
 	 * @deprecated use {@link #setSelection(IInternalElement)} instead.
 	 */
 	@Deprecated

@@ -28,9 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eventb.core.IEventBProject;
 import org.eventb.internal.ui.RodinProjectSelectionDialog;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorer;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -216,23 +214,13 @@ public class NewComponentWizardPage extends WizardPage {
 			IRodinElement curr;
 			if (element instanceof IRodinElement) {
 				curr = (IRodinElement) element;
-			} else if (element instanceof TreeNode) {
-				curr = (IRodinElement) ((TreeNode<?>) element).getParent();
 			} else
 				curr = null;
 			while (!(curr instanceof IRodinProject || curr == null)) {
 				curr = curr.getParent();
 			}
 			project = (IRodinProject) curr;
-		} else {
-			// Trying to find the current project from the Project Explorer
-			if (UIUtils.DEBUG)
-				System.out.println("From Project Explorer: ");
-			ProjectExplorer explorer = (ProjectExplorer) EventBUIPlugin
-					.getActivePage().findView(ProjectExplorer.VIEW_ID);
-			if (explorer != null)
-				project = explorer.getCurrentProject();
-		}
+		} 
 
 		if (UIUtils.DEBUG)
 			System.out.println("Project " + project);

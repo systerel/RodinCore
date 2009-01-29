@@ -188,12 +188,6 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-//			if (MessageDialog
-//					.openQuestion(
-//							shell,
-//							ProjectExplorerMessages.CopyToClipboardProblemDialog_title,
-//							ProjectExplorerMessages.CopyToClipboardProblemDialog_message))
-//				setClipboard(resources, fileNames, names);
 		}
 	}
 

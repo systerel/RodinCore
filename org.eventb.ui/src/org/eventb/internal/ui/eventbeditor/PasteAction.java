@@ -69,10 +69,7 @@ public class PasteAction extends SelectionListenerAction {
 		this.shell = shell;
 		this.clipboard = clipboard;
 		this.root = root;
-		// setToolTipText(ProjectExplorerMessages.PasteAction_toolTip);
 		setId(CopyAction.ID);
-		// PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-		// INavigatorHelpContextIds.COPY_ACTION);
 	}
 
 	/**

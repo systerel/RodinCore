@@ -11,7 +11,6 @@
 package org.eventb.ide;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * The main plugin class for Event-B UI.
@@ -20,22 +19,16 @@ public class EventBIDEPlugin extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eventb.ide";
 
-	
 	/**
 	 * The identifier of the modelling perspective (value
-	 * <code>"org.eventb.ide.perspective.eventb"</code>).
+	 * <code>"org.eventb.ui.perspective.eventb"</code>).
 	 */
-	public static final String EVENTB_PERSPECTIVE_ID = PLUGIN_ID
-			+ ".perspective.eventb";
-
+	public static final String EVENTB_PERSPECTIVE_ID = "org.eventb.ui.perspective.eventb";
 
 	/**
 	 * The identifier of the proving perspective (value
-	 * <code>"org.eventb.ide.perspective.proving"</code>).
+	 * <code>"org.eventb.ui.perspective.proving"</code>).
 	 */
-	public static final String PROVING_PERSPECTIVE_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".perspective.proving";
+	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ui.perspective.proving";
 
-
-	
 }

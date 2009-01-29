@@ -36,10 +36,8 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorerUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
-import org.eventb.internal.ui.projectexplorer.ProjectExplorerUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
@@ -83,7 +81,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	public static final String RODIN_PROBLEM_VIEW_ID = PLUGIN_ID
 			+ ".views.RodinProblemView"; 		
 	
-	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ide.perspective.eventb";
+	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ui.perspective.eventb";
 
 	public static final String NAVIGATOR_VIEW_ID = "fr.systerel.explorer.navigator.view";
 
@@ -92,12 +90,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String EVENTBEDITOR_TRACE = PLUGIN_ID
 			+ "/debug/eventbeditor"; //$NON-NLS-1$
-
-	private static final String PROJECTEXPLORER_TRACE = PLUGIN_ID
-			+ "/debug/projectexplorer"; //$NON-NLS-1$
-
-	private static final String OBLIGATIONEXPLORER_TRACE = PLUGIN_ID
-			+ "/debug/obligationexplorer"; //$NON-NLS-1$
 
 	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui"; //$NON-NLS-1$
 
@@ -230,14 +222,6 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
 			if (option != null)
 				EventBEditorUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(OBLIGATIONEXPLORER_TRACE);
-			if (option != null)
-				ObligationExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROJECTEXPLORER_TRACE);
-			if (option != null)
-				ProjectExplorerUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(PROVERUI_TRACE);
 			if (option != null)

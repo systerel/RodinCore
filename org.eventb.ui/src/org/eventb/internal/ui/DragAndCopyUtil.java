@@ -37,8 +37,6 @@ public class DragAndCopyUtil {
 			IRodinElement element = null;
 			if (obj instanceof IRodinElement) {
 				element = (IRodinElement) obj;
-//			} else if (obj instanceof TreeNode) {
-//				element = (IRodinElement) ((TreeNode) obj).getParent();
 			}
 			if (element != null)
 				elements = UIUtils.addToTreeSet(elements, element);
@@ -59,8 +57,6 @@ public class DragAndCopyUtil {
 				Object obj = it.next();
 				if (obj instanceof IRodinElement) {
 					c_parent = ((IRodinElement) obj).getParent();
-//				} else if (obj instanceof TreeNode) {
-//					c_parent = (IRodinElement) ((TreeNode) obj).getParent();
 				}
 				if (c_parent == null)
 					return false;

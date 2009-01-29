@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -48,7 +47,6 @@ import org.eventb.internal.ui.cachehypothesis.CacheHypothesisPage;
 import org.eventb.internal.ui.cachehypothesis.ICacheHypothesisPage;
 import org.eventb.internal.ui.goal.GoalPage;
 import org.eventb.internal.ui.goal.IGoalPage;
-import org.eventb.internal.ui.obligationexplorer.ObligationExplorer;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.internal.ui.proofcontrol.ProofControlPage;
 import org.eventb.internal.ui.proofinformation.IProofInformationPage;
@@ -411,37 +409,7 @@ public class ProverUI extends FormEditor implements
 						}
 
 					});
-		syncObligationExplorer();
 		super.setFocus();
-		// UIUtils.debugProverUI("Focus");
-		// Find obligationExplorer and sync
-	}
-
-	/**
-	 * Try to synchronise with the obligation explorer to show the current
-	 * obligation.
-	 */
-	private void syncObligationExplorer() {
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Sync");
-		IWorkbenchPage activePage = EventBUIPlugin.getActivePage();
-		if (activePage != null) {
-			ObligationExplorer obligationExplorer = (ObligationExplorer) activePage
-					.findView(ObligationExplorer.VIEW_ID);
-			if (obligationExplorer != null) {
-				IProofState ps = this.getUserSupport().getCurrentPO();
-				if (ps != null) {
-					IPSStatus prSequent = this.getUserSupport().getCurrentPO()
-							.getPSStatus();
-					obligationExplorer.externalSetSelection(prSequent);
-					obligationExplorer.getTreeViewer().reveal(prSequent);
-				} else {
-					// obligationExplorer.externalSetSelection(this.getRodinInput());
-				}
-				// TreeViewer viewer = obligationExplorer.getTreeViewer();
-				// UIUtils.debug("Make new selection ");
-			}
-		}
 	}
 
 	/**

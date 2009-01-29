@@ -39,13 +39,16 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -63,8 +66,6 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.projectexplorer.ExplorerUtilities;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.rodinp.core.IAttributeType;
@@ -73,6 +74,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -214,21 +216,19 @@ public class UIUtils {
 	}
 
 	/**
-	 * Method to return the openable for an object (IRodinElement or TreeNode).
+	 * Method to return the openable for an object (IRodinElement).
 	 * <p>
 	 * 
-	 * @param node
-	 *            A Rodin Element or a tree node
+	 * @param element
+	 *            A Rodin Element
 	 * @return The IRodinFile corresponding to the input object
 	 */
-	public static IOpenable getOpenable(Object node) {
-		if (node instanceof TreeNode)
-			return ((IRodinElement) ((TreeNode<?>) node).getParent())
-					.getOpenable();
-		else if (node instanceof IRodinElement)
-			return ((IRodinElement) node).getOpenable();
-
-		return null;
+	public static IOpenable getOpenable(Object element) {
+		if (element instanceof IRodinElement) {
+			return ((IRodinElement) element).getOpenable();
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -308,7 +308,31 @@ public class UIUtils {
 	 *            the object (e.g. an internal element or a Rodin file)
 	 */
 	public static void linkToEventBEditor(Object obj) {
-		ExplorerUtilities.linkToEditor(obj);
+		IRodinFile component;
+
+		if (!(obj instanceof IRodinProject)) {
+			component = (IRodinFile) UIUtils.getOpenable(obj);
+			if (component == null)
+				return;
+			try {
+				IEditorDescriptor desc = PlatformUI.getWorkbench()
+						.getEditorRegistry().getDefaultEditor(
+								component.getCorrespondingResource().getName());
+
+				IEditorPart editor = EventBUIPlugin.getActivePage().openEditor(
+						new FileEditorInput(component.getResource()),
+						desc.getId());
+				editor.getSite().getSelectionProvider().setSelection(
+						new StructuredSelection(obj));
+
+			} catch (PartInitException e) {
+				String errorMsg = "Error open Editor";
+				MessageDialog.openError(null, null, errorMsg);
+				EventBUIPlugin.getDefault().getLog().log(
+						new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+								errorMsg, e));
+			}
+		}
 	}
 
 	/**

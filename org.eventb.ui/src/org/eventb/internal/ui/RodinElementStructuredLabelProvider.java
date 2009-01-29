@@ -17,13 +17,10 @@ import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegist
 
 import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,8 +32,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.eventb.ui.projectexplorer.TreeNode;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
@@ -88,45 +83,9 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public Image getImage(Object obj) {
-		if (obj instanceof TreeNode)
-			return getTreeNodeImage((TreeNode<?>) obj);
 		if (obj instanceof IRodinElement)
 			return EventBImage.getRodinImage((IRodinElement) obj);
 		return null;
-	}
-
-	/*
-	 * Getting the image corresponding to a tree node <p>
-	 * 
-	 * @param element a tree node @return the image for displaying corresponding
-	 * to the tree node
-	 */
-	private Image getTreeNodeImage(TreeNode<?> node) {
-		int F_ERROR = 0x00002;
-		int F_WARNING = 0x00004;
-		int F_INFO = 0x00008;
-		int overlay = 0;
-		
-		ImageDescriptor descriptor = EventBImage.getImageDescriptor(node
-				.getType());
-		
-		try {
-			int severity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(node);
-			if (severity == IMarker.SEVERITY_ERROR) {
-				overlay = overlay | F_ERROR;
-			}
-			else if (severity == IMarker.SEVERITY_WARNING) {
-				overlay = overlay | F_WARNING;
-			}
-			if (severity == IMarker.SEVERITY_INFO) {
-				overlay = overlay | F_INFO;
-			}
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return EventBImage.getImage(descriptor, overlay);
 	}
 
 	public Font getFont(Object element) {

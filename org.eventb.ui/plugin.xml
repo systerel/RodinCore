@@ -6,7 +6,6 @@
       name="%point.editorPagesName" 
       schema="schema/editorPages.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
-   <extension-point id="contentProvider" name="%point.contentProvider" schema="schema/contentProvider.exsd"/>
    <extension-point id="editorItems" name="%point.editorItemsName" schema="schema/editorItems.exsd"/>
 
    
@@ -15,12 +14,6 @@
       <category
             id="org.eventb.ui"
             name="%view.category.eventB"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.obligationexplorer.ObligationExplorer"
-            icon="icons/full/clcl16/obl_expl.gif"
-            id="org.eventb.ui.views.ObligationExplorer"
-            name="%view.ObligationExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.proofcontrol.ProofControl"
@@ -33,12 +26,6 @@
             icon="icons/full/ctool16/info_prover.gif"
             id="org.eventb.ui.views.ProofInformation"
             name="%view.ProofInformation"/>
-      <view
-            category="org.eventb.ui"
-            class="org.eventb.internal.ui.projectexplorer.ProjectExplorer"
-            icon="icons/full/clcl16/prj_expl.gif"
-            id="org.eventb.ui.views.ProjectExplorer"
-            name="%view.ProjectExplorer"/>
       <view
             category="org.eventb.ui"
             class="org.eventb.internal.ui.prooftreeui.ProofTreeUI"
@@ -525,26 +512,6 @@
                menubarPath="proving"
                tooltip="%popupMenu.proveContext.tooltip"/>
       </objectContribution>
-      <viewerContribution
-            id="org.eventb.ui.ProjectExplorer"
-            targetID="org.eventb.ui.views.ProjectExplorer">
-         <visibility>
-            <or>
-               <objectClass name="org.eventb.core.IMachineRoot"/>
-               <objectClass name="org.eventb.core.IContextRoot"/>
-               <objectClass name="org.rodinp.core.IRodinProject"/>
-            </or>
-         </visibility>
-         <action
-               class="org.eventb.internal.ui.projectexplorer.actions.Delete"
-               enablesFor="+"
-               icon="icons/delete.gif"
-               id="org.eventb.ui.Delete"
-               label="%popupMenu.delete.label"
-               menubarPath="modelling"
-               tooltip="%popupMenu.delete.tooltip">
-         </action>
-      </viewerContribution>
       <objectContribution
             adaptable="false"
             id="org.eventb.ui.InternalElement"
@@ -585,28 +552,6 @@
                menubarPath="additions"
                tooltip="%popupMenu.copy.tooltip"/>
       </objectContribution>
-      <viewerContribution
-            id="org.eventb.ui.ObligationExplorer"
-            targetID="org.eventb.ui.views.ObligationExplorer">
-         <action
-               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsRecalcuateAutoStatus"
-               enablesFor="+"
-               icon="icons/discharged.gif"
-               id="org.eventb.ui.obligationexplorer.recalcAutoStatus"
-               label="%action.recalcAutoStatus.label"
-               menubarPath="proving"
-               tooltip="%action.recalcAutoStatus.tooltip">
-         </action>
-         <action
-               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsAutoProver"
-               enablesFor="+"
-               icon="icons/discharged.gif"
-               id="org.eventb.ui.obligationexplorer.autoprover"
-               label="%action.autoProver.label"
-               menubarPath="proving"
-               tooltip="%action.autoProver.tooltip">
-         </action>
-      </viewerContribution>
       <objectContribution
             id="org.eventb.ui.ProofPurger"
             objectClass="org.rodinp.core.IRodinElement">
@@ -1906,28 +1851,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
-<!-- Contributions to the Obligation Explorer View Toolbar -->
-      <viewContribution
-            targetID="org.eventb.ui.views.ObligationExplorer"
-            id="org.eventb.ui.views.ObligationExplorer.toolbar">
-         <action
-               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsCollapseAllAction"
-               icon="$nl$/icons/full/elcl16/collapseall.gif"
-               id="org.eventb.ui.views.ObligationExplorer.toolbar.collapseAll"
-               label="%action.CollapseAll.label"
-               toolbarPath="navigationGroup"
-               tooltip="%action.CollapseAll.tooltip">
-         </action>
-         <action
-               id="org.eventb.ui.views.ObligationExplorer.toolbar.expandAll"
-               toolbarPath="navigationGroup"
-               class="org.eventb.internal.ui.obligationexplorer.actions.ObligationsExpandAllAction"
-               icon="$nl$/icons/full/elcl16/expandall.gif"
-               helpContextId="breakpoints_expand_all_action_context"
-               label="%action.ExpandAll.label"
-               tooltip="%action.ExpandAll.tooltip">
-         </action>
-      </viewContribution>
       <viewContribution
             id="org.eventb.ui.ProofTree.toolbar"
             targetID="org.eventb.ui.views.ProofTreeUI">
@@ -2116,19 +2039,6 @@
             </and>
          </activeWhen>
       </handler>
-   </extension>
-   <extension
-         point="org.eventb.ui.contentProvider">
-      <provider
-            class="org.eventb.internal.ui.projectexplorer.MachineContentProvider"
-            name="Event B Machine File"
-            rodinElementId="org.eventb.core.machineFile">
-      </provider>
-      <provider
-            class="org.eventb.internal.ui.projectexplorer.ContextContentProvider"
-            name="Event B Context File"
-            rodinElementId="org.eventb.core.contextFile">
-      </provider>
    </extension>
    <extension
          point="org.eventb.ui.editorItems">
