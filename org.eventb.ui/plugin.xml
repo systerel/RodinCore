@@ -511,6 +511,13 @@
                label="%popupMenu.proveContext.label"
                menubarPath="proving"
                tooltip="%popupMenu.proveContext.tooltip"/>
+         <action
+               class="org.eventb.internal.ui.projectexplorer.actions.Renames"
+               enablesFor="1"
+               id="org.eventb.ui.rename"
+               label="%popupMenu.rename.label"
+               menubarPath="modelling"
+               tooltip="%popupMenu.rename.tooltip"/>
       </objectContribution>
       <objectContribution
             adaptable="false"

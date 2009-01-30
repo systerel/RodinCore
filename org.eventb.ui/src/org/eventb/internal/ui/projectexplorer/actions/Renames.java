@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added default name
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
@@ -35,6 +36,12 @@ public class Renames implements IObjectActionDelegate {
 
 	private IWorkbenchPart part;
 
+	private String defaultMachineName = "mch";
+
+	private String defaultContextName = "ctx";
+	
+	private String defaultName = "";
+	
 	/**
 	 * Constructor.
 	 */
@@ -67,8 +74,8 @@ public class Renames implements IObjectActionDelegate {
 
 				InputDialog dialog = new InputDialog(part.getSite().getShell(),
 						"Rename Component",
-						"Please enter the new name of for the component", "m0",
-						new RodinFileInputValidator(prj));
+						"Please enter the new name of for the component",
+						getDefaultName(root), new RodinFileInputValidator(prj));
 
 				dialog.open();
 
@@ -107,6 +114,16 @@ public class Renames implements IObjectActionDelegate {
 
 	}
 
+	private String getDefaultName(IInternalElement root) {
+		if (root instanceof IMachineRoot) {
+			return defaultMachineName;
+		} else if (root instanceof IContextRoot) {
+			return defaultContextName;
+		} else {
+			return defaultName;
+		}
+	}
+	
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
