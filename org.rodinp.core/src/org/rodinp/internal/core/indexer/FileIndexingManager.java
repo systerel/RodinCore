@@ -15,11 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
@@ -29,23 +24,16 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexer;
-import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.internal.core.RodinDBStatus;
 
 public class FileIndexingManager {
 
-	// Timeout for IIndexer#index() and IIndexer#getDependencies()
-	private static final int TIMEOUT = 30;
-	private static final TimeUnit UNIT = TimeUnit.SECONDS;
-
 	private static FileIndexingManager instance;
 
 	private final IndexerRegistry indexerRegistry;
-	private final ExecutorService exec;
 	
 	private FileIndexingManager() {
 		this.indexerRegistry = IndexerRegistry.getDefault();
-		this.exec = Executors.newSingleThreadExecutor();
 	}
 
 	public static final FileIndexingManager getDefault() {
@@ -91,20 +79,11 @@ public class FileIndexingManager {
 			throws Throwable {
 		printVerbose(makeMessage("extracting dependencies", file, indexer));
 
-		final DependCaller callGetDeps =
-				new DependCaller(indexer, file.getRoot());
-		
-		Future<IRodinFile[]> task =
-				exec.submit(callGetDeps);
 		try {
-			final IRodinFile[] result = task.get(TIMEOUT, UNIT);
+			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
 			printDebugDeps(file, result);
 
 			return result;
-		} catch (InterruptedException e) {
-			task.cancel(true);
-			Thread.currentThread().interrupt();
-			throw e;
 		} catch (Throwable t) {
 			printDebug(makeMessage("Exception while extracting dependencies",
 					file, indexer));
@@ -155,12 +134,8 @@ public class FileIndexingManager {
 		final IRodinFile file = bridge.getRodinFile();
 		printVerbose(makeMessage("indexing", file, indexer));
 
-		final IndexCaller callIndex = new IndexCaller(indexer, bridge);
-		Future<Boolean> task =
-				exec.submit(callIndex);
-
 		try {
-			final boolean success = task.get(TIMEOUT, UNIT);
+			final boolean success = indexer.index(bridge);
 			if (!success) {
 				return IndexingResult.failed(file);
 			}
@@ -169,11 +144,6 @@ public class FileIndexingManager {
 			printVerbose(makeMessage("indexing complete", file, indexer));
 			printVerbose("result:\n" + result);
 			return result;
-
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			task.cancel(true);
-			return IndexingResult.failed(file);
 
 		} catch (Throwable t) {
 			printDebug(makeMessage("Exception while indexing: "
@@ -208,36 +178,6 @@ public class FileIndexingManager {
 		if (IndexManager.DEBUG) {
 			System.out.println(message);
 		}
-	}
-
-	private static final class IndexCaller implements Callable<Boolean> {
-		private final IIndexer indexer;
-		private final IIndexingBridge bridge;
-
-		public IndexCaller(IIndexer indexer, IIndexingBridge bridge) {
-			this.indexer = indexer;
-			this.bridge = bridge;
-		}
-
-		public Boolean call() throws Exception {
-			return indexer.index(bridge);
-		}
-
-	}
-
-	private static final class DependCaller implements Callable<IRodinFile[]> {
-		private final IIndexer indexer;
-		private final IInternalElement element;
-
-		public DependCaller(IIndexer indexer, IInternalElement element) {
-			this.indexer = indexer;
-			this.element = element;
-		}
-
-		public IRodinFile[] call() throws Exception {
-			return indexer.getDependencies(element);
-		}
-
 	}
 
 }

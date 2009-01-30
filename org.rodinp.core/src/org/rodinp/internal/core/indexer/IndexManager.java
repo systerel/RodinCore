@@ -293,7 +293,7 @@ public final class IndexManager {
 	 *            cancellation.
 	 */
 	public void start(ISavedState savedState, IProgressMonitor daemonMonitor) {
-		restore(savedState);
+		restore(savedState, daemonMonitor);
 		
 		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		indexing.setRule(rodinDB.getSchedulingRule());
@@ -308,7 +308,7 @@ public final class IndexManager {
 				currentDeltas.add(headDelta);
 				queue.drainTo(currentDeltas);
 				if (indexingEnabled) {
-					processCurrentDeltas();
+					processCurrentDeltas(daemonMonitor);
 					// TODO consider implementing a DeltaIndexingManager
 					// or DeltaProcessor to delegate some code
 				}
@@ -326,7 +326,7 @@ public final class IndexManager {
 						| IResourceChangeEvent.POST_BUILD);
 	}
 
-	private void processCurrentDeltas() throws InterruptedException {
+	private void processCurrentDeltas(IProgressMonitor monitor) throws InterruptedException {
 		final int maxAttempts = 3;
 		final Iterator<IIndexDelta> iter = currentDeltas.iterator();
 		while (iter.hasNext()) {
@@ -336,7 +336,7 @@ public final class IndexManager {
 			boolean success = false;
 			do {
 				try {
-					processDelta(delta);
+					processDelta(delta, monitor);
 					success = true;
 				} catch (CancellationException e) {
 					attempts++;
@@ -347,17 +347,17 @@ public final class IndexManager {
 		}
 	}
 
-	private void processDelta(IIndexDelta delta) throws InterruptedException {
+	private void processDelta(IIndexDelta delta, IProgressMonitor monitor) throws InterruptedException {
 		if (delta.getKind() == Kind.FILE_CHANGED) {
 			final IRodinFile file = (IRodinFile) delta.getElement();
 
 			processFileChanged(file);
 		} else {
-			processProjectChanged(delta);
+			processProjectChanged(delta, monitor);
 		}
 	}
 
-	private void processProjectChanged(IIndexDelta delta) {
+	private void processProjectChanged(IIndexDelta delta, IProgressMonitor monitor) {
 		final IRodinProject project = (IRodinProject) delta.getElement();
 		final PersistenceManager persistenceManager =
 				PersistenceManager.getDefault();
@@ -368,7 +368,7 @@ public final class IndexManager {
 			final boolean success =
 					persistenceManager.restoreProject(project, pppim);
 			if (!success) {
-				indexProject(project);
+				indexProject(project, monitor);
 			}
 			persistenceManager.deleteProject(project);
 			unlockWriteInitSave();
@@ -376,7 +376,8 @@ public final class IndexManager {
 			// already saved by persistence manager (PROJECT_SAVE)
 			pppim.remove(project);
 		} else if (kind == Kind.PROJECT_CREATED || kind == Kind.PROJECT_CLEANED) {
-			indexProject(project);
+			
+			indexProject(project, monitor);
 		} else if (kind == Kind.PROJECT_DELETED) {
 			pppim.remove(project);
 			persistenceManager.deleteProject(project);
@@ -414,18 +415,22 @@ public final class IndexManager {
 				.getPersistentData());
 	}
 
-	private void restore(ISavedState savedState) {
-		lockWriteInitSave();
-		printVerbose("Restoring IndexManager");
-		final PersistentIndexManager persistIM = new PersistentIndexManager(
-				pppim, currentDeltas, new Registry<String, String>());
-		final boolean success =
-				PersistenceManager.getDefault().restore(savedState, persistIM, listener);
-		if (!success || !indexerRegistry.sameAs(persistIM.getIndexerRegistry())) {
-			indexAll();
-			// FIXME run at startup even if we want indexing disabled
+	private void restore(ISavedState savedState, IProgressMonitor monitor) {
+		try {	
+			lockWriteInitSave();
+			printVerbose("Restoring IndexManager");
+			final PersistentIndexManager persistIM = new PersistentIndexManager(
+					pppim, currentDeltas, new Registry<String, String>());
+			final boolean success = PersistenceManager.getDefault().restore(
+					savedState, persistIM, listener);
+			if (!success
+					|| !indexerRegistry.sameAs(persistIM.getIndexerRegistry())) {
+				indexAll(monitor);
+				// FIXME run at startup even if we want indexing disabled
+			}
+		} finally {
+			unlockWriteInitSave();
 		}
-		unlockWriteInitSave();
 	}
 
 	/**
@@ -442,10 +447,13 @@ public final class IndexManager {
 	 * Clears the indexes, tables and indexers.
 	 */
 	public synchronized void clear() {
-		lockWriteInitSave();
-		clearIndexers();
-		pppim.clear();
-		unlockWriteInitSave();
+		try {
+			lockWriteInitSave();
+			clearIndexers();
+			pppim.clear();
+		} finally {
+			unlockWriteInitSave();
+		}
 	}
 
 	// For testing purpose only, do not call in operational code
@@ -491,11 +499,11 @@ public final class IndexManager {
 		}
 	}
 
-	private void indexAll() {
+	private void indexAll(IProgressMonitor monitor) {
 		try {
 			final IRodinDB rodinDB = RodinCore.getRodinDB();
 			final IRodinProject[] allProjects = rodinDB.getRodinProjects();
-			indexAll(allProjects);
+			indexAll(monitor, allProjects);
 		} catch (RodinDBException e) {
 			// could not get projects: cannot do anymore
 			if (DEBUG) {
@@ -504,17 +512,17 @@ public final class IndexManager {
 		}
 	}
 
-	private void indexProject(IRodinProject project) {
-		indexAll(project);
+	private void indexProject(IRodinProject project, IProgressMonitor monitor) {
+		indexAll(monitor, project);
 	}
 
-	private void indexAll(IRodinProject... projects) {
+	private void indexAll(IProgressMonitor monitor, IRodinProject... projects) {
 
 		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		final ProjectIndexing wholeIndexing = new ProjectIndexing(projects);
 
 		try {
-			RodinCore.run(wholeIndexing, rodinDB.getSchedulingRule(), null);
+			RodinCore.run(wholeIndexing, rodinDB.getSchedulingRule(), monitor);
 		} catch (RodinDBException e) {
 			Util.log(e, "while indexing the whole database");
 		}

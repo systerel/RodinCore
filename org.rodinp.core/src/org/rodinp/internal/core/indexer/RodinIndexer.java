@@ -31,10 +31,7 @@ import org.rodinp.internal.core.indexer.persistence.PersistenceManager;
 import org.rodinp.internal.core.util.Util;
 
 /**
- * <em>Temporary class</em>
- * 
- * Main entry point for the Rodin indexer. Static methods of this class will
- * later be moved to {@link RodinCore}.
+ * Facade to the Rodin indexer.
  * 
  * @author Nicolas Beauger
  * 
@@ -116,7 +113,6 @@ public class RodinIndexer {
 
 	}
 
-	/** To be moved to an extension point */
 	private static void addOccurrenceKind(String id, String name) {
 		final OccurrenceKind kind = new OccurrenceKind(id, name);
 		kinds.put(id, kind);
@@ -167,7 +163,6 @@ public class RodinIndexer {
 		}
 	}
 
-	// To be integrated with RodinCore option processing
 	private static void configurePluginDebugOptions() {
 		if (RodinCore.getPlugin().isDebugging()) {
 			String option = Platform
