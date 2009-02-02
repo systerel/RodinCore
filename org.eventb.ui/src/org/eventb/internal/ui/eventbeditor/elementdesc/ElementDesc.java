@@ -34,10 +34,13 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final IAttributeDesc autoNameAttribute;
 
-	public ElementDesc(String prefix, String childrenSuffix, ImageDescriptor image,
-			IAttributeDesc[] attributeDesc, IAttributeDesc[] atColumn,
-			IElementType<?>[] childrenType, String autoNamePrefix,
-			IAttributeDesc autoNameAttribute, int defaultColumn) {
+	private static final NullAttributeDesc noAttribute = new NullAttributeDesc();
+
+	public ElementDesc(String prefix, String childrenSuffix,
+			ImageDescriptor image, IAttributeDesc[] attributeDesc,
+			IAttributeDesc[] atColumn, IElementType<?>[] childrenType,
+			String autoNamePrefix, IAttributeDesc autoNameAttribute,
+			int defaultColumn) {
 		super(prefix);
 		this.childrenSuffix = childrenSuffix;
 		this.image = image;
@@ -82,7 +85,9 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 
 	public boolean isSelectable(int i) {
-		return (0 <= i && i < atColumn.length);
+		if (!(0 <= i && i < atColumn.length))
+			return false;
+		return !atColumn[i].equals(noAttribute);
 	}
 
 	public IElementType<?>[] getChildTypes() {

@@ -49,4 +49,9 @@ class NullAttributeDesc implements IAttributeDesc {
 	public String getPrefix() {
 		return "";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof NullAttributeDesc;
+	}
 }
