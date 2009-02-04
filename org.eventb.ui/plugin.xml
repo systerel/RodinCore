@@ -1162,6 +1162,24 @@
             tooltip="%proofTactics.riGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
+            id="org.eventb.ui.sirHyp"
+            interrupt="false"
+            name="%proofTactics.sirHyp.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusionHyp"
+            target="hypothesis"
+            tooltip="%proofTactics.sirHyp.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.sirGoal"
+            interrupt="false"
+            name="%proofTactics.sirGoal.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusionGoal"
+            target="goal"
+            tooltip="%proofTactics.sirGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
             id="org.eventb.ui.inclusionSetMinusRightHyp"
             interrupt="false"
             name="%proofTactics.inclusionSetMinusRightHyp.name"
