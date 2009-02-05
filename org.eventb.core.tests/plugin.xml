@@ -53,6 +53,25 @@
                id="org.eventb.core.tests.machineTheoremFilterModule">
          </pogModule>
       </configuration>
+      <configuration
+            id="invalidConfiguration"
+            name="Broken context SC">
+         <config
+               id="org.eventb.core.fwd">
+         </config>
+         <scModule
+               id="org.eventb.core.tests.unloadableSCRootModule">
+         </scModule>
+      </configuration>
+   </extension>
+   <extension
+         point="org.eventb.core.scModuleTypes">
+      <rootType
+            class="org.eventb.core.tests.sc.modules.Unloadable"
+            id="org.eventb.core.tests.unloadableSCRootModule"
+            input="org.eventb.core.contextFile"
+            name="Unloadable SC root module">
+      </rootType>
    </extension>
 
 </plugin>
