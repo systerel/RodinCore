@@ -192,7 +192,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addVariant(abs, "V0");
 		setConvergent(addEvent(abs, "evt"));
 
-		abs.getRodinFile().save(null, true);
+		saveRodinFileOf(abs);
 
 		runBuilder();
 
@@ -208,7 +208,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		addVariant(mac, "V1");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -234,7 +234,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		setOrdinary(addEvent(mac, "evt"));
 		addVariant(mac, "1");
 
-		mac.getRodinFile().save(null, true);
+		saveRodinFileOf(mac);
 
 		runBuilder();
 
@@ -245,5 +245,51 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
 				GraphProblem.NoConvergentEventButVariantWarning);
 	}
+	
+	/**
+	 * if there is no convergent event, then there need not be a variant
+	 */
+	public void testVariant_08() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "V0");
+		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
+		addInitialisation(abs, "V0");
+		setAnticipated(addEvent(abs, "evt"));
+		setAnticipated(addEvent(abs, "fvt"));
+
+		saveRodinFileOf(abs);
+
+		runBuilder();
+
+		containsMarkers(abs, false);
+
+		IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "V0", "V1");
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInitialisation(mac, "V0", "V1");
+		IEvent evt = addEvent(mac, "evt");
+		setConvergent(evt);
+		addEventRefines(evt, "evt");
+		IEvent fvt = addEvent(mac, "fvt");
+		setAnticipated(fvt);
+		addEventRefines(fvt, "fvt");
+		addVariant(mac, "V1");
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		containsVariables(file, "V0", "V1");
+		ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		typeEnv.addName("V1", intType);
+		containsVariant(file, typeEnv, "V1");
+
+		containsMarkers(mac, false);
+
+	}
+
 
 }

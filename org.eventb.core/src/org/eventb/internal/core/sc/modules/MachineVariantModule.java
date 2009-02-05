@@ -101,15 +101,15 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 				if (cvg == CVG_CODE) {
 					List<IAbstractEventInfo> infoList = info
 							.getAbstractEventInfos();
-					if (infoList.size() == 0) {
-						boolean nc = true;
+					boolean nc = true;
+					if (infoList.size() != 0) {
 						for (IAbstractEventInfo absInfo : infoList) {
 							nc &= absInfo.getConvergence() != IConvergenceElement.Convergence.CONVERGENT;
 						}
-						if (nc) {
-							noCvgEvent = false;
-							break;
-						}
+					}
+					if (nc) {
+						noCvgEvent = false;
+						break;
 					}
 				}
 			}
