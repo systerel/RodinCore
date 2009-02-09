@@ -22,7 +22,6 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -34,10 +33,10 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		assert element instanceof IRefinesMachine;
 		return (IRefinesMachine) element;
 	}
-	
-	public void setDefaultValue(IRodinElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-final		String name = "abstract_machine";
+
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		final String name = "abstract_machine";
 		getRefinesMachine(element).setAbstractMachineName(name,
 				new NullProgressMonitor());
 	}
@@ -49,7 +48,8 @@ final		String name = "abstract_machine";
 
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesMachine(element).setAbstractMachineName(str, new NullProgressMonitor());
+		getRefinesMachine(element).setAbstractMachineName(str,
+				new NullProgressMonitor());
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
@@ -78,17 +78,14 @@ final		String name = "abstract_machine";
 		}
 	}
 
-	public void removeAttribute(IRodinElement element,
-			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesMachine(element).removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
+	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		getRefinesMachine(element).removeAttribute(
+				EventBAttributes.TARGET_ATTRIBUTE, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return getRefinesMachine(element).hasAbstractMachineName();
-	}
-	
-	public IAttributeType getAttributeType() {
-		return EventBAttributes.TARGET_ATTRIBUTE;
 	}
 }

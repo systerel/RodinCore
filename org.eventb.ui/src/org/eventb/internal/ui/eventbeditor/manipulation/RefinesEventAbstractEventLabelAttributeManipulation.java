@@ -24,7 +24,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -87,9 +86,5 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return getRefinesEvent(element).hasAbstractEventLabel();
-	}
-	
-	public IAttributeType getAttributeType() {
-		return EventBAttributes.TARGET_ATTRIBUTE;
 	}
 }

@@ -26,14 +26,6 @@ class DeleteElementLeaf extends OperationLeaf {
 	private IInternalElement nextSibling;
 	private final boolean force;
 
-	public DeleteElementLeaf(IInternalElement element, OperationTree createTree) {
-		super("DeleteElement");
-		this.element = element;
-		this.createTree = createTree;
-		nextSibling = null;
-		force = true;
-	}
-
 	public DeleteElementLeaf(IInternalElement element,
 			OperationTree createTree, boolean force) {
 		super("DeleteElement");
