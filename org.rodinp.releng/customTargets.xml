@@ -197,21 +197,54 @@
 		<antcall target="gatherLogs" />
 
 
+		<antcall target="run.director.for.macosx"/>
+		<antcall target="run.director.for.win32"/>
+		<antcall target="run.director.for.linux"/>
+	</target>
+	
+	<target name="run.director.for.macosx" depends="check.director.for.macosx"
+			if="do.director.for.macosx">
 		<antcall target="run.director.for">
 			<param name="p2.os" value="macosx" />
 			<param name="p2.ws" value="carbon" />
 			<param name="p2.arch" value="ppc" />
 		</antcall>
-		<!--antcall target="run.director.for">
-			<param name="p2.os" value="win32"/>
-			<param name="p2.ws" value="win32"/>
-			<param name="p2.arch" value="x86"/>
-		</antcall>
+	</target>
+	
+	<target name="check.director.for.macosx">
+		<condition property="do.director.for.macosx">
+			<contains string="${configs}" substring="macosx"/>
+		</condition>
+	</target>
+
+	<target name="run.director.for.linux" depends="check.director.for.linux"
+			if="do.director.for.linux">
 		<antcall target="run.director.for">
-			<param name="p2.os" value="linux"/>
-			<param name="p2.ws" value="gtk"/>
-			<param name="p2.arch" value="x86"/>
-		</antcall-->
+			<param name="p2.os" value="linux" />
+			<param name="p2.ws" value="gtk" />
+			<param name="p2.arch" value="x86" />
+		</antcall>
+	</target>
+	
+	<target name="check.director.for.linux">
+		<condition property="do.director.for.linux">
+			<contains string="${configs}" substring="linux"/>
+		</condition>
+	</target>
+
+	<target name="run.director.for.win32" depends="check.director.for.win32"
+			if="do.director.for.win32">
+		<antcall target="run.director.for">
+			<param name="p2.os" value="win32" />
+			<param name="p2.ws" value="win32" />
+			<param name="p2.arch" value="x86" />
+		</antcall>
+	</target>
+	
+	<target name="check.director.for.win32">
+		<condition property="do.director.for.win32">
+			<contains string="${configs}" substring="win32"/>
+		</condition>
 	</target>
 
 	<target name="run.director.for">
