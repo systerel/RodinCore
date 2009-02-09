@@ -1,0 +1,41 @@
+#Mon Dec 15 19:28:34 CET 2008
+eclipse.preferences.version=1
+repositories/http\:__download.eclipse.org_eclipse_updates_3.4/url=http\://download.eclipse.org/eclipse/updates/3.4
+repositories/http\:__download.eclipse.org_eclipse_updates_3.4/enabled=true
+repositories/http\:__download.eclipse.org_eclipse_updates_3.4/isSystem=false
+repositories/http\:__download.eclipse.org_eclipse_updates_3.4/name=The Eclipse Project Updates
+
+repositories/http\:__download.eclipse.org_releases_ganymede/url=http\://download.eclipse.org/releases/ganymede
+repositories/http\:__download.eclipse.org_releases_ganymede/isSystem=false
+repositories/http\:__download.eclipse.org_releases_ganymede/enabled=true
+repositories/http\:__download.eclipse.org_releases_ganymede/name=Ganymede Update Site
+
+repositories/http\:__bmethod.com_update_site_atelierb_provers/url=http\://bmethod.com/update_site/atelierb_provers
+repositories/http\:__bmethod.com_update_site_atelierb_provers/enabled=true
+repositories/http\:__bmethod.com_update_site_atelierb_provers/isSystem=false
+repositories/http\:__bmethod.com_update_site_atelierb_provers/name=Atelier B Provers
+
+repositories/http\:__bmethod.com_update_site_b2rodin/url=http\://bmethod.com/update_site/b2rodin
+repositories/http\:__bmethod.com_update_site_b2rodin/enabled=false
+repositories/http\:__bmethod.com_update_site_b2rodin/isSystem=false
+repositories/http\:__bmethod.com_update_site_b2rodin/name=B2Rodin
+
+repositories/http\:__bmethod.com_update_site_brama/url=http\://bmethod.com/update_site/brama
+repositories/http\:__bmethod.com_update_site_brama/enabled=false
+repositories/http\:__bmethod.com_update_site_brama/isSystem=false
+repositories/http\:__bmethod.com_update_site_brama/name=Brama
+
+repositories/http\:__rodin-b-sharp.sourceforge.net_updates/url=http\://rodin-b-sharp.sourceforge.net/updates
+repositories/http\:__rodin-b-sharp.sourceforge.net_updates/enabled=true
+repositories/http\:__rodin-b-sharp.sourceforge.net_updates/isSystem=false
+repositories/http\:__rodin-b-sharp.sourceforge.net_updates/name=Rodin
+
+repositories/http\:__www.stups.uni-duesseldorf.de_update/url=http\://www.stups.uni-duesseldorf.de/update
+repositories/http\:__www.stups.uni-duesseldorf.de_update/enabled=true
+repositories/http\:__www.stups.uni-duesseldorf.de_update/isSystem=false
+repositories/http\:__www.stups.uni-duesseldorf.de_update/name=ProB
+
+repositories/http\:__www.animb.org_updatesite/url=http\://www.animb.org/updatesite
+repositories/http\:__www.animb.org_updatesite/enabled=true
+repositories/http\:__www.animb.org_updatesite/isSystem=false
+repositories/http\:__www.animb.org_updatesite/name=AnimB
