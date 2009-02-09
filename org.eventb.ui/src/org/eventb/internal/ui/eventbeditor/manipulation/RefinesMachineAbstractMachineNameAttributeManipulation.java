@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
@@ -37,8 +36,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final String name = "abstract_machine";
-		getRefinesMachine(element).setAbstractMachineName(name,
-				new NullProgressMonitor());
+		getRefinesMachine(element).setAbstractMachineName(name, null);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
@@ -48,8 +46,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesMachine(element).setAbstractMachineName(str,
-				new NullProgressMonitor());
+		getRefinesMachine(element).setAbstractMachineName(str, null);
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
