@@ -2269,61 +2269,78 @@
       <childRelation
             parentTypeId="org.eventb.core.machineFile">
          <childType
-               typeId="org.eventb.core.refinesMachine">
+               typeId="org.eventb.core.refinesMachine"
+               priority="10">
          </childType>
          <childType
-               typeId="org.eventb.core.seesContext">
+               typeId="org.eventb.core.seesContext"
+               priority="20">
          </childType>
          <childType
-               typeId="org.eventb.core.variable">
+               typeId="org.eventb.core.variable"
+               priority="30">
          </childType>
          <childType
-               typeId="org.eventb.core.invariant">
+               typeId="org.eventb.core.invariant"
+               priority="40">
          </childType>
          <childType
-               typeId="org.eventb.core.theorem">
+               typeId="org.eventb.core.theorem"
+               priority="50">
          </childType>
          <childType
-               typeId="org.eventb.core.variant">
+               typeId="org.eventb.core.variant"
+               priority="60">
          </childType>
          <childType
-               typeId="org.eventb.core.event">
+               typeId="org.eventb.core.event"
+               priority="70">
          </childType>
       </childRelation>
       <childRelation
             parentTypeId="org.eventb.core.contextFile">
          <childType
-               typeId="org.eventb.core.extendsContext">
+               typeId="org.eventb.core.extendsContext"
+               priority="10">
          </childType>
          <childType
-               typeId="org.eventb.core.carrierSet">
+               typeId="org.eventb.core.carrierSet"
+               priority="20">
          </childType>
          <childType
-               typeId="org.eventb.core.constant">
+               typeId="org.eventb.core.constant"
+               priority="30">
          </childType>
          <childType
-               typeId="org.eventb.core.axiom">
+               typeId="org.eventb.core.axiom"
+               priority="40">
          </childType>
          <childType
-               typeId="org.eventb.core.theorem">
+               typeId="org.eventb.core.theorem"
+               priority="50">
          </childType>
       </childRelation>
       <childRelation
             parentTypeId="org.eventb.core.event">
          <childType
-               typeId="org.eventb.core.refinesEvent">
+               typeId="org.eventb.core.refinesEvent"
+               priority="10">
          </childType>
          <childType
-               typeId="org.eventb.core.parameter">
+               typeId="org.eventb.core.parameter"
+               priority="20">
          </childType>
          <childType
-               typeId="org.eventb.core.guard">
+               typeId="org.eventb.core.guard"
+               priority="30">
          </childType>
          <childType
-               typeId="org.eventb.core.witness">
+               typeId="org.eventb.core.witness"
+               priority="40">
          </childType>
          <childType
-               typeId="org.eventb.core.action">
+               typeId="org.eventb.core.action"
+               priority="50">
          </childType>
       </childRelation>
       <attributeRelation

@@ -13,6 +13,8 @@ package org.eventb.internal.ui.eventbeditor.elementdesc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -230,30 +232,69 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	}
 
 	class ChildRelationMap extends ItemMap {
-		final HashMap<IElementType<?>, ArrayList<IElementType<?>>> map = new HashMap<IElementType<?>, ArrayList<IElementType<?>>>();
+		class ChildElement implements Comparable<ChildElement> {
+			final IElementType<?> type;
+			final int priority;
+
+			public ChildElement(IConfigurationElement element) {
+				this.type = RodinCore.getElementType(element
+						.getAttribute("typeId"));
+				this.priority = parseInt(element.getAttribute("priority"));
+			}
+
+			private int parseInt(String s) {
+				if (s == null) {
+					return HIGHEST_PRIORITY;
+				}
+				try {
+					return Integer.parseInt(s);
+				} catch (NumberFormatException e) {
+					UIUtils.log(e, "Priority attribute is not a number");
+					return HIGHEST_PRIORITY;
+				}
+			}
+
+			public int compareTo(ChildElement element) {
+				if (type.equals(element.type))
+					return 0;
+				if (priority == element.priority) {
+					return type.getName().compareTo(element.type.getName());
+				} else if (priority < element.priority) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		}
+
+		final HashMap<IElementType<?>, Set<ChildElement>> map = new HashMap<IElementType<?>, Set<ChildElement>>();
+
 		final IElementType<?>[] noChildren = new IElementType<?>[0];
 
 		@Override
 		public void put(IConfigurationElement element) {
 			final IElementType<?> parent = RodinCore.getElementType(element
 					.getAttribute("parentTypeId"));
-			ArrayList<IElementType<?>> children = map.get(parent);
+			Set<ChildElement> children = map.get(parent);
 			if (children == null) {
-				children = new ArrayList<IElementType<?>>();
+				children = new TreeSet<ChildElement>();
 				map.put(parent, children);
 			}
 			for (IConfigurationElement child : element.getChildren("childType")) {
-				children.add(RodinCore.getElementType(child
-						.getAttribute("typeId")));
+				children.add(new ChildElement(child));
 			}
 		}
 
 		public IElementType<?>[] get(IElementType<?> parent) {
-			final ArrayList<IElementType<?>> children = map.get(parent);
-			if (children == null || children.size() == 0) {
+			final Set<ChildElement> children = map.get(parent);
+			if (children == null || children.size() == 0)
 				return noChildren;
+			
+			final List<IElementType<?>> result = new ArrayList<IElementType<?>>();
+			for (ChildElement childElement : children) {
+				result.add(childElement.type);
 			}
-			return children.toArray(new IElementType<?>[children.size()]);
+			return result.toArray(new IElementType<?>[result.size()]);
 		}
 	}
 
