@@ -13,7 +13,7 @@ package org.eventb.internal.ui.eventbeditor.elementdesc;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -56,7 +56,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
 
-	final IElementDesc nullElement = new NullElementDesc();
+	static final IElementDesc nullElement = new NullElementDesc();
 
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
@@ -118,13 +118,12 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	private boolean isLastChild(IElementDesc parent, IElementType<?> child) {
 		final IElementType<?>[] types = parent.getChildTypes();
-		if (types.length == 0)
-			return false;
-		return (types[types.length - 1] == child);
+		final int len = types.length;
+		return len != 0 && types[len - 1] == child;
 	}
 
-	private final int LOWEST_PRIORITY = 1;
-	private final int HIGHEST_PRIORITY = 1000;
+	private static final int LOWEST_PRIORITY = 1;
+	private static final int HIGHEST_PRIORITY = 1000;
 
 	public int getPriority(Object object) {
 		if (!(object instanceof IRodinElement))
@@ -166,8 +165,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return newElement;
 	}
 
-	final IAttributeDesc nullAttribute = new NullAttributeDesc();
-	private final String defaultAttributeValue = "";
+	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
+	private static final String defaultAttributeValue = "";
 	ElementMap elementDescs;
 
 	private ElementDescRegistry() {
@@ -207,7 +206,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		elementDescs.put(elementFromExt);
 	}
 
-	abstract class ItemMap {
+	abstract static class ItemMap {
 		/**
 		 * Return the value of a string attribute with the given name, or "" is
 		 * there is not.
@@ -231,8 +230,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		public abstract void put(IConfigurationElement element);
 	}
 
-	class ChildRelationMap extends ItemMap {
-		class ChildElement implements Comparable<ChildElement> {
+	static class ChildRelationMap extends ItemMap {
+
+		static class ChildElement implements Comparable<ChildElement> {
 			final IElementType<?> type;
 			final int priority;
 
@@ -242,7 +242,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				this.priority = parseInt(element.getAttribute("priority"));
 			}
 
-			private int parseInt(String s) {
+			private static int parseInt(String s) {
 				if (s == null) {
 					return HIGHEST_PRIORITY;
 				}
@@ -255,19 +255,17 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			}
 
 			public int compareTo(ChildElement element) {
-				if (type.equals(element.type))
+				if (type == element.type)
 					return 0;
-				if (priority == element.priority) {
-					return type.getName().compareTo(element.type.getName());
-				} else if (priority < element.priority) {
-					return -1;
-				} else {
-					return 1;
+				final int diff = priority - element.priority;
+				if (diff != 0) {
+					return diff;
 				}
+				return type.getName().compareTo(element.type.getName());
 			}
 		}
 
-		final HashMap<IElementType<?>, Set<ChildElement>> map = new HashMap<IElementType<?>, Set<ChildElement>>();
+		final HashMap<IElementType<?>, SortedSet<ChildElement>> map = new HashMap<IElementType<?>, SortedSet<ChildElement>>();
 
 		final IElementType<?>[] noChildren = new IElementType<?>[0];
 
@@ -275,7 +273,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		public void put(IConfigurationElement element) {
 			final IElementType<?> parent = RodinCore.getElementType(element
 					.getAttribute("parentTypeId"));
-			Set<ChildElement> children = map.get(parent);
+			SortedSet<ChildElement> children = map.get(parent);
 			if (children == null) {
 				children = new TreeSet<ChildElement>();
 				map.put(parent, children);
@@ -286,7 +284,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		public IElementType<?>[] get(IElementType<?> parent) {
-			final Set<ChildElement> children = map.get(parent);
+			final SortedSet<ChildElement> children = map.get(parent);
 			if (children == null || children.size() == 0)
 				return noChildren;
 			
@@ -298,7 +296,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 	}
 
-	class AutoNamingMap extends ItemMap {
+	static class AutoNamingMap extends ItemMap {
 		final HashMap<IElementType<?>, IConfigurationElement> map = new HashMap<IElementType<?>, IConfigurationElement>();
 
 		@Override
@@ -313,7 +311,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 	}
 
-	class AttributeRelationMap extends ItemMap {
+	static class AttributeRelationMap extends ItemMap {
 		final HashMap<IElementType<?>, ArrayList<IConfigurationElement>> map = new HashMap<IElementType<?>, ArrayList<IConfigurationElement>>();
 		final IConfigurationElement[] noChildren = new IConfigurationElement[0];
 
@@ -342,7 +340,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 	}
 
-	class AttributeMap extends ItemMap {
+	static class AttributeMap extends ItemMap {
 		final HashMap<String, AttributeDesc> map = new HashMap<String, AttributeDesc>();
 
 		private boolean getBoolean(IConfigurationElement element, String name) {
