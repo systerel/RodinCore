@@ -64,16 +64,10 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	 */
 	@Override
 	public String getText(Object obj) {
-		// for project in "project explorer" and "obligation explorer"
 		if (!(obj instanceof IInternalElement))
 			return obj.toString();
-		final IInternalElement element = (IInternalElement) obj;
-		// for machine and context in "project explorer" and
-		// "obligation explorer"
-		if (!(element.getParent() instanceof IInternalElement))
-			return element.getRodinFile().getBareName();
 		final ElementDescRegistry reg = ElementDescRegistry.getInstance();
-		return reg.getValueAtColumn(element, LABEL);
+		return reg.getValueAtColumn((IInternalElement) obj, LABEL);
 	}
 
 	/*
