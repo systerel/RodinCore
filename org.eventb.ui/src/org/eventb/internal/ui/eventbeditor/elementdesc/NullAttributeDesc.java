@@ -15,13 +15,22 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.NullAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 
-class NullAttributeDesc implements IAttributeDesc {
+public class NullAttributeDesc extends AttributeDesc {
 
+	static IAttributeManipulation manipulation = new NullAttributeManipulation();
+
+	private static IAttributeType type = getTypeInstance();
+
+	public NullAttributeDesc() {
+		super(manipulation, "", "", false, type);
+	}
+
+	@Override
 	public IEditComposite createWidget() {
 		return null;
 	}
 
-	public IAttributeType getAttributeType() {
+	private static IAttributeType getTypeInstance() {
 		return new IAttributeType() {
 
 			public java.lang.String getId() {
@@ -31,27 +40,16 @@ class NullAttributeDesc implements IAttributeDesc {
 			public java.lang.String getName() {
 				return "";
 			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (!(obj instanceof IAttributeType))
+					return false;
+				final IAttributeType at = (IAttributeType) obj;
+				return this.getId().equals(at.getId())
+						&& this.getName().equals(at.getName());
+			}
 		};
 	}
 
-	public IAttributeManipulation getManipulation() {
-		return new NullAttributeManipulation();
-	}
-
-	public String getSuffix() {
-		return "";
-	}
-
-	public boolean isHorizontalExpand() {
-		return false;
-	}
-
-	public String getPrefix() {
-		return "";
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof NullAttributeDesc;
-	}
 }

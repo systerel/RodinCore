@@ -45,13 +45,13 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
 import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
@@ -59,65 +59,16 @@ import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeMani
 import org.eventb.internal.ui.eventbeditor.manipulation.ExpressionAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ExtendedAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.IdentifierAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.NullAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEventLabelAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
 public class TestElementDescRegistry extends TestCase {
-
-	class NullAttributeDesc implements IAttributeDesc {
-
-		public IEditComposite createWidget() {
-			return null;
-		}
-
-		public IAttributeType getAttributeType() {
-			return new IAttributeType() {
-
-				public java.lang.String getId() {
-					return "";
-				}
-
-				public java.lang.String getName() {
-					return "";
-				}
-
-				@Override
-				public boolean equals(Object obj) {
-					if (!(obj instanceof IAttributeType))
-						return false;
-					final IAttributeType at = (IAttributeType) obj;
-					return this.getId().equals(at.getId())
-							&& this.getName().equals(at.getName());
-				}
-			};
-		}
-
-		public IAttributeManipulation getManipulation() {
-			return new NullAttributeManipulation();
-		}
-
-		public String getSuffix() {
-			return "";
-		}
-
-		public boolean isHorizontalExpand() {
-			return false;
-		}
-
-		public String getPrefix() {
-			return "";
-		}
-
-	}
 
 	private IElementDescRegistry registry;
 
@@ -455,33 +406,21 @@ public class TestElementDescRegistry extends TestCase {
 	private void assertElementDesc(IElementDesc actualDesc, String prefix,
 			String childrenSuffix, String imageName, String autoNamingPrefix,
 			IAttributeDesc autoNamingAttribute, int defaultColumn) {
-		assertAttributeDesc("Attribute for auto naming should be equals",
-				autoNamingAttribute, actualDesc.getAutoNameAttribute());
-		if (actualDesc == null)
-			fail("ElementDesc should not be null");
-		if (!prefix.equals(actualDesc.getPrefix()))
-			fail("Prefix should be equals - expected: " + prefix
-					+ ", but was : " + actualDesc.getPrefix());
-		if (!childrenSuffix.equals(actualDesc.getChildrenSuffix()))
-			fail("Children suffix should be equals - expected: "
-					+ childrenSuffix + ", but was : "
-					+ actualDesc.getChildrenSuffix());
-
-		if (!autoNamingPrefix.equals(actualDesc.getAutoNamePrefix()))
-			fail("Prefix for auto naming should be equals - expected: "
-					+ autoNamingPrefix + ", but was : "
-					+ actualDesc.getAutoNamePrefix());
-
-		if (defaultColumn != actualDesc.getDefaultColumn())
-			fail("Default column should be equals - expected: " + defaultColumn
-					+ ", but was : " + actualDesc.getDefaultColumn());
+		assertNotNull("ElementDesc should not be null", actualDesc);
+		assertAttributeDesc(autoNamingAttribute, actualDesc
+				.getAutoNameAttribute());
+		assertEquals("Prefix should be equals", prefix, actualDesc.getPrefix());
+		assertEquals("Children suffix should be equals ", childrenSuffix,
+				actualDesc.getChildrenSuffix());
+		assertEquals("Prefix for auto naming should be equals",
+				autoNamingPrefix, actualDesc.getAutoNamePrefix());
+		assertEquals("Default column should be equals", defaultColumn,
+				actualDesc.getDefaultColumn());
 
 		final ImageDescriptor imageDescriptor = EventBImage
 				.getImageDescriptor(imageName);
-		if (!imageDescriptor.equals(actualDesc.getImageDescriptor()))
-			fail("Image descriptor should be equals - expected: "
-					+ imageDescriptor + ", but was : "
-					+ actualDesc.getImageDescriptor());
+		assertEquals("Image descriptor should be equals", imageDescriptor,
+				actualDesc.getImageDescriptor());
 	}
 
 	private void assertChildrens(String msg, IElementType<?>[] actual,
@@ -494,35 +433,36 @@ public class TestElementDescRegistry extends TestCase {
 
 	private void assertAttributeDesc(String msg, IAttributeDesc[] actual,
 			IAttributeDesc... expected) {
-		if (expected == null || actual == null)
-			fail(msg + " - should not be null");
-		if (expected.length != actual.length)
-			fail(msg + " - expected " + Arrays.asList(expected) + " but was " + Arrays.asList(actual));
+		assertNotNull("Should not be null", expected);
+		assertNotNull("Should not be null", actual);
+		assertEquals("Should have the same length", expected.length,
+				actual.length);
+
 		for (int i = 0; i < expected.length; i++) {
-			assertAttributeDesc(msg, expected[i], actual[i]);
+			assertAttributeDesc(expected[i], actual[i]);
 		}
 	}
 
-	private void assertAttributeDesc(String msg, IAttributeDesc expected,
+	private void assertAttributeDesc(IAttributeDesc expected,
 			IAttributeDesc actual) {
-		if (expected == null || actual == null)
-			fail(msg);
-		if (!(expected.getManipulation().getClass().equals(
-				actual.getManipulation().getClass())
-				&& expected.getPrefix().equals(actual.getPrefix())
-				&& expected.getSuffix().equals(actual.getSuffix())
-				&& expected.isHorizontalExpand() == actual.isHorizontalExpand() && expected
-				.getAttributeType().equals(actual.getAttributeType())))
-			fail(msg + " - expected: " + expected + ", but was : " + actual);
+		assertNotNull("Attribute description should not be null", expected);
+		assertNotNull("Attribute description should not be null", actual);
+		assertEquals("Attribute manipulation class should be equals", expected.getManipulation().getClass(), actual.getManipulation().getClass());
+		assertEquals("Prefix of attribute should be equals",expected.getPrefix(),actual.getPrefix());
+		assertEquals("Suffix of attribute should be equals",expected.getSuffix(),actual.getSuffix());
+		assertEquals("Horizontal expand should be equals",expected.isHorizontalExpand(),actual.isHorizontalExpand());
+		assertEquals("Attribute type should be equals",expected.getAttributeType(),actual.getAttributeType());
+
 		if (expected instanceof TextDesc && actual instanceof TextDesc) {
-			assertTextDesc(msg, (TextDesc) expected, (TextDesc) actual);
+			assertTextDesc((TextDesc) expected, (TextDesc) actual);
 		}
 	}
 
-	private void assertTextDesc(String msg, TextDesc expected, TextDesc actual) {
-		if (!(expected.isMath() == actual.isMath() && expected.getStyle() == actual
-				.getStyle()))
-			fail(msg + " - expected: " + expected + ", but was : " + actual);
+	private void assertTextDesc(TextDesc expected, TextDesc actual) {
+		assertEquals("IsMath value should be equal", expected.isMath(), actual
+				.isMath());
+		assertEquals("Style should be equal", expected.getStyle(), actual
+				.getStyle());
 	}
 
 	private TextDesc getCommentedDesc() {

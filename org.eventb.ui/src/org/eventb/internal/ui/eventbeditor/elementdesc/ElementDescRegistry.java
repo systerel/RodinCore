@@ -31,8 +31,6 @@ import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -54,18 +52,30 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final String ATTR_ATTRIBUTE_TYPE = "typeId";
 	private static final String ATTR_ATTRIBUTE_ID = "id";
 
-	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
-
 	static final IElementDesc nullElement = new NullElementDesc();
+	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
+	private static final String defaultAttributeValue = "";
+
+	private static final int LOWEST_PRIORITY = 1;
+	private static final int HIGHEST_PRIORITY = 1000;
+
+	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
 
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
 	}
-
+	/**
+	 * @return the description for the given element type. If the is no
+	 *         description, use the Null Object design pattern
+	 * */
 	public IElementDesc getElementDesc(IElementType<?> type) {
 		return elementDescs.get(type);
 	}
 
+	/**
+	 * @return the description for the element. If the is no
+	 *         description, use the Null Object design pattern
+	 * */
 	public IElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
 	}
@@ -122,24 +132,12 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return len != 0 && types[len - 1] == child;
 	}
 
-	private static final int LOWEST_PRIORITY = 1;
-	private static final int HIGHEST_PRIORITY = 1000;
-
 	public int getPriority(Object object) {
-		if (!(object instanceof IRodinElement))
+		if (!(object instanceof IInternalElement))
 			return HIGHEST_PRIORITY;
 
-		final IRodinElement element = (IRodinElement) object;
-		final IElementDesc parentDesc;
-		// TODO to change : used in the project and obligation explorer
-		if (element.getParent() instanceof IRodinFile) {
-			parentDesc = getElementDesc(IRodinProject.ELEMENT_TYPE);
-		} else {
-			parentDesc = getElementDesc(element.getParent());
-		}
-
-		if (parentDesc == null)
-			return HIGHEST_PRIORITY;
+		final IInternalElement element = (IInternalElement) object;
+		final IElementDesc parentDesc = getElementDesc(element.getParent());
 
 		int count = LOWEST_PRIORITY;
 		for (IElementType<?> type : parentDesc.getChildTypes()) {
@@ -165,8 +163,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return newElement;
 	}
 
-	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
-	private static final String defaultAttributeValue = "";
 	ElementMap elementDescs;
 
 	private ElementDescRegistry() {
@@ -187,16 +183,17 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				.getConfigurationElementsFor(EDITOR_ITEMS_ID);
 
 		for (IConfigurationElement element : elements) {
-			if (element.getName().equals("element")) {
+			final String name = element.getName();
+			if (name.equals("element")) {
 				elementFromExt.add(element);
-			} else if (element.getName().equals("textAttribute")
-					|| element.getName().equals("choiceAttribute")) {
+			} else if (name.equals("textAttribute")
+					|| name.equals("choiceAttribute")) {
 				attributeDescs.put(element);
-			} else if (element.getName().equals("childRelation")) {
+			} else if (name.equals("childRelation")) {
 				childRelation.put(element);
-			} else if (element.getName().equals("autoNaming")) {
+			} else if (name.equals("autoNaming")) {
 				autoNaming.put(element);
-			} else if (element.getName().equals("attributeRelation")) {
+			} else if (name.equals("attributeRelation")) {
 				attributeRelation.put(element);
 			}
 		}
@@ -247,7 +244,14 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					return HIGHEST_PRIORITY;
 				}
 				try {
-					return Integer.parseInt(s);
+					final int priority = Integer.parseInt(s);
+					if (priority < LOWEST_PRIORITY) {
+						return LOWEST_PRIORITY;
+					} else if (HIGHEST_PRIORITY < priority) {
+						return HIGHEST_PRIORITY;
+					} else {
+						return priority;
+					}
 				} catch (NumberFormatException e) {
 					UIUtils.log(e, "Priority attribute is not a number");
 					return HIGHEST_PRIORITY;
@@ -416,7 +420,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 	}
 
-	class ElementMap extends ItemMap {
+	static class ElementMap extends ItemMap {
 		final HashMap<IElementType<?>, ElementDesc> elementMap = new HashMap<IElementType<?>, ElementDesc>();
 		final AttributeMap attributeMap;
 		final ChildRelationMap childRelationMap;
@@ -529,6 +533,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					ATTR_AUTONAMING_ATTRIBUTE_TYPE));
 		}
 
+		/**
+		 * @return the description for the given element type. If the is no
+		 *         description, use the Null Object design pattern
+		 * */
 		public IElementDesc get(IElementType<?> key) {
 			final ElementDesc desc = elementMap.get(key);
 			if (desc == null)
