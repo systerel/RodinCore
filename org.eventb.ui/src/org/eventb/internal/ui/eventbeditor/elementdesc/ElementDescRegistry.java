@@ -35,9 +35,8 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * This enumeration represent a singleton of IElementDescRegistry.
- * <p>
- * It must not have more than one element.
+ * Registry for element descriptors contributed through the
+ * <code>org.eventb.ui.editorItems</code> extension point.
  */
 public class ElementDescRegistry implements IElementDescRegistry {
 
@@ -64,18 +63,26 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
 	}
+
 	/**
-	 * @return the description for the given element type. If the is no
-	 *         description, use the Null Object design pattern
-	 * */
+	 * Returns the descriptor for the given element type. This method never
+	 * returns <code>null</code>. If there is no declared descriptor for the
+	 * given element type, an instance of {@link NullElementDesc} is returned.
+	 * 
+	 * @return the descriptor for the given element type
+	 */
 	public IElementDesc getElementDesc(IElementType<?> type) {
 		return elementDescs.get(type);
 	}
 
 	/**
-	 * @return the description for the element. If the is no
-	 *         description, use the Null Object design pattern
-	 * */
+	 * Returns the descriptor for the given element (based on it element type).
+	 * This method never returns <code>null</code>. If there is no declared
+	 * descriptor for the given element, an instance of {@link NullElementDesc}
+	 * is returned.
+	 * 
+	 * @return the descriptor for the given element
+	 */
 	public IElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
 	}
@@ -205,9 +212,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	abstract static class ItemMap {
 		/**
-		 * Return the value of a string attribute with the given name, or "" is
-		 * there is not.
-		 * */
+		 * Returns the value of a string attribute with the given name, or an
+		 * empty string if there is none.
+		 */
 		protected String getStringAttribute(IConfigurationElement element,
 				String name) {
 			if (element == null)
@@ -513,18 +520,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				atColumn.add(nullAttribute);
 		}
 
-		/**
-		 * @param element
-		 *            an autoNaming configuration element
-		 * */
 		private String getAutoNamingPrefix(IConfigurationElement element) {
 			return getStringAttribute(element, ATTR_AUTONAMING_NAME_PREFIX);
 		}
 
-		/**
-		 * @param element
-		 *            an autoNaming configuration element
-		 * */
 		private IAttributeDesc getAutoNamingAttribute(
 				IConfigurationElement element) {
 			if (element == null)
@@ -533,10 +532,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					ATTR_AUTONAMING_ATTRIBUTE_TYPE));
 		}
 
-		/**
-		 * @return the description for the given element type. If the is no
-		 *         description, use the Null Object design pattern
-		 * */
 		public IElementDesc get(IElementType<?> key) {
 			final ElementDesc desc = elementMap.get(key);
 			if (desc == null)
