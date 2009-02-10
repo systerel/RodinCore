@@ -409,18 +409,18 @@ public class TestElementDescRegistry extends TestCase {
 		assertNotNull("ElementDesc should not be null", actualDesc);
 		assertAttributeDesc(autoNamingAttribute, actualDesc
 				.getAutoNameAttribute());
-		assertEquals("Prefix should be equals", prefix, actualDesc.getPrefix());
-		assertEquals("Children suffix should be equals ", childrenSuffix,
-				actualDesc.getChildrenSuffix());
-		assertEquals("Prefix for auto naming should be equals",
-				autoNamingPrefix, actualDesc.getAutoNamePrefix());
-		assertEquals("Default column should be equals", defaultColumn,
-				actualDesc.getDefaultColumn());
+		assertEquals("Unexpected prefix", prefix, actualDesc.getPrefix());
+		assertEquals("Unexpected children suffix", childrenSuffix, actualDesc
+				.getChildrenSuffix());
+		assertEquals("Unexpected prefix for auto naming", autoNamingPrefix,
+				actualDesc.getAutoNamePrefix());
+		assertEquals("Unexpected default column", defaultColumn, actualDesc
+				.getDefaultColumn());
 
 		final ImageDescriptor imageDescriptor = EventBImage
 				.getImageDescriptor(imageName);
-		assertEquals("Image descriptor should be equals", imageDescriptor,
-				actualDesc.getImageDescriptor());
+		assertEquals("Unexpected image descriptor", imageDescriptor, actualDesc
+				.getImageDescriptor());
 	}
 
 	private void assertChildrens(String msg, IElementType<?>[] actual,
@@ -433,10 +433,9 @@ public class TestElementDescRegistry extends TestCase {
 
 	private void assertAttributeDesc(String msg, IAttributeDesc[] actual,
 			IAttributeDesc... expected) {
-		assertNotNull("Should not be null", expected);
-		assertNotNull("Should not be null", actual);
-		assertEquals("Should have the same length", expected.length,
-				actual.length);
+		assertNotNull("Expected should not be null", expected);
+		assertNotNull("Actual should not be null", actual);
+		assertEquals("Differing lengths", expected.length, actual.length);
 
 		for (int i = 0; i < expected.length; i++) {
 			assertAttributeDesc(expected[i], actual[i]);
@@ -445,13 +444,20 @@ public class TestElementDescRegistry extends TestCase {
 
 	private void assertAttributeDesc(IAttributeDesc expected,
 			IAttributeDesc actual) {
-		assertNotNull("Attribute description should not be null", expected);
-		assertNotNull("Attribute description should not be null", actual);
-		assertEquals("Attribute manipulation class should be equals", expected.getManipulation().getClass(), actual.getManipulation().getClass());
-		assertEquals("Prefix of attribute should be equals",expected.getPrefix(),actual.getPrefix());
-		assertEquals("Suffix of attribute should be equals",expected.getSuffix(),actual.getSuffix());
-		assertEquals("Horizontal expand should be equals",expected.isHorizontalExpand(),actual.isHorizontalExpand());
-		assertEquals("Attribute type should be equals",expected.getAttributeType(),actual.getAttributeType());
+		assertNotNull("Expected attribute description should not be null",
+				expected);
+		assertNotNull("Actual attribute description should not be null", actual);
+		assertEquals("Unexpected attribute manipulation class", expected
+				.getManipulation().getClass(), actual.getManipulation()
+				.getClass());
+		assertEquals("Unexpected prefix of attribute", expected.getPrefix(),
+				actual.getPrefix());
+		assertEquals("Unexpected suffix of attribute", expected.getSuffix(),
+				actual.getSuffix());
+		assertEquals("Unexpected horizontal expand", expected
+				.isHorizontalExpand(), actual.isHorizontalExpand());
+		assertEquals("Unexpected attribute type ", expected.getAttributeType(),
+				actual.getAttributeType());
 
 		if (expected instanceof TextDesc && actual instanceof TextDesc) {
 			assertTextDesc((TextDesc) expected, (TextDesc) actual);
@@ -459,10 +465,8 @@ public class TestElementDescRegistry extends TestCase {
 	}
 
 	private void assertTextDesc(TextDesc expected, TextDesc actual) {
-		assertEquals("IsMath value should be equal", expected.isMath(), actual
-				.isMath());
-		assertEquals("Style should be equal", expected.getStyle(), actual
-				.getStyle());
+		assertEquals("Unexpected isMath", expected.isMath(), actual.isMath());
+		assertEquals("Unexpected style", expected.getStyle(), actual.getStyle());
 	}
 
 	private TextDesc getCommentedDesc() {
