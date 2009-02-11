@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.rodinp.core.indexer.IDeclaration;
 
-public class NameTable {
+public class NameTable implements INameTable {
 
 	private static final IDeclaration[] NO_DECLARATIONS =
 			new IDeclaration[0];

@@ -26,8 +26,10 @@ import org.rodinp.core.tests.util.IndexTestsUtil;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.FileTable;
-import org.rodinp.internal.core.indexer.tables.NameTable;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.IFileTable;
+import org.rodinp.internal.core.indexer.tables.INameTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class TotalOrderUsageTests extends IndexTests {
@@ -39,7 +41,7 @@ public class TotalOrderUsageTests extends IndexTests {
 	private static NamedElement eltF2;
 	private static IDeclaration declEltF2;
 	private static final ExportTable f2ExportsElt2 = new ExportTable();
-	private static final ExportTable emptyExports = new ExportTable();
+	private static final IExportTable emptyExports = new ExportTable();
 	private static final DependenceTable f1DepsOnf2 = new DependenceTable();
 	private static final RodinIndex rodinIndex = new RodinIndex();
 
@@ -250,10 +252,10 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file2);
 
-		final ExportTable exportTable = manager.getExportTable(project);
-		final FileTable fileTable = manager.getFileTable(project);
-		final NameTable nameTable = manager.getNameTable(project);
-		final RodinIndex index = manager.getIndex(project);
+		final IExportTable exportTable = manager.getExportTable(project);
+		final IFileTable fileTable = manager.getFileTable(project);
+		final INameTable nameTable = manager.getNameTable(project);
+		final IRodinIndex index = manager.getIndex(project);
 
 		final Set<IDeclaration> exports = exportTable.get(file2);
 		final IInternalElement[] fileElements = fileTable.get(file2);
@@ -289,7 +291,7 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file1, file2, file3);
 
-		final ExportTable exportTable = manager.getExportTable(project);
+		final IExportTable exportTable = manager.getExportTable(project);
 		assertExports(f1f2f3expElt3.get(file3), exportTable.get(file3));
 		assertExports(f1f2f3expElt3.get(file2), exportTable.get(file2));
 		assertExports(f1f2f3expElt3.get(file1), exportTable.get(file1));

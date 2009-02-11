@@ -20,6 +20,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.internal.core.indexer.persistence.PersistenceException;
 import org.rodinp.internal.core.indexer.tables.ExportTable;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -40,7 +41,7 @@ public class ExpTablePersistor {
 		}
 	}
 
-	public static void save(ExportTable exportTable, Document doc,
+	public static void save(IExportTable exportTable, Document doc,
 			Element exportTableNode) {
 		for (IRodinFile file : exportTable.files()) {
 			final Element exportNode = createElement(doc, EXPORT);

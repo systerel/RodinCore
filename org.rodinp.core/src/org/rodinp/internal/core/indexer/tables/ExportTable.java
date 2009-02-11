@@ -19,7 +19,7 @@ import java.util.Set;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
 
-public class ExportTable {
+public class ExportTable implements IExportTable {
 
 	Map<IRodinFile, Set<IDeclaration>> table;
 
@@ -55,14 +55,6 @@ public class ExportTable {
 	}
 
 	public Set<IRodinFile> files() {
-		return table.keySet();
+		return new HashSet<IRodinFile>(table.keySet());
 	}
-	// public boolean contains(IRodinFile f, IInternalElement element) {
-	// final Set<IDeclaration> map = table.get(f);
-	// if (map == null) {
-	// return false;
-	// }
-	// return map.contains(element);
-	// }
-	//
 }

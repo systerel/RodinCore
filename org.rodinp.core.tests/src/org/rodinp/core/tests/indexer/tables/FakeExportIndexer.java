@@ -17,14 +17,14 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.tests.indexer.FakeIndexer;
-import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 
 public class FakeExportIndexer extends FakeIndexer {
 
-	protected final ExportTable exportTable;
+	protected final IExportTable exportTable;
 
-	public FakeExportIndexer(RodinIndex rodinIndex, ExportTable exportTable) {
+	public FakeExportIndexer(IRodinIndex rodinIndex, IExportTable exportTable) {
 		super(rodinIndex);
 		this.exportTable = exportTable;
 	}

@@ -22,7 +22,7 @@ import org.rodinp.core.tests.indexer.FakeIndexer;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.IndexManager;
-import org.rodinp.internal.core.indexer.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.IFileTable;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class FileTableUsageTests extends IndexTests {
@@ -73,7 +73,7 @@ public class FileTableUsageTests extends IndexTests {
 	private void assertFileTable(IRodinFile rodinFile,
 			IInternalElement[] expectedElements, String message) throws InterruptedException {
 
-		final FileTable fileTable = manager.getFileTable(rodinFile
+		final IFileTable fileTable = manager.getFileTable(rodinFile
 				.getRodinProject());
 		IInternalElement[] actualElements = fileTable.get(rodinFile);
 

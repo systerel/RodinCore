@@ -67,6 +67,10 @@ public class DeltaQueue {
 		latch.await();
 	}
 	
+	public boolean isProcessed() {
+		return latch.getCount() == 0;
+	}
+	
 	public void putAll(Collection<? extends IIndexDelta> c)
 			throws InterruptedException {
 		for (IIndexDelta delta : c) {

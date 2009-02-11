@@ -18,7 +18,7 @@ import java.util.Set;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 
-public class FileTable {
+public class FileTable implements IFileTable {
 
 	private Map<IRodinFile, Set<IInternalElement>> table;
 

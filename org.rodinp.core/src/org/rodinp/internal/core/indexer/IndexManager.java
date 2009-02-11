@@ -38,10 +38,10 @@ import org.rodinp.core.indexer.IIndexer;
 import org.rodinp.internal.core.indexer.IIndexDelta.Kind;
 import org.rodinp.internal.core.indexer.persistence.PersistenceManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
-import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.FileTable;
-import org.rodinp.internal.core.indexer.tables.NameTable;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.IFileTable;
+import org.rodinp.internal.core.indexer.tables.INameTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.util.Util;
 
 public final class IndexManager {
@@ -182,11 +182,11 @@ public final class IndexManager {
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public RodinIndex getIndex(IRodinProject project)
+	public IRodinIndex getIndex(IRodinProject project)
 			throws InterruptedException {
 		final ProjectIndexManager pim = fetchPIM(project);
 		lockReadInitAndPIM(pim);
-		final RodinIndex index = pim.getIndex();
+		final IRodinIndex index = pim.getIndex();
 		unlockReadInitAndPIM(pim);
 		return index;
 	}
@@ -203,11 +203,11 @@ public final class IndexManager {
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public FileTable getFileTable(IRodinProject project)
+	public IFileTable getFileTable(IRodinProject project)
 			throws InterruptedException {
 		final ProjectIndexManager pim = fetchPIM(project);
 		lockReadInitAndPIM(pim);
-		final FileTable fileTable = pim.getFileTable();
+		final IFileTable fileTable = pim.getFileTable();
 		unlockReadInitAndPIM(pim);
 		return fileTable;
 	}
@@ -224,11 +224,11 @@ public final class IndexManager {
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public NameTable getNameTable(IRodinProject project)
+	public INameTable getNameTable(IRodinProject project)
 			throws InterruptedException {
 		final ProjectIndexManager pim = fetchPIM(project);
 		lockReadInitAndPIM(pim);
-		final NameTable nameTable = pim.getNameTable();
+		final INameTable nameTable = pim.getNameTable();
 		unlockReadInitAndPIM(pim);
 		return nameTable;
 	}
@@ -245,11 +245,11 @@ public final class IndexManager {
 	 * @throws InterruptedException
 	 * @see #waitUpToDate()
 	 */
-	public ExportTable getExportTable(IRodinProject project)
+	public IExportTable getExportTable(IRodinProject project)
 			throws InterruptedException {
 		final ProjectIndexManager pim = fetchPIM(project);
 		lockReadInitAndPIM(pim);
-		final ExportTable exportTable = pim.getExportTable();
+		final IExportTable exportTable = pim.getExportTable();
 		unlockReadInitAndPIM(pim);
 		return exportTable;
 	}

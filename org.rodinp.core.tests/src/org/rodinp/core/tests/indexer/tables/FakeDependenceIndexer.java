@@ -16,16 +16,16 @@ import java.util.List;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IIndexingBridge;
-import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 
 public class FakeDependenceIndexer extends FakeExportIndexer {
 
 	protected final DependenceTable dependencies;
 	protected final List<IRodinFile> indexingOrder;
 
-	public FakeDependenceIndexer(RodinIndex rodinIndex,
-			DependenceTable dependencies, ExportTable exportTable) {
+	public FakeDependenceIndexer(IRodinIndex rodinIndex,
+			DependenceTable dependencies, IExportTable exportTable) {
 		super(rodinIndex, exportTable);
 		this.dependencies = dependencies;
 		this.indexingOrder = new ArrayList<IRodinFile>();

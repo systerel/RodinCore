@@ -21,7 +21,8 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.IndexManager;
-import org.rodinp.internal.core.indexer.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.IFileTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class IndexManagerTests extends IndexTests {
@@ -76,7 +77,7 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final RodinIndex index = manager.getIndex(project);
+		final IRodinIndex index = manager.getIndex(project);
 		final Descriptor desc1 = index.getDescriptor(elt1);
 		final Descriptor desc2 = index.getDescriptor(elt2);
 
@@ -91,7 +92,7 @@ public class IndexManagerTests extends IndexTests {
 		// first indexing with elt1, without elt2
 		manager.scheduleIndexing(file);
 
-		final RodinIndex index1 = manager.getIndex(project);
+		final IRodinIndex index1 = manager.getIndex(project);
 		final Descriptor descElement = index1.getDescriptor(elt1);
 
 		assertDescriptor(descElement, declElt1, 1);
@@ -104,7 +105,7 @@ public class IndexManagerTests extends IndexTests {
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
-		final RodinIndex index2 = manager.getIndex(project);
+		final IRodinIndex index2 = manager.getIndex(project);
 		final Descriptor descElement2 = index2.getDescriptor(elt2);
 
 		assertNoSuchDescriptor(index2, elt1);
@@ -113,7 +114,7 @@ public class IndexManagerTests extends IndexTests {
 
 	public void testSeveralIndexers() throws Exception {
 
-		final RodinIndex rodinIndex2 = new RodinIndex();
+		final IRodinIndex rodinIndex2 = new RodinIndex();
 		makeDescAndDefaultOcc(rodinIndex, declElt3, file.getRoot());
 
 		manager.clearIndexers();
@@ -125,7 +126,7 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final RodinIndex index = manager.getIndex(project);
+		final IRodinIndex index = manager.getIndex(project);
 		final Descriptor desc1 = index.getDescriptor(elt1);
 		final Descriptor desc2 = index.getDescriptor(elt2);
 		final Descriptor desc3 = index.getDescriptor(elt3);
@@ -146,7 +147,7 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final RodinIndex index = manager.getIndex(project);
+		final IRodinIndex index = manager.getIndex(project);
 		final Descriptor desc1 = index.getDescriptor(elt1);
 		final Descriptor desc2 = index.getDescriptor(elt2);
 
@@ -198,9 +199,9 @@ public class IndexManagerTests extends IndexTests {
 
 			manager.scheduleIndexing(file, file2);
 
-			final RodinIndex index1 = manager.getIndex(project);
+			final IRodinIndex index1 = manager.getIndex(project);
 			final Descriptor desc1 = index1.getDescriptor(elt1);
-			final RodinIndex index2 = manager.getIndex(project2);
+			final IRodinIndex index2 = manager.getIndex(project2);
 			final Descriptor desc2 = index2.getDescriptor(eltF2);
 
 			assertDescriptor(desc1, declElt1, 1);
@@ -220,7 +221,7 @@ public class IndexManagerTests extends IndexTests {
 		// should not throw an exception
 		manager.scheduleIndexing(file);
 
-		final FileTable fileTable = manager.getFileTable(project);
+		final IFileTable fileTable = manager.getFileTable(project);
 		final IInternalElement[] elements = fileTable.get(file);
 		assertEquals("no element expected", 0, elements.length);
 	}
@@ -235,7 +236,7 @@ public class IndexManagerTests extends IndexTests {
 		// should not throw an exception
 		manager.scheduleIndexing(file);
 
-		final FileTable fileTable = manager.getFileTable(project);
+		final IFileTable fileTable = manager.getFileTable(project);
 		final IInternalElement[] elements = fileTable.get(file);
 		assertEquals("no element expected", 0, elements.length);
 	}

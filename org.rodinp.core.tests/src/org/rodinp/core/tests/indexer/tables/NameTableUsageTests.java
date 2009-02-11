@@ -17,7 +17,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.internal.core.indexer.IndexManager;
-import org.rodinp.internal.core.indexer.tables.NameTable;
+import org.rodinp.internal.core.indexer.tables.INameTable;
 
 public class NameTableUsageTests extends IndexTests {
 
@@ -52,7 +52,7 @@ public class NameTableUsageTests extends IndexTests {
 	private void assertNameTable(IRodinFile rodinFile, String name,
 			IDeclaration[] expectedElements, String message) throws InterruptedException {
 
-		final NameTable table = manager.getNameTable(rodinFile
+		final INameTable table = manager.getNameTable(rodinFile
 				.getRodinProject());
 		IDeclaration[] actualElements = table.getDeclarations(name);
 

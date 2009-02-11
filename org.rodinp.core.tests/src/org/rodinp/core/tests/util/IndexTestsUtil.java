@@ -31,9 +31,10 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.Occurrence;
 import org.rodinp.internal.core.indexer.sort.TotalOrder;
-import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.FileTable;
-import org.rodinp.internal.core.indexer.tables.NameTable;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.IFileTable;
+import org.rodinp.internal.core.indexer.tables.INameTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class IndexTestsUtil {
@@ -93,7 +94,7 @@ public class IndexTestsUtil {
 		return el;
 	}
 
-	public static void assertNoSuchDescriptor(RodinIndex index,
+	public static void assertNoSuchDescriptor(IRodinIndex index,
 			IInternalElement element) {
 		Descriptor desc = index.getDescriptor(element);
 		assertNull("there should not be any descriptor for element "
@@ -134,7 +135,7 @@ public class IndexTestsUtil {
 				+ expList, actList.containsAll(expList));
 	}
 
-	public static void assertIndex(RodinIndex expected, RodinIndex actual) {
+	public static void assertIndex(IRodinIndex expected, IRodinIndex actual) {
 
 		final Descriptor[] expDescs = expected.getDescriptors();
 
@@ -248,8 +249,8 @@ public class IndexTestsUtil {
 		}
 	}
 
-	public static void assertExportTable(ExportTable expected,
-			ExportTable actual, List<IRodinFile> files) {
+	public static void assertExportTable(IExportTable expected,
+			IExportTable actual, List<IRodinFile> files) {
 		for (IRodinFile file : files) {
 			assertExports(expected.get(file), actual.get(file));
 		}
@@ -261,7 +262,7 @@ public class IndexTestsUtil {
 		assertEquals("Bad exports.", expected, actual);
 	}
 
-	public static void assertFileTable(FileTable expected, FileTable actual,
+	public static void assertFileTable(IFileTable expected, IFileTable actual,
 			List<IRodinFile> files) {
 		for (IRodinFile file : files) {
 			assertSameElements(expected.get(file), actual.get(file),
@@ -269,7 +270,7 @@ public class IndexTestsUtil {
 		}
 	}
 
-	public static void assertNameTable(NameTable expected, NameTable actual,
+	public static void assertNameTable(INameTable expected, INameTable actual,
 			List<String> names) {
 		for (String name : names) {
 			assertSameElements(expected.getDeclarations(name), actual

@@ -18,7 +18,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.internal.core.indexer.Descriptor;
 
-public final class RodinIndex {
+public final class RodinIndex implements IRodinIndex {
 
 	private Map<IInternalElement, Descriptor> map;
 

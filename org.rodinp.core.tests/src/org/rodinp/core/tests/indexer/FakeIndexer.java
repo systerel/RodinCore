@@ -18,7 +18,7 @@ import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.internal.core.indexer.Descriptor;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 
 public class FakeIndexer implements IIndexer {
 
@@ -26,9 +26,9 @@ public class FakeIndexer implements IIndexer {
 
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 
-	protected final RodinIndex localIndex;
+	protected final IRodinIndex localIndex;
 
-	public FakeIndexer(RodinIndex index) {
+	public FakeIndexer(IRodinIndex index) {
 		this.localIndex = index;
 	}
 
