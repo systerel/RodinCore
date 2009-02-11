@@ -15,8 +15,8 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
-import org.rodinp.internal.core.indexer.tables.NameTable;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
+import org.rodinp.internal.core.indexer.tables.INameTable;
+import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 
 /**
  * @author Nicolas Beauger
@@ -29,7 +29,7 @@ public class IndexQuery implements IIndexQuery {
 	public IDeclaration getDeclaration(IInternalElement element)
 			throws InterruptedException {
 		final IRodinProject project = element.getRodinProject();
-		final RodinIndex index = IndexManager.getDefault().getIndex(project);
+		final IRodinIndex index = IndexManager.getDefault().getIndex(project);
 
 		final Descriptor descriptor = index.getDescriptor(element);
 
@@ -43,7 +43,7 @@ public class IndexQuery implements IIndexQuery {
 			throws InterruptedException {
 		final IInternalElement element = declaration.getElement();
 		final IRodinProject project = element.getRodinProject();
-		final RodinIndex index = IndexManager.getDefault().getIndex(project);
+		final IRodinIndex index = IndexManager.getDefault().getIndex(project);
 
 		final Descriptor descriptor = index.getDescriptor(element);
 
@@ -55,7 +55,7 @@ public class IndexQuery implements IIndexQuery {
 
 	public IDeclaration[] getDeclarations(IRodinProject project, String name)
 			throws InterruptedException {
-		final NameTable nameTable =
+		final INameTable nameTable =
 				IndexManager.getDefault().getNameTable(project);
 
 		return nameTable.getDeclarations(name);
