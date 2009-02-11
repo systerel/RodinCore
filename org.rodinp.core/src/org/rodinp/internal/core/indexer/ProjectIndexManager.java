@@ -161,7 +161,7 @@ public class ProjectIndexManager {
 			for (IOccurrence occurrence : occurrences) {
 				descriptor.addOccurrence(occurrence);
 			}
-			fileTable.add(file, element);
+			fileTable.add(file, descriptor.getDeclaration());
 		}
 	}
 
@@ -188,14 +188,15 @@ public class ProjectIndexManager {
 				}
 			}
 
-			fileTable.add(result.getFile(), element);
+			fileTable.add(result.getFile(), declaration);
 			nameTable.add(declaration);
 		}
 	}
 
 	private void clean(IRodinFile file) {
 
-		for (IInternalElement element : fileTable.get(file)) {
+		for (IDeclaration declaration : fileTable.get(file)) {
+			final IInternalElement element = declaration.getElement();
 			final Descriptor descriptor = index.getDescriptor(element);
 
 			if (descriptor == null) {
@@ -210,8 +211,6 @@ public class ProjectIndexManager {
 				descriptor.removeOccurrences(file);
 
 				if (descriptor.getOccurrences().length == 0) {
-					final IDeclaration declaration =
-							descriptor.getDeclaration();
 					nameTable.remove(declaration);
 					// even imported elements with no remaining occurrences
 					// are removed from index (no more descriptor)
@@ -303,10 +302,9 @@ public class ProjectIndexManager {
 			final IDeclaration declaration = desc.getDeclaration();
 			nameTable.add(declaration);
 
-			final IInternalElement element = declaration.getElement();
 			for (IOccurrence occurrence : desc.getOccurrences()) {
 				final IRodinFile file = occurrence.getRodinFile();
-				fileTable.add(file, element);
+				fileTable.add(file, declaration);
 			}
 		}
 

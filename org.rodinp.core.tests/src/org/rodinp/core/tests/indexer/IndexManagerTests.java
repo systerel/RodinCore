@@ -12,7 +12,6 @@ package org.rodinp.core.tests.indexer;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -222,8 +221,8 @@ public class IndexManagerTests extends IndexTests {
 		manager.scheduleIndexing(file);
 
 		final IFileTable fileTable = manager.getFileTable(project);
-		final IInternalElement[] elements = fileTable.get(file);
-		assertEquals("no element expected", 0, elements.length);
+		final IDeclaration[] declarations = fileTable.get(file);
+		assertEquals("no element expected", 0, declarations.length);
 	}
 
 	public void testIndexerFailed() throws Exception {
@@ -237,7 +236,7 @@ public class IndexManagerTests extends IndexTests {
 		manager.scheduleIndexing(file);
 
 		final IFileTable fileTable = manager.getFileTable(project);
-		final IInternalElement[] elements = fileTable.get(file);
-		assertEquals("no element expected", 0, elements.length);
+		final IDeclaration[] declarations = fileTable.get(file);
+		assertEquals("no element expected", 0, declarations.length);
 	}
 }

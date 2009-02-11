@@ -147,7 +147,7 @@ public class Resources {
 		// order
 		order.setToIter(rodinFile);
 		// file table
-		fileTable.add(rodinFile, testElt1);
+		fileTable.add(rodinFile, declaration);
 		// name table
 		nameTable.add(declaration);
 

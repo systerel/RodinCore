@@ -15,26 +15,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.indexer.IDeclaration;
 
 public class FileTable implements IFileTable {
 
-	private Map<IRodinFile, Set<IInternalElement>> table;
+	private Map<IRodinFile, Set<IDeclaration>> table;
 
-	private static final IInternalElement[] NO_ELEMENTS =
-			new IInternalElement[0];
+	private static final IDeclaration[] NO_ELEMENTS =
+			new IDeclaration[0];
 
 	public FileTable() {
-		table = new HashMap<IRodinFile, Set<IInternalElement>>();
+		table = new HashMap<IRodinFile, Set<IDeclaration>>();
 	}
 
-	public IInternalElement[] get(IRodinFile file) {
-		final Set<IInternalElement> elements = table.get(file);
+	public IDeclaration[] get(IRodinFile file) {
+		final Set<IDeclaration> elements = table.get(file);
 		if (elements == null || elements.size() == 0) {
 			return NO_ELEMENTS;
 		}
-		return elements.toArray(new IInternalElement[elements.size()]);
+		return elements.toArray(new IDeclaration[elements.size()]);
 	}
 
 	public void remove(IRodinFile file) {
@@ -45,13 +45,13 @@ public class FileTable implements IFileTable {
 		table.clear();
 	}
 
-	public void add(IRodinFile file, IInternalElement element) {
-		Set<IInternalElement> elements = table.get(file);
+	public void add(IRodinFile file, IDeclaration declaration) {
+		Set<IDeclaration> elements = table.get(file);
 		if (elements == null) {
-			elements = new HashSet<IInternalElement>();
+			elements = new HashSet<IDeclaration>();
 			table.put(file, elements);
 		}
-		elements.add(element);
+		elements.add(declaration);
 	}
 
 	// DEBUG
@@ -60,19 +60,19 @@ public class FileTable implements IFileTable {
 		StringBuilder sb = new StringBuilder("File Table\n");
 		for (IRodinFile file : table.keySet()) {
 			sb.append(file.getBareName() + ": ");
-			for (IInternalElement elem : table.get(file)) {
-				sb.append(elem.getElementName() + "; ");
+			for (IDeclaration decl : table.get(file)) {
+				sb.append(decl.getName() + "; ");
 			}
 			sb.append("\n");
 		}
 		return sb.toString();
 	}
 
-	public boolean contains(IRodinFile file, IInternalElement element) {
-		final Set<IInternalElement> set = table.get(file);
+	public boolean contains(IRodinFile file, IDeclaration declaration) {
+		final Set<IDeclaration> set = table.get(file);
 		if (set == null) {
 			return false;
 		}
-		return set.contains(element);
+		return set.contains(declaration);
 	}
 }

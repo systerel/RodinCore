@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -258,14 +257,14 @@ public class TotalOrderUsageTests extends IndexTests {
 		final IRodinIndex index = manager.getIndex(project);
 
 		final Set<IDeclaration> exports = exportTable.get(file2);
-		final IInternalElement[] fileElements = fileTable.get(file2);
-		final IDeclaration[] nameElements = nameTable
+		final IDeclaration[] fileDecls = fileTable.get(file2);
+		final IDeclaration[] nameDecls = nameTable
 				.getDeclarations(eltF2Name);
 
 		assertTrue("exports should be empty after file deletion", exports
 				.isEmpty());
-		assertIsEmpty(fileElements);
-		assertIsEmpty(nameElements);
+		assertIsEmpty(fileDecls);
+		assertIsEmpty(nameDecls);
 		assertNoSuchDescriptor(index, eltF2);
 	}
 

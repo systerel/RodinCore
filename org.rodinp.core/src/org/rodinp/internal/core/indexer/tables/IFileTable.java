@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.tables;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.indexer.IDeclaration;
 
 public interface IFileTable {
 
-	IInternalElement[] get(IRodinFile file);
+	IDeclaration[] get(IRodinFile file);
 
 }

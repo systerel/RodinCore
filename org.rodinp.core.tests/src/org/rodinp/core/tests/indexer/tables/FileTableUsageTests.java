@@ -12,7 +12,6 @@ package org.rodinp.core.tests.indexer.tables;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -37,7 +36,9 @@ public class FileTableUsageTests extends IndexTests {
 	private static IRodinFile file;
 	private static NamedElement elt1;
 	private static NamedElement elt2;
-	private static IInternalElement[] fileElements;
+	private static IDeclaration declElt1;
+	private static IDeclaration declElt2;
+	private static IDeclaration[] fileDecls;
 	private static final IndexManager manager = IndexManager.getDefault();
 
 	private static final String elt1Name = "elt1Name";
@@ -52,10 +53,10 @@ public class FileTableUsageTests extends IndexTests {
 		file = createRodinFile(rodinProject, "fileTable.test");
 		elt1 = createNamedElement(file, "elt1");
 		elt2 = createNamedElement(file, "elt2");
-		fileElements = new NamedElement[] { elt1, elt2 };
+		declElt1 = new Declaration(elt1, elt1Name);
+		declElt2 = new Declaration(elt2, elt2Name);
+		fileDecls = new IDeclaration[] { declElt1, declElt2 };
 		rodinIndex = new RodinIndex();
-		final IDeclaration declElt1 = new Declaration(elt1, elt1Name);
-		final IDeclaration declElt2 = new Declaration(elt2, elt2Name);
 		makeDescAndDefaultOcc(rodinIndex, declElt1, file.getRoot());
 		makeDescAndDefaultOcc(rodinIndex, declElt2, file.getRoot());
 
@@ -71,33 +72,33 @@ public class FileTableUsageTests extends IndexTests {
 	}
 
 	private void assertFileTable(IRodinFile rodinFile,
-			IInternalElement[] expectedElements, String message) throws InterruptedException {
+			IDeclaration[] expectedElements, String message) throws InterruptedException {
 
 		final IFileTable fileTable = manager.getFileTable(rodinFile
 				.getRodinProject());
-		IInternalElement[] actualElements = fileTable.get(rodinFile);
+		IDeclaration[] actualElements = fileTable.get(rodinFile);
 
 		if (DEBUG) {
 			System.out.println(getName() + message);
 			System.out.println(fileTable.toString());
 		}
-		assertSameElements(expectedElements, actualElements);
+		assertSameElements(expectedElements, actualElements, "elements in file table");
 	}
 
 	public void testFileTableFilling() throws Exception {
 		manager.scheduleIndexing(file);
-		assertFileTable(file, fileElements, "");
+		assertFileTable(file, fileDecls, "");
 	}
 
 	public void testDeleteElement() throws Exception {
 
 		// first indexing with elt1 and elt2
 		manager.scheduleIndexing(file);
-		assertFileTable(file, fileElements, "\nBefore");
+		assertFileTable(file, fileDecls, "\nBefore");
 
 		// removing an element
 		rodinIndex.removeDescriptor(elt1);
-		IInternalElement[] fileElementsAfter = new NamedElement[] { elt2 };
+		final IDeclaration[] fileElementsAfter = new IDeclaration[] { declElt2 };
 
 		// second indexing with elt2 only
 		manager.scheduleIndexing(file);
