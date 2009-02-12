@@ -275,7 +275,7 @@
 			<arg line="-consoleLog" />
 			<arg line="-flavor ${p2.flavor}" />
 			<arg line="-installIU ${p2.IU}" />
-			<!--arg line="-version ${p2.version}" /-->
+			<arg line="-version ${buildId}" />
 			<arg line="-p2.os ${p2.os}" />
 			<arg line="-p2.ws ${p2.ws}" />
 			<arg line="-p2.arch ${p2.arch}" />
