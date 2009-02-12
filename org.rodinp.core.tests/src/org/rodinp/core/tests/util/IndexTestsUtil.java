@@ -28,6 +28,7 @@ import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.Occurrence;
 import org.rodinp.internal.core.indexer.sort.TotalOrder;
@@ -64,19 +65,34 @@ public class IndexTestsUtil {
 		return file;
 	}
 
-	public static Occurrence createDefaultOccurrence(IInternalElement element,
+	public static IOccurrence createDefaultOccurrence(IInternalElement element,
 			IDeclaration declaration) {
-		return new Occurrence(TEST_KIND, RodinCore
-				.getInternalLocation(element), declaration);
+		return createInternalOccurrence(element, declaration, TEST_KIND);
+	}
+
+	public static IOccurrence createInternalOccurrence(IInternalElement element,
+			IDeclaration declaration, IOccurrenceKind kind) {
+		return new Occurrence(kind, RodinCore.getInternalLocation(element),
+				declaration);
 	}
 
 	// useful when you want to keep a descriptor in the index
 	// (empty descriptors can be removed)
 	public static IOccurrence makeDescAndDefaultOcc(RodinIndex rodinIndex,
 			IDeclaration declaration, IInternalElement element) {
-		final Descriptor descElt3 = rodinIndex.makeDescriptor(declaration);
-		final Occurrence occ = createDefaultOccurrence(element, declaration);
-		descElt3.addOccurrence(occ);
+		rodinIndex.makeDescriptor(declaration);
+		return addInternalOccurrence(rodinIndex, declaration, element,
+				TEST_KIND);
+	}
+	
+	public static IOccurrence addInternalOccurrence(RodinIndex rodinIndex,
+			IDeclaration declaration, IInternalElement element,
+			IOccurrenceKind kind) {
+		final Descriptor descElt = rodinIndex.getDescriptor(declaration
+				.getElement());
+		final IOccurrence occ = createInternalOccurrence(element, declaration,
+				kind);
+		descElt.addOccurrence(occ);
 		return occ;
 	}
 	
@@ -90,6 +106,13 @@ public class IndexTestsUtil {
 	public static NamedElement createNamedElement(IRodinFile file,
 			String elementName) throws CoreException {
 		NamedElement el = new NamedElement(elementName, file.getRoot());
+		el.create(null, null);
+		return el;
+	}
+
+	public static NamedElement2 createNamedElement2(IRodinFile file,
+			String elementName) throws CoreException {
+		NamedElement2 el = new NamedElement2(elementName, file.getRoot());
 		el.create(null, null);
 		return el;
 	}

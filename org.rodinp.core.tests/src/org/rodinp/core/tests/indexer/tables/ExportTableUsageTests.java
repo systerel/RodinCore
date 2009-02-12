@@ -89,7 +89,7 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 		
 		// change exports
-		exportTable.get(file).add(new Declaration(elt1, "expRenName1"));
+		exportTable.add(file, new Declaration(elt1, "expRenName1"));
 		manager.clearIndexers();
 		final FakeExportIndexer indexer = new FakeExportIndexer(rodinIndex, exportTable);
 		manager.addIndexer(indexer, TEST_FILE_TYPE);

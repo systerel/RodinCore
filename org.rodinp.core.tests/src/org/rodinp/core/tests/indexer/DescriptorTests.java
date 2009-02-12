@@ -15,11 +15,11 @@ import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
+import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.IndexTestsUtil;
 import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.Descriptor;
-import org.rodinp.internal.core.indexer.Occurrence;
 
 public class DescriptorTests extends IndexTests {
 
@@ -63,7 +63,7 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testAddHasOccurrence() throws Exception {
-		final Occurrence occ =
+		final IOccurrence occ =
 				createDefaultOccurrence(file.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(occ);
@@ -72,8 +72,8 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testGetOccurrences() throws Exception {
-		final Occurrence occ1 = createDefaultOccurrence(testElt2, declTestElt1);
-		final Occurrence occ2 = createDefaultOccurrence(file.getRoot(), declTestElt1);
+		final IOccurrence occ1 = createDefaultOccurrence(testElt2, declTestElt1);
+		final IOccurrence occ2 = createDefaultOccurrence(file.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(occ1);
 		testDesc.addOccurrence(occ2);
@@ -82,10 +82,10 @@ public class DescriptorTests extends IndexTests {
 	}
 
 	public void testRemoveOccurrences() throws Exception {
-		final Occurrence localOcc = createDefaultOccurrence(testElt2, declTestElt1);
+		final IOccurrence localOcc = createDefaultOccurrence(testElt2, declTestElt1);
 		final IRodinFile importer =
 				createRodinFile(rodinProject, "importerFile.test");
-		final Occurrence importOcc =
+		final IOccurrence importOcc =
 				createDefaultOccurrence(importer.getRoot(), declTestElt1);
 
 		testDesc.addOccurrence(localOcc);
