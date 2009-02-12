@@ -40,6 +40,10 @@ public final class Descriptor {
 		return occurrences.contains(occurrence);
 	}
 
+	public boolean isEmpty() {
+		return occurrences.isEmpty();
+	}
+	
 	public void addOccurrence(IOccurrence occurrence) {
 		occurrences.add(occurrence);
 	}

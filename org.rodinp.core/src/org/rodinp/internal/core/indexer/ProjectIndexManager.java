@@ -210,7 +210,7 @@ public class ProjectIndexManager {
 			} else {
 				descriptor.removeOccurrences(file);
 
-				if (descriptor.getOccurrences().length == 0) {
+				if (descriptor.isEmpty()) {
 					nameTable.remove(declaration);
 					// even imported elements with no remaining occurrences
 					// are removed from index (no more descriptor)

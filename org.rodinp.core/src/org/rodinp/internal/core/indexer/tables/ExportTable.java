@@ -32,7 +32,7 @@ public class ExportTable implements IExportTable {
 		if (declarations == null) {
 			return Collections.emptySet();
 		}
-		return new HashSet<IDeclaration>(declarations);
+		return Collections.unmodifiableSet(declarations);
 	}
 
 	// Overwrites any previous mapping from the given file to the element,
@@ -55,6 +55,6 @@ public class ExportTable implements IExportTable {
 	}
 
 	public Set<IRodinFile> files() {
-		return new HashSet<IRodinFile>(table.keySet());
+		return Collections.unmodifiableSet(table.keySet());
 	}
 }
