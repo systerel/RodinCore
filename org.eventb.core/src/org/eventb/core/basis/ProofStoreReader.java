@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored expression and predicate storage
+ ******************************************************************************/
 package org.eventb.core.basis;
 
 import java.util.HashMap;
@@ -15,7 +26,6 @@ import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputReader;
@@ -51,49 +61,30 @@ public class ProofStoreReader implements IProofStoreReader {
 				baseTypEnv.addGivenSet(set);
 			}
 			for (IPRIdentifier ident: prProof.getIdentifiers()) {
-				baseTypEnv.addName(ident.getElementName(), ident.getType(factory));
+				baseTypEnv.add(ident.getIdentifier(factory));
 			}
 		}
 		return baseTypEnv;
 	}
 
-	public Predicate getPredicate(String ref)
-			throws RodinDBException {
+	public Predicate getPredicate(String ref) throws RodinDBException {
 		Predicate pred = predicates.get(ref);
-		if (pred == null){
-			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
+		if (pred == null) {
+			getBaseTypeEnv();
 			final IPRStoredPred prPred = prProof.getPredicate(ref);
-			FreeIdentifier[] newFreeIdents = prPred.getFreeIdents(factory);
-			if (newFreeIdents.length == 0)
-			{
-				pred = prPred.getPredicate(factory, baseTypeEnv);
-			}
-			else
-			{
-				ITypeEnvironment newTypEnv = baseTypeEnv.clone();
-				newTypEnv.addAll(newFreeIdents);
-				pred = prPred.getPredicate(factory, newTypEnv);
-			}
+			pred = prPred.getPredicate(factory, baseTypEnv);
+			predicates.put(ref, pred);
 		}
 		return pred;
 	}
 
 	public Expression getExpression(String ref) throws RodinDBException {
 		Expression expr = expressions.get(ref);
-		if (expr == null){
-			final ITypeEnvironment baseTypeEnv = getBaseTypeEnv();
+		if (expr == null) {
+			getBaseTypeEnv();
 			final IPRStoredExpr prExpr = prProof.getExpression(ref);
-			FreeIdentifier[] newFreeIdents = prExpr.getFreeIdents(factory);
-			if (newFreeIdents.length == 0)
-			{
-				expr = prExpr.getExpression(factory, baseTypeEnv);
-			}
-			else
-			{
-				ITypeEnvironment newTypEnv = baseTypeEnv.clone();
-				newTypEnv.addAll(newFreeIdents);
-				expr = prExpr.getExpression(factory, newTypEnv);
-			}
+			expr = prExpr.getExpression(factory, baseTypEnv);
+			expressions.put(ref, expr);
 		}
 		return expr;
 	}

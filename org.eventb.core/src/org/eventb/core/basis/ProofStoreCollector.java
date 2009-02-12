@@ -1,6 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored expression and predicate storage
+ ******************************************************************************/
 package org.eventb.core.basis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +25,6 @@ import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -66,43 +74,25 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		return ref;
 	}
 
-	// TODO : Make this efficient; At the moment this is not possible since once
-	// cannot overwrite a type environment.
-	private FreeIdentifier[] getIdentsNotInBase(Formula<?> formula){
-		FreeIdentifier[] freeIdents = formula.getFreeIdentifiers();
-		ArrayList<FreeIdentifier> absent = new ArrayList<FreeIdentifier>();
-		for (FreeIdentifier ident : freeIdents) {
-			if (!(baseTypEnv.contains(ident.getName()) &&
-					baseTypEnv.getType(ident.getName()).equals(ident.getType())))
-			{
-				absent.add(ident);
-			}
-		}
-		FreeIdentifier[] result = new FreeIdentifier[absent.size()];
-		return absent.toArray(result);
-	}
-	
 	public void writeOut(IPRProof prProof, IProgressMonitor monitor)
 			throws RodinDBException {
 
 		writeTypeEnv(prProof);
 		
-		for(Map.Entry<Predicate, String> entry : predicates.entrySet()){
+		for (Map.Entry<Predicate, String> entry : predicates.entrySet()) {
 			// TODO : writeout extra type info
-			IPRStoredPred prPred = prProof.getPredicate(entry.getValue());
+			final IPRStoredPred prPred = prProof.getPredicate(entry.getValue());
 			prPred.create(null, monitor);
-			Predicate pred = entry.getKey();
-			prPred.setPredicate(pred, monitor);
-			prPred.setFreeIdents(getIdentsNotInBase(pred), monitor);			
+			final Predicate pred = entry.getKey();
+			prPred.setPredicate(pred, baseTypEnv, monitor);
 		}
-		
-		for(Map.Entry<Expression, String> entry : expressions.entrySet()){
+
+		for (Map.Entry<Expression, String> entry : expressions.entrySet()) {
 			// TODO : writeout extra type info
-			IPRStoredExpr prExpr = prProof.getExpression(entry.getValue());
+			final IPRStoredExpr prExpr = prProof.getExpression(entry.getValue());
 			prExpr.create(null, monitor);
-			Expression expr = entry.getKey();
-			prExpr.setExpression(expr, monitor);
-			prExpr.setFreeIdents(getIdentsNotInBase(expr), monitor);
+			final Expression expr = entry.getKey();
+			prExpr.setExpression(expr, baseTypEnv, monitor);
 		}
 	}
 	

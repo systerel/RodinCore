@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - updated Javadoc
+ *     Systerel - streamlined interface
  ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofManager;
@@ -41,16 +41,36 @@ public interface IPRStoredPred extends IInternalElement {
 	IInternalElementType<IPRStoredPred> ELEMENT_TYPE = RodinCore
 			.getInternalElementType(EventBPlugin.PLUGIN_ID + ".prPred"); //$NON-NLS-1$
 
-	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typEnv)
+	/**
+	 * Returns the predicate stored in this element. The result is always
+	 * type-checked.
+	 * 
+	 * @param factory
+	 *            factory to use to build the result
+	 * @param baseTypenv
+	 *            common type environment of the proof tree
+	 * @return the predicate stored in this element
+	 * @throws RodinDBException
+	 *             in case of an error accessing the Rodin database
+	 */
+	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment baseTypenv)
 			throws RodinDBException;
 
-	void setPredicate(Predicate predicate, IProgressMonitor monitor)
-			throws RodinDBException;
+	/**
+	 * Stores the given predicate in this element. The given predicate must be
+	 * type-checked.
+	 * 
+	 * @param predicate
+	 *            the predicate to store
+	 * @param baseTypenv
+	 *            common type environment of the proof tree
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws RodinDBException
+	 *             in case of an error accessing the Rodin database
+	 */
+	void setPredicate(Predicate predicate, ITypeEnvironment baseTypenv,
+			IProgressMonitor monitor) throws RodinDBException;
 
-	// extra free idents
-	FreeIdentifier[] getFreeIdents(FormulaFactory factory)
-			throws RodinDBException;
-
-	void setFreeIdents(FreeIdentifier[] freeIdents, IProgressMonitor monitor)
-			throws RodinDBException;
 }
