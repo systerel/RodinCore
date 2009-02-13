@@ -350,7 +350,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		checker.addIdents(addedIdents);
 		checker.checkFormulas(infHyps);
 		if (checker.hasTypeCheckError())
-			return null;
+			return this;
 		if (!checker.areAddedIdentsFresh())
 			return this;
 
