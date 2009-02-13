@@ -47,6 +47,10 @@ import org.rodinp.core.RodinDBException;
 @SuppressWarnings("restriction")
 public class ProofSkeletonBuilder {
 
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	private static final LiteralPredicate bfalseGoal = ff.makeLiteralPredicate(
+			Formula.BFALSE, null);
+
 	/**
 	 * Computes the root sequent of the given proof.
 	 * 
@@ -55,11 +59,8 @@ public class ProofSkeletonBuilder {
 	 * @return the IProverSequent that is the root node of the proof tree.
 	 * @throws RodinDBException
 	 */
-	public static IProverSequent buildRootSequent(IPRProof pr)
+	private static IProverSequent buildRootSequent(IPRProof pr)
 			throws RodinDBException {
-		final FormulaFactory ff = FormulaFactory.getDefault();
-		final LiteralPredicate bfalseGoal = ff.makeLiteralPredicate(
-				Formula.BFALSE, null);
 		final ITypeEnvironment env;
 		final Collection<Predicate> hyps;
 		final Predicate goal;
@@ -110,6 +111,7 @@ public class ProofSkeletonBuilder {
 
 		IProverSequent rootSequent = buildRootSequent(pr);
 		if (rootSequent == null) {
+			// TODO log an error for ill-formed proof
 			return null;
 		}
 
@@ -126,6 +128,8 @@ public class ProofSkeletonBuilder {
 			assert prTree.getRoot().isOpen();
 			if (ProofBuilder.reuse(prTree.getRoot(), skel, monitor)) {
 				return prTree;
+			} else {
+				// TODO log an error for ill-formed proof
 			}
 		} catch (AssertionError e) {
 			// catching error in reuse (see bug #2355262)
@@ -139,7 +143,7 @@ public class ProofSkeletonBuilder {
 
 	private static IProofComponent getProofComponent(IPRProof pr) {
 		final IProofManager pm = EventBPlugin.getProofManager();
-		final IEventBRoot prRoot = (IEventBRoot) pr.getRodinFile().getRoot();
+		final IEventBRoot prRoot = (IEventBRoot) pr.getRoot();
 		return pm.getProofComponent(prRoot);
 	}
 
@@ -153,6 +157,7 @@ public class ProofSkeletonBuilder {
 	}
 
 	private static class MakeEmpty implements IWorkspaceRunnable {
+
 		private final IPRProof pr;
 		private final IProofComponent pc;
 		
@@ -162,19 +167,13 @@ public class ProofSkeletonBuilder {
 		}
 		
 		public void run(IProgressMonitor monitor) throws CoreException {
-			makeEmpty(pr, pc);
-		}
-		
-		private static void makeEmpty(IPRProof pr, IProofComponent pc)
-		throws RodinDBException {
 			final IProofAttempt prAttempt =
 				pc.createProofAttempt(pr.getElementName(),
 						"ProofSkeletonBuilder", null);
 			prAttempt.commit(false, null);
 			prAttempt.dispose();
 		}
-		
+
 	}	
-	
 
 }
