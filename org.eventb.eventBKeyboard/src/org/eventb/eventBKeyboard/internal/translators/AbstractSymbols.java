@@ -94,16 +94,11 @@ public abstract class AbstractSymbols {
 		Collection<Symbol> collection = tempSymbols.get(key);
 		if (collection == null) {
 			collection = new HashSet<Symbol>();
-			collection.add(symbol);
 			tempSymbols.put(key, collection);
-		} else {
-			if (collection.contains(symbol)) {
-
-			} else {
-				collection.add(symbol);
-			}
 		}
-
+		if (!collection.contains(symbol)) {
+			collection.add(symbol);
+		}
 	}
 
 	private void generateNewSymbol(Symbol symbol, Symbol oldSymbol) {
@@ -168,16 +163,11 @@ public abstract class AbstractSymbols {
 		Collection<Symbol> collection = symbols.get(key);
 		if (collection == null) {
 			collection = new HashSet<Symbol>();
-			collection.add(symbol);
 			symbols.put(key, collection);
-		} else {
-			if (collection.contains(symbol)) {
-
-			} else {
-				collection.add(symbol);
-			}
 		}
-
+		if (!collection.contains(symbol)) {
+			collection.add(symbol);
+		}
 	}
 
 	public int getMaxSize() {

@@ -49,6 +49,7 @@ public class EventBKeyboardView extends ViewPart implements
 	 * This is a callback that will allow us to create the text area and the
 	 * check button and initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 5;
@@ -87,6 +88,7 @@ public class EventBKeyboardView extends ViewPart implements
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		formula.setFocus();
 	}

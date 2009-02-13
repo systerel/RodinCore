@@ -12,7 +12,7 @@ IEventBStyledTextTranslator {
 	/**
 	 * Testing if a character is a text character
 	 * 
-	 * @param c:
+	 * @param c
 	 *            a character
 	 * @return true if the character is one of the text characters (i.e. 'A' to
 	 *         'Z', 'a' to 'z', etc.) false otherwise
@@ -29,32 +29,10 @@ IEventBStyledTextTranslator {
 		return false;
 	}
 
-	/**
-	 * Attempting to find and translate a text combo. The combo is translated if
-	 * there are white space at the beginning and the end of the combo.
-	 * 
-	 * @param widget:
-	 *            The Text Widget
-	 * @param text:
-	 *            The actual string contains in the "widget"
-	 * @param currentPos
-	 *            Current position in the string "text"
-	 * 
-	 * @return true if there is a string which is translated into mathematical
-	 *         expression false otherwise
-	 */
-
 	private static HashMap<String, Collection<Symbol>> symbols = null;
 
 	private static int maxSize = 0;
 
-	/**
-	 * Translate the content of the text widget. Because of the "space", it
-	 * needs be translated twice.
-	 * <p>
-	 * 
-	 * @see org.eventb.eventBKeyboard.IEventBKeyboardTranslator#translate(org.eclipse.swt.widgets.Text)
-	 */
 	public void translate(StyledText widget) {
 		if (symbols == null) {
 			TextSymbols textSymbol = new TextSymbols();

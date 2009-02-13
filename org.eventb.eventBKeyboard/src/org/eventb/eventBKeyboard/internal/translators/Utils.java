@@ -22,7 +22,7 @@ public class Utils {
 	/**
 	 * Testing if a character is a text character
 	 * 
-	 * @param c:
+	 * @param c
 	 *            a character
 	 * @return true if the character is one of the text characters (i.e. 'A' to
 	 *         'Z', 'a' to 'z', etc.) false otherwise

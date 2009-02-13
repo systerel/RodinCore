@@ -14,20 +14,6 @@ public class EventBStyledTextMathTranslator implements
 
 	private static int maxSize = 0;
 
-	/**
-	 * Attempting to find and translate a mathematical combo. The combo is
-	 * translated once it is found in the string.
-	 * 
-	 * @param widget:
-	 *            The Text Widget
-	 * @param text:
-	 *            The actual string contains in the "widget"
-	 * @param currentPos
-	 *            Current position in the string "text"
-	 * 
-	 * @return true if there is a mathematical string which is translated into
-	 *         mathematical expression false otherwise
-	 */
 	public void translate(StyledText widget) {
 		if (symbols == null) {
 			MathSymbols mathSymbols = new MathSymbols();

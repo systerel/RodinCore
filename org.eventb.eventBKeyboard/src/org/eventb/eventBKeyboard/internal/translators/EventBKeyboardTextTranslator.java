@@ -26,21 +26,6 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
  */
 public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 
-	/**
-	 * Attempting to find and translate a text combo. The combo is translated if
-	 * there are white space at the beginning and the end of the combo.
-	 * 
-	 * @param widget:
-	 *            The Text Widget
-	 * @param text:
-	 *            The actual string contains in the "widget"
-	 * @param currentPos
-	 *            Current position in the string "text"
-	 * 
-	 * @return true if there is a string which is translated into mathematical
-	 *         expression false otherwise
-	 */
-
 	private static HashMap<String, Collection<Symbol>> symbols = null;
 
 	private static int maxSize = 0;
