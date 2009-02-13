@@ -185,6 +185,9 @@ public class UserSupportDeltaProcessor {
 				if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
 					// Try to reuse
 					IProofState proofState = userSupport.getProofState(psStatus);
+					
+					if (proofState == null)
+						return;
 
 					// Do nothing if the state is uninitialized
 					if (proofState.isUninitialised())
