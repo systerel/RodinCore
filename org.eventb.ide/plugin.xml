@@ -41,6 +41,10 @@
                ratio="0.25"
                relationship="fast"/>
          <view
+               id="org.eventb.ui.views.ProofSkeleton"
+               ratio="0.25"
+               relationship="fast"/>
+         <view
                id="org.eventb.ui.views.Goal"
                ratio="0.4"
                relationship="top"
@@ -52,6 +56,9 @@
          <viewShortcut id="org.eventb.ui.views.ProofControl"/>
          <viewShortcut id="org.eventb.ui.views.ProofInformation"/>
          <viewShortcut id="org.eventb.ui.views.SearchHypothesis"/>
+         <viewShortcut id="org.eventb.ui.views.CacheHypothesis"/>
+         <viewShortcut id="org.eventb.ui.views.ProofSkeleton"/>
+         <viewShortcut id="org.eventb.ui.views.Goal"/>
          <viewShortcut id="org.eventb.ui.views.RodinProblemView"/>
          <view
                id="org.eventb.ui.views.RodinProblemView"
