@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class TextTest extends TestCase {
 
@@ -19,7 +20,7 @@ public class TextTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		Display display = Display.getDefault();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = display.getActiveShell();
 		shell.setLayout(new GridLayout());
 		single = new Text(shell, SWT.SINGLE | SWT.BORDER);
