@@ -13,7 +13,6 @@ package org.eventb.core.seqprover.tests;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -39,15 +38,15 @@ import org.junit.Test;
  * 
  * @author Laurent Voisin
  */
-public class TypeTests extends AbstractProofTreeTests {	
+public class TypeTests extends AbstractProofTreeTests {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault(); 
+	private static FormulaFactory ff = FormulaFactory.getDefault();
 
-	private final GivenType typeS = ff.makeGivenType("S");
-	private final GivenType typeT = ff.makeGivenType("T");
-	
-	private final Predicate falsum = ff.makeLiteralPredicate(BFALSE, null);
-	
+	private static final GivenType typeS = ff.makeGivenType("S");
+	private static final GivenType typeT = ff.makeGivenType("T");
+
+	private static final Predicate falsum = ff.makeLiteralPredicate(BFALSE, null);
+
 	@Test
 	public void bug2355262() {
 		final IProofTreeNode rootS = makeProofTree(typeS).getRoot();
@@ -55,11 +54,11 @@ public class TypeTests extends AbstractProofTreeTests {
 		final ITactic rmTac = Tactics.removeMembership(hyp, IPosition.ROOT);
 		rmTac.apply(rootS, null);
 		assertFalse("Tactic should have succeeded", rootS.isOpen());
-		
+
 		final IProofTreeNode rootT = makeProofTree(typeT).getRoot();
 		final IProofSkeleton proofSkeleton = rootS.copyProofSkeleton();
 		BasicTactics.rebuildTac(proofSkeleton).apply(rootT, null);
-		assertTrue("Rebuild should have failed", rootT.isOpen());
+		assertFalse("Rebuild should have succeeded", rootT.isOpen());
 	}
 
 	private IProofTree makeProofTree(final GivenType type) {
