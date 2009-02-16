@@ -46,92 +46,41 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		super(true, FormulaFactory.getDefault());
 	}
 		
+	protected QuantifiedPredicate makeQuantifiedPredicate(int tag,
+			BoundIdentDecl[] boundIdentifiers, Predicate child) {
+		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
+	}
+
+	protected AssociativePredicate makeAssociativePredicate(int tag,
+			Predicate... children) {
+		return ff.makeAssociativePredicate(tag, children, null);
+	}
+
+	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
+			Expression right) {
+		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+
 	%include {Formula.tom}
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate)
 	{
-		BinaryExpression expression1=null;
-		BinaryExpression expression2=null;
-		BinaryExpression expression;
 		%match (Predicate predicate) {
 			/**
-	         * SetComprehension: A ↦ B ↦ ... ↦N∈{a ↦ b ↦ ... ↦n|P(a,b,...,n)}=P(A,B,...,N)
+	         * SetComprehension: F ∈ {x,y,..· P(x,y,..) | E(x,y,..)} == ∃x,y,.. · P(x,y,..) ∧ F = E(x,y,..)
 	         */
-			In(left,Cset(ident,pred,expr))->{
-				
-				// is the part before ∈ of the form A ↦ B ↦ ... ↦N then rewrite it to x ↦ x ↦ ... ↦x
-				if (`expr.getTag()==Formula.MAPSTO)
-					expression1=(BinaryExpression) redo((BinaryExpression)`expr);
-				// is the part before | of the form a ↦ b ↦ ... ↦n then rewrite it to x ↦ x ↦ ... ↦x
-				if (`left.getTag()==Formula.MAPSTO)
-					expression2=(BinaryExpression) redo((BinaryExpression)`left);
-				
-				if(expression1.equals(expression2))
-				{
-					//if they have the same structure we define a quantified predicate and instantiate it 
-					// with the extracted Expressions from A ↦ B ↦ ... ↦N
-					QuantifiedPredicate pred = ff.makeQuantifiedPredicate(Formula.FORALL, `ident, `pred, null);
-					Expression[] expressions=new Expression[1];
-					expressions=extract_expressions((BinaryExpression)tom_left).toArray(expressions);
-					return pred.instantiate(expressions, ff);
-				}
-				
-				return predicate;
+			In(F,Cset(xy,P,E))->{
+				Predicate rPred = makeRelationalPredicate(Predicate.EQUAL, `F, `E);
+				Predicate aPred = makeAssociativePredicate(Predicate.LAND, `P, rPred);
+
+				Predicate qPred = makeQuantifiedPredicate(Predicate.EXISTS, `xy, aPred);
+								
+				return qPred;
 			}
 		}
 		return predicate;
 	}
 	
-	/**
-	 * Rewrites a formula of the form A ↦ B ↦ ... ↦N to x ↦ x ↦ ... ↦x where the x are free identifiers so 
-	 * equality can be checked.
-	 *
-	 * @param expr
-	 *            a binary expression of the form A ↦ B ↦ ... ↦N
-	 * @return This formula after application of the substitution.
-	 */
-	private Expression redo (BinaryExpression expr)
-	{
-		Expression left;
-		Expression right;
-		
-			if(expr.getLeft().getTag()==Formula.MAPSTO) 
-				left=redo((BinaryExpression)expr.getLeft());
-			else
-				left=ff.makeFreeIdentifier("x", null,expr.getLeft().getType() );
-
-			if(expr.getRight().getTag()==Formula.MAPSTO) 
-				right=redo((BinaryExpression)expr.getRight());
-			else
-				right=ff.makeFreeIdentifier("x", null,expr.getRight().getType() );
-		
-		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, null);
-	}
-
-	/**
-	 * Extracts the expressions a formula of the form A ↦ B ↦ ... ↦N. In the case of
-	 * A ↦ B ↦ C we would get A,B,C.
-	 *
-	 * @param expr
-	 *            a binary expression of the form A ↦ B ↦ ... ↦N
-	 * @return A list of the extracted expressions.
-	 */
-	private ArrayList<Expression> extract_expressions(BinaryExpression expr)
-	{
-		ArrayList<Expression> expressions= new ArrayList<Expression>();
-		
-		if(expr.getLeft().getTag()==Formula.MAPSTO) 
-			expressions.addAll(extract_expressions((BinaryExpression)expr.getLeft()));
-		else
-			expressions.add(expr.getLeft());
-
-		if(expr.getRight().getTag()==Formula.MAPSTO) 
-			expressions.addAll(extract_expressions((BinaryExpression)expr.getRight()));
-		else
-			expressions.add (expr.getRight());
-		
-		return expressions;
-		
-	}
-
+	
+	
 }

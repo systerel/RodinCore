@@ -9,6 +9,11 @@
             class="org.eventb.contributer.seqprover.fr1942714.AutoRewrites"
             id="org.eventb.contributer.seqprover.fr1942714.autoRewrites">
       </reasoner>
+      <reasoner
+            class="org.eventb.contributer.seqprover.fr1942714.RemoveMembership"
+            id="org.eventb.contributer.seqprover.fr1942714"
+            name="Manual rewrite">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -28,6 +33,19 @@
          point="org.eventb.core.pomTactics">
       <tactic
             id="org.eventb.contributer.seqprover.fr1942714.autoTactic1">
+      </tactic>
+   </extension>
+   <extension
+         point="org.eventb.ui.proofTactics">
+      <tactic
+            icon="icons/default.gif"
+            id="org.eventb.contributer.seqprover.fr1942714.tacticHyp"
+            interrupt="false"
+            name="Remove membership in hypothesis"
+            priorty="9"
+            tacticProvider="org.eventb.contributer.seqprover.fr1942714.RemoveMembershipHyp"
+            target="hypothesis"
+            tooltip="Set comprehension membership">
       </tactic>
    </extension>
 
