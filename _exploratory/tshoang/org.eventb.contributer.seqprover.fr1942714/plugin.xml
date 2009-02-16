@@ -47,6 +47,16 @@
             target="hypothesis"
             tooltip="Set comprehension membership">
       </tactic>
+      <tactic
+            icon="icons/default.gif"
+            id="org.eventb.contributer.seqprover.fr1942714.tacticGoal"
+            interrupt="false"
+            name="Remove membership in goal"
+            priorty="9"
+            tacticProvider="org.eventb.contributer.seqprover.fr1942714.RemoveMembershipGoal"
+            target="goal"
+            tooltip="Set comprehension membership">
+      </tactic>
    </extension>
 
 </plugin>

@@ -19,29 +19,34 @@ public class RemoveMembershipGoal  extends DefaultTacticProvider implements
 	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
-		Predicate pred = node.getSequent().goal();
-		return pred.getPositions(new DefaultFilter() {
+		if (node != null) {
+			Predicate pred = node.getSequent().goal();
+			List<IPosition> positions = pred.getPositions(new DefaultFilter() {
 
-			@Override
-			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.IN) {
-					Expression right = predicate.getRight();
-					int rTag = right.getTag();
-					if (rTag == Expression.SETEXT)
-							return true;
+				@Override
+				public boolean select(RelationalPredicate predicate) {
+					if (predicate.getTag() == Predicate.IN) {
+						Expression right = predicate.getRight();
+						int rTag = right.getTag();
+						if (rTag == Expression.CSET	)
+								return true;
+					}
+					return super.select(predicate);
 				}
-				return super.select(predicate);
-			}
 
-		});
+			});
+			if (positions.size() == 0)
+				return null;
+			return positions;
+		}
+		return null;
 	}
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs, String globalInput) {
-		Predicate pred = node.getSequent().goal();
 		return BasicTactics.reasonerTac(new RemoveMembership(),
-				new RemoveMembership.Input(pred, position));
+				new RemoveMembership.Input(null, position));
 	}
 
 }
