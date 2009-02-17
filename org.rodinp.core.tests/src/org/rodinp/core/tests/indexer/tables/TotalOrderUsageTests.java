@@ -14,7 +14,6 @@ import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -26,9 +25,6 @@ import org.rodinp.internal.core.indexer.Declaration;
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.tables.ExportTable;
 import org.rodinp.internal.core.indexer.tables.IExportTable;
-import org.rodinp.internal.core.indexer.tables.IFileTable;
-import org.rodinp.internal.core.indexer.tables.INameTable;
-import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class TotalOrderUsageTests extends IndexTests {
@@ -251,21 +247,15 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file2);
 
-		final IExportTable exportTable = manager.getExportTable(project);
-		final IFileTable fileTable = manager.getFileTable(project);
-		final INameTable nameTable = manager.getNameTable(project);
-		final IRodinIndex index = manager.getIndex(project);
+		final IDeclaration[] exports = manager.getExports(file2);
+		final IDeclaration[] fileDecls = manager.getDeclarations(file2);
+		final IDeclaration[] nameDecls = manager.getDeclarations(project,
+				eltF2Name);
 
-		final Set<IDeclaration> exports = exportTable.get(file2);
-		final IDeclaration[] fileDecls = fileTable.get(file2);
-		final IDeclaration[] nameDecls = nameTable
-				.getDeclarations(eltF2Name);
-
-		assertTrue("exports should be empty after file deletion", exports
-				.isEmpty());
+		assertIsEmpty(exports);
 		assertIsEmpty(fileDecls);
 		assertIsEmpty(nameDecls);
-		assertNoSuchDescriptor(index, eltF2);
+		assertNotIndexed(manager, eltF2);
 	}
 
 	public void testSerialExports() throws Exception {
@@ -290,10 +280,13 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file1, file2, file3);
 
-		final IExportTable exportTable = manager.getExportTable(project);
-		assertExports(f1f2f3expElt3.get(file3), exportTable.get(file3));
-		assertExports(f1f2f3expElt3.get(file2), exportTable.get(file2));
-		assertExports(f1f2f3expElt3.get(file1), exportTable.get(file1));
+		final String exportsStr = "exports";
+		assertSameElements(f1f2f3expElt3.get(file3), manager.getExports(file3),
+				exportsStr);
+		assertSameElements(f1f2f3expElt3.get(file2), manager.getExports(file2),
+				exportsStr);
+		assertSameElements(f1f2f3expElt3.get(file1), manager.getExports(file1),
+				exportsStr);
 	}
 
 	public void testSeveralIndexing() throws Exception {

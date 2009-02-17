@@ -19,7 +19,7 @@ import java.util.Set;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
 
-public class ExportTable implements IExportTable {
+public class ExportTable implements IExportTable, Cloneable {
 
 	Map<IRodinFile, Set<IDeclaration>> table;
 
@@ -56,5 +56,12 @@ public class ExportTable implements IExportTable {
 
 	public Set<IRodinFile> files() {
 		return Collections.unmodifiableSet(table.keySet());
+	}
+	
+	@Override
+	public ExportTable clone() {
+		final ExportTable clone = new ExportTable();
+		clone.table.putAll(table);
+		return clone;
 	}
 }

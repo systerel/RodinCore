@@ -17,9 +17,9 @@ import java.io.File;
 
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.PerProjectPIM;
-import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.persistence.IPersistor;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
+import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -79,7 +79,7 @@ public class XMLPersistor implements IPersistor {
 		}
 	}
 
-	public boolean saveProject(ProjectIndexManager pim, File file) {
+	public boolean saveProject(PersistentPIM pim, File file) {
 		try {
 			Document doc = getDocument();
 
@@ -105,7 +105,7 @@ public class XMLPersistor implements IPersistor {
 				return false;
 			}
 			final PIMPersistor persistor = new PIMPersistor();
-			persistor.restore(pimNode, pppim);
+			pppim.put(persistor.restore(pimNode));
 			return true;
 		} catch (Exception e) {
 			if (IndexManager.DEBUG) {

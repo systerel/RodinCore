@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
+import static java.util.Arrays.asList;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class TotalOrderTests extends IndexTests {
 	private static void setPreds(TotalOrder<Integer> iter, boolean setToIter,
 			Integer label, Integer... preds) {
 
-		iter.setPredecessors(label, preds);
+		iter.setPredecessors(label, asList(preds));
 
 		if (setToIter) {
 			setToIter(iter, label);
@@ -509,9 +510,8 @@ public class TotalOrderTests extends IndexTests {
 
 		assertNext(order, second);
 
-		final Integer[] NO_PREDS = makeArray();
 		// second is no more the successor of first => breaks the cycle
-		order.setPredecessors(second, NO_PREDS);
+		setPreds(order, second); // no predecessors
 
 		// so first becomes the last to iterate and second becomes the first
 		final int new1 = second;

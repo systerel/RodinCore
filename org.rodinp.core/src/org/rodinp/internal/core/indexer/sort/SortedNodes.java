@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer.sort;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -51,7 +52,7 @@ public class SortedNodes<T> implements Iterator<T> {
 		numberToIter = 0;
 	}
 
-	public void sort(List<Node<T>> nodes) {
+	public void sort(Collection<Node<T>> nodes) {
 
 		final boolean iterating = (currentNode != null);
 

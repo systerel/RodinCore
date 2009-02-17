@@ -34,9 +34,9 @@ public class PPPIMPersistor {
 			final Element pimNode = (Element) pimNodes.item(i);
 
 			final PIMPersistor persistor = new PIMPersistor();
-			persistor.restore(pimNode, pppim);
+			
+			pppim.put(persistor.restore(pimNode));
 		}
-
 	}
 
 	public static void save(PerProjectPIM pppim, Document doc, Element indexRoot) {
@@ -44,7 +44,7 @@ public class PPPIMPersistor {
 			final Element pimNode = createElement(doc, PIM);
 
 			final PIMPersistor persistor = new PIMPersistor();
-			persistor.save(pim, doc, pimNode);
+			persistor.save(pim.getPersistentData(), doc, pimNode);
 
 			indexRoot.appendChild(pimNode);
 		}

@@ -13,6 +13,7 @@ package org.rodinp.core.tests.util;
 import static junit.framework.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -30,11 +31,9 @@ import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.internal.core.indexer.Descriptor;
+import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.Occurrence;
-import org.rodinp.internal.core.indexer.sort.TotalOrder;
-import org.rodinp.internal.core.indexer.tables.IExportTable;
-import org.rodinp.internal.core.indexer.tables.IFileTable;
-import org.rodinp.internal.core.indexer.tables.INameTable;
+import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
@@ -124,16 +123,23 @@ public class IndexTestsUtil {
 				+ element.getElementName(), desc);
 	}
 
+	public static void assertNotIndexed(IndexManager manager,
+			IInternalElement element) throws Exception {
+		final IDeclaration declaration = manager.getDeclaration(element);
+		assertNull("there should not be any declaration for element "
+				+ element.getElementName(), declaration);
+	}
+
 	public static void assertNotNullDesc(Descriptor desc) {
 		assertNotNull("Descriptor " + desc + " should not be null", desc);
 	}
 
 	public static void assertDescriptor(Descriptor expected, Descriptor actual) {
 		assertDescDeclaration(actual, expected.getDeclaration());
-		final IOccurrence[] expOccs = expected.getOccurrences();
-		final IOccurrence[] actOccs = actual.getOccurrences();
+		final Set<IOccurrence> expOccs = expected.getOccurrences();
+		final Set<IOccurrence> actOccs = actual.getOccurrences();
 
-		assertOccurrences(expOccs, actOccs);
+		assertEquals("bad occurrences in descriptor", expOccs, actOccs);
 	}
 
 	public static <T> void assertSameElements(T[] expected, T[] actual,
@@ -144,40 +150,52 @@ public class IndexTestsUtil {
 		assertSameElements(expList, actList, arrayDesc);
 	}
 
-	public static <T> void assertSameElements(List<T> expList, List<T> actList,
-			String arrayDesc) {
-		assertEquals(arrayDesc
+	public static <T> void assertSameElements(Collection<T> expColl,
+			Collection<T> actColl,
+			String elementDesc) {
+		assertEquals(elementDesc
 				+ ": bad length in\nact: "
-				+ actList
+				+ actColl
 				+ "\nexp: "
-				+ expList, expList.size(), actList.size());
-		assertTrue(arrayDesc
+				+ expColl, expColl.size(), actColl.size());
+		assertTrue(elementDesc
 				+ ": bad elements in\nact: "
-				+ actList
+				+ actColl
 				+ "\nexp: "
-				+ expList, actList.containsAll(expList));
+				+ expColl, actColl.containsAll(expColl));
 	}
 
-	public static void assertIndex(IRodinIndex expected, IRodinIndex actual) {
+	public static <T> void assertSameElements(Collection<T> expColl, T[] actArray,
+			String arrayDesc) {
+		assertSameElements(expColl, Arrays.asList(actArray), arrayDesc);
+	}
 
-		final Descriptor[] expDescs = expected.getDescriptors();
+	public static void assertIndex(IRodinIndex expected,
+			ProjectIndexManager actual) throws InterruptedException {
+
+		final Collection<Descriptor> expDescs = expected.getDescriptors();
 
 		for (Descriptor expDesc : expDescs) {
 			final IInternalElement elt = expDesc.getDeclaration().getElement();
-			final Descriptor actDesc = actual.getDescriptor(elt);
-			assertDescriptor(expDesc, actDesc);
+			final IDeclaration actDecl = actual.getDeclaration(elt);
+			assertNotNull("declaration expected for " + elt, actDecl);
+			final IOccurrence[] actOccs = actual.getOccurrences(actDecl);
+			assertSameElements(expDesc.getOccurrences(), actOccs, "occurrences");
 		}
-	}
-
-	public static void assertOccurrences(IOccurrence[] expected,
-			IOccurrence[] actual) {
-		assertSameElements(expected, actual, "occurrences");
 	}
 
 	public static void assertDescriptor(Descriptor desc,
 			IDeclaration declaration, int expectedLength) {
 		assertDescDeclaration(desc, declaration);
 		assertLength(desc, expectedLength);
+	}
+
+	public static void assertDescriptor(IndexManager manager,
+			IDeclaration declaration, int expectedLength) throws Exception {
+		final IDeclaration actualDecl = manager.getDeclaration(declaration.getElement());
+		assertEquals("bad declaration", declaration, actualDecl);
+		final IOccurrence[] actualOccs = manager.getOccurrences(declaration);
+		assertLength(actualOccs, expectedLength);
 	}
 
 	public static void assertContains(Descriptor desc, IOccurrence occ) {
@@ -202,7 +220,7 @@ public class IndexTestsUtil {
 	public static void assertLength(Descriptor desc, int expectedLength) {
 		assertNotNullDesc(desc);
 		assertEquals("bad number of occurrences", expectedLength, desc
-				.getOccurrences().length);
+				.getOccurrences().size());
 	}
 
 	public static void assertDescDeclaration(Descriptor desc,
@@ -221,6 +239,10 @@ public class IndexTestsUtil {
 
 	public static <T> void assertIsEmpty(T[] elements) {
 		assertLength(elements, 0);
+	}
+
+	public static <T> void assertIsEmpty(Collection<T> collection) {
+		assertTrue("collection should be empty", collection.isEmpty());
 	}
 
 	private static void assertContains(IInternalElement elem,
@@ -248,57 +270,10 @@ public class IndexTestsUtil {
 		assertLength(actualElements, expectedElements.length);
 	}
 
-	public static void assertOrder(TotalOrder<IRodinFile> expected,
-			TotalOrder<IRodinFile> actual, List<IRodinFile> files) {
-		// assert initially marked files
-		assertMarkedOrder(expected, actual);
-
-		// assert that files not marked are present and well sorted
-		for (IRodinFile file : files) {
-			final List<IRodinFile> expPreds = expected.getPredecessors(file);
-			final List<IRodinFile> actPreds = actual.getPredecessors(file);
-			assertSameElements(expPreds, actPreds, "predecessors");
-		}
-	}
-
-	private static void assertMarkedOrder(TotalOrder<IRodinFile> expected,
-			TotalOrder<IRodinFile> actual) {
-		// nodes must already be marked
-		while (expected.hasNext()) {
-			final IRodinFile expFile = expected.next();
-			assertTrue("should have next: " + expFile, actual.hasNext());
-			final IRodinFile actFile = actual.next();
-			assertEquals("Bad file", expFile, actFile);
-		}
-	}
-
-	public static void assertExportTable(IExportTable expected,
-			IExportTable actual, List<IRodinFile> files) {
-		for (IRodinFile file : files) {
-			assertExports(expected.get(file), actual.get(file));
-		}
-	}
-
 	public static void assertExports(Set<IDeclaration> expected,
 			Set<IDeclaration> actual) {
 
 		assertEquals("Bad exports.", expected, actual);
-	}
-
-	public static void assertFileTable(IFileTable expected, IFileTable actual,
-			List<IRodinFile> files) {
-		for (IRodinFile file : files) {
-			assertSameElements(expected.get(file), actual.get(file),
-					"file table");
-		}
-	}
-
-	public static void assertNameTable(INameTable expected, INameTable actual,
-			List<String> names) {
-		for (String name : names) {
-			assertSameElements(expected.getDeclarations(name), actual
-					.getDeclarations(name), "name table");
-		}
 	}
 
 	public static <T> void assertPredecessors(final List<T> predecessors,

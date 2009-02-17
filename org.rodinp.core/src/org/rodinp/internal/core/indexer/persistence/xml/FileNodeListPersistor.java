@@ -13,6 +13,7 @@ package org.rodinp.internal.core.indexer.persistence.xml;
 import static org.rodinp.internal.core.indexer.persistence.xml.XMLElementTypes.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.rodinp.core.IRodinFile;
@@ -39,7 +40,7 @@ public class FileNodeListPersistor {
 		return fileNodes;
 	}
 
-	public static void saveFiles(List<IRodinFile> files, Document doc,
+	public static void saveFiles(Collection<IRodinFile> files, Document doc,
 			Element parent, XMLElementTypes nodeType, XMLAttributeTypes attType) {
 		for (IRodinFile file : files) {
 			saveFile(file, doc, parent, nodeType, attType);

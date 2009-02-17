@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer.sort;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,11 +36,11 @@ public class Node<T> {
 	}
 
 	public List<Node<T>> getPredecessors() {
-		return new ArrayList<Node<T>>(predecessors);
+		return Collections.unmodifiableList(predecessors);
 	}
 
 	public List<Node<T>> getSuccessors() {
-		return new ArrayList<Node<T>>(successors);
+		return Collections.unmodifiableList(successors);
 	}
 
 	public void changePredecessors(List<Node<T>> newPredecessors) {

@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer.tables;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +40,9 @@ public final class RodinIndex implements IRodinIndex {
 		return map.get(element);
 	}
 
-	public Descriptor[] getDescriptors() {
+	public Collection<Descriptor> getDescriptors() {
 		final Collection<Descriptor> descriptors = map.values();
-		return descriptors.toArray(new Descriptor[descriptors.size()]);
+		return Collections.unmodifiableCollection(descriptors);
 	}
 
 	/**

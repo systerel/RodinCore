@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.persistence;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.rodinp.internal.core.indexer.sort.Node;
 
@@ -20,19 +20,19 @@ import org.rodinp.internal.core.indexer.sort.Node;
  */
 public class PersistentSortedNodes<T> {
 
-	final List<Node<T>> nodes;
-	final List<T> iterated;
+	final Collection<Node<T>> nodes;
+	final Collection<T> iterated;
 
-	public PersistentSortedNodes(List<Node<T>> nodes, List<T> iterated) {
+	public PersistentSortedNodes(Collection<Node<T>> nodes, Collection<T> iterated) {
 		this.nodes = nodes;
 		this.iterated = iterated;
 	}
 
-	public List<Node<T>> getNodes() {
+	public Collection<Node<T>> getNodes() {
 		return nodes;
 	}
 
-	public List<T> getIterated() {
+	public Collection<T> getIterated() {
 		return iterated;
 	}
 

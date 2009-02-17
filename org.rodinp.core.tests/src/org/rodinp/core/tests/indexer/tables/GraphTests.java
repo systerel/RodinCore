@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
+import static java.util.Arrays.asList;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.rodinp.core.tests.indexer.IndexTests;
@@ -42,7 +44,7 @@ public class GraphTests extends IndexTests {
 	private static void setPreds(Graph<Integer> iter, Integer label,
 			Integer... preds) {
 
-		iter.setPredecessors(label, preds);
+		iter.setPredecessors(label, asList(preds));
 	}
 
 	private static void remove(Graph<Integer> iter, Integer label) {
@@ -50,7 +52,7 @@ public class GraphTests extends IndexTests {
 		iter.remove(node);
 	}
 
-	private static List<Integer> getLabels(List<Node<Integer>> nodes) {
+	private static List<Integer> getLabels(Collection<Node<Integer>> nodes) {
 		List<Integer> result = new ArrayList<Integer>();
 		for (Node<Integer> node : nodes) {
 			result.add(node.getLabel());
@@ -60,7 +62,7 @@ public class GraphTests extends IndexTests {
 
 	private void assertLabels(Graph<Integer> gr, Integer... labels) {
 		final List<Integer> expected = Arrays.asList(labels);
-		final List<Node<Integer>> nodes = gr.getNodes();
+		final Collection<Node<Integer>> nodes = gr.getNodes();
 		final List<Integer> actual = getLabels(nodes);
 
 		assertEquals("Bad length for: " + nodes, expected.size(), actual.size());
@@ -99,14 +101,14 @@ public class GraphTests extends IndexTests {
 	}
 
 	public void testSetGetPredecessors() {
-		graph.setPredecessors(2, makeArray(1));
+		graph.setPredecessors(2, asList(1));
 		final List<Integer> predecessors = graph.getPredecessors(2);
 
 		assertPredecessors(predecessors, 1);
 	}
 
 	public void testSetGetSeveralPredecessors() {
-		graph.setPredecessors(3, makeArray(1, 2));
+		graph.setPredecessors(3, asList(1, 2));
 		final List<Integer> predecessors = graph.getPredecessors(3);
 
 		assertPredecessors(predecessors, 1, 2);
@@ -125,7 +127,7 @@ public class GraphTests extends IndexTests {
 		setPreds(graph, 3, 1, 2);
 
 		graph.clear();
-		final List<Node<Integer>> nodes = graph.getNodes();
+		final Collection<Node<Integer>> nodes = graph.getNodes();
 
 		assertTrue("graph not properly cleared", nodes.isEmpty());
 	}
@@ -133,7 +135,7 @@ public class GraphTests extends IndexTests {
 	public void testGetNodes() {
 		setPreds(graph, 3, 1, 2);
 
-		final List<Node<Integer>> nodes = graph.getNodes();
+		final Collection<Node<Integer>> nodes = graph.getNodes();
 		assertEquals("bad nodes size in: " + nodes, 3, nodes.size());
 
 		for (Node<Integer> node : nodes) {

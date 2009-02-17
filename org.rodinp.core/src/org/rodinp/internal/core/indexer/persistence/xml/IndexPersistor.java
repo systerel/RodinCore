@@ -15,7 +15,6 @@ import static org.rodinp.internal.core.indexer.persistence.xml.XMLElementTypes.*
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.persistence.PersistenceException;
-import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -40,8 +39,8 @@ public class IndexPersistor {
 		}
 	}
 
-	public static void save(IRodinIndex index, Document doc, Element indexNode) {
-		for (Descriptor desc : index.getDescriptors()) {
+	public static void save(Descriptor[] descriptors, Document doc, Element indexNode) {
+		for (Descriptor desc : descriptors) {
 			final Element descNode = createElement(doc, DESCRIPTOR);
 			DescPersistor.save(desc, doc, descNode);
 			indexNode.appendChild(descNode);

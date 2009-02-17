@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer.sort;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,9 @@ public class Sorter<T> {
 		}
 	}
 
-	private final List<Node<T>> nodes;
+	private final Collection<Node<T>> nodes;
 
-	public Sorter(List<Node<T>> nodes) {
+	public Sorter(Collection<Node<T>> nodes) {
 		this.nodes = nodes;
 	}
 

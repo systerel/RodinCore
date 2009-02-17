@@ -11,26 +11,34 @@
 package org.rodinp.core.tests.indexer.persistence;
 
 import static org.rodinp.core.tests.indexer.persistence.Resources.*;
-import static org.rodinp.core.tests.indexer.persistence.XMLAssert.*;
+import static org.rodinp.core.tests.indexer.persistence.XMLAssert.assertFile;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.indexer.IndexTests;
 import org.rodinp.core.tests.indexer.persistence.Resources.IPersistResource;
 import org.rodinp.internal.core.indexer.IIndexDelta;
 import org.rodinp.internal.core.indexer.IndexManager;
+import org.rodinp.internal.core.indexer.IndexerRegistry;
 import org.rodinp.internal.core.indexer.PerProjectPIM;
 import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.Registry;
 import org.rodinp.internal.core.indexer.persistence.IPersistor;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.indexer.persistence.xml.XMLPersistor;
+import org.rodinp.internal.core.indexer.sort.TotalOrder;
+import org.rodinp.internal.core.indexer.tables.FileTable;
+import org.rodinp.internal.core.indexer.tables.IExportTable;
+import org.rodinp.internal.core.indexer.tables.NameTable;
 
 /**
  * @author Nicolas Beauger
@@ -40,35 +48,95 @@ public class XMLPersistorTests extends IndexTests {
 
 	private static IRodinProject project;
 
+	public static void assertOrder(TotalOrder<IRodinFile> expected,
+			ProjectIndexManager pim, List<IRodinFile> files) {
+		// assert initially marked files
+		assertOrder(expected, pim, false);
+
+		// assert that files not marked are present and well sorted
+		for (IRodinFile file : files) {
+			expected.setToIter(file);
+		}
+		assertOrder(expected, pim, true);
+	}
+
+	private static void assertOrder(TotalOrder<IRodinFile> expected,
+			ProjectIndexManager pim, boolean indexAll) {
+		// nodes must already be marked
+		final FakeOrderRecordIndexer indexer = new FakeOrderRecordIndexer();
+		IndexerRegistry.getDefault().clear();
+		IndexerRegistry.getDefault().addIndexer(indexer,
+				RodinTestRoot.ELEMENT_TYPE);
+		if (indexAll) {
+			pim.indexAll(null);
+		} else {
+			pim.doIndexing(null);
+		}
+		
+		final Iterator<IRodinFile> actual = indexer.getIndexedFiles().iterator();
+		while (expected.hasNext()) {
+			final IRodinFile expFile = expected.next();
+			assertTrue("should have next: " + expFile, actual.hasNext());
+			final IRodinFile actFile = actual.next();
+			assertEquals("Bad file", expFile, actFile);
+		}
+	}
+
+	public static void assertExportTable(IExportTable expected,
+			ProjectIndexManager actual, List<IRodinFile> files)
+			throws InterruptedException {
+		for (IRodinFile file : files) {
+			assertSameElements(expected.get(file), actual.getExports(file),
+					"exports");
+		}
+	}
+
+	public static void assertFileTable(FileTable expected,
+			ProjectIndexManager actual, List<IRodinFile> files)
+			throws InterruptedException {
+		for (IRodinFile file : files) {
+			assertSameElements(expected.get(file),
+					actual.getDeclarations(file), "elements in file table");
+		}
+	}
+
+	public static void assertNameTable(NameTable expected, ProjectIndexManager actual,
+			List<String> names) throws InterruptedException {
+		for (String name : names) {
+			assertSameElements(expected.getDeclarations(name), actual
+					.getDeclarations(name), "elements in name table");
+		}
+	}
+
+
 	private static void assertIMData(IPersistResource resource,
-			PersistentIndexManager actual) {
-		final PersistentIndexManager expected = resource.getIMData();
+			PersistentIndexManager actual) throws InterruptedException {
+		final Map<IRodinProject, PublicPIM> expectedPIMs = resource.getPublicPIMs();
 		final List<IRodinFile> files = resource.getRodinFiles();
 		final List<String> names = resource.getNames();
 
-		final PerProjectPIM expPPPIM = expected.getPPPIM();
 		final PerProjectPIM actPPPIM = actual.getPPPIM();
 
-		final Set<IRodinProject> expProjects = expPPPIM.projects();
+		final Set<IRodinProject> expProjects = expectedPIMs.keySet();
 		final Set<IRodinProject> actProjects = actPPPIM.projects();
 		assertEquals("bad PerProjectPIM projects", expProjects, actProjects);
 		for (IRodinProject prj : expProjects) {
-			final ProjectIndexManager expPIM = expPPPIM.get(prj);
+			final PublicPIM expPIM = expectedPIMs.get(prj);
 			final ProjectIndexManager actPIM = actPPPIM.get(prj);
 
-			assertEquals("bad project", expPIM.getProject(), actPIM
+			assertEquals("bad project", expPIM.project, actPIM
 					.getProject());
-			assertIndex(expPIM.getIndex(), actPIM.getIndex());
-			assertExportTable(expPIM.getExportTable(), actPIM.getExportTable(),
-					files);
-			assertOrder(expPIM.getOrder(), actPIM.getOrder(), files);
+			assertIndex(expPIM.index, actPIM);
+			assertExportTable(expPIM.exportTable, actPIM, files);
 
-			assertFileTable(expPIM.getFileTable(), actPIM.getFileTable(), files);
-			assertNameTable(expPIM.getNameTable(), actPIM.getNameTable(), names);
+			assertFileTable(expPIM.fileTable, actPIM, files);
+			assertNameTable(expPIM.nameTable, actPIM, names);
+			// test order at the end (changes tables)
+			assertOrder(expPIM.order, actPIM, files);
 		}
 
 		final List<IIndexDelta> expDeltas =
-				new ArrayList<IIndexDelta>(expected.getDeltas());
+				new ArrayList<IIndexDelta>(resource.getDeltas());
 		final List<IIndexDelta> actDeltas =
 				new ArrayList<IIndexDelta>(actual.getDeltas());
 		assertSameElements(expDeltas, actDeltas, "saved deltas");
@@ -107,7 +175,8 @@ public class XMLPersistorTests extends IndexTests {
 		file.delete();
 	}
 
-	private static void restoreTest(File file, IPersistResource expected) {
+	private static void restoreTest(File file, IPersistResource expected)
+			throws InterruptedException {
 
 		final IPersistor ps = new XMLPersistor();
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.tables;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,23 +19,20 @@ import java.util.Set;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
 
-public class FileTable implements IFileTable {
+public class FileTable {
 
 	private Map<IRodinFile, Set<IDeclaration>> table;
-
-	private static final IDeclaration[] NO_ELEMENTS =
-			new IDeclaration[0];
 
 	public FileTable() {
 		table = new HashMap<IRodinFile, Set<IDeclaration>>();
 	}
 
-	public IDeclaration[] get(IRodinFile file) {
+	public Set<IDeclaration> get(IRodinFile file) {
 		final Set<IDeclaration> elements = table.get(file);
 		if (elements == null || elements.size() == 0) {
-			return NO_ELEMENTS;
+			return Collections.emptySet();
 		}
-		return elements.toArray(new IDeclaration[elements.size()]);
+		return Collections.unmodifiableSet(elements);
 	}
 
 	public void remove(IRodinFile file) {

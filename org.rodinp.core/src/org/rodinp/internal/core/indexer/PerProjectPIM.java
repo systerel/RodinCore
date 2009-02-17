@@ -25,11 +25,8 @@ public class PerProjectPIM {
 
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
-	/**
-	 * 
-	 */
 	public PerProjectPIM() {
-		pims = new HashMap<IRodinProject, ProjectIndexManager>();
+		this.pims = new HashMap<IRodinProject, ProjectIndexManager>();
 	}
 
 	public Set<IRodinProject> projects() {

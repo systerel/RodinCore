@@ -11,7 +11,8 @@
 package org.rodinp.internal.core.indexer.sort;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,10 @@ public class Graph<T> {
 	private final Map<T, Node<T>> nodes;
 	private final List<IGraphChangedListener> listeners;
 
-	private static <T> boolean sameList(List<T> left, T[] right) {
-		if (left.size() != right.length)
+	private static <T> boolean sameList(List<T> left, Collection<T> right) {
+		if (left.size() != right.size())
 			return false;
-		if (!left.containsAll(Arrays.asList(right)))
+		if (!left.containsAll(right))
 			return false;
 		return true;
 	}
@@ -56,7 +57,7 @@ public class Graph<T> {
 		return node.getPredecessorLabels();
 	}
 
-	public void setPredecessors(T label, T[] predecessors) {
+	public void setPredecessors(T label, Collection<T> predecessors) {
 		final Node<T> node = getOrCreateNode(label);
 		final List<T> oldPreds = node.getPredecessorLabels();
 		if (sameList(oldPreds, predecessors)) {
@@ -67,7 +68,7 @@ public class Graph<T> {
 		fireGraphChanged();
 	}
 
-	private List<Node<T>> getOrCreateNodes(T[] labels) {
+	private List<Node<T>> getOrCreateNodes(Collection<T> labels) {
 		final List<Node<T>> result = new ArrayList<Node<T>>();
 		for (T label : labels) {
 			result.add(getOrCreateNode(label));
@@ -86,8 +87,8 @@ public class Graph<T> {
 		fireGraphChanged();
 	}
 
-	public List<Node<T>> getNodes() {
-		return new ArrayList<Node<T>>(nodes.values());
+	public Collection<Node<T>> getNodes() {
+		return Collections.unmodifiableCollection(nodes.values());
 	}
 
 	public Node<T> getOrCreateNode(T label) {
@@ -107,8 +108,7 @@ public class Graph<T> {
 		}
 	}
 
-	protected void setPersistentData(PersistentTotalOrder<T> pto) {
-		final Map<T, List<T>> predMap = pto.getPredMap();
+	protected void setPersistentData(PersistentTotalOrder<T> pto, Map<T, List<T>> predMap) {
 		nodes.clear();
 		for (Node<T> n : pto.getNodes()) {
 			final T label = n.getLabel();

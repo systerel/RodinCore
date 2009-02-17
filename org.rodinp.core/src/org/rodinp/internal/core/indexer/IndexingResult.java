@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -75,11 +76,6 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		return declarations.containsKey(element);
 	}
 	
-	public IDeclaration[] getDeclArray() {
-		final Collection<IDeclaration> decls = declarations.values();
-		return decls.toArray(new IDeclaration[decls.size()]);
-	}
-
 	public void setSuccess(boolean value) {
 		this.success = value;
 	}
@@ -91,8 +87,9 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		exports.remove(declaration);
 	}
 	
-	public Map<IInternalElement, IDeclaration> getDeclarations() {
-		return declarations;
+	public Collection<IDeclaration> getDeclarations() {
+		final Collection<IDeclaration> decls = declarations.values();
+		return Collections.unmodifiableCollection(decls);
 	}
 
 	public Set<IDeclaration> getExports() {

@@ -13,7 +13,6 @@ package org.rodinp.internal.core.indexer.persistence;
 import java.io.File;
 
 import org.rodinp.internal.core.indexer.PerProjectPIM;
-import org.rodinp.internal.core.indexer.ProjectIndexManager;
 
 /**
  * @author Nicolas Beauger
@@ -24,7 +23,7 @@ public interface IPersistor {
 
 	boolean save(PersistentIndexManager data, File file);
 
-	boolean saveProject(ProjectIndexManager pim, File file);
+	boolean saveProject(PersistentPIM pim, File file);
 
 	boolean restore(File file, PersistentIndexManager data);
 

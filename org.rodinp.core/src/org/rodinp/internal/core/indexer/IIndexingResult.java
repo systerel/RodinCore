@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import org.rodinp.core.indexer.IOccurrence;
 
 public interface IIndexingResult {
 
-	Map<IInternalElement, IDeclaration> getDeclarations();
+	Collection<IDeclaration> getDeclarations();
 
 	Set<IDeclaration> getExports();
 

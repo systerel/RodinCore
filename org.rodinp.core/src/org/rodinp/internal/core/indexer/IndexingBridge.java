@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +61,12 @@ public class IndexingBridge implements IIndexingBridge {
 	}
 
 	public IDeclaration[] getDeclarations() {
-		return result.getDeclArray();
+		// must not return declColl nor
+		// Collections.unmodifiableCollection(declColl)
+		// as ConcurrentModificationException would raise if a client declares
+		// new elements while iterating on the unmodifiable view of declarations
+		final Collection<IDeclaration> declColl = result.getDeclarations();
+		return declColl.toArray(new IDeclaration[declColl.size()]);
 	}
 
 	public IDeclaration declare(IInternalElement element, String name) {
@@ -160,7 +166,7 @@ public class IndexingBridge implements IIndexingBridge {
 
 	private void removeNonOccurringElements() {
 		final Set<IInternalElement> occElems = result.getOccurrences().keySet();
-		for (IDeclaration decl: result.getDeclArray()) {
+		for (IDeclaration decl: result.getDeclarations()) {
 			if (!occElems.contains(decl.getElement())) {
 				result.remove(decl);
 				if (IndexManager.DEBUG) {

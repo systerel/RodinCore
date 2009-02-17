@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,8 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.internal.core.RodinDBStatus;
+import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
+import org.rodinp.internal.core.indexer.persistence.PersistentTotalOrder;
 import org.rodinp.internal.core.indexer.sort.TotalOrder;
 import org.rodinp.internal.core.indexer.tables.ExportTable;
 import org.rodinp.internal.core.indexer.tables.FileTable;
@@ -42,6 +45,8 @@ import org.rodinp.internal.core.indexer.tables.RodinIndex;
  * 
  */
 public class ProjectIndexManager {
+
+	private static final IOccurrence[] NO_OCCURRENCES = new IOccurrence[0];
 
 	private final IRodinProject project;
 
@@ -64,26 +69,52 @@ public class ProjectIndexManager {
 		this.nameTable = new NameTable();
 		this.exportTable = new ExportTable();
 		this.order = new TotalOrder<IRodinFile>();
-		this.tableRWL = new ReentrantReadWriteLock();
+		this.tableRWL = new ReentrantReadWriteLock(true);
 	}
-
-	public void lockRead() throws InterruptedException {
+	
+	// for persistence purposes
+	public ProjectIndexManager(IRodinProject project, RodinIndex index,
+			ExportTable exportTable, TotalOrder<IRodinFile> order) {
+		this.project = project;
+		this.index = index;
+		this.fileTable = new FileTable();
+		this.nameTable = new NameTable();
+		this.exportTable = exportTable;
+		this.order = order;
+		this.tableRWL = new ReentrantReadWriteLock(true);
+		restoreNonPersistentData();
+	}
+	
+	// for testing purposes
+	public ProjectIndexManager(IRodinProject project, RodinIndex index,
+			FileTable fileTable, NameTable nameTable, ExportTable exportTable,
+			TotalOrder<IRodinFile> order) {
+		this.project = project;
+		this.index = index;
+		this.fileTable = fileTable;
+		this.nameTable = nameTable;
+		this.exportTable = exportTable;
+		this.order = order;
+		this.tableRWL = new ReentrantReadWriteLock(true);
+	}
+	
+	private void lockRead() throws InterruptedException {
 		tableRWL.readLock().lockInterruptibly();
 	}
 
-	public void unlockRead() {
+	private void unlockRead() {
 		tableRWL.readLock().unlock();
 	}
 
-	public void lockWrite() throws InterruptedException {
-		tableRWL.writeLock().lockInterruptibly();
+	private void lockWrite() {
+		tableRWL.writeLock().lock();
 	}
 
-	public void unlockWrite() {
+	private void unlockWrite() {
 		tableRWL.writeLock().unlock();
 	}
 
-	public void doIndexing(IProgressMonitor monitor) {
+	public synchronized void doIndexing(IProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.beginTask("indexing project " + project,
 					IProgressMonitor.UNKNOWN);
@@ -113,11 +144,13 @@ public class ProjectIndexManager {
 		} else {
 			order.setToIterSuccessors();
 			order.remove();
+			lockWrite();
 			clean(file);
+			unlockWrite();
 		}
 	}
 
-	public boolean mustReindexDependents(IIndexingResult result) {
+	private boolean mustReindexDependents(IIndexingResult result) {
 		// FIXME costly (?)
 		final Set<IDeclaration> currentExports =
 				exportTable.get(result.getFile());
@@ -126,7 +159,7 @@ public class ProjectIndexManager {
 	}
 
 	private void updateTables(IIndexingResult result) {
-		tableRWL.writeLock().lock();
+		lockWrite();
 
 		clean(result.getFile());
 
@@ -136,7 +169,7 @@ public class ProjectIndexManager {
 
 		updateExports(result);
 
-		tableRWL.writeLock().unlock();
+		unlockWrite();
 	}
 
 	private void updateExports(IIndexingResult result) {
@@ -166,7 +199,7 @@ public class ProjectIndexManager {
 	}
 
 	private void updateDeclarations(IIndexingResult result) {
-		for (IDeclaration declaration : result.getDeclarations().values()) {
+		for (IDeclaration declaration : result.getDeclarations()) {
 			final IInternalElement element = declaration.getElement();
 			final String name = declaration.getName();
 
@@ -227,8 +260,9 @@ public class ProjectIndexManager {
 	 * dependents of the given file in the dependency graph.
 	 * 
 	 * @param file
+	 *            the changed file
 	 */
-	public void fileChanged(IRodinFile file) {
+	public synchronized void fileChanged(IRodinFile file) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
 					+ " should be indexed in project "
@@ -240,35 +274,14 @@ public class ProjectIndexManager {
 		}
 		final FileIndexingManager fim = FileIndexingManager.getDefault();
 
-		IRodinFile[] dependFiles;
 		try {
-			dependFiles = fim.getDependencies(file);
+			final Set<IRodinFile> dependFiles = fim.getDependencies(file);
 			order.setPredecessors(file, dependFiles);
 			order.setToIter(file);
 		} catch (IndexingException e) {
 			// forget this file
 		}
 
-	}
-
-	public FileTable getFileTable() {
-		return fileTable;
-	}
-
-	public NameTable getNameTable() {
-		return nameTable;
-	}
-
-	public ExportTable getExportTable() {
-		return exportTable;
-	}
-
-	public RodinIndex getIndex() {
-		return index;
-	}
-
-	public TotalOrder<IRodinFile> getOrder() {
-		return order;
 	}
 
 	private Map<IInternalElement, IDeclaration> computeImports(IRodinFile file) {
@@ -292,10 +305,8 @@ public class ProjectIndexManager {
 		return project;
 	}
 
-	/**
-	 * Assumes that the RodinIndex is up to date.
-	 */
-	public void restoreNonPersistentData() {
+	//  Assumes that the RodinIndex is up to date.
+	private void restoreNonPersistentData() {
 		nameTable.clear();
 		fileTable.clear();
 		for (Descriptor desc : index.getDescriptors()) {
@@ -310,7 +321,7 @@ public class ProjectIndexManager {
 
 	}
 
-	public boolean indexAll(IProgressMonitor monitor) {
+	public synchronized boolean indexAll(IProgressMonitor monitor) {
 		try {
 			final IRodinFile[] files = project.getRodinFiles();
 			for (IRodinFile file : files) {
@@ -330,5 +341,97 @@ public class ProjectIndexManager {
 			throw new CancellationException();
 		}
 	}
+	
+	public IDeclaration getDeclaration(IInternalElement element)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Descriptor descriptor = index.getDescriptor(element);
+			if (descriptor == null) {
+				return null;
+			} else {
+				return descriptor.getDeclaration();
+			}
+		} finally {
+			unlockRead();
+		}
+	}
 
+	public IDeclaration[] getDeclarations(IRodinFile file)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Set<IDeclaration> decls = fileTable.get(file);
+			return decls.toArray(new IDeclaration[decls.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+
+	public IDeclaration[] getDeclarations(String name)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Set<IDeclaration> decls = nameTable.getDeclarations(name);
+			return decls.toArray(new IDeclaration[decls.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+
+	private IOccurrence[] getOccurrences(IInternalElement element)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Descriptor descriptor = index.getDescriptor(element);
+			if (descriptor == null) {
+				return NO_OCCURRENCES;
+			}
+			final Set<IOccurrence> occs = descriptor.getOccurrences();
+			return occs.toArray(new IOccurrence[occs.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+
+	public IOccurrence[] getOccurrences(IDeclaration declaration) throws InterruptedException {
+		return getOccurrences(declaration.getElement());
+	}
+
+	public IRodinFile[] exportFiles() throws InterruptedException {
+		try {
+			lockRead();
+			final Set<IRodinFile> files = exportTable.files();
+			return files.toArray(new IRodinFile[files.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+
+	public IDeclaration[] getExports(IRodinFile file)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Set<IDeclaration> exports = exportTable.get(file);
+			return exports.toArray(new IDeclaration[exports.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+	
+	public PersistentPIM getPersistentData() {
+		try {
+			tableRWL.readLock().lock();
+			final Collection<Descriptor> descColl = index.getDescriptors();
+			final Descriptor[] descriptors = descColl
+					.toArray(new Descriptor[descColl.size()]);
+			final PersistentTotalOrder<IRodinFile> persistOrder = order
+					.getPersistentData();
+			final ExportTable exportClone = exportTable.clone();
+			return new PersistentPIM(project, descriptors, exportClone,
+					persistOrder);
+		} finally {
+			unlockRead();
+		}
+	}
 }

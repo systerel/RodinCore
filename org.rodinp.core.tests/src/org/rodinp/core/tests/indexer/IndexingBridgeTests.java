@@ -12,6 +12,7 @@ package org.rodinp.core.tests.indexer;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,11 +90,9 @@ public class IndexingBridgeTests extends IndexTests {
 
 		assertIndexingSuccess(result);
 
-		final Map<IInternalElement, IDeclaration> declarations =
-				result.getDeclarations();
-		final IDeclaration actual = declarations.get(elt1);
-		assertNotNull("expected a declaration for: " + elt1, actual);
-		assertEquals("Bad declaration", expected, actual);
+		final Collection<IDeclaration> declarations = result.getDeclarations();
+		assertTrue("expected a declaration for: " + elt1, declarations
+				.contains(expected));
 	}
 
 	public void testDeclareNoOccurrence() {
@@ -107,10 +106,10 @@ public class IndexingBridgeTests extends IndexTests {
 
 		assertIndexingSuccess(result);
 
-		final Map<IInternalElement, IDeclaration> declarations =
-				result.getDeclarations();
-		final IDeclaration actual = declarations.get(elt1);
-		assertNull("expected declaration removed for: " + elt1, actual);
+		final IDeclaration unexpected = new Declaration(elt1, name1);
+		final Collection<IDeclaration> declarations = result.getDeclarations();
+		assertFalse("expected declaration removed for: " + elt1, declarations
+				.contains(unexpected));
 	}
 
 	public void testDeclareNullElem() throws Exception {

@@ -18,9 +18,7 @@ import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexer;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.internal.core.indexer.Declaration;
-import org.rodinp.internal.core.indexer.Descriptor;
 import org.rodinp.internal.core.indexer.IndexManager;
-import org.rodinp.internal.core.indexer.tables.IFileTable;
 import org.rodinp.internal.core.indexer.tables.IRodinIndex;
 import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
@@ -76,12 +74,8 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index = manager.getIndex(project);
-		final Descriptor desc1 = index.getDescriptor(elt1);
-		final Descriptor desc2 = index.getDescriptor(elt2);
-
-		assertDescriptor(desc1, declElt1, 1);
-		assertDescriptor(desc2, declElt2, 1);
+		assertDescriptor(manager, declElt1, 1);
+		assertDescriptor(manager, declElt2, 1);
 	}
 
 	public void testSeveralIndexing() throws Exception {
@@ -91,11 +85,8 @@ public class IndexManagerTests extends IndexTests {
 		// first indexing with elt1, without elt2
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index1 = manager.getIndex(project);
-		final Descriptor descElement = index1.getDescriptor(elt1);
-
-		assertDescriptor(descElement, declElt1, 1);
-		assertNoSuchDescriptor(index1, elt2);
+		assertDescriptor(manager, declElt1, 1);
+		assertNotIndexed(manager, elt2);
 
 		// removing elt1, adding elt2
 		rodinIndex.removeDescriptor(elt1);
@@ -104,11 +95,8 @@ public class IndexManagerTests extends IndexTests {
 		// second indexing with element2, without element
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index2 = manager.getIndex(project);
-		final Descriptor descElement2 = index2.getDescriptor(elt2);
-
-		assertNoSuchDescriptor(index2, elt1);
-		assertDescriptor(descElement2, declElt2, 1);
+		assertNotIndexed(manager, elt1);
+		assertDescriptor(manager, declElt2, 1);
 	}
 
 	public void testSeveralIndexers() throws Exception {
@@ -125,14 +113,9 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index = manager.getIndex(project);
-		final Descriptor desc1 = index.getDescriptor(elt1);
-		final Descriptor desc2 = index.getDescriptor(elt2);
-		final Descriptor desc3 = index.getDescriptor(elt3);
-
-		assertDescriptor(desc1, declElt1, 1);
-		assertDescriptor(desc2, declElt2, 1);
-		assertDescriptor(desc3, declElt3, 1);
+		assertDescriptor(manager, declElt1, 1);
+		assertDescriptor(manager, declElt2, 1);
+		assertDescriptor(manager, declElt3, 1);
 	}
 
 	public void testSeveralIndexersFail() throws Exception {
@@ -146,13 +129,9 @@ public class IndexManagerTests extends IndexTests {
 
 		manager.scheduleIndexing(file);
 
-		final IRodinIndex index = manager.getIndex(project);
-		final Descriptor desc1 = index.getDescriptor(elt1);
-		final Descriptor desc2 = index.getDescriptor(elt2);
-
-		assertDescriptor(desc1, declElt1, 1);
-		assertDescriptor(desc2, declElt2, 1);
-		assertNoSuchDescriptor(index, elt3);
+		assertDescriptor(manager, declElt1, 1);
+		assertDescriptor(manager, declElt2, 1);
+		assertNotIndexed(manager, elt3);
 	}
 	
 	public void testGetDeclarationsSecondIndexer() throws Exception {
@@ -198,13 +177,8 @@ public class IndexManagerTests extends IndexTests {
 
 			manager.scheduleIndexing(file, file2);
 
-			final IRodinIndex index1 = manager.getIndex(project);
-			final Descriptor desc1 = index1.getDescriptor(elt1);
-			final IRodinIndex index2 = manager.getIndex(project2);
-			final Descriptor desc2 = index2.getDescriptor(eltF2);
-
-			assertDescriptor(desc1, declElt1, 1);
-			assertDescriptor(desc2, declEltF2, 1);
+			assertDescriptor(manager, declElt1, 1);
+			assertDescriptor(manager, declEltF2, 1);
 		} finally {
 			deleteProject("P2");
 		}
@@ -220,8 +194,7 @@ public class IndexManagerTests extends IndexTests {
 		// should not throw an exception
 		manager.scheduleIndexing(file);
 
-		final IFileTable fileTable = manager.getFileTable(project);
-		final IDeclaration[] declarations = fileTable.get(file);
+		final IDeclaration[] declarations = manager.getDeclarations(file);
 		assertEquals("no element expected", 0, declarations.length);
 	}
 
@@ -235,8 +208,7 @@ public class IndexManagerTests extends IndexTests {
 		// should not throw an exception
 		manager.scheduleIndexing(file);
 
-		final IFileTable fileTable = manager.getFileTable(project);
-		final IDeclaration[] declarations = fileTable.get(file);
+		final IDeclaration[] declarations = manager.getDeclarations(file);
 		assertEquals("no element expected", 0, declarations.length);
 	}
 }

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.persistence;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 import org.rodinp.internal.core.indexer.sort.Node;
 
@@ -23,15 +22,13 @@ public class PersistentTotalOrder<T> {
 
 	private final boolean isSorted;
 	// if isSorted then nodes are listed in total order
-	private final List<Node<T>> nodes;
-	private final Map<T, List<T>> predMap;
-	private final List<T> iterated;
+	private final Collection<Node<T>> nodes;
+	private final Collection<T> iterated;
 
-	public PersistentTotalOrder(boolean isSorted, List<Node<T>> nodes,
-			Map<T, List<T>> predMap, List<T> iterated) {
+	public PersistentTotalOrder(boolean isSorted, Collection<Node<T>> nodes,
+			Collection<T> iterated) {
 		this.isSorted = isSorted;
 		this.nodes = nodes;
-		this.predMap = predMap;
 		this.iterated = iterated;
 	}
 
@@ -39,16 +36,12 @@ public class PersistentTotalOrder<T> {
 		return isSorted;
 	}
 
-	public List<Node<T>> getNodes() {
+	public Collection<Node<T>> getNodes() {
 		return nodes;
 	}
 
-	public List<T> getIterated() {
+	public Collection<T> getIterated() {
 		return iterated;
-	}
-
-	public Map<T, List<T>> getPredMap() {
-		return predMap;
 	}
 
 }

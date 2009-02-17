@@ -12,6 +12,9 @@ package org.rodinp.core.tests.indexer.tables;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -22,7 +25,7 @@ import org.rodinp.internal.core.indexer.tables.FileTable;
 
 public class FileTableTests extends IndexTests {
 
-	private static final String ELEMENTS_IN_FILE_TABLE = "elements in file table";
+	private static final String BAD_ELEMENTS = "bad elements in file table";
 	private static final FileTable table = new FileTable();
 	private static final String nameElement = "nameElement";
 	private static final String nameElement2 = "nameElement2";
@@ -56,17 +59,17 @@ public class FileTableTests extends IndexTests {
 
 	public void testGetElementsPresent() throws Exception {
 		table.add(file, declElement);
-		final IDeclaration[] expectedResult = makeArray(declElement);
+		final Set<IDeclaration> expectedResult = Collections.singleton(declElement);
 
-		final IDeclaration[] elements = table.get(file);
+		final Set<IDeclaration> elements = table.get(file);
 
-		assertSameElements(expectedResult, elements, ELEMENTS_IN_FILE_TABLE);
+		assertEquals(BAD_ELEMENTS, expectedResult, elements);
 	}
 
 	public void testGetElementsFileAbsent() throws Exception {
 		table.add(file, declElement);
 
-		final IDeclaration[] elements = table.get(file2);
+		final Set<IDeclaration> elements = table.get(file2);
 
 		assertIsEmpty(elements);
 	}
@@ -74,10 +77,10 @@ public class FileTableTests extends IndexTests {
 	public void testAddElement() throws Exception {
 		table.add(file, declElement);
 
-		final IDeclaration[] expectedResult = makeArray(declElement);
-		final IDeclaration[] elements = table.get(file);
+		final Set<IDeclaration> expectedResult = Collections.singleton(declElement);
+		final Set<IDeclaration> elements = table.get(file);
 
-		assertSameElements(expectedResult, elements, ELEMENTS_IN_FILE_TABLE);
+		assertEquals(BAD_ELEMENTS, expectedResult, elements);
 	}
 
 	public void testImportedElement() throws Exception {
@@ -89,23 +92,23 @@ public class FileTableTests extends IndexTests {
 		table.add(file2, declElement2);
 		table.remove(file);
 
-		final IDeclaration[] elements = table.get(file);
-		final IDeclaration[] expectedResult2 = makeArray(declElement2);
-		final IDeclaration[] elements2 = table.get(file2);
+		final Set<IDeclaration> elements = table.get(file);
+		final Set<IDeclaration> expectedResult2 = Collections.singleton(declElement2);
+		final Set<IDeclaration> elements2 = table.get(file2);
 
 		assertIsEmpty(elements);
-		assertSameElements(expectedResult2, elements2, ELEMENTS_IN_FILE_TABLE);
+		assertEquals(BAD_ELEMENTS, expectedResult2, elements2);
 	}
 
 	public void testRemoveElementsFileAbsent() throws Exception {
 		table.add(file, declElement);
 		table.remove(file2);
 
-		final IDeclaration[] expectedResult = makeArray(declElement);
-		final IDeclaration[] elements = table.get(file);
-		final IDeclaration[] elements2 = table.get(file2);
+		final Set<IDeclaration> expectedResult = Collections.singleton(declElement);
+		final Set<IDeclaration> elements = table.get(file);
+		final Set<IDeclaration> elements2 = table.get(file2);
 
-		assertSameElements(expectedResult, elements, ELEMENTS_IN_FILE_TABLE);
+		assertEquals(BAD_ELEMENTS, expectedResult, elements);
 		assertIsEmpty(elements2);
 	}
 
@@ -114,8 +117,8 @@ public class FileTableTests extends IndexTests {
 		table.add(file2, declElement2);
 		table.clear();
 
-		final IDeclaration[] elements = table.get(file);
-		final IDeclaration[] elements2 = table.get(file2);
+		final Set<IDeclaration> elements = table.get(file);
+		final Set<IDeclaration> elements2 = table.get(file2);
 
 		assertIsEmpty(elements);
 		assertIsEmpty(elements2);

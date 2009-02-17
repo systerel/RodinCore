@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.sort;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.rodinp.internal.core.indexer.persistence.PersistentSortedNodes;
 import org.rodinp.internal.core.indexer.persistence.PersistentTotalOrder;
@@ -21,7 +24,7 @@ import org.rodinp.internal.core.indexer.persistence.PersistentTotalOrder;
  * Stores and maintains a total order in a set of T objects.
  * <p>
  * Those objects are added to the order via {@link #setToIter(Object)} and
- * {@link #setPredecessors(Object, Object[])} methods, there is no specific
+ * {@link #setPredecessors(Object, Collection)} methods, there is no specific
  * adding method.
  * </p>
  * <p>
@@ -70,7 +73,7 @@ public class TotalOrder<T> implements Iterator<T> {
 		return graph.getPredecessors(label);
 	}
 
-	public void setPredecessors(T label, T[] predecessors) {
+	public void setPredecessors(T label, Collection<T> predecessors) {
 		graph.setPredecessors(label, predecessors);
 	}
 
@@ -126,20 +129,21 @@ public class TotalOrder<T> implements Iterator<T> {
 	// Use only for persistence purposes.
 	public PersistentTotalOrder<T> getPersistentData() {
 		if (isSorted) {
-			final PersistentSortedNodes<T> sortData =
-					sortedNodes.getPersistentData();
-			return new PersistentTotalOrder<T>(true, sortData.getNodes(), null,
+			final PersistentSortedNodes<T> sortData = sortedNodes
+					.getPersistentData();
+			return new PersistentTotalOrder<T>(true, sortData.getNodes(),
 					sortData.getIterated());
 		} else {
 			final List<T> emptyList = Collections.emptyList();
-			return new PersistentTotalOrder<T>(false, graph.getNodes(), null,
-					emptyList);
+			final List<Node<T>> nodes = new ArrayList<Node<T>>(graph.getNodes());
+
+			return new PersistentTotalOrder<T>(false, nodes, emptyList);
 		}
 	}
 
 	// Use only for persistence purposes.
-	public void setPersistentData(PersistentTotalOrder<T> pto) {
-		graph.setPersistentData(pto);
+	public void setPersistentData(PersistentTotalOrder<T> pto, Map<T, List<T>> predMap) {
+		graph.setPersistentData(pto, predMap);
 		if (pto.isSorted()) {
 			final PersistentSortedNodes<T> psn =
 					new PersistentSortedNodes<T>(pto.getNodes(), pto

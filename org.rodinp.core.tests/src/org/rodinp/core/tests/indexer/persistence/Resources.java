@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.persistence;
 
+import static java.util.Arrays.asList;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.io.File;
@@ -18,8 +19,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -37,11 +41,6 @@ import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.Registry;
 import org.rodinp.internal.core.indexer.IIndexDelta.Kind;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
-import org.rodinp.internal.core.indexer.sort.TotalOrder;
-import org.rodinp.internal.core.indexer.tables.ExportTable;
-import org.rodinp.internal.core.indexer.tables.FileTable;
-import org.rodinp.internal.core.indexer.tables.NameTable;
-import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 /**
  * @author Nicolas Beauger
@@ -51,7 +50,11 @@ public class Resources {
 
 	public static interface IPersistResource {
 		PersistentIndexManager getIMData();
+		
+		Map<IRodinProject, PublicPIM> getPublicPIMs();
 
+		List<IIndexDelta> getDeltas();
+		
 		List<IRodinFile> getRodinFiles();
 
 		List<String> getNames();
@@ -59,12 +62,15 @@ public class Resources {
 
 	private static class PersistResource implements IPersistResource {
 		private final PerProjectPIM pppim;
+		private final Map<IRodinProject, PublicPIM> publicPIMs;
+		
 		private final List<IIndexDelta> deltas;
 		private final List<IRodinFile> rodinFiles;
 		private final List<String> names;
 
 		public PersistResource() {
 			pppim = new PerProjectPIM();
+			publicPIMs = new HashMap<IRodinProject, PublicPIM>();
 			deltas = new ArrayList<IIndexDelta>();
 			rodinFiles = new ArrayList<IRodinFile>();
 			names = new ArrayList<String>();
@@ -75,12 +81,26 @@ public class Resources {
 					new Registry<String, String>());
 		}
 
+		public List<IIndexDelta> getDeltas() {
+			return deltas;
+		}
+
 		public List<String> getNames() {
 			return names;
 		}
 
 		public List<IRodinFile> getRodinFiles() {
 			return rodinFiles;
+		}
+
+		public void putPIM(PublicPIM pim) {
+			publicPIMs.put(pim.project, pim);
+			pppim.put(new ProjectIndexManager(pim.project, pim.index,
+					pim.fileTable, pim.nameTable, pim.exportTable, pim.order));
+		}
+
+		public Map<IRodinProject, PublicPIM> getPublicPIMs() {
+			return publicPIMs;
 		}
 	}
 
@@ -129,28 +149,24 @@ public class Resources {
 		final IOccurrence occurrence =
 				createDefaultOccurrence(rodinFile.getRoot(), declaration);
 
-		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
-		final ProjectIndexManager pim = pppim.getOrCreate(project);
-
-		final RodinIndex index = pim.getIndex();
-		final ExportTable exportTable = pim.getExportTable();
-		final TotalOrder<IRodinFile> order = pim.getOrder();
-		final FileTable fileTable = pim.getFileTable();
-		final NameTable nameTable = pim.getNameTable();
-
+		
+		final PublicPIM pim = new PublicPIM(project);
 		// fill elements
 		// index
-		final Descriptor descriptor = index.makeDescriptor(declaration);
+		final Descriptor descriptor = pim.index.makeDescriptor(declaration);
 		descriptor.addOccurrence(occurrence);
 		// export table
-		exportTable.add(rodinFile, declaration);
+		pim.exportTable.add(rodinFile, declaration);
 		// order
-		order.setToIter(rodinFile);
+		pim.order.setToIter(rodinFile);
 		// file table
-		fileTable.add(rodinFile, declaration);
+		pim.fileTable.add(rodinFile, declaration);
 		// name table
-		nameTable.add(declaration);
+		pim.nameTable.add(declaration);
 
+		
+		pr.putPIM(pim);
+		
 		pr.getRodinFiles().add(rodinFile);
 		pr.getNames().add(testElt1Name);
 
@@ -203,10 +219,9 @@ public class Resources {
 
 		final PersistResource pr = new PersistResource();
 
-		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
-		pppim.getOrCreate(p1);
-		pppim.getOrCreate(p2);
-
+		pr.putPIM(new PublicPIM(p1));
+		pr.putPIM(new PublicPIM(p2));
+		
 		return pr;
 	}
 
@@ -247,25 +262,22 @@ public class Resources {
 		final IRodinFile file2 = createRodinFile(project, "F2.test");
 		final IRodinFile file3 = createRodinFile(project, "F3.test");
 
-		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
-		final ProjectIndexManager pim = pppim.getOrCreate(project);
-
-		final TotalOrder<IRodinFile> order = pim.getOrder();
-
+		final PublicPIM pim = new PublicPIM(project);
+		
 		// order
-		order.setPredecessors(file2, makeArray(file1));
-		order.setPredecessors(file3, makeArray(file1, file2));
+		pim.order.setPredecessors(file2, asList(file1));
+		pim.order.setPredecessors(file3, asList(file1, file2));
 
-		order.setToIter(file1);
-		order.setToIter(file2);
-		order.setToIter(file3);
+		pim.order.setToIter(file1);
+		pim.order.setToIter(file2);
+		pim.order.setToIter(file3);
 
 		// make sorted
-		order.hasNext();
+		pim.order.hasNext();
 
-		pr.getRodinFiles().add(file1);
-		pr.getRodinFiles().add(file2);
-		pr.getRodinFiles().add(file3);
+		pr.putPIM(pim);
+		
+		pr.getRodinFiles().addAll(Arrays.asList(file1, file2, file3));
 
 		return pr;
 	}
@@ -309,27 +321,22 @@ public class Resources {
 		final IRodinFile file2 = createRodinFile(project, "F2.test");
 		final IRodinFile file3 = createRodinFile(project, "F3.test");
 
-		final PerProjectPIM pppim = pr.getIMData().getPPPIM();
-		final ProjectIndexManager pim = pppim.getOrCreate(project);
-
-		final TotalOrder<IRodinFile> order = pim.getOrder();
-
-		// fill elements
-
+		final PublicPIM pim = new PublicPIM(project);
+		
 		// order
-		order.setPredecessors(file2, makeArray(file1));
-		order.setPredecessors(file3, makeArray(file1, file2));
+		pim.order.setPredecessors(file2, asList(file1));
+		pim.order.setPredecessors(file3, asList(file1, file2));
 
-		order.setToIter(file1);
-		order.setToIter(file2);
-		order.setToIter(file3);
+		pim.order.setToIter(file1);
+		pim.order.setToIter(file2);
+		pim.order.setToIter(file3);
 
-		order.next();
-		order.next();
+		pim.order.next();
+		pim.order.next();
 
-		pr.getRodinFiles().add(file1);
-		pr.getRodinFiles().add(file2);
-		pr.getRodinFiles().add(file3);
+		pr.putPIM(pim);
+
+		pr.getRodinFiles().addAll(Arrays.asList(file1, file2, file3));
 
 		return pr;
 	}
@@ -446,7 +453,7 @@ public class Resources {
 
 		final IRodinFile file1 = createRodinFile(project, "F1.test");
 
-		final Collection<IIndexDelta> deltas = pr.getIMData().getDeltas();
+		final Collection<IIndexDelta> deltas = pr.getDeltas();
 
 		deltas.add(new IndexDelta(file1, Kind.FILE_CHANGED));
 		deltas.add(new IndexDelta(project, Kind.PROJECT_CLOSED));

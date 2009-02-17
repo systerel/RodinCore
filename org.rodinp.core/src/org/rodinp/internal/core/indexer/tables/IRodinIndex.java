@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.tables;
 
+import java.util.Collection;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.internal.core.indexer.Descriptor;
 
@@ -25,6 +27,6 @@ public interface IRodinIndex {
 	 */
 	Descriptor getDescriptor(IInternalElement element);
 
-	Descriptor[] getDescriptors();
+	Collection<Descriptor> getDescriptors();
 
 }

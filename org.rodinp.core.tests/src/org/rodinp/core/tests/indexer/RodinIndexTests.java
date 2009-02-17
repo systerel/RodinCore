@@ -12,6 +12,9 @@ package org.rodinp.core.tests.indexer;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.indexer.IDeclaration;
@@ -107,12 +110,13 @@ public class RodinIndexTests extends IndexTests {
 		index.makeDescriptor(declElt1);
 		index.makeDescriptor(declElt2);
 
-		final Descriptor[] descriptors = index.getDescriptors();
+		final Collection<Descriptor> descriptors = index.getDescriptors();
 
-		assertEquals("bad number of descriptors", 2, descriptors.length);
+		assertEquals("bad number of descriptors", 2, descriptors.size());
 
-		Descriptor desc = descriptors[0];
-		Descriptor desc2 = descriptors[1];
+		final Iterator<Descriptor> iter = descriptors.iterator();
+		Descriptor desc = iter.next();
+		Descriptor desc2 = iter.next();
 
 		if (desc.getDeclaration().getElement() == elt1) {
 			assertDescriptor(desc, declElt1, 0);

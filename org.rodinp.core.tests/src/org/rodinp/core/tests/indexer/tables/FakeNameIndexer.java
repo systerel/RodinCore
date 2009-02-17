@@ -12,6 +12,7 @@ package org.rodinp.core.tests.indexer.tables;
 
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,8 +32,6 @@ import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.util.IndexTestsUtil;
 
 public class FakeNameIndexer implements IIndexer {
-
-	private static final IDeclaration[] NO_DECLARATION = new IDeclaration[0];
 
 	private static final boolean DEBUG = false;
 
@@ -90,12 +89,12 @@ public class FakeNameIndexer implements IIndexer {
 		}
 	}
 
-	public IDeclaration[] getIndexedElements(String name) {
+	public Set<IDeclaration> getIndexedElements(String name) {
 		Set<IDeclaration> elements = indexedElements.get(name);
 		if (elements == null || elements.size() == 0) {
-			return NO_DECLARATION;
+			return Collections.emptySet();
 		}
-		return elements.toArray(new IDeclaration[elements.size()]);
+		return Collections.unmodifiableSet(elements);
 	}
 
 	public IRodinFile[] getDependencies(IInternalElement root) {

@@ -25,7 +25,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.indexer.DeltaQueuer;
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.PerProjectPIM;
-import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.persistence.xml.XMLPersistor;
 
 /**
@@ -75,7 +74,7 @@ public class PersistenceManager implements ISaveParticipant {
 			final File file = stateLocation.append(saveFilePath).toFile();
 
 			final PersistentIndexManager data =
-					IndexManager.getDefault().getPersistentData(true);
+					IndexManager.getDefault().getPersistentData();
 
 			final IPersistor ps = chooseStrategy();
 			final boolean success = ps.save(data, file);
@@ -94,11 +93,9 @@ public class PersistenceManager implements ISaveParticipant {
 			final IProject project = context.getProject();
 			if (project != null) {
 				final IRodinProject rodinProject = RodinCore.valueOf(project);
-				final PersistentIndexManager data =
-						IndexManager.getDefault().getPersistentData(false);
+				final PersistentPIM pim =
+						IndexManager.getDefault().getPersistentPIM(rodinProject);
 
-				final ProjectIndexManager pim =
-						data.getPPPIM().get(rodinProject);
 				if (pim != null) {
 					saveProject(rodinProject, pim, stateLocation);
 				}
@@ -108,27 +105,13 @@ public class PersistenceManager implements ISaveParticipant {
 	}
 
 	private void saveProject(IRodinProject rodinProject,
-			ProjectIndexManager pim, IPath stateLocation) {
+			PersistentPIM pim, IPath stateLocation) {
 		final File file = getProjectSaveFile(stateLocation, rodinProject);
 
 		final IPersistor ps = chooseStrategy();
-		boolean interrupted = false;
-		try {
-			while (true) {
-				pim.lockRead();
-				final boolean success = ps.saveProject(pim, file);
-				if (!success) {
-					file.delete();
-				}
-				return;
-			}
-		} catch (InterruptedException e) {
-			interrupted = true;
-		} finally {
-			pim.unlockRead();
-			if (interrupted) {
-				Thread.currentThread().interrupt();
-			}
+		final boolean success = ps.saveProject(pim, file);
+		if (!success) {
+			file.delete();
 		}
 	}
 
@@ -176,7 +159,6 @@ public class PersistenceManager implements ISaveParticipant {
 		}
 		queuer.restore(persistIM.getDeltas());
 		
-//		ss.processResourceChangeEvents(queuer);
 		return true;
 	}
 

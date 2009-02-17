@@ -26,6 +26,7 @@ import org.rodinp.internal.core.indexer.tables.RodinIndex;
 
 public class ExportTableUsageTests extends IndexTests {
 
+	private static final String EXPORTS = "exports";
 	private static final ExportTable exportTable = new ExportTable();
 	private static IRodinProject rodinProject;
 	private static IRodinFile file;
@@ -78,10 +79,9 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 		
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final Set<IDeclaration> actual = manager.getExportTable(
-				rodinProject).get(file);
+		final IDeclaration[] actual = manager.getExports(file);
 		
-		assertExports(expected, actual);
+		assertSameElements(expected, actual, EXPORTS);
 	}
 
 	public void testExportTableRenaming() throws Exception {
@@ -99,10 +99,9 @@ public class ExportTableUsageTests extends IndexTests {
 		
 		// verify renaming
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final Set<IDeclaration> actual = manager.getExportTable(
-				rodinProject).get(file);
+		final IDeclaration[] actual = manager.getExports(file);
 
-		assertExports(expected, actual);
+		assertSameElements(expected, actual, EXPORTS);
 	}
 
 	public void testExportTableRemoving() throws Exception {
@@ -121,10 +120,9 @@ public class ExportTableUsageTests extends IndexTests {
 
 		// verify removing
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final Set<IDeclaration> actual = manager.getExportTable(
-				rodinProject).get(file);
+		final IDeclaration[] actual = manager.getExports(file);
 
-		assertExports(expected, actual);
+		assertSameElements(expected, actual, EXPORTS);
 	}
 
 	public void testExportTableAdding() throws Exception {
@@ -146,9 +144,8 @@ public class ExportTableUsageTests extends IndexTests {
 
 		// verify adding
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final Set<IDeclaration> actual = manager.getExportTable(
-				rodinProject).get(file);
+		final IDeclaration[] actual = manager.getExports(file);
 
-		assertExports(expected, actual);
+		assertSameElements(expected, actual, EXPORTS);
 	}
 }

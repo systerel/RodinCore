@@ -43,7 +43,7 @@ public class FileIndexingManager {
 		return instance;
 	}
 
-	public IRodinFile[] getDependencies(IRodinFile file)
+	public Set<IRodinFile> getDependencies(IRodinFile file)
 			throws IndexingException {
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		final Set<IRodinFile> result = new HashSet<IRodinFile>();
@@ -55,7 +55,7 @@ public class FileIndexingManager {
 			valid = true;
 		}
 		if (valid) {
-			return result.toArray(new IRodinFile[result.size()]);
+			return result;
 		} else {
 			throw new IndexingException();
 		}

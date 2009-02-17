@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -32,8 +33,8 @@ public final class Descriptor {
 		return declaration;
 	}
 
-	public IOccurrence[] getOccurrences() {
-		return occurrences.toArray(new Occurrence[occurrences.size()]);
+	public Set<IOccurrence> getOccurrences() {
+		return Collections.unmodifiableSet(occurrences);
 	}
 
 	public boolean hasOccurrence(IOccurrence occurrence) {

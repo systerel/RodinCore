@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer.tables;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,10 +18,7 @@ import java.util.Set;
 
 import org.rodinp.core.indexer.IDeclaration;
 
-public class NameTable implements INameTable {
-
-	private static final IDeclaration[] NO_DECLARATIONS =
-			new IDeclaration[0];
+public class NameTable {
 
 	private Map<String, Set<IDeclaration>> table;
 
@@ -55,12 +53,12 @@ public class NameTable implements INameTable {
 		remove(declaration.getName(), declaration);
 	}
 
-	public IDeclaration[] getDeclarations(String name) {
+	public Set<IDeclaration> getDeclarations(String name) {
 		final Set<IDeclaration> declarations = table.get(name);
 		if (declarations == null || declarations.size() == 0) {
-			return NO_DECLARATIONS;
+			return Collections.emptySet();
 		}
-		return declarations.toArray(new IDeclaration[declarations.size()]);
+		return Collections.unmodifiableSet(declarations);
 	}
 
 	public void clear() {

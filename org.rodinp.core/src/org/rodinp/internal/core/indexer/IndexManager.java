@@ -28,20 +28,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexer;
+import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.internal.core.indexer.IIndexDelta.Kind;
 import org.rodinp.internal.core.indexer.persistence.PersistenceManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
-import org.rodinp.internal.core.indexer.tables.IExportTable;
-import org.rodinp.internal.core.indexer.tables.IFileTable;
-import org.rodinp.internal.core.indexer.tables.INameTable;
-import org.rodinp.internal.core.indexer.tables.IRodinIndex;
+import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
 import org.rodinp.internal.core.util.Util;
 
 public final class IndexManager {
@@ -71,9 +71,12 @@ public final class IndexManager {
 	private volatile boolean indexingEnabled = true;
 
 	private final ReentrantReadWriteLock initSaveLock =
-			new ReentrantReadWriteLock();
+			new ReentrantReadWriteLock(true);
 
 	/** Lock guarding table access during indexing */
+	
+	private static final IDeclaration[] NO_DECLARATIONS = new IDeclaration[0];
+	private static final IOccurrence[] NO_OCCURRENCES = new IOccurrence[0];
 
 	private IndexManager() {
 		pppim = new PerProjectPIM();
@@ -159,99 +162,13 @@ public final class IndexManager {
 		}
 	}
 
-	private void lockReadInitAndPIM(ProjectIndexManager pim)
+	private void lockReadInitSave()
 			throws InterruptedException {
 		initSaveLock.readLock().lockInterruptibly();
-		pim.lockRead();
 	}
 
-	private void unlockReadInitAndPIM(ProjectIndexManager pim) {
-		pim.unlockRead();
+	private void unlockReadInitSave() {
 		initSaveLock.readLock().unlock();
-	}
-
-	/**
-	 * Returns the current index of the given project.
-	 * <p>
-	 * Note that the result may be erroneous if the project is being indexed.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project of the requested index.
-	 * @return the current index of the given project.
-	 * @throws InterruptedException
-	 * @see #waitUpToDate()
-	 */
-	public IRodinIndex getIndex(IRodinProject project)
-			throws InterruptedException {
-		final ProjectIndexManager pim = fetchPIM(project);
-		lockReadInitAndPIM(pim);
-		final IRodinIndex index = pim.getIndex();
-		unlockReadInitAndPIM(pim);
-		return index;
-	}
-
-	/**
-	 * Returns the current file table of the given project.
-	 * <p>
-	 * Note that the result may be erroneous if the project is being indexed.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project of the requested file table.
-	 * @return the current file table of the given project.
-	 * @throws InterruptedException
-	 * @see #waitUpToDate()
-	 */
-	public IFileTable getFileTable(IRodinProject project)
-			throws InterruptedException {
-		final ProjectIndexManager pim = fetchPIM(project);
-		lockReadInitAndPIM(pim);
-		final IFileTable fileTable = pim.getFileTable();
-		unlockReadInitAndPIM(pim);
-		return fileTable;
-	}
-
-	/**
-	 * Returns the current name table of the given project.
-	 * <p>
-	 * Note that the result may be erroneous if the project is being indexed.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project of the requested name table.
-	 * @return the current name table of the given project.
-	 * @throws InterruptedException
-	 * @see #waitUpToDate()
-	 */
-	public INameTable getNameTable(IRodinProject project)
-			throws InterruptedException {
-		final ProjectIndexManager pim = fetchPIM(project);
-		lockReadInitAndPIM(pim);
-		final INameTable nameTable = pim.getNameTable();
-		unlockReadInitAndPIM(pim);
-		return nameTable;
-	}
-
-	/**
-	 * Returns the current export table of the given project.
-	 * <p>
-	 * Note that the result may be erroneous if the project is being indexed.
-	 * </p>
-	 * 
-	 * @param project
-	 *            the project of the requested export table.
-	 * @return the current export table of the given project.
-	 * @throws InterruptedException
-	 * @see #waitUpToDate()
-	 */
-	public IExportTable getExportTable(IRodinProject project)
-			throws InterruptedException {
-		final ProjectIndexManager pim = fetchPIM(project);
-		lockReadInitAndPIM(pim);
-		final IExportTable exportTable = pim.getExportTable();
-		unlockReadInitAndPIM(pim);
-		return exportTable;
 	}
 
 	ProjectIndexManager fetchPIM(IRodinProject project) {
@@ -405,14 +322,30 @@ public final class IndexManager {
 		initSaveLock.writeLock().lock();
 	}
 
-	public PersistentIndexManager getPersistentData(boolean includeDeltas) {
-		final Set<IIndexDelta> deltaSet = new HashSet<IIndexDelta>();
-		if (includeDeltas) {
+	public PersistentIndexManager getPersistentData() {
+		try {
+			initSaveLock.readLock().lock();
+			final Set<IIndexDelta> deltaSet = new HashSet<IIndexDelta>();
 			deltaSet.addAll(currentDeltas);
 			queue.drainTo(deltaSet);
+			return new PersistentIndexManager(pppim, deltaSet, indexerRegistry
+					.getPersistentData());
+		} finally {
+			unlockReadInitSave();
 		}
-		return new PersistentIndexManager(pppim, deltaSet, indexerRegistry
-				.getPersistentData());
+	}
+	
+	public PersistentPIM getPersistentPIM(IRodinProject project) {
+		try {
+			initSaveLock.readLock().lock();
+			final ProjectIndexManager pim = pppim.get(project);
+			if (pim == null) {
+				return null;
+			}
+			return pim.getPersistentData();
+		} finally {
+			unlockReadInitSave();
+		}
 	}
 
 	private void restore(ISavedState savedState, IProgressMonitor monitor) {
@@ -530,6 +463,77 @@ public final class IndexManager {
 
 	public void resourceChanged(IResourceChangeEvent event) {
 		listener.resourceChanged(event);		
+	}
+
+	public IDeclaration getDeclaration(IInternalElement element)
+			throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim
+					.get(element.getRodinProject());
+			if (pim == null) {
+				return null;
+			}
+			return pim.getDeclaration(element);
+		} finally {
+			unlockReadInitSave();
+		}
+	}
+
+	public IDeclaration[] getDeclarations(IRodinFile file) throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+			if (pim == null) {
+				return NO_DECLARATIONS;
+			}
+			return pim.getDeclarations(file);
+		} finally {
+			unlockReadInitSave();
+		}
+	}
+	
+	public IDeclaration[] getDeclarations(IRodinProject project, String name)
+			throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim.get(project);
+			if (pim == null) {
+				return NO_DECLARATIONS;
+			}
+			return pim.getDeclarations(name);
+		} finally {
+			unlockReadInitSave();
+		}
+	}
+
+	public IOccurrence[] getOccurrences(IDeclaration declaration)
+			throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim.get(declaration.getElement()
+					.getRodinProject());
+			if (pim == null) {
+				return NO_OCCURRENCES;
+			}
+			return pim.getOccurrences(declaration);
+		} finally {
+			unlockReadInitSave();
+		}
+	}
+
+	public IDeclaration[] getExports(IRodinFile file)
+			throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+			if (pim == null) {
+				return NO_DECLARATIONS;
+			}
+			return pim.getExports(file);
+		} finally {
+			unlockReadInitSave();
+		}
 	}
 
 }
