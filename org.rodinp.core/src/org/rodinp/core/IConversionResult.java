@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * <p>
- * Version numbers can be associated with file element types by means of the
+ * Version numbers can be associated with root element types by means of the
  * extension point <code>org.rodinp.core.fileElementVersions</code>. By means
  * of the version numbers declared in corresponding extensions the Rodin
  * platform supports automatic conversions from older to newer versions of file
@@ -67,15 +67,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <ul>
  * <li>A plug-in can only manipulate elements contributed by it.</li>
  * <li>File element nodes cannot be renamed.</li>
- * <li>If a plug-in contributes a conversion for some file element type, then
- * the plug-in must declare a version for that file element type.</li>
- * <li>For every version and file element type there can be at most one
+ * <li>If a plug-in contributes a conversion for some root element type, then
+ * the plug-in must declare a version for that root element type.</li>
+ * <li>For every version and root element type there can be at most one
  * contributed conversion.</li>
  * <li>In a simple/sorted conversion the operations are declared relative to file element
  * paths.
  * <ul>
  * <li>These paths must be unique in each conversion.</li>
- * <li>They must be absolute, beginning with the file element type.</li>
+ * <li>They must be absolute, beginning with the root element type.</li>
  * <li>They must refer to elements, not to attributes.</li>
  * </ul>
  * </li>
@@ -92,9 +92,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <b>The following restrictions apply to file element versions:</b>
  * <nl>
  * <ul>
- * <li>If any plug-in declares a version for a file element type, then so must
- * the plug-in that contributes the file element type.</li>
- * <li>All contributed file element versions for the same file element type
+ * <li>If any plug-in declares a version for a root element type, then so must
+ * the plug-in that contributes the root element type.</li>
+ * <li>All contributed file element versions for the same root element type
  * must coincide.</li>
  * </ul>
  * </p>

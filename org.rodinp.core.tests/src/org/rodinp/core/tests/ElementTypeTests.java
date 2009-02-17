@@ -16,10 +16,10 @@ import junit.framework.TestCase;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
-import org.rodinp.core.tests.basis.RodinTestFile;
 
 /**
  * Test cases for element types.
@@ -77,10 +77,10 @@ public class ElementTypeTests extends TestCase {
 	}
 
 	/**
-	 * Ensures that the test file element type can be retrieved.
+	 * Ensures that the Rodin file element type can be retrieved.
 	 */
 	public void testElementTypeFile() throws Exception {
-		assertETypePos(RodinTestFile.ELEMENT_TYPE);
+		assertETypePos(IRodinFile.ELEMENT_TYPE);
 	}
 
 	/**

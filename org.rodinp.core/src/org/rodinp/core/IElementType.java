@@ -17,8 +17,7 @@ package org.rodinp.core;
  * <ul>
  * <li>The database element type which is predefined and unique.</li>
  * <li>The project element type which is also predefined and unique.</li>
- * <li>File element types that are contributed by clients (see
- * {@link IFileElementType}).</li>
+ * <li>The file element type which is also predefined and unique.</li>
  * <li>Internal element types that are contributed by clients (see
  * {@link IInternalElementType}).</li>
  * </ul>
@@ -37,8 +36,8 @@ package org.rodinp.core;
  *
  * @see IRodinDB#ELEMENT_TYPE
  * @see IRodinProject#ELEMENT_TYPE
+ * @see IRodinFile#ELEMENT_TYPE
  * @see RodinCore#getElementType(String)
- * @see RodinCore#getFileElementType(String)
  * @see RodinCore#getInternalElementType(String)
  */
 public interface IElementType<T extends IRodinElement> {

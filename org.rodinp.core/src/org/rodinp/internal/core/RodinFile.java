@@ -13,33 +13,19 @@
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - separation of file and root element
  *******************************************************************************/
-package org.rodinp.core.basis;
+package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.core.IFileElementType;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.Buffer;
-import org.rodinp.internal.core.ClearElementsOperation;
-import org.rodinp.internal.core.CopyResourceElementsOperation;
-import org.rodinp.internal.core.CreateRodinFileOperation;
-import org.rodinp.internal.core.DeleteResourceElementsOperation;
-import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.FileElementType;
-import org.rodinp.internal.core.InternalElementType;
-import org.rodinp.internal.core.MoveResourceElementsOperation;
-import org.rodinp.internal.core.OpenableElementInfo;
-import org.rodinp.internal.core.RenameResourceElementsOperation;
-import org.rodinp.internal.core.RodinDBManager;
-import org.rodinp.internal.core.RodinFileElementInfo;
-import org.rodinp.internal.core.RodinProject;
-import org.rodinp.internal.core.SaveRodinFileOperation;
+import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
@@ -47,19 +33,10 @@ import org.rodinp.internal.core.util.Messages;
 /**
  * Represents an entire Rodin file. File elements need to be opened before they
  * can be navigated or manipulated.
- * <p>
- * This abstract class is intended to be implemented by clients that contribute
- * to the <code>org.rodinp.core.fileElementTypes</code> extension point.
- * </p>
- * <p>
- * This abstract class should not be used in any other way than subclassing it
- * in database extensions. In particular, database clients should not use it,
- * but rather use its associated interface <code>IRodinFile</code>.
- * </p>
  * 
  * @see IRodinFile
  */
-public abstract class RodinFile extends Openable implements IRodinFile {
+public final class RodinFile extends Openable implements IRodinFile {
 	
 	/**
 	 * The platform file resource this <code>IRodinFile</code> is based on
@@ -73,14 +50,14 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	private boolean snapshot;
 
 	private InternalElementType<?> rootType ;
-
-	protected RodinFile(IFile file, IRodinElement parent) {
+	
+	public RodinFile(IFile file, IRodinElement parent) {
 		super((RodinElement) parent);
 		this.file = file;
 		
 		final ElementTypeManager etm = ElementTypeManager.getInstance();
-		final FileElementType type = etm.getFileElementType(file);
-		rootType = type.getRootElementType();
+		final FileAssociation association = etm.getFileAssociation(file);
+		rootType = association.getRootElementType();
 	}
 	
 	public final IRodinElement[] findElements(IRodinElement element) {
@@ -145,8 +122,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	private final IRodinFile createNewHandle() {
-		final FileElementType type = (FileElementType) getElementType();
-		return type.createInstance(file, (RodinProject) getParent());
+		return new RodinFile(file, getParent());
 	}
 
 	public final void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
@@ -186,7 +162,9 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public abstract IFileElementType getElementType();
+	public IElementType<IRodinFile> getElementType(){
+		return ELEMENT_TYPE;
+	}
 
 	@Override
 	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
@@ -316,8 +294,7 @@ public abstract class RodinFile extends Openable implements IRodinFile {
 	}
 
 	public IInternalElement getRoot() {
-		final IPath path = file.getProjectRelativePath();
-		final String name = path.removeFileExtension().lastSegment();
+		final String name = getBareName();
 		return rootType.createInstance(name, this);
 	}
 

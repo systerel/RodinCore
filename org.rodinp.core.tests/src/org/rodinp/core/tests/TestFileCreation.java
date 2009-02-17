@@ -17,13 +17,13 @@ import java.io.UnsupportedEncodingException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.tests.basis.RodinTestFile;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.xml.sax.SAXParseException;
 
@@ -328,15 +328,15 @@ public class TestFileCreation extends ModifyingResourceTests {
 		assertEquals("Array should contain one element", 1, children.length);
 		assertEquals("Wrong element", rodinProject, children[0]);
 		
-		children = rodinProject.getChildrenOfType(RodinTestFile.ELEMENT_TYPE);
-		assertTrue(children instanceof IRodinFile[]);
-		assertEquals("Array should be empty", 0, children.length);
+		IInternalElement[] rootChildren = rodinProject.getRootElementsOfType(RodinTestRoot.ELEMENT_TYPE);
+		assertTrue(rootChildren instanceof RodinTestRoot[]);
+		assertEquals("Array should be empty", 0, rootChildren.length);
 		
 		IRodinFile rf = createRodinFile("/foo/x.test");
-		children = rodinProject.getChildrenOfType(RodinTestFile.ELEMENT_TYPE);
-		assertTrue(children instanceof IRodinFile[]);
-		assertEquals("Array should contain one element", 1, children.length);
-		assertEquals("Wrong element", rf, children[0]);
+		rootChildren = rodinProject.getRootElementsOfType(RodinTestRoot.ELEMENT_TYPE);
+		assertTrue(rootChildren instanceof RodinTestRoot[]);
+		assertEquals("Array should contain one element", 1, rootChildren.length);
+		assertEquals("Wrong element", rf, rootChildren[0].getRodinFile());
 	}
 	
 	public void testRootElementType() throws Exception {

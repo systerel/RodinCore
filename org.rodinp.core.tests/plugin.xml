@@ -47,48 +47,27 @@
             priority="normal"/>
    </extension>
    <extension
-         point="org.rodinp.core.fileElementTypes">
-      <fileElementType
-            class="org.rodinp.core.tests.basis.RodinTestFile"
+         point="org.rodinp.core.fileAssociations">
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.content-type-test"
-            id="testF"
-            name="Test Rodin File"
             root-element-type="org.rodinp.core.tests.test"/>
-      <fileElementType
-            class="org.rodinp.core.tests.basis.RodinTestFile2"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.content-type-test2"
-            id="test2F"
-            name="Test2 Rodin File"
             root-element-type="org.rodinp.core.tests.test2"/>
-      <fileElementType
-            class="org.rodinp.core.tests.builder.basis.Context"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.context"
-            id="contextF"
-            name="Context"
             root-element-type="org.rodinp.core.tests.context"/>
-      <fileElementType
-            class="org.rodinp.core.tests.builder.basis.SCContext"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.scContext"
-            id="scContextF"
-            name="Checked Context"
             root-element-type="org.rodinp.core.tests.scContext"/>
-      <fileElementType
-            class="org.rodinp.core.tests.builder.basis.POFile"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.poFile"
-            id="poFileF"
-            name="PO File"
             root-element-type="org.rodinp.core.tests.poFile"/>
-      <fileElementType
-            class="org.rodinp.core.tests.builder.basis.Machine"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.machine"
-            id="machineF"
-            name="Machine"
             root-element-type="org.rodinp.core.tests.machine"/>
-      <fileElementType
-            class="org.rodinp.core.tests.builder.basis.SCMachine"
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.scMachine"
-            id="scMachineF"
-            name="Checked Machine"
             root-element-type="org.rodinp.core.tests.scMachine"/>
    </extension>
    <extension
@@ -258,49 +237,31 @@
       </content-type>
    </extension>
    <extension
-         point="org.rodinp.core.fileElementTypes">
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileA"
+         point="org.rodinp.core.fileAssociations">
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileA"
-            id="versionFileAF"
-            name="Version File A"
             root-element-type="org.rodinp.core.tests.versionFileA">
-      </fileElementType>
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileB"
+      </fileAssociation>
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileB"
-            id="versionFileBF"
-            name="Version File B"
             root-element-type="org.rodinp.core.tests.versionFileB">
-      </fileElementType>
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileC"
+      </fileAssociation>
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileC"
-            id="versionFileCF"
-            name="Version File C"
             root-element-type="org.rodinp.core.tests.versionFileC">
-      </fileElementType>
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileD"
+      </fileAssociation>
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileD"
-            id="versionFileDF"
-            name="Version File D"
             root-element-type="org.rodinp.core.tests.versionFileD">
-      </fileElementType>
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileE"
+      </fileAssociation>
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileE"
-            id="versionFileEF"
-            name="Version File E"
             root-element-type="org.rodinp.core.tests.versionFileE">
-      </fileElementType>
-      <fileElementType
-            class="org.rodinp.core.tests.version.db.basis.VersionFileF"
+      </fileAssociation>
+      <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileF"
-            id="versionFileFF"
-            name="Version File F"
             root-element-type="org.rodinp.core.tests.versionFileF">
-      </fileElementType>
+      </fileAssociation>
    </extension>
    <extension
          point="org.rodinp.core.internalElementTypes">

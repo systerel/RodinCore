@@ -20,7 +20,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 public class RemoveElementAttributeOperation extends RodinDBOperation{
@@ -39,11 +38,7 @@ public class RemoveElementAttributeOperation extends RodinDBOperation{
 	protected void executeOperation() throws RodinDBException {
 		try {
 			beginTask(Messages.operation_removeElementAttributeProgress, 2);
-			final RodinFile file;
-			if (element instanceof RodinFile)
-				file = (RodinFile) element;
-			else
-				file = ((InternalElement) element).getRodinFile();
+			final RodinFile file = ((InternalElement) element).getRodinFile();
 			final RodinFileElementInfo fileInfo = (RodinFileElementInfo)
 					file.getElementInfo(getSubProgressMonitor(1));
 			if (fileInfo.removeAttribute(element, attrType)) {

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import java.lang.reflect.Array;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
@@ -28,11 +30,19 @@ import org.rodinp.internal.core.util.Util;
 public class InternalElementType<T extends IInternalElement> extends
 		ContributedElementType<T> implements IInternalElementType<T> {
 
+	// Name of the class implementing elements of this element type
+	private final String className;
+
+	// Class implementing elements of this element type
+	// (cached value)
+	protected Class<? extends T> classObject;
+
+
 	public InternalElementType(IConfigurationElement configurationElement) {
 		super(configurationElement);
+		this.className = configurationElement.getAttribute("class");		
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	protected void computeClass() {
 		Bundle bundle = Platform.getBundle(getBundleName());
@@ -47,7 +57,6 @@ public class InternalElementType<T extends IInternalElement> extends
 		}
 	}
 
-	@Override
 	protected void computeConstructor() {
 		if (classObject == null) {
 			computeClass();
@@ -87,5 +96,19 @@ public class InternalElementType<T extends IInternalElement> extends
 			throw new IllegalStateException(message, e);
 		}
 	}
+		
+	String getClassName() {
+		return className;
+	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public T[] getArray(int length) {
+		if (classObject == null) {
+			computeClass();
+		}
+		return (T[]) Array.newInstance(classObject, length);
+	}
+
+
 }

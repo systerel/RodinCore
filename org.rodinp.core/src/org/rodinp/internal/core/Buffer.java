@@ -44,7 +44,6 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
 import org.rodinp.internal.core.version.VersionManager;
 import org.w3c.dom.Attr;

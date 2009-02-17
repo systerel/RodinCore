@@ -3,11 +3,15 @@
 <schema targetNamespace="org.rodinp.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.rodinp.core" id="fileElementVersions" name="File Element Versions"/>
+         <meta.schema plugin="org.rodinp.core" id="fileAssociations" name="File Associations"/>
       </appinfo>
       <documentation>
-         &lt;p&gt;Internal element types of root element can be associated with version numbers. The platform supports automatic conversions from older to newer versions.&lt;/p&gt;
-&lt;p&gt;Derived files should not have versions. They should simply be recreated after a clean of the builder.&lt;/p&gt;
+         &lt;p&gt;
+This extension point allows plugins writers to register new association between content type and root element type of Rodin file elements. Every content type has a unique associated root element type.
+&lt;/p&gt;
+&lt;p&gt;
+See extension point &lt;code&gt;internalElementTypes&lt;/code&gt; to declare new Rodin internal element type.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -18,8 +22,8 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="fileElementVersion"/>
+         <sequence>
+            <element ref="fileAssociation" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,24 +52,19 @@
       </complexType>
    </element>
 
-   <element name="fileElementVersion">
-      <annotation>
-         <documentation>
-            Description of a file element version:
-         </documentation>
-      </annotation>
+   <element name="fileAssociation">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="content-type-id" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified identifier of a type of root elements to which this version applies
+                  The full id of the content type. Must be a subtype of the &lt;code&gt;org.rodinp.core.rodin&lt;/code&gt; content type.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="version" type="string" use="required">
+         <attribute name="root-element-type" type="string" use="required">
             <annotation>
                <documentation>
-                  the version number, a number greater than or equal to 0 (&quot;zero&quot;)
+                  The full id of the root element associated to the content type. Must be the unique ID of a Rodin internal element type.
                </documentation>
             </annotation>
          </attribute>
@@ -77,7 +76,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         0.7.6
+         0.9.3
       </documentation>
    </annotation>
 
@@ -86,37 +85,17 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         For extension examples, please refer to the &quot;org.eventb.core&quot; plug-in.
+         [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         &lt;p&gt;Version management is almost completely hidden inside the Rodin core plug-in. Conversions, i.e. transformations between versions are declared exlusively in extensions. There is no need to implement any line of code in Java.&lt;/p&gt;
-&lt;p&gt;Conversions can be carried out per project using method
-&lt;pre&gt;
- IConversionResult RodinCore.convert(IRodinProject project, boolean force, IProgressMonitor monitor)
-&lt;/pre&gt;
-The parameter &lt;code&gt;force&lt;/code&gt; is used to express whether synchrony with the file system is wanted or not. See &lt;code&gt;org.eclipse.core.resources.IFile&lt;/code&gt;.
-&lt;/p&gt;
-&lt;p&gt;Method &lt;code&gt;RodinCore.convert()&lt;/code&gt; does not modify files. It converts all files in memory and produces an &lt;code&gt;IConversionResult&lt;/code&gt;. The conversion result can be queried to find out about the status of the conversion of an entire project. Only if the conversion result is accepted
-&lt;pre&gt;
- void accept(boolean force, boolean keepHistory, IProgressMonitor monitor)
-&lt;/pre&gt;
-the files of the project a manipulated, i.e., the updated files are written to disk.
-&lt;/p&gt;
-      </documentation>
-   </annotation>
 
    <annotation>
       <appinfo>
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         None required.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 
@@ -125,7 +104,7 @@ the files of the project a manipulated, i.e., the updated files are written to d
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2007 ETH Zurich.&lt;br&gt;
+         Copyright (c) 2005, 2009 ETH Zurich and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at

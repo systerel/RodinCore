@@ -16,17 +16,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.osgi.framework.Bundle;
-import org.rodinp.core.IFileElementType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Util;
 
-public class FileElementType
-		extends ContributedElementType<IRodinFile> implements IFileElementType {
+public class FileAssociation {
 
-	// Content type associated to this file element type
 	// (cached value)
 	private IContentType contentType;
 
@@ -39,8 +33,7 @@ public class FileElementType
 	// Unique identifier of the associated root type
 	private String rootTypeId;
 	
-	public FileElementType(IConfigurationElement ce) {
-		super(ce);
+	public FileAssociation(IConfigurationElement ce) {
 		this.contentTypeId = getAttribute(ce, "content-type-id");
 		this.rootTypeId = getAttribute(ce, "root-element-type");
 	}
@@ -48,38 +41,9 @@ public class FileElementType
 	private String getAttribute(IConfigurationElement ce, String attrName) {
 		final String result = ce.getAttribute(attrName);
 		if (result == null) {
-			throw new NullPointerException("Missing " + attrName
-					+ " for element type " + id);
+			throw new NullPointerException("Missing " + attrName);
 		}
 		return result;
-	}
-
-	@Override
-	protected void computeClass() {
-		Bundle bundle = Platform.getBundle(getBundleName());
-		try {
-			Class<?> clazz = bundle.loadClass(getClassName());
-			classObject = clazz.asSubclass(RodinFile.class);
-		} catch (Exception e) {
-			String message = "Can't find class for element type " + getId();
-			Util.log(null, message);
-			throw new IllegalStateException(message, e);
-		}
-	}
-
-	@Override
-	protected void computeConstructor() {
-		if (classObject == null) {
-			computeClass();
-		}
-		try {
-			constructor = classObject.getConstructor(IFile.class, IRodinElement.class);
-		} catch (Exception e) {
-			String message = "Can't find constructor for element type "
-					+ getId();
-			Util.log(null, message);
-			throw new IllegalStateException(message, e);
-		}
 	}
 
 	public IContentType getContentType() {
@@ -106,7 +70,8 @@ public class FileElementType
 		final InternalElementType<?> type = etm
 				.getInternalElementType(rootTypeId);
 		if (type == null) {
-			final String msg = "Root element type for " + this + " doesn't exist";
+			final String msg = "Root element type for " + rootTypeId
+					+ " doesn't exist";
 			Util.log(null, msg);
 			throw new IllegalStateException(msg);
 		}
@@ -118,19 +83,6 @@ public class FileElementType
 	}
 
 	public IRodinFile createInstance(IFile file, RodinProject project) {
-		if (constructor == null) {
-			computeConstructor();
-		}
-		if (constructor == null) {
-			return null;
-		}
-		try {
-			return constructor.newInstance(file, project);
-		} catch (Exception e) {
-			String message = "Can't create an element of type " + getId();
-			Util.log(null, message);
-			throw new IllegalStateException(message, e);
-		}
+		return new RodinFile(file, project);
 	}
-
 }

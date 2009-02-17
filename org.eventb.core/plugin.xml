@@ -54,48 +54,27 @@
             priority="normal"/>
    </extension>
    <extension
-         point="org.rodinp.core.fileElementTypes">
-      <fileElementType
-            class="org.eventb.core.basis.MachineFile"
+         point="org.rodinp.core.fileAssociations">
+      <fileAssociation
             content-type-id="org.eventb.core.machineFile"
-            id="machineFileF"
-            name="%eventBMachineFile"
             root-element-type="org.eventb.core.machineFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.ContextFile"
+      <fileAssociation
             content-type-id="org.eventb.core.contextFile"
-            id="contextFileF"
-            name="%eventBContextFile"
             root-element-type="org.eventb.core.contextFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.SCMachineFile"
+      <fileAssociation
             content-type-id="org.eventb.core.scMachineFile"
-            id="scMachineFileF"
-            name="%eventBSCMachineFile"
             root-element-type="org.eventb.core.scMachineFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.SCContextFile"
+      <fileAssociation
             content-type-id="org.eventb.core.scContextFile"
-            id="scContextFileF"
-            name="%eventBSCContextFile"
             root-element-type="org.eventb.core.scContextFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.POFile"
+      <fileAssociation
             content-type-id="org.eventb.core.poFile"
-            id="poFileF"
-            name="%eventBpoFile"
             root-element-type="org.eventb.core.poFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.PRFile"
+      <fileAssociation
             content-type-id="org.eventb.core.prFile"
-            id="prFileF"
-            name="%eventBprFile"
             root-element-type="org.eventb.core.prFile"/>
-      <fileElementType
-            class="org.eventb.core.basis.PSFile"
+      <fileAssociation
             content-type-id="org.eventb.core.psFile"
-            id="psFileF"
-            name="%eventBpsFile"
             root-element-type="org.eventb.core.psFile"/>
    </extension>
    <extension

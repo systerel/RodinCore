@@ -37,6 +37,7 @@ import org.rodinp.internal.core.ElementType;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.MultiOperation;
+import org.rodinp.internal.core.Openable;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinProject;

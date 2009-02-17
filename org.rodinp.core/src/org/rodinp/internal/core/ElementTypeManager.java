@@ -60,61 +60,58 @@ public class ElementTypeManager {
 		// singleton: prevent others from creating a new instance
 	}
 
-	private FileElementType getFileElementType(IContentType contentType) {
+	private FileAssociation getFileAssociation(IContentType contentType) {
 		if (fileContentTypes == null) {
-			computeFileElementTypes();
+			computeFileAssociations();
 		}
 		return fileContentTypes.get(contentType.getId());
 	}
 	
-	public FileElementType getFileElementTypeFor(String fileName) {
+	public FileAssociation getFileAssociationFor(String fileName) {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType contentType = contentTypeManager.findContentTypeFor(fileName);
 		if (contentType == null) {
 			return null;		// Not a Rodin file.
 		}
-		return getFileElementType(contentType);
+		return getFileAssociation(contentType);
 	}
 
-	// Local id of the fileElementTypes extension point of this plugin
-	private static final String FILE_ELEMENT_TYPES_ID = "fileElementTypes";
+	// Local id of the fileAssociations extension point of this plugin
+	private static final String FILE_ASSOCIATIONS_ID = "fileAssociations";
 	
-	// Access to file element types using their content type name
-	private HashMap<String, FileElementType> fileContentTypes;
+	// Access to file association using their content type name
+	private HashMap<String, FileAssociation> fileContentTypes;
 
-	// Access to file element types using their unique id
-	private HashMap<String, FileElementType> fileElementTypeIds;
+	// Access to file association using their root element id
+	private HashMap<String, FileAssociation> fileRootElementTypeIds;
 
-	private void computeFileElementTypes() {
-		fileElementTypeIds = new HashMap<String, FileElementType>();
-		fileContentTypes = new HashMap<String, FileElementType>();
-		fileContentTypes = new HashMap<String, FileElementType>();
+	private void computeFileAssociations() {
+		fileRootElementTypeIds = new HashMap<String, FileAssociation>();
+		fileContentTypes = new HashMap<String, FileAssociation>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
-			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ELEMENT_TYPES_ID);
+			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ASSOCIATIONS_ID);
 		for (IConfigurationElement element: elements) {
-			FileElementType type = new FileElementType(element);
-			fileElementTypeIds.put(type.getId(), type);
+			FileAssociation type = new FileAssociation(element);
+			fileRootElementTypeIds.put(type.getRootElementTypeId(), type);
 			fileContentTypes.put(type.getContentTypeId(), type);
 		}
 
 		if (VERBOSE) {
 			System.out.println("-----------------------------------------------");
-			System.out.println("File element types known to the Rodin database:");
-			for (String id: getSortedIds(fileElementTypeIds)) {
-				FileElementType type = fileElementTypeIds.get(id);
-				System.out.println("  " + type.getId());
-				System.out.println("    name: " + type.getName());
+			System.out.println("File association known to the Rodin database:");
+			for (String id: getSortedIds(fileRootElementTypeIds)) {
+				FileAssociation type = fileRootElementTypeIds.get(id);
+				System.out.println("    root-element-type: " + id);
 				System.out.println("    content-type: " + type.getContentTypeId());
-				System.out.println("    class: " + type.getClassName());
 			}
 			System.out.println("-----------------------------------------------");
 		}
 	}
 
-	// Local id of the fileElementTypes extension point of this plugin
+	// Local id of the internalElementTypes extension point of this plugin
 	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 	
 	// Access to internal element types using their unique id
@@ -166,59 +163,56 @@ public class ElementTypeManager {
 	}
 	
 	/**
-	 * Returns the Rodin element type of the given file or <code>null</code>
-	 * if it is not a Rodin File.
+	 * Returns the file association of the given file or <code>null</code> if it
+	 * is not a Rodin File.
 	 * 
 	 * @param file
 	 *            the file to test
-	 * @return the file element type associated to the file or <code>null</code>
-	 *         if it is not a Rodin file
+	 * @return the file association or <code>null</code> if it is not a Rodin
+	 *         file
 	 */
-	public FileElementType getFileElementType(IFile file) {
+	public FileAssociation getFileAssociation(IFile file) {
 		try {
 			IContentDescription contentDescription = file.getContentDescription();
 			if (contentDescription == null) return null; // Unknown kind of file.
 			IContentType contentType = contentDescription.getContentType();
 			if (contentType == null) return null; // Unknown kind of file.
-			return getFileElementType(contentType);
+			return getFileAssociation(contentType);
 		} catch (CoreException e) {
 			// Ignore
 		}
 		// Maybe the file doesn't exist, try with its filename
-		return getFileElementTypeFor(file.getName());
+		return getFileAssociationFor(file.getName());
 	}
 
-	public FileElementType getFileElementType(
+	public FileAssociation getFileAssociation(
 			String id) {
-		if (fileElementTypeIds == null) {
-			computeFileElementTypes();
+		if (fileRootElementTypeIds == null) {
+			computeFileAssociations();
 		}
-		return fileElementTypeIds.get(id);
+		return fileRootElementTypeIds.get(id);
 	}
 	
 	/**
 	 * Tells whether the given file name is valid for a Rodin File (that is
-	 * corresponds to a declared file element type).
+	 * corresponds to a declared file association).
 	 * 
 	 * @param fileName
 	 *            the file name to test
 	 * @return <code>true</code> iff the name is valid
 	 */
 	public boolean isValidFileName(String fileName) {
-		return getFileElementTypeFor(fileName) != null;
+		return getFileAssociationFor(fileName) != null;
 	}
 	
 	public IElementType<? extends IRodinElement> getElementType(String id) {
 		if (internalElementTypeIds == null) {
 			computeInternalElementTypes();
 		}
-		if (fileElementTypeIds == null) {
-			computeFileElementTypes();
-		}
 		return ElementType.getElementType(id);
 	}
 
-	// Local id of the fileElementTypes extension point of this plugin
+	// Local id of the attributeTypes extension point of this plugin
 	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 	
 	// Access to attribute type descriptions using their unique id

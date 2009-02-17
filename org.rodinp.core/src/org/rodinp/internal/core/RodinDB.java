@@ -27,7 +27,6 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;

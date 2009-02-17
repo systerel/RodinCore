@@ -20,7 +20,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.tests.basis.RodinTestFile;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
 /**
@@ -33,16 +32,28 @@ public class HandleTests extends AbstractRodinDBTests {
 		super(name);
 	}
 
-	public static void assertNameTypeParent(IRodinElement element,
-			String expectedName, IElementType<?> expectedType,
-			IRodinElement expectedParent) {
+	public static void assertNameParent(IRodinElement element,
+			String expectedName, IRodinElement expectedParent) {
 		assertEquals(expectedName, element.getElementName());
-		assertEquals(expectedType, element.getElementType());
 		if (expectedParent == null) {
 			assertNull(element.getParent());
 		} else {
 			assertEquals(expectedParent, element.getParent());
 		}
+	}
+
+	public static void assertNameTypeParent(IRodinElement element,
+			String expectedName, IElementType<?> expectedType,
+			IRodinElement expectedParent) {
+		assertNameParent(element, expectedName, expectedParent);
+		assertEquals(expectedType, element.getElementType());
+	}
+
+	public static void assertNameRootTypeParent(IRodinFile file,
+			String expectedName, IElementType<?> expectedType,
+			IRodinElement expectedParent) {
+		assertNameParent(file, expectedName, expectedParent);
+		assertEquals(expectedType, file.getRootElementType());
 	}
 
 	public void testDBHandle() throws Exception {
@@ -64,7 +75,7 @@ public class HandleTests extends AbstractRodinDBTests {
 		final String fileName = "foo.test";
 		final IRodinProject rodinProject = getRodinProject("P");
 		final IRodinFile rodinFile = rodinProject.getRodinFile(fileName);
-		assertNameTypeParent(rodinFile, fileName, RodinTestFile.ELEMENT_TYPE,
+		assertNameRootTypeParent(rodinFile, fileName, RodinTestRoot.ELEMENT_TYPE,
 				rodinProject);
 		assertNull(RodinCore.valueOf((IFile) null));
 	}

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.FileElementType;
+import org.rodinp.internal.core.FileAssociation;
 import org.rodinp.internal.core.util.Messages;
 
 /**
@@ -364,8 +364,8 @@ public class Node implements Serializable {
 		if (rootElementType == null && targetFile != null) {
 			final ElementTypeManager manager = ElementTypeManager.getInstance();
 
-			final FileElementType fileElementType = manager.getFileElementType(targetFile);
-			this.rootElementType = fileElementType.getRootElementType();
+			final FileAssociation fileAssociation = manager.getFileAssociation(targetFile);
+			this.rootElementType = fileAssociation.getRootElementType();
 		}
 
 		return rootElementType;

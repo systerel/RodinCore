@@ -11,7 +11,6 @@
 package org.rodinp.internal.core;
 
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.Openable;
 
 /**
  * An LRU cache of <code>Openable</code>s.

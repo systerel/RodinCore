@@ -32,7 +32,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
@@ -183,7 +182,7 @@ public class RodinProject extends Openable implements IRodinProject {
 				if (!memento.hasMoreTokens())
 					return this;
 				String fileName = memento.nextToken();
-				RodinElement file = (RodinElement) getRodinFile(fileName);
+				RodinElement file = getRodinFile(fileName);
 				if (file == null) {
 					return null;
 				}
@@ -360,14 +359,14 @@ public class RodinProject extends Openable implements IRodinProject {
 	/**
 	 * @see IRodinProject
 	 */
-	public IRodinFile getRodinFile(String fileName) {
+	public RodinFile getRodinFile(String fileName) {
+		final IFile file = project.getProject().getFile(fileName);
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		FileElementType type = manager.getFileElementTypeFor(fileName);
-		if (type == null) {
+		final FileAssociation association = manager.getFileAssociation(file);
+		if (association == null) {
 			return null;		// Not a Rodin file.
 		}
-		IFile file = project.getProject().getFile(fileName);
-		return type.createInstance(file, this);
+		return new RodinFile(file, this);
 	}
 
 	public IRodinFile[] getRodinFiles() throws RodinDBException {

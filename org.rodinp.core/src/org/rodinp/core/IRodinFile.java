@@ -14,17 +14,25 @@ package org.rodinp.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.internal.core.ElementType;
 
 /**
  * Represents an entire Rodin file. File elements need to be opened before they
  * can be navigated or manipulated.
  * 
+ * This interface is not intended to be implemented by clients.
+ *
  * TODO write doc for IRodinFile.
  *
  * @author Laurent Voisin
  */
 public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 		IElementManipulation, ISnapshotable {
+
+	/**
+	 * The element type of all Rodin Files.
+	 */
+	IElementType<IRodinFile> ELEMENT_TYPE = ElementType.FILE_ELEMENT_TYPE;
 
 	/**
 	 * Creates this file in the database. As a side effect, all ancestors of
@@ -88,9 +96,7 @@ public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 	 * @see IResource#getFileExtension()
 	 */
 	String getBareName();
-	
-	IFileElementType getElementType();
-	
+		
 	IFile getResource();
 
 	/**

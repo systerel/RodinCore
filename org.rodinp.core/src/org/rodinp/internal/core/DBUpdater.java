@@ -18,8 +18,6 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.Openable;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * This class is used by <code>RodinDBManager</code> to update the RodinDB

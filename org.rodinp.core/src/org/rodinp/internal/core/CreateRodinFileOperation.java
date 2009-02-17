@@ -27,7 +27,6 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
 import org.rodinp.internal.core.version.VersionManager;

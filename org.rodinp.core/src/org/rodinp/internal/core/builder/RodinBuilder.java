@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.rodinp.core.IFileElementType;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.FileAssociation;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -125,9 +125,9 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	Node createNode(IResource resource) {
 		assert resource instanceof IFile;
 		IFile file = (IFile) resource;
-		IFileElementType elementType = 
-			elementTypeManager.getFileElementType(file);
-		if(elementType == null)
+		FileAssociation association = 
+			elementTypeManager.getFileAssociation(file);
+		if(association == null)
 			return null;
 		Node node = state.graph.getNode(resource.getFullPath());
 		

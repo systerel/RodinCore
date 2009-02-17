@@ -4,6 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -29,11 +33,10 @@ import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.Openable;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.util.DebugUtil;
 import org.rodinp.internal.core.util.Util;
@@ -458,8 +461,11 @@ public class DeltaProcessor {
 		if (res instanceof IProject) {
 			return IRodinProject.ELEMENT_TYPE;
 		} else if (res.getType() == IResource.FILE) {
-			final ElementTypeManager etManager = ElementTypeManager.getInstance();
-			return etManager.getFileElementType((IFile) res);
+			final ElementTypeManager etManager = ElementTypeManager
+					.getInstance();
+			if (etManager.getFileAssociation((IFile) res) == null)
+				return null;
+			return IRodinFile.ELEMENT_TYPE;
 		} else {
 			return null;
 		}

@@ -32,7 +32,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
+import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
@@ -137,7 +137,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 				+ "      e12[org.rodinp.core.tests.namedElement]\n"
 				+ "    e2[org.rodinp.core.tests.namedElement]\n"
 				+ "    e3[org.rodinp.core.tests.namedElement]",
-				((RodinFile) rodinFile).toDebugString());
+				((RodinElement) rodinFile).toDebugString());
 		
 		// rodinFile.save(null, true);
 		// showFile(rodinFile.getResource());

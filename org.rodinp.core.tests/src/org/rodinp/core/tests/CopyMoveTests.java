@@ -25,7 +25,6 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.RodinFile;
 
 abstract public class CopyMoveTests extends ModifyingResourceTests {
 
@@ -167,7 +166,7 @@ abstract public class CopyMoveTests extends ModifyingResourceTests {
 			name = rename;
 		}
 		if (container instanceof IRodinProject) {
-			assertTrue("illegal child type", original instanceof RodinFile);
+			assertTrue("illegal child type", original instanceof IRodinFile);
 			return ((IRodinProject) container).getRodinFile(name);
 		} else if (container instanceof IRodinFile) {
 			final IInternalElement root = ((IRodinFile) container).getRoot();

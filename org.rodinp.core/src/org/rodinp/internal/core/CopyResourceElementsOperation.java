@@ -26,7 +26,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 /**

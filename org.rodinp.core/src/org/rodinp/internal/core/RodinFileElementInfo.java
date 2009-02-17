@@ -33,7 +33,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.version.ConversionEntry;
 import org.rodinp.internal.core.version.VersionManager;
 import org.w3c.dom.Element;
@@ -287,14 +286,11 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 	 * Returns the DOM element corresponding to the given Rodin element.
 	 * 
 	 * @param element
-	 *            a Rodin file or internal element
+	 *            an internal element
 	 * @return the corresponding DOM element or <code>null</code> if
 	 *         inexistent
 	 */
 	private Element getDOMElement(IInternalElement element) {
-		if (element instanceof RodinFile) {
-			return buffer.getDocumentElement();
-		}
 		Element result = internalElements.get(element);
 		if (result != null) {
 			assert result.getParentNode() != null;

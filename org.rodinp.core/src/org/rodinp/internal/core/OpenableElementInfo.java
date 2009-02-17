@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.rodinp.core.basis.Openable;
 import org.rodinp.core.basis.RodinElement;
 
 

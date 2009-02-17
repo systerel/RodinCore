@@ -298,24 +298,6 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Returns the file element type with the given id.
-	 * 
-	 * @param id
-	 *            unique identifier of the element type
-	 * @return the file element type with the given id
-	 * @throws IllegalArgumentException
-	 *             if no such file element type has been contributed
-	 */
-	public static IFileElementType getFileElementType(String id) {
-		final ElementTypeManager manager = ElementTypeManager.getInstance();
-		final IFileElementType result = manager.getFileElementType(id);
-		if (result != null) {
-			return result;
-		}
-		throw new IllegalArgumentException("Unknown file element type: " + id);
-	}
-
-	/**
 	 * Returns the single instance of the Rodin core plug-in runtime class.
 	 * Equivalent to <code>(RodinCore) getPlugin()</code>.
 	 * 

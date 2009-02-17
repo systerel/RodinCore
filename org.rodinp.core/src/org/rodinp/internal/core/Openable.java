@@ -8,7 +8,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.rodinp.core.basis;
+package org.rodinp.internal.core;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -20,11 +20,7 @@ import org.rodinp.core.IOpenable;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.OpenableElementInfo;
-import org.rodinp.internal.core.RodinDB;
-import org.rodinp.internal.core.RodinDBManager;
-import org.rodinp.internal.core.RodinDBStatus;
-import org.rodinp.internal.core.RodinElementInfo;
+import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 
 /**

@@ -47,7 +47,7 @@ import org.rodinp.core.basis.RodinElement;
 				switch (res.getType()) {
 				case IResource.FILE:
 					ElementTypeManager mgr = ElementTypeManager.getInstance();
-					if (mgr.getFileElementType((IFile) res) == null) {
+					if (mgr.getFileAssociation((IFile) res) == null) {
 						// Not a Rodin file
 						resources[resourcesCounter++] = res;
 					}

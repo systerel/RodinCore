@@ -17,6 +17,7 @@ import java.util.List;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Messages;
@@ -51,6 +52,17 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 		}
 	}
 
+	public static final class FileElementType extends ElementType<IRodinFile> {
+		protected FileElementType() {
+			super(RodinCore.PLUGIN_ID + ".file", Messages.type_file);
+		}
+
+		@Override
+		public RodinFile[] getArray(int length) {
+			return new RodinFile[length];
+		}
+	}
+
 	private static final HashMap<String, ElementType<?>> registry =
 		new HashMap<String, ElementType<?>>();
 	
@@ -59,6 +71,9 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 	
 	public static final ProjectElementType PROJECT_ELEMENT_TYPE = 
 		new ProjectElementType();
+
+	public static final FileElementType FILE_ELEMENT_TYPE = 
+		new FileElementType();
 
 	private static void register(String id, ElementType<?> type) {
 		final ElementType<?> oldType = registry.put(id, type);

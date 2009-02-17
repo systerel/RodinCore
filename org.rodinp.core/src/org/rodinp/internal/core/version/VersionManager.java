@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
@@ -122,7 +121,7 @@ public class VersionManager {
 	private void computeConverter(IConfigurationElement configElement,
 			List<VersionDesc> descs,
 			HashMap<IInternalElementType<?>, Converter> fc) throws Exception {
-		IInternalElementType<?> type = getFileElementType(configElement, "type");
+		IInternalElementType<?> type = getRootElementType(configElement, "type");
 		if (canConvert(descs, configElement.getContributor().getName(), type)) {
 
 			Converter converter = fc.get(type);
@@ -176,7 +175,7 @@ public class VersionManager {
 		}
 	}
 
-	private IInternalElementType<?> getFileElementType(
+	private IInternalElementType<?> getRootElementType(
 			IConfigurationElement configElement, String id) {
 		String typeString = configElement.getAttribute(id);
 		return RodinCore.getInternalElementType(typeString);
@@ -221,18 +220,18 @@ public class VersionManager {
 			version = Long.parseLong(versionString);
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException(
-					"Can't parse version number for file element type " + type, e);
+					"Can't parse version number for root element type " + type, e);
 		}
 		if (version < 0) {
 			throw new IllegalStateException(
-					"Negative version number for file element type " + type);
+					"Negative version number for root element type " + type);
 		}
 		return version;
 	}
 
 	private void addVersionDesc(List<VersionDesc> descs, IConfigurationElement element) {
 		assert element.getName().equals("fileElementVersion");
-		IInternalElementType<?> type = getFileElementType(element, "id");
+		IInternalElementType<?> type = getRootElementType(element, "id");
 		long version = parseVersion(element, type);
 		VersionDesc desc = findVersionDesc(descs, type);
 		String name = element.getContributor().getName();

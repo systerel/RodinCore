@@ -44,7 +44,7 @@ public abstract class EventBRoot extends InternalElement implements IEventBRoot,
 	}
 
 	public final String getComponentName() {
-		return getRodinFile().getBareName();
+		return getElementName();
 	}
 
 	public IEventBProject getEventBProject() {

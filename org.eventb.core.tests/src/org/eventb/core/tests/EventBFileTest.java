@@ -139,8 +139,8 @@ public class EventBFileTest extends TestCase {
 		checkFileConversions(file);
 	}
 
-	private <T> void assertSimilar(T input, T expected, T actual) {
-		if (expected.getClass() == input.getClass()) {
+	private void assertSimilar(IRodinFile input, IRodinFile expected, IRodinFile actual) {
+		if (expected.getRootElementType() == input.getRootElementType()) {
 			assertSame(expected, actual);
 		} else {
 			assertEquals(expected, actual);
@@ -164,7 +164,7 @@ public class EventBFileTest extends TestCase {
 
 		for (IRodinFile file : files) {
 			final IFile res = file.getResource();
-			assertSimilar(res, file, EventBPlugin.asEventBFile(res));
+			assertEquals(file, EventBPlugin.asEventBFile(res));
 			assertSimilar(file, file, EventBPlugin.asEventBFile(file));
 			assertSimilar(file, buc, EventBPlugin.asContextFile(file));
 			assertSimilar(file, bum, EventBPlugin.asMachineFile(file));

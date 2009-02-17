@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-   <extension-point id="fileElementTypes" name="%fileElementTypesName" schema="schema/fileElementTypes.exsd"/>
+   <extension-point id="fileAssociations" name="%fileAssociationsName" schema="schema/fileAssociations.exsd"/>
    <extension-point id="internalElementTypes" name="%internalElementTypesName" schema="schema/internalElementTypes.exsd"/>
    <extension-point id="autoTools" name="%autoToolsName" schema="schema/autoTools.exsd"/>
    <extension-point id="attributeTypes" name="%attributeTypesName" schema="schema/attributeTypes.exsd"/>

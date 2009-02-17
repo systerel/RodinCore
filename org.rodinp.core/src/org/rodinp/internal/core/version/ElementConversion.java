@@ -104,7 +104,7 @@ public class ElementConversion extends Conversion {
 		String rootName = p.substring(1, f == -1 ? p.length() : f);
 		if (!rootName.equals(getSheet().getType().getId())) {
 			throw new IllegalStateException(
-					"element path must begin with file element type " + 
+					"element path must begin with root element type " + 
 					getSheet().getType());
 		}
 		return f == -1;

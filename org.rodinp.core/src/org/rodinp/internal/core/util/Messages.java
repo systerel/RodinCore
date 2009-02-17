@@ -101,6 +101,7 @@ public final class Messages {
 	
 	public static String type_database;
 	public static String type_project;
+	public static String type_file;
 	
 	public static String converter_fileUnchanged;
 	public static String converter_successfulConversion;

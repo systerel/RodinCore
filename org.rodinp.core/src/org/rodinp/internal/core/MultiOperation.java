@@ -22,7 +22,6 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * This class is used to perform operations on multiple <code>IRodinElement</code>.

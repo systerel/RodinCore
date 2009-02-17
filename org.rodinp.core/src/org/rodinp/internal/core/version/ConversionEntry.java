@@ -36,9 +36,9 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.IConversionResult.IEntry;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.RodinDBStatus;
+import org.rodinp.internal.core.RodinFile;
 
 public class ConversionEntry implements IEntry {
 

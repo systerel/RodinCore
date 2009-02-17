@@ -17,8 +17,6 @@ import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
-import org.rodinp.core.basis.Openable;
-import org.rodinp.core.basis.RodinFile;
 
 /**
  * The cache of Rodin elements to their respective info.

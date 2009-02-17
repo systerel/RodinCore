@@ -11,7 +11,6 @@
 package org.rodinp.internal.core;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.basis.RodinFile;
 import org.rodinp.internal.core.util.Messages;
 
 /**
