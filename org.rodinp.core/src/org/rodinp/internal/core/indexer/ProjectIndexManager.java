@@ -12,6 +12,7 @@ package org.rodinp.internal.core.indexer;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -362,6 +363,20 @@ public class ProjectIndexManager {
 		try {
 			lockRead();
 			final Set<IDeclaration> decls = fileTable.get(file);
+			return decls.toArray(new IDeclaration[decls.size()]);
+		} finally {
+			unlockRead();
+		}
+	}
+
+	public IDeclaration[] getVisibleDeclarations(IRodinFile file)
+			throws InterruptedException {
+		try {
+			lockRead();
+			final Set<IDeclaration> decls = new HashSet<IDeclaration>(fileTable
+					.get(file));
+			final Collection<IDeclaration> imports = computeImports(file).values();
+			decls.addAll(imports);
 			return decls.toArray(new IDeclaration[decls.size()]);
 		} finally {
 			unlockRead();

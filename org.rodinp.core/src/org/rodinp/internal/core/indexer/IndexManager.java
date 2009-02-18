@@ -493,6 +493,19 @@ public final class IndexManager {
 		}
 	}
 	
+	public IDeclaration[] getVisibleDeclarations(IRodinFile file) throws InterruptedException {
+		try {
+			lockReadInitSave();
+			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+			if (pim == null) {
+				return NO_DECLARATIONS;
+			}
+			return pim.getVisibleDeclarations(file);
+		} finally {
+			unlockReadInitSave();
+		}
+	}
+
 	public IDeclaration[] getDeclarations(IRodinProject project, String name)
 			throws InterruptedException {
 		try {

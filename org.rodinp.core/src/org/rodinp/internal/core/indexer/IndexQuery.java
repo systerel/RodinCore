@@ -38,6 +38,11 @@ public class IndexQuery implements IIndexQuery {
 		return IndexManager.getDefault().getDeclarations(file);
 	}
 
+	public IDeclaration[] getVisibleDeclarations(IRodinFile file)
+			throws InterruptedException {
+		return IndexManager.getDefault().getVisibleDeclarations(file);
+	}
+
 	public IDeclaration[] getDeclarations(IRodinProject project, String name)
 			throws InterruptedException {
 		return IndexManager.getDefault().getDeclarations(project, name);
