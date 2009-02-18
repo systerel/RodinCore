@@ -151,25 +151,6 @@ public class QueryTests extends IndexTests {
 		assertIsEmpty(actualOccsElt2);
 	}
 	
-	public void testGetDeclsFile() throws Exception {
-		final IIndexQuery query = RodinCore.makeIndexQuery();
-		query.waitUpToDate();
-		final IDeclaration[] declsFile2 = query.getDeclarations(file2);
-
-		assertSameElements(makeArray(declElt1, declElt3), declsFile2,
-				DECLARATIONS);
-	}
-	
-	public void testGetVisibleDecls() throws Exception {
-		final IIndexQuery query = RodinCore.makeIndexQuery();
-		query.waitUpToDate();
-		final IDeclaration[] visibleDeclsFile2 = query
-				.getVisibleDeclarations(file2);
-
-		assertSameElements(makeArray(declElt1, declElt3, declElt4),
-				visibleDeclsFile2, DECLARATIONS);
-	}
-	
 	public void testGetDeclsPrjName() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
