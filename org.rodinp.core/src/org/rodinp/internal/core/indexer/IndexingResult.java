@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,11 +81,22 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		this.success = value;
 	}
 
-	public void remove(IDeclaration declaration) {
-		final IInternalElement element = declaration.getElement();
-		declarations.remove(element);
-		occurrences.remove(element);
-		exports.remove(declaration);
+	public void removeNonOccurringElements() {
+		final Iterator<IInternalElement> iter = declarations.keySet().iterator();
+		while(iter.hasNext()) {
+			final IInternalElement element = iter.next();
+			if (!occurrences.containsKey(element)) {
+				exports.remove(declarations.get(element));
+				iter.remove();
+				
+				if (IndexManager.DEBUG) {
+					System.out.println("Indexing "
+							+ file.getPath()
+							+ ": Removed non occurring declaration of: "
+							+ element);
+				}
+			}
+		}
 	}
 	
 	public Collection<IDeclaration> getDeclarations() {

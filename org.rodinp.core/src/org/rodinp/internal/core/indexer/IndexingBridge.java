@@ -12,7 +12,6 @@ package org.rodinp.internal.core.indexer;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
@@ -160,25 +159,10 @@ public class IndexingBridge implements IIndexingBridge {
 
 	// to call before getResult;
 	public void complete() {
-		removeNonOccurringElements();
+		result.removeNonOccurringElements();
 		result.setSuccess(!isCancelled());
 	}
 
-	private void removeNonOccurringElements() {
-		final Set<IInternalElement> occElems = result.getOccurrences().keySet();
-		for (IDeclaration decl: result.getDeclarations()) {
-			if (!occElems.contains(decl.getElement())) {
-				result.remove(decl);
-				if (IndexManager.DEBUG) {
-					System.out.println("Indexing "
-							+ file.getPath()
-							+ ": Removed non occurring declaration: "
-							+ decl);
-				}
-			}
-		}
-	}
-	
 	public IIndexingResult getResult() {
 		return result.clone();
 	}
