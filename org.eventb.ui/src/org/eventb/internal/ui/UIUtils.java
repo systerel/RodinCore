@@ -648,7 +648,7 @@ public class UIUtils {
 		if (value == null) {
 			return factory.hasValue(element, monitor);
 		}
-		if (!factory.hasValue(element, monitor))
+		if (!factory.hasValue(element, monitor) && !value.equals(""))
 			return true;
 		return !value.equals(factory.getValue(element, monitor));
 	}

@@ -35,6 +35,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -57,16 +57,17 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.EventBText;
+import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -113,6 +114,9 @@ public class EditPage extends EventBEditorPage implements
 	// Comment text widget at file level
 	IEventBInputText commentText;
 
+	StyledText commentWidget;
+	
+	private IAttributeManipulation commentManipulation = new CommentAttributeManipulation();
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -279,6 +283,9 @@ public class EditPage extends EventBEditorPage implements
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
+		final boolean borderEnabled = EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE);
+		
 		if (EventBEditorUtils.DEBUG) {
 			comp
 					.setBackground(EventBSharedColor
@@ -340,22 +347,19 @@ public class EditPage extends EventBEditorPage implements
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
-		final Text commentWidget = toolkit.createText(comp, "", SWT.MULTI);
+		final int style = (borderEnabled) ? SWT.MULTI | SWT.BORDER : SWT.MULTI;
+		commentWidget = new StyledText(comp, style);
 		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				false));
 		commentWidget.setForeground(EventBPreferenceStore
 				.getColorPreference(PreferenceConstants.P_COMMENT_FOREGROUND));
-		commentText = new EventBText(commentWidget);
-		new TimerText(commentWidget, 1000) {
+
+		commentText = new EventBStyledText(commentWidget, false);
+		new TimerStyledText(commentWidget, 1000) {
 
 			@Override
 			protected void response() {
-				if (rodinInput instanceof ICommentedElement) {
-					ICommentedElement ce = (ICommentedElement) rodinInput;
-					UIUtils.setStringAttribute(ce,
-							new CommentAttributeManipulation(), commentWidget
-									.getText(), null);
-				}
+				commitComment();
 			}
 		};
 		if (rodinInput instanceof ICommentedElement) {
@@ -369,12 +373,19 @@ public class EditPage extends EventBEditorPage implements
 				e.printStackTrace();
 			}
 		}
-		if (EventBPreferenceStore
-				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
+		if (borderEnabled) {
 			toolkit.paintBordersFor(comp);
 		}
 	}
 
+	void commitComment(){
+		final EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
+		final IInternalElement rodinInput = editor.getRodinInput();
+		UIUtils.setStringAttribute(rodinInput,
+				commentManipulation, commentWidget.getText(),
+				null);
+	}
+	
 	private static void removeFocusListener(ImageHyperlink hyperlink) {
 		for (Listener l : hyperlink.getListeners(SWT.FocusIn)) {
 			hyperlink.removeListener(SWT.FocusIn, l);
@@ -487,34 +498,39 @@ public class EditPage extends EventBEditorPage implements
 
 		if (commentText == null)
 			return;
-		final Text commentWidget = commentText.getTextWidget();
+
 		Display display = form.getDisplay();
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				String text = commentWidget.getText();
-				IInternalElement rodinInput = EditPage.this.getEventBEditor()
-						.getRodinInput();
-				if (rodinInput instanceof ICommentedElement) {
-					final ICommentedElement cElement = (ICommentedElement) rodinInput;
-					try {
-						if (cElement.hasComment()) {
-							final String comment = cElement.getComment();
-							if (!comment.equals(text)) {
-								commentWidget.setText(comment);
-							}
-						}
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					internalPack(commentWidget.getParent());
+				final String text = commentWidget.getText();
+				final String comment = getComment();
+				if (!comment.equals(text)) {
+					commentWidget.setText(comment);
 				}
+				internalPack(commentWidget.getParent());
 			}
-			
+
 		});
 	}
 
+	String getComment() {
+		final IInternalElement rodinInput = EditPage.this.getEventBEditor()
+				.getRodinInput();
+		String comment;
+		try {
+			if (commentManipulation.hasValue(rodinInput, null)) {
+				comment = commentManipulation.getValue(rodinInput, null);
+			} else {
+				comment = "";
+			}
+		} catch (RodinDBException e) {
+			comment = "";
+			e.printStackTrace();
+		}
+		return comment;
+	}
+	
 	/**
 	 * Utility method for packing the composite to the preferred size.
 	 * 
