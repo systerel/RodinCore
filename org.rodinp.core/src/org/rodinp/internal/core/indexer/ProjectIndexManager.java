@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
@@ -61,8 +60,6 @@ public class ProjectIndexManager {
 
 	private final TotalOrder<IRodinFile> order;
 
-	private final ReentrantReadWriteLock tableRWL;
-
 	public ProjectIndexManager(IRodinProject project) {
 		this.project = project;
 		this.index = new RodinIndex();
@@ -70,7 +67,6 @@ public class ProjectIndexManager {
 		this.nameTable = new NameTable();
 		this.exportTable = new ExportTable();
 		this.order = new TotalOrder<IRodinFile>();
-		this.tableRWL = new ReentrantReadWriteLock(true);
 	}
 	
 	// for persistence purposes
@@ -82,7 +78,6 @@ public class ProjectIndexManager {
 		this.nameTable = new NameTable();
 		this.exportTable = exportTable;
 		this.order = order;
-		this.tableRWL = new ReentrantReadWriteLock(true);
 		restoreNonPersistentData();
 	}
 	
@@ -96,25 +91,8 @@ public class ProjectIndexManager {
 		this.nameTable = nameTable;
 		this.exportTable = exportTable;
 		this.order = order;
-		this.tableRWL = new ReentrantReadWriteLock(true);
 	}
 	
-	private void lockRead() throws InterruptedException {
-		tableRWL.readLock().lockInterruptibly();
-	}
-
-	private void unlockRead() {
-		tableRWL.readLock().unlock();
-	}
-
-	private void lockWrite() {
-		tableRWL.writeLock().lock();
-	}
-
-	private void unlockWrite() {
-		tableRWL.writeLock().unlock();
-	}
-
 	public synchronized void doIndexing(IProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.beginTask("indexing project " + project,
@@ -145,9 +123,7 @@ public class ProjectIndexManager {
 		} else {
 			order.setToIterSuccessors();
 			order.remove();
-			lockWrite();
 			clean(file);
-			unlockWrite();
 		}
 	}
 
@@ -160,7 +136,6 @@ public class ProjectIndexManager {
 	}
 
 	private void updateTables(IIndexingResult result) {
-		lockWrite();
 
 		clean(result.getFile());
 
@@ -170,7 +145,6 @@ public class ProjectIndexManager {
 
 		updateExports(result);
 
-		unlockWrite();
 	}
 
 	private void updateExports(IIndexingResult result) {
@@ -343,100 +317,63 @@ public class ProjectIndexManager {
 		}
 	}
 	
-	public IDeclaration getDeclaration(IInternalElement element)
+	public synchronized IDeclaration getDeclaration(IInternalElement element)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Descriptor descriptor = index.getDescriptor(element);
 			if (descriptor == null) {
 				return null;
 			} else {
 				return descriptor.getDeclaration();
 			}
-		} finally {
-			unlockRead();
-		}
 	}
 
-	public IDeclaration[] getDeclarations(IRodinFile file)
+	public synchronized IDeclaration[] getDeclarations(IRodinFile file)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Set<IDeclaration> decls = fileTable.get(file);
 			return decls.toArray(new IDeclaration[decls.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 
-	public IDeclaration[] getVisibleDeclarations(IRodinFile file)
+	public synchronized IDeclaration[] getVisibleDeclarations(IRodinFile file)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Set<IDeclaration> decls = new HashSet<IDeclaration>(fileTable
 					.get(file));
 			final Collection<IDeclaration> imports = computeImports(file).values();
 			decls.addAll(imports);
 			return decls.toArray(new IDeclaration[decls.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 
-	public IDeclaration[] getDeclarations(String name)
+	public synchronized IDeclaration[] getDeclarations(String name)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Set<IDeclaration> decls = nameTable.getDeclarations(name);
 			return decls.toArray(new IDeclaration[decls.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 
-	private IOccurrence[] getOccurrences(IInternalElement element)
+	private synchronized IOccurrence[] getOccurrences(IInternalElement element)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Descriptor descriptor = index.getDescriptor(element);
 			if (descriptor == null) {
 				return NO_OCCURRENCES;
 			}
 			final Set<IOccurrence> occs = descriptor.getOccurrences();
 			return occs.toArray(new IOccurrence[occs.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 
-	public IOccurrence[] getOccurrences(IDeclaration declaration) throws InterruptedException {
+	public synchronized IOccurrence[] getOccurrences(IDeclaration declaration) throws InterruptedException {
 		return getOccurrences(declaration.getElement());
 	}
 
-	public IRodinFile[] exportFiles() throws InterruptedException {
-		try {
-			lockRead();
+	public synchronized IRodinFile[] exportFiles() throws InterruptedException {
 			final Set<IRodinFile> files = exportTable.files();
 			return files.toArray(new IRodinFile[files.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 
-	public IDeclaration[] getExports(IRodinFile file)
+	public synchronized IDeclaration[] getExports(IRodinFile file)
 			throws InterruptedException {
-		try {
-			lockRead();
 			final Set<IDeclaration> exports = exportTable.get(file);
 			return exports.toArray(new IDeclaration[exports.size()]);
-		} finally {
-			unlockRead();
-		}
 	}
 	
-	public PersistentPIM getPersistentData() {
-		try {
-			tableRWL.readLock().lock();
+	public synchronized PersistentPIM getPersistentData() {
 			final Collection<Descriptor> descColl = index.getDescriptors();
 			final Descriptor[] descriptors = descColl
 					.toArray(new Descriptor[descColl.size()]);
@@ -445,8 +382,5 @@ public class ProjectIndexManager {
 			final ExportTable exportClone = exportTable.clone();
 			return new PersistentPIM(project, descriptors, exportClone,
 					persistOrder);
-		} finally {
-			unlockRead();
-		}
 	}
 }
