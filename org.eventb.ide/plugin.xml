@@ -49,9 +49,14 @@
                ratio="0.4"
                relationship="top"
                relative="org.eventb.ui.views.ProofControl"/>
+         <view
+               id="fr.systerel.explorer.statistics"
+               relationship="stack"
+               relative="org.eventb.ui.views.ProofControl"/>
          <perspectiveShortcut id="org.eventb.ui.perspective.eventb"/>
          <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
          <viewShortcut id="fr.systerel.explorer.navigator.view"/>
+         <viewShortcut id="fr.systerel.explorer.statistics"/>
          <viewShortcut id="org.eventb.ui.views.ProofTreeUI"/>
          <viewShortcut id="org.eventb.ui.views.ProofControl"/>
          <viewShortcut id="org.eventb.ui.views.ProofInformation"/>
