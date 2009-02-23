@@ -642,15 +642,13 @@ public class UIUtils {
 		}
 	}
 
-	private static boolean attributeHasChanged(
-			IInternalElement element, IAttributeManipulation factory, String value,
+	private static boolean attributeHasChanged(IInternalElement element,
+			IAttributeManipulation manipulation, String value,
 			IProgressMonitor monitor) throws RodinDBException {
-		if (value == null) {
-			return factory.hasValue(element, monitor);
-		}
-		if (!factory.hasValue(element, monitor) && !value.equals(""))
-			return true;
-		return !value.equals(factory.getValue(element, monitor));
+		final String newValue = (value == null) ? "" : value;
+		final String oldValue = !manipulation.hasValue(element, monitor) ? ""
+				: manipulation.getValue(element, monitor);
+		return !(newValue.equals(oldValue));
 	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
