@@ -11,14 +11,19 @@
 
 package org.rodinp.core.tests.indexer;
 
+import static java.util.Arrays.asList;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.Set;
+
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
+import org.rodinp.core.indexer.IPropagator;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.indexer.tables.DependenceTable;
@@ -61,11 +66,13 @@ public class QueryTests extends IndexTests {
 	private static IDeclaration declElt4;
 	private static IOccurrence occElt1F1;
 	private static IOccurrence occElt1K2F2;
-	
+	private static IOccurrence occElt4InF1Root;
+	private static IOccurrence occElt4InElt1;
+
 	public QueryTests(String name) {
 		super(name);
 	}
-	
+
 	private void init() throws Exception {
 		project = createRodinProject("P");
 		file1 = createRodinFile(project, "query.test");
@@ -80,12 +87,15 @@ public class QueryTests extends IndexTests {
 		declElt3 = new Declaration(elt3, name3);
 		declElt4 = new Declaration(elt4, name4);
 		occElt1F1 = makeDescAndDefaultOcc(rodinIndex, declElt1, file1.getRoot());
-		occElt1K2F2 = addInternalOccurrence(rodinIndex, declElt1,
-				file2.getRoot(), TEST_KIND_2);
+		occElt1K2F2 = addInternalOccurrence(rodinIndex, declElt1, file2
+				.getRoot(), TEST_KIND_2);
 		makeDescAndDefaultOcc(rodinIndex, declElt3, file2.getRoot());
-		makeDescAndDefaultOcc(rodinIndex, declElt4, file1.getRoot());
+		occElt4InF1Root = makeDescAndDefaultOcc(rodinIndex, declElt4, file1
+				.getRoot());
+		occElt4InElt1 = addInternalOccurrence(rodinIndex, declElt4, elt1,
+				TEST_KIND);
 		// elt2 will not be indexed
-		
+
 		f1exportsElt1Elt4.add(file1, declElt1);
 		f1exportsElt1Elt4.add(file1, declElt4);
 		f2DepsOnf1.put(file2, makeArray(file1));
@@ -99,7 +109,7 @@ public class QueryTests extends IndexTests {
 		DebugHelpers.enableIndexing();
 		f.getResource().touch(null);
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -108,7 +118,7 @@ public class QueryTests extends IndexTests {
 		forceIndexing(file1);
 		forceIndexing(file2);
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		rodinIndex.clear();
@@ -117,7 +127,7 @@ public class QueryTests extends IndexTests {
 		IndexManager.getDefault().clear();
 		super.tearDown();
 	}
-	
+
 	public void testGetDecl() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -131,40 +141,155 @@ public class QueryTests extends IndexTests {
 		final IDeclaration actualDeclElt2 = query.getDeclaration(elt2);
 		assertNull(actualDeclElt2);
 	}
-	
+
 	public void testGetOccs() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
 		final IDeclaration actualDeclElt1 = query.getDeclaration(elt1);
 
-		final IOccurrence[] actualOccsElt1 = query.getOccurrences(actualDeclElt1);
-		
-		assertSameElements(makeArray(occElt1F1, occElt1K2F2), actualOccsElt1,
+		final Set<IOccurrence> actualOccsElt1 = query
+				.getOccurrences(actualDeclElt1);
+
+		assertSameElements(asList(occElt1F1, occElt1K2F2), actualOccsElt1,
 				OCCURRENCES);
 	}
-	
+
 	public void testGetOccsUnknown() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
-		final IOccurrence[] actualOccsElt2 = query.getOccurrences(declElt2);
-		
+		final Set<IOccurrence> actualOccsElt2 = query
+				.getOccurrences(declElt2);
+
 		assertIsEmpty(actualOccsElt2);
 	}
-	
+
 	public void testGetDeclsPrjName() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
-		final IDeclaration[] declsName1 = query.getDeclarations(project, name1);
-		
-		assertSameElements(makeArray(declElt1), declsName1, DECLARATIONS);
+		final Set<IDeclaration> declsName1 = query.getDeclarations(project,
+				name1);
+
+		assertSameElements(asList(declElt1), declsName1, DECLARATIONS);
 	}
-	
+
 	public void testGetDeclsPrjNameNoneExpected() throws Exception {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
-		final IDeclaration[] declsName2 = query.getDeclarations(project, name2);
+		final Set<IDeclaration> declsName2 = query.getDeclarations(project,
+				name2);
 
 		assertIsEmpty(declsName2);
 	}
-	
+
+	public void testGetDeclsFile() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IDeclaration> declsFile2 = query.getDeclarations(file2);
+
+		assertSameElements(asList(declElt1, declElt3), declsFile2, DECLARATIONS);
+	}
+
+	public void testGetVisibleDecls() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IDeclaration> visibleDeclsFile2 = query
+				.getVisibleDeclarations(file2);
+
+		assertSameElements(asList(declElt1, declElt3, declElt4),
+				visibleDeclsFile2, DECLARATIONS);
+	}
+
+	public void testGetDeclsFileName() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IDeclaration> declsName1F1 = query.getDeclarations(file1);
+		query.filterName(declsName1F1, name1);
+
+		assertSameElements(asList(declElt1), declsName1F1, DECLARATIONS);
+	}
+
+	public void testGetDeclsFileNameOtherThanDecl() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IDeclaration> declsName1F2 = query.getDeclarations(file2);
+		query.filterName(declsName1F2, name1);
+
+		assertSameElements(asList(declElt1), declsName1F2, DECLARATIONS);
+	}
+
+	public void testGetDeclsFileType() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IDeclaration> declsF2NE = query.getDeclarations(file2);
+		query.filterType(declsF2NE, NamedElement.ELEMENT_TYPE);
+		final Set<IDeclaration> declsF2NE2 = query.getDeclarations(file2);
+		query.filterType(declsF2NE2, NamedElement2.ELEMENT_TYPE);
+
+		assertSameElements(asList(declElt1), declsF2NE, DECLARATIONS);
+		assertSameElements(asList(declElt3), declsF2NE2, DECLARATIONS);
+	}
+
+	public void testGetOccsKind() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IOccurrence> occsElt1K2 = query.getOccurrences(declElt1);
+		query.filterKind(occsElt1K2, TEST_KIND_2);
+
+		assertSameElements(asList(occElt1K2F2), occsElt1K2, OCCURRENCES);
+	}
+
+	public void testGetOccsFile() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IOccurrence> occsElt1F2 = query.getOccurrences(declElt1);
+		query.filterFile(occsElt1F2, file2);
+
+		assertSameElements(asList(occElt1K2F2), occsElt1F2, OCCURRENCES);
+	}
+
+	public void testGetOccsLocation() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IOccurrence> occsElt4 = query.getOccurrences(declElt4);
+		assertSameElements(asList(occElt4InF1Root, occElt4InElt1), occsElt4,
+				OCCURRENCES);
+		query.filterLocation(occsElt4, RodinCore.getInternalLocation(elt1));
+
+		assertSameElements(asList(occElt4InElt1), occsElt4, OCCURRENCES);
+	}
+
+	public void testGetOccsKindFile() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final Set<IOccurrence> occsKF2 = query.getOccurrences(declElt1);
+		query.filterKind(occsKF2, TEST_KIND);
+		query.filterFile(occsKF2, file2);
+
+		assertIsEmpty(occsKF2);
+	}
+
+	private static class OccElemPropagator implements IPropagator {
+
+		public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
+				IIndexQuery query) {
+			final IInternalElement locElem = occurrence.getLocation()
+					.getElement();
+			return query.getDeclaration(locElem);
+		}
+
+	}
+
+	public void testPropagator() throws Exception {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final OccElemPropagator propagator = new OccElemPropagator();
+		final Set<IOccurrence> occsPropElt4 = query.getOccurrences(declElt4,
+				propagator);
+
+		
+		assertSameElements(asList(occElt4InF1Root, occElt4InElt1, occElt1F1,
+				occElt1K2F2), occsPropElt4, OCCURRENCES);
+
+	}
+
 }

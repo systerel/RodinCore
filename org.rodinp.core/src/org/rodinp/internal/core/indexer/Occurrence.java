@@ -59,9 +59,8 @@ public class Occurrence implements IOccurrence {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("kind: " + kind.getName());
-		sb.append(" ");
-		sb.append("location: " + location);
-		sb.append("declaration: " + declaration);
+		sb.append(" location: " + location);
+		sb.append(" declaration: " + declaration);
 		return sb.toString();
 	}
 

@@ -79,7 +79,7 @@ public class ExportTableUsageTests extends IndexTests {
 		manager.scheduleIndexing(file);
 		
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final IDeclaration[] actual = manager.getExports(file);
+		final Set<IDeclaration> actual = manager.getExports(file);
 		
 		assertSameElements(expected, actual, EXPORTS);
 	}
@@ -99,7 +99,7 @@ public class ExportTableUsageTests extends IndexTests {
 		
 		// verify renaming
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final IDeclaration[] actual = manager.getExports(file);
+		final Set<IDeclaration> actual = manager.getExports(file);
 
 		assertSameElements(expected, actual, EXPORTS);
 	}
@@ -120,7 +120,7 @@ public class ExportTableUsageTests extends IndexTests {
 
 		// verify removing
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final IDeclaration[] actual = manager.getExports(file);
+		final Set<IDeclaration> actual = manager.getExports(file);
 
 		assertSameElements(expected, actual, EXPORTS);
 	}
@@ -144,7 +144,7 @@ public class ExportTableUsageTests extends IndexTests {
 
 		// verify adding
 		final Set<IDeclaration> expected = indexer.getExports(file);
-		final IDeclaration[] actual = manager.getExports(file);
+		final Set<IDeclaration> actual = manager.getExports(file);
 
 		assertSameElements(expected, actual, EXPORTS);
 	}

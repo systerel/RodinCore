@@ -179,7 +179,7 @@ public class IndexTestsUtil {
 			final IInternalElement elt = expDesc.getDeclaration().getElement();
 			final IDeclaration actDecl = actual.getDeclaration(elt);
 			assertNotNull("declaration expected for " + elt, actDecl);
-			final IOccurrence[] actOccs = actual.getOccurrences(actDecl);
+			final Set<IOccurrence> actOccs = actual.getOccurrences(actDecl);
 			assertSameElements(expDesc.getOccurrences(), actOccs, "occurrences");
 		}
 	}
@@ -194,8 +194,8 @@ public class IndexTestsUtil {
 			IDeclaration declaration, int expectedLength) throws Exception {
 		final IDeclaration actualDecl = manager.getDeclaration(declaration.getElement());
 		assertEquals("bad declaration", declaration, actualDecl);
-		final IOccurrence[] actualOccs = manager.getOccurrences(declaration);
-		assertLength(actualOccs, expectedLength);
+		final Set<IOccurrence> actualOccs = manager.getOccurrences(declaration);
+		assertEquals("bad size", expectedLength, actualOccs.size());
 	}
 
 	public static void assertContains(Descriptor desc, IOccurrence occ) {

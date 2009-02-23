@@ -11,8 +11,9 @@
 package org.rodinp.internal.core.indexer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,8 +46,6 @@ import org.rodinp.internal.core.indexer.tables.RodinIndex;
  * 
  */
 public class ProjectIndexManager {
-
-	private static final IOccurrence[] NO_OCCURRENCES = new IOccurrence[0];
 
 	private final IRodinProject project;
 
@@ -208,12 +207,11 @@ public class ProjectIndexManager {
 			final Descriptor descriptor = index.getDescriptor(element);
 
 			if (descriptor == null) {
-				IRodinDBStatus status =
-						new RodinDBStatus(
-								IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
-								element,
-								getClass()
-										+ ": element in FileTable with no Descriptor in RodinIndex.");
+				IRodinDBStatus status = new RodinDBStatus(
+						IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
+						element,
+						getClass()
+								+ ": element in FileTable with no Descriptor in RodinIndex.");
 				RodinCore.getRodinCore().getLog().log(status);
 			} else {
 				descriptor.removeOccurrences(file);
@@ -316,71 +314,66 @@ public class ProjectIndexManager {
 			throw new CancellationException();
 		}
 	}
-	
-	public synchronized IDeclaration getDeclaration(IInternalElement element)
-			throws InterruptedException {
-			final Descriptor descriptor = index.getDescriptor(element);
-			if (descriptor == null) {
-				return null;
-			} else {
-				return descriptor.getDeclaration();
-			}
+
+	public synchronized IDeclaration getDeclaration(IInternalElement element) {
+		final Descriptor descriptor = index.getDescriptor(element);
+		if (descriptor == null) {
+			return null;
+		} else {
+			return descriptor.getDeclaration();
+		}
 	}
 
-	public synchronized IDeclaration[] getDeclarations(IRodinFile file)
-			throws InterruptedException {
-			final Set<IDeclaration> decls = fileTable.get(file);
-			return decls.toArray(new IDeclaration[decls.size()]);
+	public synchronized Set<IDeclaration> getDeclarations(IRodinFile file) {
+		final Set<IDeclaration> decls = fileTable.get(file);
+		return new LinkedHashSet<IDeclaration>(decls);
 	}
 
-	public synchronized IDeclaration[] getVisibleDeclarations(IRodinFile file)
-			throws InterruptedException {
-			final Set<IDeclaration> decls = new HashSet<IDeclaration>(fileTable
-					.get(file));
-			final Collection<IDeclaration> imports = computeImports(file).values();
-			decls.addAll(imports);
-			return decls.toArray(new IDeclaration[decls.size()]);
+	public synchronized Set<IDeclaration> getVisibleDeclarations(IRodinFile file) {
+		final Set<IDeclaration> decls = new LinkedHashSet<IDeclaration>(
+				fileTable.get(file));
+		final Collection<IDeclaration> imports = computeImports(file).values();
+		decls.addAll(imports);
+		return decls;
 	}
 
-	public synchronized IDeclaration[] getDeclarations(String name)
-			throws InterruptedException {
-			final Set<IDeclaration> decls = nameTable.getDeclarations(name);
-			return decls.toArray(new IDeclaration[decls.size()]);
+	public synchronized Set<IDeclaration> getDeclarations(String name) {
+		final Set<IDeclaration> decls = nameTable.getDeclarations(name);
+		return new LinkedHashSet<IDeclaration>(decls);
 	}
 
-	private synchronized IOccurrence[] getOccurrences(IInternalElement element)
-			throws InterruptedException {
-			final Descriptor descriptor = index.getDescriptor(element);
-			if (descriptor == null) {
-				return NO_OCCURRENCES;
-			}
-			final Set<IOccurrence> occs = descriptor.getOccurrences();
-			return occs.toArray(new IOccurrence[occs.size()]);
+	private synchronized Set<IOccurrence> getOccurrences(
+			IInternalElement element) {
+		final Descriptor descriptor = index.getDescriptor(element);
+		if (descriptor == null) {
+			return Collections.emptySet();
+		}
+		final Set<IOccurrence> occs = descriptor.getOccurrences();
+		return new LinkedHashSet<IOccurrence>(occs);
 	}
 
-	public synchronized IOccurrence[] getOccurrences(IDeclaration declaration) throws InterruptedException {
+	public synchronized Set<IOccurrence> getOccurrences(IDeclaration declaration) {
 		return getOccurrences(declaration.getElement());
 	}
 
-	public synchronized IRodinFile[] exportFiles() throws InterruptedException {
-			final Set<IRodinFile> files = exportTable.files();
-			return files.toArray(new IRodinFile[files.size()]);
+	public synchronized Set<IRodinFile> exportFiles() {
+		final Set<IRodinFile> files = exportTable.files();
+		return new LinkedHashSet<IRodinFile>(files);
 	}
 
-	public synchronized IDeclaration[] getExports(IRodinFile file)
-			throws InterruptedException {
-			final Set<IDeclaration> exports = exportTable.get(file);
-			return exports.toArray(new IDeclaration[exports.size()]);
+	public synchronized Set<IDeclaration> getExports(IRodinFile file) {
+		final Set<IDeclaration> exports = exportTable.get(file);
+		return new LinkedHashSet<IDeclaration>(exports);
 	}
-	
+
 	public synchronized PersistentPIM getPersistentData() {
-			final Collection<Descriptor> descColl = index.getDescriptors();
-			final Descriptor[] descriptors = descColl
-					.toArray(new Descriptor[descColl.size()]);
-			final PersistentTotalOrder<IRodinFile> persistOrder = order
-					.getPersistentData();
-			final ExportTable exportClone = exportTable.clone();
-			return new PersistentPIM(project, descriptors, exportClone,
-					persistOrder);
+		final Collection<Descriptor> descColl = index.getDescriptors();
+		final Descriptor[] descriptors = descColl
+				.toArray(new Descriptor[descColl.size()]);
+		final PersistentTotalOrder<IRodinFile> persistOrder = order
+				.getPersistentData();
+		final ExportTable exportClone = exportTable.clone();
+		return new PersistentPIM(project, descriptors, exportClone,
+				persistOrder);
 	}
 }

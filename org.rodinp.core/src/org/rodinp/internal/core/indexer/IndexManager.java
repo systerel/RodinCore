@@ -12,12 +12,12 @@ package org.rodinp.internal.core.indexer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISavedState;
@@ -47,7 +47,7 @@ import org.rodinp.internal.core.util.Util;
 public final class IndexManager {
 
 	// TODO change scheduling rules to the file being processed
-	
+
 	// For debugging and tracing purposes
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
@@ -69,14 +69,6 @@ public final class IndexManager {
 	// private static final int TIME_BEFORE_INDEXING = 2000;
 
 	private volatile boolean indexingEnabled = true;
-
-	private final ReentrantReadWriteLock initSaveLock =
-			new ReentrantReadWriteLock(true);
-
-	/** Lock guarding table access during indexing */
-	
-	private static final IDeclaration[] NO_DECLARATIONS = new IDeclaration[0];
-	private static final IOccurrence[] NO_OCCURRENCES = new IOccurrence[0];
 
 	private IndexManager() {
 		pppim = new PerProjectPIM();
@@ -128,8 +120,7 @@ public final class IndexManager {
 	}
 
 	// for testing purposes only
-	public void scheduleIndexing(IRodinFile... files)
-			throws InterruptedException {
+	public void scheduleIndexing(IRodinFile... files) {
 		assert !indexingEnabled;
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
@@ -160,15 +151,6 @@ public final class IndexManager {
 		if (monitor != null && monitor.isCanceled()) {
 			throw new CancellationException();
 		}
-	}
-
-	private void lockReadInitSave()
-			throws InterruptedException {
-		initSaveLock.readLock().lockInterruptibly();
-	}
-
-	private void unlockReadInitSave() {
-		initSaveLock.readLock().unlock();
 	}
 
 	ProjectIndexManager fetchPIM(IRodinProject project) {
@@ -211,7 +193,7 @@ public final class IndexManager {
 	 */
 	public void start(ISavedState savedState, IProgressMonitor daemonMonitor) {
 		restore(savedState, daemonMonitor);
-		
+
 		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		indexing.setRule(rodinDB.getSchedulingRule());
 		indexing.setPriority(Job.DECORATE);
@@ -243,7 +225,8 @@ public final class IndexManager {
 						| IResourceChangeEvent.POST_BUILD);
 	}
 
-	private void processCurrentDeltas(IProgressMonitor monitor) throws InterruptedException {
+	private void processCurrentDeltas(IProgressMonitor monitor)
+			throws InterruptedException {
 		final int maxAttempts = 3;
 		final Iterator<IIndexDelta> iter = currentDeltas.iterator();
 		while (iter.hasNext()) {
@@ -264,7 +247,8 @@ public final class IndexManager {
 		}
 	}
 
-	private void processDelta(IIndexDelta delta, IProgressMonitor monitor) throws InterruptedException {
+	private void processDelta(IIndexDelta delta, IProgressMonitor monitor)
+			throws InterruptedException {
 		if (delta.getKind() == Kind.FILE_CHANGED) {
 			final IRodinFile file = (IRodinFile) delta.getElement();
 
@@ -274,30 +258,36 @@ public final class IndexManager {
 		}
 	}
 
-	private void processProjectChanged(IIndexDelta delta, IProgressMonitor monitor) {
+	private void processProjectChanged(IIndexDelta delta,
+			IProgressMonitor monitor) {
 		final IRodinProject project = (IRodinProject) delta.getElement();
-		final PersistenceManager persistenceManager =
-				PersistenceManager.getDefault();
-		final Kind kind = delta.getKind();
-
-		if (kind == Kind.PROJECT_OPENED) {
-			lockWriteInitSave();
-			final boolean success =
-					persistenceManager.restoreProject(project, pppim);
-			if (!success) {
-				indexProject(project, monitor);
+		final PersistenceManager persistenceManager = PersistenceManager
+				.getDefault();
+		switch (delta.getKind()) {
+		case PROJECT_OPENED:
+			synchronized (this) { // ¿ TODO synchronize the whole method ?
+				final boolean success = persistenceManager.restoreProject(
+						project, pppim);
+				if (!success) {
+					indexProject(project, monitor);
+				}
+				persistenceManager.deleteProject(project);
 			}
-			persistenceManager.deleteProject(project);
-			unlockWriteInitSave();
-		} else if (kind == Kind.PROJECT_CLOSED) {
+			break;
+		case PROJECT_CLOSED:
 			// already saved by persistence manager (PROJECT_SAVE)
 			pppim.remove(project);
-		} else if (kind == Kind.PROJECT_CREATED || kind == Kind.PROJECT_CLEANED) {
-			
+			break;
+		case PROJECT_CREATED:
+		case PROJECT_CLEANED:
 			indexProject(project, monitor);
-		} else if (kind == Kind.PROJECT_DELETED) {
+			break;
+		case PROJECT_DELETED:
 			pppim.remove(project);
 			persistenceManager.deleteProject(project);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -314,79 +304,53 @@ public final class IndexManager {
 		}
 	}
 
-	private void unlockWriteInitSave() {
-		initSaveLock.writeLock().unlock();
+	public synchronized PersistentIndexManager getPersistentData() {
+		final Set<IIndexDelta> deltaSet = new HashSet<IIndexDelta>();
+		deltaSet.addAll(currentDeltas);
+		queue.drainTo(deltaSet);
+		return new PersistentIndexManager(pppim, deltaSet, indexerRegistry
+				.getPersistentData());
 	}
 
-	private void lockWriteInitSave() {
-		initSaveLock.writeLock().lock();
-	}
-
-	public PersistentIndexManager getPersistentData() {
-		try {
-			initSaveLock.readLock().lock();
-			final Set<IIndexDelta> deltaSet = new HashSet<IIndexDelta>();
-			deltaSet.addAll(currentDeltas);
-			queue.drainTo(deltaSet);
-			return new PersistentIndexManager(pppim, deltaSet, indexerRegistry
-					.getPersistentData());
-		} finally {
-			unlockReadInitSave();
+	public synchronized PersistentPIM getPersistentPIM(IRodinProject project) {
+		final ProjectIndexManager pim = pppim.get(project);
+		if (pim == null) {
+			return null;
 		}
-	}
-	
-	public PersistentPIM getPersistentPIM(IRodinProject project) {
-		try {
-			initSaveLock.readLock().lock();
-			final ProjectIndexManager pim = pppim.get(project);
-			if (pim == null) {
-				return null;
-			}
-			return pim.getPersistentData();
-		} finally {
-			unlockReadInitSave();
-		}
+		return pim.getPersistentData();
 	}
 
-	private void restore(ISavedState savedState, IProgressMonitor monitor) {
-		try {	
-			lockWriteInitSave();
-			printVerbose("Restoring IndexManager");
-			final PersistentIndexManager persistIM = new PersistentIndexManager(
-					pppim, currentDeltas, new Registry<String, String>());
-			final boolean success = PersistenceManager.getDefault().restore(
-					savedState, persistIM, listener);
-			if (!success
-					|| !indexerRegistry.sameAs(persistIM.getIndexerRegistry())) {
-				indexAll(monitor);
-				// FIXME run at startup even if we want indexing disabled
-			}
-		} finally {
-			unlockWriteInitSave();
+	private synchronized void restore(ISavedState savedState,
+			IProgressMonitor monitor) {
+		printVerbose("Restoring IndexManager");
+		final PersistentIndexManager persistIM = new PersistentIndexManager(
+				pppim, currentDeltas, new Registry<String, String>());
+		final boolean success = PersistenceManager.getDefault().restore(
+				savedState, persistIM, listener);
+		if (!success || !indexerRegistry.sameAs(persistIM.getIndexerRegistry())) {
+			indexAll(monitor);
+			// FIXME run at startup even if we want indexing disabled
 		}
 	}
 
 	/**
 	 * Blocks until the indexing system becomes up to date.
 	 * 
-	 * @throws InterruptedException
-	 * 
 	 */
-	public void waitUpToDate() throws InterruptedException {
-		queue.awaitEmptyQueue();
+	public void waitUpToDate() {
+		try {
+			queue.awaitEmptyQueue();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	/**
 	 * Clears the indexes, tables and indexers.
 	 */
 	public synchronized void clear() {
-		try {
-			lockWriteInitSave();
-			clearIndexers();
-			pppim.clear();
-		} finally {
-			unlockWriteInitSave();
-		}
+		clearIndexers();
+		pppim.clear();
 	}
 
 	// For testing purpose only, do not call in operational code
@@ -417,7 +381,6 @@ public final class IndexManager {
 			this.projects = projects;
 		}
 
-		
 		public void run(IProgressMonitor monitor) {
 			printVerbose("project indexing: " + Arrays.asList(projects));
 			try {
@@ -462,91 +425,57 @@ public final class IndexManager {
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		listener.resourceChanged(event);		
+		listener.resourceChanged(event);
 	}
 
-	public IDeclaration getDeclaration(IInternalElement element)
-			throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim
-					.get(element.getRodinProject());
-			if (pim == null) {
-				return null;
-			}
-			return pim.getDeclaration(element);
-		} finally {
-			unlockReadInitSave();
+	public synchronized IDeclaration getDeclaration(IInternalElement element) {
+		final ProjectIndexManager pim = pppim.get(element.getRodinProject());
+		if (pim == null) {
+			return null;
 		}
+		return pim.getDeclaration(element);
 	}
 
-	public IDeclaration[] getDeclarations(IRodinFile file) throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
-			if (pim == null) {
-				return NO_DECLARATIONS;
-			}
-			return pim.getDeclarations(file);
-		} finally {
-			unlockReadInitSave();
+	public synchronized Set<IDeclaration> getDeclarations(IRodinFile file) {
+		final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+		if (pim == null) {
+			return Collections.emptySet();
 		}
-	}
-	
-	public IDeclaration[] getVisibleDeclarations(IRodinFile file) throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
-			if (pim == null) {
-				return NO_DECLARATIONS;
-			}
-			return pim.getVisibleDeclarations(file);
-		} finally {
-			unlockReadInitSave();
-		}
+		return pim.getDeclarations(file);
 	}
 
-	public IDeclaration[] getDeclarations(IRodinProject project, String name)
-			throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim.get(project);
-			if (pim == null) {
-				return NO_DECLARATIONS;
-			}
-			return pim.getDeclarations(name);
-		} finally {
-			unlockReadInitSave();
+	public synchronized Set<IDeclaration> getVisibleDeclarations(IRodinFile file) {
+		final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+		if (pim == null) {
+			return Collections.emptySet();
 		}
+		return pim.getVisibleDeclarations(file);
 	}
 
-	public IOccurrence[] getOccurrences(IDeclaration declaration)
-			throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim.get(declaration.getElement()
-					.getRodinProject());
-			if (pim == null) {
-				return NO_OCCURRENCES;
-			}
-			return pim.getOccurrences(declaration);
-		} finally {
-			unlockReadInitSave();
+	public synchronized Set<IDeclaration> getDeclarations(
+			IRodinProject project, String name) {
+		final ProjectIndexManager pim = pppim.get(project);
+		if (pim == null) {
+			return Collections.emptySet();
 		}
+		return pim.getDeclarations(name);
 	}
 
-	public IDeclaration[] getExports(IRodinFile file)
-			throws InterruptedException {
-		try {
-			lockReadInitSave();
-			final ProjectIndexManager pim = pppim.get(file.getRodinProject());
-			if (pim == null) {
-				return NO_DECLARATIONS;
-			}
-			return pim.getExports(file);
-		} finally {
-			unlockReadInitSave();
+	public synchronized Set<IOccurrence> getOccurrences(IDeclaration declaration) {
+		final ProjectIndexManager pim = pppim.get(declaration.getElement()
+				.getRodinProject());
+		if (pim == null) {
+			return Collections.emptySet();
 		}
+		return pim.getOccurrences(declaration);
+	}
+
+	public synchronized Set<IDeclaration> getExports(IRodinFile file) {
+		final ProjectIndexManager pim = pppim.get(file.getRodinProject());
+		if (pim == null) {
+			return Collections.emptySet();
+		}
+		return pim.getExports(file);
 	}
 
 }

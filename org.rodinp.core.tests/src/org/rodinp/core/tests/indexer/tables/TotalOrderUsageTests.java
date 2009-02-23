@@ -14,6 +14,7 @@ import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -247,9 +248,9 @@ public class TotalOrderUsageTests extends IndexTests {
 
 		manager.scheduleIndexing(file2);
 
-		final IDeclaration[] exports = manager.getExports(file2);
-		final IDeclaration[] fileDecls = manager.getDeclarations(file2);
-		final IDeclaration[] nameDecls = manager.getDeclarations(project,
+		final Set<IDeclaration> exports = manager.getExports(file2);
+		final Set<IDeclaration> fileDecls = manager.getDeclarations(file2);
+		final Set<IDeclaration> nameDecls = manager.getDeclarations(project,
 				eltF2Name);
 
 		assertIsEmpty(exports);

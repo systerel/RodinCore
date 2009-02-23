@@ -78,7 +78,7 @@ public class FileTableUsageTests extends IndexTests {
 	private void assertFileTable(IRodinFile rodinFile,
 			Set<IDeclaration> expectedElements, String message) throws InterruptedException {
 
-		IDeclaration[] actualElements = manager.getDeclarations(rodinFile);
+		Set<IDeclaration> actualElements = manager.getDeclarations(rodinFile);
 
 		if (DEBUG) {
 			System.out.println(getName() + message);
