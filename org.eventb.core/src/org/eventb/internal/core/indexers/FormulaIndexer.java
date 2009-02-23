@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.internal.core.indexers.EventBIndexUtil.*;
+import static org.eventb.core.EventBPlugin.*;
+import static org.eventb.internal.core.indexers.EventBIndexUtil.getRodinLocation;
 
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.DefaultVisitor;

@@ -11,8 +11,8 @@
 package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.internal.core.indexers.EventBIndexUtil.REFERENCE;
-import static org.rodinp.core.RodinCore.*;
+import static org.eventb.core.EventBPlugin.*;
+import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.Map;
 
@@ -136,8 +136,8 @@ public class EventIndexer extends Cancellable {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
 			final IDeclaration declaration = bridge.declare(event, eventLabel);
-			bridge.addOccurrence(declaration, REFERENCE,
-					getInternalLocation(event.getRodinFile().getRoot()));
+			bridge.addOccurrence(declaration, DECLARATION,
+					getInternalLocation(event.getRoot()));
 			bridge.export(declaration);
 		}
 	}
@@ -196,6 +196,8 @@ public class EventIndexer extends Cancellable {
 				final String ident = parameter.getIdentifierString();
 
 				IDeclaration declaration = bridge.declare(parameter, ident);
+				bridge.addOccurrence(declaration, DECLARATION,
+						getInternalLocation(event));
 				totalST.put(declaration);
 				bridge.export(declaration);
 

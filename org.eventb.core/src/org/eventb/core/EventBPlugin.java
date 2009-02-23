@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import static org.rodinp.core.RodinCore.getOccurrenceKind;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.pm.IProofManager;
@@ -19,6 +21,8 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.core.indexers.EventPropagator;
+import org.eventb.internal.core.indexers.IdentifierPropagator;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
 import org.eventb.internal.core.pm.UserSupportManager;
@@ -33,6 +37,8 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.indexer.IPropagator;
 
 /**
  * The Event-B core plugin class.
@@ -563,6 +569,20 @@ public class EventBPlugin extends Plugin {
 			return null;
 		}
 		return elem.getPSRoot().getRodinFile();
+	}
+
+	public static final IOccurrenceKind DECLARATION = getOccurrenceKind("declaration");
+
+	public static final IOccurrenceKind REFERENCE = getOccurrenceKind("reference");
+
+	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind("modification");
+
+	public static IPropagator getEventPropagator() {
+		return EventPropagator.getDefault();
+	}
+
+	public static IPropagator getIdentifierPropagator() {
+		return IdentifierPropagator.getDefault();
 	}
 
 }

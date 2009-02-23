@@ -84,7 +84,34 @@ public abstract class EventBIndexerTests extends BuilderTest {
 					+ "		org.eventb.core.label=\"inv1\""
 					+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
 					+ "</org.eventb.core.machineFile>";
-
+	
+	protected static final String EVT_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	+ "<org.eventb.core.machineFile"
+	+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+	+ "		version=\"3\">"
+	+ "<org.eventb.core.event"
+	+ "		name=\"internal_element1\""
+	+ "		org.eventb.core.convergence=\"0\""
+	+ "		org.eventb.core.extended=\"false\""
+	+ "		org.eventb.core.label=\"evt1\"/>"
+	+ "</org.eventb.core.machineFile>";
+	
+	protected static final String EVT_1REF_REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.machineFile"
+			+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+			+ "		version=\"3\">"
+			+ "<org.eventb.core.refinesMachine"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.target=\"exporter\"/>"
+			+ "<org.eventb.core.event"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.convergence=\"0\" org.eventb.core.extended=\"true\" org.eventb.core.label=\"evt1\">"
+			+ "		<org.eventb.core.refinesEvent"
+			+ "				name=\"internal_element1\""
+			+ "				org.eventb.core.target=\"evt1\"/>"
+			+ "</org.eventb.core.event>"
+			+ "</org.eventb.core.machineFile>";
+	
 	public EventBIndexerTests(String name) {
 		super(name);
 	}

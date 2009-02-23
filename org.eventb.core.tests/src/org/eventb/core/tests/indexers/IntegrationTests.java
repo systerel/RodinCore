@@ -10,21 +10,28 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static java.util.Arrays.asList;
+import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
 import static org.eventb.core.tests.indexers.OccUtils.*;
 import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
 
 import java.util.List;
+import java.util.Set;
 
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
@@ -59,6 +66,17 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "		org.eventb.core.label=\"axm1\""
 					+ "		org.eventb.core.predicate=\"cst2 ∈ set1\"/>"
 					+ "</org.eventb.core.contextFile>";
+
+	private static final String C2_NO_EXTENDS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "	<org.eventb.core.constant"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"cst2\"/>"
+			+ "	<org.eventb.core.axiom"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.label=\"axm1\""
+			+ "		org.eventb.core.predicate=\"cst2 ∈ set1\"/>"
+			+ "</org.eventb.core.contextFile>";
 
 	private static final String C3 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -140,6 +158,7 @@ public class IntegrationTests extends EventBIndexerTests {
 	}
 
 	protected void tearDown() throws Exception {
+		DebugHelpers.disableIndexing();
 		super.tearDown();
 	}
 
@@ -166,17 +185,17 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IEvent evtM2 = m2.getEvent(INTERNAL_ELEMENT1);
 		final IWitness witM2 = evtM2.getWitness(INTERNAL_ELEMENT1);
 
-		final IIndexQuery requester = RodinCore.makeIndexQuery();
+		final IIndexQuery query = RodinCore.makeIndexQuery();
 
 		// Thread.sleep(800);
-		requester.waitUpToDate();
+		query.waitUpToDate();
 
-		final IDeclaration declSet1 = requester.getDeclaration(set1);
-		final IDeclaration declCst2C2 = requester.getDeclaration(cst2C2);
-		final IDeclaration declSet3 = requester.getDeclaration(set3);
-		final IDeclaration declCst2C3 = requester.getDeclaration(cst2C3);
-		final IDeclaration declVar1 = requester.getDeclaration(var1);
-		final IDeclaration declVar2 = requester.getDeclaration(var2);
+		final IDeclaration declSet1 = query.getDeclaration(set1);
+		final IDeclaration declCst2C2 = query.getDeclaration(cst2C2);
+		final IDeclaration declSet3 = query.getDeclaration(set3);
+		final IDeclaration declCst2C3 = query.getDeclaration(cst2C3);
+		final IDeclaration declVar1 = query.getDeclaration(var1);
+		final IDeclaration declVar2 = query.getDeclaration(var2);
 
 		final IOccurrence declC1 = makeDecl(c1, declSet1);
 		final IOccurrence refSet1AxmC2 = makeRefPred(axmC2, 7, 11, declSet1);
@@ -223,19 +242,150 @@ public class IntegrationTests extends EventBIndexerTests {
 
 		final List<IOccurrence> expVar2 = makeOccList(declM2, refVar2InvM2);
 
-		final IOccurrence[] occSet1 = requester.getOccurrences(declSet1);
-		final IOccurrence[] occCst2C2 = requester.getOccurrences(declCst2C2);
-		final IOccurrence[] occSet3 = requester.getOccurrences(declSet3);
-		final IOccurrence[] occCst2C3 = requester.getOccurrences(declCst2C3);
-		final IOccurrence[] occVar1 = requester.getOccurrences(declVar1);
-		final IOccurrence[] occVar2 = requester.getOccurrences(declVar2);
+		final Set<IOccurrence> occSet1 = query.getOccurrences(declSet1);
+		final Set<IOccurrence> occCst2C2 = query.getOccurrences(declCst2C2);
+		final Set<IOccurrence> occSet3 = query.getOccurrences(declSet3);
+		final Set<IOccurrence> occCst2C3 = query.getOccurrences(declCst2C3);
+		final Set<IOccurrence> occVar1 = query.getOccurrences(declVar1);
+		final Set<IOccurrence> occVar2 = query.getOccurrences(declVar2);
 
-		ListAssert.assertSameAsArray(expSet1, occSet1, "occ set1");
-		ListAssert.assertSameAsArray(expCst2C2, occCst2C2, "occ cst2C2");
-		ListAssert.assertSameAsArray(expSet3, occSet3, "occ set3");
-		ListAssert.assertSameAsArray(expCst2C3, occCst2C3, "occ cst2C3");
-		ListAssert.assertSameAsArray(expVar1, occVar1, "occ var1");
-		ListAssert.assertSameAsArray(expVar2, occVar2, "occ var2");
+		assertSameElements(expSet1, occSet1, "occ set1");
+		assertSameElements(expCst2C2, occCst2C2, "occ cst2C2");
+		assertSameElements(expSet3, occSet3, "occ set3");
+		assertSameElements(expCst2C3, occCst2C3, "occ cst2C3");
+		assertSameElements(expVar1, occVar1, "occ var1");
+		assertSameElements(expVar2, occVar2, "occ var2");
+	}
+
+	public void testIndexQueryJavadocExample() throws Exception {
+		final IContextRoot c1 = ResourceUtils.createContext(rodinProject, "C1",
+				C1);
+		final ICarrierSet mySet = c1.getCarrierSet(INTERNAL_ELEMENT1);
+		final IRodinFile myFile = c1.getRodinFile();
+
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final IDeclaration declMySet = query.getDeclaration(mySet);
+		if (declMySet != null) { // the element is indexed
+			final Set<IOccurrence> occsMySet = query.getOccurrences(declMySet);
+			query.filterFile(occsMySet, myFile);
+			// process occurrences of mySet in myFile
+			final IOccurrence declMySetC1 = makeDecl(c1, declMySet);
+			final List<IOccurrence> expMySet = makeOccList(declMySetC1);
+			assertSameElements(expMySet, occsMySet, "occurrences of mySet");
+		}
+	}
+
+	public void testOnlyExtendsChange() throws Exception {
+		final IContextRoot c1 = ResourceUtils.createContext(rodinProject, "C1",
+				C1);
+		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2",
+				C2_NO_EXTENDS);
+
+		final IIndexQuery requester = RodinCore.makeIndexQuery();
+		final ICarrierSet set1 = c1.getCarrierSet(INTERNAL_ELEMENT1);
+
+		requester.waitUpToDate();
+
+		final IDeclaration declsSet1 = requester.getDeclaration(set1);
+		final Set<IOccurrence> occsSet1 = requester.getOccurrences(declsSet1);
+		assertEquals(1, occsSet1.size());
+
+		final IExtendsContext extCls = c2.getExtendsClause(INTERNAL_ELEMENT1);
+		extCls.create(null, null);
+		extCls.setAbstractContextName("C1", null);
+		c2.getRodinFile().save(null, true);
+
+		requester.waitUpToDate();
+
+		final Set<IOccurrence> occsSet1After = requester
+				.getOccurrences(declsSet1);
+		assertEquals(2, occsSet1After.size());
+
+	}
+
+	public void testEventPropagation() throws Exception {
+		final IMachineRoot exporter = ResourceUtils.createMachine(rodinProject,
+				EXPORTER, EVT_1DECL);
+
+		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declEventExp = newDecl(eventExp, eventExp.getLabel());
+		final IOccurrence eventExpDecl = makeDecl(exporter, declEventExp);
+
+		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject,
+				IMPORTER, EVT_1REF_REFINES);
+		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declEventImp = newDecl(eventImp, eventImp.getLabel());
+		final IOccurrence eventImpDecl = makeDecl(importer, declEventImp);
+
+		final IRefinesEvent refinesClause = eventImp
+				.getRefinesClause(INTERNAL_ELEMENT1);
+		final IOccurrence eventExpRefInRefines = makeRefTarget(refinesClause,
+				declEventExp);
+
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final IDeclaration declEventProp = query.getDeclaration(eventExp);
+		assertNotNull("declaration expected for " + eventExp, declEventProp);
+		final Set<IOccurrence> occsEventProp = query.getOccurrences(declEventProp,
+				EventBPlugin.getEventPropagator());
+		final List<IOccurrence> expected = asList(eventExpDecl,
+				eventExpRefInRefines, eventImpDecl);
+		assertSameElements(expected, occsEventProp,
+				"propagated event occurrences");
+
+	}
+
+	public void testIdentifierPropagation() throws Exception {
+		final IMachineRoot exporter = ResourceUtils.createMachine(rodinProject,
+				EXPORTER, VAR_1DECL_1REF_INV);
+
+		final IVariable varExp = exporter.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVarExp = newDecl(varExp, varExp
+				.getIdentifierString());
+		final IOccurrence varExpDecl = makeDecl(exporter, declVarExp);
+		final IInvariant invExp = exporter.getInvariant(INTERNAL_ELEMENT1);
+		final IOccurrence varExpRefInInvExp = makeRefPred(invExp, 0, 4, declVarExp);
+
+		final String VAR_1DECL_1REF_REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile"
+				+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+				+ "		version=\"3\">"
+				+ "<org.eventb.core.refinesMachine"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.target=\"exporter\"/>"
+				+ "<org.eventb.core.variable"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.identifier=\"var1\"/>"
+				+ "<org.eventb.core.invariant"
+				+ "		name=\"internal_element1\""
+				+ "		org.eventb.core.label=\"inv1\""
+				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
+				+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject,
+				IMPORTER, VAR_1DECL_1REF_REFINES);
+		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVarImp = newDecl(varImp, varImp
+				.getIdentifierString());
+		final IOccurrence varImpDecl = makeDecl(importer, declVarImp);
+		final IOccurrence varExpRefInVarImpIdent = makeRefIdent(varImp,
+				declVarExp);
+		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);
+		final IOccurrence varImpRefInInvImp = makeRefPred(invImp, 0, 4, declVarImp);
+
+		
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+		final IDeclaration declVarProp = query.getDeclaration(varExp);
+		assertNotNull("declaration expected for " + varExp, declVarProp);
+		final Set<IOccurrence> occsEventProp = query.getOccurrences(declVarProp,
+				EventBPlugin.getIdentifierPropagator());
+		final List<IOccurrence> expected = asList(varExpDecl, varExpRefInInvExp,
+				varExpRefInVarImpIdent, varImpDecl, varImpRefInInvImp);
+		assertSameElements(expected, occsEventProp,
+				"propagated event occurrences");
+
 	}
 
 }

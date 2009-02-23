@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.eventb.core.EventBPlugin.DECLARATION;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
 import static org.eventb.core.tests.indexers.OccUtils.*;
 import static org.eventb.core.tests.indexers.ResourceUtils.EMPTY_DECL;
-import static org.eventb.internal.core.indexers.EventBIndexUtil.DECLARATION;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

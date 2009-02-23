@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.internal.core.indexers.EventBIndexUtil.*;
-import static org.rodinp.core.RodinCore.*;
+import static org.eventb.core.EventBPlugin.*;
+import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.concurrent.CancellationException;
 
@@ -74,7 +74,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 		final IDeclaration declaration = currentBridge.declare(element, name);
 		final IInternalLocation loc =
-				getInternalLocation(element.getRodinFile().getRoot());
+				getInternalLocation(element.getRoot());
 
 		currentBridge.addOccurrence(declaration, DECLARATION, loc);
 

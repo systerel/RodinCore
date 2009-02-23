@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.internal.core.indexers.EventBIndexUtil.*;
+import static org.eventb.core.EventBPlugin.*;
 
 import java.util.ArrayList;
 import java.util.List;

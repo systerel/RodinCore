@@ -15,17 +15,10 @@ import static org.rodinp.core.RodinCore.*;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 
 public class EventBIndexUtil {
-
-	public static final IOccurrenceKind DECLARATION = getOccurrenceKind("declaration");
-
-	public static final IOccurrenceKind REFERENCE = getOccurrenceKind("reference");
-
-	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind("modification");
 
 	/**
 	 * When extracting a location from a SourceLocation, using that method is

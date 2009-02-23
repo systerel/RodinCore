@@ -269,8 +269,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IMachineRoot importer =
 				ResourceUtils.createMachine(rodinProject, IMPORTER, VAR_1DECL);
-
-		final IOccurrence occDecl = makeRef(importer, declVarExp);
+		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
+		
+		final IOccurrence occDecl = makeRefIdent(varImp, declVarExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
@@ -438,18 +439,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
 
-	private static final String EVT_1DECL =
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile"
-					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"3\">"
-					+ "<org.eventb.core.event"
-					+ "		name=\"internal_element1\""
-					+ "		org.eventb.core.convergence=\"0\""
-					+ "		org.eventb.core.extended=\"false\""
-					+ "		org.eventb.core.label=\"evt1\"/>"
-					+ "</org.eventb.core.machineFile>";
-
 	public void testEventDeclAndExport() throws Exception {
 
 		final IMachineRoot machine =
@@ -458,7 +447,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 
 		final IDeclaration declEvt1 = newDecl(event, event.getLabel());
-
+		final IOccurrence occEventDecl = makeDecl(machine, declEvt1);
+		
 		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -466,6 +456,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(declEvt1);
+		tk.assertOccurrences(event, occEventDecl);
 		tk.assertExports(declEvt1);
 	}
 
@@ -477,30 +468,13 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declEventExp =
 				newDecl(eventExp, eventExp.getLabel());
 
-		final String EVT_1REF_REFINES =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile"
-						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
-						+ "<org.eventb.core.refinesMachine"
-						+ "		name=\"internal_element1\""
-						+ "		org.eventb.core.target=\"exporter\"/>"
-						+ "<org.eventb.core.event"
-						+ "		name=\"internal_element1\""
-						+ "		org.eventb.core.convergence=\"0\" org.eventb.core.extended=\"true\" org.eventb.core.label=\"evt1\">"
-						+ "		<org.eventb.core.refinesEvent"
-						+ "				name=\"internal_element1\""
-						+ "				org.eventb.core.target=\"evt1\"/>"
-						+ "</org.eventb.core.event>"
-						+ "</org.eventb.core.machineFile>";
-
 		final IMachineRoot importer =
 				ResourceUtils.createMachine(rodinProject, IMPORTER, EVT_1REF_REFINES);
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IDeclaration declEventImp =
 			newDecl(eventImp, eventImp.getLabel());
-		final IOccurrence refEventImp = makeRef(importer, declEventImp);
+		final IOccurrence eventImpDecl = makeDecl(importer, declEventImp);
 		
 	
 		final IRefinesEvent refinesImp =
@@ -513,7 +487,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertOccurrences(eventImp, refEventImp);
+		tk.assertOccurrences(eventImp, eventImpDecl);
 		tk.assertOccurrences(eventExp, refEventExpInImp);
 	}
 
@@ -566,7 +540,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 		final IParameter prm1 = event.getParameter(INTERNAL_ELEMENT1);
 		final IDeclaration declPrm1 = newDecl(prm1, prm1.getIdentifierString());
-
+		final IOccurrence prm1Decl = makeDecl(event, declPrm1);
+		
 		final BridgeStub tk = new BridgeStub(machine);
 
 		final MachineIndexer indexer = new MachineIndexer();
@@ -574,6 +549,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		assertTrue(indexer.index(tk));
 
 		tk.assertDeclarations(IParameter.ELEMENT_TYPE, declPrm1);
+		tk.assertOccurrences(prm1, prm1Decl);
 		tk.assertExports(IParameter.ELEMENT_TYPE, declPrm1);
 	}
 
@@ -717,7 +693,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence occModif = makeModifAssign(action, 0, 4, declVarImp);
 
-		final IOccurrence refVarExp = makeRef(importer, declVarExp);
+		final IOccurrence refVarExp = makeRefIdent(varImp, declVarExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
@@ -895,7 +871,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IGuard grdImp = eventImp.getGuard(INTERNAL_ELEMENT1);
 		
 		final IDeclaration declPrmImp = newDecl(prmImp, PRM1);
+		
 		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4, declPrmImp);
+		final IOccurrence prmImpDecl = makeDecl(eventImp, declPrmImp);
 
 		final BridgeStub tk = new BridgeStub(importer, declPrmExp, declEvExp);
 
@@ -903,7 +881,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertOccurrences(prmImp, grdRef);
+		tk.assertOccurrences(prmImp, prmImpDecl, grdRef);
 	}
 
 	public void testPrioritiesAbsParamVsLocalVar() throws Exception {

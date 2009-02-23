@@ -11,7 +11,7 @@
 package org.eventb.core.tests.indexers;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
@@ -21,8 +21,8 @@ import junit.framework.TestCase;
  */
 public class ListAssert {
 
-	public static <T> void assertSameElements(List<T> expected, List<T> actual,
-			String listEltDesc) {
+	public static <T> void assertSameElements(Collection<T> expected,
+			Collection<T> actual, String listEltDesc) {
 		final String actExpString = ListAssert.makeActExpString(expected,
 				actual);
 		TestCase.assertEquals(listEltDesc + ": bad size in\n" + actExpString,
@@ -33,18 +33,23 @@ public class ListAssert {
 				+ actExpString, containsAll);
 	}
 
-	public static <T> void assertSameAsArray(List<T> expected,
+	public static <T> void assertSameAsArray(Collection<T> expected,
 			T[] actual, String listEltDesc) {
-		final List<T> actList = Arrays.asList(actual);
+		final Collection<T> actList = Arrays.asList(actual);
 		assertSameElements(expected, actList, listEltDesc);
 	}
 
-	private static <T> String makeActExpString(List<T> expected, List<T> actual) {
+	private static <T> String makeActExpString(Collection<T> expected,
+			Collection<T> actual) {
 		return makeString("act", actual) + makeString("exp", expected);
 	}
 
-	private static <T> String makeString(String listDesc, List<T> list) {
-		return listDesc + ": " + list + "\n";
+	private static <T> String makeString(String listDesc, Collection<T> list) {
+		final StringBuffer result = new StringBuffer(listDesc + "\n");
+		for (T t : list) {
+			result.append(t.toString() + "\n");
+		}
+		return result.toString();
 	}
 
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBPlugin.getContextFileName;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
@@ -119,20 +120,21 @@ public class MachineIndexer extends EventBIndexer {
 				final String name = ident.getIdentifierString();
 				final IDeclaration declaration = indexDeclaration(ident, name);
 				currentBridge.export(declaration);
-				refIfRedeclared(name, declImports);
+				refIfRedeclared(name, declImports, ident);
 				declImports.put(declaration);
 			}
 		}
 	}
 
-	private void refIfRedeclared(final String name, SymbolTable declImports) {
+	private void refIfRedeclared(final String name, SymbolTable declImports,
+			IIdentifierElement refElement) {
 		final IDeclaration previousDecl = declImports.lookUpper(name);
 		if (previousDecl != null) {
 			final IInternalElement element = previousDecl.getElement();
 			if (element instanceof IVariable) {
 				// re-declaration of abstract variable
-				final IInternalElement root = currentBridge.getRootToIndex();
-				indexReference(previousDecl, getInternalLocation(root));
+				indexReference(previousDecl, getInternalLocation(refElement,
+						IDENTIFIER_ATTRIBUTE));
 			}
 		}
 	}
