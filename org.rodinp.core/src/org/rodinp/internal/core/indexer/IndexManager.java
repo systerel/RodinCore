@@ -216,10 +216,8 @@ public final class IndexManager {
 
 	public void addListeners() {
 		RodinCore.addElementChangedListener(listener, eventMask);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				listener,
-				IResourceChangeEvent.POST_CHANGE
-						| IResourceChangeEvent.POST_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,
+				IResourceChangeEvent.POST_BUILD);
 	}
 
 	private void processCurrentDeltas(IProgressMonitor monitor)
@@ -400,10 +398,6 @@ public final class IndexManager {
 		} finally {
 			printVerbose("...end project indexing");
 		}
-	}
-
-	public void resourceChanged(IResourceChangeEvent event) {
-		listener.resourceChanged(event);
 	}
 
 	public synchronized IDeclaration getDeclaration(IInternalElement element) {

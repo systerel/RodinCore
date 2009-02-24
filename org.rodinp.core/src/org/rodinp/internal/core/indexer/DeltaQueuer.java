@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IOpenable;
@@ -26,6 +31,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.indexer.IIndexDelta.Kind;
+import org.rodinp.internal.core.util.Util;
 
 public class DeltaQueuer implements IElementChangedListener,
 		IResourceChangeListener {
@@ -40,83 +46,93 @@ public class DeltaQueuer implements IElementChangedListener,
 		this.queue = queue;
 	}
 
-	public void elementChanged(ElementChangedEvent event) {
-		final IRodinElementDelta delta = event.getDelta();
-		interrupted.set(false);
-		try {
-			while (true) {
-				try {
-					processDelta(delta);
-					return;
-				} catch (InterruptedException e) {
-					interrupted.set(true);
-				}
-			}
-		} finally {
-			if (interrupted.get()) {
-				Thread.currentThread().interrupt();
-			}
+	static IRodinProject getRodinProject(IResource resource) {
+		final IProject project = resource.getProject();
+		if (project == null) {
+			return null;
 		}
+		return RodinCore.valueOf(project);
 	}
 
-	private void processDelta(IRodinElementDelta delta)
-			throws InterruptedException {
-		enqueueAffectedFiles(delta);
+	public void elementChanged(ElementChangedEvent event) {
+		enqueueAffectedElements(event.getDelta());
 	}
 
-	private void enqueueAffectedFiles(IRodinElementDelta delta)
-			throws InterruptedException {
+	private void enqueueAffectedElements(IRodinElementDelta delta) {
 		final IRodinElement element = delta.getElement();
 		if (!(element instanceof IOpenable)) {
-			// No chance to find a file below
+			// No chance to find a project or a file below
 			return;
 		}
-		if (element instanceof IRodinFile) {
-			final IRodinFile file = (IRodinFile) element;
-			if (DEBUG) {
-				System.out.println("Indexer: File "
-						+ file.getPath()
-						+ " has changed.");
+		final IRodinElementDelta[] affectedChildren = delta
+				.getAffectedChildren();
+		if (affectedChildren.length != 0) {
+			for (IRodinElementDelta childDelta : affectedChildren) {
+				enqueueAffectedElements(childDelta);
 			}
-			final IIndexDelta indexDelta =
-					new IndexDelta(file, Kind.FILE_CHANGED);
-			queue.put(indexDelta, false);
-			return;
+		} else if (element instanceof IRodinProject) {
+			enqueueAffectedProject((IRodinProject) element, delta);
+		} else if (element instanceof IRodinFile) {
+			enqueueChangedFile((IRodinFile) element);
+		} else { // special cases like deleting a closed project
+			enqueueResourceDeltas(delta.getResourceDeltas());
 		}
-		for (IRodinElementDelta childDelta : delta.getAffectedChildren()) {
-			enqueueAffectedFiles(childDelta);
+	}
+
+	private void enqueueAffectedProject(IRodinProject rodinProject,
+			IRodinElementDelta delta) {
+		switch (delta.getKind()) {
+
+		case IRodinElementDelta.CHANGED:
+			if ((delta.getFlags() & IRodinElementDelta.F_OPENED) != 0) {
+				enqueueProject(rodinProject, Kind.PROJECT_OPENED);
+			} else if ((delta.getFlags() & IRodinElementDelta.F_CLOSED) != 0) {
+				enqueueProject(rodinProject, Kind.PROJECT_CLOSED);
+			}
+			break;
+		case IRodinElementDelta.ADDED:
+			enqueueProject(rodinProject, Kind.PROJECT_CREATED);
+			break;
+		case IRodinElementDelta.REMOVED:
+			enqueueProject(rodinProject, Kind.PROJECT_DELETED);
+			break;
 		}
+	}
+
+	private void enqueueChangedFile(IRodinFile file) {
+		final IIndexDelta indexDelta = new IndexDelta(file, Kind.FILE_CHANGED);
+		enqueueDelta(indexDelta, false);
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		boolean process = false;
-		boolean clean = false;
-		switch (event.getType()) {
-		case IResourceChangeEvent.POST_BUILD:
-			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) {
-				process = true;
-				clean = true;
-			}
-			break;
-		case IResourceChangeEvent.POST_CHANGE:
-			process = true;
-			clean = false;
-			break;
-		default:
-			process = false;
-			break;
-		}
-		if (process) {
-			processDelta(event.getDelta(), clean);
+		if (event.getType() == IResourceChangeEvent.POST_BUILD
+				&& event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) {
+			enqueueCleanedProjects(event.getDelta());
 		}
 	}
 
-	private void processDelta(final IResourceDelta delta, boolean clean) {
+	private void enqueueCleanedProjects(IResourceDelta delta) {
+		final IRodinProject project = getRodinProject(delta.getResource());
+		if (project == null) {
+			for (IResourceDelta childDelta : delta.getAffectedChildren()) {
+				enqueueCleanedProjects(childDelta);
+			}
+		} else {
+			enqueueProject(project, Kind.PROJECT_CLEANED);
+		}
+	}
+
+	private void enqueueProject(IRodinProject project, Kind kind) {
+		final IndexDelta delta = new IndexDelta(project, kind);
+		enqueueDelta(delta, true);
+	}
+
+	private void enqueueDelta(IIndexDelta delta, boolean allowDuplicate) {
 		interrupted.set(false);
 		try {
 			while (true) {
 				try {
-					enqueueRodinProjects(delta, clean);
+					queue.put(delta, allowDuplicate);
 					return;
 				} catch (InterruptedException e) {
 					interrupted.set(true);
@@ -129,49 +145,49 @@ public class DeltaQueuer implements IElementChangedListener,
 		}
 	}
 
-	private void enqueueRodinProjects(IResourceDelta delta, boolean clean)
-			throws InterruptedException {
-		final IProject project = delta.getResource().getProject();
-		if (project == null) {
-			for (IResourceDelta childDelta : delta.getAffectedChildren()) {
-				enqueueRodinProjects(childDelta, clean);
+	private void enqueueResourceDeltas(final IResourceDelta[] resourceDeltas) {
+		final ResourceDeltaQueuer rdQueuer = new ResourceDeltaQueuer();
+		for (IResourceDelta resourceDelta : resourceDeltas) {
+			try {
+				resourceDelta.accept(rdQueuer);
+			} catch (CoreException e) {
+				Util.log(e, "While visiting resource delta: " + resourceDelta);
+				// forget the delta
 			}
-		} else {
-			final IRodinProject rodinProject = RodinCore.valueOf(project);
-			if (rodinProject == null) {
-				return;
-			}
-			enqueueRodinProject(rodinProject, delta, clean);
+		}
+		for (IIndexDelta indexDelta : rdQueuer.getDeltas()) {
+			enqueueDelta(indexDelta, true);
 		}
 	}
 
-	private void enqueueRodinProject(IRodinProject rodinProject,
-			IResourceDelta delta, boolean clean) throws InterruptedException {
-		if (clean) {
-			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_CLEANED), true);
-			return;
+	private static class ResourceDeltaQueuer implements IResourceDeltaVisitor {
+	
+		private final List<IIndexDelta> deltas;
+	
+		public ResourceDeltaQueuer() {
+			this.deltas = new ArrayList<IIndexDelta>();
 		}
-		switch (delta.getKind()) {
-
-		case IResourceDelta.CHANGED:
-			if (delta.getFlags() == IResourceDelta.OPEN) {
-				final IIndexDelta indexDelta;
-				if (rodinProject.getProject().isOpen()) {
-					indexDelta =
-							new IndexDelta(rodinProject, Kind.PROJECT_OPENED);
-				} else {
-					indexDelta =
-							new IndexDelta(rodinProject, Kind.PROJECT_CLOSED);
-				}
-				queue.put(indexDelta, true);
+	
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			System.out.println(delta);
+			IResource resource = delta.getResource();
+			final IRodinProject project = getRodinProject(resource);
+			if (project == null) {
+				return false;
 			}
-			break;
-		case IResourceDelta.ADDED:
-			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_CREATED), true);
-			break;
-		case IResourceDelta.REMOVED:
-			queue.put(new IndexDelta(rodinProject, Kind.PROJECT_DELETED), true);
-			break;
+			switch (delta.getKind()) {
+			case IResourceDelta.ADDED:
+				deltas.add(new IndexDelta(project, Kind.PROJECT_CREATED));
+				return false;
+			case IResourceDelta.REMOVED:
+				deltas.add(new IndexDelta(project, Kind.PROJECT_DELETED));
+				return false;
+			}
+			return true;
+		}
+	
+		public List<IIndexDelta> getDeltas() {
+			return deltas;
 		}
 	}
 

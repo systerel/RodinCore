@@ -13,7 +13,6 @@ package org.rodinp.internal.core.indexer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -188,10 +187,6 @@ public class RodinIndexer {
 
 	public static void saving(ISaveContext context) throws CoreException {
 		PersistenceManager.getDefault().saving(context);		
-	}
-
-	public static void resourceChangedAtStartup(IResourceChangeEvent event) {
-		IndexManager.getDefault().resourceChanged(event);
 	}
 
 	public static void startAfter(SavedStateProcessor processSavedState) {

@@ -891,9 +891,6 @@ public class RodinDBManager implements ISaveParticipant {
 											IResourceChangeEvent event) {
 										dbManager.deltaState
 										.resourceChanged(event);
-										RodinIndexer.resourceChangedAtStartup(event);
-										// TODO see if possible to listen to RodinDB state changes
-										// rather than directly to the workspace
 									}
 								});
 							}
