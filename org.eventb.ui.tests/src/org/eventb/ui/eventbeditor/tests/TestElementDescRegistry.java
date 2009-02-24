@@ -123,8 +123,8 @@ public class TestElementDescRegistry extends TestCase {
 				.getElementDesc(IRefinesMachine.ELEMENT_TYPE);
 
 		final AttributeDesc expectedAttribute = new ComboDesc(
-				new RefinesMachineAbstractMachineNameAttributeManipulation(), "",
-				"", false, TARGET_ATTRIBUTE);
+				new RefinesMachineAbstractMachineNameAttributeManipulation(),
+				"", "", false, TARGET_ATTRIBUTE, true);
 
 		assertElementDesc(desc, "REFINES", "", "icons/full/obj16/mch_obj.gif",
 				nullPrefix, nullAttribute, 0);
@@ -142,7 +142,7 @@ public class TestElementDescRegistry extends TestCase {
 
 		final AttributeDesc expectedAttribute = new ComboDesc(
 				new SeesContextNameAttributeManipulation(), "", "", false,
-				TARGET_ATTRIBUTE);
+				TARGET_ATTRIBUTE, true);
 
 		assertElementDesc(desc, "SEES", "", "icons/full/obj16/ctx_obj.gif",
 				nullPrefix, nullAttribute, 0);
@@ -229,10 +229,10 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedLabel = getLabelDesc();
 		final AttributeDesc expectedExtended = new ComboDesc(
 				new ExtendedAttributeManipulation(), "", "", false,
-				EXTENDED_ATTRIBUTE);
+				EXTENDED_ATTRIBUTE, true);
 		final AttributeDesc expectedConvergence = new ComboDesc(
 				new ConvergenceAttributeManipulation(), "", "", false,
-				CONVERGENCE_ATTRIBUTE);
+				CONVERGENCE_ATTRIBUTE, true);
 		final AttributeDesc expectedComment = getCommentedDesc();
 
 		assertElementDesc(desc, "EVENTS", "END",
@@ -253,8 +253,8 @@ public class TestElementDescRegistry extends TestCase {
 				.getElementDesc(IRefinesEvent.ELEMENT_TYPE);
 
 		final AttributeDesc expectedAttribute = new ComboDesc(
-				new RefinesEventAbstractEventLabelAttributeManipulation(), "", "",
-				false, TARGET_ATTRIBUTE);
+				new RefinesEventAbstractEventLabelAttributeManipulation(), "",
+				"", false, TARGET_ATTRIBUTE, true);
 
 		assertElementDesc(desc, "REFINES", "", "icons/full/obj16/evt_obj.gif",
 				nullPrefix, nullAttribute, 0);
@@ -340,8 +340,8 @@ public class TestElementDescRegistry extends TestCase {
 				.getElementDesc(IExtendsContext.ELEMENT_TYPE);
 
 		final AttributeDesc expectedExtends = new ComboDesc(
-				new ExtendsContextAbstractContextNameAttributeManipulation(), "",
-				"", false, TARGET_ATTRIBUTE);
+				new ExtendsContextAbstractContextNameAttributeManipulation(),
+				"", "", false, TARGET_ATTRIBUTE, true);
 
 		assertElementDesc(desc, "EXTENDS", "", "icons/full/obj16/ctx_obj.gif",
 				nullPrefix, nullAttribute, 0);
@@ -461,12 +461,19 @@ public class TestElementDescRegistry extends TestCase {
 
 		if (expected instanceof TextDesc && actual instanceof TextDesc) {
 			assertTextDesc((TextDesc) expected, (TextDesc) actual);
+		} else if (expected instanceof ComboDesc && actual instanceof ComboDesc) {
+			assertComboDesc((ComboDesc) expected, (ComboDesc) actual);
 		}
 	}
 
 	private void assertTextDesc(TextDesc expected, TextDesc actual) {
 		assertEquals("Unexpected isMath", expected.isMath(), actual.isMath());
 		assertEquals("Unexpected style", expected.getStyle(), actual.getStyle());
+	}
+
+	private void assertComboDesc(ComboDesc expected, ComboDesc actual) {
+		assertEquals("Unexpected required", expected.isRequired(), actual
+				.isRequired());
 	}
 
 	private TextDesc getCommentedDesc() {
@@ -480,26 +487,26 @@ public class TestElementDescRegistry extends TestCase {
 	}
 
 	private TextDesc getLabelDesc() {
-		return new TextDesc(new LabelAttributeManipulation(), "", ":", false, false,
-				TextDesc.Style.SINGLE, LABEL_ATTRIBUTE);
+		return new TextDesc(new LabelAttributeManipulation(), "", ":", false,
+				false, TextDesc.Style.SINGLE, LABEL_ATTRIBUTE);
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getAssignmentDesc() {
-		return new TextDesc(new AssignmentAttributeManipulation(), "", "", false,
-				true, TextDesc.Style.MULTI, ASSIGNMENT_ATTRIBUTE);
+		return new TextDesc(new AssignmentAttributeManipulation(), "", "",
+				false, true, TextDesc.Style.MULTI, ASSIGNMENT_ATTRIBUTE);
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getPredicateDesc() {
-		return new TextDesc(new PredicateAttributeManipulation(), "", "", false,
-				true, TextDesc.Style.MULTI, PREDICATE_ATTRIBUTE);
+		return new TextDesc(new PredicateAttributeManipulation(), "", "",
+				false, true, TextDesc.Style.MULTI, PREDICATE_ATTRIBUTE);
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getExpressionDesc() {
-		return new TextDesc(new ExpressionAttributeManipulation(), "", "", true,
-				true, TextDesc.Style.MULTI, EXPRESSION_ATTRIBUTE);
+		return new TextDesc(new ExpressionAttributeManipulation(), "", "",
+				true, true, TextDesc.Style.MULTI, EXPRESSION_ATTRIBUTE);
 	}
 
 }
