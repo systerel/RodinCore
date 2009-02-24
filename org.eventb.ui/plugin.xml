@@ -2209,12 +2209,14 @@
             class="org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.extendsContext"
-            typeId="org.eventb.core.target">
+            typeId="org.eventb.core.target"
+            required="true">
       </choiceAttribute>
       <choiceAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.ExtendedAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.extended"
+            required="true"
             typeId="org.eventb.core.extended">
       </choiceAttribute>
       <textAttribute
@@ -2246,25 +2248,29 @@
             class="org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.convergence"
-            typeId="org.eventb.core.convergence">
+            typeId="org.eventb.core.convergence"
+            required="true">
       </choiceAttribute>
       <choiceAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.refinesMachine"
-            typeId="org.eventb.core.target">
+            typeId="org.eventb.core.target"
+            required="true">
       </choiceAttribute>
       <choiceAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEventLabelAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.refinesEvent"
-            typeId="org.eventb.core.target">
+            typeId="org.eventb.core.target"
+            required="true">
       </choiceAttribute>
       <choiceAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation"
             expandsHorizontally="false"
             id="org.eventb.ui.seenContext"
-            typeId="org.eventb.core.target">
+            typeId="org.eventb.core.target"
+            required="true">
       </choiceAttribute>
       <childRelation
             parentTypeId="org.eventb.core.machineFile">

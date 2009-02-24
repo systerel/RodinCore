@@ -26,4 +26,9 @@ public class ConvergenceSection extends CComboSection {
 	protected IAttributeManipulation createFactory() {
 		return new ConvergenceAttributeManipulation();
 	}
+
+	@Override
+	public int getColumn() {
+		return 2;
+	}
 }

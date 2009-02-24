@@ -33,9 +33,7 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 	
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		String name = "abstract_context";
-		getContextElement(element).setAbstractContextName(name,
-				new NullProgressMonitor());
+		// do nothing
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)

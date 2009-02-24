@@ -35,8 +35,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final String name = "abstract_machine";
-		getRefinesMachine(element).setAbstractMachineName(name, null);
+		// do nothing
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)

@@ -28,4 +28,8 @@ public class RefinesMachineSection extends CComboSection {
 		return new RefinesMachineAbstractMachineNameAttributeManipulation();
 	}
 
+	@Override
+	public int getColumn() {
+		return 0;
+	}
 }

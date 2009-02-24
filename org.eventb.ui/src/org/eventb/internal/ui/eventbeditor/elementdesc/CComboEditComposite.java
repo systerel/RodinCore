@@ -41,22 +41,30 @@ public class CComboEditComposite extends AbstractEditComposite {
 	
 	protected CCombo combo;
 	protected Button undefinedButton;
-
-	public CComboEditComposite(AttributeDesc attrDesc) {
+	private final boolean required;
+	
+	public CComboEditComposite(ComboDesc attrDesc) {
 		super(attrDesc);
+		this.required = attrDesc.isRequired();
 	}
 	
 	@Override
 	public void initialise(boolean refreshMarkers) {
+		String value = getValue();
+		createCombo();
+		combo.setText(value);
+		if (refreshMarkers)
+			displayMarkers();
+	}
+
+	private String getValue() {
 		try {
-			String value = manipulation.getValue(element,
-					new NullProgressMonitor());
-			createCombo();
-			combo.setText(value);
-			if (refreshMarkers) 
-				displayMarkers();
+			if (!manipulation.hasValue(element, null))
+				return UNDEFINED;
+			return manipulation.getValue(element, null);
 		} catch (RodinDBException e) {
-			setUndefinedValue();
+			e.printStackTrace();
+			return UNDEFINED;
 		}
 	}
 
@@ -98,16 +106,6 @@ public class CComboEditComposite extends AbstractEditComposite {
 		super.setSelected(selection);
 	}
 
-	/**
-	 * Set undefined value for the element.
-	 */
-	private void setUndefinedValue() {
-		if (combo == null)
-			createCombo();
-		
-		combo.setText(UNDEFINED);
-	}
-
 	private void createCombo() {
 		if (combo != null)
 			combo.removeAll();
@@ -135,8 +133,9 @@ public class CComboEditComposite extends AbstractEditComposite {
 			});
 			this.getFormToolkit().paintBordersFor(composite);
 		}
-		
-		combo.add(UNDEFINED);
+
+		if(!required)
+			combo.add(UNDEFINED);
 		String[] values = manipulation.getPossibleValues(
 				element, null);
 		for (String value : values) {

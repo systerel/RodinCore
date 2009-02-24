@@ -32,7 +32,7 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 	
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getContextElement(element).setSeenContextName("context", monitor);
+		// do nothing
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)

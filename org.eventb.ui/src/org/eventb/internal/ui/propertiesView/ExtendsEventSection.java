@@ -29,4 +29,8 @@ public class ExtendsEventSection extends CComboSection {
 		return new ExtendedAttributeManipulation();
 	}
 
+	@Override
+	public int getColumn() {
+		return 1;
+	}
 }

@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -31,8 +29,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -48,6 +48,10 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	private IInternalElement element;
 
+	private final String UNDEFINED = "--undef--";
+
+	private boolean required = false;
+	
 	public CComboSection() {
 		// Do nothing
 	}
@@ -74,17 +78,17 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		
 		comboWidget.addSelectionListener(new SelectionListener() {
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
+			private String getText() {
+				final String text = comboWidget.getText();
+				return (text.equals(UNDEFINED)) ? null : text;
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					setText(comboWidget.getText(), new NullProgressMonitor());
-				} catch (RodinDBException exception) {
-					EventBUIExceptionHandler
-							.handleSetAttributeException(exception);
-				}
+				setText(getText());
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
 			}
 
 		});
@@ -101,17 +105,26 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	void setText(String text, IProgressMonitor monitor) throws RodinDBException {
+	void setText(String text) {
 		UIUtils.setStringAttribute(element, getFactory(), text, null);
 	}
 
 	void setData() {
+		if(!required)
+			comboWidget.add(UNDEFINED);
 		for (String value : getFactory().getPossibleValues(element, null))
 			comboWidget.add(value);
 	}
 
-	String getText() throws RodinDBException {
-		return getFactory().getValue(element, null);
+	private String getValue() {
+		try {
+			if (!getFactory().hasValue(element, null))
+				return UNDEFINED;
+			return getFactory().getValue(element, null);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return UNDEFINED;
+		}
 	}
 
 	@Override
@@ -119,13 +132,9 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		if (comboWidget.isDisposed())
 			return;
 
-		try {
-			comboWidget.removeAll();
-			setData();
-			comboWidget.setText(getText());
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
+		comboWidget.removeAll();
+		setData();
+		comboWidget.setText(getValue());
 		super.refresh();
 	}
 
@@ -137,11 +146,23 @@ public abstract class CComboSection extends AbstractPropertySection implements
 			if (input instanceof IInternalElement) {
 				// TODO should check compatibility from the factory.
 				this.element = (IInternalElement) input;
+				required = getRequired();
 			}
 		}
 		refresh();
 	}
 
+	private boolean getRequired() {
+		final IAttributeDesc desc = ElementDescRegistry.getInstance()
+				.getAttribute(element.getElementType(), getColumn());
+		if (desc instanceof ComboDesc)
+			return ((ComboDesc) desc).isRequired();
+		else
+			return false;
+	}
+	
+	public abstract int getColumn();
+	
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Filter out the delta first
 		if (comboWidget.isDisposed())

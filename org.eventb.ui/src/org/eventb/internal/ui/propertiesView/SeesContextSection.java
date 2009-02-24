@@ -28,4 +28,8 @@ public class SeesContextSection extends CComboSection {
 		return new SeesContextNameAttributeManipulation();
 	}
 
+	@Override
+	public int getColumn() {
+		return 0;
+	}
 }

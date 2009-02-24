@@ -28,4 +28,8 @@ public class RefinesEventSection extends CComboSection {
 		return new RefinesEventAbstractEventLabelAttributeManipulation();
 	}
 
+	@Override
+	public int getColumn() {
+		return 0;
+	}
 }

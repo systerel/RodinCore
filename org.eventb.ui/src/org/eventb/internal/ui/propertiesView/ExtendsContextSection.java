@@ -28,4 +28,9 @@ public class ExtendsContextSection extends CComboSection {
 		return new ExtendsContextAbstractContextNameAttributeManipulation();
 	}
 
+	@Override
+	public int getColumn() {
+		return 0;
+	}
+
 }

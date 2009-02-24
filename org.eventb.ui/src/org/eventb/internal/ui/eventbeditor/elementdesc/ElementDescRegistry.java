@@ -48,6 +48,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final String ATTR_ATTRIBUTE_SUFFIX = "suffix";
 	private static final String ATTR_ATTRIBUTE_EXPANDS = "expandsHorizontally";
 	private static final String ATTR_ATTRIBUTE_MATH = "isMath";
+	private static final String ATTR_ATTRIBUTE_REQUIRED = "required";
 	private static final String ATTR_ATTRIBUTE_TYPE = "typeId";
 	private static final String ATTR_ATTRIBUTE_ID = "id";
 
@@ -396,8 +397,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					desc = new TextDesc(manipulation, prefix, suffix,
 							isHorizontalExpand, isMath, style, attrType);
 				} else {
+					final boolean required = getBoolean(element,
+							ATTR_ATTRIBUTE_REQUIRED);
 					desc = new ComboDesc(manipulation, prefix, suffix,
-							isHorizontalExpand, attrType);
+							isHorizontalExpand, attrType, required);
 				}
 				map.put(id, desc);
 			} catch (Exception e) {

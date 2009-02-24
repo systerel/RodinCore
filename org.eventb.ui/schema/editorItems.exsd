@@ -223,6 +223,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="required" type="boolean">
+            <annotation>
+               <documentation>
+                  This indicates that the attribute is required or not. If the attribute is not required, combo widget will display an item &quot;undefined&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
