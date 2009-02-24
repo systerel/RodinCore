@@ -21,7 +21,6 @@ import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISavedState;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,7 +41,6 @@ import org.rodinp.internal.core.indexer.IIndexDelta.Kind;
 import org.rodinp.internal.core.indexer.persistence.PersistenceManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
-import org.rodinp.internal.core.util.Util;
 
 public final class IndexManager {
 
@@ -125,7 +123,7 @@ public final class IndexManager {
 		for (IRodinFile file : files) {
 			final IRodinProject project = file.getRodinProject();
 			final ProjectIndexManager pim = fetchPIM(project);
-			pim.fileChanged(file);
+			pim.fileChanged(file, null);
 		}
 
 		doIndexing(null);
@@ -194,8 +192,7 @@ public final class IndexManager {
 	public void start(ISavedState savedState, IProgressMonitor daemonMonitor) {
 		restore(savedState, daemonMonitor);
 
-		final IRodinDB rodinDB = RodinCore.getRodinDB();
-		indexing.setRule(rodinDB.getSchedulingRule());
+		indexing.setRule(null); // rules are managed for each file by the FIM
 		indexing.setPriority(Job.DECORATE);
 
 		boolean stop = false;
@@ -252,7 +249,7 @@ public final class IndexManager {
 		if (delta.getKind() == Kind.FILE_CHANGED) {
 			final IRodinFile file = (IRodinFile) delta.getElement();
 
-			processFileChanged(file);
+			processFileChanged(file, monitor);
 		} else {
 			processProjectChanged(delta, monitor);
 		}
@@ -291,12 +288,12 @@ public final class IndexManager {
 		}
 	}
 
-	private void processFileChanged(final IRodinFile file)
+	private void processFileChanged(final IRodinFile file, IProgressMonitor monitor)
 			throws InterruptedException {
 		final IRodinProject project = file.getRodinProject();
 		final ProjectIndexManager pim = fetchPIM(project);
 
-		pim.fileChanged(file);
+		pim.fileChanged(file, monitor);
 		indexing.schedule();
 		indexing.join();
 		if (Status.CANCEL_STATUS.equals(indexing.getResult())) {
@@ -374,27 +371,6 @@ public final class IndexManager {
 		}
 	}
 
-	private class ProjectIndexing implements IWorkspaceRunnable {
-		private final IRodinProject[] projects;
-
-		public ProjectIndexing(IRodinProject... projects) {
-			this.projects = projects;
-		}
-
-		public void run(IProgressMonitor monitor) {
-			printVerbose("project indexing: " + Arrays.asList(projects));
-			try {
-				for (IRodinProject project : projects) {
-					fetchPIM(project).indexAll(monitor);
-				}
-			} catch (CancellationException e) {
-				printVerbose("indexing Cancelled");
-			} finally {
-				printVerbose("...end project indexing");
-			}
-		}
-	}
-
 	private void indexAll(IProgressMonitor monitor) {
 		try {
 			final IRodinDB rodinDB = RodinCore.getRodinDB();
@@ -414,13 +390,15 @@ public final class IndexManager {
 
 	private void indexAll(IProgressMonitor monitor, IRodinProject... projects) {
 
-		final IRodinDB rodinDB = RodinCore.getRodinDB();
-		final ProjectIndexing wholeIndexing = new ProjectIndexing(projects);
-
+		printVerbose("project indexing: " + Arrays.asList(projects));
 		try {
-			RodinCore.run(wholeIndexing, rodinDB.getSchedulingRule(), monitor);
-		} catch (RodinDBException e) {
-			Util.log(e, "while indexing the whole database");
+			for (IRodinProject project : projects) {
+				fetchPIM(project).indexAll(monitor);
+			}
+		} catch (CancellationException e) {
+			printVerbose("indexing Cancelled");
+		} finally {
+			printVerbose("...end project indexing");
 		}
 	}
 

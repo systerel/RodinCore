@@ -234,8 +234,10 @@ public class ProjectIndexManager {
 	 * 
 	 * @param file
 	 *            the changed file
+	 * @param monitor
+	 *            the monitor to manage cancellation with
 	 */
-	public synchronized void fileChanged(IRodinFile file) {
+	public synchronized void fileChanged(IRodinFile file, IProgressMonitor monitor) {
 		if (!file.getRodinProject().equals(project)) {
 			throw new IllegalArgumentException(file
 					+ " should be indexed in project "
@@ -248,7 +250,7 @@ public class ProjectIndexManager {
 		final FileIndexingManager fim = FileIndexingManager.getDefault();
 
 		try {
-			final Set<IRodinFile> dependFiles = fim.getDependencies(file);
+			final Set<IRodinFile> dependFiles = fim.getDependencies(file, monitor);
 			order.setPredecessors(file, dependFiles);
 			order.setToIter(file);
 		} catch (IndexingException e) {
@@ -298,7 +300,7 @@ public class ProjectIndexManager {
 		try {
 			final IRodinFile[] files = project.getRodinFiles();
 			for (IRodinFile file : files) {
-				fileChanged(file);
+				fileChanged(file, monitor);
 				checkCancel(monitor);
 			}
 			doIndexing(monitor);

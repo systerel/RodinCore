@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -30,10 +32,8 @@ public class FileIndexingManager {
 
 	private static FileIndexingManager instance;
 
-	private final IndexerRegistry indexerRegistry;
-	
 	private FileIndexingManager() {
-		this.indexerRegistry = IndexerRegistry.getDefault();
+		// singleton: private constructor
 	}
 
 	public static final FileIndexingManager getDefault() {
@@ -43,21 +43,29 @@ public class FileIndexingManager {
 		return instance;
 	}
 
-	public Set<IRodinFile> getDependencies(IRodinFile file)
-			throws IndexingException {
+	public Set<IRodinFile> getDependencies(IRodinFile file,
+			IProgressMonitor monitor) throws IndexingException {
+		final IndexerRegistry indexerRegistry = IndexerRegistry.getDefault();
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		final Set<IRodinFile> result = new HashSet<IRodinFile>();
-		boolean valid = false;
-		for (IIndexer indexer : indexers) {
-			final boolean success = addDependencies(file, indexer, result);
-			if (!success)
-				break;
-			valid = true;
-		}
-		if (valid) {
-			return result;
-		} else {
-			throw new IndexingException();
+		
+		final ISchedulingRule fileRule = file.getSchedulingRule();
+		try {
+			Job.getJobManager().beginRule(fileRule, monitor);
+			boolean valid = false;
+			for (IIndexer indexer : indexers) {
+				final boolean success = addDependencies(file, indexer, result);
+				if (!success)
+					break;
+				valid = true;
+			}
+			if (valid) {
+				return result;
+			} else {
+				throw new IndexingException();
+			}
+		} finally {
+			Job.getJobManager().endRule(fileRule);
 		}
 	}
 
@@ -112,21 +120,27 @@ public class FileIndexingManager {
 		if (!file.exists()) {
 			return IndexingResult.failed(file);
 		}
-		
+
 		final IndexingBridge bridge =
 			new IndexingBridge(file, fileImports, monitor);
-		
+		final IndexerRegistry indexerRegistry = IndexerRegistry.getDefault();
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		IIndexingResult prevResult = IndexingResult.failed(file);
 
-		for (IIndexer indexer : indexers) {
-			final IIndexingResult result = doIndexing(indexer, bridge);
-			if (!result.isSuccess()) {
-				return prevResult;
+		final ISchedulingRule fileRule = file.getSchedulingRule();
+		try {
+			Job.getJobManager().beginRule(fileRule, monitor);
+			for (IIndexer indexer : indexers) {
+				final IIndexingResult result = doIndexing(indexer, bridge);
+				if (!result.isSuccess()) {
+					return prevResult;
+				}
+				prevResult = result;
 			}
-			prevResult = result;
+			return prevResult;
+		} finally {
+			Job.getJobManager().endRule(fileRule);
 		}
-		return prevResult;
 	}
 
 	private IIndexingResult doIndexing(IIndexer indexer,
