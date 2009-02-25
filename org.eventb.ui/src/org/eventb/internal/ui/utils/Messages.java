@@ -133,6 +133,9 @@ public class Messages {
 	public static String proofskeleton_cantdisplayproof;
 	public static String proofskeleton_pendingnode;
 	public static String proofskeleton_turnstile;
+	public static String proofskeleton_copy_title;
+	public static String proofskeleton_copy_toolTip;
+
 
 	
 	static {

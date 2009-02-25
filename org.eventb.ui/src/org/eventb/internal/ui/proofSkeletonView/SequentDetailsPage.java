@@ -13,15 +13,20 @@ package org.eventb.internal.ui.proofSkeletonView;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -74,6 +79,17 @@ public class SequentDetailsPage implements IDetailsPage {
 		viewer = new ListViewer(parent);
 		viewer.getControl().setFont(EVENTB_FONT);
 		viewer.setContentProvider(sequentContentProvider);
+		addPopUpMenu();
+	}
+
+	private void addPopUpMenu() {
+		final MenuManager popupMenu = new MenuManager();
+		final Clipboard clipboard = new Clipboard(PlatformUI.getWorkbench()
+				.getDisplay());
+		final IAction copyAction = new CopyAction(viewer, clipboard);
+		popupMenu.add(copyAction);
+		Menu menu = popupMenu.createContextMenu(viewer.getList());
+		viewer.getList().setMenu(menu);
 	}
 
 	public void commit(boolean onSave) {
