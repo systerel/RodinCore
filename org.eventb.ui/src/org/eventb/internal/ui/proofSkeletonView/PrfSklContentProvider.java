@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.internal.ui.proofSkeletonView.PrfSklMasterDetailsBlock.DefaultMasterInput;
 
 /**
  * Content provider for the proof skeleton viewer.
@@ -60,7 +59,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 			final Object[] result = {((IProofTreeNode) inputElement).getRule()};
 			return result;
 		}
-		if (inputElement instanceof DefaultMasterInput) {
+		if (inputElement instanceof IPrfSklInput) {
 			return new Object[] {inputElement};
 		}
 		return NO_OBJECTS;

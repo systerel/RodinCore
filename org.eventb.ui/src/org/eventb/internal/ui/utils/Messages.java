@@ -130,6 +130,7 @@ public class Messages {
 	
 	// Proof Skeleton
 	public static String proofskeleton_noproof;
+	public static String proofskeleton_cantdisplayproof;
 	public static String proofskeleton_pendingnode;
 	public static String proofskeleton_turnstile;
 

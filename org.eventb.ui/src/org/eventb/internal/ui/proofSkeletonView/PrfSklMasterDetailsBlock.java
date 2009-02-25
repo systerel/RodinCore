@@ -52,32 +52,6 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 	}
 
 	/**
-	 * Default master input set to the IManagedForm when creating the master
-	 * part. Can be set later from outside the class, when the current input is
-	 * no more accurate, and no other relevant input can be found.
-	 * <p>
-	 * It is a singleton implementation, thus static method
-	 * <code>getDefault()</code> must be called.
-	 * 
-	 * @author Nicolas Beauger
-	 * 
-	 */
-	public static final class DefaultMasterInput {
-		private static DefaultMasterInput instance;
-
-		private DefaultMasterInput() {
-			// Singleton
-		}
-
-		public static DefaultMasterInput getDefault() {
-			if (instance == null) {
-				instance = new DefaultMasterInput();
-			}
-			return instance;
-		}
-	}
-
-	/**
 	 * Get the master part TreeViewer.
 	 * 
 	 * @return the master part TreeViewer.

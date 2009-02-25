@@ -20,7 +20,6 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.proofSkeletonView.PrfSklMasterDetailsBlock.DefaultMasterInput;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -75,7 +74,7 @@ public class PrfSklMasterPart implements IFormPart {
 				listener.selectionChanged(new SelectionChangedEvent(viewer,
 						viewer.getSelection()));
 			}
-		} else if (input instanceof DefaultMasterInput) {
+		} else if (input instanceof IPrfSklInput) {
 			viewer.setInput(input);
 		} else {
 			return false;

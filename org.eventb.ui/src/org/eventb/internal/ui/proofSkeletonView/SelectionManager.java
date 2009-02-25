@@ -27,7 +27,6 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.proofSkeletonView.PrfSklMasterDetailsBlock.DefaultMasterInput;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -90,7 +89,7 @@ public class SelectionManager implements IPartListener2, ISelectionListener{
 					if (prTree != null) {
 						setInput(prTree);
 					} else {
-						setInput(DefaultMasterInput.getDefault());
+						setInput(new ProofErrorInput(proof));
 					}
 				} catch (RodinDBException e) {
 					UIUtils.showInfo(partName

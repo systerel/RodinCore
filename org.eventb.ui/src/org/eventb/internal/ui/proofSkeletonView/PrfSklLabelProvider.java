@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.proofSkeletonView.PrfSklMasterDetailsBlock.DefaultMasterInput;
 import org.eventb.internal.ui.utils.Messages;
 
 /**
@@ -37,9 +36,6 @@ public class PrfSklLabelProvider extends LabelProvider {
 				return Messages.proofskeleton_pendingnode;
 			}
 			return rule.getDisplayName();
-		}
-		if (element instanceof DefaultMasterInput) {
-			return (Messages.proofskeleton_noproof);
 		}
 		return super.getText(element);
 	}
