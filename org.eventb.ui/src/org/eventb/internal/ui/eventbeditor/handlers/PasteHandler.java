@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added history support
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
@@ -15,23 +16,22 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -80,31 +80,14 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		
 		// Get the target from the current selection.
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		final IRodinElement sibling = getTarget(ssel);
-		if (sibling == null || !sibling.exists())
+		final IRodinElement target = getTarget(ssel);
+		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
-		
-		// Copy the elements from clipboard to the target.
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
 
-				public void run(IProgressMonitor monitor) throws RodinDBException {
-					for (IRodinElement element : handleData) {
-						IRodinElement parent = sibling.getParent();
-						IInternalElement internalElement = (IInternalElement) element;
-						(internalElement).copy(parent, sibling, "element"
-								+ EventBUtils.getFreeChildNameIndex(
-										(IInternalElement) parent,
-										internalElement.getElementType(),
-										"element"), false, null);
-					}
-				}
+		History.getInstance().addOperation(
+				OperationFactory.copyElements((IInternalElement) target,
+						handleData));
 
-			}, null);
-		} catch (RodinDBException e) {
-			return "Paste unsuccessful";
-		}
-	
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
 		return null;
@@ -117,14 +100,29 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 	 * @return the actual target of the paste action
 	 */
 	private IRodinElement getTarget(IStructuredSelection selection) {
-		if (selection.size() == 0)
-			return null;
-
+		if (selection.size() == 0) {
+			return getRodinInput();
+		}
 		Object firstElement = selection.getFirstElement();
 		if (firstElement instanceof IRodinElement)
 			return (IRodinElement) firstElement;
 
 		return null;
+	}
+
+	/**
+	 * Returns the Rodin input of the active editor or null if the editor is not
+	 * an IEventBEditor.
+	 * 
+	 * @return the Rodin input of the active editor or null if there is not.
+	 * */
+	private IInternalElement getRodinInput() {
+		IEditorPart editor = EventBUIPlugin.getActivePage().getActiveEditor();
+		if (editor instanceof IEventBEditor) {
+			return ((IEventBEditor<?>) editor).getRodinInput();
+		} else {
+			return null;
+		}
 	}
 
 }

@@ -7,11 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used of interface ISelectionProvider
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
@@ -27,7 +31,8 @@ import org.rodinp.core.IRodinElement;
  *         An abstract class which extends </class>FormPage<class> for editing
  *         Rodin elements.
  */
-public abstract class EventBFormPage extends EventBEditorPage {
+public abstract class EventBFormPage extends EventBEditorPage implements
+		ISelectionProvider {
 
 	// Title of the page.
 //	private String pageTitle;
@@ -131,5 +136,21 @@ public abstract class EventBFormPage extends EventBEditorPage {
 	public void selectElement(IRodinElement element) {
 		part.setSelection(element);
 	}
-	
+
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		getPart().getViewer().addSelectionChangedListener(listener);
+	}
+
+	public ISelection getSelection() {
+		return getPart().getViewer().getSelection();
+	}
+
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		getPart().getViewer().removeSelectionChangedListener(listener);
+	}
+
+	public void setSelection(ISelection selection) {
+		getPart().getViewer().setSelection(selection);
+	}	
 }
