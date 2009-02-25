@@ -32,9 +32,9 @@ public class OperationFactory {
 	public static AtomicOperation createTheoremWizard(IInternalElement parent,
 			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createTheorem(
-				parent, label, content));
-		op.addContext(getContext(parent));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder.createTheorem(parent,
+						label, content));
 		op.setLabel("Create Theorem");
 		return op;
 	}
@@ -42,9 +42,9 @@ public class OperationFactory {
 	public static AtomicOperation createTheoremWizard(IInternalElement root,
 			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createTheorem(
-				root, labels, contents));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createTheorem(root,
+						labels, contents));
 		op.setLabel("Create Theorem");
 		return op;
 	}
@@ -57,9 +57,8 @@ public class OperationFactory {
 	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String label, String predicate) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation op = new AtomicOperation(builder.createAxiom(root,
-				label, predicate));
-		op.addContext(getContext(root));
+		AtomicOperation op = new AtomicOperation(getRodinFileUndoContext(root),
+				builder.createAxiom(root, label, predicate));
 		op.setLabel("Create Theorem");
 		return op;
 	}
@@ -67,9 +66,8 @@ public class OperationFactory {
 	public static AtomicOperation createAxiomWizard(IContextRoot root,
 			String[] labels, String[] predicates) {
 		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation op = new AtomicOperation(builder.createAxiom(root,
-				labels, predicates));
-		op.addContext(getContext(root));
+		AtomicOperation op = new AtomicOperation(getRodinFileUndoContext(root),
+				builder.createAxiom(root, labels, predicates));
 		op.setLabel("Create Axiom");
 		return op;
 	}
@@ -78,9 +76,8 @@ public class OperationFactory {
 			String identifier, String[] labels, String[] predicates) {
 		final AtomicOperation op;
 		final OperationBuilder builder = new OperationBuilder();
-		op = new AtomicOperation(builder.createConstant(root, identifier,
-				labels, predicates));
-		op.addContext(getContext(root));
+		op = new AtomicOperation(getRodinFileUndoContext(root), builder
+				.createConstant(root, identifier, labels, predicates));
 		op.setLabel("Create Constant");
 		return op;
 	}
@@ -92,9 +89,9 @@ public class OperationFactory {
 	public static AtomicOperation createEnumeratedSetWizard(IContextRoot root,
 			String identifier, String[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder
-				.createEnumeratedSet(root, identifier, elements));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createEnumeratedSet(
+						root, identifier, elements));
 		op.setLabel("Create Enumerated Set");
 		return op;
 
@@ -103,9 +100,9 @@ public class OperationFactory {
 	public static AtomicOperation createVariantWizard(IMachineRoot root,
 			String expression) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createVariant(
-				root, expression));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createVariant(root,
+						expression));
 		op.setLabel("Create Variant");
 		return op;
 	}
@@ -115,9 +112,9 @@ public class OperationFactory {
 			final Collection<Pair<String, String>> invariant,
 			final String actName, final String actSub) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createVariable(
-				root, varName, invariant, actName, actSub));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createVariable(root,
+						varName, invariant, actName, actSub));
 		op.setLabel("Create Constant");
 		return op;
 	}
@@ -135,9 +132,9 @@ public class OperationFactory {
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
 			String label, String content) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createInvariant(
-				root, label, content));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createInvariant(root,
+						label, content));
 		op.setLabel("Create Invariant");
 		return op;
 	}
@@ -145,9 +142,9 @@ public class OperationFactory {
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
 			String[] labels, String[] contents) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createInvariant(
-				root, labels, contents));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createInvariant(root,
+						labels, contents));
 		op.setLabel("Create Invariant");
 		return op;
 	}
@@ -155,9 +152,9 @@ public class OperationFactory {
 	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
 			String identifier) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder
-				.createCarrierSet(root, identifier));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createCarrierSet(root,
+						identifier));
 		op.setLabel("Create Carrier set");
 		return op;
 	}
@@ -165,9 +162,9 @@ public class OperationFactory {
 	public static AtomicOperation createCarrierSetWizard(IContextRoot root,
 			String[] identifier) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder
-				.createCarrierSet(root, identifier));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createCarrierSet(root,
+						identifier));
 		op.setLabel("Create Carrier Set");
 		return op;
 	}
@@ -189,9 +186,9 @@ public class OperationFactory {
 			IInternalElement parent, final IInternalElementType<T> type,
 			final IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder
-				.createDefaultElement(parent, type, sibling));
-		op.addContext(getContext(parent));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder.createDefaultElement(
+						parent, type, sibling));
 		op.setLabel("Create Element");
 		return op;
 	}
@@ -221,19 +218,19 @@ public class OperationFactory {
 			String[] varNames, String[] grdNames, String[] grdPredicates,
 			String[] actNames, String[] actSubstitutions) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createEvent(
-				root, name, varNames, grdNames, grdPredicates, actNames,
-				actSubstitutions));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.createEvent(root, name,
+						varNames, grdNames, grdPredicates, actNames,
+						actSubstitutions));
 		op.setLabel("Create Event");
 		return op;
 	}
 
 	public static AtomicOperation deleteElement(IInternalElement element) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.deleteElement(
-				element, true));
-		op.addContext(getContext(element));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(element), builder.deleteElement(
+						element, true));
 		op.setLabel("Delete Element");
 		return op;
 	}
@@ -241,34 +238,27 @@ public class OperationFactory {
 	public static AtomicOperation deleteElement(IInternalElement[] elements,
 			boolean force) {
 		assert elements != null;
+		assert elements.length > 0;
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.deleteElement(
-				elements, force));
-		if (elements.length > 0) {
-			op.addContext(getContext(elements[0]));
-		}
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(elements[0]), builder.deleteElement(
+						elements, force));
 		op.setLabel("Delete Element");
 		return op;
 	}
 
-	private static IUndoContext getContext(IRodinFile rodinFile) {
-		final String bareName = rodinFile.getBareName();
+	private static RodinFileUndoContext getRodinFileUndoContext(
+			IRodinFile rodinFile) {
+		return new RodinFileUndoContext(rodinFile);
+	}
 
-		return new IUndoContext() {
-
-			public String getLabel() {
-				return bareName;
-			}
-
-			public boolean matches(IUndoContext context) {
-				return getLabel().equals(context.getLabel());
-			}
-
-		};
+	private static RodinFileUndoContext getRodinFileUndoContext(
+			IInternalElement root) {
+		return getRodinFileUndoContext(root.getRodinFile());
 	}
 
 	public static IUndoContext getContext(IInternalElement root) {
-		return getContext(root.getRodinFile());
+		return getRodinFileUndoContext(root.getRodinFile());
 	}
 
 	/**
@@ -281,9 +271,9 @@ public class OperationFactory {
 			IRodinFile file, IAttributeManipulation factory, E element,
 			String value) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.changeAttribute(
-				factory, element, value));
-		op.addContext(getContext(file));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(file), builder.changeAttribute(factory,
+						element, value));
 		op.setLabel("Change Attribute");
 		return op;
 	}
@@ -292,9 +282,9 @@ public class OperationFactory {
 			IInternalElement parent, IInternalElementType<T> type,
 			IAttributeManipulation factory, String prefix) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.renameElement(
-				parent, type, factory, prefix));
-		op.addContext(getContext(parent));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder.renameElement(parent,
+						type, factory, prefix));
 		op.setLabel("Rename Element");
 		return op;
 	}
@@ -302,9 +292,9 @@ public class OperationFactory {
 	public static AtomicOperation createGuard(IInternalElement event,
 			String label, String predicate, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createGuard(
-				event, label, predicate, sibling));
-		op.addContext(getContext(event));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(event), builder.createGuard(event,
+						label, predicate, sibling));
 		op.setLabel("Create Guard");
 		return op;
 	}
@@ -312,9 +302,9 @@ public class OperationFactory {
 	public static AtomicOperation createAction(IInternalElement event,
 			String label, String assignement, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createAction(
-				event, label, assignement, sibling));
-		op.addContext(getContext(event));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(event), builder.createAction(event,
+						label, assignement, sibling));
 		op.setLabel("Create Action");
 		return op;
 	}
@@ -322,9 +312,9 @@ public class OperationFactory {
 	public static AtomicOperation createAction(IInternalElement event,
 			String label[], String predicate[], IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.createAction(
-				event, label, predicate, sibling));
-		op.addContext(getContext(event));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(event), builder.createAction(event,
+						label, predicate, sibling));
 		op.setLabel("Create Action");
 		return op;
 	}
@@ -335,9 +325,9 @@ public class OperationFactory {
 	public static AtomicOperation copyElements(IInternalElement parent,
 			IRodinElement[] elements) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.copyElements(
-				parent, elements));
-		op.addContext(getContext(parent));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder.copyElements(parent,
+						elements));
 		op.setLabel("Copy Element");
 		return op;
 	}
@@ -362,10 +352,10 @@ public class OperationFactory {
 			IInternalElementType<T> internalElementType,
 			IAttributeType.String attribute, String value) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder
-				.createElementOneStringAttribute(parent, internalElementType,
-						null, attribute, value));
-		op.addContext(getContext(parent));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder
+						.createElementOneStringAttribute(parent,
+								internalElementType, null, attribute, value));
 		op.setLabel("Create Element");
 		return op;
 	}
@@ -398,9 +388,9 @@ public class OperationFactory {
 			IInternalElement movedElement, IInternalElement newParent,
 			IInternalElement nextSibling) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(builder.move(
-				movedElement, newParent, nextSibling));
-		op.addContext(getContext(root));
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.move(movedElement,
+						newParent, nextSibling));
 		op.setLabel("Move");
 		return op;
 

@@ -41,7 +41,7 @@ public class AtomicOperation extends AbstractOperation {
 							e.printStackTrace();
 						}
 					}
-				}, monitor);
+				}, context.getRodinFile().getSchedulingRule(), monitor);
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 				return e.getStatus();
@@ -51,6 +51,8 @@ public class AtomicOperation extends AbstractOperation {
 	}
 
 	protected final OperationTree operation;
+
+	final RodinFileUndoContext context;
 
 	private final AbstractNavigation execute = new AbstractNavigation() {
 		@Override
@@ -79,9 +81,11 @@ public class AtomicOperation extends AbstractOperation {
 
 	};
 
-	public AtomicOperation(OperationTree operation) {
+	public AtomicOperation(RodinFileUndoContext context, OperationTree operation) {
 		super(operation.getLabel());
 		this.operation = operation;
+		this.context = context;
+		addContext(context);
 	}
 
 	@Override
