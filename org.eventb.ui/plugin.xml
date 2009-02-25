@@ -1911,6 +1911,15 @@
                label="%action.ExpandAll.label"
                toolbarPath="navigationGroup">
          </action>
+         <action
+               class="org.eventb.internal.ui.proofSkeletonView.SwitchOrientationAction"
+               icon="icons/full/ctool16/inv_prover.gif"
+               id="org.eventb.ui.views.ProofSkeleton.toolbar.switchOrientation"
+               label="%action.SwitchOrientation.label"
+               style="push"
+               toolbarPath="navigationGroup"
+               tooltip="%action.SwitchOrientation.tooltip">
+         </action>
       </viewContribution>
    </extension>
    <extension

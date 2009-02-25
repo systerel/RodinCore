@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPageProvider;
@@ -59,4 +60,14 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 	public TreeViewer getViewer() {
 		return masterPart.getViewer();
 	}
+
+
+	public void switchOrientation() {
+		if (sashForm.getOrientation() == SWT.VERTICAL) {
+			sashForm.setOrientation(SWT.HORIZONTAL);
+		} else {
+			sashForm.setOrientation(SWT.VERTICAL);
+		}
+	}
+
 }

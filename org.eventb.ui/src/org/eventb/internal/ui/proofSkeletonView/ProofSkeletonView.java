@@ -67,5 +67,8 @@ public class ProofSkeletonView extends ViewPart {
 		}
 	}
 
+	public void switchOrientation() {
+		masterDetailsBlock.switchOrientation();
+	}
 
 }
