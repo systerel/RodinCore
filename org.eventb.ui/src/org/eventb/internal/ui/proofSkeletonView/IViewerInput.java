@@ -13,8 +13,9 @@ package org.eventb.internal.ui.proofSkeletonView;
 
 /**
  * @author Nicolas Beauger
- * 
+ *
  */
-public interface IPrfSklInput {
-	// no methods
+public interface IViewerInput {
+
+	Object[] getElements();
 }

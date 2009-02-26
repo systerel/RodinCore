@@ -23,22 +23,23 @@ import org.eventb.internal.ui.utils.Messages;
  * @author Nicolas Beauger
  * 
  */
-public final class DefaultMasterInput implements IPrfSklInput {
-	private static DefaultMasterInput instance;
+public final class DefaultInput extends TextInput {
+	private static DefaultInput instance;
 
-	private DefaultMasterInput() {
+	private DefaultInput() {
 		// Singleton
 	}
 
-	public static DefaultMasterInput getDefault() {
+	public static DefaultInput getDefault() {
 		if (instance == null) {
-			instance = new DefaultMasterInput();
+			instance = new DefaultInput();
 		}
 		return instance;
 	}
 
 	@Override
-	public String toString() {
+	public String getText() {
 		return Messages.proofskeleton_noproof;
 	}
+
 }

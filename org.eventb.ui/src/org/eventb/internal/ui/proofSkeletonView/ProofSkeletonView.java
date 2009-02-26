@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
+import org.eventb.core.IPSStatus;
 
 /**
  * ViewPart for displaying proof skeletons.
@@ -24,21 +25,21 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class ProofSkeletonView extends ViewPart {
 
-			
+
 	protected PrfSklMasterDetailsBlock masterDetailsBlock;
-	private SelectionManager selManager;
+	private InputManager selManager;
+	private IManagedForm managedForm;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
-		final IManagedForm managedForm = new ManagedForm(parent);
+		managedForm = new ManagedForm(parent);
 		masterDetailsBlock = new PrfSklMasterDetailsBlock();
 		masterDetailsBlock.createContent(managedForm);
 
-		selManager = new SelectionManager(this, managedForm);
+		selManager = new InputManager(this);
 
 		getSite().getPage().addPartListener(selManager);
-
 	}
 
 	@Override
@@ -51,7 +52,7 @@ public class ProofSkeletonView extends ViewPart {
 		getSite().getPage().removePartListener(selManager);
 		super.dispose();
 	}
-	
+
 	/**
 	 * Expand or collapse the master part tree viewer.
 	 * 
@@ -69,6 +70,14 @@ public class ProofSkeletonView extends ViewPart {
 
 	public void switchOrientation() {
 		masterDetailsBlock.switchOrientation();
+	}
+
+	public void setInput(IPSStatus input) {
+		if (managedForm != null) {
+			if(!managedForm.getForm().isDisposed()) {
+				managedForm.setInput(input);
+			}
+		}
 	}
 
 }

@@ -50,6 +50,8 @@ public class SequentDetailsPage implements IDetailsPage {
 
 	private ListViewer viewer;
 
+	private static SequentDetailsPage instance;
+	
 	private static final IStructuredContentProvider sequentContentProvider =
 		new IStructuredContentProvider() {
 		
@@ -70,10 +72,17 @@ public class SequentDetailsPage implements IDetailsPage {
 		}
 	};
 
-	public SequentDetailsPage() {
-		// Do nothing
+	private SequentDetailsPage() {
+		// Singleton : private constructor
 	}
 
+	public static SequentDetailsPage getDefault() {
+		if (instance == null) {
+			instance = new SequentDetailsPage();
+		}
+		return instance;
+	}
+	
 	public void createContents(Composite parent) {
 		parent.setLayout(new FillLayout());
 		viewer = new ListViewer(parent);

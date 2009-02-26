@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
-import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
 
@@ -26,9 +25,6 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
  */
 public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 
-	private static final IDetailsPageProvider prfSklDetailsPageProvider = 
-		new PrfSklDetailsPageProvider();
-
 	protected PrfSklMasterPart masterPart;
 
 	public PrfSklMasterDetailsBlock() {
@@ -39,7 +35,7 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 	protected void createMasterPart(IManagedForm managedForm, Composite parent) {
 		masterPart = new PrfSklMasterPart(parent);
 		managedForm.addPart(masterPart);
-		managedForm.setInput(DefaultMasterInput.getDefault());
+		managedForm.setInput(DefaultInput.getDefault());
 	}
 
 	@Override
@@ -49,7 +45,7 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 
 	@Override
 	protected void registerPages(DetailsPart part) {
-		part.setPageProvider(prfSklDetailsPageProvider);
+		part.setPageProvider(PrfSklDetailsPageProvider.getDefault());
 	}
 
 	/**

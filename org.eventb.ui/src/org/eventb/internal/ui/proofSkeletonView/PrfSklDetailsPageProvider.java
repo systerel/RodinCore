@@ -25,10 +25,17 @@ import org.eventb.core.seqprover.IProofTreeNode;
  */
 public class PrfSklDetailsPageProvider implements IDetailsPageProvider {
 
-	private final SequentDetailsPage sequentDetailsPage = new SequentDetailsPage();
+	private static PrfSklDetailsPageProvider instance;
 
-	public PrfSklDetailsPageProvider() {
-		// Do nothing
+	private PrfSklDetailsPageProvider() {
+		// Singleton : private constructor
+	}
+
+	public static PrfSklDetailsPageProvider getDefault() {
+		if (instance == null) {
+			instance = new PrfSklDetailsPageProvider();
+		}
+		return instance;
 	}
 
 	public Object getPageKey(Object object) {
@@ -40,7 +47,7 @@ public class PrfSklDetailsPageProvider implements IDetailsPageProvider {
 
 	public IDetailsPage getPage(Object key) {
 		if (key == IProofTreeNode.class) {
-			return sequentDetailsPage;
+			return SequentDetailsPage.getDefault();
 		}
 		return null;
 	}

@@ -8,27 +8,21 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
+
 package org.eventb.internal.ui.proofSkeletonView;
 
-import org.eventb.core.IPRProof;
-import org.eventb.internal.ui.utils.Messages;
+/**
+ * Common protocol for text input objects.
+ * 
+ * @author Nicolas Beauger
+ * 
+ */
+public abstract class TextInput implements IViewerInput {
 
-public class ProofErrorInput extends TextInput {
-	private final IPRProof proof;
-	private final String reason;
-	
-	public ProofErrorInput(IPRProof proof, String reason) {
-		this.proof = proof;
-		this.reason = reason;
+	abstract String getText();
+
+	public Object[] getElements() {
+		return new Object[] { getText() };
 	}
 
-	@Override
-	public String getText() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(Messages.proofskeleton_cantdisplayproof);
-		sb.append(proof.getElementName());
-		sb.append("\nReason:\n");
-		sb.append(reason);
-		return sb.toString();
-	}
 }

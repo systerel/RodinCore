@@ -12,7 +12,6 @@ package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
@@ -51,18 +50,12 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof IProofTree) {
-			final Object[] result = {((IProofTree) inputElement).getRoot()};
-			return result;
+		System.out.println("getEleemnts called");
+		if (!(inputElement instanceof IViewerInput)) {
+			return NO_OBJECTS;
 		}
-		if (inputElement instanceof IProofTreeNode) {
-			final Object[] result = {((IProofTreeNode) inputElement).getRule()};
-			return result;
-		}
-		if (inputElement instanceof IPrfSklInput) {
-			return new Object[] {inputElement};
-		}
-		return NO_OBJECTS;
+		final IViewerInput input = (IViewerInput) inputElement;
+		return input.getElements();
 	}
 
 	public void dispose() {

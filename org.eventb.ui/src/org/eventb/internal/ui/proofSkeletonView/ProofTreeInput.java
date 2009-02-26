@@ -8,27 +8,25 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
+
 package org.eventb.internal.ui.proofSkeletonView;
 
-import org.eventb.core.IPRProof;
-import org.eventb.internal.ui.utils.Messages;
+import org.eventb.core.seqprover.IProofTree;
 
-public class ProofErrorInput extends TextInput {
-	private final IPRProof proof;
-	private final String reason;
+/**
+ * @author Nicolas Beauger
+ *
+ */
+public class ProofTreeInput implements IViewerInput {
+	final IProofTree proofTree;
 	
-	public ProofErrorInput(IPRProof proof, String reason) {
-		this.proof = proof;
-		this.reason = reason;
+	public ProofTreeInput(IProofTree proofTree) {
+		this.proofTree = proofTree;
 	}
 
-	@Override
-	public String getText() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(Messages.proofskeleton_cantdisplayproof);
-		sb.append(proof.getElementName());
-		sb.append("\nReason:\n");
-		sb.append(reason);
-		return sb.toString();
+
+	public Object[] getElements() {
+		return new Object[] {proofTree.getRoot()};
 	}
+
 }
