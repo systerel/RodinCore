@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eventb.core.EventBAttributes;
 import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
@@ -56,12 +55,14 @@ public class TextEditComposite extends AbstractEditComposite {
 	private Button undefinedButton;
 	protected final int style;
 	private final boolean isMath;
+	private final String foregroundColor;
 
 	IContextActivation contextActivation;
 
 	public TextEditComposite(TextDesc attrDesc) {
 		super(attrDesc);
 		this.isMath = attrDesc.isMath();
+		this.foregroundColor = attrDesc.getForegroundColor();
 		// TODO implement a listener on the preference store
 		if (EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE)) {
@@ -157,15 +158,8 @@ public class TextEditComposite extends AbstractEditComposite {
 			text.setText(value);
 	}
 	
-	// TODO Get the preference from extension
 	private Color getForegroundColor() {
-		if (attrDesc.getAttributeType() == EventBAttributes.COMMENT_ATTRIBUTE) {
-			return EventBPreferenceStore
-					.getColorPreference(PreferenceConstants.P_COMMENT_FOREGROUND);
-		} else {
-			return EventBPreferenceStore
-					.getColorPreference(PreferenceConstants.P_TEXT_FOREGROUND);
-		}
+		return EventBPreferenceStore.getColorPreference(foregroundColor);
 	}
 
 	private void displayMarkers() {

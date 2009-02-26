@@ -25,6 +25,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
@@ -51,6 +52,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final String ATTR_ATTRIBUTE_REQUIRED = "required";
 	private static final String ATTR_ATTRIBUTE_TYPE = "typeId";
 	private static final String ATTR_ATTRIBUTE_ID = "id";
+	private static final String ATTR_ATTRIBUTE_FOREGROUND_COLOR = "foregroundColor";
 
 	static final IElementDesc nullElement = new NullElementDesc();
 	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
@@ -374,6 +376,14 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			return (IAttributeManipulation) obj;
 		}
 
+		private String getForegroundColor(IConfigurationElement element) {
+			final String preference = element
+					.getAttribute(ATTR_ATTRIBUTE_FOREGROUND_COLOR);
+			if (preference == null)
+				return PreferenceConstants.P_TEXT_FOREGROUND;
+			return preference;
+		}
+		
 		@Override
 		public void put(IConfigurationElement element) {
 			try {
@@ -394,8 +404,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					final boolean isMath = getBoolean(element,
 							ATTR_ATTRIBUTE_MATH);
 					final Style style = getStyle(element);
+					final String preference = getForegroundColor(element);
 					desc = new TextDesc(manipulation, prefix, suffix,
-							isHorizontalExpand, isMath, style, attrType);
+							isHorizontalExpand, isMath, style, attrType, preference);
 				} else {
 					final boolean required = getBoolean(element,
 							ATTR_ATTRIBUTE_REQUIRED);

@@ -168,6 +168,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="foregroundColor" type="string">
+            <annotation>
+               <documentation>
+                  Preference key for the choice of font color. Must be defined in PreferenceConstants. By default, the value is &quot;Text foreground&quot;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

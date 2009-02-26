@@ -469,6 +469,8 @@ public class TestElementDescRegistry extends TestCase {
 	private void assertTextDesc(TextDesc expected, TextDesc actual) {
 		assertEquals("Unexpected isMath", expected.isMath(), actual.isMath());
 		assertEquals("Unexpected style", expected.getStyle(), actual.getStyle());
+		assertEquals("Unexpected foreground color preference", expected
+				.getForegroundColor(), actual.getForegroundColor());
 	}
 
 	private void assertComboDesc(ComboDesc expected, ComboDesc actual) {
@@ -478,35 +480,41 @@ public class TestElementDescRegistry extends TestCase {
 
 	private TextDesc getCommentedDesc() {
 		return new TextDesc(new CommentAttributeManipulation(), "//", "", true,
-				false, TextDesc.Style.MULTI, COMMENT_ATTRIBUTE);
+				false, TextDesc.Style.MULTI, COMMENT_ATTRIBUTE,
+				"Comment foreground");
 	}
 
 	private TextDesc getIdentifierDesc() {
 		return new TextDesc(new IdentifierAttributeManipulation(), "", "",
-				false, false, TextDesc.Style.SINGLE, IDENTIFIER_ATTRIBUTE);
+				false, false, TextDesc.Style.SINGLE, IDENTIFIER_ATTRIBUTE,
+				"Text foreground");
 	}
 
 	private TextDesc getLabelDesc() {
 		return new TextDesc(new LabelAttributeManipulation(), "", ":", false,
-				false, TextDesc.Style.SINGLE, LABEL_ATTRIBUTE);
+				false, TextDesc.Style.SINGLE, LABEL_ATTRIBUTE,
+				"Text foreground");
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getAssignmentDesc() {
 		return new TextDesc(new AssignmentAttributeManipulation(), "", "",
-				false, true, TextDesc.Style.MULTI, ASSIGNMENT_ATTRIBUTE);
+				false, true, TextDesc.Style.MULTI, ASSIGNMENT_ATTRIBUTE,
+				"Text foreground");
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getPredicateDesc() {
 		return new TextDesc(new PredicateAttributeManipulation(), "", "",
-				false, true, TextDesc.Style.MULTI, PREDICATE_ATTRIBUTE);
+				false, true, TextDesc.Style.MULTI, PREDICATE_ATTRIBUTE,
+				"Text foreground");
 	}
 
 	// multi line, can be expand horizontally and is math
 	private TextDesc getExpressionDesc() {
 		return new TextDesc(new ExpressionAttributeManipulation(), "", "",
-				true, true, TextDesc.Style.MULTI, EXPRESSION_ATTRIBUTE);
+				true, true, TextDesc.Style.MULTI, EXPRESSION_ATTRIBUTE,
+				"Text foreground");
 	}
 
 }

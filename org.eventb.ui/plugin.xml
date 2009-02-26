@@ -2249,6 +2249,7 @@
             expandsHorizontally="true"
             id="org.eventb.ui.comment"
             isMath="false"
+            foregroundColor="Comment foreground"
             prefix="//"
             style="multi"
             typeId="org.eventb.core.comment">

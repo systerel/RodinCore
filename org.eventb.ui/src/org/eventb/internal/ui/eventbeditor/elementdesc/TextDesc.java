@@ -22,21 +22,34 @@ public class TextDesc extends AttributeDesc {
 
 	public TextDesc(IAttributeManipulation factory, String prefix,
 			String suffix, boolean isHorizontalExpand, boolean isMath,
-			Style style, IAttributeType attrType) {
+			Style style, IAttributeType attrType, String preference) {
 		super(factory, prefix, suffix, isHorizontalExpand, attrType);
 		this.isMath = isMath;
 		this.style = style;
+		this.preference = preference;
 	}
 
 	private final boolean isMath;
 
 	private final Style style;
 
+	private final String preference;
+	
 	@Override
 	public IEditComposite createWidget() {
 		return new TextEditComposite(this);
 	}
 
+	/**
+	 * Returns the preference key for the choice of font color. Must be defined
+	 * in PreferenceConstants.
+	 * 
+	 * @return the preference key for the choice of font color.
+	 */
+	public String getForegroundColor() {
+		return preference;
+	}
+	
 	/**
 	 * This indicates that the text widget will need math keyboard attached to
 	 * it or not.
