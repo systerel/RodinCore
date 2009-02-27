@@ -33,4 +33,16 @@ class RodinFileUndoContext implements IUndoContext {
 	public IRodinFile getRodinFile() {
 		return rodinFile;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof RodinFileUndoContext))
+			return false;
+		return rodinFile.equals(((RodinFileUndoContext) obj).rodinFile);
+	}
+	
+	@Override
+	public int hashCode() {
+		return rodinFile.hashCode();
+	}
 }
