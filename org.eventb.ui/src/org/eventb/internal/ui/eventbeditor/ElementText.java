@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
-import org.eventb.internal.ui.DoubleClickTextListener;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.rodinp.core.IRodinElement;
@@ -206,7 +205,6 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		textWidget.addListener(SWT.Traverse, textListener);
 		textWidget.addListener(SWT.Verify, textListener);
 		textWidget.addModifyListener(this);
-		textWidget.addMouseListener(new DoubleClickTextListener(textWidget));
 	}
 
 	/*

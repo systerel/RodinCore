@@ -27,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eventb.internal.ui.DoubleClickTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
@@ -69,9 +68,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 		setStyle();
 
 		textWidget = getWidgetFactory().createText(composite, "", style);
-		
-		textWidget.addMouseListener(new DoubleClickTextListener(textWidget));
-		
+
 		data = new FormData();
 		data.left = new FormAttachment(0, STANDARD_LABEL_WIDTH);
 		data.right = new FormAttachment(100, 0);

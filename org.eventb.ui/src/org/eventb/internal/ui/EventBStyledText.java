@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - changed double click behavior
  ******************************************************************************/
 
 package org.eventb.internal.ui;
@@ -38,6 +39,7 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	 */
 	public EventBStyledText(final StyledText text, final boolean isMath) {
 		super(text);
+		text.addMouseListener(new DoubleClickStyledTextListener(text));
 		if (isMath) {
 			listener = new EventBStyledTextModifyListener();
 			text.addModifyListener(listener);

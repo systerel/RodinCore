@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - changed double click behavior
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -42,6 +43,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
@@ -95,6 +97,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		this.scrolledForm = scrolledForm;
 		dirtyStates = new ArrayList<Point>();
 		styledText = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
+		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
 		Font font = JFaceResources
 				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
 		styledText.setFont(font);
