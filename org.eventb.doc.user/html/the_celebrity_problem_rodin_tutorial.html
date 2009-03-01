@@ -43,7 +43,7 @@ var wgUserGroups = null;
 var wgUserLanguage = "en";
 var wgContentLanguage = "en";
 var wgBreakFrames = false;
-var wgCurRevisionId = "950";
+var wgCurRevisionId = "1400";
 var wgVersion = "1.12.0";
 var wgEnableAPI = true;
 var wgEnableWriteAPI = false;
@@ -69,11 +69,7 @@ var wgEnableWriteAPI = false;
 			<h3 id="siteSub">From Event-B</h3>
 			<!-- ('div', {'id': 'contentSub'}) ('/div', {}) -->
 									<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>			<!-- start content -->
-			<div class="warning" style="color:red;"><b>Dear reader, some formulas and templates are not yet rendered well, but the problem is being worked out...</b></div>
-<div class="navigation">
-<p>{{ #if: <a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a> | Previous:<a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a> | }} {{ #if: <a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a> | Next:<a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a> | }} {{ #if: <a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a> | Up:<a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a> | }}
-</p>
-</div><div>
+			<div class="navigation"><table border="2" cellpadding="3" cellspacing="4" rules="all" style="border:2px solid #999999; margin:1em 1em 1em 0;"><tr><td style="vertical-align:sub;"><b>&lt;</b><small>prev:</small> <a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a></td> <td style="vertical-align:sub;"><b>&gt;</b><small>next:</small> <a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a></td> <td style="vertical-align:sub;"><b>^</b><small>up:</small> <a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a></td></tr></table></div><div>
 <p><br />
 The next model that you will work with is the so-called celebrity problem. In the setting for this problem, we have a “knows” relation. This relation is defined so that
 </p>
@@ -83,40 +79,36 @@ The next model that you will work with is the so-called celebrity problem. In th
 </li></ul>
 <p>The goal is to find the celebrity. The provided development, once completed, yields a linear-time algorithm for the problem.
 </p>
-<a name="Modeling"></a><h2><span class="editsection">[<a href="" title="Edit section: Modeling">edit</a>]</span> <span class="mw-headline"> Modeling </span></h2>
+<a name="Modeling"></a><h2> <span class="mw-headline"> Modeling </span></h2>
 <ol><li> Make sure that you have no existing Project named <tt>Celebrity</tt>. If you do, then <a href="" title="Project (Rodin User Manual)">rename it (Section 1.7 in the Manual)</a>. Then import the archive file <tt>Celebrity.zip</tt>. For this, choose “Import…” in the File menu, and then select “Existing Projects into Workspace”. Then, select the according archive file. (Read more on importing projects in <a href="" title="Project (Rodin User Manual)">section 1.6 of the Manual</a>)
 </li><li> The tool takes a few seconds to extract and load all the files. Once it is done, it shows that there are a few problems with this project. In the first part of this section, our goal is to fix these problems and conclude the proofs.
 </li><li> First of all, we take a look at the error. It states that an event called “celebrity” is not refined. Double-click on the error in the Problem Window to open the <tt>Celebrity_1</tt> machine. If you look at its events (by pressing the “Events” tab), you can see that it actually does have a “celebrity” event. The problem is that it is not declared as a refinement. In order to do so, right-click on the event and select “New Refine Event”. This declares that the event is a refinement of an event with the same name in the abstract machine. As this is the case here, we can now save the project and the error disappears. (If the event in the abstract machine had a different name, you would have to edit it. For more on this issue, see <a href="" title="Anatomy of a Machine (Rodin User Manual)">Section 3.9.1 of the Manual</a>).
 </li><li> Next, we deal with the warnings. The three remaining warnings state that witnesses are missing. In any abstract event that uses parameters, if the concrete event has no parameter with the same name, the tool needs a witness so that it notices what value the parameter should take. Witnesses are also needed for variables that have a nondeterministic assignment in an abstract event and do not appear in the concrete model. <a href="" title="Anatomy of a Machine (Rodin User Manual)">To create the witness (Section 3.9.4 of the Manual)</a>, double-click on the warning to open the concrete model (here <tt>Celebrity_2</tt>). Then, right-click on the “celebrity” event and select “New Witness”.
-</li><li> An empty witness has been created, which we need to fill. Its name will have to be &lt;math&gt;x&lt;/math&gt; if we want it to be a witness for the parameter &lt;math&gt;x&lt;/math&gt;. Next, for the content. If we switch between the two machines (either by pressing Ctrl+F6 or by clicking on their tabs), we see that the abstract event has the assignment &lt;math&gt;r \mathrel {:\mkern 1mu=}x&lt;/math&gt;, while the concrete one has the assignment &lt;math&gt;r \mathrel {:\mkern 1mu=}b&lt;/math&gt;. So, &lt;math&gt;x = b&lt;/math&gt; is the witness. Edit the Details and save the file. One warning will disappear, two to go.
+</li><li> An empty witness has been created, which we need to fill. Its name will have to be <span class="texhtml"><i>x</i></span> if we want it to be a witness for the parameter <span class="texhtml"><i>x</i></span>. Next, for the content. If we switch between the two machines (either by pressing Ctrl+F6 or by clicking on their tabs), we see that the abstract event has the assignment <img alt="r \bcmeq x" class="tex" src="images/math_9345.png" />, while the concrete one has the assignment <img alt="r \bcmeq b" class="tex" src="images/math_2a6f.png" />. So, <span class="texhtml"><i>x</i> = <i>b</i></span> is the witness. Edit the Details and save the file. One warning will disappear, two to go.
 </li><li> Try completing the other two witnesses on your own. A hint: Both witnesses are simple equalities, and both can be found by comparing the third guard of the abstract event with the second guard of the concrete one. Remember to give the witness the name of the variable it stands for. If you completed this step correctly, there should be no warning, info or error left on the Problems window.
 </li></ol>
-<a name="Proving"></a><h2><span class="editsection">[<a href="" title="Edit section: Proving">edit</a>]</span> <span class="mw-headline"> Proving </span></h2>
+<a name="Proving"></a><h2> <span class="mw-headline"> Proving </span></h2>
 <ol><li> All we have to do now is prove. Switch to Proving Perspective. Browsing around in the Obligation Explorer (<a href="" title="The Proof Obligation Explorer (Rodin User Manual)">Section 5 of the Manual</a> shows you how), you can see that the auto-prover did quite a good job. If you have chosen the witnesses correctly, all except for five proofs already should be completed. Except for the last one of them, all of them could be proved with a different external prover, but in order to learn a few new techniques, we will prove them with the p0 prover.
-</li><li> Let’s start with the proof in <tt>Celebrity_0</tt>. Select the proof by clicking on it. What you need to prove is that P is not empty. Enter P in the proof control and open the Search Hypothesis Window. Like this, you get all hypothesis that have P in them. We need to find one that works toward the goal. &lt;math&gt;c \in P&lt;/math&gt; does that, so add it to the selected hypothesis (<a href="" title="The Proving Perspective (Rodin User Manual)">Section 6.7 of the manual</a> explains how) and click on p0 in the Proof Control. The proof succeeds.
-</li><li> Next, we look at <tt>celebrity/act1/SIM</tt> of <tt>Celebrity_1</tt>. Here we need to prove &lt;math&gt;x = c&lt;/math&gt;. You have no hypothesis about c selected, so look for them, like you did for hypothesis with P in the last proof. This time, you can see that &lt;math&gt;c \in Q&lt;/math&gt; is all you need to conclude the proof. So add it to the selected hypothesis and the proof will succeed using p0.
-</li><li> <tt>remove_1/inv2/INV</tt>, is a little more complex. In order to prove the statement, it suffices to prove &lt;math&gt;x \neq c&lt;/math&gt;. so type this into the proof control and press the Add Hypothesis button (ah). Now, press p0 until it does not get you any further. Now, try selecting the right hypothesis by yourself in order to complete the proof. If you cannot find it, you may also just select all hypotheses.
+</li><li> Let’s start with the proof in <tt>Celebrity_0</tt>. Select the proof by clicking on it. What you need to prove is that P is not empty. Enter P in the proof control and open the Search Hypothesis Window. Like this, you get all hypothesis that have P in them. We need to find one that works toward the goal. <img alt="c \in P" class="tex" src="images/math_beaf.png" /> does that, so add it to the selected hypothesis (<a href="" title="The Proving Perspective (Rodin User Manual)">Section 6.7 of the manual</a> explains how) and click on p0 in the Proof Control. The proof succeeds.
+</li><li> Next, we look at <tt>celebrity/act1/SIM</tt> of <tt>Celebrity_1</tt>. Here we need to prove <span class="texhtml"><i>x</i> = <i>c</i></span>. You have no hypothesis about c selected, so look for them, like you did for hypothesis with P in the last proof. This time, you can see that <img alt="c \in Q" class="tex" src="images/math_45dc.png" /> is all you need to conclude the proof. So add it to the selected hypothesis and the proof will succeed using p0.
+</li><li> <tt>remove_1/inv2/INV</tt>, is a little more complex. In order to prove the statement, it suffices to prove <img alt="x \neq c" class="tex" src="images/math_0075.png" />. so type this into the proof control and press the Add Hypothesis button (ah). Now, press p0 until it does not get you any further. Now, try selecting the right hypothesis by yourself in order to complete the proof. If you cannot find it, you may also just select all hypotheses.
 </li><li> In order to move to the next proof obligation, you may also use the Next Undischarged PO button of the Proof Control. The next proof can be solved the same way as the last one. You just need to add at least two hypotheses this time.
-</li><li> In the proof in <tt>Celebrity_2</tt>, you have to fill in an existential quantifier. First, look in the list of hypothesis if you find any variable that is in P, and select that hypothesis. Then, instantiate &lt;math&gt;b’&lt;/math&gt; and &lt;math&gt;R’&lt;/math&gt; correctly (For instance, if you want to instantiate &lt;math&gt;b’&lt;/math&gt; with &lt;math&gt;c&lt;/math&gt;, then &lt;math&gt;P \backslash \{ c\} &lt;/math&gt; is a good choice for &lt;math&gt;R’&lt;/math&gt;) by typing the instantiations in the <a href="" title="The Proving Perspective (Rodin User Manual)">Goal Window</a> and then clicking on the red existential quantifier. Now, all open branches of the proof tree can be proved with p0. After this, we have completed all the proofs, and the model is ready for use.
+</li><li> In the proof in <tt>Celebrity_2</tt>, you have to fill in an existential quantifier. First, look in the list of hypothesis if you find any variable that is in P, and select that hypothesis. Then, instantiate <span class="texhtml"><i>b</i>'</span> and <span class="texhtml"><i>R</i>'</span> correctly (For instance, if you want to instantiate <span class="texhtml"><i>b</i>'</span> with <span class="texhtml"><i>c</i></span>, then <img alt="P \backslash \{ c\} " class="tex" src="images/math_be5c.png" /> is a good choice for <span class="texhtml"><i>R</i>'</span>) by typing the instantiations in the <a href="" title="The Proving Perspective (Rodin User Manual)">Goal Window</a> and then clicking on the red existential quantifier. Now, all open branches of the proof tree can be proved with p0. After this, we have completed all the proofs, and the model is ready for use.
 </li></ol>
 </div>
-<div class="warning" style="color:red;"><b>Dear reader, some formulas and templates are not yet rendered well, but the problem is being worked out...</b></div>
-<div class="navigation">
-<p>{{ #if: <a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a> | Previous:<a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a> | }} {{ #if: <a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a> | Next:<a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a> | }} {{ #if: <a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a> | Up:<a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a> | }}
-</p>
-</div>
+<div class="navigation"><table border="2" cellpadding="3" cellspacing="4" rules="all" style="border:2px solid #999999; margin:1em 1em 1em 0;"><tr><td style="vertical-align:sub;"><b>&lt;</b><small>prev:</small> <a href="a_first_example_the_birthday_book_rodin_tutorial.html" title="A First Example: The Birthday Book (Rodin Tutorial)">A First Example: The Birthday Book</a></td> <td style="vertical-align:sub;"><b>&gt;</b><small>next:</small> <a href="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html" title="Customizing a perspective suitable for RODIN (Rodin Tutorial)">Customizing a perspective suitable for RODIN</a></td> <td style="vertical-align:sub;"><b>^</b><small>up:</small> <a href="index_rodin_tutorial1.html" title="Index (Rodin Tutorial)">Index</a></td></tr></table></div>
 
 <!-- 
 NewPP limit report
-Preprocessor node count: 53/1000000
-Post-expand include size: 1448/2097152 bytes
+Preprocessor node count: 122/1000000
+Post-expand include size: 2054/2097152 bytes
 Template argument size: 928/2097152 bytes
 -->
 
-<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:83-0!1!0!!en!2 and timestamp 20080808162845 -->
+<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:83-0!1!0!!en!2!edit=0 and timestamp 20090301175241 -->
 <div class="printfooter">
 Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Celebrity_Problem_%28Rodin_Tutorial%29</a>"</div>
-			<div id="catlinks"><p class="catlinks"><a href="" title="Special:Categories">Categories</a>: <span dir="ltr"><a class="new" href="" title="Category:User Documentation">User Documentation</a></span> | <span dir="ltr"><a class="new" href="" title="Category:Rodin Platform">Rodin Platform</a></span> | <span dir="ltr"><a class="new" href="" title="Category:Tutorial">Tutorial</a></span></p></div>			<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
+			<div id="catlinks"><p class="catlinks"><a href="" title="Special:Categories">Categories</a>: <span dir="ltr"><a href="" title="Category:User documentation">User documentation</a></span> | <span dir="ltr"><a class="new" href="" title="Category:Rodin Platform">Rodin Platform</a></span> | <span dir="ltr"><a class="new" href="" title="Category:Tutorial">Tutorial</a></span></p></div>			<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
     <div id="column-one">
       <!-- ('div', {'id': 'p-cactions', 'class': 'portlet'}) ('/div', {}) -->
       <!-- ('div', {'class': 'portlet', 'id': 'p-personal'}) ('/div', {}) -->
@@ -132,8 +124,8 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Celebrity_Probl
 			<!-- ('div', {'class': 'visualClear'}) ('/div', {}) -->
 			<div id="footerHacked">
 				<ul id="f-list">
-				<li id="lastmod"> This page was last modified 16:48, 15 July 2008.</li>
-				<li id="viewcount">This page has been accessed 52 times.</li>
+				<li id="lastmod"> This page was last modified 20:31, 10 September 2008.</li>
+				<li id="viewcount">This page has been accessed 553 times.</li>
 				<li id="privacy"><a href="" title="Event-B:Privacy policy">Privacy policy</a></li>
 				<li id="about"><a href="" title="Event-B:About">About Event-B</a></li>
 				<li id="disclaimer"><a href="" title="Event-B:General disclaimer">Disclaimers</a></li>
@@ -143,4 +135,4 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Celebrity_Probl
 	
 		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
 </div>
-<!-- Served in 0.133 secs. --><br /></body></html>
+<!-- Served in 0.138 secs. --><br /></body></html>
