@@ -15,11 +15,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
-import static org.eventb.internal.ui.EventBUtils.getFreeChildName;
-import static org.eventb.internal.ui.EventBUtils.getImplicitChildren;
+import static org.eventb.internal.ui.EventBUtils.*;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
@@ -28,7 +26,6 @@ import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -48,7 +45,7 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 			this.event = event;
 		}
 
-		public void run(IProgressMonitor pMonitor) throws CoreException {
+		public void run(IProgressMonitor pMonitor) throws RodinDBException {
 			event.setExtended(true, pMonitor);
 			final IInternalElement[] implicitChildren = getImplicitChildren(event);
 			if (implicitChildren.length == 0) {
@@ -86,7 +83,7 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 			this.event = event;
 		}
 
-		public void run(IProgressMonitor pMonitor) throws CoreException {
+		public void run(IProgressMonitor pMonitor) throws RodinDBException {
 			final IInternalElement[] implicitChildren = getImplicitChildren(event);
 			event.setExtended(false, pMonitor);
 			if (implicitChildren.length == 0) {
@@ -169,9 +166,11 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 		final boolean extended = newValue.equals(TRUE);
 		final IEvent event = getEvent(element);
 		if (extended) {
-			RodinCore.run(new SetExtended(event), monitor);
+			final SetExtended setExtended = new SetExtended(event);
+			setExtended.run(monitor);
 		} else {
-			RodinCore.run(new UnsetExtended(event), monitor);
+			final UnsetExtended unsetExtended = new UnsetExtended(event);
+			unsetExtended.run(monitor);
 		}
 	}
 
