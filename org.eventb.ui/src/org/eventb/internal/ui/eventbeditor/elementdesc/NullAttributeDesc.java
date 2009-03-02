@@ -52,4 +52,8 @@ public class NullAttributeDesc extends AttributeDesc {
 		};
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof NullAttributeDesc);
+	}
 }
