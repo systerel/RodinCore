@@ -491,48 +491,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(eventExp, refEventExpInImp);
 	}
 
-	private static final String PRM_1DECL =
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile"
-					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"3\">"
-					+ "<org.eventb.core.event"
-					+ "		name=\"internal_element1\""
-					+ "		org.eventb.core.convergence=\"0\""
-					+ "		org.eventb.core.extended=\"false\""
-					+ "		org.eventb.core.label=\"evt1\">"
-					+ "		<org.eventb.core.parameter"
-					+ "				name=\"internal_element1\""
-					+ "				org.eventb.core.identifier=\"prm1\"/>"
-					+ "</org.eventb.core.event>"
-					+ "</org.eventb.core.machineFile>";
-
-	private static final String PRM_1DECL_1REF_GRD =
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile"
-					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"3\">"
-					+ "<org.eventb.core.refinesMachine"
-					+ "		name=\"internal_element1\""
-					+ "		org.eventb.core.target=\"exporter\"/>"
-					+ "<org.eventb.core.event"
-					+ "		name=\"internal_element1\""
-					+ "		org.eventb.core.convergence=\"0\""
-					+ "		org.eventb.core.extended=\"true\""
-					+ "		org.eventb.core.label=\"evt1\">"
-					+ "		<org.eventb.core.refinesEvent"
-					+ "				name=\"internal_element1\""
-					+ "				org.eventb.core.target=\"evt1\"/>"
-					+ "		<org.eventb.core.parameter"
-					+ "				name=\"internal_element1\""
-					+ "				org.eventb.core.identifier=\"prm1\"/>"
-					+ "		<org.eventb.core.guard"
-					+ "				name=\"internal_element1\""
-					+ "				org.eventb.core.label=\"grd1\""
-					+ "				org.eventb.core.predicate=\"prm1 = 1\"/>"
-					+ "</org.eventb.core.event>"
-					+ "</org.eventb.core.machineFile>";
-
 	public void testEventParamDeclAndExport() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, PRM_1DECL);
