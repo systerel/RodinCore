@@ -14,6 +14,7 @@ package org.rodinp.core.tests.indexer;
 import static java.util.Arrays.asList;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
+import java.util.List;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -292,4 +293,28 @@ public class QueryTests extends IndexTests {
 
 	}
 
+	public void testGetOccsSeveralDecls() throws Exception {
+		final List<IDeclaration> declarations = asList(declElt1, declElt4);
+		final List<IOccurrence> expected = asList(occElt1F1, occElt1K2F2, occElt4InElt1, occElt4InF1Root);
+		
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+
+		final Set<IOccurrence> actual = query.getOccurrences(declarations);
+		
+		assertSameElements(expected, actual, "occurrences");
+	}
+	
+	public void testGetDeclsSeveralOccs() throws Exception {
+		final List<IOccurrence> occurrences = asList(occElt1F1, occElt1K2F2, occElt4InElt1, occElt4InF1Root);
+		final List<IDeclaration> expected = asList(declElt1, declElt4);
+		
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+
+		final Set<IDeclaration> actual = query.getDeclarations(occurrences);
+		
+		assertSameElements(expected, actual, "declarations");
+	
+	}
 }
