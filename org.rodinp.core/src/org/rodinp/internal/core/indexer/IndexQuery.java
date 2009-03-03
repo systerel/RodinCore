@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -74,6 +75,22 @@ public class IndexQuery implements IIndexQuery {
 			IPropagator propagator) {
 		final Set<IOccurrence> result = new LinkedHashSet<IOccurrence>();
 		addOccurrences(declaration, propagator, result);
+		return result;
+	}
+
+	public Set<IOccurrence> getOccurrences(Collection<IDeclaration> declarations) {
+		final Set<IOccurrence> result = new LinkedHashSet<IOccurrence>();
+		for (IDeclaration declaration : declarations) {
+			result.addAll(getOccurrences(declaration));
+		}
+		return result;
+	}
+
+	public Set<IDeclaration> getDeclarations(Collection<IOccurrence> occurrences) {
+		final Set<IDeclaration> result = new LinkedHashSet<IDeclaration>();
+		for (IOccurrence occurrence : occurrences) {
+			result.add(occurrence.getDeclaration());
+		}
 		return result;
 	}
 

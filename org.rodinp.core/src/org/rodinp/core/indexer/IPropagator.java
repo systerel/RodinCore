@@ -20,16 +20,16 @@ package org.rodinp.core.indexer;
  * are supposed to be extracted from the occurrences of the given one.
  * </p>
  * <p>
- * This can be particularly intended to deal with cases where various elements
- * represent the same entity. The problem is that each element is indexed
- * separately, thus having separate occurrences. The propagation mechanism
- * allows to get all occurrences of the entity, whatever the underlying element,
- * as soon as there is a way to link occurrences of an element to the other
- * elements of the same entity.
+ * This can be particularly intended to deal with cases where various
+ * declarations represent the same entity. The problem is that each declaration
+ * is indexed separately, thus having separate occurrences. The propagation
+ * mechanism allows to get all occurrences of the entity, whatever the
+ * underlying declaration. It relies on the hypothesis that there is a way to
+ * link occurrences of a declaration to the other target declarations.
  * </p>
  * <p>
- * The way elements are linked to each other through occurrences depends on
- * indexers implementation.
+ * The way declarations are linked to each other through occurrences depends on
+ * indexers implementation. Such a link may or may not exist.
  * </p>
  * <p>
  * This interface is intended to be implemented by clients.

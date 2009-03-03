@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.indexer;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.rodinp.core.IInternalElement;
@@ -183,6 +184,28 @@ public interface IIndexQuery {
 	 */
 	Set<IOccurrence> getOccurrences(IDeclaration declaration,
 			IPropagator propagator);
+
+	/**
+	 * Returns all occurrences of the given declarations.
+	 * 
+	 * @param declarations
+	 *            the declarations for which occurrences are desired
+	 * @return the indexed occurrences of the given declarations
+	 * 
+	 * @since 0.9.3
+	 */
+	Set<IOccurrence> getOccurrences(Collection<IDeclaration> declarations);
+
+	/**
+	 * Returns the declarations associated with the given occurrences.
+	 * 
+	 * @param occurrences
+	 *            the occurrences for which declarations are desired
+	 * @return the declarations corresponding to the given occurrences
+	 * 
+	 * @since 0.9.3
+	 */
+	Set<IDeclaration> getDeclarations(Collection<IOccurrence> occurrences);
 
 	/**
 	 * Filters out the given declarations, keeping only the ones that refer to
