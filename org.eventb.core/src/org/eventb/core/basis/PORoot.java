@@ -23,7 +23,7 @@ import org.rodinp.core.RodinDBException;
  * <p>
  * This class should not be used directly by any client except the Rodin
  * database. In particular, clients should not use it, but rather use its
- * associated interface <code>IContextFile</code>.
+ * associated interface <code>IPORoot</code>.
  * </p>
  *
  * @author Laurent Voisin
