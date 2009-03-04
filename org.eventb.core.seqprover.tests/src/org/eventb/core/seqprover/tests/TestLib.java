@@ -49,11 +49,11 @@ public class TestLib {
 	 * 		 in case the sequent could not be constructed due to a parsing or typechecking error.
 	 */
 	public static IProverSequent genSeq(String sequentAsString){
-		String[] hypsStr = (sequentAsString.split("[|]-")[0]).split(";;");
+		String[] hypsStr = (sequentAsString.split("\\|-")[0]).split(";;");
 		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
 			hypsStr = new String[0];
 		
-		String goalStr = sequentAsString.split("[|]-")[1];
+		String goalStr = sequentAsString.split("\\|-")[1];
 		
 		// Parsing
 		Predicate[] hyps = new Predicate[hypsStr.length];
@@ -118,7 +118,7 @@ public class TestLib {
 	 * @author htson
 	 */
 	public static IProverSequent genFullSeq(String sequentAsString){
-		String[] goalSplit = sequentAsString.split("[|]-");
+		String[] goalSplit = sequentAsString.split("\\|-");
 		if (goalSplit.length != 2)
 			throw new IllegalArgumentException();
 		
