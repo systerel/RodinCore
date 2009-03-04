@@ -47,11 +47,11 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 	 * 			could not be constructed due to a parsing or typechecking error.
 	 */
 	public static IProverSequent genSeq(String sequentAsString){
-		String[] hypsStr = (sequentAsString.split("[|]-")[0]).split(";;");
+		String[] hypsStr = (sequentAsString.split("\\|-")[0]).split(";;");
 		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
 			hypsStr = new String[0];
 		
-		String goalStr = sequentAsString.split("[|]-")[1];
+		String goalStr = sequentAsString.split("\\|-")[1];
 		
 		// Parsing
 		Predicate[] hyps = new Predicate[hypsStr.length];
