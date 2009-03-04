@@ -50,7 +50,6 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getElements(Object inputElement) {
-		System.out.println("getEleemnts called");
 		if (!(inputElement instanceof IViewerInput)) {
 			return NO_OBJECTS;
 		}
