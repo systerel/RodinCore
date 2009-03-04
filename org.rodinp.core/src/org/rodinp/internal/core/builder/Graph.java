@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - on tool error, put marker on creator file instead of target
+ *     Systerel - added builder performance trace
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.builder.IAutomaticTool;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
@@ -303,13 +305,13 @@ public class Graph implements Serializable, Iterable<Node> {
 			try {
 				
 				FileRunnable runnable = 
-					new FileRunnable(tool, node.getCreator().getFile(), node.getTarget().getFile());
+					new FileRunnable(toolDescription, node.getCreator().getFile(), node.getTarget().getFile());
 				RodinCore.run(runnable, manager.getSliceProgressMonitor());
 				changed = runnable.targetHasChanged();
 				
 			} catch (OperationCanceledException e) {
 				throw e;
-			} catch (CoreException e) {
+			} catch (RodinDBException e) {
 				issueToolError(node, toolDescription, e);
 				return;
 			} catch (Throwable e) {

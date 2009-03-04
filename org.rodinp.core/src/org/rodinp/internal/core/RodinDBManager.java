@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - separation of file and root element
  *     Systerel - added database indexer
+ *     Systerel - added builder performance trace
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -98,6 +99,7 @@ public class RodinDBManager implements ISaveParticipant {
 	private static final String DELTA_DEBUG_VERBOSE =RodinCore.PLUGIN_ID + "/debug/rodindelta/verbose" ; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG = RodinCore.PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG_GRAPH = RodinCore.PLUGIN_ID + "/debug/builder/graph" ; //$NON-NLS-1$
+	private static final String BUILDER_DEBUG_PERF = RodinCore.PLUGIN_ID + "/debug/builder/perf" ; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG_RUN = RodinCore.PLUGIN_ID + "/debug/builder/run" ; //$NON-NLS-1$
 //	private static final String COMPLETION_DEBUG = RodinCore.PLUGIN_ID + "/debug/completion" ; //$NON-NLS-1$
 //	private static final String RESOLUTION_DEBUG = RodinCore.PLUGIN_ID + "/debug/resolution" ; //$NON-NLS-1$
@@ -261,6 +263,9 @@ public class RodinDBManager implements ISaveParticipant {
 
 			option = Platform.getDebugOption(BUILDER_DEBUG_GRAPH);
 			if(option != null) RodinBuilder.DEBUG_GRAPH = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
+			option = Platform.getDebugOption(BUILDER_DEBUG_PERF);
+			if(option != null) RodinBuilder.DEBUG_PERF = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			option = Platform.getDebugOption(BUILDER_DEBUG_RUN);
 			if(option != null) RodinBuilder.DEBUG_RUN = option.equalsIgnoreCase("true") ; //$NON-NLS-1$

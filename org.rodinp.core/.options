@@ -4,6 +4,7 @@ org.rodinp.core/debug/rodindatabase/file = false
 org.rodinp.core/debug/builder = false
 org.rodinp.core/debug/builder/graph = false
 org.rodinp.core/debug/builder/run = false
+org.rodinp.core/debug/builder/perf = false
 org.rodinp.core/debug/rodindelta = false
 org.rodinp.core/debug/rodindelta/verbose = false
 org.rodinp.core/debug/rodintypes/verbose = false
