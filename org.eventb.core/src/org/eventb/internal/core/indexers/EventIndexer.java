@@ -31,6 +31,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.core.indexer.IOccurrenceKind;
 
 /**
  * @author Nicolas Beauger
@@ -90,10 +91,6 @@ public class EventIndexer extends Cancellable {
 		processWitnesses(event.getWitnesses(), totalST);
 	}
 
-	/**
-	 * @param refinesEvents
-	 * @throws RodinDBException
-	 */
 	private void processRefines(IRefinesEvent[] refinesEvents,
 			SymbolTable absParamDeclImportST) throws RodinDBException {
 		for (IRefinesEvent refinesEvent : refinesEvents) {
@@ -105,7 +102,7 @@ public class EventIndexer extends Cancellable {
 				if (declAbsEvent != null) {
 					final IInternalElement element = declAbsEvent.getElement();
 					if (element instanceof IEvent) {
-						addRefAttribute(declAbsEvent, refinesEvent,
+						addOccurrence(declAbsEvent, REDECLARATION, refinesEvent,
 								TARGET_ATTRIBUTE);
 
 						addAbstractParams((IEvent) element,
@@ -118,9 +115,9 @@ public class EventIndexer extends Cancellable {
 
 	}
 
-	private void addRefAttribute(final IDeclaration declaration,
+	private void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalElement element, IAttributeType.String attribute) {
-		bridge.addOccurrence(declaration, REFERENCE, getInternalLocation(element,
+		bridge.addOccurrence(declaration, kind, getInternalLocation(element,
 				attribute));
 	}
 
@@ -168,7 +165,7 @@ public class EventIndexer extends Cancellable {
 					if (element instanceof IParameter
 							|| element instanceof IVariable) {
 						// could be a namesake
-						addRefAttribute(declAbs, label, LABEL_ATTRIBUTE);
+						addOccurrence(declAbs, REFERENCE, label, LABEL_ATTRIBUTE);
 					}
 				}
 			}
@@ -212,7 +209,8 @@ public class EventIndexer extends Cancellable {
 		if (declAbsParam != null) {
 			if (declAbsParam.getElement() instanceof IParameter) {
 				// could be a namesake
-				addRefAttribute(declAbsParam, parameter, IDENTIFIER_ATTRIBUTE);
+				addOccurrence(declAbsParam, REDECLARATION, parameter,
+						IDENTIFIER_ATTRIBUTE);
 			}
 		}
 	}

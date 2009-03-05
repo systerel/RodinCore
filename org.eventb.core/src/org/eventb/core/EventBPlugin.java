@@ -577,6 +577,8 @@ public class EventBPlugin extends Plugin {
 
 	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind("modification");
 
+	public static final IOccurrenceKind REDECLARATION = getOccurrenceKind("redeclaration");
+
 	public static IPropagator getEventPropagator() {
 		return EventPropagator.getDefault();
 	}

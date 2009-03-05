@@ -1340,6 +1340,10 @@
             id="modification"
             name="%modificationKindName">
       </occurrenceKind>
+      <occurrenceKind
+            id="redeclaration"
+            name="%redeclarationKindName">
+      </occurrenceKind>
    </extension>
 
 </plugin>

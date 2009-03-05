@@ -11,21 +11,21 @@
 
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBPlugin.REDECLARATION;
 
+import org.eventb.core.IIdentifierElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IPropagator;
-import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class IdentifierPropagator extends EventBPropagator {
+public class IdentifierPropagator implements IPropagator {
 
 	private static IPropagator instance;
 
@@ -40,25 +40,19 @@ public class IdentifierPropagator extends EventBPropagator {
 		return instance;
 	}
 
+	// assumption : identifier redeclaration occurs in the identifier attribute
+	// of the redeclaring identifier
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
-		final IInternalElement element = occurrence.getDeclaration()
-				.getElement();
+		if (!(occurrence.getDeclaration().getElement() instanceof IIdentifierElement)) {
+			throw new IllegalArgumentException(
+					"Should be called on identifier occurrences");
+		}
+		if (!occurrence.getKind().equals(REDECLARATION)) {
+			return null;
+		}
 		final IInternalLocation location = occurrence.getLocation();
-		if (sameFile(location, element)) {
-			return null;
-		}
-		if (!(location instanceof IAttributeLocation)) {
-			return null;
-		}
-		IAttributeLocation attLoc = (IAttributeLocation) location;
-		final IInternalElement occElem = attLoc.getElement();
-		if (!sameElementType(occElem, element)) {
-			return null;
-		}
-		if (!hasAttributeType(attLoc, IDENTIFIER_ATTRIBUTE)) {
-			return null;
-		}
+		final IInternalElement occElem = location.getElement();
 		return query.getDeclaration(occElem);
 	}
 

@@ -119,7 +119,7 @@ public class MachineIndexer extends EventBIndexer {
 			if (ident.hasIdentifierString()) {
 				final String name = ident.getIdentifierString();
 				final IDeclaration declaration = indexDeclaration(ident, name);
-				currentBridge.export(declaration);
+				export(declaration);
 				refIfRedeclared(name, declImports, ident);
 				declImports.put(declaration);
 			}
@@ -133,8 +133,8 @@ public class MachineIndexer extends EventBIndexer {
 			final IInternalElement element = previousDecl.getElement();
 			if (element instanceof IVariable) {
 				// re-declaration of abstract variable
-				indexReference(previousDecl, getInternalLocation(refElement,
-						IDENTIFIER_ATTRIBUTE));
+				indexRedeclaration(previousDecl, getInternalLocation(
+						refElement, IDENTIFIER_ATTRIBUTE));
 			}
 		}
 	}

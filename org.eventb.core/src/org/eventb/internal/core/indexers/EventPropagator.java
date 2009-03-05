@@ -11,22 +11,21 @@
 
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.EventBPlugin.REDECLARATION;
 
-import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IEvent;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IPropagator;
-import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class EventPropagator extends EventBPropagator {
+public class EventPropagator implements IPropagator {
 
 	private static IPropagator instance;
 
@@ -41,27 +40,20 @@ public class EventPropagator extends EventBPropagator {
 		return instance;
 	}
 
+	// assumption : event redeclaration occurs in the target attribute of the
+	// IRefinesEvent of the concrete event
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
-		final IInternalElement element = occurrence.getDeclaration()
-				.getElement();
+		if (!(occurrence.getDeclaration().getElement() instanceof IEvent)) {
+			throw new IllegalArgumentException(
+					"Should be called on event occurrences");
+		}
+		if (!occurrence.getKind().equals(REDECLARATION)) {
+			return null;
+		}
 		final IInternalLocation location = occurrence.getLocation();
-		if (sameFile(location, element)) {
-			return null;
-		}
-		if (!(location instanceof IAttributeLocation)) {
-			return null;
-		}
-		IAttributeLocation attLoc = (IAttributeLocation) location;
-		final IInternalElement occElem = attLoc.getElement();
-		if (occElem.getElementType() != IRefinesEvent.ELEMENT_TYPE) {
-			return null;
-		}
-		if (!hasAttributeType(attLoc, TARGET_ATTRIBUTE)) {
-			return null;
-		}
-		final IInternalElement relativeEvent = (IInternalElement) occElem
-				.getParent();
+		final IInternalElement occElem = location.getElement();
+		final IEvent relativeEvent = occElem.getAncestor(IEvent.ELEMENT_TYPE);
 		return query.getDeclaration(relativeEvent);
 	}
 

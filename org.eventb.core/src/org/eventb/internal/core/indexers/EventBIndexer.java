@@ -86,6 +86,11 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		currentBridge.addOccurrence(declaration, REFERENCE, location);
 	}
 
+	protected void indexRedeclaration(IDeclaration declaration,
+			IInternalLocation location) {
+		currentBridge.addOccurrence(declaration, REDECLARATION, location);
+	}
+
 	protected void export(IDeclaration declaration) {
 		currentBridge.export(declaration);
 	}
