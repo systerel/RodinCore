@@ -33,6 +33,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.location.IAttributeLocation;
+import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.BatchOperation;
@@ -669,7 +671,7 @@ public class RodinCore extends Plugin {
 	 *            the type of the attribute to point at
 	 * @return the location pointing at the given attribute of the given element
 	 */
-	public static IInternalLocation getInternalLocation(
+	public static IAttributeLocation getInternalLocation(
 			IInternalElement element, IAttributeType attributeType) {
 		return new AttributeLocation(element, attributeType);
 	}
@@ -700,7 +702,7 @@ public class RodinCore extends Plugin {
 	 *             if the constraints on <code>start</code> and <code>end</code>
 	 *             are not fulfilled
 	 */
-	public static IInternalLocation getInternalLocation(
+	public static IAttributeSubstringLocation getInternalLocation(
 			IInternalElement element, IAttributeType.String attributeType,
 			int start, int end) {
 		return new AttributeSubstringLocation(element, attributeType, start,
