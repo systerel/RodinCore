@@ -169,7 +169,6 @@ public class DeltaQueuer implements IElementChangedListener,
 		}
 	
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			System.out.println(delta);
 			IResource resource = delta.getResource();
 			final IRodinProject project = getRodinProject(resource);
 			if (project == null) {
