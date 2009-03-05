@@ -34,7 +34,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
-import org.eventb.internal.ui.utils.Messages;
 
 /**
  * DetailsPage for sequents. It is used within the proof skeleton
@@ -159,7 +158,7 @@ public class SequentDetailsPage implements IDetailsPage {
 		while (iter.hasNext()) {
 			seqElements.add(iter.next().toString());
 		}
-		seqElements.add(Messages.proofskeleton_turnstile);
+		seqElements.add("\u22A2");
 		seqElements.add(sequent.goal().toString());
 		return seqElements.toArray(new String[seqElements.size()]);
 	}
