@@ -373,8 +373,8 @@ public class IntegrationTests extends EventBIndexerTests {
 
 		final IRefinesEvent refinesClause = eventImp
 				.getRefinesClause(INTERNAL_ELEMENT1);
-		final IOccurrence eventExpRefInRefines = makeRefTarget(refinesClause,
-				declEventExp);
+		final IOccurrence eventExpRedeclInRefines = makeRedeclTarget(
+				refinesClause, declEventExp);
 
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		query.waitUpToDate();
@@ -383,7 +383,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final Set<IOccurrence> occsEventProp = query.getOccurrences(declEventProp,
 				EventBPlugin.getEventPropagator());
 		final List<IOccurrence> expected = asList(eventExpDecl,
-				eventExpRefInRefines, eventImpDecl);
+				eventExpRedeclInRefines, eventImpDecl);
 		assertSameElements(expected, occsEventProp,
 				"propagated event occurrences");
 
@@ -481,7 +481,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IDeclaration declVarImp = newDecl(varImp, varImp
 				.getIdentifierString());
 		final IOccurrence varImpDecl = makeDecl(importer, declVarImp);
-		final IOccurrence varExpRefInVarImpIdent = makeRefIdent(varImp,
+		final IOccurrence varExpRedeclInVarImpIdent = makeRedeclIdent(varImp,
 				declVarExp);
 		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);
 		final IOccurrence varImpRefInInvImp = makeRefPred(invImp, 0, 4,
@@ -494,7 +494,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final Set<IOccurrence> propagatedOccs = query.getOccurrences(
 				declaration, EventBPlugin.getIdentifierPropagator());
 		final List<IOccurrence> expected = asList(varExpDecl,
-				varExpRefInInvExp, varExpRefInVarImpIdent, varImpDecl,
+				varExpRefInInvExp, varExpRedeclInVarImpIdent, varImpDecl,
 				varImpRefInInvImp);
 		assertSameElements(expected, propagatedOccs,
 				"propagated event occurrences");

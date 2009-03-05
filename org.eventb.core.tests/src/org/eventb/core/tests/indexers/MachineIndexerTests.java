@@ -271,7 +271,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				ResourceUtils.createMachine(rodinProject, IMPORTER, VAR_1DECL);
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
 		
-		final IOccurrence occDecl = makeRefIdent(varImp, declVarExp);
+		final IOccurrence occDecl = makeRedeclIdent(varImp, declVarExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 
@@ -479,7 +479,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	
 		final IRefinesEvent refinesImp =
 				eventImp.getRefinesClause(INTERNAL_ELEMENT1);
-		final IOccurrence refEventExpInImp = makeRefTarget(refinesImp, declEventExp);
+		final IOccurrence refEventExpInImp = makeRedeclTarget(refinesImp, declEventExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declEventExp);
 
@@ -548,7 +548,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IParameter paramImp = eventImp.getParameter(INTERNAL_ELEMENT1);
-		final IOccurrence refParamImp = makeRefIdent(paramImp, declPrmExp);
+		final IOccurrence refParamImp = makeRedeclIdent(paramImp, declPrmExp);
 
 		final BridgeStub tk =
 				new BridgeStub(importer, declEventExp, declPrmExp);
@@ -651,7 +651,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final IOccurrence occModif = makeModifAssign(action, 0, 4, declVarImp);
 
-		final IOccurrence refVarExp = makeRefIdent(varImp, declVarExp);
+		final IOccurrence refVarExp = makeRedeclIdent(varImp, declVarExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declVarExp);
 

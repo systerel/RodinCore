@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.eventb.core.EventBAttributes.*;
 import static org.eventb.core.EventBPlugin.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
@@ -75,43 +75,46 @@ public class OccUtils {
 		return newOcc(MODIFICATION, loc, declaration);
 	}
 
+	public static IOccurrence makeRedecl(IInternalElement element,
+			IAttributeType.String attributeType,
+			IDeclaration declaration) {
+		final IInternalLocation loc =
+				RodinCore.getInternalLocation(element, attributeType);
+		return newOcc(REDECLARATION, loc, declaration);
+	}
+
 	public static IOccurrence makeRefPred(IPredicateElement pred, int start,
 			int end, IDeclaration declaration) {
-		return makeRef(pred, EventBAttributes.PREDICATE_ATTRIBUTE, start, end,
-				declaration);
+		return makeRef(pred, PREDICATE_ATTRIBUTE, start, end, declaration);
 	}
 
 	public static IOccurrence makeModifAssign(IAssignmentElement assign,
 			int start, int end, IDeclaration declaration) {
-		return makeModif(assign, EventBAttributes.ASSIGNMENT_ATTRIBUTE, start,
-				end, declaration);
+		return makeModif(assign, ASSIGNMENT_ATTRIBUTE, start, end, declaration);
 	}
 
 	public static IOccurrence makeRefExpr(IExpressionElement expr, int start,
 			int end, IDeclaration declaration) {
-		return makeRef(expr, EventBAttributes.EXPRESSION_ATTRIBUTE, start, end,
-				declaration);
+		return makeRef(expr, EXPRESSION_ATTRIBUTE, start, end, declaration);
 	}
 
 	public static IOccurrence makeRefLabel(ILabeledElement label,
 			IDeclaration declaration) {
-		return makeRef(label, EventBAttributes.LABEL_ATTRIBUTE, declaration);
+		return makeRef(label, LABEL_ATTRIBUTE, declaration);
 	}
 
-	public static IOccurrence makeRefIdent(IIdentifierElement ident,
+	public static IOccurrence makeRedeclIdent(IIdentifierElement ident,
 			IDeclaration declaration) {
-		return makeRef(ident, EventBAttributes.IDENTIFIER_ATTRIBUTE,
-				declaration);
+		return makeRedecl(ident, IDENTIFIER_ATTRIBUTE, declaration);
 	}
 
-	public static IOccurrence makeRefTarget(IRefinesEvent refines,
+	public static IOccurrence makeRedeclTarget(IRefinesEvent refines,
 			IDeclaration declaration) {
-		return makeRef(refines, EventBAttributes.TARGET_ATTRIBUTE, declaration);
+		return makeRedecl(refines, TARGET_ATTRIBUTE, declaration);
 	}
 
 	public static IDeclaration newDecl(IInternalElement elt, String name) {
-		final IDeclaration declCst1 = new Declaration(elt, name);
-		return declCst1;
+		return new Declaration(elt, name);
 	}
 
 	public static IOccurrence newOcc(IOccurrenceKind kind,
