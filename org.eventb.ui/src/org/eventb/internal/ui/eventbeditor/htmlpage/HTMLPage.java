@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -217,11 +220,20 @@ public class HTMLPage extends EventBEditorPage implements
 		if (root.getElementType() != IMachineRoot.ELEMENT_TYPE)
 			return false;
 		final IMachineRoot mchRoot = (IMachineRoot) root;
+		final IInternalElement parentRoot = parent.getRoot();
 
+		// detects cycles
+		final Set<IInternalElement> absRoots = new LinkedHashSet<IInternalElement>();
+		absRoots.add(root);
+		
 		IMachineRoot abstractRoot = getAbstractMachine(mchRoot);
 		while (abstractRoot != null) {
-			if (abstractRoot.equals(parent)) {
+			if (abstractRoot.equals(parentRoot)) {
 				return true;
+			}
+			final boolean added = absRoots.add(abstractRoot);
+			if (!added) { // cyclic refinement !!!
+				return false;
 			}
 			abstractRoot = getAbstractMachine(abstractRoot);
 		}
