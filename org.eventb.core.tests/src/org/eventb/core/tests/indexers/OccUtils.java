@@ -38,9 +38,24 @@ import org.rodinp.internal.core.indexer.Occurrence;
  */
 public class OccUtils {
 
-	public static IOccurrence makeDecl(IInternalElement element,
+	public static IOccurrence makeDecl(IIdentifierElement ident,
 			IDeclaration declaration) {
-		final IInternalLocation loc = RodinCore.getInternalLocation(element);
+		return makeDecl(declaration, ident, IDENTIFIER_ATTRIBUTE);
+	}
+
+	public static IOccurrence makeDecl(ILabeledElement label,
+			IDeclaration declaration) {
+		return makeDecl(declaration, label, LABEL_ATTRIBUTE);
+	}
+
+	private static IOccurrence makeDecl(IDeclaration declaration,
+			IInternalElement element, IAttributeType.String attribute) {
+		if (!element.equals(declaration.getElement())) {
+			throw new IllegalArgumentException(
+					"declaration and element do not match.");
+		}
+		final IInternalLocation loc = RodinCore.getInternalLocation(element,
+				attribute);
 		return newOcc(DECLARATION, loc, declaration);
 	}
 

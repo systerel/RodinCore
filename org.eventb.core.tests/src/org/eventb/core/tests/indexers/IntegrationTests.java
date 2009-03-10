@@ -200,8 +200,10 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IDeclaration declCst2C3 = query.getDeclaration(cst2C3);
 		final IDeclaration declVar1 = query.getDeclaration(var1);
 		final IDeclaration declVar2 = query.getDeclaration(var2);
+		final IDeclaration declEvtM2 = query.getDeclaration(evtM2);
 
-		final IOccurrence declC1 = makeDecl(c1, declSet1);
+		final IOccurrence set1Decl = makeDecl(set1, declSet1);
+		final IOccurrence evtM2Decl = makeDecl(evtM2, declEvtM2);
 		final IOccurrence refSet1AxmC2 = makeRefPred(axmC2, 7, 11, declSet1);
 		final IOccurrence refSet1InvM1 = makeRefPred(invM1, 7, 11, declSet1);
 		final IOccurrence refSet1ThmM2_1 = makeRefPred(thmM2, 0, 4, declSet1);
@@ -210,10 +212,10 @@ public class IntegrationTests extends EventBIndexerTests {
 		// set1 must be indexed in machines because imports from C2
 		// and C3 are identical
 		final List<IOccurrence> expSet1 =
-				makeOccList(declC1, refSet1AxmC2, refSet1InvM1, refSet1ThmM2_1,
+				makeOccList(set1Decl, refSet1AxmC2, refSet1InvM1, refSet1ThmM2_1,
 						refSet1ThmM2_2);
 
-		final IOccurrence declC2 = makeDecl(c2, declCst2C2);
+		final IOccurrence declC2 = makeDecl(cst2C2, declCst2C2);
 		final IOccurrence refCst2AxmC2 =
 				makeRefPred(c2.getAxiom(INTERNAL_ELEMENT1), 0, 4, declCst2C2);
 
@@ -222,17 +224,17 @@ public class IntegrationTests extends EventBIndexerTests {
 		// different
 		final List<IOccurrence> expCst2C2 = makeOccList(declC2, refCst2AxmC2);
 
-		final IOccurrence declC3Set3 = makeDecl(c3, declSet3);
+		final IOccurrence declC3Set3 = makeDecl(set3, declSet3);
 		final IOccurrence refSet3ThmM1 = makeRefPred(thmM1, 7, 11, declSet3);
 		final IOccurrence refSet3InvM2 = makeRefPred(invM2, 7, 11, declSet3);
 		final List<IOccurrence> expSet3 =
 				makeOccList(declC3Set3, refSet3ThmM1, refSet3InvM2);
 
 		// cst2 from C3 must not be referenced in machines either
-		final IOccurrence declC3Cst2 = makeDecl(c3, declCst2C3);
+		final IOccurrence declC3Cst2 = makeDecl(cst2C3, declCst2C3);
 		final List<IOccurrence> expCst2C3 = makeOccList(declC3Cst2);
 
-		final IOccurrence declM1 = makeDecl(m1, declVar1);
+		final IOccurrence declM1 = makeDecl(var1, declVar1);
 		final IOccurrence refVar1InvM1 = makeRefPred(invM1, 0, 4, declVar1);
 		final IOccurrence refVar1LblWitM2 = makeRefLabel(witM2, declVar1);
 		final IOccurrence refVar1PredWitM2 = makeRefPred(witM2, 0, 4, declVar1);
@@ -241,10 +243,12 @@ public class IntegrationTests extends EventBIndexerTests {
 				makeOccList(declM1, refVar1InvM1, refVar1LblWitM2,
 						refVar1PredWitM2);
 
-		final IOccurrence declM2 = makeDecl(m2, declVar2);
+		final IOccurrence declM2 = makeDecl(var2, declVar2);
 		final IOccurrence refVar2InvM2 = makeRefPred(invM2, 0, 4, declVar2);
 
 		final List<IOccurrence> expVar2 = makeOccList(declM2, refVar2InvM2);
+
+		final List<IOccurrence> expEvtM2 = makeOccList(evtM2Decl);
 
 		final Set<IOccurrence> occSet1 = query.getOccurrences(declSet1);
 		final Set<IOccurrence> occCst2C2 = query.getOccurrences(declCst2C2);
@@ -252,6 +256,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final Set<IOccurrence> occCst2C3 = query.getOccurrences(declCst2C3);
 		final Set<IOccurrence> occVar1 = query.getOccurrences(declVar1);
 		final Set<IOccurrence> occVar2 = query.getOccurrences(declVar2);
+		final Set<IOccurrence> occEvtM2 = query.getOccurrences(declEvtM2);
 
 		assertSameElements(expSet1, occSet1, "occ set1");
 		assertSameElements(expCst2C2, occCst2C2, "occ cst2C2");
@@ -259,6 +264,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		assertSameElements(expCst2C3, occCst2C3, "occ cst2C3");
 		assertSameElements(expVar1, occVar1, "occ var1");
 		assertSameElements(expVar2, occVar2, "occ var2");
+		assertSameElements(expEvtM2, occEvtM2, "occ evtM2");
 	}
 
 	public void testIndexQueryJavadocExample() throws Exception {
@@ -274,7 +280,7 @@ public class IntegrationTests extends EventBIndexerTests {
 			final Set<IOccurrence> occsMySet = query.getOccurrences(declMySet);
 			query.filterFile(occsMySet, myFile);
 			// process occurrences of mySet in myFile
-			final IOccurrence declMySetC1 = makeDecl(c1, declMySet);
+			final IOccurrence declMySetC1 = makeDecl(mySet, declMySet);
 			final List<IOccurrence> expMySet = makeOccList(declMySetC1);
 			assertSameElements(expMySet, occsMySet, "occurrences of mySet");
 		}
@@ -294,7 +300,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		
 		assertEquals(userDefinedName, "var2");
 		final IInvariant invM2 = m2.getInvariant(INTERNAL_ELEMENT1);
-		final IOccurrence declM2 = makeDecl(m2, declVar);
+		final IOccurrence declM2 = makeDecl(var, declVar);
 		final IOccurrence refVar2InvM2 = makeRefPred(invM2, 0, 4, declVar);
 		final List<IOccurrence> expVar2 = makeOccList(declM2, refVar2InvM2);
 	
@@ -325,7 +331,7 @@ public class IntegrationTests extends EventBIndexerTests {
 				EventPropagator.getDefault());
 
 		assertEquals(declEvt1, declaration);
-		assertSameElements(asList(makeDecl(m2, declEvt1)), occurrences,
+		assertSameElements(asList(makeDecl(evt1, declEvt1)), occurrences,
 				"propagated occurrences of evt1");
 	}
 
@@ -363,13 +369,13 @@ public class IntegrationTests extends EventBIndexerTests {
 
 		final IEvent eventExp = exporter.getEvent(INTERNAL_ELEMENT1);
 		final IDeclaration declEventExp = newDecl(eventExp, eventExp.getLabel());
-		final IOccurrence eventExpDecl = makeDecl(exporter, declEventExp);
+		final IOccurrence eventExpDecl = makeDecl(eventExp, declEventExp);
 
 		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject,
 				IMPORTER, EVT_1REF_REFINES);
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IDeclaration declEventImp = newDecl(eventImp, eventImp.getLabel());
-		final IOccurrence eventImpDecl = makeDecl(importer, declEventImp);
+		final IOccurrence eventImpDecl = makeDecl(eventImp, declEventImp);
 
 		final IRefinesEvent refinesClause = eventImp
 				.getRefinesClause(INTERNAL_ELEMENT1);
@@ -454,7 +460,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IVariable var = exporter.getVariable(INTERNAL_ELEMENT1);
 		final IDeclaration declVarExp = newDecl(var, var
 				.getIdentifierString());
-		final IOccurrence varExpDecl = makeDecl(exporter, declVarExp);
+		final IOccurrence varExpDecl = makeDecl(var, declVarExp);
 		final IInvariant invExp = exporter.getInvariant(INTERNAL_ELEMENT1);
 		final IOccurrence varExpRefInInvExp = makeRefPred(invExp, 0, 4,
 				declVarExp);
@@ -480,7 +486,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IVariable varImp = importer.getVariable(INTERNAL_ELEMENT1);
 		final IDeclaration declVarImp = newDecl(varImp, varImp
 				.getIdentifierString());
-		final IOccurrence varImpDecl = makeDecl(importer, declVarImp);
+		final IOccurrence varImpDecl = makeDecl(varImp, declVarImp);
 		final IOccurrence varExpRedeclInVarImpIdent = makeRedeclIdent(varImp,
 				declVarExp);
 		final IInvariant invImp = importer.getInvariant(INTERNAL_ELEMENT1);

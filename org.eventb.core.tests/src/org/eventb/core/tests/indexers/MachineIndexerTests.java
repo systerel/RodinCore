@@ -79,7 +79,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IVariable var1 = machine.getVariable(INTERNAL_ELEMENT1);
 		final IDeclaration declVar1 =
 				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
-		final IOccurrence occDecl = makeDecl(machine, declVar1);
+		final IOccurrence occDecl = makeDecl(var1, declVar1);
 
 		final BridgeStub tk = new BridgeStub(machine);
 
@@ -447,7 +447,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 
 		final IDeclaration declEvt1 = newDecl(event, event.getLabel());
-		final IOccurrence occEventDecl = makeDecl(machine, declEvt1);
+		final IOccurrence occEventDecl = makeDecl(event, declEvt1);
 		
 		final BridgeStub tk = new BridgeStub(machine);
 
@@ -474,7 +474,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent eventImp = importer.getEvent(INTERNAL_ELEMENT1);
 		final IDeclaration declEventImp =
 			newDecl(eventImp, eventImp.getLabel());
-		final IOccurrence eventImpDecl = makeDecl(importer, declEventImp);
+		final IOccurrence eventImpDecl = makeDecl(eventImp, declEventImp);
 		
 	
 		final IRefinesEvent refinesImp =
@@ -498,7 +498,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IEvent event = machine.getEvent(INTERNAL_ELEMENT1);
 		final IParameter prm1 = event.getParameter(INTERNAL_ELEMENT1);
 		final IDeclaration declPrm1 = newDecl(prm1, prm1.getIdentifierString());
-		final IOccurrence prm1Decl = makeDecl(event, declPrm1);
+		final IOccurrence prm1Decl = makeDecl(prm1, declPrm1);
 		
 		final BridgeStub tk = new BridgeStub(machine);
 
@@ -831,7 +831,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declPrmImp = newDecl(prmImp, PRM1);
 		
 		final IOccurrence grdRef = makeRefPred(grdImp, 0, 4, declPrmImp);
-		final IOccurrence prmImpDecl = makeDecl(eventImp, declPrmImp);
+		final IOccurrence prmImpDecl = makeDecl(prmImp, declPrmImp);
 
 		final BridgeStub tk = new BridgeStub(importer, declPrmExp, declEvExp);
 

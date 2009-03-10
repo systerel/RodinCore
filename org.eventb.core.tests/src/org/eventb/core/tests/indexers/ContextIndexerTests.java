@@ -81,7 +81,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
 		
-		final IOccurrence occDecl = makeDecl(context, declCst1);
+		final IOccurrence occDecl = makeDecl(cst1, declCst1);
 
 
 		final BridgeStub tk = new BridgeStub(context);
