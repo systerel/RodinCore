@@ -93,7 +93,7 @@ public class Util {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate, environment);
 		context.load(pred, false);
-		final ClauseBuilder cBuilder = new ClauseBuilder();
+		final ClauseBuilder cBuilder = new ClauseBuilder(null);
 		cBuilder.loadClausesFromContext(context, table);
 		return cBuilder;
 	}
@@ -102,7 +102,7 @@ public class Util {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate);
 		context.load(pred, false);
-		final ClauseBuilder cBuilder = new ClauseBuilder();
+		final ClauseBuilder cBuilder = new ClauseBuilder(null);
 		cBuilder.loadClausesFromContext(context);
 		return cBuilder;
 	}

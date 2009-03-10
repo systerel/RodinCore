@@ -1944,7 +1944,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private ClauseBuilder load(List<String> strPredicate, boolean goal,
 			boolean withTypeInfo, ITypeEnvironment typenv, Object... constants) {
 		final AbstractContext context = new AbstractContext();
-		final ClauseBuilder cBuilder = new ClauseBuilder();
+		final ClauseBuilder cBuilder = new ClauseBuilder(null);
 		ITypeEnvironment tmp = typenv.clone();
 		
 		for (String str : strPredicate) {

@@ -101,7 +101,7 @@ public abstract class AbstractRodinTest extends AbstractPPTest {
 		}
 
 		private PPResult prove() {
-			final PPProof prover = new PPProof(hypotheses, goal);
+			final PPProof prover = new PPProof(hypotheses, goal, null);
 			prover.translate();
 			prover.load();
 			prover.prove(timeout);
