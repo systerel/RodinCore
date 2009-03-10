@@ -118,7 +118,7 @@ public class MachineIndexer extends EventBIndexer {
 		for (IIdentifierElement ident : idents) {
 			if (ident.hasIdentifierString()) {
 				final String name = ident.getIdentifierString();
-				final IDeclaration declaration = indexDeclaration(ident, name);
+				final IDeclaration declaration = indexDeclaration(ident);
 				export(declaration);
 				refIfRedeclared(name, declImports, ident);
 				declImports.put(declaration);

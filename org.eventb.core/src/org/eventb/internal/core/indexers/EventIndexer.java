@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IParameter;
 import org.eventb.core.IPredicateElement;
@@ -120,6 +121,16 @@ public class EventIndexer extends Cancellable {
 		bridge.addOccurrence(declaration, kind, getInternalLocation(element,
 				attribute));
 	}
+	
+	private void addIdentOcc(IDeclaration declaration, IOccurrenceKind kind,
+			IIdentifierElement element) {
+		addOccurrence(declaration, kind, element, IDENTIFIER_ATTRIBUTE);
+	}
+
+	private void addLabelOcc(IDeclaration declaration, IOccurrenceKind kind,
+			ILabeledElement element) {
+		addOccurrence(declaration, kind, element, LABEL_ATTRIBUTE);
+	}
 
 	private void addAbstractParams(IEvent abstractEvent,
 			SymbolTable absParamDeclImportST) {
@@ -133,8 +144,7 @@ public class EventIndexer extends Cancellable {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
 			final IDeclaration declaration = bridge.declare(event, eventLabel);
-			bridge.addOccurrence(declaration, DECLARATION,
-					getInternalLocation(event.getRoot()));
+			addLabelOcc(declaration, DECLARATION, event);
 			bridge.export(declaration);
 		}
 	}
@@ -165,7 +175,7 @@ public class EventIndexer extends Cancellable {
 					if (element instanceof IParameter
 							|| element instanceof IVariable) {
 						// could be a namesake
-						addOccurrence(declAbs, REFERENCE, label, LABEL_ATTRIBUTE);
+						addLabelOcc(declAbs, REFERENCE, label);
 					}
 				}
 			}
@@ -193,8 +203,7 @@ public class EventIndexer extends Cancellable {
 				final String ident = parameter.getIdentifierString();
 
 				IDeclaration declaration = bridge.declare(parameter, ident);
-				bridge.addOccurrence(declaration, DECLARATION,
-						getInternalLocation(event));
+				addIdentOcc(declaration, DECLARATION, parameter);
 				totalST.put(declaration);
 				bridge.export(declaration);
 
@@ -209,8 +218,7 @@ public class EventIndexer extends Cancellable {
 		if (declAbsParam != null) {
 			if (declAbsParam.getElement() instanceof IParameter) {
 				// could be a namesake
-				addOccurrence(declAbsParam, REDECLARATION, parameter,
-						IDENTIFIER_ATTRIBUTE);
+				addIdentOcc(declAbsParam, REDECLARATION, parameter);
 			}
 		}
 	}

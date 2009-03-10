@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBPlugin.*;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.concurrent.CancellationException;
 
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -69,21 +71,17 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected abstract IRodinFile[] getDeps(IInternalElement root)
 			throws RodinDBException;
 
-	protected IDeclaration indexDeclaration(IInternalElement element,
-			String name) {
+	protected IDeclaration indexDeclaration(IIdentifierElement ident)
+			throws RodinDBException {
 
-		final IDeclaration declaration = currentBridge.declare(element, name);
-		final IInternalLocation loc =
-				getInternalLocation(element.getRoot());
+		final IDeclaration declaration = currentBridge.declare(ident, ident
+				.getIdentifierString());
+		final IInternalLocation loc = getInternalLocation(ident,
+				IDENTIFIER_ATTRIBUTE);
 
 		currentBridge.addOccurrence(declaration, DECLARATION, loc);
 
 		return declaration;
-	}
-
-	protected void indexReference(IDeclaration declaration,
-			IInternalLocation location) {
-		currentBridge.addOccurrence(declaration, REFERENCE, location);
 	}
 
 	protected void indexRedeclaration(IDeclaration declaration,
