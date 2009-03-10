@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added test2648946
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -215,5 +219,15 @@ public class DocTests extends AbstractTranslationTests {
 				"∀y·(∃z·(z = TRUE ⇔ x = 5) ∧ z ↦ a ↦ y ∈ f) ⇒ 0 ≤ y",
 				false, 
 				te);
-	}				
+	}
+
+	public void test2648946() {
+		final ITypeEnvironment te = mTypeEnvironment("A", "ℙ(A)", "B", "ℙ(B)");
+		doTransTest("G ⊆ A ∧ H ⊆ A ∧ f ∈ ℙ(A) → ℙ(B) ⇒ G ∪ H ∈ dom(f)",//
+				"  (∀x,y,z· x↦y∈f ∧ x↦z∈f ⇒ y=z)" +
+				"∧ (∀x·∃y·x↦y∈f)" +
+				"⇒ (∃x·∃S·(∀x·x∈S ⇔ x∈G ∨ x∈H) ∧ S↦x∈f)",//
+				false, te);
+	}
+
 }
