@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -72,6 +73,8 @@ public class PPProof {
 	public static Runnable translateHook = null;
 	public static Runnable loadHook = null;
 	
+	private final IPPMonitor monitor;
+	
 	private List<InputPredicate> hypotheses = new ArrayList<InputPredicate>();
 	private InputPredicate goal;
 	
@@ -83,19 +86,23 @@ public class PPProof {
 	
 	private ClauseDispatcher proofStrategy;
 	
-	public PPProof(Predicate[] hypotheses, Predicate goal) {
+	public PPProof(Predicate[] hypotheses, Predicate goal, IPPMonitor monitor) {
 		setHypotheses(Arrays.asList(hypotheses));
 		this.goal = new InputPredicate(goal,true);
-	}
-	
-	public PPProof(Set<Predicate> hypotheses, Predicate goal) {
-		setHypotheses(hypotheses);
-		this.goal = new InputPredicate(goal,true);
+		this.monitor = monitor;
 	}
 
-	public PPProof(Iterable<Predicate> hypotheses, Predicate goal) {
+	public PPProof(Set<Predicate> hypotheses, Predicate goal, IPPMonitor monitor) {
 		setHypotheses(hypotheses);
 		this.goal = new InputPredicate(goal,true);
+		this.monitor = monitor;
+	}
+
+	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
+			IPPMonitor monitor) {
+		setHypotheses(hypotheses);
+		this.goal = new InputPredicate(goal,true);
+		this.monitor = monitor;
 	}
 	
 	private void setHypotheses(Iterable<Predicate> predicates) {
@@ -104,6 +111,11 @@ public class PPProof {
 		}
 	}
 	
+	private void checkCancellation() {
+		if (monitor != null && monitor.isCanceled()) {
+			throw new CancellationException();
+		}
+	}
 		
 	/**
 	 * Returns the result of this proof.
@@ -142,8 +154,10 @@ public class PPProof {
 	public void translate() {
 		for (InputPredicate predicate : hypotheses) {
 			predicate.translate();
+			checkCancellation();
 		}
 		goal.translate();
+		checkCancellation();
 		runHook(translateHook);
 	}
 	
@@ -154,6 +168,7 @@ public class PPProof {
 	public void load() {
 		final AbstractContext loadContext = new AbstractContext();
 		load(loadContext);
+		checkCancellation();
 		runHook(loadHook);
 	}
 	
@@ -170,47 +185,36 @@ public class PPProof {
 				debugResult();
 				return;
 			}
+			checkCancellation();
 		}
 		if (goal.loadPhaseOne(loadContext)) {
 			proofFound(goal);
 			debugResult();
 			return;
 		}
+		checkCancellation();
 
-		final ClauseBuilder cBuilder = new ClauseBuilder();
+		final ClauseBuilder cBuilder = new ClauseBuilder(monitor);
 		cBuilder.loadClausesFromContext(loadContext);
+		checkCancellation();
 		cBuilder.buildPredicateTypeInformation(loadContext);
+		checkCancellation();
 
 		clauses = cBuilder.getClauses();
 		context = cBuilder.getVariableContext();
 		table = cBuilder.getPredicateTable();
 	}
-	
+
 	/**
-	 * Invokes the prover. Tries to prove the given sequent in maximum maxSteps
-	 * steps.
+	 * Invokes the prover. Tries to prove the current sequent
+	 * in maximum maxSteps steps. Also, the prover will stop when the 
+	 * monitor indicates that it has been canceled.
 	 * 
 	 * @param maxSteps
 	 *            maximal number of steps, or <code>-1</code> to denote an
 	 *            infinite number
 	 */
 	public void prove(long maxSteps) {
-		prove(maxSteps, null);
-	}
-
-	/**
-	 * Invokes the prover in a cancelable way. Tries to prove the given sequent
-	 * in maximum maxSteps steps. Also, the prover will stop when the given
-	 * monitor indicates that it has been canceled.
-	 * 
-	 * @param maxSteps
-	 *            maximal number of steps, or <code>-1</code> to denote an
-	 *            infinite number
-	 * @param monitor
-	 *            monitor for cancellation or <code>null</code> if no
-	 *            monitoring is required
-	 */
-	public void prove(long maxSteps, IPPMonitor monitor) {
 		if (result != null) return;
 		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		

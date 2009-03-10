@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added cancellation tests
  *******************************************************************************/
-
 package org.eventb.internal.pp.loader.clause;
 
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
+import org.eventb.pp.IPPMonitor;
 
 /**
  * This is the builder for the second phase of the loading process. The input
@@ -62,6 +66,8 @@ public final class ClauseBuilder {
 		prefix.setLength(prefix.length() - 2);
 	}
 	
+	private final IPPMonitor monitor;
+	
 	private List<Clause> clauses;
 	private VariableContext variableContext;
 	private LabelManager manager;
@@ -69,6 +75,10 @@ public final class ClauseBuilder {
 	private PredicateTable predicateTable;
 	private VariableTable variableTable;
 
+	public ClauseBuilder(IPPMonitor monitor) {
+		this.monitor = monitor;
+	}
+	
 	public void loadClausesFromContext(IContext context) {
 		loadClausesFromContext(context, null);
 	}
@@ -102,7 +112,7 @@ public final class ClauseBuilder {
 		predicateTable = new PredicateTable();
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 		clauses = new ArrayList<Clause>();
-		manager = new LabelManager();
+		manager = new LabelManager(monitor);
 	}	
 	
 	private void getDefinitions() {
