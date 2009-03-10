@@ -171,7 +171,7 @@
          <attribute name="foregroundColor" type="string">
             <annotation>
                <documentation>
-                  Preference key for the choice of font color. Must be defined in PreferenceConstants. By default, the value is &quot;Text foreground&quot;
+                  preference key determining the foreground color of this widget. Must be defined in PreferenceConstants. If this attribute is not specified, the &quot;Text foreground&quot; preference will be used.
                </documentation>
             </annotation>
          </attribute>
@@ -233,7 +233,7 @@
          <attribute name="required" type="boolean">
             <annotation>
                <documentation>
-                  This indicates that the attribute is required or not. If the attribute is not required, combo widget will display an item &quot;undefined&quot;.
+                  tells whether this attribute is required. If false, the combo widget will display an &quot;undefined&quot; item in the list of choices.
                </documentation>
             </annotation>
          </attribute>
