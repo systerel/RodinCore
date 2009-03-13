@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added isInitialisation() method
  *******************************************************************************/
 package org.eventb.core;
 
@@ -112,6 +116,15 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	boolean isExtended() throws RodinDBException;
+	
+	/**
+	 * Returns whether the event is an initialisation event.
+	 * 
+	 * @return <code>true</code> if the event is an initialisation event
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	boolean isInitialisation() throws RodinDBException;
 	
 	/**
 	 * Marks the event as extended.

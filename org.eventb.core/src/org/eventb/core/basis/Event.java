@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added isInitialisation() method
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -125,6 +129,10 @@ public class Event extends EventBElement implements IEvent {
 	public void setExtended(boolean extended, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE, extended, monitor);
+	}
+
+	public boolean isInitialisation() throws RodinDBException {
+		return IEvent.INITIALISATION.equals(getLabel());
 	}
 
 }
