@@ -33,6 +33,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.indexer.IOccurrenceKind;
+import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
@@ -73,10 +74,11 @@ public class EventIndexer extends Cancellable {
 
 	public void process() throws RodinDBException {
 		checkCancel();
-		processEventLabel();
+		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
+
+		processEventLabel(absPrmDeclImpST);
 
 		checkCancel();
-		final SymbolTable absPrmDeclImpST = new SymbolTable(declImportST);
 		processRefines(event.getRefinesClauses(), absPrmDeclImpST);
 
 		checkCancel();
@@ -99,21 +101,25 @@ public class EventIndexer extends Cancellable {
 				final String absEventLabel =
 						refinesEvent.getAbstractEventLabel();
 
-				final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
-				if (declAbsEvent != null) {
-					final IInternalElement element = declAbsEvent.getElement();
-					if (element instanceof IEvent) {
-						addOccurrence(declAbsEvent, REDECLARATION, refinesEvent,
-								TARGET_ATTRIBUTE);
-
-						addAbstractParams((IEvent) element,
-								absParamDeclImportST);
-					}
-				}
+				processEventRedecl(absEventLabel, getInternalLocation(
+						refinesEvent, TARGET_ATTRIBUTE), absParamDeclImportST);
 			}
 			checkCancel();
 		}
 
+	}
+
+	private void processEventRedecl(String absEventLabel,
+			IInternalLocation location, SymbolTable absParamDeclImportST) {
+		final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
+		if (declAbsEvent != null) {
+			final IInternalElement element = declAbsEvent.getElement();
+			if (element instanceof IEvent) {
+				bridge.addOccurrence(declAbsEvent, REDECLARATION, location);
+
+				addAbstractParams((IEvent) element, absParamDeclImportST);
+			}
+		}
 	}
 
 	private void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
@@ -140,12 +146,16 @@ public class EventIndexer extends Cancellable {
 		}
 	}
 
-	private void processEventLabel() throws RodinDBException {
+	private void processEventLabel(SymbolTable absParamDeclImportST) throws RodinDBException {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
 			final IDeclaration declaration = bridge.declare(event, eventLabel);
 			addLabelOcc(declaration, DECLARATION, event);
 			bridge.export(declaration);
+			if (event.isInitialisation()) {
+				processEventRedecl(IEvent.INITIALISATION, getInternalLocation(
+						event, LABEL_ATTRIBUTE), absParamDeclImportST);
+			}
 		}
 	}
 
@@ -196,8 +206,8 @@ public class EventIndexer extends Cancellable {
 		return name;
 	}
 
-	private void processParameters(final IParameter[] parameters,
-			SymbolTable totalST) throws RodinDBException {
+	private void processParameters(IParameter[] parameters, SymbolTable totalST)
+			throws RodinDBException {
 		for (IParameter parameter : parameters) {
 			if (parameter.hasIdentifierString()) {
 				final String ident = parameter.getIdentifierString();
@@ -212,7 +222,7 @@ public class EventIndexer extends Cancellable {
 		}
 	}
 
-	private void refAnyAbstractParam(final String ident, IParameter parameter,
+	private void refAnyAbstractParam(String ident, IParameter parameter,
 			SymbolTable totalST) {
 		final IDeclaration declAbsParam = totalST.lookUpper(ident);
 		if (declAbsParam != null) {
