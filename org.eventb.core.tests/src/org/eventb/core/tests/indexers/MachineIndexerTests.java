@@ -460,7 +460,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertExports(declEvt1);
 	}
 
-	public void testEventRefInRefinesClauses() throws Exception {
+	public void testEventRedeclaration() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, EVT_1DECL);
 
@@ -479,7 +479,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	
 		final IRefinesEvent refinesImp =
 				eventImp.getRefinesClause(INTERNAL_ELEMENT1);
-		final IOccurrence refEventExpInImp = makeRedeclTarget(refinesImp, declEventExp);
+		final IOccurrence redeclInImp = makeRedeclTarget(refinesImp, declEventExp);
 
 		final BridgeStub tk = new BridgeStub(importer, declEventExp);
 
@@ -488,7 +488,57 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		assertTrue(indexer.index(tk));
 
 		tk.assertOccurrences(eventImp, eventImpDecl);
-		tk.assertOccurrences(eventExp, refEventExpInImp);
+		tk.assertOccurrences(eventExp, redeclInImp);
+	}
+
+	public void testInitialisationRedeclared() throws Exception {
+		final String ABSTRACT_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		+ "<org.eventb.core.machineFile"
+		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+		+ "		version=\"3\">"
+		+ "<org.eventb.core.event"
+		+ "		name=\"internal_element1\""
+		+ "		org.eventb.core.convergence=\"0\""
+		+ "		org.eventb.core.extended=\"false\""
+		+ "		org.eventb.core.label=\""+IEvent.INITIALISATION+"\"/>"
+		+ "</org.eventb.core.machineFile>";
+
+		final String CONCRETE_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		+ "<org.eventb.core.machineFile"
+		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+		+ "		version=\"3\">"
+		+ "<org.eventb.core.refinesMachine"
+		+ "		name=\"internal_element1\""
+		+ "		org.eventb.core.target=\"exporter\"/>"
+		+ "<org.eventb.core.event"
+		+ "		name=\"internal_element1\""
+		+ "		org.eventb.core.convergence=\"0\""
+		+ "		org.eventb.core.extended=\"false\""
+		+ "		org.eventb.core.label=\""+IEvent.INITIALISATION+"\"/>"
+		+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot exporter =
+			ResourceUtils.createMachine(rodinProject, EXPORTER, ABSTRACT_EVT_INIT);
+		
+		final IEvent initExp = exporter.getEvent(INTERNAL_ELEMENT1);
+		final IDeclaration declInitExp =
+				newDecl(initExp, initExp.getLabel());
+
+		final IMachineRoot importer =
+			ResourceUtils.createMachine(rodinProject, IMPORTER, CONCRETE_EVT_INIT);
+	
+		final IEvent initImp = importer.getEvent(INTERNAL_ELEMENT1);
+	
+		final IOccurrence redeclInImp = makeRedeclLabel(initImp, declInitExp);
+
+		final BridgeStub tk = new BridgeStub(importer, declInitExp);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrences(initExp, redeclInImp);
+
 	}
 
 	public void testEventParamDeclAndExport() throws Exception {
@@ -1044,5 +1094,4 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		// should not throw an exception
 		assertTrue(indexer.index(tk));
 	}
-
 }

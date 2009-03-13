@@ -128,6 +128,11 @@ public class OccUtils {
 		return makeRedecl(refines, TARGET_ATTRIBUTE, declaration);
 	}
 
+	public static IOccurrence makeRedeclLabel(ILabeledElement element,
+			IDeclaration declaration) {
+		return makeRedecl(element, LABEL_ATTRIBUTE, declaration);
+	}
+
 	public static IDeclaration newDecl(IInternalElement elt, String name) {
 		return new Declaration(elt, name);
 	}
