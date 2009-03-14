@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Extracted categories in separate class
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -23,54 +27,48 @@ public enum ParseProblem implements IRodinProblem {
 	BoundIdentifierIsAlreadyBoundWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_BoundIdentifierIsAlreadyBound, 
-			ParseProblem.CATEGORY_LEGIBILITY),
+			ParseProblemCategory.CATEGORY_LEGIBILITY),
 	CircularityError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_Circularity, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	FreeIdentifierHasBoundOccurencesWarning(
 			IMarker.SEVERITY_WARNING, 
 			Messages.scuser_FreeIdentifierHasBoundOccurences, 
-			ParseProblem.CATEGORY_LEGIBILITY),
+			ParseProblemCategory.CATEGORY_LEGIBILITY),
 	InternalError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_InternalError, 
-			ParseProblem.CATEGORY_NONE),
+			ParseProblemCategory.CATEGORY_NONE),
 	LexerError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_LexerError, 
-			ParseProblem.CATEGORY_LEXICAL),
+			ParseProblemCategory.CATEGORY_LEXICAL),
 	SyntaxError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_SyntaxError, 
-			ParseProblem.CATEGORY_SYNTAX),
+			ParseProblemCategory.CATEGORY_SYNTAX),
 	TypeCheckError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_TypeCheckFailure, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	TypesDoNotMatchError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_TypesDoNotMatch, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	TypeUnknownError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_TypeUnknown, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	MinusAppliedToSetError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_MinusAppliedToSet, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	MulAppliedToSetError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_MulAppliedToSet, 
-			ParseProblem.CATEGORY_TYPING),
+			ParseProblemCategory.CATEGORY_TYPING),
 	;
-	
-	public static final int CATEGORY_NONE = 0;
-	public static final int CATEGORY_LEXICAL = 1;
-	public static final int CATEGORY_SYNTAX = 2;
-	public static final int CATEGORY_LEGIBILITY = 4;
-	public static final int CATEGORY_TYPING = 8;
 	
 	private final String errorCode;
 	
@@ -87,23 +85,14 @@ public enum ParseProblem implements IRodinProblem {
 		this.errorCode = EventBPlugin.PLUGIN_ID + "." + name();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinProblem#getSeverity()
-	 */
 	public int getSeverity() {
 		return severity;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinProblem#getErrorCode()
-	 */
 	public String getErrorCode() {
 		return errorCode;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinProblem#getLocalizedMessage(java.lang.Object[])
-	 */
 	public String getLocalizedMessage(Object[] args) {
 		return MessageFormat.format(message, args);
 	}
