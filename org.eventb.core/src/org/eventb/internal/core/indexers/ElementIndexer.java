@@ -66,7 +66,7 @@ public abstract class ElementIndexer extends Cancellable {
 
 		// Idea: filter idents that are indeed declared. Ignore those that are
 		// not and at the same time build a map from ident to declaration.
-		// Then visit the predicate and make an occurrence for each identifier
+		// Then visit the formula and make an occurrence for each identifier
 		// that belongs to the map.
 
 		final IdentTable identTable = new IdentTable();
