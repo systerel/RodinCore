@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.core.EventBPlugin.*;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.EventBPlugin.DECLARATION;
+import static org.eventb.core.EventBPlugin.REDECLARATION;
+import static org.eventb.core.EventBPlugin.REFERENCE;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.Map;
@@ -112,13 +116,13 @@ public class EventIndexer extends Cancellable {
 	private void processEventRedecl(String absEventLabel,
 			IInternalLocation location, SymbolTable absParamDeclImportST) {
 		final IDeclaration declAbsEvent = eventST.lookup(absEventLabel);
-		if (declAbsEvent != null) {
-			final IInternalElement element = declAbsEvent.getElement();
-			if (element instanceof IEvent) {
-				bridge.addOccurrence(declAbsEvent, REDECLARATION, location);
-
-				addAbstractParams((IEvent) element, absParamDeclImportST);
-			}
+		if (declAbsEvent == null) {
+			return;
+		}
+		final IInternalElement element = declAbsEvent.getElement();
+		if (element.getElementType() == IEvent.ELEMENT_TYPE) {
+			bridge.addOccurrence(declAbsEvent, REDECLARATION, location);
+			addAbstractParams((IEvent) element, absParamDeclImportST);
 		}
 	}
 
