@@ -43,6 +43,6 @@ public class ExpressionIndexer extends ElementIndexer {
 	@Override
 	protected IParseResult parseFormula(String formulaString,
 			IAttributeLocation location) {
-		return ff.parseExpression(formulaString, location);
+		return IdentTable.ff.parseExpression(formulaString, location);
 	}
 }

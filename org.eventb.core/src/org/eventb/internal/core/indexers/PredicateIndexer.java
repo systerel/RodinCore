@@ -44,7 +44,7 @@ public class PredicateIndexer extends ElementIndexer {
 	@Override
 	protected IParseResult parseFormula(String formulaString,
 			IAttributeLocation location) {
-		return ff.parsePredicate(formulaString, location);
+		return IdentTable.ff.parsePredicate(formulaString, location);
 	}
 
 }

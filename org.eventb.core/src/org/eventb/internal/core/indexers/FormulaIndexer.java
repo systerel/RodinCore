@@ -17,7 +17,6 @@ import static org.eventb.internal.core.indexers.EventBIndexUtil.getRodinLocation
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexingBridge;
@@ -68,15 +67,13 @@ public class FormulaIndexer extends DefaultVisitor {
 	 * @param kind
 	 */
 	private void index(FreeIdentifier ident, IOccurrenceKind kind) {
-		if (ident.isPrimed()) {
-			ident = ident.withoutPrime(FormulaFactory.getDefault());
+		final IDeclaration declaration = visibleIdents.get(ident);
+		if (declaration == null) {
+			// Ignore an undeclared identifier
+			return;
 		}
-
-		if (visibleIdents.contains(ident)) {
-			final IDeclaration declaration = visibleIdents.get(ident);
-			final IInternalLocation loc = getRodinLocation(ident);
-			bridge.addOccurrence(declaration, kind, loc);
-		}
+		final IInternalLocation loc = getRodinLocation(ident);
+		bridge.addOccurrence(declaration, kind, loc);
 	}
 
 }

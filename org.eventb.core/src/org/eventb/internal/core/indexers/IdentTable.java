@@ -13,29 +13,54 @@ package org.eventb.internal.core.indexers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.indexer.IDeclaration;
 
 public class IdentTable {
+
+	public static final FormulaFactory ff = FormulaFactory.getDefault();
+
 	private final Map<FreeIdentifier, IDeclaration> table;
 
 	public IdentTable() {
 		this.table = new HashMap<FreeIdentifier, IDeclaration>();
 	}
 
-	public void put(FreeIdentifier ident, IDeclaration declaration) {
+	public void addIdents(FreeIdentifier[] idents, SymbolTable symbolTable) {
+		for (FreeIdentifier ident : idents) {
+			final FreeIdentifier unprimed = getUnprimed(ident);
+			final String name = unprimed.getName();
+			final IDeclaration declaration = symbolTable.lookup(name);
+			if (declaration != null) {
+				put(unprimed, declaration);
+			}
+		}
+	}
+
+	private static FreeIdentifier getUnprimed(FreeIdentifier ident) {
+		if (ident.isPrimed()) {
+			return ident.withoutPrime(ff);
+		}
+		return ident;
+	}
+
+	private void put(FreeIdentifier ident, IDeclaration declaration) {
 		table.put(ident, declaration);
 	}
 
-	public IDeclaration get(FreeIdentifier ident) {
-		return table.get(ident);
+	public static FreeIdentifier getUnprimedIdent(String name) {
+		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
+		return getUnprimed(ident);
 	}
 
-	public boolean contains(FreeIdentifier ident) {
-		return table.containsKey(ident);
+	public IDeclaration get(FreeIdentifier ident) {
+		final FreeIdentifier unprimed = getUnprimed(ident);
+		return table.get(unprimed);
 	}
 
 	public boolean isEmpty() {
 		return table.isEmpty();
 	}
+
 }

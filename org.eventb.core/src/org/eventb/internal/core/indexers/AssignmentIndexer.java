@@ -43,7 +43,7 @@ public class AssignmentIndexer extends ElementIndexer {
 	@Override
 	protected IParseResult parseFormula(String formulaString,
 			IAttributeLocation location) {
-		return ff.parseAssignment(formulaString, location);
+		return IdentTable.ff.parseAssignment(formulaString, location);
 	}
 
 }

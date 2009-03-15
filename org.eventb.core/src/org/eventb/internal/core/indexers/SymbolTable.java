@@ -13,8 +13,6 @@ package org.eventb.internal.core.indexers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.indexer.IDeclaration;
 
 public class SymbolTable {
@@ -65,25 +63,6 @@ public class SymbolTable {
 			return null;
 		}
 		return prev.lookup(symbol);
-	}
-
-	/**
-	 * Extracts an IdentTable containing only the given FreeIdentifiers, when
-	 * they are found.
-	 * 
-	 * @param idents
-	 * @param identTable
-	 */
-	public void addToIdentTable(FreeIdentifier[] idents, IdentTable identTable) {
-		for (FreeIdentifier ident : idents) {
-			if (ident.isPrimed()) {
-				ident = ident.withoutPrime(FormulaFactory.getDefault());
-			}
-			final IDeclaration declaration = lookup(ident.getName());
-			if (declaration != null) {
-				identTable.put(ident, declaration);
-			}
-		}
 	}
 
 	/**

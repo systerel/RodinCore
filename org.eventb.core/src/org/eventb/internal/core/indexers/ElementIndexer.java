@@ -13,8 +13,6 @@ package org.eventb.internal.core.indexers;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -23,8 +21,6 @@ import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IAttributeLocation;
 
 public abstract class ElementIndexer extends Cancellable {
-
-	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	private final IInternalElement element;
 	private final SymbolTable symbolTable;
@@ -75,8 +71,7 @@ public abstract class ElementIndexer extends Cancellable {
 		// that belongs to the map.
 
 		final IdentTable identTable = new IdentTable();
-		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
-		symbolTable.addToIdentTable(idents, identTable);
+		identTable.addIdents(formula.getFreeIdentifiers(), symbolTable);
 		if (identTable.isEmpty()) {
 			// Nothing to index
 			return;
