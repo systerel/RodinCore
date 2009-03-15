@@ -19,7 +19,6 @@ import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IPropagator;
-import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
@@ -27,34 +26,35 @@ import org.rodinp.core.location.IInternalLocation;
  */
 public class EventPropagator implements IPropagator {
 
-	private static IPropagator instance;
+	private static final IPropagator instance = new EventPropagator();
 
 	private EventPropagator() {
 		// singleton: private constructor
 	}
 
 	public static IPropagator getDefault() {
-		if (instance == null) {
-			instance = new EventPropagator();
-		}
 		return instance;
 	}
 
-	// assumption : event redeclaration occurs in the target attribute of the
-	// IRefinesEvent of the concrete event
+	// Assumption: an event redeclaration occurs in a descendant of the concrete
+	// event
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
-		if (!(occurrence.getDeclaration().getElement() instanceof IEvent)) {
-			throw new IllegalArgumentException(
-					"Should be called on event occurrences");
-		}
+		ensureEventDeclaration(occurrence);
 		if (!occurrence.getKind().equals(REDECLARATION)) {
 			return null;
 		}
-		final IInternalLocation location = occurrence.getLocation();
-		final IInternalElement occElem = location.getElement();
+		final IInternalElement occElem = occurrence.getLocation().getElement();
 		final IEvent relativeEvent = occElem.getAncestor(IEvent.ELEMENT_TYPE);
 		return query.getDeclaration(relativeEvent);
+	}
+
+	private void ensureEventDeclaration(IOccurrence occurrence) {
+		final IDeclaration decl = occurrence.getDeclaration();
+		final IInternalElement declElem = decl.getElement();
+		if (declElem.getElementType() != IEvent.ELEMENT_TYPE) {
+			throw new IllegalArgumentException("Not an event occurrence");
+		}
 	}
 
 }
