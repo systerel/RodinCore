@@ -15,7 +15,6 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IAttributeLocation;
 
@@ -28,12 +27,7 @@ public class PredicateIndexer extends ElementIndexer {
 	public PredicateIndexer(IPredicateElement element, SymbolTable symbolTable,
 			IIndexingBridge bridge) {
 
-		super(element, symbolTable, bridge);
-	}
-
-	@Override
-	public IAttributeType.String getAttributeType() {
-		return PREDICATE_ATTRIBUTE;
+		super(element, PREDICATE_ATTRIBUTE, symbolTable, bridge);
 	}
 
 	@Override

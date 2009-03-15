@@ -25,10 +25,13 @@ public abstract class ElementIndexer extends Cancellable {
 	private final IInternalElement element;
 	private final SymbolTable symbolTable;
 	private final IIndexingBridge bridge;
+	private final IAttributeType.String attrType;
 
-	public ElementIndexer(IInternalElement element, SymbolTable symbolTable,
+	public ElementIndexer(IInternalElement element,
+			IAttributeType.String attrType, SymbolTable symbolTable,
 			IIndexingBridge bridge) {
 		this.element = element;
+		this.attrType = attrType;
 		this.symbolTable = symbolTable;
 		this.bridge = bridge;
 	}
@@ -39,7 +42,6 @@ public abstract class ElementIndexer extends Cancellable {
 	 * @throws RodinDBException
 	 */
 	public void process() throws RodinDBException {
-		final IAttributeType.String attrType = getAttributeType();
 		if (!isValid(element, attrType)) {
 			return;
 		}
@@ -52,18 +54,15 @@ public abstract class ElementIndexer extends Cancellable {
 			return;
 		}
 		final Formula<?> formula = getParsedFormula(result);
-		visitAndIndex(attrType, formula);
+		visitAndIndex(formula);
 	}
-
-	protected abstract IAttributeType.String getAttributeType();
 
 	protected abstract IParseResult parseFormula(String formulaString,
 			IAttributeLocation location);
 
 	protected abstract Formula<?> getParsedFormula(IParseResult result);
 
-	private void visitAndIndex(IAttributeType.String attribute,
-			Formula<?> formula) {
+	private void visitAndIndex(Formula<?> formula) {
 
 		// Idea: filter idents that are indeed declared. Ignore those that are
 		// not and at the same time build a map from ident to declaration.

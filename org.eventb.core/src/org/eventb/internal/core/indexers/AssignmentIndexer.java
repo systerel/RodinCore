@@ -15,7 +15,6 @@ import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IAttributeLocation;
 
@@ -27,12 +26,7 @@ public class AssignmentIndexer extends ElementIndexer {
 
 	public AssignmentIndexer(IAssignmentElement element,
 			SymbolTable symbolTable, IIndexingBridge bridge) {
-		super(element, symbolTable, bridge);
-	}
-
-	@Override
-	public IAttributeType.String getAttributeType() {
-		return ASSIGNMENT_ATTRIBUTE;
+		super(element, ASSIGNMENT_ATTRIBUTE, symbolTable, bridge);
 	}
 
 	@Override

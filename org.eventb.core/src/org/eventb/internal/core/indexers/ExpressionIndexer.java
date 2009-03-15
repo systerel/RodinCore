@@ -15,7 +15,6 @@ import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IAttributeLocation;
 
@@ -27,12 +26,7 @@ public class ExpressionIndexer extends ElementIndexer {
 
 	public ExpressionIndexer(IExpressionElement element,
 			SymbolTable symbolTable, IIndexingBridge bridge) {
-		super(element, symbolTable, bridge);
-	}
-
-	@Override
-	public IAttributeType.String getAttributeType() {
-		return EXPRESSION_ATTRIBUTE;
+		super(element, EXPRESSION_ATTRIBUTE, symbolTable, bridge);
 	}
 
 	@Override
