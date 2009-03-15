@@ -52,7 +52,7 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".event"); //$NON-NLS-1$
 	
 	/**
-	 * The label of the initialisation event.
+	 * The label of an initialisation event.
 	 */
 	String INITIALISATION = "INITIALISATION";
 
@@ -116,9 +116,10 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	boolean isExtended() throws RodinDBException;
-	
+
 	/**
-	 * Returns whether the event is an initialisation event.
+	 * Returns whether this event is an initialisation event. An event is an
+	 * initialisation event iff its label is <code>INITIALISATION</code>.
 	 * 
 	 * @return <code>true</code> if the event is an initialisation event
 	 * @throws RodinDBException
