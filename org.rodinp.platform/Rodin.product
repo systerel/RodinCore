@@ -10,13 +10,14 @@
       </text>
    </aboutInfo>
 
-   <configIni use="default"/>
+   <configIni use="default">
+   </configIni>
 
    <launcherArgs>
       <vmArgs>-Xmx512m</vmArgs>
    </launcherArgs>
 
-   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif"/>
+   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif" i48="/org.rodinp.platform/icons/rodin48.gif" i64="/org.rodinp.platform/icons/rodin64.gif" i128="/org.rodinp.platform/icons/rodin128.gif"/>
 
    <splash
       location="org.rodinp.platform"
@@ -27,12 +28,19 @@
       <linux icon="/org.rodinp.platform/rodin32.xpm"/>
       <macosx icon="/org.rodinp.platform/rodin.icns"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/org.rodinp.platform/rodin.ico"/>
          <bmp/>
       </win>
    </launcher>
 
    <intro introId="org.rodinp.platform.intro"/>
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
 
    <features>
       <feature id="org.rodinp.platform" version="0.9.2"/>
