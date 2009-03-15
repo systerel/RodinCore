@@ -15,7 +15,7 @@ import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
 
 /**
@@ -24,23 +24,14 @@ import org.rodinp.core.indexer.IIndexingBridge;
  */
 public class AssignmentIndexer extends ElementIndexer {
 
-	final IAssignmentElement element;
-
 	public AssignmentIndexer(IAssignmentElement element,
 			SymbolTable symbolTable, IIndexingBridge bridge) {
-
-		super(symbolTable, bridge);
-		this.element = element;
+		super(element, symbolTable, bridge);
 	}
 
 	@Override
-	public void process() throws RodinDBException {
-		process(element, ASSIGNMENT_ATTRIBUTE);
-	}
-
-	@Override
-	protected String getFormulaString() throws RodinDBException {
-		return element.getAssignmentString();
+	public IAttributeType.String getAttributeType() {
+		return ASSIGNMENT_ATTRIBUTE;
 	}
 
 	@Override

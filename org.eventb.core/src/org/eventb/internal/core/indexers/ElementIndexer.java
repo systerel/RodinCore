@@ -23,10 +23,13 @@ public abstract class ElementIndexer extends Cancellable {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
-	protected final SymbolTable symbolTable;
+	private final IInternalElement element;
+	private final SymbolTable symbolTable;
 	private final IIndexingBridge bridge;
 
-	public ElementIndexer(SymbolTable symbolTable, IIndexingBridge bridge) {
+	public ElementIndexer(IInternalElement element, SymbolTable symbolTable,
+			IIndexingBridge bridge) {
+		this.element = element;
 		this.symbolTable = symbolTable;
 		this.bridge = bridge;
 	}
@@ -36,33 +39,30 @@ public abstract class ElementIndexer extends Cancellable {
 	 * 
 	 * @throws RodinDBException
 	 */
-	public abstract void process() throws RodinDBException;
-
-	protected final void process(IInternalElement element,
-			IAttributeType.String attribute) throws RodinDBException {
-		if (!isValid(element, attribute)) {
+	public void process() throws RodinDBException {
+		final IAttributeType.String attrType = getAttributeType();
+		if (!isValid(element, attrType)) {
 			return;
 		}
-		final String formulaString = getFormulaString();
+		final String formulaString = element.getAttributeValue(attrType);
 		checkCancel();
-		IParseResult result = parseFormula(formulaString);
+		final IParseResult result = parseFormula(formulaString);
 		checkCancel();
 		if (!result.isSuccess()) {
 			return;
 		}
 		final Formula<?> formula = getParsedFormula(result);
-		visitAndIndex(element, attribute, formula);
+		visitAndIndex(attrType, formula);
 	}
 
-	protected abstract String getFormulaString() throws RodinDBException;
+	protected abstract IAttributeType.String getAttributeType();
 
 	protected abstract IParseResult parseFormula(String formulaString);
 
 	protected abstract Formula<?> getParsedFormula(IParseResult result);
 
-	private void visitAndIndex(IInternalElement element,
-			IAttributeType.String attribute, Formula<?> formula) {
-		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
+	private void visitAndIndex(IAttributeType.String attribute,
+			Formula<?> formula) {
 
 		// Idea: filter idents that are indeed declared. Ignore those that are
 		// not and at the same time build a map from ident to declaration.
@@ -70,22 +70,21 @@ public abstract class ElementIndexer extends Cancellable {
 		// that belongs to the map.
 
 		final IdentTable identTable = new IdentTable();
+		final FreeIdentifier[] idents = formula.getFreeIdentifiers();
 		symbolTable.addToIdentTable(idents, identTable);
-
-		if (!identTable.isEmpty()) {
-			final FormulaIndexer formulaIndexer =
-					new FormulaIndexer(element, attribute, identTable, bridge);
-
-			formula.accept(formulaIndexer);
+		if (identTable.isEmpty()) {
+			// Nothing to index
+			return;
 		}
+
+		final FormulaIndexer formulaIndexer = new FormulaIndexer(element,
+				attribute, identTable, bridge);
+		formula.accept(formulaIndexer);
 	}
 
 	private boolean isValid(IInternalElement elem,
 			IAttributeType.String attribute) throws RodinDBException {
-		if (!elem.exists()) {
-			return false;
-		}
-		return elem.hasAttribute(attribute);
+		return elem.exists() && elem.hasAttribute(attribute);
 	}
 
 	private void checkCancel() {

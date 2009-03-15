@@ -15,7 +15,7 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
 
 /**
@@ -24,23 +24,15 @@ import org.rodinp.core.indexer.IIndexingBridge;
  */
 public class PredicateIndexer extends ElementIndexer {
 
-	final IPredicateElement element;
-
 	public PredicateIndexer(IPredicateElement element, SymbolTable symbolTable,
 			IIndexingBridge bridge) {
 
-		super(symbolTable, bridge);
-		this.element = element;
+		super(element, symbolTable, bridge);
 	}
 
 	@Override
-	public void process() throws RodinDBException {
-		process(element, PREDICATE_ATTRIBUTE);
-	}
-
-	@Override
-	protected String getFormulaString() throws RodinDBException {
-		return element.getPredicateString();
+	public IAttributeType.String getAttributeType() {
+		return PREDICATE_ATTRIBUTE;
 	}
 
 	@Override
