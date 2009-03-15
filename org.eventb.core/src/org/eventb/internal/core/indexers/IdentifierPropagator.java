@@ -14,12 +14,10 @@ package org.eventb.internal.core.indexers;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 
 import org.eventb.core.IIdentifierElement;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.indexer.IPropagator;
-import org.rodinp.core.location.IInternalLocation;
 
 /**
  * @author Nicolas Beauger
@@ -27,38 +25,28 @@ import org.rodinp.core.location.IInternalLocation;
  */
 public class IdentifierPropagator implements IPropagator {
 
-	private static IPropagator instance;
+	private static IPropagator instance = new IdentifierPropagator();
 
 	private IdentifierPropagator() {
 		// singleton: private constructor
 	}
 
 	public static IPropagator getDefault() {
-		if (instance == null) {
-			instance = new IdentifierPropagator();
-		}
 		return instance;
 	}
 
-	// assumption : identifier redeclaration occurs in the identifier attribute
+	// Assumption : an identifier redeclaration occurs in an attribute
 	// of the redeclaring identifier
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
-		if (!(occurrence.getDeclaration().getElement() instanceof IIdentifierElement)) {
-			throw new IllegalArgumentException(
-					"Should be called on identifier occurrences");
+		final IDeclaration declaration = occurrence.getDeclaration();
+		if (!(declaration.getElement() instanceof IIdentifierElement)) {
+			throw new IllegalArgumentException("Not an identifier occurrence");
 		}
 		if (!occurrence.getKind().equals(REDECLARATION)) {
 			return null;
 		}
-		final IInternalLocation location = occurrence.getLocation();
-		final IInternalElement occElem = location.getElement();
-		return query.getDeclaration(occElem);
-	}
-
-	protected boolean sameElementType(IInternalElement elt1,
-			IInternalElement elt2) {
-		return elt1.getElementType() == elt2.getElementType();
+		return query.getDeclaration(occurrence.getLocation().getElement());
 	}
 
 }
