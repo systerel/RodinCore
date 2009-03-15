@@ -51,12 +51,12 @@ import org.rodinp.core.IRodinFile;
  * <li>an element cannot be declared more than once</li>
  * <li>declared elements must be local to the file</li>
  * <li>occurring elements must be either local or imported</li>
- * <li>declared elements should have one or more occurrences when indexing
+ * <li>declared elements should have at least one occurrence when indexing
  * completes</li>
  * </ul>
  * The first constraint is implicitly held by the fact that occurrences are
  * added by giving the declaration of the occurring element. <br>
- * Breaking one of the three next ones will result in a
+ * Breaking one of the three next constraints will result in a
  * {@link IllegalArgumentException} being thrown. <br>
  * Finally, when file indexing completes, declarations with no occurrence are
  * simply ignored (not entered into the index tables).
@@ -88,8 +88,8 @@ public interface IIndexer {
 
 	/**
 	 * Returns the unique id of this indexer. The string returned must be the
-	 * the full id of the indexer, that is its plugin id + its local id as
-	 * declared in extension point <code>org.rodinp.core.indexers</code>.
+	 * full id of the indexer i.e., its plug-in id + its local id as declared in
+	 * extension point <code>org.rodinp.core.indexers</code>.
 	 * 
 	 * @return the unique id of this indexer
 	 */
@@ -97,10 +97,13 @@ public interface IIndexer {
 
 	/**
 	 * Indexes the given file and sends results through calls to the given
-	 * IIndexingBridge.
+	 * IIndexingBridge. The return value indicates whether indexing was
+	 * successful.
 	 * 
 	 * @param bridge
 	 *            the indexing facility to which to send results
+	 * 
+	 * @return whether indexing was successful
 	 * @see IIndexingBridge
 	 */
 	public boolean index(IIndexingBridge bridge);
