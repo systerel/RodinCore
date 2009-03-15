@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
+import static org.rodinp.core.RodinCore.getInternalLocation;
+
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -18,6 +20,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.core.location.IAttributeLocation;
 
 public abstract class ElementIndexer extends Cancellable {
 
@@ -45,8 +48,9 @@ public abstract class ElementIndexer extends Cancellable {
 			return;
 		}
 		final String formulaString = element.getAttributeValue(attrType);
+		final IAttributeLocation loc = getInternalLocation(element, attrType);
 		checkCancel();
-		final IParseResult result = parseFormula(formulaString);
+		final IParseResult result = parseFormula(formulaString, loc);
 		checkCancel();
 		if (!result.isSuccess()) {
 			return;
@@ -57,7 +61,8 @@ public abstract class ElementIndexer extends Cancellable {
 
 	protected abstract IAttributeType.String getAttributeType();
 
-	protected abstract IParseResult parseFormula(String formulaString);
+	protected abstract IParseResult parseFormula(String formulaString,
+			IAttributeLocation location);
 
 	protected abstract Formula<?> getParsedFormula(IParseResult result);
 
@@ -77,8 +82,8 @@ public abstract class ElementIndexer extends Cancellable {
 			return;
 		}
 
-		final FormulaIndexer formulaIndexer = new FormulaIndexer(element,
-				attribute, identTable, bridge);
+		final FormulaIndexer formulaIndexer = new FormulaIndexer(identTable,
+				bridge);
 		formula.accept(formulaIndexer);
 	}
 

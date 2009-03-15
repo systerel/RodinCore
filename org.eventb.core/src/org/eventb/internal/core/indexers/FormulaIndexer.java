@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.core.EventBPlugin.*;
+import static org.eventb.core.EventBPlugin.MODIFICATION;
+import static org.eventb.core.EventBPlugin.REFERENCE;
 import static org.eventb.internal.core.indexers.EventBIndexUtil.getRodinLocation;
 
 import org.eventb.core.ast.BecomesEqualTo;
@@ -18,9 +19,6 @@ import org.eventb.core.ast.DefaultVisitor;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.SourceLocation;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.indexer.IOccurrenceKind;
@@ -32,16 +30,10 @@ import org.rodinp.core.location.IInternalLocation;
  */
 public class FormulaIndexer extends DefaultVisitor {
 
-	private final IInternalElement visited;
-	private final IAttributeType.String attributeType;
 	private final IdentTable visibleIdents;
 	private final IIndexingBridge bridge;
 
-	public FormulaIndexer(IInternalElement visited,
-			IAttributeType.String attributeType, IdentTable visibleIdents,
-			IIndexingBridge bridge) {
-		this.visited = visited;
-		this.attributeType = attributeType;
+	public FormulaIndexer(IdentTable visibleIdents, IIndexingBridge bridge) {
 		this.visibleIdents = visibleIdents;
 		this.bridge = bridge;
 	}
@@ -82,10 +74,7 @@ public class FormulaIndexer extends DefaultVisitor {
 
 		if (visibleIdents.contains(ident)) {
 			final IDeclaration declaration = visibleIdents.get(ident);
-			final SourceLocation srcLoc = ident.getSourceLocation();
-			final IInternalLocation loc =
-					getRodinLocation(visited, attributeType, srcLoc);
-
+			final IInternalLocation loc = getRodinLocation(ident);
 			bridge.addOccurrence(declaration, kind, loc);
 		}
 	}

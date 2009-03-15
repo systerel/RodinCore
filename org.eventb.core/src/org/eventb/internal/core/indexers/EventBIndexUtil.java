@@ -10,31 +10,42 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.rodinp.core.RodinCore.*;
+import static org.rodinp.core.RodinCore.getInternalLocation;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.SourceLocation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 import org.rodinp.core.location.IInternalLocation;
 
 public class EventBIndexUtil {
 
 	/**
-	 * When extracting a location from a SourceLocation, using that method is
-	 * mandatory, as long as {@link SourceLocation} and
+	 * Returns the Rodin location for the given formula, assuming that the
+	 * source location of the given formula contains an attribute location of
+	 * type <code>String</code>.
+	 * <p>
+	 * Note that when extracting a location from a <code>SourceLocation</code>,
+	 * using this method is mandatory, as long as {@link SourceLocation} and
 	 * {@link IAttributeSubstringLocation} do not share the same range
 	 * convention.
+	 * </p>
 	 * 
-	 * @param element
-	 * @param attributeType
-	 * @param location
+	 * @param formula
+	 *            a formula
 	 * @return the corresponding IInternalLocation
 	 */
-	public static IInternalLocation getRodinLocation(IInternalElement element,
-			IAttributeType.String attributeType, SourceLocation location) {
-		return getInternalLocation(element, attributeType, location.getStart(),
-				location.getEnd() + 1);
+	public static IInternalLocation getRodinLocation(Formula<?> formula) {
+		final SourceLocation srcLoc = formula.getSourceLocation();
+		final IAttributeLocation elemLoc = (IAttributeLocation) srcLoc
+				.getOrigin();
+		final IInternalElement element = elemLoc.getElement();
+		final IAttributeType.String attributeType = (IAttributeType.String) elemLoc
+				.getAttributeType();
+		return getInternalLocation(element, attributeType, srcLoc.getStart(),
+				srcLoc.getEnd() + 1);
 	}
 
 }

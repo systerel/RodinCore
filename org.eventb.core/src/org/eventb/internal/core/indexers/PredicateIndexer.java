@@ -17,6 +17,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.indexer.IIndexingBridge;
+import org.rodinp.core.location.IAttributeLocation;
 
 /**
  * @author Nicolas Beauger
@@ -41,8 +42,9 @@ public class PredicateIndexer extends ElementIndexer {
 	}
 
 	@Override
-	protected IParseResult parseFormula(String formulaString) {
-		return ff.parsePredicate(formulaString);
+	protected IParseResult parseFormula(String formulaString,
+			IAttributeLocation location) {
+		return ff.parsePredicate(formulaString, location);
 	}
 
 }
