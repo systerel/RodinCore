@@ -115,7 +115,6 @@ public class PrfSklMasterPart implements IFormPart {
 		if (input == null) {
 			return false;
 		}
-		// TODO remove IPSS test: always IVI
 		if (input instanceof IPSStatus) {
 			setViewerInput((IPSStatus) input);
 			return true;
@@ -146,8 +145,7 @@ public class PrfSklMasterPart implements IFormPart {
 		display.asyncExec(new Runnable() {
 			public void run() {
 				try {
-					final IProofTree prTree = ProofSkeletonBuilder
-							.buildProofTree(proof, null);
+					final IProofTree prTree = proof.getProofTree(null);
 					if (prTree != null) {
 						setViewerInput(new ProofTreeInput(prTree));
 					} else {
