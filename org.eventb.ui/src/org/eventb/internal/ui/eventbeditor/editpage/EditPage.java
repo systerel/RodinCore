@@ -35,14 +35,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -52,22 +50,16 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.ICommentedElement;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.EventBStyledText;
-import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
-import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -111,12 +103,8 @@ public class EditPage extends EventBEditorPage implements
 	// The main scrolled form
 	ScrolledForm form;
 	
-	// Comment text widget at file level
-	IEventBInputText commentText;
+	private final List<IEditComposite> rootComps = new ArrayList<IEditComposite>();
 
-	StyledText commentWidget;
-	
-	private IAttributeManipulation commentManipulation = new CommentAttributeManipulation();
 	/**
 	 * Constructor: This default constructor will be used to create the page
 	 */
@@ -281,7 +269,7 @@ public class EditPage extends EventBEditorPage implements
 	 */
 	private void createDeclaration(Composite parent) {
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
-		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
+		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
 		final boolean borderEnabled = EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE);
@@ -339,51 +327,16 @@ public class EditPage extends EventBEditorPage implements
 		else if (rodinInput instanceof IContextRoot)
 			declaration = "CONTEXT";
 
-		Label label = toolkit.createLabel(comp, "//");
-		label.setLayoutData(new GridData());
-		
 		String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
 				+ declaration + "</b> " + rodinInput.getElementName()
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
-		final int style = (borderEnabled) ? SWT.MULTI | SWT.BORDER : SWT.MULTI;
-		commentWidget = new StyledText(comp, style);
-		commentWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false));
-		commentWidget.setForeground(EventBPreferenceStore
-				.getColorPreference(PreferenceConstants.P_COMMENT_FOREGROUND));
+		createRootAttrs(comp, editor, toolkit);
 
-		commentText = new EventBStyledText(commentWidget, false);
-		new TimerStyledText(commentWidget, 1000) {
-
-			@Override
-			protected void response() {
-				commitComment();
-			}
-		};
-		if (rodinInput instanceof ICommentedElement) {
-			ICommentedElement cElement = (ICommentedElement) rodinInput;
-			try {
-				if (cElement.hasComment()) {
-					commentWidget.setText(cElement.getComment());
-				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		if (borderEnabled) {
 			toolkit.paintBordersFor(comp);
 		}
-	}
-
-	void commitComment(){
-		final EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
-		final IInternalElement rodinInput = editor.getRodinInput();
-		UIUtils.setStringAttribute(rodinInput,
-				commentManipulation, commentWidget.getText(),
-				null);
 	}
 	
 	private static void removeFocusListener(ImageHyperlink hyperlink) {
@@ -417,9 +370,22 @@ public class EditPage extends EventBEditorPage implements
 		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
 		IInternalElement rodinInput = editor.getRodinInput();
 		
-		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
+
+		createSectionComps(parent, rodinInput, toolkit);
+	}
+
+	private void createRootAttrs(Composite parent,
+			IEventBEditor<?> editor, FormToolkit toolkit) {
+		final IInternalElement rodinRoot = editor.getRodinInput();
+		
+		DescRegistryReader.createAttributeComposites(form, rodinRoot, parent,
+				editor, toolkit, rootComps);
+	}
+
+	private void createSectionComps(Composite parent,
+			IInternalElement rodinInput, FormToolkit toolkit) {
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 
 		// Get the list of possible element type depending on the type (e.g.
 		// IMachineFile or IContextFile) of the input file.
@@ -476,9 +442,6 @@ public class EditPage extends EventBEditorPage implements
 		// Refresh the page according to the collected information.
 		postRefresh();
 
-		// Update the comment of the file.
-		updateComment();
-
 		// Record the end time.
 		long afterTime = System.currentTimeMillis();
 		
@@ -491,44 +454,13 @@ public class EditPage extends EventBEditorPage implements
 	/**
 	 * Utility method for updating comment of the file.
 	 */
-	private void updateComment() {
-		
-		if (form == null || form.isDisposed())
-			return;
-
-		if (commentText == null)
-			return;
-
-		Display display = form.getDisplay();
-		display.syncExec(new Runnable() {
-
-			public void run() {
-				final String text = commentWidget.getText();
-				final String comment = getComment();
-				if (!comment.equals(text)) {
-					commentWidget.setText(comment);
-				}
-				internalPack(commentWidget.getParent());
-			}
-
-		});
-	}
-
-	String getComment() {
-		final IInternalElement rodinInput = EditPage.this.getEventBEditor()
-				.getRodinInput();
-		String comment;
-		try {
-			if (commentManipulation.hasValue(rodinInput, null)) {
-				comment = commentManipulation.getValue(rodinInput, null);
-			} else {
-				comment = "";
-			}
-		} catch (RodinDBException e) {
-			comment = "";
-			e.printStackTrace();
+	void updateRootAttrs() {
+		for (IEditComposite editComp: rootComps) {
+			editComp.refresh(true);
 		}
-		return comment;
+		if (form != null) {
+			internalPack(form.getBody());
+		}
 	}
 	
 	/**
@@ -590,6 +522,9 @@ public class EditPage extends EventBEditorPage implements
 				for (IRodinElement element : isChanged) {
 					for (ISectionComposite sectionComp : sectionComps) {
 						sectionComp.refresh(element);
+					}
+					if (element.isRoot()) {
+						updateRootAttrs();
 					}
 				}
 			
@@ -686,9 +621,6 @@ public class EditPage extends EventBEditorPage implements
 	public void dispose() {
 		IEventBEditor<?> editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
-		if (commentText != null) {
-			commentText.dispose();
-		}
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}

@@ -73,7 +73,6 @@ public class TestElementDescRegistry extends TestCase {
 	private IElementDescRegistry registry;
 
 	private final IInternalElementType<?>[] noChildren = new IInternalElementType<?>[0];
-	private final AttributeDesc[] noAttribute = new AttributeDesc[0];
 	private final String nullPrefix = "";
 	private final IAttributeDesc nullAttribute = new NullAttributeDesc();
 
@@ -91,7 +90,7 @@ public class TestElementDescRegistry extends TestCase {
 				"icons/full/obj16/mch_obj.gif", nullPrefix, nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				noAttribute);
+				getCommentedDesc());
 
 		assertChildrens("Test children", desc.getChildTypes(),
 				IRefinesMachine.ELEMENT_TYPE, ISeesContext.ELEMENT_TYPE,
@@ -109,7 +108,7 @@ public class TestElementDescRegistry extends TestCase {
 				"icons/full/obj16/ctx_obj.gif", nullPrefix, nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				noAttribute);
+				getCommentedDesc());
 
 		assertChildrens("Test children", desc.getChildTypes(),
 				IExtendsContext.ELEMENT_TYPE, ICarrierSet.ELEMENT_TYPE,

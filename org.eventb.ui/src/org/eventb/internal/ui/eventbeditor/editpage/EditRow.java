@@ -27,9 +27,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
@@ -77,16 +74,10 @@ public class EditRow {
 
 		createButtons(toolkit, level);
 
-		final IElementDescRegistry registry = ElementDescRegistry.getInstance();
-		final IElementDesc elemDesc = registry.getElementDesc(type);
 		final List<IEditComposite> list = new ArrayList<IEditComposite>();
-		for (IAttributeDesc attrDesc : elemDesc.getAttributeDescription()) {
-			final IEditComposite editComposite = attrDesc.createWidget();
-			editComposite.setForm(form);
-			editComposite.setElement((IInternalElement) element);
-			editComposite.createComposite(editor, toolkit, composite);
-			list.add(editComposite);
-		}
+		DescRegistryReader.createAttributeComposites(form, (IInternalElement) element, composite,
+				editor, toolkit, list);
+
 		editComposites = list.toArray(new IEditComposite[list.size()]);
 		toolkit.paintBordersFor(composite);
 	}

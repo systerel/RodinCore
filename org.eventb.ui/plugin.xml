@@ -2360,6 +2360,18 @@
          </childType>
       </childRelation>
       <attributeRelation
+            elementTypeId="org.eventb.core.machineFile">
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
+            elementTypeId="org.eventb.core.contextFile">
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
+      </attributeRelation>
+      <attributeRelation
             elementTypeId="org.eventb.core.refinesMachine">
          <attributeReference
                column="0"

@@ -44,7 +44,6 @@ import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
 
@@ -222,7 +221,7 @@ public class TextEditComposite extends AbstractEditComposite {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				setDefaultValue(fEditor);
+				setDefaultValue();
 			}
 
 		});
@@ -241,7 +240,7 @@ public class TextEditComposite extends AbstractEditComposite {
 		super.setSelected(selection);
 	}
 
-	public void setDefaultValue(IEventBEditor<?> editor) {
+	public void setDefaultValue() {
 		try {
 			manipulation.setDefaultValue(element, new NullProgressMonitor());
 			if (text != null)
