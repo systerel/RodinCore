@@ -144,6 +144,23 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 			throws RodinDBException;
 
 	/**
+	 * Gets the proof tree of this proof by rebuilding it using its skeleton.
+	 * <p>
+	 * No reasoners are called by the method.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @return the proof tree, or <code>null</code> if the proof tree could not
+	 *         be rebuilt.
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the rodin database
+	 */
+	public IProofTree getProofTree(IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
 	 * Returns the proof dependencies for proof tree stored in this proof
 	 * element.
 	 * 
@@ -155,8 +172,8 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * @param factory
 	 *            The formula factory to be used
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * @return The proof dependencies for proof tree stored in this proof
 	 *         element
 	 * @throws RodinDBException

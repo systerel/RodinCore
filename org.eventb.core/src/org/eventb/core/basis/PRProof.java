@@ -35,6 +35,8 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.internal.core.ProofMonitor;
+import org.eventb.internal.core.ProofSkeletonBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -235,5 +237,12 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		}
 		setAttributeValue(PR_SETS_ATTRIBUTE, builder.toString(), monitor);
 	}
+
+	public IProofTree getProofTree(IProgressMonitor monitor)
+			throws RodinDBException {
+		return ProofSkeletonBuilder.buildProofTree(this, new ProofMonitor(
+				monitor));
+	}
+
 
 }
