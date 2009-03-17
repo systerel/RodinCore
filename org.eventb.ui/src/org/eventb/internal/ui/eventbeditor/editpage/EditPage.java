@@ -103,7 +103,7 @@ public class EditPage extends EventBEditorPage implements
 	// The main scrolled form
 	ScrolledForm form;
 	
-	private final List<IEditComposite> rootComps = new ArrayList<IEditComposite>();
+	private IEditComposite[] rootComps;
 
 	/**
 	 * Constructor: This default constructor will be used to create the page
@@ -375,12 +375,11 @@ public class EditPage extends EventBEditorPage implements
 		createSectionComps(parent, rodinInput, toolkit);
 	}
 
-	private void createRootAttrs(Composite parent,
-			IEventBEditor<?> editor, FormToolkit toolkit) {
+	private void createRootAttrs(Composite parent, IEventBEditor<?> editor,
+			FormToolkit toolkit) {
 		final IInternalElement rodinRoot = editor.getRodinInput();
-		
-		DescRegistryReader.createAttributeComposites(form, rodinRoot, parent,
-				editor, toolkit, rootComps);
+		rootComps = DescRegistryReader.createAttributeComposites(form,
+				rodinRoot, parent, editor, toolkit);
 	}
 
 	private void createSectionComps(Composite parent,

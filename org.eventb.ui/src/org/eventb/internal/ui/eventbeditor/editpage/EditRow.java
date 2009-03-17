@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -74,11 +72,8 @@ public class EditRow {
 
 		createButtons(toolkit, level);
 
-		final List<IEditComposite> list = new ArrayList<IEditComposite>();
-		DescRegistryReader.createAttributeComposites(form, (IInternalElement) element, composite,
-				editor, toolkit, list);
-
-		editComposites = list.toArray(new IEditComposite[list.size()]);
+		editComposites = DescRegistryReader.createAttributeComposites(form,
+				(IInternalElement) element, composite, editor, toolkit);
 		toolkit.paintBordersFor(composite);
 	}
 

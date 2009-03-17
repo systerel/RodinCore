@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.List;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -27,20 +25,24 @@ import org.rodinp.core.IInternalElement;
  */
 public class DescRegistryReader {
 
-	public static void createAttributeComposites(ScrolledForm frm,
-			IInternalElement element, Composite parent, IEventBEditor<?> editor,
-			FormToolkit toolkit, List<IEditComposite> createdComps) {
+	public static IEditComposite[] createAttributeComposites(ScrolledForm form,
+			IInternalElement element, Composite parent,
+			IEventBEditor<?> editor, FormToolkit toolkit) {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 		final IElementDesc desc = registry.getElementDesc(element);
 		final IAttributeDesc[] attrDescs = desc.getAttributeDescription();
 	
-		for (IAttributeDesc attrDesc : attrDescs) {
+		final int length = attrDescs.length;
+		final IEditComposite[] result = new IEditComposite[length];
+		for (int i = 0; i < length; ++i) {
+			final IAttributeDesc attrDesc = attrDescs[i];
 			final IEditComposite editComposite = attrDesc.createWidget();
-			editComposite.setForm(frm);
+			editComposite.setForm(form);
 			editComposite.setElement(element);
 			editComposite.createComposite(editor, toolkit, parent);
-			createdComps.add(editComposite);
+			result[i] = editComposite;
 		}
+		return result;
 	}
 
 	
