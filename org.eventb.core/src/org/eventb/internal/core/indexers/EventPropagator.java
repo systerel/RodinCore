@@ -41,7 +41,7 @@ public class EventPropagator implements IPropagator {
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
 		ensureEventDeclaration(occurrence);
-		if (!occurrence.getKind().equals(REDECLARATION)) {
+		if (occurrence.getKind() != REDECLARATION) {
 			return null;
 		}
 		final IInternalElement occElem = occurrence.getLocation().getElement();

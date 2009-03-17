@@ -12,8 +12,10 @@ package org.eventb.core.tests.indexers;
 
 import static org.eventb.core.EventBPlugin.DECLARATION;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
-import static org.eventb.core.tests.indexers.OccUtils.*;
+import static org.eventb.core.tests.indexers.OccUtils.newDecl;
+import static org.eventb.core.tests.indexers.OccUtils.newOcc;
 import static org.eventb.core.tests.indexers.ResourceUtils.EMPTY_DECL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -170,10 +172,9 @@ public class BridgeStub implements IIndexingBridge {
 	private static List<IOccurrence> getOccsOtherThanDecl(List<IOccurrence> occs) {
 		final List<IOccurrence> result = new ArrayList<IOccurrence>();
 		for (IOccurrence occurrence : occs) {
-			if (occurrence.getKind().equals(DECLARATION)) {
-				continue;
+			if (occurrence.getKind() != DECLARATION) {
+				result.add(occurrence);
 			}
-			result.add(occurrence);
 		}
 		return result;
 	}

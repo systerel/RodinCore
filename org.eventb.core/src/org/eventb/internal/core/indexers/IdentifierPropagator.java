@@ -14,6 +14,7 @@ package org.eventb.internal.core.indexers;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 
 import org.eventb.core.IIdentifierElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
@@ -39,14 +40,19 @@ public class IdentifierPropagator implements IPropagator {
 	// of the redeclaring identifier
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
-		final IDeclaration declaration = occurrence.getDeclaration();
-		if (!(declaration.getElement() instanceof IIdentifierElement)) {
-			throw new IllegalArgumentException("Not an identifier occurrence");
-		}
-		if (!occurrence.getKind().equals(REDECLARATION)) {
+		ensureIdentifierDeclaration(occurrence);
+		if (occurrence.getKind() != REDECLARATION) {
 			return null;
 		}
 		return query.getDeclaration(occurrence.getLocation().getElement());
+	}
+
+	private void ensureIdentifierDeclaration(IOccurrence occurrence) {
+		final IDeclaration declaration = occurrence.getDeclaration();
+		final IInternalElement declElem = declaration.getElement();
+		if (!(declElem instanceof IIdentifierElement)) {
+			throw new IllegalArgumentException("Not an identifier occurrence");
+		}
 	}
 
 }

@@ -571,13 +571,17 @@ public class EventBPlugin extends Plugin {
 		return elem.getPSRoot().getRodinFile();
 	}
 
-	public static final IOccurrenceKind DECLARATION = getOccurrenceKind("declaration");
+	public static final IOccurrenceKind DECLARATION = getOccurrenceKind(PLUGIN_ID
+			+ ".declaration");
 
-	public static final IOccurrenceKind REFERENCE = getOccurrenceKind("reference");
+	public static final IOccurrenceKind REFERENCE = getOccurrenceKind(PLUGIN_ID
+			+ ".reference");
 
-	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind("modification");
+	public static final IOccurrenceKind MODIFICATION = getOccurrenceKind(PLUGIN_ID
+			+ ".modification");
 
-	public static final IOccurrenceKind REDECLARATION = getOccurrenceKind("redeclaration");
+	public static final IOccurrenceKind REDECLARATION = getOccurrenceKind(PLUGIN_ID
+			+ ".redeclaration");
 
 	public static IPropagator getEventPropagator() {
 		return EventPropagator.getDefault();
