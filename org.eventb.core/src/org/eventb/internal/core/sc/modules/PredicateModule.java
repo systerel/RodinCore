@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -49,9 +50,11 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 			Collection<FreeIdentifier> freeIdentifierContext,
 			FormulaFactory factory) throws CoreException {
 
+		IAttributeType.String attributeType = getFormulaAttributeType();
+
 		if (!formulaElement.hasPredicateString()) {
 			createProblemMarker(formulaElement,
-					EventBAttributes.PREDICATE_ATTRIBUTE,
+					attributeType,
 					GraphProblem.PredicateUndefError);
 			return null;
 		}
@@ -61,10 +64,8 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 
 		IParseResult parseResult = factory.parsePredicate(predicateString);
 
-		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(formulaElement, getFormulaAttributeType(),
-					parseResult);
-
+		if (issueASTProblemMarkers(formulaElement, attributeType,
+				parseResult)) {
 			return null;
 		}
 		Predicate predicate = parseResult.getParsedPredicate();
@@ -74,9 +75,9 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 
 		IResult legibilityResult = predicate.isLegible(freeIdentifierContext);
 
-		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(formulaElement, getFormulaAttributeType(),
-					legibilityResult);
+		if (issueASTProblemMarkers(formulaElement, attributeType,
+				legibilityResult)) {
+			return null;
 		}
 
 		return predicate;

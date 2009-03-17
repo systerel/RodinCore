@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -83,7 +87,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		hasMarker(getGeneric().getIdents(cmp)[0]);
 		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
-}
+	}
 	
 	/**
 	 * refering to identifiers with faulty declaration should fail
@@ -109,5 +113,27 @@ extends GenericEventBSCTest<E, SCE> {
 		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
 	}
 
+	/**
+	 * An identifier declaration containing an invalid character is reported
+	 */
+	public void testIdents_04_bug2689872() throws Exception {
+		E cmp = getGeneric().createElement("cmp");
+
+		getGeneric().addIdents(cmp, makeSList("/V1"));
+		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("/V1∈ℤ"));
+
+		getGeneric().save(cmp);
+		
+		runBuilder();
+		
+		SCE file = getGeneric().getSCElement(cmp);
+		
+		getGeneric().containsIdents(file);
+		
+		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(getGeneric().getIdents(cmp)[0]);
+		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
+	}
 
 }

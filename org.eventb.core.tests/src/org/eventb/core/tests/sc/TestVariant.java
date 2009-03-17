@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -18,6 +19,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.ParseProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -291,5 +293,26 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 	}
 
+	/**
+	 * create a variant containing an illegal character
+	 */
+	public void testVariant_09_bug2689872() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		setConvergent(addEvent(mac, "evt"));
+		addInitialisation(mac);
+		addVariant(mac, "{x ∣ x /= 0}");
+
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		containsVariant(file, emptyEnv);
+
+		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
+				ParseProblem.LexerError, "/");
+	}
 
 }

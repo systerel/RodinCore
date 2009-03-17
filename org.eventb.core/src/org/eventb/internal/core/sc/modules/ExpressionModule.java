@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -53,10 +54,10 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 			FormulaFactory factory) throws CoreException {
 
 		IExpressionElement expressionElement = (IExpressionElement) formulaElement;
+		IAttributeType.String attributeType = getFormulaAttributeType();
 
 		if (!expressionElement.hasExpressionString()) {
-			createProblemMarker(expressionElement,
-					EventBAttributes.EXPRESSION_ATTRIBUTE,
+			createProblemMarker(expressionElement, attributeType,
 					GraphProblem.ExpressionUndefError);
 			return null;
 		}
@@ -65,11 +66,8 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 		// parse the predicate
 
 		IParseResult parseResult = factory.parseExpression(expressionString);
-
-		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement,
-					getFormulaAttributeType(), parseResult);
-
+		if (issueASTProblemMarkers(expressionElement, attributeType,
+				parseResult)) {
 			return null;
 		}
 		Expression expression = parseResult.getParsedExpression();
@@ -78,10 +76,9 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 		// (this will only produce a warning on failure)
 
 		IResult legibilityResult = expression.isLegible(freeIdentifierContext);
-
-		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(expressionElement,
-					getFormulaAttributeType(), legibilityResult);
+		if (issueASTProblemMarkers(expressionElement, attributeType,
+				legibilityResult)) {
+			return null;
 		}
 
 		return expression;

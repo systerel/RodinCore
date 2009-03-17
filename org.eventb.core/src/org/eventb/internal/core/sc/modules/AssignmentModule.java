@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -53,10 +54,10 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 			FormulaFactory factory) throws CoreException {
 
 		IAssignmentElement assignmentElement = (IAssignmentElement) formulaElement;
-
+		IAttributeType.String attributeType = getFormulaAttributeType();
+		
 		if (!assignmentElement.hasAssignmentString()) {
-			createProblemMarker(assignmentElement,
-					EventBAttributes.ASSIGNMENT_ATTRIBUTE,
+			createProblemMarker(assignmentElement, attributeType,
 					GraphProblem.AssignmentUndefError);
 			return null;
 		}
@@ -67,10 +68,8 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 
 		IParseResult parseResult = factory.parseAssignment(assignmentString);
 
-		if (!parseResult.isSuccess()) {
-			issueASTProblemMarkers(assignmentElement,
-					EventBAttributes.ASSIGNMENT_ATTRIBUTE, parseResult);
-
+		if (issueASTProblemMarkers(assignmentElement, attributeType,
+				parseResult)) {
 			return null;
 		}
 
@@ -80,10 +79,9 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 		// (this will only produce a warning on failure)
 
 		IResult legibilityResult = assignment.isLegible(freeIdentifierContext);
-
-		if (!legibilityResult.isSuccess()) {
-			issueASTProblemMarkers(assignmentElement,
-					EventBAttributes.ASSIGNMENT_ATTRIBUTE, legibilityResult);
+		if (issueASTProblemMarkers(assignmentElement, attributeType,
+				legibilityResult)) {
+			return null;
 		}
 
 		return assignment;

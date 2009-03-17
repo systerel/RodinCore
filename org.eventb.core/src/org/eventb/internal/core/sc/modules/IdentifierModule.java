@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -49,25 +50,19 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			throws RodinDBException {
 
 		IParseResult pResult = factory.parseExpression(name);
-		if (pResult.isSuccess()) {
-			Expression expr = pResult.getParsedExpression();
-			if (expr instanceof FreeIdentifier) {
-				FreeIdentifier identifier = (FreeIdentifier) expr;
-				if (name.equals(identifier.getName()))
-					return identifier;
-				else {
-					display.createProblemMarker(element, attrType,
-							GraphProblem.InvalidIdentifierSpacesError, name);
-
-					return null;
-				}
-			}
+		Expression expr = pResult.getParsedExpression();
+		if (pResult.hasProblem() || !(expr instanceof FreeIdentifier)) {
+			display.createProblemMarker(element, attrType,
+					GraphProblem.InvalidIdentifierError, name);
+			return null;
 		}
-		display.createProblemMarker(element, attrType,
-				GraphProblem.InvalidIdentifierError, name);
-
-		return null;
-
+		FreeIdentifier identifier = (FreeIdentifier) expr;
+		if (!name.equals(identifier.getName())) {
+			display.createProblemMarker(element, attrType,
+					GraphProblem.InvalidIdentifierSpacesError, name);
+			return null;
+		}
+		return identifier;
 	}
 
 	/**

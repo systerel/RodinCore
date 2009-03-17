@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -775,6 +776,35 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		
 		containsMarkers(mac, true);
+	}
+
+	/**
+	 * A lexical error in an action is reported
+	 */
+	public void testEvents_26_bug2689872() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("L1", factory.makeIntegerType());
+
+		addVariables(mac, "L1");
+		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
+		addInitialisation(mac, "L1");
+		IEvent evt = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList("A1"), makeSList("L1 :∣ 0 /= 1"));
+	
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+		
+		ISCMachineRoot file = mac.getSCMachineRoot();
+		
+		containsVariables(file, "L1");
+		
+		ISCEvent[] scEvents = getSCEvents(file, IEvent.INITIALISATION, "evt1");
+		
+		containsActions(scEvents[1], emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(evt.getActions()[0]);
 	}
 
 }

@@ -1,14 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - ensure that all AST problems are reported
+ *     Systerel - ensure that all AST problems are reported
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.ASTProblem;
@@ -100,10 +106,12 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 		super.endModule(element, repository, monitor);
 	}
 
-	protected void issueASTProblemMarkers(IInternalElement element,
+	// Returns whether an error was issued
+	protected boolean issueASTProblemMarkers(IInternalElement element,
 			IAttributeType.String attributeType, IResult result)
 			throws RodinDBException {
 
+		boolean errorIssued = false;
 		for (ASTProblem parserProblem : result.getProblems()) {
 			SourceLocation location = parserProblem.getSourceLocation();
 			ProblemKind problemKind = parserProblem.getMessage();
@@ -214,7 +222,11 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 						location.getStart(), location.getEnd(), problem,
 						objects);
 			}
+
+			errorIssued |= problem.getSeverity() == IMarker.SEVERITY_ERROR; 
 		}
+
+		return errorIssued;
 	}
 
 	/**
@@ -250,10 +262,8 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 		ITypeCheckResult typeCheckResult = formula.typeCheck(environment);
 
-		if (!typeCheckResult.isSuccess()) {
-			issueASTProblemMarkers(formulaElement, getFormulaAttributeType(),
-					typeCheckResult);
-
+		if (issueASTProblemMarkers(formulaElement, getFormulaAttributeType(),
+				typeCheckResult)) {
 			return null;
 		}
 
