@@ -1,15 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -21,29 +28,21 @@ import org.eventb.core.ast.SourceLocation;
  * 
  * @author Laurent Voisin
  */
-public class TestTypeCheckError extends TestCase {
-
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestTypeCheckError extends AbstractTests {
 	
 	private void doTestPredicate(String input, ITypeEnvironment te, ProblemKind... problems) {
-		final IParseResult parseResult = ff.parsePredicate(input);
-		assertTrue("Parser failed on: " + input, parseResult.isSuccess());
-		final Predicate pred = parseResult.getParsedPredicate();
-		
+		final Predicate pred = parsePredicate(input);
 		doTest(pred, te, problems);
 	}
 	
 	private void doTestAssignment(String input, ITypeEnvironment te, ProblemKind... problems) {
-		final IParseResult parseResult = ff.parseAssignment(input);
-		assertTrue("Parser failed on: " + input, parseResult.isSuccess());
-		final Assignment pred = parseResult.getParsedAssignment();
-		
-		doTest(pred, te, problems);
+		final Assignment assign = parseAssignment(input);
+		doTest(assign, te, problems);
 	}
 	
 	private void doTest(Formula<?> formula, ITypeEnvironment te, ProblemKind... problems) {
 		final ITypeCheckResult tcResult = formula.typeCheck(te);
-		assertFalse("Type checker succeeded unexpectedly", tcResult.isSuccess());
+		assertFailure("Type checker succeeded unexpectedly", tcResult);
 		assertFalse("Predicate shouldn't be typechecked", formula.isTypeChecked());
 		List<ASTProblem> actualProblems = tcResult.getProblems();
 		assertEquals("Unexpected list of problems", problems.length, actualProblems.size());

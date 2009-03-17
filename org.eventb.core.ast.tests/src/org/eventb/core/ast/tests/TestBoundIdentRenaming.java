@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -23,16 +34,12 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import java.util.List;
 import java.util.Vector;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 
@@ -46,10 +53,8 @@ import org.eventb.core.ast.QuantifiedExpression;
  * 
  * @author Laurent Voisin
  */
-public class TestBoundIdentRenaming extends TestCase {
+public class TestBoundIdentRenaming extends AbstractTests {
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
 	private List<TestItem<?>> testItems = new Vector<TestItem<?>>();
 
 	private class TestItem<T extends Formula<T>> {
@@ -296,15 +301,10 @@ public class TestBoundIdentRenaming extends TestCase {
 			parserInput = result;
 		}
 		
-		// Parse the result
-		IParseResult parseResult = ff.parsePredicate(parserInput);
+		Predicate actual = parsePredicate(parserInput);
 		String msg = "Input formula:\n" + expected.getSyntaxTree()
-		+ "\nString result:" + parserInput + "\n";
-		assertTrue(msg, parseResult.isSuccess());
-		
-		// Then check it is the same as the input.
-		Predicate actual = parseResult.getParsedPredicate();
-		msg += "Result formula: " + actual.getSyntaxTree() + "\n";
+				+ "\nString result:" + parserInput //
+				+ "\nResult formula: " + actual.getSyntaxTree() + "\n";
 		assertEquals(msg, expected, actual);
 	}
 	

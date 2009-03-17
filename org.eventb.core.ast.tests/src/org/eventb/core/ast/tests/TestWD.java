@@ -1,21 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
@@ -25,9 +25,7 @@ import org.eventb.core.ast.Type;
  * @author halstefa
  *
  */
-public class TestWD extends TestCase {
-
-	public static FormulaFactory ff = FormulaFactory.getDefault(); 
+public class TestWD extends AbstractTests {
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -74,14 +72,8 @@ public class TestWD extends TestCase {
 		
 		@Override
 		public void test() {
-			IParseResult resIn = ff.parsePredicate(input);
-			assertTrue("Couldn't parse " + input, resIn.isSuccess());
-			Predicate inP = resIn.getParsedPredicate();
-			ITypeCheckResult result = inP.typeCheck(env);
-			assertTrue("Couldn't typecheck " + input, inP.isTypeChecked());
-			
-			ITypeEnvironment newEnv = env.clone();
-			newEnv.addAll(result.getInferredEnvironment());
+			Predicate inP = parsePredicate(input);
+			ITypeEnvironment newEnv = typeCheck(inP, env);
 			
 			Predicate inWD = inP.getWDPredicate(ff);
 			assertTrue("Ill-formed WD predicate: " + inWD, inWD.isWellFormed());
@@ -90,11 +82,8 @@ public class TestWD extends TestCase {
 					+ inWD.getSyntaxTree() + "\n",
 					inWD.isTypeChecked());
 			
-			IParseResult resExp = ff.parsePredicate(expected);
-			assertTrue(input, resExp.isSuccess());
-			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			exP.typeCheck(newEnv);
-			assertTrue("Couldn't typeCheck " + exP, exP.isTypeChecked());
+			Predicate exP = parsePredicate(expected).flatten(ff);
+			typeCheck(exP, newEnv);
 			
 			assertEquals(input, exP, inWD);
 		}
@@ -112,24 +101,15 @@ public class TestWD extends TestCase {
 		
 		@Override
 		public void test() {
-			IParseResult resIn = ff.parseAssignment(input);
-			assertTrue(resIn.isSuccess());
-			Assignment inA = resIn.getParsedAssignment();
-			ITypeCheckResult result = inA.typeCheck(env);
-			assertTrue(input, result.isSuccess());
-			
-			ITypeEnvironment newEnv = env.clone();
-			newEnv.addAll(result.getInferredEnvironment());
-			
+			Assignment inA = parseAssignment(input);
+			ITypeEnvironment newEnv = typeCheck(inA, env);
+						
 			Predicate inWD = inA.getWDPredicate(ff);
 			assertTrue("Ill-formed WD predicate: " + inWD, inWD.isWellFormed());
 			assertTrue("Untyped WD predicate: " + inWD, inWD.isTypeChecked());
 			
-			IParseResult resExp = ff.parsePredicate(expected);
-			assertTrue(input, resExp.isSuccess());
-			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			ITypeCheckResult newResult = exP.typeCheck(newEnv);
-			assertTrue(newResult.isSuccess());
+			Predicate exP = parsePredicate(expected).flatten(ff);
+			typeCheck(exP, newEnv);
 			
 			assertEquals(input, exP, inWD);
 		}

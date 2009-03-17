@@ -1,7 +1,14 @@
-/*
- * Created on 07-jul-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import java.util.List;
@@ -25,7 +32,7 @@ import org.eventb.internal.core.parser.Token;
  * 
  * @author Laurent Voisin
  * @author François Terrier
- *
+ * 
  */
 public class TestLexer extends TestCase {
 
@@ -164,6 +171,7 @@ public class TestLexer extends TestCase {
     			Token t = scanner.Scan();
     			assertTrue("Scanner should have succeeded", result.isSuccess());
     			assertTrue(t.kind == 0);	// _EOF
+    			assertTrue("Scanner should have a problem", result.hasProblem());
     			List<ASTProblem> problems = result.getProblems();
     			assertEquals("Should get one problem", 1, problems.size());
     			ASTProblem problem = problems.get(0);

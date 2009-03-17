@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,22 +25,18 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 
-public class TestOrigin extends TestCase {
-
-	public static final FormulaFactory ff = FormulaFactory.getDefault();
+public class TestOrigin extends AbstractTests {
 
 	private static FreeIdentifier id_x = mFreeIdentifier("x");
 	private static FreeIdentifier id_y = mFreeIdentifier("y");
@@ -86,7 +82,7 @@ public class TestOrigin extends TestCase {
 		@Override
 		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parseExpression(image, this);
-			assertTrue("Parse failed for " + image, result.isSuccess());
+			assertSuccess("Parse failed for " + image, result);
 			final Expression actual = result.getParsedExpression();
 			assertEquals("Unexpected parser result origin", this,
 					actual.getSourceLocation().getOrigin());
@@ -105,7 +101,7 @@ public class TestOrigin extends TestCase {
 		@Override
 		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parsePredicate(image, this);
-			assertTrue("Parse failed for " + image, result.isSuccess());
+			assertSuccess("Parse failed for " + image, result);
 			final Predicate actual = result.getParsedPredicate();
 			assertEquals("Unexpected parser result", this, actual
 					.getSourceLocation().getOrigin());
@@ -124,7 +120,7 @@ public class TestOrigin extends TestCase {
 		@Override
 		Formula<?> parseAndCheck(String image) {
 			IParseResult result = ff.parseAssignment(image, this);
-			assertTrue("Parse failed for " + image, result.isSuccess());
+			assertSuccess("Parse failed for " + image, result);
 			final Assignment actual = result.getParsedAssignment();
 			assertSame("Unexpected parser result", this, actual
 					.getSourceLocation().getOrigin());

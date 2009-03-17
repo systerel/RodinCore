@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -19,22 +30,16 @@ import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
-public class TestTypedIdentDecl extends TestCase {
-
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestTypedIdentDecl extends AbstractTests {
 
 	// Types used in these tests
 	private static GivenType ty_S = ff.makeGivenType("S");
@@ -183,11 +188,8 @@ public class TestTypedIdentDecl extends TestCase {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		final IParseResult pResult = ff.parseExpression(image);
-		assertTrue("Typed string didn't parse", pResult.isSuccess());
-		Expression actual = pResult.getParsedExpression();
-		final ITypeCheckResult result = actual.typeCheck(env);
-		assertTrue("Expression didn't typecheck", result.isSuccess());
+		Expression actual = parseExpression(image);
+		typeCheck(actual, env);
 		assertEquals("Typed string is a different expression", expr, actual);
 	}
 
@@ -216,11 +218,8 @@ public class TestTypedIdentDecl extends TestCase {
 	private void doTest(Predicate pred) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		final IParseResult pResult = ff.parsePredicate(image);
-		assertTrue("Typed string didn't parse", pResult.isSuccess());
-		final Predicate actual = pResult.getParsedPredicate();
-		final ITypeCheckResult result = actual.typeCheck(env);
-		assertTrue("Predicate didn't typecheck", result.isSuccess());
+		final Predicate actual = parsePredicate(image);
+		typeCheck(actual, env);
 		assertEquals("Typed string is a different predicate", pred, actual);
 	}
 

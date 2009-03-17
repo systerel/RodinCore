@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BCOMP;
@@ -69,18 +80,14 @@ import static org.eventb.core.ast.tests.ITestHelper.UNARY_PREDICATE_LENGTH;
 
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
@@ -101,10 +108,8 @@ import org.eventb.core.ast.UnaryExpression;
  * 
  * @author fterrier
  */
-public class TestUnparse extends TestCase {
+public class TestUnparse extends AbstractTests {
 
-	public static final FormulaFactory ff = FormulaFactory.getDefault();
-	
 	static FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	private static FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
 	private static FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
@@ -169,9 +174,7 @@ public class TestUnparse extends TestCase {
 		}
 		@Override 
 		Expression parseAndCheck(String input) {
-			IParseResult result = ff.parseExpression(input);
-			assertTrue("Parse failed", result.isSuccess());
-			final Expression actual = result.getParsedExpression();
+			final Expression actual = parseExpression(input);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -189,9 +192,7 @@ public class TestUnparse extends TestCase {
 		}
 		@Override 
 		Predicate parseAndCheck(String input) {
-			IParseResult result = ff.parsePredicate(input);
-			assertTrue("Parse failed for " + input, result.isSuccess());
-			final Predicate actual = result.getParsedPredicate();
+			final Predicate actual = parsePredicate(input);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -209,9 +210,7 @@ public class TestUnparse extends TestCase {
 		}
 		@Override 
 		Assignment parseAndCheck(String input) {
-			IParseResult result = ff.parseAssignment(input);
-			assertTrue("Parse failed", result.isSuccess());
-			final Assignment actual = result.getParsedAssignment();
+			final Assignment actual = parseAssignment(input);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}

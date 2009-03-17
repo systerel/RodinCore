@@ -1,21 +1,51 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.Formula.*;
-import static org.eventb.core.ast.tests.FastFactory.*;
-import static org.eventb.core.ast.QuantifiedExpression.Form.*;
+import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.CPROD;
+import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.FCOMP;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.POW;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
+import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -36,7 +66,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class TestGivenTypes extends TestCase {
+public class TestGivenTypes extends AbstractTests {
 
 	private static final BooleanType BOOL = ff.makeBooleanType();
 	private static final IntegerType INT = ff.makeIntegerType();
@@ -272,7 +302,7 @@ public class TestGivenTypes extends TestCase {
 		// First test is with an empty set extension: needs type-checking
 		final Expression empty = mSetExtension();
 		final RelationalPredicate pred = mRelationalPredicate(EQUAL, empty, eS);
-		pred.typeCheck(mTypeEnvironment());
+		typeCheck(pred);
 		doTest(empty, tS);
 		
 		doTest(mSetExtension(heS), tS);

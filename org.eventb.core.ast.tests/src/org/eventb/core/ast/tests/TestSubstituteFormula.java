@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.DIV;
@@ -14,8 +25,6 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
@@ -39,9 +48,7 @@ import org.eventb.core.ast.Type;
  * @author halstefa
  *
  */
-public class TestSubstituteFormula extends TestCase {
-
-	public static final FormulaFactory ff = FormulaFactory.getDefault(); 
+public class TestSubstituteFormula extends AbstractTests {
 	
 	private static Map<FreeIdentifier, Expression> ms(FreeIdentifier[] ids, Expression[] exps) {
 		assert ids.length == exps.length;
@@ -474,11 +481,6 @@ public class TestSubstituteFormula extends TestCase {
         assertEquals(pred.toString(), expected, result);
 	}
 
-	protected static void typeCheck(Formula<?> formula, ITypeEnvironment te) {
-		formula.typeCheck(te);
-		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
-	}
-	
 	/**
 	 * Examples given in the Javadoc of
 	 * {@link Formula#applyAssignment(BecomesEqualTo, FormulaFactory)}.

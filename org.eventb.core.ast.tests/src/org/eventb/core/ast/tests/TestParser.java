@@ -1,7 +1,14 @@
-/*
- * Created on 07-jul-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
@@ -30,14 +37,12 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LiteralPredicate;
@@ -49,10 +54,8 @@ import org.eventb.core.ast.Type;
  * @author franz
  *
  */
-public class TestParser extends TestCase {
+public class TestParser extends AbstractTests {
 	
-	public static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	private static FreeIdentifier id_x = mFreeIdentifier("x");
 	private static FreeIdentifier id_y = mFreeIdentifier("y");
 	private static FreeIdentifier id_z = mFreeIdentifier("z");
@@ -94,8 +97,11 @@ public class TestParser extends TestCase {
 	
 	private static abstract class TestPair {
 		private String image;
-		TestPair(String image) {
+		private Formula<?> expected;
+
+		TestPair(String image, Formula<?> expected) {
 			this.image = image;
+			this.expected = expected;
 		}
 		final void verify() {
 			final Formula<?> parsedFormula = parseAndCheck(image);
@@ -109,54 +115,41 @@ public class TestParser extends TestCase {
 			final String subImage = image.substring(loc.getStart(), loc.getEnd() + 1);
 			parseAndCheck(subImage);
 		}
-		abstract Formula<?> parseAndCheck(String stringToParse);
+		final Formula<?> parseAndCheck(String stringToParse) {
+			Formula<?> actual = parse(stringToParse);
+			assertEquals("Unexpected parser result", expected, actual);
+			return actual;
+		}
+		abstract Formula<?> parse(String stringToParse);
 	}
 	
 	private static class ExprTestPair extends TestPair {
-		Expression formula;
-		ExprTestPair(String image, Expression formula) {
-			super(image);
-			this.formula = formula;
+		ExprTestPair(String image, Expression expected) {
+			super(image, expected);
 		}
 		@Override 
-		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parseExpression(image);
-			assertTrue("Parse failed for " + image, result.isSuccess());
-			final Expression actual = result.getParsedExpression();
-			assertEquals("Unexpected parser result", formula, actual);
-			return actual;
+		Formula<?> parse(String image) {
+			return parseExpression(image);
 		}
 	}
 	
 	private static class PredTestPair extends TestPair {
-		Predicate formula;
-		PredTestPair(String image, Predicate formula) {
-			super(image);
-			this.formula = formula;
+		PredTestPair(String image, Predicate expected) {
+			super(image, expected);
 		}
 		@Override 
-		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parsePredicate(image);
-			assertTrue("Parse failed for " + image, result.isSuccess());
-			final Predicate actual = result.getParsedPredicate();
-			assertEquals("Unexpected parser result", formula, actual);
-			return actual;
+		Formula<?> parse(String image) {
+			return parsePredicate(image);
 		}
 	}
 	
 	private static class AssignmentTestPair extends TestPair {
-		Assignment formula;
-		AssignmentTestPair(String image, Assignment formula) {
-			super(image);
-			this.formula = formula;
+		AssignmentTestPair(String image, Assignment expected) {
+			super(image, expected);
 		}
 		@Override 
-		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parseAssignment(image);
-			assertTrue("Parse failed for " + image, result.isSuccess());
-			final Assignment actual = result.getParsedAssignment();
-			assertEquals("Unexpected parser result", formula, actual);
-			return actual;
+		Formula<?> parse(String image) {
+			return parseAssignment(image);
 		}
 	}
 	
@@ -1118,7 +1111,7 @@ public class TestParser extends TestCase {
 		
 		for (String input: invalidExprs) {
 			IParseResult result = ff.parseExpression(input);
-			assertFalse("Parser should have failed", result.isSuccess());
+			assertFailure("Parser should have failed", result);
 			assertNull("Parser should have no output", result.getParsedExpression());
 		}
 	}

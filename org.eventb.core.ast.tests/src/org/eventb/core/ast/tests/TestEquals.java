@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
@@ -7,15 +18,12 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 
@@ -25,9 +33,7 @@ import org.eventb.core.ast.QuantifiedExpression;
  * 
  * @author Laurent Voisin
  */
-public class TestEquals extends TestCase {
-	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestEquals extends AbstractTests {
 
 	private class TestItem<T extends Formula<T>> {
 		T[] formulas;
@@ -234,12 +240,6 @@ public class TestEquals extends TestCase {
 				f1.equals(f2));
 		assertFalse("Disequality of " + f2 + " and " + f1,
 				f2.equals(f1));
-	}
-
-	private Predicate parsePredicate(String string) {
-		final IParseResult result = ff.parsePredicate(string);
-		assertTrue("Can't parse " + string, result.isSuccess());
-		return result.getParsedPredicate();
 	}
 
 }

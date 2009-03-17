@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.EQUAL;
@@ -30,14 +41,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LiteralPredicate;
@@ -58,9 +66,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class TestFreeIdents extends TestCase {
-	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestFreeIdents extends AbstractTests {
 
 	private static final FreeIdentifier[] NO_FREE_IDENT = new FreeIdentifier[0];
 	
@@ -571,8 +577,7 @@ public class TestFreeIdents extends TestCase {
 						mRelationalPredicate(Formula.IN, b1, BOOL),
 						mRelationalPredicate(Formula.IN, b0, S))
 		);
-		pred.typeCheck(tenv);
-		assertTrue("Initial type-check failed", pred.isTypeChecked());
+		typeCheck(pred, tenv);
 		
 		// Create one fresh identifier 
 		FreeIdentifier[] idents = ff.makeFreshIdentifiers(mList(bd_x1), tenv);
@@ -597,11 +602,6 @@ public class TestFreeIdents extends TestCase {
 		assertEquals(idents.length, 2);
 		checkFreeIdent(idents[0], "x2", bd_x1.getType());
 		checkFreeIdent(idents[1], "x3", bd_x2.getType());
-	}
-	
-	private void typeCheck(Formula<?> formula, ITypeEnvironment te) {
-		formula.typeCheck(te);
-		assertTrue("Formula " + formula + " should typecheck.", formula.isTypeChecked());
 	}
 	
 	private void typeCheck(Formula<?>[] formulas, ITypeEnvironment te) {

@@ -1,27 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.ASTProblem;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
-
 
 /**
  * Unit test of error messages.
  * 
  * @author franz
  */
-public class TestErrors extends TestCase {
-	private FormulaFactory formulaFactory;
+public class TestErrors extends AbstractTests {
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		formulaFactory = FormulaFactory.getDefault();
 	}
 	
 
@@ -59,9 +64,10 @@ public class TestErrors extends TestCase {
 	 */
 	public void testLexErrors() {
 		for (int i = 0; i < lexTestPairs.length; i = i + 2) {
-			IParseResult result = formulaFactory.parsePredicate((String) lexTestPairs[i]);
+			IParseResult result = ff.parsePredicate((String) lexTestPairs[i]);
 			// Lexer errors are only warnings, so parsing is a success.
-			assertTrue(result.isSuccess());
+			assertTrue("parse should have succeeded", result.isSuccess());
+			assertTrue("parse should have a problem", result.hasProblem());
 			assertEquals(result.getProblems().size(), 1);
 			assertEquals(result.getProblems().get(0), lexTestPairs[i + 1]);
 			assertNotNull(result.getParsedPredicate());
@@ -75,8 +81,8 @@ public class TestErrors extends TestCase {
 		for (int i = 0; i < parseTestPairs.length; i = i + 2) {
 			final String input = (String) parseTestPairs[i];
 			final ASTProblem problem = (ASTProblem) parseTestPairs[i + 1];
-			final IParseResult result = formulaFactory.parsePredicate(input);
-			assertFalse(result.isSuccess());
+			final IParseResult result = ff.parsePredicate(input);
+			assertFailure("parse should have failed", result);
 			assertEquals(1, result.getProblems().size());
 			assertNull(result.getParsedPredicate());
 			assertEquals(problem, result.getProblems().get(0));

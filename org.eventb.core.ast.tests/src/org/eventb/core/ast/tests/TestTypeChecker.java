@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -5,15 +16,11 @@ import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
@@ -26,8 +33,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author franz
  */
-public class TestTypeChecker extends TestCase {
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestTypeChecker extends AbstractTests {
 	
 	private static class TestItem {
 		public final String formula;
@@ -1196,7 +1202,7 @@ public class TestTypeChecker extends TestCase {
 					)
 			),
 			new TestItem(
-					" g = g~ ∧ " +
+					" g = g\u223c ∧ " +
 					" id(N) ∩ g = ∅ ∧ " +
 					" dom(g) = N ∧ " +
 					" h ∈ N ↔ ( N ⤀ N ) ∧ " +
@@ -1208,7 +1214,7 @@ public class TestTypeChecker extends TestCase {
 					"     ⇔" + 
 					"     (f ∈ N ∖ {n} ↠ N ∧ " +
 					"      f ⊆ g ∧ " +
-					"      (∀ S \u00b7 n ∈ S ∧ f~[S] ⊆ S ⇒ N ⊆ S)" +
+					"      (∀ S \u00b7 n ∈ S ∧ f\u223c[S] ⊆ S ⇒ N ⊆ S)" +
 					"     )" +
 					"    )" +
 					" )",
@@ -1228,8 +1234,8 @@ public class TestTypeChecker extends TestCase {
 					" com ∩ id(L) = ∅ ∧ " +
 					" exit ∈ L ∖ {outside} ↠ L ∧ " +
 					" exit ⊆ com ∧ " +
-					" ( ∀ s \u00b7 s ⊆ exit~[s] ⇒ s = ∅ ) ∧ " +
-					" aut ⩥ {outside} ⊆ (aut ; exit~) ∧ " +
+					" ( ∀ s \u00b7 s ⊆ exit\u223c[s] ⇒ s = ∅ ) ∧ " +
+					" aut ⩥ {outside} ⊆ (aut ; exit\u223c) ∧ " +
 					" ( ∃ l \u00b7 l ∈ L ∖ {outside} ∧ outside ↦ l ∈ com ∧ L×{l} ⊆ aut )",
 					mTypeEnvironment(mList("L"), mList(POW(ty_L))),
 					mTypeEnvironment(
@@ -1411,18 +1417,14 @@ public class TestTypeChecker extends TestCase {
 	 */
 	public void testTypeChecker () {
 		for (TestItem item: testItems) {
-			IParseResult parseResult = ff.parsePredicate(item.formula);
-			assertTrue("Couldn't parse " + item.formula, parseResult.isSuccess());
-			Predicate formula = parseResult.getParsedPredicate();
+			Predicate formula = parsePredicate(item.formula);
 			doTest(item, formula);
 		}
 	}
 	
 	public void testAssignmentTypeChecker () {
 		for (TestItem item: assignItems) {
-			IParseResult parseResult = ff.parseAssignment(item.formula);
-			assertTrue(parseResult.isSuccess());
-			Assignment formula = parseResult.getParsedAssignment();
+			Assignment formula = parseAssignment(item.formula);
 			doTest(item, formula);
 		}
 	}

@@ -1,14 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 
 /**
@@ -17,9 +26,8 @@ import org.eventb.core.ast.QuantifiedExpression;
  * 
  * @author franz
  */
-public class TestConflictResolver extends TestCase {
+public class TestConflictResolver extends AbstractTests {
 	
-	private FormulaFactory ff;
 	private TestItem[] testItems;
 	
 	private class TestItem {
@@ -36,8 +44,6 @@ public class TestConflictResolver extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		ff = FormulaFactory.getDefault();
-
 		final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 		final FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
 		final FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
@@ -145,16 +151,13 @@ public class TestConflictResolver extends TestCase {
 	 */
 	public void testConflict() {
 		for (TestItem item : testItems) {
-			IParseResult result = ff.parsePredicate(item.input);
-			assertTrue("\nParser unexpectedly failed on: " + item.input
-					+ "\nwith error message: " + result.getProblems(), 
-					result.isSuccess());
+			final Predicate actual = parsePredicate(item.input);
 			assertEquals("\nTest failed on: " + item.input
 					+ "\nTree expected: " + item.expectedTree.getSyntaxTree()
 					+ "\nTree received: "
-					+ result.getParsedPredicate().getSyntaxTree(),
+					+ actual.getSyntaxTree(),
 					item.expectedTree,
-					result.getParsedPredicate());
+					actual);
 		}
 	}
 	

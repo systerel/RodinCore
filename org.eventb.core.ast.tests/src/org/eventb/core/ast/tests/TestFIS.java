@@ -1,22 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
-public class TestFIS extends TestCase {
-
-	public static FormulaFactory ff = FormulaFactory.getDefault(); 
+public class TestFIS extends AbstractTests {
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -64,25 +69,16 @@ public class TestFIS extends TestCase {
 		}
 		
 		public void test() throws Exception {
-			IParseResult resIn = ff.parseAssignment(input);
-			assertTrue(resIn.isSuccess());
-			Assignment inA = resIn.getParsedAssignment();
-			ITypeCheckResult result = inA.typeCheck(tenv);
-			assertTrue(input, result.isSuccess());
-			
-			ITypeEnvironment newEnv = tenv.clone();
-			newEnv.addAll(result.getInferredEnvironment());
+			Assignment inA = parseAssignment(input);
+			ITypeEnvironment newEnv = typeCheck(inA, tenv);
 			
 			Predicate inFIS = inA.getFISPredicate(ff);
 			assertTrue(input + "\n" + inFIS.toString() + "\n"
 					+ inFIS.getSyntaxTree() + "\n",
-					inA.isTypeChecked());
+					inFIS.isTypeChecked());
 			
-			IParseResult resExp = ff.parsePredicate(expected);
-			assertTrue(input, resExp.isSuccess());
-			Predicate exP = resExp.getParsedPredicate().flatten(ff);
-			exP.typeCheck(newEnv);
-			assertTrue(exP.isTypeChecked());
+			Predicate exP = parsePredicate(expected).flatten(ff);
+			typeCheck(exP, newEnv);
 			
 			assertEquals(input, exP, inFIS);
 		}

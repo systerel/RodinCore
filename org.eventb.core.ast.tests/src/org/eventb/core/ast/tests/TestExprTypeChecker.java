@@ -1,13 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
@@ -18,9 +26,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class TestExprTypeChecker extends TestCase {
-	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestExprTypeChecker extends AbstractTests {
 	
 	private static class TestItem {
 		public final String formula;
@@ -99,16 +105,8 @@ public class TestExprTypeChecker extends TestCase {
 	 */
 	public void testExpTypeChecker() {
 		for (TestItem item: testItems) {
-			IParseResult exprParseResult = ff.parseExpression(item.formula);
-			assertTrue("Couldn't parse " + item.formula, 
-					exprParseResult.isSuccess());
-			
-			IParseResult typeParseResult = ff.parseType(item.expectedType);
-			assertTrue("Couldn't parse " + item.expectedType,
-					typeParseResult.isSuccess());
-			
-			Expression expr = exprParseResult.getParsedExpression();
-			Type expectedType = typeParseResult.getParsedType();
+			Expression expr = parseExpression(item.formula);
+			Type expectedType = parseType(item.expectedType);
 			ITypeCheckResult result = 
 				expr.typeCheck(item.initialEnv, expectedType);
 			

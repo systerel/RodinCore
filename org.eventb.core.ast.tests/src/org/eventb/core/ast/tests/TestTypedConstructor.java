@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fully refactored all tests and added error tests
+ *     Systerel - added abstract test class
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -114,7 +115,6 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.IdentsChecker.check;
@@ -123,14 +123,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
@@ -148,9 +144,7 @@ import org.eventb.core.ast.QuantifiedExpression.Form;
  * 
  * @author Laurent Voisin
  */
-public class TestTypedConstructor extends TestCase {
-
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
+public class TestTypedConstructor extends AbstractTests {
 
 	// Types used in these tests
 	private static final Type B = ff.makeBooleanType();
@@ -437,8 +431,7 @@ public class TestTypedConstructor extends TestCase {
 
 	private static void runTypeCheck(Formula<?> form) {
 		if (form.isWellFormed()) {
-			final ITypeCheckResult result = form.typeCheck(mTypeEnvironment());
-			assertTrue("Formula didn't typecheck", result.isSuccess());
+			typeCheck(form);
 			assertTrue("Problem with identifier caches", check(form, ff));
 		}
 	}

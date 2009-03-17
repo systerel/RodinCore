@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -23,9 +23,7 @@ import org.eventb.core.ast.SourceLocation;
  * 
  * @author Laurent Voisin
  */
-public class TestLocation extends TestCase {
-	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
+public class TestLocation extends AbstractTests {
 
 	/*
 	 * First regression test for [ 1544477 ] AST source location does not take
@@ -34,9 +32,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate1() {
 		//                   01234     56789     012
 		String predString = "(X=Y\u2228Z=T)\u2227U=V"; 
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		
 		assertTrue("Associative Predicate", parsedPred instanceof AssociativePredicate);
 		AssociativePredicate aPred1 = (AssociativePredicate) parsedPred;
@@ -85,9 +81,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate2() {
 		//                   01     23     4     5     6
 		String predString = "X\u21a6Y\u2208\u2115\u21f8\u2115";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
 		SourceLocation loc = rPred.getLeft().getSourceLocation();
@@ -106,9 +100,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate3() {
 		//                   0123     4
 		String predString = "{1}\u2282\u2115";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
 		SourceLocation loc = rPred.getLeft().getSourceLocation();
@@ -123,9 +115,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate4() {
 		//                   0123 4
 		String predString = "∅∈∅↔S";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
 		SourceLocation loc = rPred.getLeft().getSourceLocation();
@@ -140,9 +130,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate5() {
 		//                   0123456789012345678901234
 		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id(ℤ)";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		AssociativePredicate aPred = (AssociativePredicate) parsedPred;
 		
 		Predicate [] children = aPred.getChildren();
@@ -159,9 +147,7 @@ public class TestLocation extends TestCase {
 	public void testPredicate6() {
 		//                   0123456789012345
 		String predString = "f∼;({a}◁f)⊆id(ℤ)";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
 		SourceLocation loc = rPred.getLeft().getSourceLocation();
@@ -175,9 +161,7 @@ public class TestLocation extends TestCase {
 	
 	public void testPredicate7() {
 		String predString = "f(a)⊆S";
-		IParseResult parseResult = ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
-		Predicate parsedPred = parseResult.getParsedPredicate();
+		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
 		SourceLocation loc = rPred.getLeft().getSourceLocation();

@@ -1,4 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
+
+import static org.eventb.core.ast.tests.AbstractTests.parseType;
 
 import java.math.BigInteger;
 
@@ -17,7 +30,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -253,9 +265,7 @@ public class FastFactory {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		for (int i = 0; i < strs.length; i += 2) {
 			final String name = strs[i];
-			final IParseResult res = ff.parseType(strs[i+1]);
-			assert res.isSuccess();
-			final Type type = res.getParsedType();
+			final Type type = parseType(strs[i + 1]);
 			te.addName(name, type);
 		}
 		return te;

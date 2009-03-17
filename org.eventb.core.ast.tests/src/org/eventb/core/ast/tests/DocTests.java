@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel.
+ * Copyright (c) 2008, 2009 Systerel.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,21 +29,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
-public class DocTests extends TestCase {
-
-	private static FormulaFactory sff = FormulaFactory.getDefault();
+public class DocTests extends AbstractTests {
 
 	private Predicate pred;
 
@@ -53,18 +48,18 @@ public class DocTests extends TestCase {
 			"S×T");
 
 	private static Type POW(Type base) {
-		return sff.makePowerSetType(base);
+		return ff.makePowerSetType(base);
 	}
 
 	private static Type CPROD(Type left, Type right) {
-		return sff.makeProductType(left, right);
+		return ff.makeProductType(left, right);
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		final Type ty_S = sff.makeGivenType("S");
-		final Type ty_T = sff.makeGivenType("T");
+		final Type ty_S = ff.makeGivenType("S");
+		final Type ty_T = ff.makeGivenType("T");
 		final Expression empty_S = mEmptySet(POW(ty_S));
 		final Expression empty_T = mEmptySet(POW(ty_T));
 		final Expression empty_ST = mEmptySet(POW(CPROD(ty_S, ty_T)));
@@ -77,7 +72,7 @@ public class DocTests extends TestCase {
 		ps.add(mRelationalPredicate(EQUAL, empty_S, empty_S));
 		ps.add(mQuantifiedPredicate(EXISTS, mList(bid_x), in));
 		ps.add(mRelationalPredicate(NOTIN, id_x, empty_ST));
-		pred = sff.makeAssociativePredicate(LAND, ps, null);
+		pred = ff.makeAssociativePredicate(LAND, ps, null);
 		assert pred.isTypeChecked();
 	}
 
@@ -108,7 +103,6 @@ public class DocTests extends TestCase {
 		final List<String> strings = serialized;
 		
 		// De-serialize type environment
-		final FormulaFactory ff = FormulaFactory.getDefault();
 		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
 		int size = strings.size();
 		for (int i = 1; i < size; i += 2) {
@@ -120,7 +114,7 @@ public class DocTests extends TestCase {
 		// De-serialize predicate
 		final Predicate bar = ff.parsePredicate(strings.get(0))
 				.getParsedPredicate();
-		bar.typeCheck(typenv);
+		typeCheck(bar, typenv);
 		assertEquals(pred, bar);
 	}
 

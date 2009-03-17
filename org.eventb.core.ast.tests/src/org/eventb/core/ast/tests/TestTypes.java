@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added abstract test class
  *******************************************************************************/
-
 package org.eventb.core.ast.tests;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -25,9 +26,8 @@ import org.eventb.core.ast.Type;
  * 
  * @author Laurent Voisin
  */
-public class TestTypes extends TestCase {
+public class TestTypes extends AbstractTests {
 	
-	private FormulaFactory ff = FormulaFactory.getDefault();
 	private FormulaFactory tf = FormulaFactory.getDefault();
 	
 	private GivenType ty_S = tf.makeGivenType("S");
@@ -138,7 +138,7 @@ public class TestTypes extends TestCase {
 	public void testTypeParser() {
 		for (TestItem item : items) {
 			IParseResult result = ff.parseType(item.image);
-			assertTrue(result.isSuccess());
+			assertSuccess(item.image, result);
 			assertNull(result.getParsedExpression());
 			assertEquals(item.type, result.getParsedType());
 		}
@@ -149,7 +149,7 @@ public class TestTypes extends TestCase {
 		};
 		for (String input: illFormed) {
 			IParseResult result = ff.parseType(input);
-			assertFalse(result.isSuccess());
+			assertFailure("parse should have failed", result);
 			assertNull(result.getParsedExpression());
 			assertNull(result.getParsedType());
 		}
@@ -198,12 +198,8 @@ public class TestTypes extends TestCase {
 	}
 
 	private Expression parseAndTypeCheck(String image, ITypeEnvironment typenv) {
-		IParseResult parseResult = ff.parseExpression(image);
-		assertTrue("Can't parse " + image, parseResult.isSuccess());
-		Expression expr = parseResult.getParsedExpression();
-		expr.typeCheck(typenv);
-		assertTrue("Expression " + expr + " didn't typecheck",
-				expr.isTypeChecked());
+		Expression expr = parseExpression(image);
+		typeCheck(expr, typenv);
 		return expr;
 	}
 	
