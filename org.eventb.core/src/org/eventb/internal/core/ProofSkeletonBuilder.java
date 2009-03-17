@@ -12,7 +12,6 @@ package org.eventb.internal.core;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.Assert;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
@@ -119,7 +118,6 @@ public class ProofSkeletonBuilder {
 			pc.getProofSkeleton(pr.getElementName(), FormulaFactory
 					.getDefault(), null);
 		IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);
-		Assert.isTrue(prTree.getRoot().isOpen());
 		if (ProofBuilder.reuse(prTree.getRoot(), skel, monitor)) {
 			return prTree;
 		} else {
