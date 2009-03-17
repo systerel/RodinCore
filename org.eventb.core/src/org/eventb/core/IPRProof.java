@@ -144,18 +144,24 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 			throws RodinDBException;
 
 	/**
-	 * Gets the proof tree of this proof by rebuilding it using its skeleton.
+	 * Returns a proof tree for this proof. The proof tree is built only with
+	 * information local to this proof. The root sequent of the proof tree is
+	 * made of the needed hypotheses and goal (if any) of this proof. Then, all
+	 * rules contained in this proof are applied successively to reconstruct the
+	 * proof tree saved in this proof.
 	 * <p>
-	 * No reasoners are called by the method.
+	 * No attempt is made to access the corresponding proof obligation. No
+	 * reasoner is run.
 	 * </p>
 	 * 
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
+	 *            a progress monitor, or <code>null</code>. Note that no
+	 *            progress will be reported by this method. The monitor is used
+	 *            only for cancellation
 	 * @return the proof tree, or <code>null</code> if the proof tree could not
 	 *         be rebuilt.
 	 * @throws RodinDBException
-	 *             if there was a problem accessing the rodin database
+	 *             if there was a problem accessing the Rodin database
 	 */
 	public IProofTree getProofTree(IProgressMonitor monitor)
 			throws RodinDBException;
