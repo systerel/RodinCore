@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.rodinp.core.indexer;
 
+import org.rodinp.core.RodinCore;
+
 /**
  * Common protocol for kinds of occurrences found while indexing files.
  * <p>
  * Clients should contribute their own kinds through the extension point
  * <code>org.rodinp.core.occurrenceKinds</code>.
+ * </p>
+ * <p>
+ * Occurrence kinds are guaranteed to be unique. Hence, two occurrence kinds can
+ * be compared directly using identity (<code>==</code>). Instances can be
+ * obtained using the static factory method
+ * {@link RodinCore#getOccurrenceKind(String)}.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.

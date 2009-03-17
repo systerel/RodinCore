@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.Assert;
 import org.rodinp.core.indexer.IOccurrenceKind;
 
@@ -19,10 +22,26 @@ import org.rodinp.core.indexer.IOccurrenceKind;
  */
 public class OccurrenceKind implements IOccurrenceKind {
 
+	private static final Map<String, OccurrenceKind> instances = new HashMap<String, OccurrenceKind>();
+
+	public static synchronized IOccurrenceKind newOccurrenceKind(String id,
+			String name) {
+		if (valueOf(id) != null) {
+			throw new IllegalArgumentException("Duplicate id " + id);
+		}
+		final OccurrenceKind result = new OccurrenceKind(id, name);
+		instances.put(id, result);
+		return result;
+	}
+
+	public static IOccurrenceKind valueOf(String id) {
+		return instances.get(id);
+	}
+
 	private final String id;
 	private final String name;
 
-	public OccurrenceKind(String id, String name) {
+	private OccurrenceKind(String id, String name) {
 		Assert.isNotNull(id);
 		Assert.isNotNull(name);
 		this.id = id;

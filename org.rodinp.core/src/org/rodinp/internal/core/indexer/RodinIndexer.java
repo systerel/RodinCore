@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,7 +21,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.internal.core.RodinDBManager.SavedStateProcessor;
 import org.rodinp.internal.core.indexer.persistence.PersistenceManager;
 import org.rodinp.internal.core.util.Util;
@@ -37,8 +33,6 @@ import org.rodinp.internal.core.util.Util;
  */
 public class RodinIndexer {
 	
-	private static final Map<String, IOccurrenceKind> kinds = new HashMap<String, IOccurrenceKind>();
-
 	private static class IndexerJob  extends Job {
 
 		private final SavedStateProcessor processSavedState;
@@ -72,10 +66,6 @@ public class RodinIndexer {
 		// private constructor: zeroton
 	}
 	
-	public static IOccurrenceKind getOccurrenceKind(String id) {
-		return kinds.get(id);
-	}
-
 	public static void load() {
 		configurePluginDebugOptions();
 		registerOccurrenceKinds();
@@ -91,18 +81,7 @@ public class RodinIndexer {
 				.getConfigurationElementsFor(occKindExtPointId);
 		for (IConfigurationElement element : extensions) {
 			try {
-				final String extensionId = element.getDeclaringExtension()
-						.getUniqueIdentifier();
-
-				final String id = element.getAttribute("id");
-				final String name = element.getAttribute("name");
-				if (id == null || name == null) {
-					Util.log(null, ("Unable to get occurrence kind from "
-							+ extensionId));
-					continue;
-				}
-
-				addOccurrenceKind(id, name);
+				registerOccurrenceKind(element);
 			} catch (Exception e) {
 				Util.log(e,
 						"Exception while loading occurrence kind extension");
@@ -112,9 +91,34 @@ public class RodinIndexer {
 
 	}
 
-	private static void addOccurrenceKind(String id, String name) {
-		final OccurrenceKind kind = new OccurrenceKind(id, name);
-		kinds.put(id, kind);
+	private static void registerOccurrenceKind(IConfigurationElement element) {
+		final String ns = element.getNamespaceIdentifier();
+		final String extensionId = element.getDeclaringExtension()
+				.getUniqueIdentifier();
+		final String id = element.getAttribute("id");
+		final String name = element.getAttribute("name");
+
+		if (id == null) {
+			Util.log(null, "Missing occurrence kind id from extension "
+					+ extensionId + " contributed by " + ns);
+			return;
+		}
+		if (id.length() == 0) {
+			Util.log(null, "Empty occurrence kind id from extension "
+					+ extensionId + " contributed by " + ns);
+			return;
+		}
+		if (id.indexOf(".") != -1) {
+			Util.log(null, "Invalid occurrence kind id '" + id
+					+ "' contributed by " + ns);
+			return;
+		}
+		if (name == null) {
+			Util.log(null, "Missing occurrence kind name associated to id "
+					+ id + " contributed by " + ns);
+			return;
+		}
+		OccurrenceKind.newOccurrenceKind(ns + "." + id, name);
 	}
 
 	private static void registerIndexers() {

@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests.util;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,14 +52,14 @@ public class IndexTestsUtil {
 	public static final IInternalElementType<?> TEST_FILE_TYPE_2 = RodinCore
 			.getInternalElementType("org.rodinp.core.tests.test2");
 
-	public static final IOccurrenceKind TEST_KIND =
-			RodinCore.getOccurrenceKind("testKind");
+	public static final IOccurrenceKind TEST_KIND = RodinCore
+			.getOccurrenceKind("org.rodinp.core.tests.testKind");
 
-	public static final IOccurrenceKind TEST_KIND_1 =
-			RodinCore.getOccurrenceKind("testKind1");
+	public static final IOccurrenceKind TEST_KIND_1 = RodinCore
+			.getOccurrenceKind("org.rodinp.core.tests.testKind1");
 
-	public static final IOccurrenceKind TEST_KIND_2 =
-			RodinCore.getOccurrenceKind("testKind2");
+	public static final IOccurrenceKind TEST_KIND_2 = RodinCore
+			.getOccurrenceKind("org.rodinp.core.tests.testKind2");
 
 	public static IRodinFile createRodinFile(IRodinProject project,
 			String fileName) throws RodinDBException {

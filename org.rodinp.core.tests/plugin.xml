@@ -470,6 +470,10 @@
             id="testKind2"
             name="test Kind 2">
       </occurrenceKind>
+      <occurrenceKind
+            id="invalid.kind"
+            name="Occurrence kind containing a dot">
+      </occurrenceKind>
    </extension>
   <extension
          id="testIndexers"

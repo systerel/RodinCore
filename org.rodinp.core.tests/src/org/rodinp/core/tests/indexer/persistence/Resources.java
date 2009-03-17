@@ -11,7 +11,9 @@
 package org.rodinp.core.tests.indexer.persistence;
 
 import static java.util.Arrays.asList;
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createDefaultOccurrence;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createNamedElement;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -113,7 +115,7 @@ public class Resources {
 						+ "<pim project=\"/P\">"
 						+ "<rodin_index>"
 						+ "<descriptor element=\"/P/F1.test|org.rodinp.core.tests.test#F1|org.rodinp.core.tests.namedElement#intName1\" name=\"name1\">"
-						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"testKind\"/>"
+						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"org.rodinp.core.tests.testKind\"/>"
 						+ "</descriptor>"
 						+ "</rodin_index>"
 						+ "<export_table>"
@@ -407,7 +409,7 @@ public class Resources {
 						+ "<pim project=\"/P\">"
 						+ "<rodin_index>"
 						+ "<descriptor element=\"/P/F1.test\" name=\"name1\">"
-						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"testKind\"/>"
+						+ "<occurrence element=\"/P/F1.test|org.rodinp.core.tests.test#F1\" kind=\"org.rodinp.core.tests.testKind\"/>"
 						+ "</descriptor>"
 						+ "</rodin_index>"
 						+ "<export_table>"

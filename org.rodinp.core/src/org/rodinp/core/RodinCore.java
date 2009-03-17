@@ -43,7 +43,7 @@ import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
 import org.rodinp.internal.core.indexer.IndexQuery;
-import org.rodinp.internal.core.indexer.RodinIndexer;
+import org.rodinp.internal.core.indexer.OccurrenceKind;
 import org.rodinp.internal.core.location.AttributeLocation;
 import org.rodinp.internal.core.location.AttributeSubstringLocation;
 import org.rodinp.internal.core.location.InternalLocation;
@@ -627,7 +627,7 @@ public class RodinCore extends Plugin {
 	 *         is none
 	 */
 	public static IOccurrenceKind getOccurrenceKind(String id) {
-		return RodinIndexer.getOccurrenceKind(id);
+		return OccurrenceKind.valueOf(id);
 	}
 
 	/**

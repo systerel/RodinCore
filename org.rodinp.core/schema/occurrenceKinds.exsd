@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.rodinp.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.rodinp.core" id="occurrenceKinds" name="Occurrence Kinds"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Occurrence kinds can be contributed in order to be used by indexers.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -39,9 +39,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -62,55 +62,55 @@ for occurrence kinds within the extension namespace). The token cannot contain d
                <documentation>
                   the human-readable name of this occurrence kind
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.9.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiinfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The contributed occurrence kind results in a &lt;code&gt;org.rodinp.core.indexer.IOccurrenceKind&lt;/code&gt; with the given id and name.&lt;br&gt;
-It can be retrieved via its id by calling &lt;code&gt;org.rodinp.core.RodinCore.getOccurrenceKind(String)&lt;/code&gt;.
+It can be retrieved via its full id (plug-in id + &quot;.&quot; + local id) by calling &lt;code&gt;org.rodinp.core.RodinCore.getOccurrenceKind(String)&lt;/code&gt;.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         See plug-in &lt;code&gt;fr.systerel.eventb.indexer&lt;/code&gt; and the Rodin database tests.
+         See plug-in &lt;code&gt;org.eventb.core&lt;/code&gt; and the Rodin database tests.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2009 Systerel and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
