@@ -37,6 +37,9 @@ public class TestErrors extends AbstractTests {
 			new ASTProblem(new SourceLocation(1,1), ProblemKind.LexerError, ProblemSeverities.Warning, "\ueeee"),
 			"finite(\u03bb x\u21a6(\ueeeey\u21a6s)\u00b7\u22a5\u2223z)",
 			new ASTProblem(new SourceLocation(12,12), ProblemKind.LexerError, ProblemSeverities.Warning, "\ueeee"),
+			// From bug #2689872 Illegal character not reported
+			"0/=1",
+			new ASTProblem(new SourceLocation(1,1), ProblemKind.LexerError, ProblemSeverities.Warning, "/"),
 			
 	};
 	
