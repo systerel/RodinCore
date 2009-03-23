@@ -683,4 +683,18 @@ public class EventBKeyboardSimpleTestCase extends TestCase {
 		assertEquals("| ", expect, actual);
 	}
 
+	public void testOfType() {
+		formula.setText("");
+		insert("o");
+		insert("f");
+		insert("t");
+		insert("y");
+		insert("p");
+		insert("e");
+		insert(" ");
+		String expect = "\u2982 ";
+		String actual = formula.getText();
+		assertEquals("oftype ", expect, actual);
+	}
+
 }
