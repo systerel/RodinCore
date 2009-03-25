@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
@@ -12,10 +22,8 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 public class FormulaSimplification {
@@ -171,70 +179,6 @@ public class FormulaSimplification {
 			final Expression minusE = ff.makeIntegerLiteral(E.negate(), null);
 			final Expression minusF = ff.makeIntegerLiteral(F.negate(), null);
 			return ff.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
-		}
-		return expression;
-	}
-
-	public static Expression simplifyMulArithmetic(
-			AssociativeExpression expression, Expression[] children) {
-		Expression number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
-		boolean positive = true;
-		boolean change = false;
-		// Expression neutral = number1;
-		Expression number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
-		Expression numberMinus1 = ff.makeUnaryExpression(Expression.UNMINUS,
-				number1, null);
-		Expression literalMinus1 = ff.makeIntegerLiteral(new BigInteger("-1"), null);
-		// Expression determinant = number0;
-		Collection<Expression> expressions = new ArrayList<Expression>();
-
-		for (Expression child : children) {
-			if (child.equals(number0)) {
-				return number0;
-			}
-
-			if (child.equals(numberMinus1) || child.equals(literalMinus1)) {
-				positive = !positive;
-				change = true;
-			} else if (!child.equals(number1)) {
-				if (child instanceof UnaryExpression
-						&& child.getTag() == Expression.UNMINUS) {
-					expressions.add(((UnaryExpression) child).getChild());
-					positive = !positive;
-					change = true;
-				}
-				else if (child instanceof IntegerLiteral) {
-					
-						BigInteger value = ((IntegerLiteral) child).getValue();
-						if (value.compareTo(new BigInteger("0")) < 0) {
-							expressions.add(ff
-								.makeIntegerLiteral(value.abs(), null));
-						positive = !positive;
-							change = true;
-						}
-						else {
-							expressions.add(child);
-						}
-				} else {
-					expressions.add(child);
-				}
-			} else {
-				change = true;
-			}
-		}
-		if (change) {
-			if (expressions.size() == 0)
-				return number1;
-
-			if (expressions.size() == 1)
-				return expressions.iterator().next();
-
-			Expression newExpression = ff.makeAssociativeExpression(
-					Expression.MUL, expressions, null);
-			if (!positive)
-				newExpression = ff.makeUnaryExpression(Expression.UNMINUS,
-						newExpression, null);
-			return newExpression;
 		}
 		return expression;
 	}

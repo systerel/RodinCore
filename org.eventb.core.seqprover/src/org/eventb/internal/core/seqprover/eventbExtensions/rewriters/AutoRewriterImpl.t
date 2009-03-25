@@ -50,9 +50,9 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 @SuppressWarnings("unused")
 public class AutoRewriterImpl extends DefaultRewriter {
 
-	private final IntegerLiteral number0 = ff.makeIntegerLiteral(new BigInteger("0"), null);
+	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
-	private final IntegerLiteral number1 = ff.makeIntegerLiteral(new BigInteger("1"), null);
+	private final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
@@ -794,8 +794,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 7: (-E) ∗ (-F) == (E * F)
 	    	 * Arithmetic 7.1: (-E) ∗ F == -(E * F)
 	    	 */
-	    	Mul (children) -> {
-	    		return FormulaSimplification.simplifyMulArithmetic(expression, `children);
+	    	Mul (_) -> {
+	    		return MultiplicationSimplifier.simplify(expression, ff);
 	    	}
 	    	
 	    	/**

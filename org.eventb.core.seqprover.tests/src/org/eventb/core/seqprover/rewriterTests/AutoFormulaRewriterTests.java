@@ -1033,6 +1033,18 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	}
 
 	/**
+	 * Non-regression test for multiplication and division by a negative
+	 * literal.
+	 */
+	@Test
+	public void testBug2706216() {
+		expressionTest("− (d ∗ 2)", "d ∗ (−2)");
+		expressionTest("− (d ∗ 2 ∗ 2)", "d ∗ 2 ∗ (−2)");
+		// original problem
+		expressionTest("v + (− d)", "v + d ∗ (−1)");
+	}	
+
+	/**
 	 * Tests for rewriting finiteness predicates.
 	 */
 	@Test
