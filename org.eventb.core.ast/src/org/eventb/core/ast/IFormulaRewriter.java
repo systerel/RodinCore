@@ -121,7 +121,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(AssociativePredicate predicate);
@@ -148,7 +148,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(BinaryPredicate predicate);
@@ -193,7 +193,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(LiteralPredicate predicate);
@@ -211,7 +211,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(QuantifiedPredicate predicate);
@@ -220,7 +220,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(RelationalPredicate predicate);
@@ -238,7 +238,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(SimplePredicate predicate);
@@ -256,7 +256,7 @@ public interface IFormulaRewriter {
 	 * Rewrites the given predicate.
 	 * 
 	 * @param predicate
-	 *            expression to rewrite
+	 *            predicate to rewrite
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(UnaryPredicate predicate);
