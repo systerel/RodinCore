@@ -172,13 +172,9 @@ public class AssociativePredicate extends Predicate {
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		StringBuffer str = new StringBuffer();
-		str.append(tabs + this.getClass().getSimpleName() + " ["
-				+ getTagOperator() + "]\n");
-		for (Predicate child: children) {
-			str.append(child.getSyntaxTree(boundNames, tabs+"\t"));
-		}
-		return str.toString();
+		return AssociativeHelper
+				.getSyntaxTreeHelper(boundNames, tabs, children,
+						getTagOperator(), "", this.getClass().getSimpleName());
 	}
 
 	@Override
