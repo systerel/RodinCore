@@ -18,9 +18,13 @@ import java.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages {
+public final class Messages {
+
 	private static final String BUNDLE_NAME = "org.eventb.internal.ui.utils.messages"; //$NON-NLS-1$
 
+	public static String error_unsupported_action;
+	public static String error_cannot_save_as_message;
+	
 	public static String editorPage_axiomPage_title;
 	public static String editorPage_axiomPage_tabTitle;
 	public static String editorPage_eventPage_title;

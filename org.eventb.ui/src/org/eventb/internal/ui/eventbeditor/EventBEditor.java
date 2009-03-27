@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
+import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,6 +38,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -491,38 +495,19 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 		return super.getAdapter(required);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
-		return true;
+		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
-		// TODO Do save as
-		MessageDialog.openInformation(null, null, "Saving");
-		// EventBFormPage editor = (EventBFormPage) this.getEditor(0);
-		// editor.doSaveAs();
-		// IEditorPart editor = getEditor(0);
-		// editor.doSaveAs();
-		// setPageText(0, editor.getTitle());
-		// setInput(editor.getEditorInput());
+		final Shell shell = getSite().getShell();
+		final String title = error_unsupported_action;
+		final String message = error_cannot_save_as_message;
+		MessageDialog.openError(shell, title, message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {

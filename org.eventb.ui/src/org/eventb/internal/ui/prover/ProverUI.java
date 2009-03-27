@@ -12,6 +12,9 @@
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
+import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
@@ -26,6 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
@@ -255,31 +259,19 @@ public class ProverUI extends FormEditor implements
 		return super.getAdapter(required);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
-		return true;
+		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
-		MessageDialog.openError(null, null, "Cannot save as");
+		final Shell shell = getSite().getShell();
+		final String title = error_unsupported_action;
+		final String message = error_cannot_save_as_message;
+		MessageDialog.openError(shell, title, message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		saving = true;
