@@ -32,6 +32,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -49,13 +51,41 @@ import org.rodinp.core.RodinMarkerUtil;
 
 public class TextEditComposite extends AbstractEditComposite {
 
+	public static final String CONTEXT_ID = EventBUIPlugin.PLUGIN_ID
+	+ ".contexts.textEditCompositeScope";
+	
+	// Activate a new context when actually editing this text composite
+	private static class ContextActivator implements FocusListener {
+
+		private final IWorkbenchPart part;
+		private IContextActivation deactivationKey;
+
+		public ContextActivator(IWorkbenchPart part) {
+			this.part = part;
+		}
+
+		public void focusGained(FocusEvent e) {
+			deactivationKey = getContextService().activateContext(CONTEXT_ID);
+		}
+
+		public void focusLost(FocusEvent e) {
+			if (deactivationKey != null) {
+				getContextService().deactivateContext(deactivationKey);
+			}
+		}
+
+		private IContextService getContextService() {
+			final IWorkbenchPartSite site = part.getSite();
+			return (IContextService) site.getService(IContextService.class);
+		}
+
+	}
+
 	protected StyledText text;
 	private Button undefinedButton;
 	protected final int style;
 	private final boolean isMath;
 	private final String foregroundColor;
-
-	IContextActivation contextActivation;
 
 	public TextEditComposite(TextDesc attrDesc) {
 		super(attrDesc);
@@ -98,27 +128,7 @@ public class TextEditComposite extends AbstractEditComposite {
 			}
 			text = new StyledText(composite, style);
 
-			text.addFocusListener(new FocusListener() {
-
-				public void focusGained(FocusEvent e) {
-					// Activate Event-B Editor Context
-					IContextService contextService = (IContextService) fEditor
-							.getSite().getService(IContextService.class);
-					contextActivation = contextService
-							.activateContext(EventBUIPlugin.PLUGIN_ID
-									+ ".contexts.textEditCompositeScope");
-				}
-
-				public void focusLost(FocusEvent e) {
-					if (contextActivation == null)
-						return;
-					// Activate Event-B Editor Context
-					IContextService contextService = (IContextService) fEditor
-							.getSite().getService(IContextService.class);
-					contextService.deactivateContext(contextActivation);
-				}
-
-			});
+			text.addFocusListener(new ContextActivator(fEditor));
 			text.addModifyListener(new ModifyListener() {
 
 				public void modifyText(ModifyEvent e) {
