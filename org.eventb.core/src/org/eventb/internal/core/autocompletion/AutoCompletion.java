@@ -53,7 +53,11 @@ public class AutoCompletion {
 	 * @return a sorted list of possible completions
 	 */
 	public static List<String> getCompletions(IAttributeLocation location) {
-		RodinCore.makeIndexQuery().waitUpToDate();
+		try {
+			RodinCore.makeIndexQuery().waitUpToDate();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 		final Set<String> completionNames = getCompletionNames(location);
 		final List<String> sortedNames = new ArrayList<String>(completionNames);
 		Collections.sort(sortedNames);
