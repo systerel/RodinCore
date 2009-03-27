@@ -328,16 +328,11 @@ public final class IndexManager {
 		}
 	}
 
-	/**
+	/*
 	 * Blocks until the indexing system becomes up to date.
-	 * 
 	 */
-	public void waitUpToDate() {
-		try {
-			queue.awaitEmptyQueue();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+	public void waitUpToDate() throws InterruptedException {
+		queue.awaitEmptyQueue();
 	}
 
 	/**

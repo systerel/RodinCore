@@ -32,7 +32,7 @@ import org.rodinp.core.location.IInternalLocation;
  */
 public class IndexQuery implements IIndexQuery {
 
-	public void waitUpToDate() {
+	public void waitUpToDate() throws InterruptedException {
 		IndexManager.getDefault().waitUpToDate();
 	}
 

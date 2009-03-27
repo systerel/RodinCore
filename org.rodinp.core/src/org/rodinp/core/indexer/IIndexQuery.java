@@ -88,15 +88,17 @@ public interface IIndexQuery {
 
 	/**
 	 * Returns when the indexing system is up to date, else blocks until it
-	 * becomes up to date.
+	 * becomes up to date or this thread gets interrupted.
 	 * <p>
 	 * To ensure accurate results, clients should call this method before
 	 * querying the index, while locking the appropriate part of the Rodin
 	 * database.
 	 * </p>
 	 * 
+	 * @throws InterruptedException
+	 *             if the current thread was interrupted while waiting
 	 */
-	void waitUpToDate();
+	void waitUpToDate() throws InterruptedException;
 
 	/**
 	 * Returns the declaration for the given element. If the element is not
