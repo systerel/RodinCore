@@ -81,7 +81,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	public static final String RODIN_PROBLEM_VIEW_ID = PLUGIN_ID
 			+ ".views.RodinProblemView"; 		
 	
-	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ui.perspective.eventb";
+	public static final String PROVING_PERSPECTIVE_ID = "org.eventb.ui.perspective.proving";
 
 	public static final String NAVIGATOR_VIEW_ID = "fr.systerel.explorer.navigator.view";
 
