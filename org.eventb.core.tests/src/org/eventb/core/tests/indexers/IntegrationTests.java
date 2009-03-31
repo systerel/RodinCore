@@ -12,8 +12,15 @@ package org.eventb.core.tests.indexers;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
-import static org.eventb.core.tests.indexers.OccUtils.*;
+import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
+import static org.eventb.core.tests.indexers.OccUtils.makeOccList;
+import static org.eventb.core.tests.indexers.OccUtils.makeRedeclIdent;
+import static org.eventb.core.tests.indexers.OccUtils.makeRedeclTarget;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefLabel;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
+import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT2;
 
 import java.util.List;
 import java.util.Set;
@@ -430,7 +437,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IRodinFile file = importer.getRodinFile();
 		final IEvent evt1 = importer.getEvent(INTERNAL_ELEMENT1);
 		final IParameter prm1 = evt1.getParameter(INTERNAL_ELEMENT1);
-		final IParameter prm2 = evt1.getParameter("internal_element2");
+		final IParameter prm2 = evt1.getParameter(INTERNAL_ELEMENT2);
 		
 		final IDeclaration declPrm1 = newDecl(prm1, prm1.getIdentifierString());
 		final IDeclaration declPrm2 = newDecl(prm2, prm2.getIdentifierString());

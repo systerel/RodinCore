@@ -108,6 +108,11 @@ public class OccUtils {
 		return makeModif(assign, ASSIGNMENT_ATTRIBUTE, start, end, declaration);
 	}
 
+	public static IOccurrence makeRefAssign(IAssignmentElement assign,
+			int start, int end, IDeclaration declaration) {
+		return makeRef(assign, ASSIGNMENT_ATTRIBUTE, start, end, declaration);
+	}
+
 	public static IOccurrence makeRefExpr(IExpressionElement expr, int start,
 			int end, IDeclaration declaration) {
 		return makeRef(expr, EXPRESSION_ATTRIBUTE, start, end, declaration);

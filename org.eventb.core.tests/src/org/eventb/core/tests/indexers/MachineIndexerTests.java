@@ -1094,4 +1094,162 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		// should not throw an exception
 		assertTrue(indexer.index(tk));
 	}
+	
+	public void testBecomesEqualTo() throws Exception {
+		final String VAR_2DECL_2ASSIGN_ACT =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"var1\"/>"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element2\""
+			+ "		org.eventb.core.identifier=\"var2\"/>"
+			+ "<org.eventb.core.event name=\"internal_element1\""
+			+ "		org.eventb.core.convergence=\"0\""
+			+ "		org.eventb.core.extended=\"false\""
+			+ "		org.eventb.core.label=\"evt1\">"
+			+ "		<org.eventb.core.action "
+			+ "				name=\"internal_element1\" "
+			+ "				org.eventb.core.assignment=\"var1, var2 ≔ var2', var1'\""
+			+ "				org.eventb.core.label=\"act1\"/>"
+			+ "</org.eventb.core.event>"
+			+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot mch =
+			ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_2DECL_2ASSIGN_ACT);
+
+		final IVariable var1 = mch.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 = newDecl(var1, VAR1);
+
+		final IVariable var2 = mch.getVariable(INTERNAL_ELEMENT2);
+		final IDeclaration declVar2 = newDecl(var2, VAR2);
+
+		final IEvent event = mch.getEvent(INTERNAL_ELEMENT1);
+		final IAction action = event.getAction(INTERNAL_ELEMENT1);
+
+		final IOccurrence occAssignVar1 = makeModifAssign(action, 0, 4, declVar1);
+		final IOccurrence occRefVar1 = makeRefAssign(action, 20, 25, declVar1);
+
+		final IOccurrence occAssignVar2 = makeModifAssign(action, 6, 10, declVar2);
+		final IOccurrence occRefVar2 = makeRefAssign(action, 13, 18, declVar2);
+
+
+		final BridgeStub tk = new BridgeStub(mch);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrencesOtherThanDecl(var1, occAssignVar1, occRefVar1);
+		tk.assertOccurrencesOtherThanDecl(var2, occAssignVar2, occRefVar2);
+
+	}
+
+	public void testBecomesSuchThat() throws Exception {
+		final String becomesSuchThat = "var1, var2 :∣ ∀x· x=var2' ⇒ {var2', var1'}={var2, x}";
+		//                              0    |    1     |    2    |    3    |    4    |    5
+		final String VAR_2DECL_2ASSIGN_ACT =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"var1\"/>"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element2\""
+			+ "		org.eventb.core.identifier=\"var2\"/>"
+			+ "<org.eventb.core.event name=\"internal_element1\""
+			+ "		org.eventb.core.convergence=\"0\""
+			+ "		org.eventb.core.extended=\"false\""
+			+ "		org.eventb.core.label=\"evt1\">"
+			+ "		<org.eventb.core.action "
+			+ "				name=\"internal_element1\" "
+			+ "				org.eventb.core.assignment=\"" + becomesSuchThat + "\""
+			+ "				org.eventb.core.label=\"act1\"/>"
+			+ "</org.eventb.core.event>"
+			+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot mch =
+			ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_2DECL_2ASSIGN_ACT);
+
+		final IVariable var1 = mch.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 = newDecl(var1, VAR1);
+
+		final IVariable var2 = mch.getVariable(INTERNAL_ELEMENT2);
+		final IDeclaration declVar2 = newDecl(var2, VAR2);
+
+		final IEvent event = mch.getEvent(INTERNAL_ELEMENT1);
+		final IAction action = event.getAction(INTERNAL_ELEMENT1);
+
+		final IOccurrence occAssignVar1 = makeModifAssign(action, 0, 4, declVar1);
+		final IOccurrence occRefVar1 = makeRefAssign(action, 36, 41, declVar1);
+
+		final IOccurrence occAssignVar2 = makeModifAssign(action, 6, 10, declVar2);
+		final IOccurrence occRefVar2Primed = makeRefAssign(action, 20, 25, declVar2);
+		final IOccurrence occRefVar2Right1 = makeRefAssign(action, 29, 34, declVar2);
+		final IOccurrence occRefVar2Right2 = makeRefAssign(action, 44, 48, declVar2);
+
+
+		final BridgeStub tk = new BridgeStub(mch);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrencesOtherThanDecl(var1, occAssignVar1, occRefVar1);
+		tk.assertOccurrencesOtherThanDecl(var2, occAssignVar2,
+				occRefVar2Primed, occRefVar2Right1, occRefVar2Right2);
+
+	}
+
+	public void testBecomesMemberOf() throws Exception {
+		final String VAR_2DECL_2ASSIGN_ACT =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element1\""
+			+ "		org.eventb.core.identifier=\"var1\"/>"
+			+ "<org.eventb.core.variable"
+			+ "		name=\"internal_element2\""
+			+ "		org.eventb.core.identifier=\"var2\"/>"
+			+ "<org.eventb.core.event name=\"internal_element1\""
+			+ "		org.eventb.core.convergence=\"0\""
+			+ "		org.eventb.core.extended=\"false\""
+			+ "		org.eventb.core.label=\"evt1\">"
+			+ "		<org.eventb.core.action "
+			+ "				name=\"internal_element1\" "
+			+ "				org.eventb.core.assignment=\"var1 :∈ {var2', var1'}\""
+			+ "				org.eventb.core.label=\"act1\"/>"
+			+ "</org.eventb.core.event>"
+			+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot mch =
+			ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_2DECL_2ASSIGN_ACT);
+
+		final IVariable var1 = mch.getVariable(INTERNAL_ELEMENT1);
+		final IDeclaration declVar1 = newDecl(var1, VAR1);
+
+		final IVariable var2 = mch.getVariable(INTERNAL_ELEMENT2);
+		final IDeclaration declVar2 = newDecl(var2, VAR2);
+
+		final IEvent event = mch.getEvent(INTERNAL_ELEMENT1);
+		final IAction action = event.getAction(INTERNAL_ELEMENT1);
+
+		final IOccurrence occAssignVar1 = makeModifAssign(action, 0, 4, declVar1);
+		final IOccurrence occRefVar1 = makeRefAssign(action, 16, 21, declVar1);
+
+		final IOccurrence occRefVar2 = makeRefAssign(action, 9, 14, declVar2);
+
+
+		final BridgeStub tk = new BridgeStub(mch);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrencesOtherThanDecl(var1, occAssignVar1, occRefVar1);
+		tk.assertOccurrencesOtherThanDecl(var2, occRefVar2);
+
+	}
+
 }

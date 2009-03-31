@@ -22,6 +22,7 @@ public abstract class EventBIndexerTests extends BuilderTest {
 	protected static final String IMPORTER = "importer";
 	protected static final String EXPORTER = "exporter";
 	protected static final String VAR1 = "var1";
+	protected static final String VAR2 = "var2";
 	protected static final String PRM1 = "prm1";
 	protected static final String CST1 = "cst1";
 

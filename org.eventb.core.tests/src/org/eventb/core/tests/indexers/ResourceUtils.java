@@ -71,6 +71,7 @@ public class ResourceUtils {
 	public static final String MCH_BARE_NAME = "machine";
 	public static final List<IDeclaration> EMPTY_DECL = Collections.emptyList();
 	public static final String INTERNAL_ELEMENT1 = "internal_element1";
+	public static final String INTERNAL_ELEMENT2 = "internal_element2";
 	public static final String CTX_BARE_NAME = "context";
 
 }
