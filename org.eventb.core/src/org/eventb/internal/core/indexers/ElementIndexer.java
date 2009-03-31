@@ -57,6 +57,7 @@ public abstract class ElementIndexer extends Cancellable {
 		visitAndIndex(formula);
 	}
 
+	// TODO add a ParserVersion argument
 	protected abstract IParseResult parseFormula(String formulaString,
 			IAttributeLocation location);
 

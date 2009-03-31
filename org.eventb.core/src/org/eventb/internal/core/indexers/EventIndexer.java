@@ -16,7 +16,7 @@ import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.EventBPlugin.DECLARATION;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 import static org.eventb.core.EventBPlugin.REFERENCE;
-import static org.eventb.internal.core.indexers.IdentTable.getUnprimedIdent;
+import static org.eventb.internal.core.indexers.IdentTable.getUnprimedName;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.Map;
@@ -30,7 +30,6 @@ import org.eventb.core.IPredicateElement;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
-import org.eventb.core.ast.FreeIdentifier;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -181,8 +180,7 @@ public class EventIndexer extends Cancellable {
 		for (IWitness witness : witnesses) {
 			if (witness.hasLabel()) {
 				final String label = witness.getLabel();
-				final FreeIdentifier ident = getUnprimedIdent(label);
-				final String name = ident.getName();
+				final String name = getUnprimedName(label);
 				final IDeclaration declAbs = totalST.lookUpper(name);
 
 				if (declAbs != null) {

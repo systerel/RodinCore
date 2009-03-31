@@ -49,11 +49,11 @@ public class IdentTable {
 		table.put(ident, declaration);
 	}
 
-	public static FreeIdentifier getUnprimedIdent(String name) {
+	public static String getUnprimedName(String name) {
 		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
-		return getUnprimed(ident);
+		return getUnprimed(ident).getName();
 	}
-
+	
 	public IDeclaration get(FreeIdentifier ident) {
 		final FreeIdentifier unprimed = getUnprimed(ident);
 		return table.get(unprimed);
