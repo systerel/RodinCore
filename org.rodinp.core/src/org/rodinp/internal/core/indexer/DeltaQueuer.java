@@ -64,18 +64,22 @@ public class DeltaQueuer implements IElementChangedListener,
 			// No chance to find a project or a file below
 			return;
 		}
-		final IRodinElementDelta[] affectedChildren = delta
-				.getAffectedChildren();
-		if (affectedChildren.length != 0) {
-			for (IRodinElementDelta childDelta : affectedChildren) {
-				enqueueAffectedElements(childDelta);
-			}
-		} else if (element instanceof IRodinProject) {
-			enqueueAffectedProject((IRodinProject) element, delta);
-		} else if (element instanceof IRodinFile) {
+		if (element instanceof IRodinFile) {
 			enqueueChangedFile((IRodinFile) element);
-		} else { // special cases like deleting a closed project
-			enqueueResourceDeltas(delta.getResourceDeltas());
+		} else {
+			final IRodinElementDelta[] affectedChildren = delta
+					.getAffectedChildren();
+			if (affectedChildren.length != 0) {
+				for (IRodinElementDelta childDelta : affectedChildren) {
+					enqueueAffectedElements(childDelta);
+				}
+			} else {
+				if (element instanceof IRodinProject) {
+					enqueueAffectedProject((IRodinProject) element, delta);
+				} else { // special cases like deleting a closed project
+					enqueueResourceDeltas(delta.getResourceDeltas());
+				}
+			}
 		}
 	}
 

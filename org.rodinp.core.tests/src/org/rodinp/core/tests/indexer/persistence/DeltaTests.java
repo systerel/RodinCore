@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.persistence;
 
-import static org.rodinp.core.tests.util.IndexTestsUtil.*;
-import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.*;
+import static org.rodinp.core.tests.util.IndexTestsUtil.TEST_ATTR_TYPE;
+import static org.rodinp.core.tests.util.IndexTestsUtil.assertSameElements;
+import static org.rodinp.core.tests.util.IndexTestsUtil.createRodinFile;
+import static org.rodinp.internal.core.indexer.persistence.xml.XMLUtils.write;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.indexer.IndexTests;
+import org.rodinp.internal.core.indexer.DeltaQueue;
+import org.rodinp.internal.core.indexer.DeltaQueuer;
+import org.rodinp.internal.core.indexer.IIndexDelta;
 import org.rodinp.internal.core.indexer.IndexManager;
 
 /**
@@ -129,4 +134,39 @@ public class DeltaTests extends IndexTests {
 		assertSameElements(expected, listener.getList(), "delta file");
 	}
 
+	private static class TestQueue extends DeltaQueue {
+		private final List<IRodinElement> list = new ArrayList<IRodinElement>();
+
+		public void put(IIndexDelta delta, boolean allowDuplicate) {
+			list.add(delta.getElement());
+		}
+
+		public List<IRodinElement> getList() {
+			return list;
+		}
+	}
+	
+	/**
+	 * Verify that a deep delta, that is a delta whose deepest affected child is
+	 * an internal element, is correctly enqueued.
+	 * 
+	 * @throws Exception
+	 */
+	public void testDeepDeltaEnqueued() throws Exception {
+		final IRodinFile file = createRodinFile(project, "deltaDeep.test");
+		NamedElement elt = getNamedElement(file.getRoot(), "elt");
+		elt.create(null, null);
+		file.save(null, true);
+
+		final List<IRodinElement> expected = Arrays.asList((IRodinElement) file);
+
+		final TestQueue queue = new TestQueue();
+		DeltaQueuer queuer = new DeltaQueuer(queue);
+		
+		RodinCore.addElementChangedListener(queuer);
+		elt.setAttributeValue(TEST_ATTR_TYPE, "newValue", null);
+		RodinCore.removeElementChangedListener(queuer);
+		
+		assertSameElements(expected, queue.getList(), "delta file");
+	}
 }
