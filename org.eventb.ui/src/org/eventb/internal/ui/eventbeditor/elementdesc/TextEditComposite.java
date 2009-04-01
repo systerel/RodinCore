@@ -128,6 +128,8 @@ public class TextEditComposite extends AbstractEditComposite {
 			}
 			text = new StyledText(composite, style);
 
+			setText(value);
+			
 			text.addFocusListener(new ContextActivator(fEditor));
 			text.addModifyListener(new ModifyListener() {
 
@@ -159,7 +161,12 @@ public class TextEditComposite extends AbstractEditComposite {
 				}
 			};
 			this.getFormToolkit().paintBordersFor(composite);
+		}else{
+			setText(value);
 		}
+	}
+
+	private void setText(String value){
 		if (!text.getText().equals(value))
 			text.setText(value);
 	}

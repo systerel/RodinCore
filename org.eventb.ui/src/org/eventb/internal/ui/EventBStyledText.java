@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
+ *     Systerel - added class Translator
  ******************************************************************************/
 
 package org.eventb.internal.ui;
@@ -16,6 +17,7 @@ package org.eventb.internal.ui;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
@@ -28,8 +30,8 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
  */
 public class EventBStyledText extends EventBControl implements IEventBInputText {
 
-	EventBStyledTextModifyListener listener;
-	
+	private final StyledText text;
+	private final boolean isMath;
 	/**
 	 * Constructor.
 	 * <p>
@@ -39,31 +41,40 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	 */
 	public EventBStyledText(final StyledText text, final boolean isMath) {
 		super(text);
+		this.text = text;
+		this.isMath = isMath;
 		text.addMouseListener(new DoubleClickStyledTextListener(text));
 		if (isMath) {
-			listener = new EventBStyledTextModifyListener();
-			text.addModifyListener(listener);
+			final Translator translator = new Translator(text);
+			text.addModifyListener(translator);
 		}
 		text.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
-				// Do nothing
+				translate();
 			}
 
 			public void focusLost(FocusEvent e) {
-				if (text.getEditable() && isMath) {
-					String translateStr = Text2EventBMathTranslator
-							.translate(text.getText());
-					if (!text.getText().equals(translateStr)) {
-						text.setText(translateStr);
-					}
-				}
-				commit();
+				translate();
 			}
 
 		});
 	}
 
+	/**
+	 * Translate the StyledText into Event-B Mathematical Language and commit.
+	 * */
+	protected void translate(){
+		if (text.getEditable() && isMath) {
+			String translateStr = Text2EventBMathTranslator
+					.translate(text.getText());
+			if (!text.getText().equals(translateStr)) {
+				text.setText(translateStr);
+			}
+		}
+		commit();
+	}
+	
 	protected void commit() {
 		// Do nothing. Client should override this method in order to implement
 		// the intended behaviour.
@@ -78,4 +89,20 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 		return (Text) getControl();
 	}
 
+	class Translator extends EventBStyledTextModifyListener {
+		private final StyledText widget;
+
+		public Translator(StyledText widget) {
+			this.widget = widget;
+		}
+
+		@Override
+		public void modifyText(ModifyEvent e) {
+			if (!widget.isFocusControl()) {
+				return;
+			}
+			super.modifyText(e);
+		}
+	}
+	
 }
