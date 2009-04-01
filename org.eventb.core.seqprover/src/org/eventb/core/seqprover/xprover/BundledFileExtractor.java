@@ -8,13 +8,13 @@
 package org.eventb.core.seqprover.xprover;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -96,27 +96,28 @@ public class BundledFileExtractor {
 						+ bundle.getSymbolicName(), e);
 				return null;
 			}
-			if (executable && ! Platform.getOS().equals(Platform.OS_WIN32)) {
-				makeExecutable(url);
+			final IPath result = new Path(url.getPath());
+			if (executable && !isWin32()) {
+				makeExecutable(result);
 			}
-			return new Path(url.getPath());
+			return result;
 		}
 		
 		/**
-		 * Makes the given file executable.
+		 * Makes the given local file executable.
 		 * 
-		 * @param pathString
-		 *     path to the file as a String.
+		 * @param path
+		 *     path to the file
 		 */
-		private void makeExecutable(URL url) {
+		private void makeExecutable(IPath path) {
 			try {
-				final URI uri = url.toURI();
-				final IFileStore store = EFS.getStore(uri);
+				final IFileSystem fs = EFS.getLocalFileSystem();
+				final IFileStore store = fs.getStore(path);
 				final IFileInfo info = store.fetchInfo();
 				info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
 				store.putInfo(info, EFS.SET_ATTRIBUTES, null);
 			} catch (Exception e) {
-				log("Problem making file " + url + " executable", e);
+				log("Problem making file " + path + " executable", e);
 			}
 		}
 
@@ -162,7 +163,7 @@ public class BundledFileExtractor {
 	public static synchronized IPath extractFile(Bundle bundle, IPath path,
 			boolean exec) {
 		
-		if (exec && Platform.getOS().equals(Platform.OS_WIN32)) {
+		if (exec && isWin32()) {
 			path = path.addFileExtension("exe");
 		}
 		
@@ -174,6 +175,10 @@ public class BundledFileExtractor {
 			descriptors.put(desc, result);
 		}
 		return result;
+	}
+
+	private static boolean isWin32() {
+		return Platform.getOS().equals(Platform.OS_WIN32);
 	}
 
 }
