@@ -200,7 +200,7 @@ public class TestOperation extends OperationTest {
 
 	@Test
 	public void testCreateElementGeneric() throws Exception, RodinDBException {
-		addInvariant(mchElement, "inv1", "true");
+		addInvariant(mchElement, "inv1", "\u22a4");
 
 		final AtomicOperation op = OperationFactory.createElementGeneric(mch,
 				IInvariant.ELEMENT_TYPE, null);
