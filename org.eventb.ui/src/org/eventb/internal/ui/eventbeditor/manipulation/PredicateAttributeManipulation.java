@@ -39,7 +39,7 @@ public class PredicateAttributeManipulation extends AbstractAttributeManipulatio
 
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getPredicate(element).setPredicateString("true", monitor);
+		getPredicate(element).setPredicateString("\u22a4", monitor);
 	}
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
