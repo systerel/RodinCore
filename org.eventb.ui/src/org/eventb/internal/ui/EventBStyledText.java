@@ -15,6 +15,7 @@
 package org.eventb.internal.ui;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,7 +32,7 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 public class EventBStyledText extends EventBControl implements IEventBInputText {
 
 	private final StyledText text;
-	private final boolean isMath;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -42,37 +43,44 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	public EventBStyledText(final StyledText text, final boolean isMath) {
 		super(text);
 		this.text = text;
-		this.isMath = isMath;
 		text.addMouseListener(new DoubleClickStyledTextListener(text));
 		if (isMath) {
 			final Translator translator = new Translator(text);
 			text.addModifyListener(translator);
+			text.addFocusListener(new FocusListener() {
+				public void focusGained(FocusEvent e) {
+					if (translate()) {
+						commit();
+					}
+				}
+				public void focusLost(FocusEvent e) {
+					translate();
+					commit();
+				}
+			});
+		} else {
+			text.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					commit();
+				}
+			});
 		}
-		text.addFocusListener(new FocusListener() {
-
-			public void focusGained(FocusEvent e) {
-				translate();
-			}
-
-			public void focusLost(FocusEvent e) {
-				translate();
-			}
-
-		});
 	}
 
-	/**
-	 * Translate the StyledText into Event-B Mathematical Language and commit.
-	 * */
-	protected void translate(){
-		if (text.getEditable() && isMath) {
-			String translateStr = Text2EventBMathTranslator
-					.translate(text.getText());
-			if (!text.getText().equals(translateStr)) {
-				text.setText(translateStr);
-			}
+	// Translates the StyledText contents into Event-B Mathematical Language.
+	// Returns true if something changed
+	protected boolean translate(){
+		if (!text.getEditable()) {
+			return false;
 		}
-		commit();
+		final String original = text.getText();
+		final String translated = Text2EventBMathTranslator.translate(original);
+		if (original.equals(translated)) {
+			return false;
+		}
+		text.setText(translated);
+		return true;
 	}
 	
 	protected void commit() {
