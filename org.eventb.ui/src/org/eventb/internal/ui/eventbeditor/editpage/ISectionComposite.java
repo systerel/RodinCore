@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added method for marker refresh
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
@@ -123,6 +124,16 @@ public interface ISectionComposite {
 	void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd);
 
+	/**
+	 * Call the method before refresh the section several times.
+	 * */
+	public void disableMarkerRefresh();
+	
+	/**
+	 * Call the method after refresh the section several times.
+	 * */
+	public void enableMarkerRefresh();
+	
 	/**
 	 * Refresh the information display in the composite if there are some
 	 * changes for attribute of input type within the input element.

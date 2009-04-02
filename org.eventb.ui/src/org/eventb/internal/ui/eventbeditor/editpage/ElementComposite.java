@@ -10,10 +10,13 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
+ *     Systerel - used Map for section composite
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -50,6 +53,8 @@ public class ElementComposite implements IElementComposite {
 	Composite mainSectionComposite;
 
 	ArrayList<ISectionComposite> sectionComps;
+
+	Map<IElementType<?>, ISectionComposite> mapComps;
 
 	EditPage page;
 
@@ -146,14 +151,16 @@ public class ElementComposite implements IElementComposite {
 		final IElementType<?>[] rels = registry.getChildTypes(rElement
 				.getElementType());
 		sectionComps = new ArrayList<ISectionComposite>(rels.length);
-		
+		mapComps = new HashMap<IElementType<?>, ISectionComposite>();
 		 for (IElementType<?> type : rels) {
 			// Create the section composite
 			 final ElementDescRelationship rel = new ElementDescRelationship(
 					rElement.getElementType(), (IInternalElementType<?>) type);
-			sectionComps.add(new SectionComposite(page, toolkit, form,
-					mainSectionComposite, (IInternalElement) rElement, rel,
-					level + 1));
+			 final ISectionComposite comp = new SectionComposite(page, toolkit,
+					form, mainSectionComposite, (IInternalElement) rElement,
+					rel, level + 1);
+			sectionComps.add(comp);
+			mapComps.put(type, comp);
 		}
 	}
 
@@ -359,9 +366,11 @@ public class ElementComposite implements IElementComposite {
 			row.updateLinks();
 			if (rElement.isAncestorOf(element)) {
 				if (sectionComps != null) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.refresh(element, set);
-					}
+					final IElementType<?> type = EventBEditorUtils
+							.getChildTowards(rElement, element).getElementType();
+					final ISectionComposite comp = mapComps.get(type);
+					if (comp != null)
+						comp.refresh(element, set);
 				}
 			}
 		}

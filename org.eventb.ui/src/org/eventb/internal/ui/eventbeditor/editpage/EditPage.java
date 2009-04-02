@@ -14,6 +14,7 @@
  *     Systerel - removed focus listener of Hyper Link
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
+ *     Systerel - used Map for section composite
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -24,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -99,6 +101,7 @@ public class EditPage extends EventBEditorPage implements
 	// A list of section composites. The list or its element must not be
 	// <code>null</code>.
 	List<ISectionComposite> sectionComps;
+	Map<IElementType<?>, ISectionComposite> mapComps;
 
 	// The main scrolled form
 	ScrolledForm form;
@@ -392,7 +395,8 @@ public class EditPage extends EventBEditorPage implements
 				.getElementType());
 		// Create the section composite corresponding with each relationship.
 		sectionComps = new ArrayList<ISectionComposite>(childTypes.length);
-	    for (IElementType<?> childType : childTypes) {
+		mapComps = new HashMap<IElementType<?>, ISectionComposite>();
+		for (IElementType<?> childType : childTypes) {
 			// Create the section composite
 			final ElementDescRelationship rel = new ElementDescRelationship(
 					rodinInput.getElementType(),
@@ -400,6 +404,7 @@ public class EditPage extends EventBEditorPage implements
 			SectionComposite sectionComp = new SectionComposite(this, toolkit,
 					form, parent, rodinInput, rel, 0);
 			sectionComps.add(sectionComp);
+			mapComps.put(childType, sectionComp);
 		}
 
 	}
@@ -831,21 +836,42 @@ public class EditPage extends EventBEditorPage implements
 		display.syncExec(new Runnable() {
 
 			public void run() {
-				Set<IRodinElement> keySet = map.keySet();
-				for (IRodinElement key : keySet) {
-					Set<IAttributeType> set = map.get(key);
-					if (rodinInput.equals(key)
-							|| rodinInput.isAncestorOf(key)) {
-						if (sectionComps != null)
-							for (ISectionComposite sectionComposite : sectionComps) {
-								sectionComposite.refresh(key, set);
+				try {
+					enableMarkerRefresh();
+					for (Entry<IRodinElement, Set<IAttributeType>> entry : map
+							.entrySet()) {
+						final IRodinElement key = entry.getKey();
+						final Set<IAttributeType> set = entry.getValue();
+						if (rodinInput.equals(key)
+								|| rodinInput.isAncestorOf(key)) {
+							if (sectionComps != null) {
+								final IElementType<?> type = EventBEditorUtils
+										.getChildTowards(rodinInput, key)
+										.getElementType();
+								final ISectionComposite comp = mapComps
+										.get(type);
+								if (comp != null)
+									comp.refresh(key, set);
 							}
+						}
 					}
+				} finally {
+					disableMarkerRefresh();
 				}
 			}
-			
 		});
 	}
 
-
+	void enableMarkerRefresh() {
+		for (ISectionComposite comp : sectionComps) {
+			comp.enableMarkerRefresh();
+		}
+	}
+	
+	void disableMarkerRefresh() {
+		for (ISectionComposite comp : sectionComps) {
+			comp.disableMarkerRefresh();
+		}
+	}
+	
 }

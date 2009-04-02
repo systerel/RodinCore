@@ -11,6 +11,7 @@
  *     Systerel - replaced inherited by extended, local variable by parameter
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - added getChildTowards
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -967,5 +968,22 @@ public class EventBEditorUtils {
 		if (element != null) {
 			((EventBEditableTreeViewer) viewer).edit(element);
 		}
+	}
+	
+	
+
+	/**
+	 * Return the given element it is a direct child of parent. Else return the
+	 * direct child of parent which is ancestor of element. Require parent is an
+	 * ancestor of child.
+	 * */
+	public static IRodinElement getChildTowards(IRodinElement element,
+			IRodinElement target) {
+		assert element.isAncestorOf(target);
+		IRodinElement current = target;
+		while (!current.getParent().equals(element)) {
+			current = current.getParent();
+		}
+		return current;
 	}
 }
