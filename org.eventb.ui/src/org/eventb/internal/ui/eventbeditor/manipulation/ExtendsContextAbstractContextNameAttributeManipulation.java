@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.internal.ui.UIUtils;
@@ -26,7 +26,7 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 		AbstractContextManipulation<IExtendsContext> {
 
 	@Override
-	protected IExtendsContext getContextElement(IRodinElement element) {
+	protected IExtendsContext asContextClause(IRodinElement element) {
 		assert element instanceof IExtendsContext;
 		return (IExtendsContext) element;
 	}
@@ -38,12 +38,12 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getContextElement(element).getAbstractContextName();
+		return asContextClause(element).getAbstractContextName();
 	}
 
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		getContextElement(element).setAbstractContextName(str, new NullProgressMonitor());
+		asContextClause(element).setAbstractContextName(str, null);
 	}
 
 	@Override
@@ -59,11 +59,11 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getContextElement(element).removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
+		asContextClause(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getContextElement(element).hasAbstractContextName();
+		return asContextClause(element).hasAbstractContextName();
 	}
 }

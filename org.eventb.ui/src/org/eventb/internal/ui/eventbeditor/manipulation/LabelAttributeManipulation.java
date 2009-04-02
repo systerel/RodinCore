@@ -26,7 +26,7 @@ public class LabelAttributeManipulation extends AbstractAttributeManipulation im
 
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		final ILabeledElement labeledElement = getLabeled(element);
+		final ILabeledElement labeledElement = asLabeled(element);
 		final String label = UIUtils.getFreeElementLabel(
 				(IInternalElement) labeledElement.getParent(), labeledElement
 						.getElementType());
@@ -35,12 +35,12 @@ public class LabelAttributeManipulation extends AbstractAttributeManipulation im
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getLabeled(element).setLabel(newValue, monitor);
+		asLabeled(element).setLabel(newValue, monitor);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getLabeled(element).getLabel();
+		return asLabeled(element).getLabel();
 	}
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
@@ -57,10 +57,10 @@ public class LabelAttributeManipulation extends AbstractAttributeManipulation im
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getLabeled(element).hasLabel();
+		return asLabeled(element).hasLabel();
 	}
 	
-	protected ILabeledElement getLabeled(IRodinElement element) {
+	protected ILabeledElement asLabeled(IRodinElement element) {
 		assert element instanceof ILabeledElement;
 		return (ILabeledElement) element;
 	}

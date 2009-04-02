@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
+import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.rodinp.core.IRodinElement;
@@ -30,14 +30,14 @@ public class ConvergenceAttributeManipulation extends AbstractAttributeManipulat
 
 	public final static String ANTICIPATED = "anticipated";
 
-	private IConvergenceElement getConvergence(IRodinElement element) {
+	private IConvergenceElement asConvergence(IRodinElement element) {
 		assert element instanceof IConvergenceElement;
 		return (IConvergenceElement) element;
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final Convergence convergence = getConvergence(element)
+		final Convergence convergence = asConvergence(element)
 				.getConvergence();
 		if (convergence == Convergence.ORDINARY)
 			return ORDINARY;
@@ -59,7 +59,7 @@ public class ConvergenceAttributeManipulation extends AbstractAttributeManipulat
 			convergence = Convergence.ANTICIPATED;
 		else
 			convergence = null;
-		getConvergence(element).setConvergence(convergence, null);
+		asConvergence(element).setConvergence(convergence, null);
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
@@ -69,19 +69,17 @@ public class ConvergenceAttributeManipulation extends AbstractAttributeManipulat
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getConvergence(element).removeAttribute(
-				EventBAttributes.CONVERGENCE_ATTRIBUTE,
-				new NullProgressMonitor());
+		asConvergence(element).removeAttribute(CONVERGENCE_ATTRIBUTE, null);
 	}
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getConvergence(element).setConvergence(Convergence.ORDINARY, monitor);
+		asConvergence(element).setConvergence(Convergence.ORDINARY, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getConvergence(element).hasConvergence();
+		return asConvergence(element).hasConvergence();
 	}
 
 }

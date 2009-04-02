@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor.manipulation;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.ICommentedElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -23,22 +22,23 @@ import org.rodinp.core.RodinDBException;
 public class CommentAttributeManipulation extends AbstractAttributeManipulation
 		implements IAttributeManipulation {
 
-	private ICommentedElement getCommented(IRodinElement element) {
+	private ICommentedElement asCommented(IRodinElement element) {
 		assert element instanceof ICommentedElement;
 		return (ICommentedElement) element;
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		if (getCommented(element).hasComment())
-			return getCommented(element).getComment();
+		final ICommentedElement commented = asCommented(element);
+		if (commented.hasComment())
+			return commented.getComment();
 		else
 			return "";
 	}
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getCommented(element).setComment(newValue, monitor);
+		asCommented(element).setComment(newValue, monitor);
 	}
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
@@ -48,8 +48,7 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getCommented(element).removeAttribute(
-				EventBAttributes.COMMENT_ATTRIBUTE, monitor);
+		asCommented(element).removeAttribute(COMMENT_ATTRIBUTE, monitor);
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
@@ -63,7 +62,7 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation
 			throws RodinDBException {
 		if (element == null)
 			return false;
-		return getCommented(element).hasComment();
+		return asCommented(element).hasComment();
 
 	}
 

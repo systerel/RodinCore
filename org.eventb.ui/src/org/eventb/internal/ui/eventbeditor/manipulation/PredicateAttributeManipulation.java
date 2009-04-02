@@ -22,24 +22,24 @@ import org.rodinp.core.RodinDBException;
 public class PredicateAttributeManipulation extends AbstractAttributeManipulation
 		implements IAttributeManipulation {
 
-	private IPredicateElement getPredicate(IRodinElement element) {
+	private IPredicateElement asPredicate(IRodinElement element) {
 		assert element instanceof IPredicateElement;
 		return (IPredicateElement) element;
 	}
 	
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getPredicate(element).setPredicateString(newValue, null);
+		asPredicate(element).setPredicateString(newValue, null);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getPredicate(element).getPredicateString();
+		return asPredicate(element).getPredicateString();
 	}
 
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getPredicate(element).setPredicateString("\u22a4", monitor);
+		asPredicate(element).setPredicateString("\u22a4", monitor);
 	}
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
@@ -56,7 +56,7 @@ public class PredicateAttributeManipulation extends AbstractAttributeManipulatio
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getPredicate(element).hasPredicateString();
+		return asPredicate(element).hasPredicateString();
 	}
 	
 }

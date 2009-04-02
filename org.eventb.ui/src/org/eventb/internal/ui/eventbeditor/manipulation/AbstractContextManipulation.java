@@ -30,7 +30,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 	
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
-		final E contextElement = getContextElement(element);
+		final E contextElement = asContextClause(element);
 		final Set<String> results = new HashSet<String>();
 		final Set<String> contextNames = getContextNames(contextElement);
 		final Set<String> usedContextNames = getUsedContextNames(contextElement);
@@ -94,5 +94,5 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 
 	public abstract E[] getClauses(E element);
 
-	protected abstract E getContextElement(IRodinElement element);
+	protected abstract E asContextClause(IRodinElement element);
 }

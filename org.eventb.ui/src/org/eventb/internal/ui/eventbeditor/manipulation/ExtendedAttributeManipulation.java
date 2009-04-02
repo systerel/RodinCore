@@ -15,11 +15,12 @@
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
-import static org.eventb.internal.ui.EventBUtils.*;
+import static org.eventb.core.EventBAttributes.EXTENDED_ATTRIBUTE;
+import static org.eventb.internal.ui.EventBUtils.getFreeChildName;
+import static org.eventb.internal.ui.EventBUtils.getImplicitChildren;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.internal.ui.utils.Messages;
@@ -133,14 +134,14 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 	 */
 	private static final String FALSE = Messages.attributeManipulation_extended_false;
 	
-	private IEvent getEvent(IRodinElement element) {
+	private IEvent asEvent(IRodinElement element) {
 		assert element instanceof IEvent;
 		return (IEvent) element;
 	}
 	
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final IEvent event = getEvent(element);
+		final IEvent event = asEvent(element);
 		return (event.hasExtended() && event.isExtended()) ? TRUE : FALSE;
 	}
 
@@ -164,7 +165,7 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final boolean extended = newValue.equals(TRUE);
-		final IEvent event = getEvent(element);
+		final IEvent event = asEvent(element);
 		if (extended) {
 			final SetExtended setExtended = new SetExtended(event);
 			setExtended.run(monitor);
@@ -180,8 +181,7 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getEvent(element).removeAttribute(EventBAttributes.EXTENDED_ATTRIBUTE,
-				monitor);
+		asEvent(element).removeAttribute(EXTENDED_ATTRIBUTE, monitor);
 	}
 
 	/**
@@ -190,12 +190,12 @@ public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
 	 */
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getEvent(element).setExtended(false, monitor);
+		asEvent(element).setExtended(false, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getEvent(element).hasExtended();
+		return asEvent(element).hasExtended();
 	}
 	
 }

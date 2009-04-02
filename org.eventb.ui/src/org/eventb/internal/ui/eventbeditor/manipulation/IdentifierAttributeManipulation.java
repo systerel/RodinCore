@@ -15,7 +15,6 @@ package org.eventb.internal.ui.eventbeditor.manipulation;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
@@ -27,7 +26,7 @@ public class IdentifierAttributeManipulation extends
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		final IIdentifierElement identifierElement = getIdentifier(element);
+		final IIdentifierElement identifierElement = asIdentifier(element);
 		final String identifier = UIUtils.getFreeElementIdentifier(
 				(IInternalElement) identifierElement.getParent(),
 				identifierElement.getElementType());
@@ -36,13 +35,12 @@ public class IdentifierAttributeManipulation extends
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getIdentifier(element).setIdentifierString(newValue,
-				new NullProgressMonitor());
+		asIdentifier(element).setIdentifierString(newValue, null);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getIdentifier(element).getIdentifierString();
+		return asIdentifier(element).getIdentifierString();
 	}
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
@@ -59,10 +57,10 @@ public class IdentifierAttributeManipulation extends
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getIdentifier(element).hasIdentifierString();
+		return asIdentifier(element).hasIdentifierString();
 	}
 
-	public IIdentifierElement getIdentifier(IRodinElement element) {
+	public IIdentifierElement asIdentifier(IRodinElement element) {
 		assert element instanceof IIdentifierElement;
 		return (IIdentifierElement) element;
 	}

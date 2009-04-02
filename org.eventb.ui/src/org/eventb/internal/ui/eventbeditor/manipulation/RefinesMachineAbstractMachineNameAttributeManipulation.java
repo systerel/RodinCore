@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.UIUtils;
@@ -28,7 +29,7 @@ import org.rodinp.core.RodinDBException;
 public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		AbstractAttributeManipulation implements IAttributeManipulation {
 
-	private IRefinesMachine getRefinesMachine(IRodinElement element) {
+	private IRefinesMachine asRefinesMachine(IRodinElement element) {
 		assert element instanceof IRefinesMachine;
 		return (IRefinesMachine) element;
 	}
@@ -40,17 +41,17 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getRefinesMachine(element).getAbstractMachineName();
+		return asRefinesMachine(element).getAbstractMachineName();
 	}
 
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesMachine(element).setAbstractMachineName(str, null);
+		asRefinesMachine(element).setAbstractMachineName(str, null);
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
-		final IRefinesMachine refines = getRefinesMachine(element);
+		final IRefinesMachine refines = asRefinesMachine(element);
 		List<String> results = new ArrayList<String>();
 		IMachineRoot machine = (IMachineRoot) refines.getParent();
 		String machineName = machine.getRodinFile().getBareName();
@@ -76,12 +77,11 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getRefinesMachine(element).removeAttribute(
-				EventBAttributes.TARGET_ATTRIBUTE, monitor);
+		asRefinesMachine(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getRefinesMachine(element).hasAbstractMachineName();
+		return asRefinesMachine(element).hasAbstractMachineName();
 	}
 }

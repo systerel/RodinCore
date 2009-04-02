@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.EventBAttributes;
-import org.eventb.core.IExtendsContext;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
@@ -25,8 +25,8 @@ import org.rodinp.core.RodinDBException;
 public class SeesContextNameAttributeManipulation extends AbstractContextManipulation<ISeesContext> {
 
 	@Override
-	protected ISeesContext getContextElement(IRodinElement element) {
-		assert element instanceof IExtendsContext;
+	protected ISeesContext asContextClause(IRodinElement element) {
+		assert element instanceof ISeesContext;
 		return (ISeesContext) element;
 	}
 	
@@ -37,12 +37,12 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getContextElement(element).getSeenContextName();
+		return asContextClause(element).getSeenContextName();
 	}
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getContextElement(element).setSeenContextName(newValue, monitor);
+		asContextClause(element).setSeenContextName(newValue, monitor);
 	}
 	
 	@Override
@@ -58,11 +58,11 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getContextElement(element).removeAttribute(EventBAttributes.TARGET_ATTRIBUTE, monitor);
+		asContextClause(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getContextElement(element).hasSeenContextName();
+		return asContextClause(element).hasSeenContextName();
 	}
 }

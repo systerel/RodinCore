@@ -22,24 +22,24 @@ import org.rodinp.core.RodinDBException;
 public class ExpressionAttributeManipulation extends AbstractAttributeManipulation implements
 		IAttributeManipulation {
 
-	private IExpressionElement getExpression(IRodinElement element) {
+	private IExpressionElement asExpression(IRodinElement element) {
 		assert element instanceof IExpressionElement;
 		return (IExpressionElement) element;
 	}
 	
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getExpression(element).getExpressionString();
+		return asExpression(element).getExpressionString();
 	}
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getExpression(element).setExpressionString(newValue, monitor);
+		asExpression(element).setExpressionString(newValue, monitor);
 	}
 
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getExpression(element).setExpressionString("", monitor);
+		asExpression(element).setExpressionString("", monitor);
 	}
 
 	public void removeAttribute(IRodinElement element,
@@ -56,7 +56,7 @@ public class ExpressionAttributeManipulation extends AbstractAttributeManipulati
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getExpression(element).hasExpressionString();
+		return asExpression(element).hasExpressionString();
 
 	}
 	

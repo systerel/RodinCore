@@ -22,24 +22,24 @@ import org.rodinp.core.RodinDBException;
 public class AssignmentAttributeManipulation extends AbstractAttributeManipulation
 		implements IAttributeManipulation {
 
-	private IAssignmentElement getAssignment(IRodinElement element) {
+	private IAssignmentElement asAssignment(IRodinElement element) {
 		assert element instanceof IAssignmentElement;
 		return (IAssignmentElement) element;
 	}
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getAssignment(element).setAssignmentString(newValue, monitor);
+		asAssignment(element).setAssignmentString(newValue, monitor);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getAssignment(element).getAssignmentString();
+		return asAssignment(element).getAssignmentString();
 	}
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		getAssignment(element).setAssignmentString("", monitor);
+		asAssignment(element).setAssignmentString("", monitor);
 	}
 
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
@@ -55,7 +55,7 @@ public class AssignmentAttributeManipulation extends AbstractAttributeManipulati
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getAssignment(element).hasAssignmentString();
+		return asAssignment(element).hasAssignmentString();
 	}
 
 }

@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
@@ -30,7 +31,7 @@ import org.rodinp.core.RodinDBException;
 public class RefinesEventAbstractEventLabelAttributeManipulation extends
 		AbstractAttributeManipulation implements IAttributeManipulation {
 
-	private IRefinesEvent getRefinesEvent(IRodinElement element) {
+	private IRefinesEvent asRefinesEvent(IRodinElement element) {
 		assert element instanceof IRefinesEvent;
 		return (IRefinesEvent) element;
 	}
@@ -38,18 +39,18 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		IEvent event = (IEvent) element.getParent();
-		getRefinesEvent(element).setAbstractEventLabel(event.getLabel(),
+		asRefinesEvent(element).setAbstractEventLabel(event.getLabel(),
 				monitor);
 	}
 
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getRefinesEvent(element).getAbstractEventLabel();
+		return asRefinesEvent(element).getAbstractEventLabel();
 	}
 
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesEvent(element).setAbstractEventLabel(newValue,
+		asRefinesEvent(element).setAbstractEventLabel(newValue,
 				new NullProgressMonitor());
 	}
 
@@ -79,12 +80,11 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
-		getRefinesEvent(element).removeAttribute(
-				EventBAttributes.TARGET_ATTRIBUTE, monitor);
+		asRefinesEvent(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
-		return getRefinesEvent(element).hasAbstractEventLabel();
+		return asRefinesEvent(element).hasAbstractEventLabel();
 	}
 }
