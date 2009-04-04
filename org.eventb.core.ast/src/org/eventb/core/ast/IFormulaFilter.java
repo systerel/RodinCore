@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast;
 
 /**
@@ -124,6 +128,15 @@ public interface IFormulaFilter {
 	 * @return <code>true</code> iff the given predicate passes the criterion
 	 */
 	boolean select(LiteralPredicate predicate);
+
+	/**
+	 * Tells whether the given predicate passes this filter criterion.
+	 * 
+	 * @param predicate
+	 *            predicate to test
+	 * @return <code>true</code> iff the given predicate passes the criterion
+	 */
+	boolean select(MultiplePredicate predicate);
 
 	/**
 	 * Tells whether the given expression passes this filter criterion.

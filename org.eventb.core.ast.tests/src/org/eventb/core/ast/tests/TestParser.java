@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -30,6 +31,7 @@ import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -45,6 +47,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
@@ -68,6 +71,7 @@ public class TestParser extends AbstractTests {
 	private static FreeIdentifier id_T = mFreeIdentifier("T");
 	private static FreeIdentifier id_f = mFreeIdentifier("f");
 	private static FreeIdentifier id_filter = mFreeIdentifier("filter");
+	private static FreeIdentifier id_partition = mFreeIdentifier("partition");
 	
 	private static BoundIdentDecl bd_x = mBoundIdentDecl("x");
 	private static BoundIdentDecl bd_y = mBoundIdentDecl("y");
@@ -79,6 +83,7 @@ public class TestParser extends AbstractTests {
 	private static BoundIdentDecl bd_xp = mBoundIdentDecl("x'");
 	private static BoundIdentDecl bd_yp = mBoundIdentDecl("y'");
 	private static BoundIdentDecl bd_zp = mBoundIdentDecl("z'");
+	private static BoundIdentDecl bd_partition = mBoundIdentDecl("partition");
 
 	private static BoundIdentifier b0 = mBoundIdentifier(0);
 	private static BoundIdentifier b1 = mBoundIdentifier(1);
@@ -89,22 +94,42 @@ public class TestParser extends AbstractTests {
 	
 	private static Type INT = ff.makeIntegerType();
 	
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
 	static SourceLocationChecker slChecker = new SourceLocationChecker();
 	
 	private static abstract class TestPair {
-		private String image;
-		private Formula<?> expected;
+
+		private static final LanguageVersion[] VERSIONS
+				= LanguageVersion.values();
+
+		private final String image;
+		private final Formula<?>[] expects;
 
 		TestPair(String image, Formula<?> expected) {
+			this(image, new Formula<?>[] { expected, expected });
+		}
+		TestPair(String image, Formula<?>[] expects) {
 			this.image = image;
-			this.expected = expected;
+			this.expects = expects;
+			assertEquals(VERSIONS.length, expects.length);
 		}
 		final void verify() {
-			final Formula<?> parsedFormula = parseAndCheck(image);
+			for (int i = 0; i < VERSIONS.length; ++i) {
+				final LanguageVersion version = VERSIONS[i];
+				final Formula<?> expected = expects[i];
+				if (expected == null) {
+					verifyFailure(version);
+				} else {
+					verify(version, expected);
+				}
+			}
+		}
+		final void verifyFailure(LanguageVersion version) {
+			final IParseResult result = parseResult(image, version);
+			assertTrue(result.hasProblem());
+			assertFalse(result.isSuccess());
+		}
+		final void verify(LanguageVersion version, Formula<?> exp) {
+			final Formula<?> parsedFormula = parseAndCheck(image, version, exp);
 			
 			// Verify that source locations are properly nested
 			parsedFormula.accept(slChecker);
@@ -113,23 +138,32 @@ public class TestParser extends AbstractTests {
 			// whole substring.
 			final SourceLocation loc = parsedFormula.getSourceLocation();
 			final String subImage = image.substring(loc.getStart(), loc.getEnd() + 1);
-			parseAndCheck(subImage);
+			parseAndCheck(subImage, version, exp);
 		}
-		final Formula<?> parseAndCheck(String stringToParse) {
-			Formula<?> actual = parse(stringToParse);
+		final Formula<?> parseAndCheck(String stringToParse,
+				LanguageVersion version, Formula<?> expected) {
+			Formula<?> actual = parse(stringToParse, version);
 			assertEquals("Unexpected parser result", expected, actual);
 			return actual;
 		}
-		abstract Formula<?> parse(String stringToParse);
+		abstract Formula<?> parse(String input, LanguageVersion version);
+		abstract IParseResult parseResult(String input, LanguageVersion version);
 	}
 	
 	private static class ExprTestPair extends TestPair {
 		ExprTestPair(String image, Expression expected) {
 			super(image, expected);
 		}
+		ExprTestPair(String image, Expression... expects) {
+			super(image, expects);
+		}
 		@Override 
-		Formula<?> parse(String image) {
-			return parseExpression(image);
+		Formula<?> parse(String input, LanguageVersion version) {
+			return parseExpression(input, version);
+		}
+		@Override 
+		IParseResult parseResult(String input, LanguageVersion version) {
+			return ff.parseExpression(input, version, null);
 		}
 	}
 	
@@ -137,9 +171,16 @@ public class TestParser extends AbstractTests {
 		PredTestPair(String image, Predicate expected) {
 			super(image, expected);
 		}
+		PredTestPair(String image, Predicate... expects) {
+			super(image, expects);
+		}
 		@Override 
-		Formula<?> parse(String image) {
-			return parsePredicate(image);
+		Formula<?> parse(String input, LanguageVersion version) {
+			return parsePredicate(input, version);
+		}
+		@Override 
+		IParseResult parseResult(String input, LanguageVersion version) {
+			return ff.parsePredicate(input, version, null);
 		}
 	}
 	
@@ -147,16 +188,17 @@ public class TestParser extends AbstractTests {
 		AssignmentTestPair(String image, Assignment expected) {
 			super(image, expected);
 		}
-		@Override 
-		Formula<?> parse(String image) {
-			return parseAssignment(image);
+		AssignmentTestPair(String image, Assignment... expects) {
+			super(image, expects);
 		}
-	}
-	
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+		@Override 
+		Formula<?> parse(String input, LanguageVersion version) {
+			return parseAssignment(input, version);
+		}
+		@Override 
+		IParseResult parseResult(String input, LanguageVersion version) {
+			return ff.parseAssignment(input, version, null);
+		}
 	}
 	
 	/*
@@ -169,7 +211,7 @@ public class TestParser extends AbstractTests {
 	 * CONVERSE BOOL TRUE FALSE KPRED KSUCC MOD KBOOL KCARD KUNION KINTER KDOM
 	 * KRAN KID KFINITE KPRJ1 KPRJ2 KMIN KMAX DOT FREE_IDENT INTLIT
 	 */
-	PredTestPair[] preds = new PredTestPair[]{
+	TestPair[] preds = new TestPair[]{
 			// AtomicPredicate
 			new PredTestPair(
 					"\u22a5", 
@@ -247,6 +289,33 @@ public class TestParser extends AbstractTests {
 					mAssociativePredicate(Formula.LOR, bfalse, bfalse, bfalse) 
 			),
 			
+			// MultiplePredicate
+			new PredTestPair(
+					"partition(x)", 
+					null,
+					mMultiplePredicate(Formula.KPARTITION, id_x)
+			), new ExprTestPair(
+					"partition(x)", 
+					mBinaryExpression(Formula.FUNIMAGE, id_partition, id_x),
+					null
+			), new PredTestPair(
+					"partition(x, y)", 
+					null,
+					mMultiplePredicate(Formula.KPARTITION, id_x, id_y)
+			), new PredTestPair(
+					"partition(x, y, z)",
+					null,
+					mMultiplePredicate(Formula.KPARTITION, id_x, id_y, id_z)
+			), new PredTestPair(
+					"\u2200partition\u00b7partition(x)=y",
+					mQuantifiedPredicate(Formula.FORALL, mList(bd_partition),
+							mRelationalPredicate(Formula.EQUAL,
+									mBinaryExpression(Formula.FUNIMAGE, b0, id_x),
+									id_y)
+					),
+					null
+			),
+
 			// UnquantifiedPredicate
 			new PredTestPair(
 					"\u22a5\u21d2\u22a5", 
@@ -379,6 +448,7 @@ public class TestParser extends AbstractTests {
 			),
 	};
 
+	@SuppressWarnings("deprecation")
 	ExprTestPair[] exprs = new ExprTestPair[] {
 			// SimpleExpression
 			new ExprTestPair(
@@ -407,13 +477,19 @@ public class TestParser extends AbstractTests {
 					mUnaryExpression(Formula.KRAN, id_x) 
 			), new ExprTestPair(
 					"prj1(x)", 
-					mUnaryExpression(Formula.KPRJ1, id_x) 
+					mUnaryExpression(Formula.KPRJ1, id_x),
+					mBinaryExpression(Formula.FUNIMAGE,
+							mAtomicExpression(Formula.KPRJ1_GEN), id_x)
 			), new ExprTestPair(
 					"prj2(x)", 
-					mUnaryExpression(Formula.KPRJ2, id_x) 
+					mUnaryExpression(Formula.KPRJ2, id_x),
+					mBinaryExpression(Formula.FUNIMAGE,
+							mAtomicExpression(Formula.KPRJ2_GEN), id_x)
 			), new ExprTestPair(
 					"id(x)", 
-					mUnaryExpression(Formula.KID, id_x) 
+					mUnaryExpression(Formula.KID, id_x),
+					mBinaryExpression(Formula.FUNIMAGE,
+							mAtomicExpression(Formula.KID_GEN), id_x)
 			), new ExprTestPair(
 					"(x)", 
 					id_x 
@@ -486,6 +562,18 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"succ", 
 					mAtomicExpression(Formula.KSUCC) 
+			), new ExprTestPair(
+					"prj1",
+					null,
+					mAtomicExpression(Formula.KPRJ1_GEN)
+			), new ExprTestPair(
+					"prj2",
+					null,
+					mAtomicExpression(Formula.KPRJ2_GEN)
+			), new ExprTestPair(
+					"id",
+					null,
+					mAtomicExpression(Formula.KID_GEN)
 			), new ExprTestPair(
 					"2", 
 					mIntegerLiteral(2) 
@@ -738,6 +826,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.TREL, 
 							mBinaryExpression(Formula.TREL, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\ue101y", 
 					mBinaryExpression(Formula.SREL, id_x, id_y) 					
@@ -746,6 +835,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.SREL, 
 							mBinaryExpression(Formula.SREL, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\ue102y", 
 					mBinaryExpression(Formula.STREL, id_x, id_y) 					
@@ -754,6 +844,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.STREL, 
 							mBinaryExpression(Formula.STREL, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u2900y", 
 					mBinaryExpression(Formula.PSUR, id_x, id_y) 					
@@ -762,6 +853,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.PSUR, 
 							mBinaryExpression(Formula.PSUR, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u2914y", 
 					mBinaryExpression(Formula.PINJ, id_x, id_y) 					
@@ -770,6 +862,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.PINJ, 
 							mBinaryExpression(Formula.PINJ, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u2916y", 
 					mBinaryExpression(Formula.TBIJ, id_x, id_y) 					
@@ -778,6 +871,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.TBIJ, 
 							mBinaryExpression(Formula.TBIJ, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u2192y", 
 					mBinaryExpression(Formula.TFUN, id_x, id_y) 					
@@ -786,6 +880,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.TFUN, 
 							mBinaryExpression(Formula.TFUN, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u2194y", 
 					mBinaryExpression(Formula.REL, id_x, id_y) 					
@@ -794,6 +889,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.REL, 
 							mBinaryExpression(Formula.REL, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u21a0y", 
 					mBinaryExpression(Formula.TSUR, id_x, id_y) 					
@@ -802,6 +898,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.TSUR, 
 							mBinaryExpression(Formula.TSUR, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u21a3y", 
 					mBinaryExpression(Formula.TINJ, id_x, id_y) 					
@@ -810,6 +907,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.TINJ, 
 							mBinaryExpression(Formula.TINJ, id_x, id_y), id_z
 					) 					
+					, null
 			), new ExprTestPair(
 					"x\u21f8y", 
 					mBinaryExpression(Formula.PFUN, id_x, id_y) 					
@@ -818,6 +916,7 @@ public class TestParser extends AbstractTests {
 					mBinaryExpression(Formula.PFUN, 
 							mBinaryExpression(Formula.PFUN, id_x, id_y), id_z
 					) 					
+					, null
 			),
 			
 			// PairExpr
@@ -1110,9 +1209,7 @@ public class TestParser extends AbstractTests {
 		testList(assigns);
 		
 		for (String input: invalidExprs) {
-			IParseResult result = ff.parseExpression(input);
-			assertFailure("Parser should have failed", result);
-			assertNull("Parser should have no output", result.getParsedExpression());
+			new ExprTestPair(input, (Expression) null).verify();
 		}
 	}
 }

@@ -1,11 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.INTEGER;
+import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.MAPSTO;
-import static org.eventb.core.ast.tests.FastFactory.ff;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
@@ -17,17 +28,14 @@ import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 
 import java.util.HashMap;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
-public class TestSourceLocation extends TestCase {
+public class TestSourceLocation extends AbstractTests {
 
 	public final void testContains() {
 		SourceLocation s11 = new SourceLocation(1, 1);
@@ -72,22 +80,6 @@ public class TestSourceLocation extends TestCase {
 		assertFalse(s11.equals(s01));
 	}
 
-	/*
-	 * Parse the given formula.
-	 */
-	private Formula<?> parseFormula(String input) {
-		IParseResult result = ff.parsePredicate(input);
-		if (result.isSuccess()) {
-			return result.getParsedPredicate();
-		}
-		result = ff.parseExpression(input);
-		if (result.isSuccess()) {
-			return result.getParsedExpression();
-		}
-		fail("Not a predicate, nor an expression.");
-		return null;
-	}
-	
 	private void addAllPairs(HashMap<SourceLocation, Formula<?>> pairs,
 			final int start, final int end, Formula<?> sub) {
 
@@ -135,19 +127,14 @@ public class TestSourceLocation extends TestCase {
 		testAllLocations(formula, max, children);
 	}
 
-	private void assertPositions(String input, Object... args) {
-		Formula<?> formula = parseFormula(input);
-		HashMap<SourceLocation, Formula<?>> children =
-			new HashMap<SourceLocation, Formula<?>>();
-		int idx = 0;
-		while (idx < args.length) {
-			final int start = (Integer) args[idx++];
-			final int end = (Integer) args[idx++];
-			final Formula<?> sub = (Formula<?>) args[idx++];
-			addAllPairs(children, start, end, sub);
-		}
+	private void assertPositionsE(String input, Object... args) {
+		Formula<?> formula = parseExpression(input);
+		assertPositions(formula, input.length(), args);
+	}
 
-		testAllLocations(formula, input.length(), children);
+	private void assertPositionsP(String input, Object... args) {
+		Formula<?> formula = parsePredicate(input);
+		assertPositions(formula, input.length(), args);
 	}
 
 	private final BoundIdentDecl bd_x = mBoundIdentDecl("x");
@@ -169,24 +156,25 @@ public class TestSourceLocation extends TestCase {
 	 */
 	public void testGetPosition() {
 		// AssociativeExpression
-		assertPositions("x+y", 0, 0, id_x, 2, 2, id_y);
-		assertPositions("x+y+z", 0, 0, id_x, 2, 2, id_y, 4, 4, id_z);
+		assertPositionsE("x+y", 0, 0, id_x, 2, 2, id_y);
+		assertPositionsE("x+y+z", 0, 0, id_x, 2, 2, id_y, 4, 4, id_z);
 		
 		// AssociativePredicate
-		assertPositions("⊤∧⊥", 0, 0, btrue, 2, 2, bfalse);
-		assertPositions("⊤∧⊥∧⊤", 0, 0, btrue, 2, 2, bfalse, 4, 4, btrue);
+		assertPositionsP("⊤∧⊥", 0, 0, btrue, 2, 2, bfalse);
+		assertPositionsP("⊤∧⊥∧⊤", 0, 0, btrue, 2, 2, bfalse, 4, 4, btrue);
 		
 		// AtomicExpression
-		assertPositions("ℤ", 0, 0, mAtomicExpression(INTEGER));
+		assertPositionsE("ℤ", 0, 0, mAtomicExpression(INTEGER));
+		assertPositionsE("id", 0, 1, mAtomicExpression(KID_GEN));
 		
 		// BinaryExpression
-		assertPositions("x−y", 0, 0, id_x, 2, 2, id_y);
+		assertPositionsE("x−y", 0, 0, id_x, 2, 2, id_y);
 
 		// BinaryPredicate
-		assertPositions("⊤⇒⊥", 0, 0, btrue, 2, 2, bfalse);
+		assertPositionsP("⊤⇒⊥", 0, 0, btrue, 2, 2, bfalse);
 		
 		// BoolExpression
-		assertPositions("bool(⊤)", 5, 5, btrue);
+		assertPositionsE("bool(⊤)", 5, 5, btrue);
 		
 		// BoundIdentDecl
 		assertPositions(ff.makeBoundIdentDecl("x", new SourceLocation(0,0)), 1,
@@ -199,51 +187,55 @@ public class TestSourceLocation extends TestCase {
 				0, 3, b0);
 
 		// FreeIdentifier
-		assertPositions("x", 0, 0, id_x);
-		assertPositions("foo");
+		assertPositionsE("x", 0, 0, id_x);
+		assertPositionsE("foo");
 
 		// IntegerLiteral
-		assertPositions("1", 0, 0, mIntegerLiteral(1));
-		assertPositions("1024", 0, 3, mIntegerLiteral(1024));
+		assertPositionsE("1", 0, 0, mIntegerLiteral(1));
+		assertPositionsE("1024", 0, 3, mIntegerLiteral(1024));
 
 		// LiteralPredicate
-		assertPositions("⊤", 0, 0, btrue);
+		assertPositionsP("⊤", 0, 0, btrue);
+
+		// MultiplePredicate
+		assertPositionsP("partition(x)", 10, 10, id_x);
+		assertPositionsP("partition(x,y)", 10, 10, id_x, 12, 12, id_y);
 
 		// QuantifiedExpression
-		assertPositions("⋃x·⊤∣x", 1,1, bd_x, 3,3, btrue, 5,5, b0);
-		assertPositions("⋃x,y·⊤∣y", 1,1, bd_x, 3,3, bd_y, 5,5, btrue, 7,7, b0);
+		assertPositionsE("⋃x·⊤∣x", 1,1, bd_x, 3,3, btrue, 5,5, b0);
+		assertPositionsE("⋃x,y·⊤∣y", 1,1, bd_x, 3,3, bd_y, 5,5, btrue, 7,7, b0);
 
-		assertPositions("⋃x∣⊤", 1,1, b0, 3,3, btrue);
-		assertPositions("⋃x∪y∣⊤", 1,3, union10, 1,1, b1, 3,3, b0, 5,5, btrue);
+		assertPositionsE("⋃x∣⊤", 1,1, b0, 3,3, btrue);
+		assertPositionsE("⋃x∪y∣⊤", 1,3, union10, 1,1, b1, 3,3, b0, 5,5, btrue);
 
-		assertPositions("{x·⊤∣x}", 1,1, bd_x, 3,3, btrue, 5,5, b0);
-		assertPositions("{x∣⊤}", 1,1, b0, 3,3, btrue);
-		assertPositions("λx·⊤∣x", 1,1, b0, 3,3, btrue, 5,5, b0);
-		assertPositions("λx↦y·⊤∣x∪y",
+		assertPositionsE("{x·⊤∣x}", 1,1, bd_x, 3,3, btrue, 5,5, b0);
+		assertPositionsE("{x∣⊤}", 1,1, b0, 3,3, btrue);
+		assertPositionsE("λx·⊤∣x", 1,1, b0, 3,3, btrue, 5,5, b0);
+		assertPositionsE("λx↦y·⊤∣x∪y",
 				1,3, map10, 1,1, b1, 3,3, b0,
 				5,5, btrue,
 				7,9, union10, 7,7, b1, 9,9, b0);
 		
 		// QuantifiedPredicate
-		assertPositions("∀x·⊤", 1,1, bd_x, 3,3, btrue);
-		assertPositions("∀x,y·⊤", 1,1, bd_x, 3,3, bd_y, 5,5, btrue);
+		assertPositionsP("∀x·⊤", 1,1, bd_x, 3,3, btrue);
+		assertPositionsP("∀x,y·⊤", 1,1, bd_x, 3,3, bd_y, 5,5, btrue);
 
 		// RelationalPredicate
-		assertPositions("x=y", 0,0, id_x, 2,2, id_y);
+		assertPositionsP("x=y", 0,0, id_x, 2,2, id_y);
 
 		// SetExtension
-		assertPositions("{}");
-		assertPositions("{x}", 1,1, id_x);
-		assertPositions("{x,y}", 1,1, id_x, 3,3, id_y);
+		assertPositionsE("{}");
+		assertPositionsE("{x}", 1,1, id_x);
+		assertPositionsE("{x,y}", 1,1, id_x, 3,3, id_y);
 
 		// SimplePredicate
-		assertPositions("finite(x)", 7,7, id_x);
+		assertPositionsP("finite(x)", 7,7, id_x);
 
 		// UnaryExpression
-		assertPositions("ℙ(x)", 2,2, id_x);
+		assertPositionsE("ℙ(x)", 2,2, id_x);
 
 		// UnaryPredicate
-		assertPositions("¬⊤", 1,1, btrue);
+		assertPositionsP("¬⊤", 1,1, btrue);
 	}
 
 }

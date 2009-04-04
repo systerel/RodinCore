@@ -10,6 +10,18 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.CONVERSE;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.UNMINUS;
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -54,7 +66,7 @@ public class TestOrigin extends AbstractTests {
 	private static BoundIdentifier b1 = mBoundIdentifier(1);
 	private static BoundIdentifier b2 = mBoundIdentifier(2);
 	
-	private static LiteralPredicate bfalse = mLiteralPredicate(Formula.BFALSE);
+	private static LiteralPredicate bfalse = mLiteralPredicate(BFALSE);
 
 	private static abstract class TestAllOrigins {
 		private String image;
@@ -81,7 +93,7 @@ public class TestOrigin extends AbstractTests {
 
 		@Override
 		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parseExpression(image, this);
+			IParseResult result = ff.parseExpression(image, LATEST, this);
 			assertSuccess("Parse failed for " + image, result);
 			final Expression actual = result.getParsedExpression();
 			assertEquals("Unexpected parser result origin", this,
@@ -100,7 +112,7 @@ public class TestOrigin extends AbstractTests {
 
 		@Override
 		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parsePredicate(image, this);
+			IParseResult result = ff.parsePredicate(image, LATEST, this);
 			assertSuccess("Parse failed for " + image, result);
 			final Predicate actual = result.getParsedPredicate();
 			assertEquals("Unexpected parser result", this, actual
@@ -119,18 +131,13 @@ public class TestOrigin extends AbstractTests {
 
 		@Override
 		Formula<?> parseAndCheck(String image) {
-			IParseResult result = ff.parseAssignment(image, this);
+			IParseResult result = ff.parseAssignment(image, LATEST, this);
 			assertSuccess("Parse failed for " + image, result);
 			final Assignment actual = result.getParsedAssignment();
 			assertSame("Unexpected parser result", this, actual
 					.getSourceLocation().getOrigin());
 			return actual;
 		}
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
 	}
 
 	PredTestOrigin[] predsOrigin = new PredTestOrigin[]{
@@ -140,18 +147,18 @@ public class TestOrigin extends AbstractTests {
 					bfalse
 			), new PredTestOrigin(
 					"\u00ac\u00ac\u22a5", 
-					mUnaryPredicate(Formula.NOT, 
-							mUnaryPredicate(Formula.NOT, bfalse)
+					mUnaryPredicate(NOT, 
+							mUnaryPredicate(NOT, bfalse)
 					)
 			), new PredTestOrigin(
 					"∀x·x ∈ S ∧ (∀x·x ∈ T)",
-					mQuantifiedPredicate(Formula.FORALL,
+					mQuantifiedPredicate(FORALL,
 							mList(bd_x),
-							mAssociativePredicate(Formula.LAND,
-									mRelationalPredicate(Formula.IN, b0, id_S),
-									mQuantifiedPredicate(Formula.FORALL,
+							mAssociativePredicate(LAND,
+									mRelationalPredicate(IN, b0, id_S),
+									mQuantifiedPredicate(FORALL,
 											mList(bd_x),
-											mRelationalPredicate(Formula.IN, b0, id_T)
+											mRelationalPredicate(IN, b0, id_T)
 									)
 							)
 					)
@@ -166,16 +173,16 @@ public class TestOrigin extends AbstractTests {
 					mBoolExpression(bfalse)
 			), new ExprTestOrigin(
 					"−x+y+z", 
-					mAssociativeExpression(Formula.PLUS, 
-							mUnaryExpression(Formula.UNMINUS, id_x), 
+					mAssociativeExpression(PLUS, 
+							mUnaryExpression(UNMINUS, id_x), 
 							id_y, 
 							id_z
 					) 
 			), new ExprTestOrigin(
 					"(f(x))∼[y]", 
-					mBinaryExpression(Formula.RELIMAGE,
-							mUnaryExpression(Formula.CONVERSE,
-									mBinaryExpression(Formula.FUNIMAGE,
+					mBinaryExpression(RELIMAGE,
+							mUnaryExpression(CONVERSE,
+									mBinaryExpression(FUNIMAGE,
 											id_f, id_x)),
 							id_y)
 			),
@@ -188,10 +195,10 @@ public class TestOrigin extends AbstractTests {
 			), new AssignmentTestOrigin(
 					"x,y,z :\u2223 x' = y ∧ y' = z ∧ z' = x",
 					mBecomesSuchThat(mList(id_x, id_y, id_z), mList(bd_xp, bd_yp, bd_zp),
-							mAssociativePredicate(Formula.LAND,
-									mRelationalPredicate(Formula.EQUAL, b2, id_y),
-									mRelationalPredicate(Formula.EQUAL, b1, id_z),
-									mRelationalPredicate(Formula.EQUAL, b0, id_x)
+							mAssociativePredicate(LAND,
+									mRelationalPredicate(EQUAL, b2, id_y),
+									mRelationalPredicate(EQUAL, b1, id_z),
+									mRelationalPredicate(EQUAL, b0, id_x)
 							))
 			),
 	};

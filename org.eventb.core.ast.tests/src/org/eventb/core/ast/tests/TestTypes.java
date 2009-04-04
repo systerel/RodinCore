@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
+
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -137,7 +140,7 @@ public class TestTypes extends AbstractTests {
 	
 	public void testTypeParser() {
 		for (TestItem item : items) {
-			IParseResult result = ff.parseType(item.image);
+			IParseResult result = ff.parseType(item.image, LATEST);
 			assertSuccess(item.image, result);
 			assertNull(result.getParsedExpression());
 			assertEquals(item.type, result.getParsedType());
@@ -148,7 +151,7 @@ public class TestTypes extends AbstractTests {
 				"ℕ", "ℙ(ℕ)", "ℙ1(ℤ)", "S ⇸ T"
 		};
 		for (String input: illFormed) {
-			IParseResult result = ff.parseType(input);
+			IParseResult result = ff.parseType(input, LATEST);
 			assertFailure("parse should have failed", result);
 			assertNull(result.getParsedExpression());
 			assertNull(result.getParsedType());

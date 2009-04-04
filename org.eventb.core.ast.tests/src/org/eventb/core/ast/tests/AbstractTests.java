@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
@@ -20,6 +21,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
@@ -42,27 +44,44 @@ public abstract class AbstractTests extends TestCase {
 		assertTrue(message, result.hasProblem());
 	}
 
+	private static String makeFailMessage(String image, IParseResult result) {
+		return "Parse failed for " + image + " (parser "
+				+ result.getLanguageVersion() + "): " + result.getProblems();
+	}
+
 	public static Expression parseExpression(String image) {
-		final IParseResult result = ff.parseExpression(image);
-		assertSuccess("Parse failed for " + image, result);
+		return parseExpression(image, LATEST);
+	}
+	
+	public static Expression parseExpression(String image, LanguageVersion version) {
+		final IParseResult result = ff.parseExpression(image, version, null);
+		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedExpression();
 	}
 
 	public static Predicate parsePredicate(String image) {
-		final IParseResult result = ff.parsePredicate(image);
-		assertSuccess("Parse failed for " + image, result);
+		return parsePredicate(image, LATEST);
+	}
+	
+	public static Predicate parsePredicate(String image, LanguageVersion version) {
+		final IParseResult result = ff.parsePredicate(image, version, null);
+		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedPredicate();
 	}
-
+	
 	public static Assignment parseAssignment(String image) {
-		final IParseResult result = ff.parseAssignment(image);
-		assertSuccess("Parse failed for " + image, result);
+		return parseAssignment(image, LATEST);
+	}
+		
+	public static Assignment parseAssignment(String image, LanguageVersion version) {
+		final IParseResult result = ff.parseAssignment(image, version, null);
+		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedAssignment();
 	}
 
 	public static Type parseType(String image) {
-		final IParseResult result = ff.parseType(image);
-		assertSuccess("Parse failed for " + image, result);
+		final IParseResult result = ff.parseType(image, LATEST);
+		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedType();
 	}
 
@@ -93,6 +112,18 @@ public abstract class AbstractTests extends TestCase {
 	
 	public static ITypeEnvironment typeCheck(Formula<?> formula) {
 		return typeCheck(formula, ff.makeTypeEnvironment());
+	}
+
+	protected static Type POW(Type base) {
+		return ff.makePowerSetType(base);
+	}
+
+	protected static Type CPROD(Type left, Type right) {
+		return ff.makeProductType(left, right);
+	}
+
+	protected static Type REL(Type left, Type right) {
+		return ff.makeRelationalType(left, right);
 	}
 
 }

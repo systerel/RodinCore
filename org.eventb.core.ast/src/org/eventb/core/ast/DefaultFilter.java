@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast;
 
 /**
@@ -60,6 +64,10 @@ public class DefaultFilter implements IFormulaFilter {
 	}
 
 	public boolean select(LiteralPredicate predicate) {
+		return false;
+	}
+
+	public boolean select(MultiplePredicate predicate) {
 		return false;
 	}
 

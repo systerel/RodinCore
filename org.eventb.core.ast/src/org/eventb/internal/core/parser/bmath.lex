@@ -1,4 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.internal.core.parser;
+
+import static org.eventb.core.ast.LanguageVersion.V1;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -148,6 +161,12 @@ FullStop = "." | "\u2024"
 "ran"                 { return symbol(Parser._KRAN); }
 "succ"                { return symbol(Parser._KSUCC); }
 "union"               { return symbol(Parser._KUNION); }
+"partition"           { if (result.getLanguageVersion() == V1) {
+                           return symbol(Parser._IDENT);
+                        } else {
+                           return symbol(Parser._KPARTITION);
+                        }
+                      }
 {FullStop}            { return symbol(Parser._DOT); }
 {Identifier}{Prime}?  { return symbol(Parser._IDENT); }
 {IntegerLiteral}      { return symbol(Parser._INTLIT); }

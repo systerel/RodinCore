@@ -8,9 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -22,8 +25,12 @@ import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mId;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
+import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPrj1;
+import static org.eventb.core.ast.tests.FastFactory.mPrj2;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -42,12 +49,23 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 
-public class TestTypedEmptySet extends AbstractTests {
+/**
+ * Main test class for formulas containing generic atomic operators.
+ * 
+ * Tests have been entered in the same order as the type-checker
+ * specification in the Rodin Deliverable D7 "Event-B Language".
+ * 
+ * Only tests where an empty set can occur have been retained. For the other
+ * generic atomic operators (KID_GEN, KPRJ1_GEN, KPRJ2_GEN) only one test is
+ * present as they are parsed in the same way as empty sets.
+ */
+public class TestTypedGeneric extends AbstractTests {
 
 	// Types used in these tests
 	private static GivenType ty_S = ff.makeGivenType("S");
@@ -55,23 +73,8 @@ public class TestTypedEmptySet extends AbstractTests {
 	private static GivenType ty_U = ff.makeGivenType("U");
 	private static GivenType ty_V = ff.makeGivenType("V");
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static Type REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
-	}
-	
 	ITypeEnvironment env;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -79,26 +82,25 @@ public class TestTypedEmptySet extends AbstractTests {
 	}
 	
 	/**
-	 * Main test routine for expressions containing empty sets.
+	 * Main test routine for expressions containing generic atomic operators.
 	 * 
 	 * Tests have been entered in the same order as the type-checker
 	 * specification in the Rodin Deliverable D7 "Event-B Language".
-	 * 
-	 * Only tests where an empty set can occur have been retained.
 	 */
+	@SuppressWarnings("deprecation")
 	public void testExpressions () {
 
-		AtomicExpression eS = mEmptySet(POW(ty_S));
-		AtomicExpression eT = mEmptySet(POW(ty_T));
-		AtomicExpression ePS = mEmptySet(POW(POW(ty_S)));
-		AtomicExpression eST = mEmptySet(REL(ty_S, ty_T));
-		AtomicExpression eSU = mEmptySet(REL(ty_S, ty_U));
-		AtomicExpression eTU = mEmptySet(REL(ty_T, ty_U));
-		AtomicExpression eUV = mEmptySet(REL(ty_U, ty_V));
-		AtomicExpression ePST = mEmptySet(REL(POW(ty_S), ty_T));
+		final AtomicExpression eS = mEmptySet(POW(ty_S));
+		final AtomicExpression eT = mEmptySet(POW(ty_T));
+		final AtomicExpression ePS = mEmptySet(POW(POW(ty_S)));
+		final AtomicExpression eST = mEmptySet(REL(ty_S, ty_T));
+		final AtomicExpression eSU = mEmptySet(REL(ty_S, ty_U));
+		final AtomicExpression eTU = mEmptySet(REL(ty_T, ty_U));
+		final AtomicExpression eUV = mEmptySet(REL(ty_U, ty_V));
+		final AtomicExpression ePST = mEmptySet(REL(POW(ty_S), ty_T));
 
-		BoundIdentDecl bd_x = mBoundIdentDecl("x", POW(ty_S));
-		BoundIdentifier b0S = mBoundIdentifier(0, POW(ty_S));
+		final BoundIdentDecl bd_x = mBoundIdentDecl("x", POW(ty_S));
+		final BoundIdentifier b0S = mBoundIdentifier(0, POW(ty_S));
 
 		//--------------------
 		//  Binary expressions
@@ -166,11 +168,14 @@ public class TestTypedEmptySet extends AbstractTests {
 		
 		doTest(mUnaryExpression(Formula.KRAN, eST), POW(ty_T));
 		
-		doTest(mUnaryExpression(Formula.KPRJ1, eST), REL(CPROD(ty_S, ty_T), ty_S));
+		doTest(mUnaryExpression(Formula.KPRJ1, eST), REL(CPROD(ty_S, ty_T), ty_S),
+				V1);
 
-		doTest(mUnaryExpression(Formula.KPRJ2, eST), REL(CPROD(ty_S, ty_T), ty_T));
-		
-		doTest(mUnaryExpression(Formula.KID, eS), REL(ty_S, ty_S));
+		doTest(mUnaryExpression(Formula.KPRJ2, eST), REL(CPROD(ty_S, ty_T), ty_T),
+				V1);
+
+		doTest(mUnaryExpression(Formula.KID, eS), REL(ty_S, ty_S),
+				V1);
 
 		
 		//--------------------
@@ -203,21 +208,25 @@ public class TestTypedEmptySet extends AbstractTests {
 	}
 	
 	private void doTest(Expression expr, Type expected) {
+		doTest(expr, expected, LanguageVersion.values());
+	}
+	
+	private void doTest(Expression expr, Type expected, LanguageVersion... versions) {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		Expression actual = parseExpression(image);
-		typeCheck(actual, env);
-		assertEquals("Typed string is a different expression", expr, actual);
+		for (LanguageVersion version : versions) {
+			final Expression actual = parseExpression(image, version);
+			typeCheck(actual, env);
+			assertEquals("Typed string is a different expression", expr, actual);
+		}
 	}
 
 	/**
-	 * Main test routine for predicates.
+	 * Main test routine for predicates containing generic atomic operators.
 	 * 
 	 * Tests have been entered in the same order as the type-checker
 	 * specification in the Rodin Deliverable D7 "Event-B Language".
-	 * 
-	 * Only tests where an empty set can occur have been retained.
 	 */
 	public void testPredicates () {
 		
@@ -243,7 +252,13 @@ public class TestTypedEmptySet extends AbstractTests {
 		//  Unary predicate
 		//-----------------
 		doTest(mUnaryPredicate(Formula.NOT, atom));
-		
+
+		//-----------------
+		//  Multiple predicate
+		//-----------------
+		doTest(mMultiplePredicate(Formula.KPARTITION, eS), V2);
+		doTest(mMultiplePredicate(Formula.KPARTITION, eS, eS), V2);
+
 		//-----------------------
 		//  Quantified predicates
 		//-----------------------
@@ -280,12 +295,19 @@ public class TestTypedEmptySet extends AbstractTests {
 				mRelationalPredicate(Formula.EQUAL, b0S, eS)));
 	}
 	
+	// test on all parser versions
 	private void doTest(Predicate pred) {
+		doTest(pred, LanguageVersion.values());
+	}
+	
+	private void doTest(Predicate pred, LanguageVersion... versions) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		final Predicate actual = parsePredicate(image);
-		typeCheck(actual, env);
-		assertEquals("Typed string is a different predicate", pred, actual);
+		for (LanguageVersion version : versions) {
+			final Predicate actual = parsePredicate(image, version);
+			typeCheck(actual, env);
+			assertEquals("Typed string is a different predicate", pred, actual);
+		}
 	}
 
 	/**
@@ -341,9 +363,27 @@ public class TestTypedEmptySet extends AbstractTests {
 	private void doTest(Assignment assign) {
 		assertTrue("Input is not typed", assign.isTypeChecked());
 		final String image = assign.toStringWithTypes();
-		final Assignment actual = parseAssignment(image);
-		typeCheck(actual, env);
-		assertEquals("Typed string is a different predicate", assign, actual);
+		for (LanguageVersion version : LanguageVersion.values()) {
+			final Assignment actual = parseAssignment(image, version);
+			typeCheck(actual, env);
+			assertEquals("Typed string is a different predicate", assign, actual);
+		}
 	}
 
+	/**
+	 * The other generic atomic expressions (KPRJ1_GEN, KPRJ2_GEN and KID_GEN)
+	 * are parsed with the same code as empty set. We just ensure that they work
+	 * in the simplest case.
+	 */
+	public void testOtherGenericAtomicExpressions() throws Exception {
+		final Type rSTS = REL(CPROD(ty_S, ty_T), ty_S);
+		doTest(mPrj1(rSTS), rSTS, V2);
+		
+		final Type rSTT = REL(CPROD(ty_S, ty_T), ty_T);
+		doTest(mPrj2(rSTT), rSTT, V2);
+		
+		final Type rSS = REL(ty_S, ty_S);
+		doTest(mId(rSS), rSS, V2);
+	}
+	
 }

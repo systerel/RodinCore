@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - fixed bug in synthesizeType()
+ *     Systerel - mathematical language v2
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -219,9 +220,7 @@ public class AssociativeExpression extends Expression {
 		propagateLeft.set(Formula.KINTER);
 		propagateLeft.set(Formula.KDOM);
 		propagateLeft.set(Formula.KRAN);
-		propagateLeft.set(Formula.KPRJ1);
-		propagateLeft.set(Formula.KPRJ2);
-		propagateLeft.set(Formula.KID);
+		addDeprecatedUnaryTags(propagateLeft);
 		propagateLeft.set(Formula.KMIN);
 		propagateLeft.set(Formula.KMAX);
 		// is a relop
@@ -312,6 +311,13 @@ public class AssociativeExpression extends Expression {
 		propagateRight.set(Formula.UNMINUS);
 		leftNoParenthesesMap[Formula.MUL-firstTag] = (BitSet)propagateLeft.clone();
 		rightNoParenthesesMap[Formula.MUL-firstTag] = (BitSet)propagateRight.clone();
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void addDeprecatedUnaryTags(final BitSet bitset) {
+		bitset.set(Formula.KPRJ1);
+		bitset.set(Formula.KPRJ2);
+		bitset.set(Formula.KID);
 	}
 	
 	/**

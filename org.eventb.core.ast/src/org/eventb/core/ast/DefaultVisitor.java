@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast;
 
 /**
@@ -682,6 +685,18 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	public boolean visitKPRJ1_GEN(AtomicExpression expr) {
+		return true;
+	}
+
+	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
+		return true;
+	}
+
+	public boolean visitKID_GEN(AtomicExpression expr) {
+		return true;
+	}
+
 	public boolean enterKBOOL(BoolExpression expr) {
 		return true;
 	}
@@ -919,6 +934,18 @@ public class DefaultVisitor implements IVisitor {
 	}
 
 	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
+		return true;
+	}
+
+	public boolean enterKPARTITION(MultiplePredicate pred) {
+		return true;
+	}
+
+	public boolean continueKPARTITION(MultiplePredicate pred) {
+		return true;
+	}
+
+	public boolean exitKPARTITION(MultiplePredicate pred) {
 		return true;
 	}
 

@@ -8,16 +8,17 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.V1;
+
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.ASTProblem;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.internal.core.parser.ParseResult;
@@ -34,7 +35,7 @@ import org.eventb.internal.core.parser.Token;
  * @author François Terrier
  * 
  */
-public class TestLexer extends TestCase {
+public class TestLexer extends AbstractTests {
 
         private static final String[][] toBeLexed = {
                 { ""                   			 },	// _EOF
@@ -130,6 +131,7 @@ public class TestLexer extends TestCase {
                 { "prj2"			   			 },	// _KPRJ2
                 { "min"				   			 },	// _KMIN
                 { "max"				   			 },	// _KMAX
+                { "partition"				  	 }, // _KPARTITION
                 { ".", "\u2024"		   			 },	// _DOT
                 { "x", "_toto", "x'"  			 },	// _IDENT
                 { "2", "001"		   			 },	// _INTLIT
@@ -138,9 +140,19 @@ public class TestLexer extends TestCase {
         
         private static final String[] invalidStrings = new String[] {
         	"-",
+        	"/",
         };
         
-        /**
+        private static final int _KPARTITION = Parser.getPartitionT();
+        private static final int _IDENT = Parser.getIdentT();
+
+        private static int getExpectedKind(int kind, LanguageVersion version) {
+        	if (kind == _KPARTITION && version == V1)
+        		return _IDENT;
+        	return kind;
+        }
+
+       /**
          * Tests all the tokens that are needed to construct an event-B formula.
          */
         public void testToken() {
@@ -148,14 +160,21 @@ public class TestLexer extends TestCase {
         	// Check that all tokens are listed.
         	assertEquals("Length of string table", Parser.getMaxT(), toBeLexed.length);
         	
-        	// Check each token string through the lexical analyser.
-        	for (int kind = 0; kind < toBeLexed.length; ++ kind) {
+        	for (LanguageVersion version : LanguageVersion.values()) {
+        		testAllTokens(version);
+        	}
+        }
+
+        // Check each token string through the lexical analyzer.
+        private void testAllTokens(LanguageVersion version) {
+        	for (int kind = 0; kind < toBeLexed.length; ++kind) {
         		for (String str : toBeLexed[kind]) {
-        			ParseResult result = new ParseResult(FormulaFactory.getDefault());
+        			ParseResult result = new ParseResult(ff, version, null);
         			Scanner scanner = new Scanner(str, result);
         			Token t = scanner.Scan();
         			assertEquals(str, t.val);
-        			assertEquals(kind, t.kind);
+        			final String msg = "for " + str + " with language " + version;
+					assertEquals(msg, getExpectedKind(kind, version), t.kind);
         		}
         	}
         }
@@ -164,9 +183,14 @@ public class TestLexer extends TestCase {
          * Ensure that invalid tokens get rejected.
          */
         public void testInvalidStrings() {
-        	FormulaFactory ff = FormulaFactory.getDefault();
-        	for (String string : invalidStrings) {
-    			final IParseResult result = new ParseResult(ff);
+        	for (LanguageVersion version : LanguageVersion.values()) {
+        		testInvalidStrings(version);
+        	}
+        }
+
+		private void testInvalidStrings(LanguageVersion version) {
+			for (String string : invalidStrings) {
+    			final IParseResult result = new ParseResult(ff, version, null);
     			Scanner scanner = new Scanner(string, (ParseResult) result);
     			Token t = scanner.Scan();
     			assertTrue("Scanner should have succeeded", result.isSuccess());

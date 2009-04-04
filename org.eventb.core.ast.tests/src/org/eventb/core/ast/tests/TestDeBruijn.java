@@ -1,13 +1,18 @@
-/*
- * Created on 07-jul-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
-import junit.framework.TestCase;
+import org.eventb.core.ast.Predicate;
 
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 
 /**
  * Test the equivalence of various ways of expressing the same quantified
@@ -15,14 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
  * 
  * @author franz
  */
-public class TestDeBruijn extends TestCase {
-	private FormulaFactory formulaFactory;
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		formulaFactory = FormulaFactory.getDefault();
-	}
+public class TestDeBruijn extends AbstractTests {
 	
 	private class TestItem {
 		String[] inputs;
@@ -70,9 +68,8 @@ public class TestDeBruijn extends TestCase {
 	public void testDeBruijn() {
 		for (TestItem item : testItems) {
 			for (int i = 0; i < item.size() - 1; i++) {
-				Formula<?> form1 = formulaFactory.parsePredicate(item.get(i)).getParsedPredicate();
-				Formula<?> form2 = formulaFactory.parsePredicate(item.get(i + 1))
-						.getParsedPredicate();
+				Predicate form1 = parsePredicate(item.get(i));
+				Predicate form2 = parsePredicate(item.get(i + 1));
 				assertEquals("\nFirst input: " + item.get(i) + "\nFirst tree: "
 						+ form1.getSyntaxTree() + "\nSecond input: "
 						+ item.get(i + 1) + "\nSecond tree: "

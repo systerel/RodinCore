@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -277,9 +278,7 @@ public class BinaryExpression extends Expression {
 		propagateLeft.set(Formula.KINTER);
 		propagateLeft.set(Formula.KDOM);
 		propagateLeft.set(Formula.KRAN);
-		propagateLeft.set(Formula.KPRJ1);
-		propagateLeft.set(Formula.KPRJ2);
-		propagateLeft.set(Formula.KID);
+		addDeprecatedUnaryTags(propagateLeft);
 		propagateLeft.set(Formula.KMIN);
 		propagateLeft.set(Formula.KMAX);
 		// is a relop
@@ -323,7 +322,6 @@ public class BinaryExpression extends Expression {
 		temp.set(Formula.TBIJ);
 		commonTempRight = (BitSet)propagateRight.clone();
 		commonTempLeft = (BitSet)propagateLeft.clone();
-		commonTempLeft.or(temp);
 		
 		for(int i=temp.nextSetBit(0); i>=0; i=temp.nextSetBit(i+1)) {
 			leftNoParenthesesMap[i-firstTag] = commonTempLeft;
@@ -428,6 +426,13 @@ public class BinaryExpression extends Expression {
 		leftNoParenthesesMap[Formula.FUNIMAGE-firstTag] = (BitSet)propagateLeft.clone();
 		rightNoParenthesesMap[Formula.FUNIMAGE-firstTag] = (BitSet)propagateRight.clone();
 		
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void addDeprecatedUnaryTags(BitSet bitset) {
+		bitset.set(Formula.KPRJ1);
+		bitset.set(Formula.KPRJ2);
+		bitset.set(Formula.KID);
 	}
 	
 	@Override

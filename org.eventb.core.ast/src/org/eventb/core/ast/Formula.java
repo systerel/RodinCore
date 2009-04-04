@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract accept method for ISimpleVisitor
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -583,6 +584,30 @@ public abstract class Formula<T extends Formula<T>> {
 	public final static int KSUCC = FIRST_ATOMIC_EXPRESSION + 8;
 
 	/**
+	 * <code>KPRJ1_GEN</code> represents prj1
+	 * 
+	 * @see AtomicExpression
+	 * @since Math Language V2
+	 */
+	public static final int KPRJ1_GEN = FIRST_ATOMIC_EXPRESSION + 9;
+
+	/**
+	 * <code>KPRJ2_GEN</code> represents prj2
+	 * 
+	 * @see AtomicExpression
+	 * @since Math Language V2
+	 */
+	public static final int KPRJ2_GEN = FIRST_ATOMIC_EXPRESSION + 10;
+
+	/**
+	 * <code>KID_GEN</code> represents id
+	 * 
+	 * @see AtomicExpression
+	 * @since Math Language V2
+	 */
+	public static final int KID_GEN = FIRST_ATOMIC_EXPRESSION + 11;
+
+	/**
 	 * <code>KBOOL</code> represents a <code>bool</code> expression.
 	 * 
 	 * @see BoolExpression
@@ -698,21 +723,33 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>KPRJ1</code> represents prj1
 	 * 
 	 * @see UnaryExpression
+	 * @see #KPRJ1_GEN
+	 * @deprecated This operator has become generic in version 2 of the
+	 *             mathematical language
 	 */
+	@Deprecated
 	public final static int KPRJ1 = FIRST_UNARY_EXPRESSION + 7;
 
 	/**
 	 * <code>KPRJ2</code> represents prj2
 	 * 
 	 * @see UnaryExpression
+	 * @see #KPRJ2_GEN
+	 * @deprecated This operator has become generic in version 2 of the
+	 *             mathematical language
 	 */
+	@Deprecated
 	public final static int KPRJ2 = FIRST_UNARY_EXPRESSION + 8;
 
 	/**
 	 * <code>KID</code> represents id
 	 * 
 	 * @see UnaryExpression
+	 * @see #KID_GEN
+	 * @deprecated This operator has become generic in version 2 of the
+	 *             mathematical language
 	 */
+	@Deprecated
 	public final static int KID = FIRST_UNARY_EXPRESSION + 9;
 
 	/**
@@ -793,6 +830,22 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final static int EXISTS = FIRST_QUANTIFIED_PREDICATE + 1;
 	
+	/**
+	 * First tag for a multiple predicate.
+	 * 
+	 * @see MultiplePredicate
+	 * @since Math Language V2
+	 */
+	public final static int FIRST_MULTIPLE_PREDICATE = 901;
+
+	/**
+	 * <code>KPARTITION</code> represents a "partition" predicate.
+	 * 
+	 * @see MultiplePredicate
+	 * @since Math Language V2
+	 */
+	public final static int KPARTITION = FIRST_MULTIPLE_PREDICATE + 0;
+
 	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
 		new BoundIdentDecl[0];
 	

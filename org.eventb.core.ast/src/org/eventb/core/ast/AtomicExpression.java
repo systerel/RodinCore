@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - mathematical language v2
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -45,7 +46,10 @@ public class AtomicExpression extends Expression {
 		"FALSE",   // FALSE
 		"\u2205",  // EMPTYSET
 		"pred",    // KPRED
-		"succ"     // KSUCC
+		"succ",     // KSUCC
+		"prj1",		// PRJ1_GEN
+		"prj2",		// PRJ2_GEN
+		"id",		// KID_GEN
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
@@ -78,10 +82,7 @@ public class AtomicExpression extends Expression {
 			resultType = ff.makeBooleanType();
 			break;
 		case Formula.EMPTYSET:
-			if (givenType == null) {
-				return;
-			}
-			assert givenType instanceof PowerSetType;
+			assert givenType == null || givenType instanceof PowerSetType;
 			resultType = givenType;
 			break;
 		case Formula.KPRED:
@@ -91,19 +92,55 @@ public class AtomicExpression extends Expression {
 					ff.makeIntegerType()
 			);
 			break;
+		case Formula.KPRJ1_GEN:
+			if (givenType != null) {
+				assertPrjType(givenType, true);
+			}
+			resultType = givenType;
+			break;
+		case Formula.KPRJ2_GEN:
+			if (givenType != null) {
+				assertPrjType(givenType, false);
+			}
+			resultType = givenType;
+			break;
+		case Formula.KID_GEN:
+			if (givenType != null) {
+				final Type source = givenType.getSource();
+				assert source != null && source.equals(givenType.getTarget());
+			}
+			resultType = givenType;
+			break;
 		default:
 			assert false;
 			return;
 		}
-		setFinalType(resultType, givenType);
+		if (resultType != null) {
+			setFinalType(resultType, givenType);
+		}
 	}
-	
+
+	private static void assertPrjType(Type givenType, boolean left) {
+		final Type source = givenType.getSource();
+		final Type target = givenType.getTarget();
+		assert target != null && source instanceof ProductType;
+
+		final ProductType prodSource = (ProductType) source;
+		final Type child;
+		if (left) {
+			child = prodSource.getLeft();
+		} else {
+			child = prodSource.getRight();
+		}
+		assert target.equals(child);
+	}
+
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
 		
 		final String image = tags[getTag()-firstTag];
-		if (withTypes && getTag() == EMPTYSET && isTypeChecked()) {
+		if (withTypes && isTypeChecked() && isGeneric()) {
 			builder.append('(');
 			builder.append(image);
 			builder.append(" \u2982 ");
@@ -111,6 +148,18 @@ public class AtomicExpression extends Expression {
 			builder.append(')');
 		} else {
 			builder.append(image);
+		}
+	}
+
+	private boolean isGeneric() {
+		switch (getTag()) {
+		case EMPTYSET:
+		case KPRJ1_GEN:
+		case KPRJ2_GEN:
+		case KID_GEN:
+			return true;
+		default:
+			return false;
 		}
 	}
 
@@ -140,6 +189,8 @@ public class AtomicExpression extends Expression {
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
 
+		final TypeVariable alpha, beta;
+		final Type srcType;
 		final Type resultType;
 		switch (getTag()) {
 		case Formula.INTEGER:
@@ -155,7 +206,7 @@ public class AtomicExpression extends Expression {
 			resultType = result.makeBooleanType();
 			break;
 		case Formula.EMPTYSET:
-			TypeVariable alpha = result.newFreshVariable(getSourceLocation());
+			alpha = result.newFreshVariable(getSourceLocation());
 			resultType = result.makePowerSetType(alpha);
 			break;
 		case Formula.KPRED:
@@ -164,6 +215,22 @@ public class AtomicExpression extends Expression {
 					result.makeIntegerType(),
 					result.makeIntegerType()
 			);
+			break;
+		case Formula.KPRJ1_GEN:
+			alpha = result.newFreshVariable(getSourceLocation());
+			beta = result.newFreshVariable(getSourceLocation());
+			srcType = result.makeProductType(alpha, beta);
+			resultType = result.makeRelationalType(srcType, alpha);
+			break;
+		case Formula.KPRJ2_GEN:
+			alpha = result.newFreshVariable(getSourceLocation());
+			beta = result.newFreshVariable(getSourceLocation());
+			srcType = result.makeProductType(alpha, beta);
+			resultType = result.makeRelationalType(srcType, beta);
+			break;
+		case Formula.KID_GEN:
+			alpha = result.newFreshVariable(getSourceLocation());
+			resultType = result.makeRelationalType(alpha, alpha);
 			break;
 		default:
 			assert false;
@@ -211,6 +278,9 @@ public class AtomicExpression extends Expression {
 		case EMPTYSET: return visitor.visitEMPTYSET(this);
 		case KPRED:    return visitor.visitKPRED(this);
 		case KSUCC:    return visitor.visitKSUCC(this);
+		case KPRJ1_GEN:return visitor.visitKPRJ1_GEN(this);
+		case KPRJ2_GEN:return visitor.visitKPRJ2_GEN(this);
+		case KID_GEN:  return visitor.visitKID_GEN(this);
 		default:       return true;
 		}
 	}

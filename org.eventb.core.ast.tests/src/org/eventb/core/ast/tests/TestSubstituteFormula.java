@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -42,7 +43,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.Type;
 
 /**
  * @author halstefa
@@ -167,18 +167,6 @@ public class TestSubstituteFormula extends AbstractTests {
 	private static IntegerType tINTEGER = ff.makeIntegerType();
 	private static BooleanType tBOOL = ff.makeBooleanType();
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static Type REL(Type left, Type right) {
-		return POW(CPROD(left, right));
-	}
-	
 	static AtomicExpression INTEGER = ff.makeAtomicExpression(Formula.INTEGER, null);
 	
 	private static FreeIdentifier id_x = mFreeIdentifier("x", tINTEGER);

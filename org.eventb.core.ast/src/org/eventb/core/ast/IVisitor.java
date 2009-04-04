@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast;
 
 /**
@@ -2173,6 +2176,42 @@ public interface IVisitor {
 	boolean visitKSUCC(AtomicExpression expr);
 
 	/**
+	 * Visits a <code>KPRJ1_GEN</code> node.
+	 *
+	 * @param expr
+	 *             the node to visit
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean visitKPRJ1_GEN(AtomicExpression expr);
+
+	/**
+	 * Visits a <code>KPRJ2_GEN</code> node.
+	 *
+	 * @param expr
+	 *             the node to visit
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean visitKPRJ2_GEN(AtomicExpression expr);
+
+	/**
+	 * Visits a <code>KID_GEN</code> node.
+	 *
+	 * @param expr
+	 *             the node which is entered
+	 * @return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean visitKID_GEN(AtomicExpression expr);
+
+	/**
 	 * Enters a <code>KBOOL</code> node.
 	 *
 	 * @param expr
@@ -2899,5 +2938,42 @@ public interface IVisitor {
 	 * @see Formula#accept(IVisitor)
 	 */
 	boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign);
+
+	/**
+	 * Enters a <code>KPARTITION</code> node.
+	 *
+	 * @param pred
+	 *             the node which is entered
+	 * @return <code>false</code> to prevent visiting the children
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean enterKPARTITION(MultiplePredicate pred);
+
+	/**
+	 * Advances to the next child of a <code>KPARTITION</code> node.
+	 *
+	 * @param pred
+	 *             the parent node
+	 * @return <code>false</code> to prevent visiting the remaining
+	 *         children of the given node, <code>true</code> to continue
+	 *         visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean continueKPARTITION(MultiplePredicate pred);
+
+	/**
+	 * Exits a <code>KPARTITION</code> node.
+	 *
+	 * @param pred
+	 *             the node which is exited
+	 * @return <code>false</code> to prevent visiting the siblings
+	 *         of the given node, <code>true</code> to continue visiting.
+	 *
+	 * @see Formula#accept(IVisitor)
+	 */
+	boolean exitKPARTITION(MultiplePredicate pred);
 
 }

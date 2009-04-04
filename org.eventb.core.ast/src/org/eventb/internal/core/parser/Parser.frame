@@ -32,6 +32,7 @@ Coco/R itself) does not fall under the GNU General Public License.
 /**
  *  Implements a parser for the Event-B mathematical language.
  */
+@SuppressWarnings("deprecation")
 public class Parser {
 -->constants
 	static final boolean T = true;
@@ -50,14 +51,15 @@ public class Parser {
 	protected Token la;   // lookahead token
 	int errDist = minErrDist;
 	
-	Scanner scanner;
+	private final Scanner scanner;
 	
 	// this field configures the parser to parse some kind of formula,
 	// viz. Expression, Predicate, Assignment, or Type.
-	private Class<?> clazz;
+	private final Class<?> clazz;
 	
-	private ParseResult result;
-	private FormulaFactory factory;
+	private final ParseResult result;
+	private final FormulaFactory factory;
+	private final LanguageVersion version;
 	
 	/**
 	 * Returns the current parsing result.
@@ -84,6 +86,7 @@ public class Parser {
 		this.factory = result.factory;
 		this.clazz = clazz;
 		this.result = result;
+		this.version = result.version;
 		
 	    assert (clazz == Predicate.class ||
 	    		clazz == Expression.class ||

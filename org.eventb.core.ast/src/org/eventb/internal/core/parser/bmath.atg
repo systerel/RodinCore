@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
+import static org.eventb.core.ast.LanguageVersion.V1;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +27,12 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -97,10 +112,56 @@ COMPILER Bmath
         }
     }
 
-	// Returns true iff the next two tokens are EMPTYSET and TYPING
-	private boolean isTypedEmptySet() {
+	// Returns true iff the next two tokens are a generic operator and TYPING
+	private boolean isTypedGeneric() {
 		scanner.ResetPeek();
-		return la.kind == _EMPTYSET && scanner.Peek().kind == _TYPING;	
+		return isGeneric() && scanner.Peek().kind == _TYPING;	
+	}
+
+	private boolean isGeneric() {
+		switch (la.kind) {
+		case _EMPTYSET:
+		case _KID:
+		case _KPRJ1:
+		case _KPRJ2:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private boolean isValidTypedGeneric(int tag, Type type) {
+		switch(tag) {
+		case Formula.EMPTYSET:
+			return (type instanceof PowerSetType);
+		case Formula.KID_GEN:
+			final Type source = type.getSource();
+			return source != null && source.equals(type.getTarget());
+		case Formula.KPRJ1_GEN:
+			return isValidPrjType(type, true);
+		case Formula.KPRJ2_GEN:
+			return isValidPrjType(type, false);
+		default:
+			assert false;
+			return false;
+		}
+	}
+	
+	private static boolean isValidPrjType(Type type, boolean left) {
+		final Type source = type.getSource();
+		final Type target = type.getTarget();
+		if (!(source instanceof ProductType)) {
+			return false;
+		}
+
+		final ProductType prodSource = (ProductType) source;
+		final Type child;
+		if (left) {
+			child = prodSource.getLeft();
+		} else {
+			child = prodSource.getRight();
+		}
+		return target.equals(child);
 	}
 
 	// Figures out if the left brace just read starts a comprehension set.  For
@@ -304,6 +365,15 @@ COMPILER Bmath
   		return factory.makeUnaryExpression(Formula.UNMINUS, expr, loc);
 	}
 
+	// For testing purposes
+	public static int getPartitionT() {
+		return _KPARTITION;
+	}
+
+	public static int getIdentT() {
+		return _IDENT;
+	}
+
 TOKENS
 
 	LPAR
@@ -398,6 +468,7 @@ TOKENS
 	KPRJ2
 	KMIN
 	KMAX
+	KPARTITION
 	DOT
 	IDENT
 	INTLIT
@@ -529,13 +600,22 @@ PRODUCTIONS
     .
     
     RelationSetExpr <out Expression expr, Binding binding>   (. int startPos = la.pos; .)
-    =
-        SetExpr <out expr, binding>
-        {
-            RelationalSetOp <out int tag>                        
-            SetExpr <out Expression inexpr, binding>         (. SourceLocation loc = newSourceLoc(startPos);
-            													expr = factory.makeBinaryExpression(tag, expr, inexpr, loc); .)
-        }
+    = 
+       	SetExpr <out expr, binding>
+    	(
+    		IF (version == V1)
+    	    {
+        	    RelationalSetOp <out int tag>                        
+            	SetExpr <out Expression inexpr, binding>         (. SourceLocation loc = newSourceLoc(startPos);
+	                                                                expr = factory.makeBinaryExpression(tag, expr, inexpr, loc); .)
+            }
+	    |
+    	    [
+        	    RelationalSetOp <out int tag>                        
+            	SetExpr <out Expression inexpr, binding>         (. SourceLocation loc = newSourceLoc(startPos);
+	                                                                expr = factory.makeBinaryExpression(tag, expr, inexpr, loc); .)
+		    ]
+		)
     .
     
     RelationalSetOp <out int tag>
@@ -786,21 +866,34 @@ PRODUCTIONS
         Expression <out expr, binding>
         RPAR                                             (. expr = factory.makeUnaryExpression(tag, expr, newSourceLoc(startPos)); .)
     |
+    	(
+    		IF (version == V1)
+    		UnaryOrAtomicOp <out int tag>
+    		LPAR
+    		Expression <out expr, binding>
+    		RPAR                             (. expr = factory.makeUnaryExpression(tag, expr, newSourceLoc(startPos)); .)
+    	|
+    		UnaryOrAtomicOp <out int tag>    (. expr = factory.makeAtomicExpression(tag, newSourceLoc(startPos)); .)
+    	)
+    |
         LPAR
         (
-        	IF (isTypedEmptySet())
-	        EMPTYSET
-        	TYPING					 (. int typeStart = la.pos; .)
-        	Type<out Type type>      (. if (! (type instanceof PowerSetType)) {
-						                   	final SourceLocation loc = 
-								        		new SourceLocation(typeStart, t.getEnd(), result.getOrigin());
-						                	result.addProblem(new ASTProblem(
-								        		loc, 
-								        		ProblemKind.InvalidTypeExpression, 
-								        		ProblemSeverities.Error));
-						                	type = null;
-					                    } .)
-			RPAR                     (. expr = factory.makeEmptySet(type, newSourceLoc(startPos)); .)
+        	IF (isTypedGeneric())
+                                          (. int tag = -1; .)
+        	(
+                 EMPTYSET                 (. tag = Formula.EMPTYSET; .)
+            |    UnaryOrAtomicOp <out tag>
+	        )
+                 TYPING					  (. int typeStart = la.pos; .)
+                 Type<out Type type>      (. if (! isValidTypedGeneric(tag, type)) {
+                                                 final SourceLocation loc = newSourceLoc(typeStart);
+                                                 result.addProblem(new ASTProblem(
+                                                    loc,
+                                                    ProblemKind.InvalidTypeExpression, 
+                                                    ProblemSeverities.Error));
+                                                 type = null;
+                                             } .)
+                 RPAR                     (. expr = factory.makeAtomicExpression(tag, newSourceLoc(startPos), type); .)
         |
 	        Expression <out expr, binding>
 			RPAR
@@ -859,6 +952,22 @@ PRODUCTIONS
         INTLIT      (. expr =  factory.makeIntegerLiteral(new BigInteger(t.val), newSourceLoc(t.pos)); .)
     .
 
+	
+ 	UnaryOrAtomicOp <out int tag>
+                     (. tag = -1; .)
+    =
+	    IF (version == V1)
+		(   KID	     (. tag = Formula.KID; .)
+    	|	KPRJ1    (. tag = Formula.KPRJ1; .)
+    	|	KPRJ2    (. tag = Formula.KPRJ2; .)
+    	)
+	|
+		(   KID	     (. tag = Formula.KID_GEN; .)
+    	|	KPRJ1    (. tag = Formula.KPRJ1_GEN; .)
+    	|	KPRJ2    (. tag = Formula.KPRJ2_GEN; .)
+    	)
+    .
+ 
     UnaryOp <out int tag>
                (. tag = -1; .)
     = KCARD    (. tag = Formula.KCARD; .)
@@ -868,9 +977,6 @@ PRODUCTIONS
     | KINTER   (. tag = Formula.KINTER; .)
     | KDOM     (. tag = Formula.KDOM; .)
     | KRAN     (. tag = Formula.KRAN; .)
-    | KID      (. tag = Formula.KID; .)
-    | KPRJ1    (. tag = Formula.KPRJ1; .)
-    | KPRJ2    (. tag = Formula.KPRJ2; .)
     | KMIN     (. tag = Formula.KMIN; .)
     | KMAX     (. tag = Formula.KMAX; .)
     .
@@ -1010,6 +1116,11 @@ PRODUCTIONS
         LPAR
         Expression <out Expression inexpr, binding>
         RPAR                                (. pred = factory.makeSimplePredicate(Formula.KFINITE, inexpr, newSourceLoc(startPos)); .)
+    |
+    	KPARTITION
+   		LPAR
+ 		ExpressionList <out List<Expression> exprs, binding>
+   		RPAR								(. pred = factory.makeMultiplePredicate(Formula.KPARTITION, exprs, newSourceLoc(startPos)); .)
     |
         IF (! isParPredicate())
         PairExpression <out Expression leftinexpr, binding>

@@ -1,10 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
@@ -36,6 +40,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IVisitor;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -1199,6 +1204,36 @@ public class TestVisitor extends TestCase {
 			return true;
 		}
 
+		public boolean enterKPARTITION(MultiplePredicate pred) {
+			++ count;
+			return true;
+		}
+
+		public boolean continueKPARTITION(MultiplePredicate pred) {
+			++ count;
+			return true;
+		}
+
+		public boolean exitKPARTITION(MultiplePredicate pred) {
+			++ count;
+			return true;
+		}
+
+		public boolean visitKID_GEN(AtomicExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean visitKPRJ1_GEN(AtomicExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean visitKPRJ2_GEN(AtomicExpression expr) {
+			++ count;
+			return true;
+		}
+
 	}
 	
 	// Some simple expressions.
@@ -1217,6 +1252,7 @@ public class TestVisitor extends TestCase {
 	// A free identifier.
 	private FreeIdentifier idx = mFreeIdentifier("x");
 	
+	@SuppressWarnings("deprecation")
 	private TestItem[] items = new TestItem[] {
 			new TestItem(
 					ff.makeFreeIdentifier("x", null),
@@ -1475,6 +1511,18 @@ public class TestVisitor extends TestCase {
 					1
 				),
 				new TestItem(
+					ff.makeAtomicExpression(Formula.KPRJ1_GEN, null),
+					1
+				),
+				new TestItem(
+					ff.makeAtomicExpression(Formula.KPRJ2_GEN, null),
+					1
+				),
+				new TestItem(
+					ff.makeAtomicExpression(Formula.KID_GEN, null),
+					1
+				),
+				new TestItem(
 					ff.makeBoolExpression(p1, null),
 					3
 				),
@@ -1568,6 +1616,10 @@ public class TestVisitor extends TestCase {
 				),
 				new TestItem(
 					ff.makeQuantifiedPredicate(Formula.EXISTS, mList(bid), p2, null),
+					5
+				),
+				new TestItem(
+					ff.makeMultiplePredicate(Formula.KPARTITION, mList(e1, e2), null),
 					5
 				),
 				new TestItem(

@@ -8,9 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -24,9 +28,9 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.Type;
 
 /**
  * Unit test of the mathematical formula Type-Checker.
@@ -40,12 +44,20 @@ public class TestTypeChecker extends AbstractTests {
 		public final ITypeEnvironment initialEnv;
 		public final boolean result;
 		public final ITypeEnvironment inferredEnv;
+		public final LanguageVersion version;
 		
-		TestItem(String formula, ITypeEnvironment initialEnv, ITypeEnvironment finalEnv) {
+		TestItem(String formula, ITypeEnvironment initialEnv,
+				ITypeEnvironment finalEnv) {
+			this(formula, LATEST, initialEnv, finalEnv);
+		}
+
+		TestItem(String formula, LanguageVersion version,
+				ITypeEnvironment initialEnv, ITypeEnvironment finalEnv) {
 			this.formula = formula;
 			this.initialEnv = initialEnv;
 			this.result = finalEnv != null;
 			this.inferredEnv = finalEnv;
+			this.version = version;
 		}
 	}
 	
@@ -68,18 +80,6 @@ public class TestTypeChecker extends AbstractTests {
 	private static GivenType ty_S2 = ff.makeGivenType(new String(new char[]{'S'}));
 	
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static Type REL(Type left, Type right) {
-		return POW(CPROD(left, right));
-	}
-	
 	private TestItem[] testItems = new TestItem[] {
 			new TestItem(
 					"x\u2208\u2124\u22271\u2264x",
@@ -199,6 +199,10 @@ public class TestTypeChecker extends AbstractTests {
 			new TestItem("x\u2288S",
 					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
 					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+			),
+			new TestItem("partition(S, {x},{y})", V2,
+					mTypeEnvironment(mList("x"), mList(ty_S)),
+					mTypeEnvironment(mList("S", "y"), mList(POW(ty_S), ty_S))
 			),
 			// LiteralPredicate
 			new TestItem("\u00ac\u22a5",
@@ -323,17 +327,33 @@ public class TestTypeChecker extends AbstractTests {
 					mTypeEnvironment(),
 					null
 			),
-			new TestItem("prj1(x)=y",
+			new TestItem("prj1(x)=y", V1,
 					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(CPROD(INTEGER,BOOL),INTEGER))))
 			),
-			new TestItem("prj2(x)=y",
+			new TestItem("x\u25c1prj1=y",
+					mTypeEnvironment(mList("x"), mList(REL(ty_S, ty_T))),
+					mTypeEnvironment(mList("y"), mList(REL(CPROD(ty_S, ty_T), ty_S)))
+			),
+			new TestItem("prj2(x)=y", V1,
 					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(CPROD(INTEGER,BOOL),BOOL))))
 			),
-			new TestItem("id(x)=y",
+			new TestItem("x\u25c1prj2=y",
+					mTypeEnvironment(mList("x"), mList(REL(ty_S, ty_T))),
+					mTypeEnvironment(mList("y"), mList(REL(CPROD(ty_S, ty_T), ty_T)))
+			),
+			new TestItem("id(x)=y", V1,
 					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
 					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_S,ty_S))))
+			),
+			new TestItem("x\u25c1id=y",
+					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
+					mTypeEnvironment(mList("y"), mList(REL(ty_S,ty_S)))
+			),
+			new TestItem("id(x)=y",
+					mTypeEnvironment(mList("x"), mList(ty_S)),
+					mTypeEnvironment(mList("y"), mList(ty_S))
 			),
 			new TestItem("{x,y\u00b7\u22a5\u2223z}=a",
 					mTypeEnvironment(),
@@ -800,7 +820,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\ue100y\ue100z=a",
+			new TestItem("(x\ue100y)\ue100z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -820,7 +840,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\ue101y\ue101z=a",
+			new TestItem("(x\ue101y)\ue101z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -840,7 +860,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\ue102y\ue102z=a",
+			new TestItem("(x\ue102y)\ue102z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -860,7 +880,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u2900y\u2900z=a",
+			new TestItem("(x\u2900y)\u2900z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -880,7 +900,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u2914y\u2914z=a",
+			new TestItem("(x\u2914y)\u2914z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -900,7 +920,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u2916y\u2916z=a",
+			new TestItem("(x\u2916y)\u2916z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -920,7 +940,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u2192y\u2192z=a",
+			new TestItem("(x\u2192y)\u2192z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -940,7 +960,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u2194y\u2194z=a",
+			new TestItem("(x\u2194y)\u2194z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -960,7 +980,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u21a0y\u21a0z=a",
+			new TestItem("(x\u21a0y)\u21a0z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -980,7 +1000,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u21a3y\u21a3z=a",
+			new TestItem("(x\u21a3y)\u21a3z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -1000,7 +1020,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(ty_T), POW(ty_S))
 					)
 			),
-			new TestItem("x\u21f8y\u21f8z=a",
+			new TestItem("(x\u21f8y)\u21f8z=a",
 					mTypeEnvironment(
 							mList("a"),
 							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
@@ -1143,7 +1163,7 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			
 			// Special formulas
-			new TestItem("∀ s \u00b7 id ( N ) ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
+			new TestItem("∀ s \u00b7 N\u25c1id ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
 					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
 					mTypeEnvironment(
 							mList("r",                  "c"),
@@ -1194,7 +1214,7 @@ public class TestTypeChecker extends AbstractTests {
 							mList(POW(POW(POW(ty_S))), POW(POW(POW(ty_S))))
 					)
 			),
-			new TestItem("id(N) ∩ g = ∅",
+			new TestItem("N\u25c1id ∩ g = ∅",
 					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
 					mTypeEnvironment(
 							mList("g"),
@@ -1203,7 +1223,7 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			new TestItem(
 					" g = g\u223c ∧ " +
-					" id(N) ∩ g = ∅ ∧ " +
+					" id ∩ g = ∅ ∧ " +
 					" dom(g) = N ∧ " +
 					" h ∈ N ↔ ( N ⤀ N ) ∧ " +
 					" (∀n,f\u00b7" +
@@ -1231,7 +1251,7 @@ public class TestTypeChecker extends AbstractTests {
 					)
 			),
 			new TestItem(
-					" com ∩ id(L) = ∅ ∧ " +
+					" com ∩ id = ∅ ∧ " +
 					" exit ∈ L ∖ {outside} ↠ L ∧ " +
 					" exit ⊆ com ∧ " +
 					" ( ∀ s \u00b7 s ⊆ exit\u223c[s] ⇒ s = ∅ ) ∧ " +
@@ -1415,16 +1435,16 @@ public class TestTypeChecker extends AbstractTests {
 	/**
 	 * Main test routine for predicates.
 	 */
-	public void testTypeChecker () {
-		for (TestItem item: testItems) {
-			Predicate formula = parsePredicate(item.formula);
+	public void testTypeChecker() {
+		for (TestItem item : testItems) {
+			Predicate formula = parsePredicate(item.formula, item.version);
 			doTest(item, formula);
 		}
 	}
-	
-	public void testAssignmentTypeChecker () {
-		for (TestItem item: assignItems) {
-			Assignment formula = parseAssignment(item.formula);
+
+	public void testAssignmentTypeChecker() {
+		for (TestItem item : assignItems) {
+			Assignment formula = parseAssignment(item.formula, item.version);
 			doTest(item, formula);
 		}
 	}

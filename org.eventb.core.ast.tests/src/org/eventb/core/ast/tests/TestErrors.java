@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
+
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.IParseResult;
@@ -54,6 +57,8 @@ public class TestErrors extends AbstractTests {
 			new ASTProblem(new SourceLocation(1,1), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
 			"∀(x,y)·x∈ℤ ∧ y∈ℤ",
 			new ASTProblem(new SourceLocation(1,1), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+			"s ∈ (∅ \u2982 S)",
+			new ASTProblem(new SourceLocation(9,9), ProblemKind.InvalidTypeExpression, ProblemSeverities.Error),
 // TODO check how it could be extended to quantified expressions
 //			"finite(⋃(x)·(x⊆ℤ ∣ x))",
 //			new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
@@ -67,7 +72,8 @@ public class TestErrors extends AbstractTests {
 	 */
 	public void testLexErrors() {
 		for (int i = 0; i < lexTestPairs.length; i = i + 2) {
-			IParseResult result = ff.parsePredicate((String) lexTestPairs[i]);
+			final String input = (String) lexTestPairs[i];
+			final IParseResult result = ff.parsePredicate(input, LATEST, null);
 			// Lexer errors are only warnings, so parsing is a success.
 			assertTrue("parse should have succeeded", result.isSuccess());
 			assertTrue("parse should have a problem", result.hasProblem());
@@ -84,8 +90,8 @@ public class TestErrors extends AbstractTests {
 		for (int i = 0; i < parseTestPairs.length; i = i + 2) {
 			final String input = (String) parseTestPairs[i];
 			final ASTProblem problem = (ASTProblem) parseTestPairs[i + 1];
-			final IParseResult result = ff.parsePredicate(input);
-			assertFailure("parse should have failed", result);
+			final IParseResult result = ff.parsePredicate(input, LATEST, null);
+			assertFailure("parse should have failed for " + input, result);
 			assertEquals(1, result.getProblems().size());
 			assertNull(result.getParsedPredicate());
 			assertEquals(problem, result.getProblems().get(0));

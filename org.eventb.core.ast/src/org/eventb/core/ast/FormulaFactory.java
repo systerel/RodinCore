@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added origin
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast;
+
+import static org.eventb.core.ast.LanguageVersion.V1;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -20,7 +23,6 @@ import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
-
 
 /**
  * This class is the factory class for all the ast nodes of an event-B formula.
@@ -127,7 +129,8 @@ public class FormulaFactory {
 	/**
 	 * Returns a new atomic expression
 	 * <p>
-	 * {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC}
+	 * {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC,
+	 * KPRJ1_GEN, KPRJ2_GEN, KID_GEN}
 	 * 
 	 * @param tag
 	 *            the tag of the atomic expression
@@ -141,9 +144,42 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new empty set expression.
+	 * Returns a new typed atomic expression.
+	 * <p>
+	 * The allowed type patterns are given below for each tag:
+	 * <ul>
+	 * <li><code>INTEGER</code>, <code>NATURAL</code>, <code>NATURAL1</code>:
+	 * <code>ℙ(ℤ)</code></li>
+	 * <li><code>BOOL</code>: <code>ℙ(BOOL)</code></li>
+	 * <li><code>TRUE</code>, <code>FALSE</code>: <code>BOOL</code></li>
+	 * <li><code>EMPTYSET</code>: <code>ℙ(alpha)</code></li>
+	 * <li><code>KPRED</code>, <code>KSUCC</code>: <code>ℙ(ℤ)</code></li>
+	 * <li><code>KPRJ1_GEN</code>: <code>ℙ(alpha × beta × alpha)</code></li>
+	 * <li><code>KPRJ2_GEN</code>: <code>ℙ(alpha × beta × beta)</code></li>
+	 * <li><code>KID_GEN</code>: <code>ℙ(alpha × alpha)</code></li>
+	 * </ul>
+	 * 
+	 * @param tag
+	 *            the tag of the atomic expression
+	 * @param location
+	 *            the location of the atomic expression
 	 * @param type
-	 *            the type of the empty set (must be a power set)
+	 *            type of this expression. Must be <code>null</code> or
+	 *            compatible with the tag
+	 * @return a new atomic expression
+	 * @since Math Language V2
+	 */
+	public AtomicExpression makeAtomicExpression(int tag,
+			SourceLocation location, Type type) {
+		return new AtomicExpression(tag, location, type, this);
+	}
+
+	/**
+	 * Returns a new empty set expression.
+	 * 
+	 * @param type
+	 *            the type of the empty set. Must be <code>null</code> or a
+	 *            power set type
 	 * @param location
 	 *            the location of the empty set
 	 * 
@@ -721,7 +757,7 @@ public class FormulaFactory {
 	 * <p>
 	 * {NOT}
 	 * @param tag
-	 *            the tag of the unaty predicate
+	 *            the tag of the unary predicate
 	 * @param child
 	 *            the child of the unary predicate
 	 * @param location
@@ -735,78 +771,178 @@ public class FormulaFactory {
 	}
 	
 	/**
+	 * Returns a new multiple predicate.
+	 * <p>
+	 * {KPARTITION}
+	 * 
+	 * @param tag
+	 *            the tag of the multiple predicate
+	 * @param children
+	 *            the children of the multiple predicate
+	 * @param location
+	 *            the location of the multiple predicate
+	 * 
+	 * @return a new multiple predicate
+	 * @since Math Language V2
+	 */
+	public MultiplePredicate makeMultiplePredicate(int tag,
+			Expression[] children, SourceLocation location) {
+		return new MultiplePredicate(children, tag, location, this);
+	}
+
+	/**
+	 * Returns a new multiple predicate.
+	 * <p>
+	 * {KPARTITION}
+	 * 
+	 * @param tag
+	 *            the tag of the multiple predicate
+	 * @param children
+	 *            the children of the multiple predicate
+	 * @param location
+	 *            the location of the multiple predicate
+	 * 
+	 * @return a new multiple predicate
+	 * @since Math Language V2
+	 */
+	public MultiplePredicate makeMultiplePredicate(int tag,
+			Collection<Expression> children, SourceLocation location) {
+		return new MultiplePredicate(children, tag, location, this);
+	}
+
+	/**
 	 * Parses the specified formula and returns the corresponding result.
 	 * 
 	 * @param formula the formula to be parsed
 	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parseAssignment(String, LanguageVersion, Object)
 	 */
+	@Deprecated
 	public IParseResult parseAssignment(String formula) {
-		return parseAssignment(formula, null);
+		return parseGeneric(formula, V1, null, Assignment.class);
 	}
 	
 	/**
 	 * Parses the specified formula and returns the corresponding result.
 	 * 
-	 * @param formula formula the formula to be parsed.
-	 * @param origin the origin to be traced to the built AST.
-	 * @return the result of the parse.
+	 * @param formula the formula to be parsed
+	 * @param origin the origin to be traced to the built AST
+	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parseAssignment(String, LanguageVersion, Object)
 	 */
+	@Deprecated
 	public IParseResult parseAssignment(String formula, Object origin) {
-		ParseResult result = new ParseResult(this, origin);
-		Scanner scanner = new Scanner(formula, result);
-		Parser parser = new Parser(Assignment.class, scanner, result);
-		parser.Parse();
-		return parser.getResult();
+		return parseGeneric(formula, V1, origin, Assignment.class);
 	}
 	
 	/**
 	 * Parses the specified formula and returns the corresponding result.
 	 * 
 	 * @param formula the formula to be parsed
+	 * @param version the version of the math language used in the formula
+	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
+	 * @since Mathematical Language V2
 	 */
+	public IParseResult parseAssignment(String formula, LanguageVersion version,
+			Object origin) {
+		return parseGeneric(formula, version, origin, Assignment.class);
+	}
+
+	/**
+	 * Parses the specified formula and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parseExpression(String, LanguageVersion, Object)
+	 */
+	@Deprecated
 	public IParseResult parseExpression(String formula) {
-		return parseExpression(formula, null);
+		return parseGeneric(formula, V1, null, Expression.class);
 	}
 	
 	/**
 	 * Parses the specified formula and returns the corresponding result.
 	 * 
-	 * @param formula the formula to be parsed.
-	 * @param origin the origin to be traced to the built AST.
-	 * @return the result of the parse.
+	 * @param formula the formula to be parsed
+	 * @param origin the origin to be traced to the built AST
+	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parseExpression(String, LanguageVersion, Object)
 	 */
+	@Deprecated
 	public IParseResult parseExpression(String formula, Object origin) {
-		ParseResult result = new ParseResult(this, origin);
-		Scanner scanner = new Scanner(formula, result);
-		Parser parser = new Parser(Expression.class, scanner, result);
-		parser.Parse();
-		return parser.getResult();
+		return parseGeneric(formula, V1, origin, Expression.class);
 	}
-	
+
 	/**
-	 * Parses the specified predicate and returns the corresponding result.
+	 * Parses the specified formula and returns the corresponding result.
 	 * 
 	 * @param formula the formula to be parsed
+	 * @param version the version of the math language used in the formula
+	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
+	 * @since Mathematical Language V2
 	 */
-	public IParseResult parsePredicate(String formula) {
-		return parsePredicate(formula, null);
+	public IParseResult parseExpression(String formula, LanguageVersion version,
+			Object origin) {
+		return parseGeneric(formula, version, origin, Expression.class);
 	}
 
 	/**
 	 * Parses the specified predicate and returns the corresponding result.
 	 * 
-	 * @param formula the formula to be parsed.
-	 * @param origin the origin to be traced to the built AST.
-	 * @return the result of the parse.
+	 * @param formula the formula to be parsed
+	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parsePredicate(String, LanguageVersion, Object)
 	 */
+	@Deprecated
+	public IParseResult parsePredicate(String formula) {
+		return parseGeneric(formula, V1, null, Predicate.class);
+	}
+
+	/**
+	 * Parses the specified predicate and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @param origin the origin to be traced to the built AST
+	 * @return the result of the parse
+	 * @deprecated Since the introduction of mathematical language versions,
+	 *             clients should use the similar method taking a language
+	 *             version as argument
+	 * @see #parsePredicate(String, LanguageVersion, Object)
+	 */
+	@Deprecated
 	public IParseResult parsePredicate(String formula, Object origin) {
-		ParseResult result = new ParseResult(this, origin);
-		Scanner scanner = new Scanner(formula, result);
-		Parser parser = new Parser(Predicate.class, scanner, result);
-		parser.Parse();
-		return parser.getResult();
+		return parseGeneric(formula, V1, origin, Predicate.class);
+	}
+	
+	/**
+	 * Parses the specified predicate and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @param version the version of the math language used in the formula
+	 * @param origin the origin to be traced to the built AST
+	 * @return the result of the parse
+	 * @since Mathematical Language V2
+	 */
+	public IParseResult parsePredicate(String formula, LanguageVersion version,
+			Object origin) {
+		return parseGeneric(formula, version, origin, Predicate.class);
 	}
 
 	/**
@@ -814,11 +950,30 @@ public class FormulaFactory {
 	 * 
 	 * @param formula the formula to be parsed
 	 * @return the result of the parse
+	 * @deprecated use {@link #parseType(String, LanguageVersion)}
 	 */
+	@Deprecated
 	public IParseResult parseType(String formula) {
-		ParseResult result = new ParseResult(this);
-		Scanner scanner = new Scanner(formula, result);
-		Parser parser = new Parser(Type.class, scanner, result);
+		return parseGeneric(formula, V1, null, Type.class);
+	}
+	
+	/**
+	 * Parses the specified type and returns the corresponding result.
+	 * 
+	 * @param formula the formula to be parsed
+	 * @param version the version of the math language used in the formula
+	 * @return the result of the parse
+	 * @since Mathematical Language V2
+	 */
+	public IParseResult parseType(String formula, LanguageVersion version) {
+		return parseGeneric(formula, version, null, Type.class);
+	}
+
+	private final <T> IParseResult parseGeneric(String formula,
+			LanguageVersion version, Object origin, Class<T> clazz) {
+		final ParseResult result = new ParseResult(this, version, origin);
+		final Scanner scanner = new Scanner(formula, result);
+		final Parser parser = new Parser(clazz, scanner, result);
 		parser.Parse();
 		return parser.getResult();
 	}

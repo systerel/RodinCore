@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -34,7 +35,10 @@ import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mId;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mPrj1;
+import static org.eventb.core.ast.tests.FastFactory.mPrj2;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -55,9 +59,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 
@@ -74,18 +76,6 @@ public class TestGivenTypes extends AbstractTests {
 	private static final GivenType tT = ff.makeGivenType("T");
 	private static final GivenType tU = ff.makeGivenType("U");
 
-	private static PowerSetType POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-	
-	private static ProductType CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static PowerSetType REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
-	}
-	
 	/**
 	 * Returns a relation from integer to integer that hides the given type.
 	 * 
@@ -120,6 +110,10 @@ public class TestGivenTypes extends AbstractTests {
 	private static final Expression eT = mEmptySet(POW(tT));
 	private static final Expression eU = mEmptySet(POW(tU));
 	
+	private static final Expression idSS = mId(REL(tS, tS));
+	private static final Expression prj1ST = mPrj1(REL(CPROD(tS, tT), tS));
+	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
+
 	private static final Predicate peS = mRelationalPredicate(EQUAL, eS, eS);
 	private static final Predicate peT = mRelationalPredicate(EQUAL, eT, eT);
 	private static final Predicate peU = mRelationalPredicate(EQUAL, eU, eU);
@@ -175,6 +169,9 @@ public class TestGivenTypes extends AbstractTests {
 	 */
 	public void testAtomicExpression() {
 		doTest(eS, tS);
+		doTest(idSS, tS);
+		doTest(prj1ST, tS, tT);
+		doTest(prj2ST, tS, tT);
 	}
 
 	/**
@@ -335,6 +332,15 @@ public class TestGivenTypes extends AbstractTests {
 	public void testUnaryPredicate() {
 		doTest(mUnaryPredicate(peS), tS);
 		doTest(mUnaryPredicate(piS), tS);
+	}
+	
+	/**
+	 * Ensures that given types in a multiple predicate are propagated.
+	 */
+	public void testMultiplePredicate() {
+		doTest(FastFactory.mMultiplePredicate(eS), tS);
+		doTest(FastFactory.mMultiplePredicate(eS, eS), tS);
+		doTest(FastFactory.mMultiplePredicate(eS, eS, eS), tS);
 	}
 	
 	/**

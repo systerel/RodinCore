@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
 import java.util.Arrays;
@@ -30,6 +33,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IVisitor;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -1126,6 +1130,30 @@ public class IdentsChecker implements IVisitor {
 
 	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
 		return quantifiedExit(assign, assign.getPrimedIdents().length);
+	}
+
+	public boolean enterKPARTITION(MultiplePredicate pred) {
+		return standardEnter(pred);
+	}
+
+	public boolean continueKPARTITION(MultiplePredicate pred) {
+		return success;
+	}
+
+	public boolean exitKPARTITION(MultiplePredicate pred) {
+		return standardExit(pred);
+	}
+
+	public boolean visitKID_GEN(AtomicExpression expr) {
+		return standardVisit(expr);
+	}
+
+	public boolean visitKPRJ1_GEN(AtomicExpression expr) {
+		return standardVisit(expr);
+	}
+
+	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
+		return standardVisit(expr);
 	}
 	
 }

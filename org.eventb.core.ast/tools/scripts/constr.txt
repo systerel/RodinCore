@@ -16,3 +16,4 @@ SetExtension	mList(e1, e2, e3)	5
 SimplePredicate	e1	3
 UnaryExpression	e1	3
 UnaryPredicate	p1	3
+MultiplePredicate	mList(e1, e2)	5

@@ -47,14 +47,6 @@ public class DocTests extends AbstractTests {
 			"x", //
 			"S×T");
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -107,13 +99,12 @@ public class DocTests extends AbstractTests {
 		int size = strings.size();
 		for (int i = 1; i < size; i += 2) {
 			final String name = strings.get(i);
-			final Type type = ff.parseType(strings.get(i + 1)).getParsedType();
+			final Type type = parseType(strings.get(i + 1));
 			typenv.addName(name, type);
 		}
 
 		// De-serialize predicate
-		final Predicate bar = ff.parsePredicate(strings.get(0))
-				.getParsedPredicate();
+		final Predicate bar = parsePredicate(strings.get(0));
 		typeCheck(bar, typenv);
 		assertEquals(pred, bar);
 	}

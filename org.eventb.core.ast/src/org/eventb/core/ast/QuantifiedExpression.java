@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -225,9 +226,7 @@ public class QuantifiedExpression extends Expression {
 		propagate.set(Formula.KINTER);
 		propagate.set(Formula.KDOM);
 		propagate.set(Formula.KRAN);
-		propagate.set(Formula.KPRJ1);
-		propagate.set(Formula.KPRJ2);
-		propagate.set(Formula.KID);
+		addDeprecatedUnaryTags(propagate);
 		propagate.set(Formula.KMIN);
 		propagate.set(Formula.KMAX);
 		propagateRight.set(Formula.FUNIMAGE);
@@ -284,6 +283,13 @@ public class QuantifiedExpression extends Expression {
 		propagate.set(Formula.EXPN);
 		
 		csetImplicitNoParenthesesMap = (BitSet)propagate.clone();
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void addDeprecatedUnaryTags(BitSet bitset) {
+		bitset.set(Formula.KPRJ1);
+		bitset.set(Formula.KPRJ2);
+		bitset.set(Formula.KID);
 	}
 
 	/**

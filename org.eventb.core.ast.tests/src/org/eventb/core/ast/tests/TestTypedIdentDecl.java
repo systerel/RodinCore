@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -36,6 +37,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
@@ -46,18 +48,6 @@ public class TestTypedIdentDecl extends AbstractTests {
 	private static GivenType ty_T = ff.makeGivenType("T");
 	private static GivenType ty_U = ff.makeGivenType("U");
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
-	private static Type REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
-	}
-	
 	private static ITypeEnvironment env = mTypeEnvironment();
 	
 	private static BoundIdentDecl bxS = mBoundIdentDecl("x", ty_S);
@@ -188,9 +178,11 @@ public class TestTypedIdentDecl extends AbstractTests {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		Expression actual = parseExpression(image);
-		typeCheck(actual, env);
-		assertEquals("Typed string is a different expression", expr, actual);
+		for (LanguageVersion version : LanguageVersion.values()) {
+			final Expression actual = parseExpression(image, version);
+			typeCheck(actual, env);
+			assertEquals("Typed string is a different expression", expr, actual);
+		}
 	}
 
 	/**
@@ -218,9 +210,11 @@ public class TestTypedIdentDecl extends AbstractTests {
 	private void doTest(Predicate pred) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		final Predicate actual = parsePredicate(image);
-		typeCheck(actual, env);
-		assertEquals("Typed string is a different predicate", pred, actual);
+		for (LanguageVersion version : LanguageVersion.values()) {
+			final Predicate actual = parsePredicate(image, version);
+			typeCheck(actual, env);
+			assertEquals("Typed string is a different predicate", pred, actual);
+		}
 	}
 
 }

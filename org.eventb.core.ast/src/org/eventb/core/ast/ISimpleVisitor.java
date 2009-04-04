@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,6 +161,14 @@ public interface ISimpleVisitor {
 	 *            the predicate node to visit
 	 */
 	void visitLiteralPredicate(LiteralPredicate predicate);
+
+	/**
+	 * Visits the given predicate node.
+	 * 
+	 * @param predicate
+	 *            the predicate node to visit
+	 */
+	void visitMultiplePredicate(MultiplePredicate predicate);
 
 	/**
 	 * Visits the given predicate node.

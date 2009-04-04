@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -17,6 +18,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 
@@ -33,10 +35,17 @@ public class TestConflictResolver extends AbstractTests {
 	private class TestItem {
 		final String input;
 		final Formula<?> expectedTree;
+		final LanguageVersion[] versions;
 		
-		TestItem(String input, Formula<?> expectedTree) {
+		TestItem(String input, Formula<?> expectedTree,
+				LanguageVersion... versions) {
 			this.expectedTree = expectedTree;
 			this.input = input;
+			if (versions.length == 0) {
+				this.versions = LanguageVersion.values();
+			} else {
+				this.versions = versions;
+			}
 		}
 	}
 	
@@ -151,13 +160,15 @@ public class TestConflictResolver extends AbstractTests {
 	 */
 	public void testConflict() {
 		for (TestItem item : testItems) {
-			final Predicate actual = parsePredicate(item.input);
-			assertEquals("\nTest failed on: " + item.input
-					+ "\nTree expected: " + item.expectedTree.getSyntaxTree()
-					+ "\nTree received: "
-					+ actual.getSyntaxTree(),
-					item.expectedTree,
-					actual);
+			for (LanguageVersion version: item.versions) {
+				final Predicate actual = parsePredicate(item.input, version);
+				assertEquals("\nTest failed on: " + item.input
+						+ "\nTree expected: " + item.expectedTree.getSyntaxTree()
+						+ "\nTree received: "
+						+ actual.getSyntaxTree(),
+						item.expectedTree,
+						actual);
+			}
 		}
 	}
 	

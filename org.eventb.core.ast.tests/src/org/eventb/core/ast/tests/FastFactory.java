@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -33,6 +34,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -87,6 +89,18 @@ public class FastFactory {
 
 	public static AtomicExpression mEmptySet(Type type) {
 		return ff.makeEmptySet(type, null);
+	}
+
+	public static AtomicExpression mPrj1(Type type) {
+		return ff.makeAtomicExpression(Formula.KPRJ1_GEN, null, type);
+	}
+
+	public static AtomicExpression mPrj2(Type type) {
+		return ff.makeAtomicExpression(Formula.KPRJ2_GEN, null, type);
+	}
+
+	public static AtomicExpression mId(Type type) {
+		return ff.makeAtomicExpression(Formula.KID_GEN, null, type);
 	}
 
 	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident, Expression value) {
@@ -170,30 +184,10 @@ public class FastFactory {
 		return ff.makeIntegerLiteral(new BigInteger(Integer.toString(value)), null);
 	}
 
-	public static BoundIdentDecl[] mList(BoundIdentDecl... idents) {
-		return idents;
+	public static <T> T[] mList(T... objs) {
+		return objs;
 	}
-
-	public static Expression[] mList(Expression... exprs) {
-		return exprs;
-	}
-
-	public static FreeIdentifier[] mList(FreeIdentifier... idents) {
-		return idents;
-	}
-
-	public static Predicate[] mList(Predicate... preds) {
-		return preds;
-	}
-
-	public static String[] mList(String... names) {
-		return names;
-	}
-
-	public static Type[] mList(Type... types) {
-		return types;
-	}
-
+	
 	public static LiteralPredicate mLiteralPredicate(int tag) {
 		return ff.makeLiteralPredicate(tag, null);
 	}
@@ -296,4 +290,11 @@ public class FastFactory {
 		return mUnaryPredicate(Formula.NOT, child);
 	}
 
+	public static MultiplePredicate mMultiplePredicate(int tag, Expression... expressions) {
+		return ff.makeMultiplePredicate(tag, expressions, null);
+	}
+
+	public static MultiplePredicate mMultiplePredicate(Expression... expressions) {
+		return ff.makeMultiplePredicate(Formula.KPARTITION, expressions, null);
+	}
 }

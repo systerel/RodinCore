@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BFALSE;
@@ -31,6 +42,7 @@ import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
+import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -61,6 +73,7 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -125,6 +138,10 @@ public class TestSubFormulas extends TestCase {
 		}
 
 		public boolean select(LiteralPredicate predicate) {
+			return searched.equals(predicate);
+		}
+
+		public boolean select(MultiplePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
@@ -227,6 +244,11 @@ public class TestSubFormulas extends TestCase {
 		}
 
 		@Override
+		public Predicate rewrite(MultiplePredicate predicate) {
+			return this.<Predicate>doRewrite(predicate);
+		}
+
+		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
 			return this.<Expression>doRewrite(expression);
 		}
@@ -280,6 +302,7 @@ public class TestSubFormulas extends TestCase {
 	private static FreeIdentifier id_y = mFreeIdentifier("y", INT);
 	private static FreeIdentifier id_S = mFreeIdentifier("S", POW(INT));
 	private static FreeIdentifier id_T = mFreeIdentifier("T", POW(INT));
+	private static FreeIdentifier id_U = mFreeIdentifier("U", POW(INT));
 	
 	private static Expression b0 = mBoundIdentifier(0, INT);
 	private static Expression b1 = mBoundIdentifier(1, INT);
@@ -299,6 +322,9 @@ public class TestSubFormulas extends TestCase {
 			= new FixedFilter<BoundIdentDecl>(bd_x, bd_X);
 	private static FixedFilter<Expression> idFilter
 			= new FixedFilter<Expression>(id_x, id_X);
+	private static FixedFilter<Expression> setIdFilter
+			= new FixedFilter<Expression>(id_S, id_U);
+
 	private static FixedFilter<Predicate> equalsFilter
 			= new FixedFilter<Predicate>(equals, equalsX);
 
@@ -480,6 +506,25 @@ public class TestSubFormulas extends TestCase {
 		checkPositions(idFilter, mIntegerLiteral());
 		
 		checkPositions(idFilter,
+				mMultiplePredicate(id_S, id_S));
+		checkPositions(setIdFilter,
+				mMultiplePredicate(id_T, id_T));
+		checkPositions(setIdFilter,
+				mMultiplePredicate(id_S, id_T),
+				"0",
+				mMultiplePredicate(id_U, id_T));
+		checkPositions(setIdFilter,
+				mMultiplePredicate(id_T, id_S),
+				"1",
+				mMultiplePredicate(id_T, id_U));
+		checkPositions(setIdFilter,
+				mMultiplePredicate(id_S, id_T, id_S),
+				"0",
+				mMultiplePredicate(id_U, id_T, id_S),
+				"2",
+				mMultiplePredicate(id_S, id_T, id_U));
+
+		checkPositions(idFilter,
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y));
 		checkPositions(idFilter,
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
@@ -535,10 +580,10 @@ public class TestSubFormulas extends TestCase {
 				mSetExtension(id_x, id_y, id_X));
 		
 		checkPositions(idFilter, mSimplePredicate(id_S));
-		checkPositions(new FixedFilter<Expression>(id_S, id_T),
+		checkPositions(setIdFilter,
 				mSimplePredicate(id_S),
 				"0",
-				mSimplePredicate(id_T));
+				mSimplePredicate(id_U));
 
 		checkPositions(idFilter,
 				mUnaryExpression(UNMINUS, id_x),
@@ -713,6 +758,10 @@ public class TestSubFormulas extends TestCase {
 				mLiteralPredicate(BFALSE)
 		);
 		checkRootPosition(
+				mMultiplePredicate(id_S, id_S),
+				mMultiplePredicate(id_T, id_T)
+		);
+		checkRootPosition(
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y)
 		);
@@ -845,6 +894,16 @@ public class TestSubFormulas extends TestCase {
 
 		checkRewriting(i1, i2, zero, zero);
 
+		checkRewriting(s1, s2,
+				mMultiplePredicate(s1, id_T),
+				mMultiplePredicate(s2, id_T));
+		checkRewriting(s1, s2,
+				mMultiplePredicate(id_T, s1),
+				mMultiplePredicate(id_T, s2));
+		checkRewriting(s1, s2,
+				mMultiplePredicate(s1, id_T, s1),
+				mMultiplePredicate(s2, id_T, s2));
+		
 		checkRewriting(i1, i2,
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y),
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y));
@@ -1011,6 +1070,10 @@ public class TestSubFormulas extends TestCase {
 		this.<Predicate>checkRootRewriting(
 				mLiteralPredicate(BTRUE),
 				mLiteralPredicate(BFALSE)
+		);
+		this.<Predicate>checkRootRewriting(
+				mMultiplePredicate(id_S, id_S),
+				mMultiplePredicate(id_S, id_T)
 		);
 		this.<Expression>checkRootRewriting(
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),

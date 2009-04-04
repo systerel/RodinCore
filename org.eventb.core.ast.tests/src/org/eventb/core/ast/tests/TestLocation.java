@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -128,8 +129,8 @@ public class TestLocation extends AbstractTests {
 	}
 	
 	public void testPredicate5() {
-		//                   0123456789012345678901234
-		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id(ℤ)";
+		//                   0123456789012345678901
+		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id";
 		Predicate parsedPred = parsePredicate(predString);
 		AssociativePredicate aPred = (AssociativePredicate) parsedPred;
 		
@@ -141,12 +142,12 @@ public class TestLocation extends AbstractTests {
 		
 		loc = children[1].getSourceLocation();
 		assertEquals("Source Loc Start 2 ", 9, loc.getStart());
-		assertEquals("Source Loc End 2 ", 24, loc.getEnd());
+		assertEquals("Source Loc End 2 ", 21, loc.getEnd());
 	}
 	
 	public void testPredicate6() {
-		//                   0123456789012345
-		String predString = "f∼;({a}◁f)⊆id(ℤ)";
+		//                   0123456789012
+		String predString = "f∼;({a}◁f)⊆id";
 		Predicate parsedPred = parsePredicate(predString);
 		RelationalPredicate rPred = (RelationalPredicate) parsedPred;
 		
@@ -156,7 +157,7 @@ public class TestLocation extends AbstractTests {
 		
 		loc = rPred.getRight().getSourceLocation();
 		assertEquals("Source Loc Start 2 ", 11, loc.getStart());
-		assertEquals("Source Loc End 2 ", 15, loc.getEnd());
+		assertEquals("Source Loc End 2 ", 12, loc.getEnd());
 	}
 	
 	public void testPredicate7() {

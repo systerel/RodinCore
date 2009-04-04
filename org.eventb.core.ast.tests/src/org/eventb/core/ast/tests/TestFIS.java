@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -19,7 +20,6 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 
 public class TestFIS extends AbstractTests {
 	
@@ -31,14 +31,6 @@ public class TestFIS extends AbstractTests {
 	private static IntegerType INTEGER = ff.makeIntegerType();
 	private static BooleanType BOOL = ff.makeBooleanType();
 
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-	
 	private ITypeEnvironment defaultTEnv = mTypeEnvironment(
 			mList(
 					"x",

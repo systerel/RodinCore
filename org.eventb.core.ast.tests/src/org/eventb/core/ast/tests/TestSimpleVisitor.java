@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISimpleVisitor;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -135,6 +136,10 @@ public class TestSimpleVisitor extends TestCase {
 		}
 
 		public void visitUnaryPredicate(UnaryPredicate predicate) {
+			b.append(predicate.getClass());
+		}
+
+		public void visitMultiplePredicate(MultiplePredicate predicate) {
 			b.append(predicate.getClass());
 		}
 	}
@@ -252,4 +257,8 @@ public class TestSimpleVisitor extends TestCase {
 		assertVisit(ff.makeUnaryPredicate(Formula.NOT, p1, null));
 	}
 
+	public void testMultiplePredicate() throws Exception {
+		assertVisit(ff.makeMultiplePredicate(Formula.KPARTITION, mList(e1, e2),
+				null));
+	}
 }

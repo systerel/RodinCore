@@ -1,23 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
-import junit.framework.TestCase;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.INTLIT;
+import static org.eventb.core.ast.Formula.KBOOL;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.SETEXT;
 
-import static org.eventb.core.ast.Formula.*;
-import static org.eventb.core.ast.tests.ITestHelper.*;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -26,7 +39,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-
+import org.eventb.core.ast.tests.Common.TagSupply;
 
 /**
  * Test the abstract syntax tree.
@@ -38,9 +51,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * @author François Terrier
  *
  */
-public class TestAST extends TestCase {
-	
-	private FormulaFactory ff = FormulaFactory.getDefault();
+public class TestAST extends AbstractTests {
 
 	private FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 	private FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
@@ -48,116 +59,127 @@ public class TestAST extends TestCase {
 
 	private BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
 	private BoundIdentDecl bd_z = ff.makeBoundIdentDecl("z", null);
-	
-	private LiteralPredicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, null);
-	
-	private IntegerLiteral two = ff.makeIntegerLiteral(Common.TWO,null);
-	
+
+	private LiteralPredicate btrue = ff.makeLiteralPredicate(BTRUE, null);
+
+	private IntegerLiteral two = ff.makeIntegerLiteral(Common.TWO, null);
+
 	/**
 	 * Tests if the constructed node's children returned by the accessors are
 	 * the same that the one specified when constructing the node.
 	 */
 	public void testAST() {
-		Expression[] expressions = Common.constructExpressions();
-		Predicate[] predicates = Common.constructPredicates();
-		for (int i = 0; i < ASSOCIATIVE_EXPRESSION_LENGTH; i++) {
-			for (int j = 0; j < expressions.length; j++) {
-				AssociativeExpression expr = ff.makeAssociativeExpression(i+FIRST_ASSOCIATIVE_EXPRESSION,
-						new Expression[]{expressions[j],id_x},null);
-				assertEquals(expr.getChildren()[0], expressions[j]);
-			}
-		}
-		for (int i = 0; i < ASSOCIATIVE_PREDICATE_LENGTH; i++) {
-			for (int j = 0; j < predicates.length; j++) {
-				AssociativePredicate expr = ff.makeAssociativePredicate(i + FIRST_ASSOCIATIVE_PREDICATE, 
-						new Predicate[] { predicates[j], btrue }, null);
-				assertEquals(expr.getChildren()[0], predicates[j]);
-			}
-		}
-		for (int i = 0; i < BINARY_EXPRESSION_LENGTH; i++) {
-			for (int j = 0; j < expressions.length; j++) {
-				BinaryExpression expr = ff.makeBinaryExpression(i + FIRST_BINARY_EXPRESSION,
-						expressions[j], id_x, null);
-				assertEquals(expr.getLeft(),expressions[j]);
-				BinaryExpression expr1 = ff.makeBinaryExpression(i + FIRST_BINARY_EXPRESSION,
-						id_x, expressions[j], null);
-				assertEquals(expr1.getRight(),expressions[j]);
-			}
-		}
-		for (int i = 0; i < BINARY_PREDICATE_LENGTH; i++) {
-			for (int j = 0; j < predicates.length; j++) {
-				BinaryPredicate pred = ff.makeBinaryPredicate(i + FIRST_BINARY_PREDICATE,
-						predicates[j], btrue, null);
-				assertEquals(pred.getLeft(),predicates[j]);
-				BinaryPredicate expr2 = ff.makeBinaryPredicate(i + FIRST_BINARY_PREDICATE,
-						btrue, predicates[j], null);
-				assertEquals(expr2.getRight(),predicates[j]);
-			}
-		}
-		// BoolExpression
-		for (int j = 0; j < predicates.length; j++) {
-				BoolExpression expr = ff.makeBoolExpression(predicates[j], null);
-				assertEquals(expr.getPredicate(), predicates[j]);
-			}
+		final TagSupply allTags = TagSupply.getAllTagSupply();
 
-		for (int i = 0; i < QUANTIFIED_EXPRESSION_LENGTH; i++) {
-			for (int j = 0; j < expressions.length; j++) {
-				QuantifiedExpression expr = ff.makeQuantifiedExpression(i + FIRST_QUANTIFIED_EXPRESSION,
-						new BoundIdentDecl[] { bd_x }, btrue, expressions[j], null, QuantifiedExpression.Form.Explicit);
-				assertEquals(expr.getExpression(),expressions[j]);
+		List<Expression> expressions = Common.constructExpressions(allTags);
+		List<Predicate> predicates = Common.constructPredicates(allTags);
+		for (int tag : allTags.associativeExpressionTags) {
+			for (Expression childExpr : expressions) {
+				AssociativeExpression expr = ff.makeAssociativeExpression(
+						tag, new Expression[] { childExpr, id_x }, null);
+				assertEquals(expr.getChildren()[0], childExpr);
 			}
-			for (int j = 0; j < predicates.length; j++) {
-				QuantifiedExpression expr = ff.makeQuantifiedExpression(i + FIRST_QUANTIFIED_EXPRESSION, 
-						new BoundIdentDecl[] { bd_x }, predicates[j], two, null, QuantifiedExpression.Form.Explicit);
-				assertEquals(expr.getPredicate(),predicates[j]);
+		}
+		for (int tag : allTags.associativePredicateTags) {
+			for (Predicate childPred : predicates) {
+				AssociativePredicate expr = ff.makeAssociativePredicate(
+						tag, new Predicate[] { childPred, btrue }, null);
+				assertEquals(expr.getChildren()[0], childPred);
 			}
-			QuantifiedExpression expr = ff.makeQuantifiedExpression(i + FIRST_QUANTIFIED_EXPRESSION,
-					new BoundIdentDecl[] { bd_x, bd_z }, btrue, two, null, QuantifiedExpression.Form.Explicit);
+		}
+		for (int tag : allTags.binaryExpressionTags) {
+			for (Expression childExpr : expressions) {
+				BinaryExpression expr = ff.makeBinaryExpression(tag,
+						childExpr, id_x, null);
+				assertEquals(expr.getLeft(), childExpr);
+				BinaryExpression expr1 = ff.makeBinaryExpression(tag,
+						id_x, childExpr, null);
+				assertEquals(expr1.getRight(), childExpr);
+			}
+		}
+		for (int tag : allTags.binaryPredicateTags) {
+			for (Predicate childPred : predicates) {
+				BinaryPredicate pred = ff.makeBinaryPredicate(tag,
+						childPred, btrue, null);
+				assertEquals(pred.getLeft(), childPred);
+				BinaryPredicate pred2 = ff.makeBinaryPredicate(tag,
+						btrue, childPred, null);
+				assertEquals(pred2.getRight(), childPred);
+			}
+		}
+		for (Predicate childPred : predicates) {
+			BoolExpression expr = ff.makeBoolExpression(childPred, null);
+			assertEquals(expr.getPredicate(), childPred);
+		}
+		for (int tag : allTags.multiplePredicateTags) {
+			for (Expression childExpr : expressions) {
+				MultiplePredicate pred = ff.makeMultiplePredicate(tag,
+						new Expression[] { childExpr, id_x }, null);
+				assertEquals(pred.getChildren()[0], childExpr);
+			}
+		}
+		for (int tag : allTags.quantifiedExpressionTags) {
+			for (Expression childExpr : expressions) {
+				QuantifiedExpression expr = ff.makeQuantifiedExpression(
+						tag, new BoundIdentDecl[] { bd_x }, btrue,
+						childExpr, null, QuantifiedExpression.Form.Explicit);
+				assertEquals(expr.getExpression(), childExpr);
+			}
+			for (Predicate childPred : predicates) {
+				QuantifiedExpression expr = ff.makeQuantifiedExpression(
+						tag, new BoundIdentDecl[] { bd_x }, childPred,
+						two, null, QuantifiedExpression.Form.Explicit);
+				assertEquals(expr.getPredicate(), childPred);
+			}
+			QuantifiedExpression expr = ff.makeQuantifiedExpression(tag,
+					new BoundIdentDecl[] { bd_x, bd_z }, btrue, two, null,
+					QuantifiedExpression.Form.Explicit);
 			assertEquals(expr.getBoundIdentDecls()[0], bd_x);
 			assertEquals(expr.getBoundIdentDecls()[1], bd_z);
 		}
-		for (int i = 0; i < QUANTIFIED_PREDICATE_LENGTH; i++) {
-			for (int j = 0; j < predicates.length; j++) {
-				QuantifiedPredicate expr = ff.makeQuantifiedPredicate(i + FIRST_QUANTIFIED_PREDICATE,
-						new BoundIdentDecl[] { bd_x }, predicates[j], null);
-				assertEquals(expr.getPredicate(), predicates[j]);
+		for (int tag : allTags.quantifiedPredicateTags) {
+			for (Predicate childPred : predicates) {
+				QuantifiedPredicate expr = ff.makeQuantifiedPredicate(tag,
+						new BoundIdentDecl[] { bd_x }, childPred, null);
+				assertEquals(expr.getPredicate(), childPred);
 			}
-			QuantifiedPredicate expr = ff.makeQuantifiedPredicate(i + FIRST_QUANTIFIED_PREDICATE,
+			QuantifiedPredicate expr = ff.makeQuantifiedPredicate(tag,
 					new BoundIdentDecl[] { bd_x, bd_z }, btrue, null);
 			assertEquals(expr.getBoundIdentDecls()[0], bd_x);
 			assertEquals(expr.getBoundIdentDecls()[1], bd_z);
 		}
-		for (int i = 0; i < RELATIONAL_PREDICATE_LENGTH; i++) {
-			for (int j = 0; j < expressions.length; j++) {
-				RelationalPredicate expr = ff.makeRelationalPredicate(i + FIRST_RELATIONAL_PREDICATE,
-						expressions[j], id_z, null);
-				assertEquals(expr.getLeft(),expressions[j]);
-				RelationalPredicate expr2 = ff.makeRelationalPredicate(i + FIRST_RELATIONAL_PREDICATE,
-						id_z, expressions[j], null);
-				assertEquals(expr2.getRight(),expressions[j]);
+		for (int tag : allTags.relationalPredicateTags) {
+			for (Expression childExpr : expressions) {
+				RelationalPredicate expr = ff.makeRelationalPredicate(tag,
+						childExpr, id_z, null);
+				assertEquals(expr.getLeft(), childExpr);
+				RelationalPredicate expr2 = ff.makeRelationalPredicate(tag,
+						id_z, childExpr, null);
+				assertEquals(expr2.getRight(), childExpr);
 			}
 		}
-		for (int i = 0; i < expressions.length; i++) {
-			SetExtension expr2 = ff.makeSetExtension(new Expression[] { expressions[i] }, null);
-			assertEquals(expr2.getMembers()[0], expressions[i]);
+		for (Expression childExpr : expressions) {
+			SetExtension expr2 = ff.makeSetExtension(
+					new Expression[] { childExpr }, null);
+			assertEquals(expr2.getMembers()[0], childExpr);
 		}
-		for (int i = 0; i < expressions.length; i++) {
+		for (Expression childExpr : expressions) {
 			SimplePredicate expr3 = ff.makeSimplePredicate(Formula.KFINITE,
-					expressions[i], null);
-			assertEquals(expr3.getExpression(), expressions[i]);
+					childExpr, null);
+			assertEquals(expr3.getExpression(), childExpr);
 		}
-		for (int i = 0; i < UNARY_EXPRESSION_LENGTH; i++) {
-			for (int j = 0; j < expressions.length; j++) {
-				UnaryExpression expr = ff.makeUnaryExpression(i + FIRST_UNARY_EXPRESSION,
-						expressions[j], null);
-				assertEquals(expr.getChild(),expressions[j]);
+		for (int tag : allTags.unaryExpressionTags) {
+			for (Expression childExpr : expressions) {
+				UnaryExpression expr = ff.makeUnaryExpression(tag, childExpr,
+						null);
+				assertEquals(expr.getChild(), childExpr);
 			}
 		}
-		for (int i = 0; i < UNARY_PREDICATE_LENGTH; i++) {
-			for (int j = 0; j < predicates.length; j++) {
-				UnaryPredicate expr = ff.makeUnaryPredicate(i + FIRST_UNARY_PREDICATE,
-						predicates[j], null);
-				assertEquals(expr.getChild(),predicates[j]);
+		for (int tag : allTags.unaryPredicateTags) {
+			for (Predicate childPred : predicates) {
+				UnaryPredicate expr = ff.makeUnaryPredicate(tag, childPred,
+						null);
+				assertEquals(expr.getChild(), childPred);
 			}
 		}
 	}
@@ -168,70 +190,61 @@ public class TestAST extends TestCase {
 	 * when constructing the node.
 	 */
 	public void testTags() {
-		for (int i = 0; i < ASSOCIATIVE_EXPRESSION_LENGTH; i++) {
-			AssociativeExpression expr = ff.makeAssociativeExpression(i+FIRST_ASSOCIATIVE_EXPRESSION,
-					new Expression[]{id_y,id_x},null);
-			assertEquals(expr.getTag(), i+FIRST_ASSOCIATIVE_EXPRESSION);
+		final TagSupply tagSupply = TagSupply.getAllTagSupply();
+		final Expression[] eL = new Expression[] { id_y, id_x };
+		final Predicate[] pL = new Predicate[] { btrue, btrue };
+		final BoundIdentDecl[] bL = new BoundIdentDecl[] { bd_x };
+
+		for (int tag : tagSupply.associativeExpressionTags) {
+			assertTag(tag, ff.makeAssociativeExpression(tag, eL, null));
 		}
-		for (int i = 0; i < ASSOCIATIVE_PREDICATE_LENGTH; i++) {
-			AssociativePredicate expr = ff.makeAssociativePredicate(i+FIRST_ASSOCIATIVE_PREDICATE,
-					new Predicate[]{btrue,btrue},null);
-			assertEquals(expr.getTag(), i+FIRST_ASSOCIATIVE_PREDICATE);
+		for (int tag : tagSupply.associativePredicateTags) {
+			assertTag(tag, ff.makeAssociativePredicate(tag, pL, null));
 		}
-		for (int i = 0; i < BINARY_EXPRESSION_LENGTH; i++) {
-			BinaryExpression expr = ff.makeBinaryExpression(i+FIRST_BINARY_EXPRESSION,
-					id_x,id_x,null);
-			assertEquals(expr.getTag(), i+FIRST_BINARY_EXPRESSION);
+		for (int tag : tagSupply.binaryExpressionTags) {
+			assertTag(tag, ff.makeBinaryExpression(tag, id_x, id_x, null));
 		}
-		for (int i = 0; i < BINARY_PREDICATE_LENGTH; i++) {
-			BinaryPredicate expr = ff.makeBinaryPredicate(i+FIRST_BINARY_PREDICATE,
-					btrue,btrue,null);
-			assertEquals(expr.getTag(), i+FIRST_BINARY_PREDICATE);
+		for (int tag : tagSupply.binaryPredicateTags) {
+			assertTag(tag, ff.makeBinaryPredicate(tag, btrue, btrue, null));
 		}
-		for (int i = 0; i < ATOMIC_EXPRESSION_LENGTH; i++) {
-			AtomicExpression expr = ff.makeAtomicExpression(i+FIRST_ATOMIC_EXPRESSION, null);
-			assertEquals(expr.getTag(), i+FIRST_ATOMIC_EXPRESSION);
+		for (int tag : tagSupply.atomicExpressionTags) {
+			assertTag(tag, ff.makeAtomicExpression(tag, null));
 		}
-		// BoolExpression
-		BoolExpression exprb = ff.makeBoolExpression(btrue, null);
-		assertEquals(exprb.getTag(), Formula.KBOOL);
-		IntegerLiteral expr1 = ff.makeIntegerLiteral(Common.ONE, null);
-		assertEquals(expr1.getTag(),Formula.INTLIT);
-		for (int i = 0; i < LITERAL_PREDICATE_LENGTH; i++) {
-			LiteralPredicate expr = ff.makeLiteralPredicate(i+FIRST_LITERAL_PREDICATE, null);
-			assertEquals(expr.getTag(), i+FIRST_LITERAL_PREDICATE);
+
+		assertTag(KBOOL, ff.makeBoolExpression(btrue, null));
+
+		assertTag(INTLIT, ff.makeIntegerLiteral(Common.ONE, null));
+
+		for (int tag : tagSupply.literalPredicateTags) {
+			assertTag(tag, ff.makeLiteralPredicate(tag, null));
 		}
-		for (int i = 0; i < QUANTIFIED_EXPRESSION_LENGTH; i++) {
-			QuantifiedExpression expr = ff.makeQuantifiedExpression(i+FIRST_QUANTIFIED_EXPRESSION,
-					new BoundIdentDecl[]{bd_x},btrue,two,null,QuantifiedExpression.Form.Explicit);
-			assertEquals(expr.getTag(), i+FIRST_QUANTIFIED_EXPRESSION);
+		for (int tag : tagSupply.multiplePredicateTags) {
+			assertTag(tag, ff.makeMultiplePredicate(tag, eL, null));
 		}
-		for (int i = 0; i < QUANTIFIED_PREDICATE_LENGTH; i++) {
-			QuantifiedPredicate expr = ff.makeQuantifiedPredicate(i+FIRST_QUANTIFIED_PREDICATE,
-					new BoundIdentDecl[]{bd_x},btrue,null);
-			assertEquals(expr.getTag(), i+FIRST_QUANTIFIED_PREDICATE);
+		for (int tag : tagSupply.quantifiedExpressionTags) {
+			assertTag(tag, ff.makeQuantifiedExpression(tag, bL, btrue, two,
+					null, QuantifiedExpression.Form.Explicit));
 		}
-		for (int i = 0; i < RELATIONAL_PREDICATE_LENGTH; i++) {
-			RelationalPredicate expr = ff.makeRelationalPredicate(i+FIRST_RELATIONAL_PREDICATE,
-					id_x,id_x,null);
-			assertEquals(expr.getTag(), i+FIRST_RELATIONAL_PREDICATE);
+		for (int tag : tagSupply.quantifiedPredicateTags) {
+			assertTag(tag, ff.makeQuantifiedPredicate(tag, bL, btrue, null));
 		}
-		SetExtension expr2 = ff.makeSetExtension(new Expression[]{id_x}, null);
-		assertEquals(expr2.getTag(), Formula.SETEXT);
-		
-		SimplePredicate expr3 = ff.makeSimplePredicate(Formula.KFINITE,
-				id_x,null);
-		assertEquals(expr3.getTag(), Formula.KFINITE);
-		
-		for (int i = 0; i < UNARY_EXPRESSION_LENGTH; i++) {
-			UnaryExpression expr = ff.makeUnaryExpression(i+FIRST_UNARY_EXPRESSION,
-					id_x,null);
-			assertEquals(expr.getTag(), i+FIRST_UNARY_EXPRESSION);
+		for (int tag : tagSupply.relationalPredicateTags) {
+			assertTag(tag, ff.makeRelationalPredicate(tag, id_x, id_x, null));
 		}
-		for (int i = 0; i < UNARY_PREDICATE_LENGTH; i++) {
-			UnaryPredicate expr = ff.makeUnaryPredicate(i+FIRST_UNARY_PREDICATE,
-					btrue,null);
-			assertEquals(expr.getTag(), i+FIRST_UNARY_PREDICATE);
+
+		assertTag(SETEXT, ff.makeSetExtension(eL, null));
+
+		assertTag(KFINITE, ff.makeSimplePredicate(Formula.KFINITE, id_x, null));
+
+		for (int tag : tagSupply.unaryExpressionTags) {
+			assertTag(tag, ff.makeUnaryExpression(tag, id_x, null));
 		}
+		for (int tag : tagSupply.unaryPredicateTags) {
+			assertTag(tag, ff.makeUnaryPredicate(tag, btrue, null));
+		}
+	}
+	
+	private void assertTag(int expected, Formula<?> formula) {
+		assertEquals(expected, formula.getTag());
 	}
 }

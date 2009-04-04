@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added origin
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
@@ -15,6 +16,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.AbstractResult;
@@ -30,6 +32,12 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Formula factory to use for building formulas
 	protected final FormulaFactory factory;
 	
+	// Origin
+	private final Object origin;
+	
+	// Parser version
+	protected final LanguageVersion version;
+
 	// Parsed assignment
 	private Assignment assignment = null;
 
@@ -42,19 +50,13 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Parsed type
 	private Type type = null;
 
-	// Origin
-	private final Object origin;
-	
-	public ParseResult(FormulaFactory factory) {
-		this.factory = factory;
-		this.origin = null;
-	}
-
-	public ParseResult(FormulaFactory factory, Object origin) {
+	public ParseResult(FormulaFactory factory, LanguageVersion parserVersion,
+			Object origin) {
 		this.factory = factory;
 		this.origin = origin;
+		this.version = parserVersion;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedAssignment()
@@ -94,7 +96,11 @@ public class ParseResult extends AbstractResult implements IParseResult {
 			return null;
 		return type;
 	}
-	
+
+	public LanguageVersion getLanguageVersion() {
+		return version;
+	}
+
 	public Object getOrigin() {
 		return origin;
 	}
@@ -106,6 +112,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 		this.predicate = null;
 		this.expression = null;
 		this.assignment = null;
+		this.type = null;
 	}
 
 	/**

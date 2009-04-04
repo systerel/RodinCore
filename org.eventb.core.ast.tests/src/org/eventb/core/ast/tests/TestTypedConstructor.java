@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - fully refactored all tests and added error tests
  *     Systerel - added abstract test class
+ *     Systerel - mathematical language v2
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -42,6 +43,7 @@ import static org.eventb.core.ast.Formula.KID;
 import static org.eventb.core.ast.Formula.KINTER;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
+import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.KPRED;
 import static org.eventb.core.ast.Formula.KPRJ1;
 import static org.eventb.core.ast.Formula.KPRJ2;
@@ -107,9 +109,13 @@ import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mId;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
+import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPrj1;
+import static org.eventb.core.ast.tests.FastFactory.mPrj2;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -284,6 +290,13 @@ public class TestTypedConstructor extends AbstractTests {
 		assertFormulaTypeChecked(pred, expected);
 	}
 
+	private static void assertMultiplePredicate(int tag, boolean expected,
+			Type... types) {
+		final Expression[] exprs = mExpressions(types);
+		final Predicate pred = mMultiplePredicate(tag, exprs);
+		assertFormulaTypeChecked(pred, expected);
+	}
+
 	private static void assertQuantifiedExpressionType(int tag, Form form,
 			Type expected, Type[] types, boolean typed, Type type) {
 		final BoundIdentDecl[] bids = mDeclarations(types);
@@ -340,10 +353,6 @@ public class TestTypedConstructor extends AbstractTests {
 		final Predicate child = mPredicate(typed);
 		final Predicate pred = mUnaryPredicate(tag, child);
 		assertFormulaTypeChecked(pred, expected);
-	}
-
-	private static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
 	}
 
 	private static Type[] l(Type... types) {
@@ -419,14 +428,6 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 		return result;
 
-	}
-
-	private static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	private static Type REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
 	}
 
 	private static void runTypeCheck(Formula<?> form) {
@@ -709,9 +710,18 @@ public class TestTypedConstructor extends AbstractTests {
 		assertBoundIdentifierType(null);
 	}
 
-	public void testEmptySet() throws Exception {
+	public void testGenericTypes() throws Exception {
 		assertExpressionType(mEmptySet(pS), pS);
 		assertExpressionType(mEmptySet(null), null);
+
+		assertExpressionType(mId(rSS), rSS);
+		assertExpressionType(mId(null), null);
+		
+		assertExpressionType(mPrj1(REL(ST, S)), REL(ST, S));
+		assertExpressionType(mPrj1(null), null);
+		
+		assertExpressionType(mPrj2(REL(ST, T)), REL(ST, T));
+		assertExpressionType(mPrj2(null), null);
 	}
 
 	public void testFreeIdentifier() throws Exception {
@@ -726,6 +736,18 @@ public class TestTypedConstructor extends AbstractTests {
 	public void testLiteralPredicate() throws Exception {
 		assertLiteralPredicate(BTRUE, true);
 		assertLiteralPredicate(BFALSE, true);
+	}
+
+	public void testMultiplePredicate() throws Exception {
+		assertMultiplePredicate(KPARTITION, true, pS);
+		assertMultiplePredicate(KPARTITION, false, S);
+		assertMultiplePredicate(KPARTITION, false, (Type) null);
+		assertMultiplePredicate(KPARTITION, true, pS, pS);
+		assertMultiplePredicate(KPARTITION, false, S, S);
+		assertMultiplePredicate(KPARTITION, false, pS, pT);
+		assertMultiplePredicate(KPARTITION, false, null, pS);
+		assertMultiplePredicate(KPARTITION, false, pS, null);
+		assertMultiplePredicate(KPARTITION, false, null, null);
 	}
 
 	public void testQuantifiedExpression() throws Exception {
@@ -848,6 +870,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertSimplePredicate(false, null);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void testUnaryExpression() throws Exception {
 		assertUnaryExpressionType(UNMINUS, null, null);
 		assertUnaryExpressionType(UNMINUS, null, B);
