@@ -44,11 +44,15 @@ public interface IResult {
 	List<ASTProblem> getProblems();
 
 	/**
-	 * Returns whether this result is a success, i.e., doesn't contain any
-	 * error problem. Consequently, a result that contains only warnings is
-	 * considered as successful.
+	 * Returns whether this result is a success, i.e., doesn't contain any error
+	 * problem. Consequently, a result that contains only warnings is considered
+	 * as successful.
+	 * <p>
+	 * Clients who need to know that no problem at all was encountered
+	 * (including warnings), should rather use {@link #hasProblem()}.
 	 * 
 	 * @return <code>true</code> iff the operation succeeded
+	 * @see #hasProblem()
 	 */
 	boolean isSuccess();
 
