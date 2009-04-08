@@ -14,7 +14,7 @@
  *     Systerel - removed focus listener of Hyper Link
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
- *     Systerel - used Map for section composite
+ *     Systerel - optimized tree traversal
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -58,7 +58,6 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBEditor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
@@ -98,11 +97,16 @@ public class EditPage extends EventBEditorPage implements
 
 	public static final String PAGE_TAB_TITLE = Messages.editorPage_edit_tabTitle;
 
-	// A list of section composites. The list or its element must not be
-	// <code>null</code>.
+	// The next two variables maintain a link to the sections embedded in this
+	// page. The list gives the order of the sections, while the map allows
+	// direct access to a section, based on the type of the elements it
+	// contains.
 	List<ISectionComposite> sectionComps;
 	Map<IElementType<?>, ISectionComposite> mapComps;
 
+	// Set of all sections for which prefix marker must be refreshed
+	Set<ISectionComposite> toRefreshPrefixMarker;
+	
 	// The main scrolled form
 	ScrolledForm form;
 	
@@ -272,7 +276,6 @@ public class EditPage extends EventBEditorPage implements
 	 */
 	private void createDeclaration(Composite parent) {
 		FormToolkit toolkit = this.getManagedForm().getToolkit();
-		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
 		final Composite comp = toolkit.createComposite(parent);
 		final boolean borderEnabled = EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE);
@@ -323,7 +326,7 @@ public class EditPage extends EventBEditorPage implements
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
-		final IInternalElement rodinInput = editor.getRodinInput();
+		final IInternalElement rodinInput = getRodinInput();
 		String declaration = "";
 		if (rodinInput instanceof IMachineRoot)
 			declaration = "MACHINE";
@@ -335,7 +338,7 @@ public class EditPage extends EventBEditorPage implements
 				+ "</li></form>";
 		widget.setText(text, true, true);
 
-		createRootAttrs(comp, editor, toolkit);
+		createRootAttrs(comp, toolkit);
 
 		if (borderEnabled) {
 			toolkit.paintBordersFor(comp);
@@ -370,25 +373,21 @@ public class EditPage extends EventBEditorPage implements
 	 *            the composite parent of the section composites.
 	 */
 	private void createSections(final Composite parent) {
-		EventBEditor<?> editor = (EventBEditor<?>) this.getEditor();
-		IInternalElement rodinInput = editor.getRodinInput();
-		
-		FormToolkit toolkit = this.getManagedForm().getToolkit();
-
-		createSectionComps(parent, rodinInput, toolkit);
+		final FormToolkit toolkit = this.getManagedForm().getToolkit();
+		createSectionComps(parent, toolkit);
 	}
 
-	private void createRootAttrs(Composite parent, IEventBEditor<?> editor,
-			FormToolkit toolkit) {
-		final IInternalElement rodinRoot = editor.getRodinInput();
+	private void createRootAttrs(Composite parent, FormToolkit toolkit) {
+		final IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
+		final IInternalElement rodinRoot = getRodinInput();
 		rootComps = DescRegistryReader.createAttributeComposites(form,
 				rodinRoot, parent, editor, toolkit);
 	}
 
-	private void createSectionComps(Composite parent,
-			IInternalElement rodinInput, FormToolkit toolkit) {
+	private void createSectionComps(Composite parent, FormToolkit toolkit) {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-
+		final IInternalElement rodinInput = getRodinInput();
+		
 		// Get the list of possible element type depending on the type (e.g.
 		// IMachineFile or IContextFile) of the input file.
 		final IElementType<?>[] childTypes = registry.getChildTypes(rodinInput
@@ -507,8 +506,9 @@ public class EditPage extends EventBEditorPage implements
 
 				// Process the removed element
 				for (IRodinElement element : isRemoved) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.elementRemoved(element);
+					final ISectionComposite comp = getCompositeTowards(element);
+					if (comp != null) {
+						comp.elementRemoved(element);
 					}
 					if (isSelected(element)) {
 						setEditorSelection(new StructuredSelection());
@@ -517,15 +517,17 @@ public class EditPage extends EventBEditorPage implements
 
 				// Process the added element
 				for (IRodinElement element : isAdded) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.elementAdded(element);
+					final ISectionComposite comp = getCompositeTowards(element);
+					if (comp != null) {
+						comp.elementAdded(element);
 					}
 				}
 
 				// Process the changed element
 				for (IRodinElement element : isChanged) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.refresh(element);
+					final ISectionComposite comp = getCompositeTowards(element);
+					if (comp != null) {
+						comp.refresh(element);
 					}
 					if (element.isRoot()) {
 						updateRootAttrs();
@@ -534,9 +536,18 @@ public class EditPage extends EventBEditorPage implements
 			
 				// Process the elements that changed order last.
 				for (Pair<IRodinElement, IElementType<?>> pair : childrenHasChanged) {
-					for (ISectionComposite sectionComp : sectionComps) {
-						sectionComp.childrenChanged(pair.getFirst(), pair
-								.getSecond());
+					final IRodinElement parent = pair.getFirst();
+					final IElementType<?> type = pair.getSecond();
+					if (parent == null)
+						continue;
+					final ISectionComposite comp;
+					if (parent.equals(getRodinInput())) {
+						comp = mapComps.get(type);
+					} else {
+						comp = getCompositeTowards(parent);
+					}
+					if (comp != null) {
+						comp.childrenChanged(parent, type);
 					}
 				}
 
@@ -743,45 +754,52 @@ public class EditPage extends EventBEditorPage implements
 	}
 
 	public boolean select(IRodinElement element, boolean select) {
-		for (ISectionComposite sectionComp : sectionComps) {
-			if (sectionComp.select(element, select))
-				return true;
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			return comp.select(element, select);
 		}
 		return false;
 	}
 
 	public void recursiveExpand(IRodinElement element) {
-		for (ISectionComposite sectionComp : sectionComps) {
-			sectionComp.recursiveExpand(element);
+		final IInternalElement rodinInput = getRodinInput();
+		if (element.equals(rodinInput) || element.isAncestorOf(rodinInput)) {
+			for (ISectionComposite sectionComp : sectionComps) {
+				sectionComp.recursiveExpand(element);
+			}
+		} else {
+			final ISectionComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				comp.recursiveExpand(element);
+			}
 		}
 	}
 
 	public void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
-		for (ISectionComposite sectionComp : sectionComps) {
-			sectionComp.edit(element, attributeType, charStart, charEnd);
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			comp.edit(element, attributeType, charStart, charEnd);
 		}
 	}
 	
 	public void resourceChanged(IResourceChangeEvent event) {
 		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
-		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		IFile rodinInput = editor.getRodinInput().getResource();
+		IFile file = getRodinInput().getResource();
 		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
 			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
 		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
 			IResource resource = delta.getResource();
-			if (rodinInput.equals(resource)) {
+			if (file.equals(resource)) {
 				if (EventBEditorUtils.DEBUG) {
 					printRodinMarkerDelta(delta);
 				}
-				IRodinElement element = RodinMarkerUtil
-						.getElement(delta);
+				IRodinElement element = RodinMarkerUtil.getElement(delta);
 				if (element == null)
 					continue;
 				IAttributeType attributeType = RodinMarkerUtil
 						.getAttributeType(delta);
-				map = addMap(map, element, attributeType);
+				addToMap(map, element, attributeType);
 			}
 		}
 		if (EventBEditorUtils.DEBUG) {
@@ -795,8 +813,7 @@ public class EditPage extends EventBEditorPage implements
 		EventBEditorUtils.debug(markers.toString());
 	}
 
-	private Map<IRodinElement, Set<IAttributeType>> addMap(
-			Map<IRodinElement, Set<IAttributeType>> markers,
+	private void addToMap(Map<IRodinElement, Set<IAttributeType>> markers,
 			IRodinElement element, IAttributeType attributeType) {
 		Set<IAttributeType> list = markers.get(element);
 		if (list == null) {
@@ -808,7 +825,6 @@ public class EditPage extends EventBEditorPage implements
 		else if (list.size() != 0 && attributeType != null) {
 			list.add(attributeType);
 		}
-		return markers;
 	}
 
 	private void printRodinMarkerDelta(IMarkerDelta delta) {
@@ -830,48 +846,46 @@ public class EditPage extends EventBEditorPage implements
 	}
 
 	private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
-		IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
-		final IRodinFile rodinInput = editor.getRodinInput().getRodinFile();
-		Display display = this.getSite().getShell().getDisplay();
+		final Display display = this.getSite().getShell().getDisplay();
 		display.syncExec(new Runnable() {
-
 			public void run() {
-				try {
-					enableMarkerRefresh();
-					for (Entry<IRodinElement, Set<IAttributeType>> entry : map
-							.entrySet()) {
-						final IRodinElement key = entry.getKey();
-						final Set<IAttributeType> set = entry.getValue();
-						if (rodinInput.equals(key)
-								|| rodinInput.isAncestorOf(key)) {
-							if (sectionComps != null) {
-								final IElementType<?> type = EventBEditorUtils
-										.getChildTowards(rodinInput, key)
-										.getElementType();
-								final ISectionComposite comp = mapComps
-										.get(type);
-								if (comp != null)
-									comp.refresh(key, set);
-							}
-						}
+				toRefreshPrefixMarker = new HashSet<ISectionComposite>();
+				for (Entry<IRodinElement, Set<IAttributeType>> entry : map
+						.entrySet()) {
+					final IRodinElement key = entry.getKey();
+					final Set<IAttributeType> set = entry.getValue();
+					final ISectionComposite comp = getCompositeTowards(key);
+					if (comp != null) {
+						addToRefreshPrefixMarker(comp);
+						comp.refresh(key, set);
 					}
-				} finally {
-					disableMarkerRefresh();
 				}
+				refreshPrefixMarker();
 			}
 		});
 	}
 
-	void enableMarkerRefresh() {
-		for (ISectionComposite comp : sectionComps) {
-			comp.enableMarkerRefresh();
+	void refreshPrefixMarker() {
+		for (ISectionComposite comp : toRefreshPrefixMarker) {
+			comp.refreshPrefixMarker();
 		}
 	}
-	
-	void disableMarkerRefresh() {
-		for (ISectionComposite comp : sectionComps) {
-			comp.disableMarkerRefresh();
-		}
+
+	public void addToRefreshPrefixMarker(ISectionComposite section) {
+		toRefreshPrefixMarker.add(section);
 	}
 	
+	protected ISectionComposite getCompositeTowards(IRodinElement element) {
+		final IRodinElement child = EventBEditorUtils.getChildTowards(
+				getRodinInput(), element);
+		if (child == null || mapComps == null)
+			return null;
+		final IElementType<?> type = child.getElementType();
+		return mapComps.get(type);
+	}
+
+	protected IInternalElement getRodinInput() {
+		final IEventBEditor<?> editor = (IEventBEditor<?>) this.getEditor();
+		return editor.getRodinInput();
+	}
 }

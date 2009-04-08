@@ -969,21 +969,37 @@ public class EventBEditorUtils {
 			((EventBEditableTreeViewer) viewer).edit(element);
 		}
 	}
-	
-	
 
 	/**
-	 * Return the given element it is a direct child of parent. Else return the
-	 * direct child of parent which is ancestor of element. Require parent is an
-	 * ancestor of child.
-	 * */
-	public static IRodinElement getChildTowards(IRodinElement element,
+	 * Returns the child of <code>source</code> which is an ancestor of
+	 * <code>target</code>. The returned element is thus the element directly
+	 * following <code>source</code> in a path going to <code>target</code>.
+	 * <p>
+	 * In particular, if <code>source</code> is the parent of
+	 * <code>target</code>, returns <code>target</code>, if <code>source</code>
+	 * is the grand-parent of <code>target</code>, returns the parent of
+	 * <code>target</code>, and so on.
+	 * </p>
+	 * <p>
+	 * If <code>source</code> is not an ancestor of <code>target</code>, returns
+	 * <code>null</code> as there is no path from <code>source </code> to
+	 * <code>target</code>.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the source element
+	 * @param target
+	 *            the target element
+	 * @return the child of <code>source</code> which is an ancestor of
+	 *         <code>target</code> or <code>null</code> if none
+	 */
+	public static IRodinElement getChildTowards(IRodinElement source,
 			IRodinElement target) {
-		assert element.isAncestorOf(target);
 		IRodinElement current = target;
-		while (!current.getParent().equals(element)) {
+		while (current != null && !source.equals(current.getParent())) {
 			current = current.getParent();
 		}
 		return current;
 	}
+
 }

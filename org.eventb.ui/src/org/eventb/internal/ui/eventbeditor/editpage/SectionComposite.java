@@ -10,12 +10,10 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
- *     Systerel - used Map for element composite
+ *     Systerel - optimized tree traversal
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -90,20 +88,17 @@ public class SectionComposite implements ISectionComposite {
 
 	// The element composite
 	Composite elementComposite;
-	
-	// List of contained element composite
+
+	// The next two variables maintain a link to the elements embedded in this
+	// section. The list gives the order of the sections, while the map allows
+	// direct access to the composite of a Rodin element.
 	LinkedList<IElementComposite> elementComps;
-
 	private Map<IRodinElement, IElementComposite> mapComps;
-
-	private Integer currentSeverity;
-	
-	private boolean doSeveralRefresh = false;
 	
 	// After hyperlink composite
 	AbstractHyperlinkComposite afterHyperlinkComposite;
 
-	int severity = IMarker.SEVERITY_INFO;
+	int displayedSeverity = IMarker.SEVERITY_INFO;
 	
 	public SectionComposite(EditPage page, FormToolkit toolkit,
 			ScrolledForm form, Composite compParent, IInternalElement parent,
@@ -252,7 +247,7 @@ public class SectionComposite implements ISectionComposite {
 		String text = "<form><li style=\"text\" bindent = \"" + space
 				+ "\"><b>" + str + "</b></li></form>";
 		prefixFormText.setText(text, true, true);
-		updatePrefixFormText();
+		refreshPrefixMarker();
 	}
 
 	protected boolean isExpanded() {
@@ -277,7 +272,7 @@ public class SectionComposite implements ISectionComposite {
 			afterHyperlinkComposite.setHeightHint(0);
 		}
 		updateExpandStatus();
-		updatePrefixFormText();
+		refreshPrefixMarker();
 		form.reflow(true);
 		form.setRedraw(true);
 		long afterTime = System.currentTimeMillis();
@@ -340,10 +335,10 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void refresh(IRodinElement element) {
-		if (elementComps != null)
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.refresh(element);
-			}
+		final IElementComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			comp.refresh(element);
+		}
 	}
 
 	public IElementType<?> getElementType() {
@@ -351,22 +346,22 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void elementRemoved(IRodinElement element) {
-		Collection<IElementComposite> toBeRemoved = new ArrayList<IElementComposite>();
-		if (elementComps != null) {
-			mapComps.remove(element);
-			for (IElementComposite elementComp : elementComps) {
-				IRodinElement rElement = elementComp.getElement();
+		if (elementComps == null)
+			return;
 
-				if (rElement.equals(element)) {
-					elementComp.dispose();
-					toBeRemoved.add(elementComp);
-				} else
-					elementComp.elementRemoved(element);
+		final IElementComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			final IRodinElement rElement = comp.getElement();
+			if (rElement.equals(element)) {
+				comp.dispose();
+				mapComps.remove(element);
+				elementComps.remove(comp);
+			} else {
+				comp.elementRemoved(element);
 			}
-
-			elementComps.removeAll(toBeRemoved);
 		}
-		if (elementComps != null && elementComps.size() == 0) {
+
+		if (elementComps.size() == 0) {
 			GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;			
 		}
@@ -384,24 +379,24 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public void elementAdded(IRodinElement element) {
+		if (elementComps == null)
+			return;
+			
 		if (element.getParent().equals(parent)
 				&& element.getElementType() == rel.getChildType()) {
-			if (elementComps != null) {
-				// Create a new Element composite added to the end of the list
-				final IElementComposite comp = new ElementComposite(page, toolkit, form,
-						elementComposite, element, level);
-				elementComps.add(comp);
-				mapComps.put(element, comp);
-				GridData gridData = (GridData) elementComposite.getLayoutData();
-				gridData.heightHint = SWT.DEFAULT;
-				updateHyperlink();
-				form.reflow(true);
-			}
+			// Create a new Element composite added to the end of the list
+			final IElementComposite comp = new ElementComposite(page, toolkit,
+					form, elementComposite, element, level);
+			elementComps.add(comp);
+			mapComps.put(element, comp);
+			GridData gridData = (GridData) elementComposite.getLayoutData();
+			gridData.heightHint = SWT.DEFAULT;
+			updateHyperlink();
+			form.reflow(true);
 		} else {
-			if (elementComps != null) {
-				for (IElementComposite elementComp : elementComps) {
-					elementComp.elementAdded(element);
-				}
+			final IElementComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				comp.elementAdded(element);
 			}
 		}
 		updateHyperlink();
@@ -448,13 +443,10 @@ public class SectionComposite implements ISectionComposite {
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
-
-			return;
-		}
-
-		if (elementComps != null) {
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.childrenChanged(element, childrenType);
+		} else {
+			final IElementComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				comp.childrenChanged(element, childrenType);
 			}
 		}
 	}
@@ -470,84 +462,71 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	public boolean select(IRodinElement element, boolean selected) {
-		if (contain(element)) {
-			if (selected)
-				setExpand(true);
-			if (elementComps != null)
-				for (IElementComposite elementComp : elementComps) {
-					if (elementComp.select(element, selected))
-						return true;
-				}
-		}
-		return false;
-	}
-
-	private boolean contain(IRodinElement element) {
-		try {
-			IRodinElement[] children = parent.getChildrenOfType(rel
-					.getChildType());
-			for (IRodinElement child : children) {
-				if (child.equals(element) || child.isAncestorOf(element))
-					return true;
-			}
-		} catch (RodinDBException e) {
-			// Do nothing, return false
+		final IRodinElement child = getChildTowards(element);
+		if (child == null)
 			return false;
-		}
-		return false;
+
+		if (selected)
+			setExpand(true);
+		final IElementComposite comp = getComposite(child);
+		if (comp == null)
+			return false;
+		return comp.select(element, selected);
 	}
 
 	public void recursiveExpand(IRodinElement element) {
-		if (parent.equals(element)
-				|| (parent.isAncestorOf(element) && rel.equals(element
-						.getElementType())) || element.isAncestorOf(parent)) {
+		if (parent.equals(element) || element.isAncestorOf(parent)) {
 			setExpand(true);
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.recursiveExpand(element);
+			}
+		} else {
+			final IRodinElement child = getChildTowards(element);
+			if (child == null)
+				return;
+			setExpand(true);
+			final IElementComposite comp = getComposite(child);
+			if (comp != null) {
+				comp.recursiveExpand(element);
 			}
 		}
 	}
 
 	public void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
-		if (parent.isAncestorOf(element)) {
-			if (!isExpanded())
-				setExpand(true);
-			assert elementComps != null;
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.edit(element, attributeType, charStart, charEnd);
-			}
+		final IRodinElement child = getChildTowards(element);
+		if (child == null)
+			return;
+		if (!isExpanded())
+			setExpand(true);
+
+		final IElementComposite comp = getComposite(child);
+		if (comp != null) {
+			comp.edit(element, attributeType, charStart, charEnd);
 		}
 	}
 
 	public void refresh(IRodinElement element, Set<IAttributeType> set) {
-		if (parent.equals(element) || parent.isAncestorOf(element)) {
-			updatePrefixFormText();
-			if (elementComps!= null) {
-				// get the first ancestor after parent or element
-				final IRodinElement ancestor = EventBEditorUtils
-						.getChildTowards(parent, element);
-				final IElementComposite comp = mapComps.get(ancestor);
-				if (comp != null) {
-					comp.refresh(element, set);
-				}
-			}
+		final IElementComposite comp = getCompositeTowards(element);
+		if (comp != null) {
+			comp.refresh(element, set);
 		}
 	}
 
-	private void updatePrefixFormText() {
+	// refresh only if necessary
+	public void refreshPrefixMarker() {
 		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
 		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
 		Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
 		Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
 		try {
-			if(!doSeveralRefresh){
-				computeCurrentSeverity();
-			}
-
-			if (currentSeverity == severity)
+			final int severity = MarkerUIRegistry.getDefault()
+					.getMaxMarkerSeverity(parent, rel.getChildType());
+			
+			if (severity == displayedSeverity)
 				return;
-			severity = currentSeverity; 
+			displayedSeverity = severity; 
+
 			if (severity == IMarker.SEVERITY_ERROR) {
 				prefixFormText.setBackground(RED);
 				prefixFormText.setForeground(YELLOW);
@@ -564,15 +543,12 @@ public class SectionComposite implements ISectionComposite {
 			return;
 		}
 	}
-
-	private void computeCurrentSeverity() throws CoreException {
-		currentSeverity = MarkerUIRegistry.getDefault().getMaxMarkerSeverity(
-				parent, rel.getChildType());
-	}
 	
 	public void recursiveExpand() {
 		setExpand(true);
-		assert elementComps != null;
+		if (elementComps == null)
+			return;
+		
 		for (IElementComposite elementComp : elementComps) {
 			elementComp.setExpand(true);
 		}
@@ -587,17 +563,18 @@ public class SectionComposite implements ISectionComposite {
 		setExpand(false);
 	}
 	
-	public void disableMarkerRefresh() {
-		doSeveralRefresh = false;
+	protected IElementComposite getComposite(IRodinElement element) {
+		if (element == null || mapComps == null)
+			return null;
+		return mapComps.get(element);
 	}
 	
-	public void enableMarkerRefresh() {
-		doSeveralRefresh = true;
-		try {
-			computeCurrentSeverity();
-		} catch (CoreException e) {
-			e.printStackTrace();
-			doSeveralRefresh = false;
-		}
+	protected IElementComposite getCompositeTowards(IRodinElement element) {
+		final IRodinElement child = getChildTowards(element);
+		return getComposite(child);
+	}
+	
+	protected IRodinElement getChildTowards(IRodinElement element) {
+		return EventBEditorUtils.getChildTowards(parent, element);
 	}
 }

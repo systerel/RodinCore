@@ -10,7 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
- *     Systerel - used Map for section composite
+ *     Systerel - optimized tree traversal
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -52,8 +52,11 @@ public class ElementComposite implements IElementComposite {
 
 	Composite mainSectionComposite;
 
+	// The next two variables maintain a link to the sections embedded in this
+	// composite. The list gives the order of the sections, while the map allows
+	// direct access to a section, based on the type of the elements it
+	// contains.
 	ArrayList<ISectionComposite> sectionComps;
-
 	Map<IElementType<?>, ISectionComposite> mapComps;
 
 	EditPage page;
@@ -200,12 +203,11 @@ public class ElementComposite implements IElementComposite {
 				}
 				createSectionComposites();
 			}
-		} else if (rElement.isAncestorOf(element)) {
-			if (sectionComps != null) {
-				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.refresh(element);
-				}
-			}
+		} else {
+			final ISectionComposite comp = getCompositeTowards(element);
+			if (comp != null)
+				comp.refresh(element);
+
 		}
 	}
 
@@ -213,25 +215,17 @@ public class ElementComposite implements IElementComposite {
 		if (!rElement.exists())
 			return;
 		assert (!rElement.equals(element));
-		if (rElement.isAncestorOf(element)) {
-			if (sectionComps != null) {
-				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.elementRemoved(element);
-				}
-			}
-		}
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null)
+			comp.elementRemoved(element);
 	}
 
 	public void elementAdded(IRodinElement element) {
 		if (!rElement.exists())
 			return;
-		if (rElement.isAncestorOf(element)) {
-			if (sectionComps == null)
-				return;
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.elementAdded(element);
-			}
-		}
+		final ISectionComposite comp = getCompositeTowards(element);
+		if (comp != null)
+			comp.elementAdded(element);
 	}
 
 	public void dispose() {
@@ -256,19 +250,17 @@ public class ElementComposite implements IElementComposite {
 			return;
 		
 		if (rElement.equals(element)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				if (sectionComp.getElementType().equals(childrenType)) {
-					sectionComp.childrenChanged(element, childrenType);
-				}
+			final ISectionComposite comp = mapComps.get(childrenType);
+			if (comp != null) {
+				comp.childrenChanged(element, childrenType);
 			}
 
 			row.updateLinks();
-		}
-
-		if (rElement.isAncestorOf(element)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.childrenChanged(element, childrenType);
-			}
+		} else {
+			final ISectionComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				comp.childrenChanged(element, childrenType);
+			}			
 		}
 	}
 
@@ -285,30 +277,39 @@ public class ElementComposite implements IElementComposite {
 			return true;
 		}
 
-		if (rElement.isAncestorOf(element)) {
-			if (selected)
-				setExpand(true);
-			for (ISectionComposite sectionComp : sectionComps) {
-				if (sectionComp.select(element, selected))
-					return true;
-			}
-		}
-		
-		return false;
+		final IRodinElement child = getChildTowards(element);
+		if (child == null)
+			return false;
+
+		if (selected)
+			setExpand(true);
+		final ISectionComposite comp = getComposite(child);
+		if (comp == null)
+			return false;
+
+		return comp.select(element, selected);
 	}
 
 	public void recursiveExpand(IRodinElement element) {
 		if (!rElement.exists())
 			return;
 
-		if (rElement.equals(element) || rElement.isAncestorOf(element)
-				|| element.isAncestorOf(rElement)) {
+		if (element.equals(rElement) || element.isAncestorOf(rElement)) {
 			setExpand(true);
 			for (ISectionComposite sectionComp : sectionComps) {
 				sectionComp.recursiveExpand(element);
 			}
-		}
+		} else {
+			final IRodinElement child = getChildTowards(element);
+			if (child == null)
+				return;
 
+			setExpand(true);
+			final ISectionComposite comp = getComposite(child);
+			if (comp != null) {
+				comp.recursiveExpand(element);
+			}
+		}
 	}
 
 	public void edit(IInternalElement element, IAttributeType attributeType,
@@ -320,15 +321,16 @@ public class ElementComposite implements IElementComposite {
 			row.edit(attributeType, charStart, charEnd);
 		}
 
-		if (rElement.isAncestorOf(element)) {
-			if (!isExpanded())
-				setExpand(true);
-			assert sectionComps != null;
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.edit(element, attributeType, charStart, charEnd);
-			}
+		final IRodinElement child = getChildTowards(element);
+		if (child == null)
+			return;
+
+		if (!isExpanded())
+			setExpand(true);
+		final ISectionComposite comp = getComposite(child);
+		if (comp != null) {
+			comp.edit(element, attributeType, charStart, charEnd);
 		}
-		
 	}
 
 	public void refresh(IRodinElement element, Set<IAttributeType> set) {
@@ -364,16 +366,29 @@ public class ElementComposite implements IElementComposite {
 			}
 		} else {
 			row.updateLinks();
-			if (rElement.isAncestorOf(element)) {
-				if (sectionComps != null) {
-					final IElementType<?> type = EventBEditorUtils
-							.getChildTowards(rElement, element).getElementType();
-					final ISectionComposite comp = mapComps.get(type);
-					if (comp != null)
-						comp.refresh(element, set);
-				}
+			if (mapComps == null)
+				return;
+			final ISectionComposite comp = getCompositeTowards(element);
+			if (comp != null) {
+				page.addToRefreshPrefixMarker(comp);
+				comp.refresh(element, set);
 			}
 		}
 	}
 
+	protected IRodinElement getChildTowards(IRodinElement element) {
+		return EventBEditorUtils.getChildTowards(rElement, element);
+	}
+	
+	protected ISectionComposite getCompositeTowards(IRodinElement element) {
+		final IRodinElement child = getChildTowards(element);
+		return getComposite(child);
+	}
+
+	protected ISectionComposite getComposite(IRodinElement element) {
+		if (element == null || mapComps == null)
+			return null;
+		final IElementType<?> type = element.getElementType();
+		return mapComps.get(type);
+	}
 }

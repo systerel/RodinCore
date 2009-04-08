@@ -123,16 +123,11 @@ public interface ISectionComposite {
 	 */
 	void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd);
-
-	/**
-	 * Call the method before refresh the section several times.
-	 * */
-	public void disableMarkerRefresh();
 	
 	/**
-	 * Call the method after refresh the section several times.
-	 * */
-	public void enableMarkerRefresh();
+	 * Refreshes the prefix marker of this section.
+	 */
+	public void refreshPrefixMarker();
 	
 	/**
 	 * Refresh the information display in the composite if there are some
