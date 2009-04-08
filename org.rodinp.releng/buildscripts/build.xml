@@ -1,0 +1,19 @@
+<project name="build-eclipse" default="product-build" >
+
+<target name="product-build">
+
+    <java jar="${baseLocation}/plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20080819.jar" fork="true">
+      <arg value="-Dbuilder=${buildFolder}/${projectName}/buildscripts"/>
+      <arg value="-application"/>
+      <arg value="org.eclipse.ant.core.antRunner"/>
+      <arg value="-buildfile"/>
+      <arg value="${baseLocation}/plugins/org.eclipse.pde.build_3.4.1.R34x_v20080805/scripts/productBuild/productBuild.xml"/>
+
+      <arg value="-DbaseLocation=${baseLocation}"/>
+      <arg value="-DbuildFolder=${buildFolder}"/>
+      <arg value="-DprojectName=${projectName}"/>
+      <arg value="-DpluginPath=${pluginPath}"/>
+    </java>
+
+</target>
+</project>
