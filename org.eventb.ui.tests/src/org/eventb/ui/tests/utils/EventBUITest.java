@@ -508,4 +508,32 @@ public abstract class EventBUITest extends TestCase {
 		}
 	}
 
+	/**
+	 * Utility method to get a handle to a machine root with the given name. The
+	 * machine is located in the test Rodin project ({@link #rodinProject}).
+	 * 
+	 * @param name
+	 *            the bare name (without any file extension) of the machine
+	 * @return a handle to a machine root with the given name
+	 */
+	protected IMachineRoot getMachineRoot(String name) {
+		final String fileName = EventBPlugin.getMachineFileName(name);
+		final IRodinFile file = rodinProject.getRodinFile(fileName);
+		return (IMachineRoot) file.getRoot();
+	}
+	
+	/**
+	 * Utility method to get a handle to a context root with the given name. The
+	 * context is located in the test Rodin project ({@link #rodinProject}).
+	 * 
+	 * @param name
+	 *            the bare name (without any file extension) of the context
+	 * @return a handle to a context root with the given name
+	 */
+	protected IContextRoot getContextRoot(String name) {
+		final String fileName = EventBPlugin.getContextFileName(name);
+		final IRodinFile file = rodinProject.getRodinFile(fileName);
+		return (IContextRoot) file.getRoot();
+	}
+
 }
