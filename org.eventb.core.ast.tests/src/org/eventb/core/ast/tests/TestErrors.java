@@ -70,6 +70,7 @@ public class TestErrors extends AbstractTests {
 	/**
 	 * Test of lexical errors
 	 */
+	@SuppressWarnings("deprecation")
 	public void testLexErrors() {
 		for (int i = 0; i < lexTestPairs.length; i = i + 2) {
 			final String input = (String) lexTestPairs[i];

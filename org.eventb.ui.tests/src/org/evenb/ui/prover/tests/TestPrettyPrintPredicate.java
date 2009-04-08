@@ -12,7 +12,7 @@ public class TestPrettyPrintPredicate extends TestCase {
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
 		IParseResult parseResult = Lib.ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
+		assertFalse("Parse Successful", parseResult.hasProblem());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 
 		String prettyPrint = PredicateUtil.prettyPrint(30, predString,

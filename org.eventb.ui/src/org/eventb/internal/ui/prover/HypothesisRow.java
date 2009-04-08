@@ -176,7 +176,7 @@ public class HypothesisRow {
 		Predicate pred = hyp;
 		actualString = pred.toString();
 		IParseResult parseResult = formulaFactory.parsePredicate(actualString);
-		assert parseResult.isSuccess();
+		assert !parseResult.hasProblem();
 		parsedPred = parseResult.getParsedPredicate();
 
 		createHypothesisText();
@@ -245,7 +245,7 @@ public class HypothesisRow {
 			// For each tactic, get the applicable positions
 
 			IParseResult parseResult = formulaFactory.parsePredicate(string);
-			assert parseResult.isSuccess();
+			assert !parseResult.hasProblem();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 
 			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
@@ -287,7 +287,7 @@ public class HypothesisRow {
 					parsedPred);
 
 			IParseResult parseResult = formulaFactory.parsePredicate(str);
-			assert parseResult.isSuccess();
+			assert !parseResult.hasProblem();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 
 			int [] indexes = new int[0];

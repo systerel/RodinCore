@@ -517,18 +517,16 @@ public final class Lib {
 
 	public static Expression parseExpression(String str) {
 		IParseResult plr = ff.parseExpression(str);
-		if (plr.isSuccess())
-			return plr.getParsedExpression();
-		else
+		if (plr.hasProblem())
 			return null;
+		return plr.getParsedExpression();
 	}
 
 	public static Type parseType(String str) {
 		IParseResult plr = ff.parseType(str);
-		if (plr.isSuccess())
-			return plr.getParsedType();
-		else
+		if (plr.hasProblem())
 			return null;
+		return plr.getParsedType();
 	}
 
 	public static Expression typeToExpression(Type type) {
@@ -539,18 +537,16 @@ public final class Lib {
 
 	public static Assignment parseAssignment(String str) {
 		IParseResult plr = ff.parseAssignment(str);
-		if (plr.isSuccess())
-			return plr.getParsedAssignment();
-		else
+		if (plr.hasProblem())
 			return null;
+		return plr.getParsedAssignment();
 	}
 
 	public static Predicate parsePredicate(String str) {
 		IParseResult plr = ff.parsePredicate(str);
-		if (plr.isSuccess())
-			return plr.getParsedPredicate();
-		// else System.out.println(str+" : "+plr.getProblems());
-		return null;
+		if (plr.hasProblem())
+			return null;
+		return plr.getParsedPredicate();
 	}
 
 	@Deprecated

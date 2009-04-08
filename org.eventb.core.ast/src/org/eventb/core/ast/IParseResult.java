@@ -26,6 +26,20 @@ package org.eventb.core.ast;
 public interface IParseResult extends IResult {
 
 	/**
+	 * Returns whether parsing was successful. However, this method will return
+	 * <code>true</code> in case of characters ignored by the lexical analyzer.
+	 * Its usage is thus discouraged in favor of a test for
+	 * <code>!hasProblem()</code> which will return <code>false</code> in case
+	 * of lexical error.
+	 * 
+	 * @return <code>true</code> iff parsing succeeded
+	 * @see #hasProblem()
+	 * @deprecated Use <code>!hasProblem()</code> instead
+	 */
+	@Deprecated
+	boolean isSuccess();
+	
+	/**
 	 * Returns the parsed assignment.
 	 * <p>
 	 * A <code>null</code> result is returned in the following cases

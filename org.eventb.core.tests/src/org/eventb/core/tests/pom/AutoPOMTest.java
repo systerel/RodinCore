@@ -53,8 +53,8 @@ public class AutoPOMTest extends BuilderTest {
 			final String name = strings[i];
 			final String typeString = strings[i+1];
 			final IParseResult pResult = factory.parseType(typeString);
-			assertTrue("Parsing type failed for " + typeString,
-					pResult.isSuccess());
+			assertFalse("Parsing type failed for " + typeString,
+					pResult.hasProblem());
 			final Type type = pResult.getParsedType(); 
 			result.addName(name, type);
 		}

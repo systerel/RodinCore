@@ -50,7 +50,7 @@ public abstract class ElementIndexer extends Cancellable {
 		checkCancel();
 		final IParseResult result = parseFormula(formulaString, loc);
 		checkCancel();
-		if (!result.isSuccess()) {
+		if (result.hasProblem()) {
 			return;
 		}
 		final Formula<?> formula = getParsedFormula(result);

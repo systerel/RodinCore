@@ -51,7 +51,7 @@ public class POUtil {
 			final String name = strings[i];
 			final String typeString = strings[i + 1];
 			final IParseResult pResult = ff.parseType(typeString);
-			assert pResult.isSuccess();
+			assert !pResult.hasProblem();
 			final Type type = pResult.getParsedType();
 			result.addName(name, type);
 		}

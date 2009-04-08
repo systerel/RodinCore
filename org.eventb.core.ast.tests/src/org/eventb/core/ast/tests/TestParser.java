@@ -123,6 +123,7 @@ public class TestParser extends AbstractTests {
 				}
 			}
 		}
+		@SuppressWarnings("deprecation")
 		final void verifyFailure(LanguageVersion version) {
 			final IParseResult result = parseResult(image, version);
 			assertTrue(result.hasProblem());

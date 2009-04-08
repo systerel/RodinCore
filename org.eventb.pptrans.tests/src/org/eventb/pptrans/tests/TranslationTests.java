@@ -105,13 +105,13 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testBR3_simple() {
 
 		doTest( "s⊂t",
-				"s ∈ ℙ(t) ∧ ¬�(t ∈ ℙ(s))", true, br_te);
+				"s ∈ ℙ(t) ∧ ¬(t ∈ ℙ(s))", true, br_te);
 	}
 
 	public void testBR3_recursion() {
 
 		doTest( "s∪v ⊂ t∪w",
-				"s∪v ∈ ℙ(t∪w) ∧ ¬�(t∪w ∈ ℙ(s∪v))", true, br_te);
+				"s∪v ∈ ℙ(t∪w) ∧ ¬(t∪w ∈ ℙ(s∪v))", true, br_te);
 	}
 	
 	/**
@@ -120,13 +120,13 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testBR4_simple() {
 
 		doTest( "s ⊄ t",
-				"¬�(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)", true, br_te);
+				"¬(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)", true, br_te);
 	}
 
 	public void testBR4_recursion() {
 
 		doTest( "s∪v ⊄ t∪w",
-				"¬�(s∪v ∈ ℙ(t∪w)) ∨ t∪w ∈ ℙ(s∪v)", true, br_te);
+				"¬(s∪v ∈ ℙ(t∪w)) ∨ t∪w ∈ ℙ(s∪v)", true, br_te);
 	}
 	
 	/**

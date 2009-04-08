@@ -188,6 +188,7 @@ public class TestLexer extends AbstractTests {
         	}
         }
 
+		@SuppressWarnings("deprecation")
 		private void testInvalidStrings(LanguageVersion version) {
 			for (String string : invalidStrings) {
     			final IParseResult result = new ParseResult(ff, version, null);

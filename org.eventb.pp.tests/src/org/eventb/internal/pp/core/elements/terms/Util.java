@@ -1,5 +1,6 @@
 package org.eventb.internal.pp.core.elements.terms;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -74,7 +75,7 @@ public class Util {
 	
 	public static Predicate parsePredicate(String predicate) {
 		IParseResult result = ff.parsePredicate(predicate);
-		assertTrue(result.isSuccess());
+		assertFalse(result.hasProblem());
 		return result.getParsedPredicate();
 	}
 	

@@ -284,7 +284,7 @@ public class GoalPage extends Page implements IGoalPage {
 			Predicate goal = node.getSequent().goal();
 			String tmpString = goal.toString();
 			IParseResult parseResult = ff.parsePredicate(tmpString);
-			assert parseResult.isSuccess();
+			assert !parseResult.hasProblem();
 			Predicate tmpPred = parseResult.getParsedPredicate();
 
 			int [] indexes = new int[0];
@@ -297,7 +297,7 @@ public class GoalPage extends Page implements IGoalPage {
 						tmpPred);
 			}
 			IParseResult parsedResult = ff.parsePredicate(actualString);
-			assert parsedResult.isSuccess();
+			assert !parsedResult.hasProblem();
 			parsedPred = parsedResult.getParsedPredicate();
 
 			Collection<TacticPositionUI> links = new ArrayList<TacticPositionUI>();

@@ -13,6 +13,7 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.Assert;
@@ -258,7 +259,7 @@ public abstract class AbstractFormulaRewriterTests {
 			final String name = env[i];
 			final String typeString = env[i+1];
 			final IParseResult res = ff.parseType(typeString);
-			assertTrue(res.isSuccess());
+			assertFalse(res.hasProblem());
 			typenv.addName(name, res.getParsedType());
 		}
 		return typenv;

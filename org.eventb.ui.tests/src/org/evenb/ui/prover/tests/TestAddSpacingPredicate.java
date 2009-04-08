@@ -22,7 +22,7 @@ public class TestAddSpacingPredicate extends TestCase {
 	private void addSpacingTest(String msg, String predString,
 			String expectedPrettyPrint) {
 		IParseResult parseResult = Lib.ff.parsePredicate(predString);
-		assertTrue("Parse Successful", parseResult.isSuccess());
+		assertFalse("Parse Successful", parseResult.hasProblem());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 
 		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred);

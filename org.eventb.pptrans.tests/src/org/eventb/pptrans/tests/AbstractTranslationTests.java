@@ -44,9 +44,9 @@ public abstract class AbstractTranslationTests extends TestCase {
 
 	public static Predicate parse(String string, ITypeEnvironment te) {
 		IParseResult parseResult = ff.parsePredicate(string);
-		assertTrue("Parse error for: " + string +
+		assertFalse("Parse error for: " + string +
 				"\nProblems: " + parseResult.getProblems(),
-				parseResult.isSuccess());
+				parseResult.hasProblem());
 		Predicate pred = parseResult.getParsedPredicate();
 		ITypeCheckResult tcResult = pred.typeCheck(te);
 		assertTrue(string + " is not typed. Problems: " + tcResult.getProblems(),
