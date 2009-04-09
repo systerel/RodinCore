@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - used label prefix set by user
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -28,7 +29,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
@@ -37,6 +40,7 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -86,6 +90,10 @@ public class NewEventInputDialog extends EventBInputDialog {
 	
 	private Composite composite;
 	
+	private final String guardPrefix;
+
+	private final String actPrefix;
+	
 	/**
 	 * Constructor.
 	 * <p>
@@ -106,8 +114,14 @@ public class NewEventInputDialog extends EventBInputDialog {
 		actSubstitutions = new HashSet<String>();
 		dirtyTexts = new HashSet<Text>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+		guardPrefix = getAutoNamePrefix(IGuard.ELEMENT_TYPE);
+		actPrefix = getAutoNamePrefix(IAction.ELEMENT_TYPE);
 	}
 
+	private String getAutoNamePrefix(IInternalElementType<?> type) {
+		return UIUtils.getAutoNamePrefix(editor.getRodinInput(), type);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -238,7 +252,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			parTexts.add(parText);
 
 			IEventBInputText text = new EventBText(toolkit.createText(
-					composite, "grd" + i));
+					composite, guardPrefix + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
 			text.getTextWidget().addModifyListener(new DirtyStateListener());
@@ -290,7 +304,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 		
 		for (int i = 1; i <= 3; i++) {
 			IEventBInputText text = new EventBText(toolkit.createText(
-					composite, "act" + i));
+					composite, actPrefix + i));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
 			text.getTextWidget().addModifyListener(new DirtyStateListener());
@@ -336,7 +350,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 			parTexts.add(parText);
 
 			IEventBInputText text = new EventBText(toolkit.createText(
-					composite, "grd" + ++grdCount));
+					composite, guardPrefix + ++grdCount));
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			Text grdLabelWidget = text.getTextWidget();
 			grdLabelWidget.setLayoutData(gd);
@@ -375,7 +389,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 
 		} else if (buttonId == IDialogConstants.NO_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
-					composite, "grd" + ++grdCount));
+					composite, guardPrefix + ++grdCount));
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			Text grdLabelWidget = text.getTextWidget();
 			grdLabelWidget.setLayoutData(gd);
@@ -404,7 +418,7 @@ public class NewEventInputDialog extends EventBInputDialog {
 
 		} else if (buttonId == IDialogConstants.YES_TO_ALL_ID) {
 			IEventBInputText text = new EventBText(toolkit.createText(
-					composite, "act" + ++actCount));
+					composite, actPrefix + ++actCount));
 			GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			text.getTextWidget().setLayoutData(gd);
 			text.getTextWidget().addModifyListener(new DirtyStateListener());

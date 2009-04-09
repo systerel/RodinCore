@@ -11,6 +11,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - increased index of label when add new input
+ *     Systerel - used label prefix set by user
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -25,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.core.IAction;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
@@ -140,7 +142,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 		label = toolkit.createLabel(body, "Initialisation");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-		String actLabel = "act";
+		String actLabel = UIUtils.getAutoNamePrefix(root, IAction.ELEMENT_TYPE);
 		try {
 			actLabel = EventBEditorUtils.getFreeInitialisationActionName(root);
 		} catch (RodinDBException e) {
@@ -254,7 +256,7 @@ public class IntelligentNewVariableInputDialog extends EventBInputDialog {
 			invariantPredicateText.getTextWidget().setText("");
 			num++;
 		}
-		String actionName = "act";
+		String actionName = UIUtils.getAutoNamePrefix(root, IAction.ELEMENT_TYPE);
 		try {
 			actionName = EventBEditorUtils.getFreeInitialisationActionName(root);
 		} catch (RodinDBException e) {
