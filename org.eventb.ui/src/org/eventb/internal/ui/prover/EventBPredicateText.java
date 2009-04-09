@@ -186,7 +186,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			return;
 		boxes = new IEventBInputText[offsets.length];
 		for (int i = 0; i < offsets.length; ++i) {
-			final Text text = new Text(styledText, SWT.MULTI);
+			final Text text = new Text(styledText, SWT.SINGLE);
 			final int offset = offsets[i];
 			text.setText("     ");
 			boxes[i] = new EventBMath(text);
