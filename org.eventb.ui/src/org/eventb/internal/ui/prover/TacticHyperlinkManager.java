@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - fixed menu bug
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -25,7 +26,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -144,14 +144,14 @@ public abstract class TacticHyperlinkManager {
 		if (tipMenu != null && !tipMenu.isDisposed())
 			tipMenu.dispose();
 
-		tipMenu = new Menu(text);
+		tipMenu = new Menu(text.getShell(), SWT.POP_UP);
 
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		for (Pair<String, IPosition> tacticPosition : tacticPositions) {
 			final String tacticID = tacticPosition.getFirst();
 			final IPosition position = tacticPosition.getSecond();
 
 			MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
-			TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 			item.setText(tacticUIRegistry.getTip(tacticID));
 			item.addSelectionListener(new SelectionListener() {
 
@@ -196,25 +196,22 @@ public abstract class TacticHyperlinkManager {
 	
 	protected abstract void enableListeners();
 
-	/**
-	 * Sets the location for a hovering shell
-	 * 
-	 * @param menu
-	 *            the menu
-	 * @param position
-	 *            the position of a widget to hover over
-	 */
+	// Display the shell 16 pixels below the place where the user clicked
+	// so that the hyperlink source is not hidden by the menu
 	void setMenuLocation(Menu menu, Point position) {
-		Rectangle displayBounds = menu.getDisplay().getBounds();
-
-		int x = Math.max(Math.min(position.x, displayBounds.width), 0);
-		int y = Math.max(Math.min(position.y + 16, displayBounds.height), 0);
-		menu.setLocation(new Point(x, y));
+		Point belowCursor = new Point(position.x, position.y + 16);
+		menu.setLocation(belowCursor);
 	}
 
 	public void disposeMenu() {
 		if (tipMenu != null && !tipMenu.isDisposed()) {
 			tipMenu.dispose();
+		}
+	}
+
+	public void hideMenu() {
+		if (tipMenu != null && !tipMenu.isDisposed() && tipMenu.isVisible()) {
+			tipMenu.setVisible(false);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - changed double click behavior
+ *     Systerel - fixed menu bug
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -28,7 +29,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
@@ -57,10 +57,6 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	private final static int MARGIN = 5;
 
 	// Constants for showing different cursors
-	final Cursor handCursor;
-
-	final Cursor arrowCursor;
-
 	private IUserSupport us;
 
 	private Predicate hyp;
@@ -100,15 +96,8 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
 		Font font = JFaceResources
 				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
-		styledText.setFont(font);
-		handCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_HAND);
-		arrowCursor = new Cursor(styledText.getDisplay(), SWT.CURSOR_ARROW);
 		JFaceResources.getFontRegistry().addListener(this);
-		styledText.addListener(SWT.MouseDown, mouseDownListener);
-		styledText.addListener(SWT.MouseMove, mouseMoveListener);
-		styledText.addListener(SWT.MouseHover, mouseHoverListener);
-		styledText.addListener(SWT.MouseExit, mouseExitListener);
-		styledText.addListener(SWT.MouseEnter, mouseEnterListener);
+		styledText.setFont(font);
 		styledText.setEditable(false);
 		manager = new TacticHyperlinkManager(styledText) {
 
@@ -140,6 +129,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 			
 		};
+		manager.enableListeners();
 	}
 
 	// This must be called after initialisation
@@ -252,6 +242,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 		}
 		styledText.dispose();
+		manager.disposeMenu();
 	}
 
 	public String[] getResults() {
@@ -278,7 +269,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	class MouseMoveListener implements Listener {
 
 		public void handleEvent(Event e) {
-			manager.disposeMenu();
+			manager.hideMenu();
 			Point location = new Point(e.x, e.y);
 			manager.setMousePosition(location);
 		}
@@ -306,7 +297,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event event) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Exit ");
-			manager.disposeMenu();
+			manager.hideMenu();
 			manager.disableCurrentLink();
 		}
 
