@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - deselect WD predicate and used hypothesis
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -173,29 +185,24 @@ public class AllD implements IReasoner {
 		
 		// Generate the anticidents
 		IAntecedent[] anticidents = new IAntecedent[2];
+
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
 		
 		
 		// The instantiated goal
-		// Replaced, adding WD predicate to hypotheses
-		// anticidents[1] = ProverFactory.makeAntecedent(
-		//		null,
-		//		Lib.breakPossibleConjunct(instantiatedPred),
-		//		ProverFactory.makeDeselectHypAction(Arrays.asList(univHyp))
-		//		);
 		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 		addedHyps.addAll(WDpreds);
 		addedHyps.addAll(Lib.breakPossibleConjunct(instantiatedPred));
 		
-//		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
-//		// toDeselect.add(univHyp);
-//		// toDeselect.addAll(WDpreds);
+		final Set<Predicate> toDeselect = new HashSet<Predicate>();
+		toDeselect.add(univHyp);
+		toDeselect.addAll(WDpreds);
 		
 		anticidents[1] = ProverFactory.makeAntecedent(
 				null,
 				addedHyps,
-				null
+				ProverFactory.makeDeselectHypAction(toDeselect)
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(

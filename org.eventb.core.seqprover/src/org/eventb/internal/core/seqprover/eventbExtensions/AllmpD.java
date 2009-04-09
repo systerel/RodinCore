@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - deselect WD predicate and used hypothesis
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,7 +27,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-
 
 /**
  * Reasoner that instantiates a universally quantified implication and performs a modus ponens on it in one step.
@@ -75,7 +86,7 @@ public class AllmpD extends AllD {
 		for (int i = 0; i < instantiations.length; i++) {
 			if (instantiations[i] == null) 
 				return ProverFactory.reasonerFailure(this,input,
-						"Instantiation for bound variable " + boundIdentDecls[i] + " not provided");
+						"Missing instantiation for " + boundIdentDecls[i]);
 		}
 		
 		// Generate the well definedness predicate for the instantiations
@@ -94,12 +105,9 @@ public class AllmpD extends AllD {
 		
 		// Generate the anticidents
 		IAntecedent[] anticidents = new IAntecedent[3];
+
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
-
-//		Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
-//		// toDeselect.add(univHyp);
-//		// toDeselect.addAll(WDpreds);
 
 		// The instantiated to impLeft goal
 		{
@@ -109,19 +117,24 @@ public class AllmpD extends AllD {
 			anticidents[1] = ProverFactory.makeAntecedent(
 					impLeft,
 					addedHyps,
-					null
+					ProverFactory.makeDeselectHypAction(WDpreds)
 			);
 		}
+
 		// The instantiated continuation
 		{
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 			addedHyps.addAll(WDpreds);
 			addedHyps.addAll(Lib.breakPossibleConjunct(impRight));
-			
+
+			final Set<Predicate> toDeselect = new HashSet<Predicate>();
+			toDeselect.add(univHyp);
+			toDeselect.addAll(WDpreds);
+
 			anticidents[2] = ProverFactory.makeAntecedent(
 					null,
 					addedHyps,
-					null
+					ProverFactory.makeDeselectHypAction(toDeselect)
 			);
 		}
 		
