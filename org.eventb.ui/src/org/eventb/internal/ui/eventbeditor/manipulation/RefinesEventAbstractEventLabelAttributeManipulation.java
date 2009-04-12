@@ -29,7 +29,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesEventAbstractEventLabelAttributeManipulation extends
-		AbstractAttributeManipulation implements IAttributeManipulation {
+		AbstractAttributeManipulation {
 
 	private IRefinesEvent asRefinesEvent(IRodinElement element) {
 		assert element instanceof IRefinesEvent;

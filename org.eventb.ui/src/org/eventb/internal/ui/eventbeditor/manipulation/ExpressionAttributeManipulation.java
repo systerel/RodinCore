@@ -19,8 +19,8 @@ import org.eventb.core.IExpressionElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class ExpressionAttributeManipulation extends AbstractAttributeManipulation implements
-		IAttributeManipulation {
+public class ExpressionAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	private IExpressionElement asExpression(IRodinElement element) {
 		assert element instanceof IExpressionElement;

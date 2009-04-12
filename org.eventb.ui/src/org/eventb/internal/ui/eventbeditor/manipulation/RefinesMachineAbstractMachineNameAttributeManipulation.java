@@ -27,7 +27,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class RefinesMachineAbstractMachineNameAttributeManipulation extends
-		AbstractAttributeManipulation implements IAttributeManipulation {
+		AbstractAttributeManipulation {
 
 	private IRefinesMachine asRefinesMachine(IRodinElement element) {
 		assert element instanceof IRefinesMachine;

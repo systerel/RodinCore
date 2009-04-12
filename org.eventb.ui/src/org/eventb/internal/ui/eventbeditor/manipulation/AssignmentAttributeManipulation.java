@@ -19,8 +19,8 @@ import org.eventb.core.IAssignmentElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class AssignmentAttributeManipulation extends AbstractAttributeManipulation
-		implements IAttributeManipulation {
+public class AssignmentAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	private IAssignmentElement asAssignment(IRodinElement element) {
 		assert element instanceof IAssignmentElement;

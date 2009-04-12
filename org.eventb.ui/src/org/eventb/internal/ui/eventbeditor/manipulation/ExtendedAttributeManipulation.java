@@ -35,8 +35,8 @@ import org.rodinp.core.RodinDBException;
  *         An implementation of {@link IAttributeManipulation} providing the factory
  *         methods for extended attribute of events.
  */
-public class ExtendedAttributeManipulation extends AbstractAttributeManipulation
-		implements IAttributeManipulation {
+public class ExtendedAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	private static final class SetExtended implements IWorkspaceRunnable {
 

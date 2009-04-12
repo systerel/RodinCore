@@ -20,8 +20,8 @@ import org.eventb.core.IConvergenceElement.Convergence;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class ConvergenceAttributeManipulation extends AbstractAttributeManipulation
-		implements IAttributeManipulation {
+public class ConvergenceAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	// TODO externalize strings
 	public final static String ORDINARY = "ordinary";

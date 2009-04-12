@@ -21,8 +21,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class LabelAttributeManipulation extends AbstractAttributeManipulation implements
-		IAttributeManipulation {
+public class LabelAttributeManipulation extends AbstractAttributeManipulation {
 
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {

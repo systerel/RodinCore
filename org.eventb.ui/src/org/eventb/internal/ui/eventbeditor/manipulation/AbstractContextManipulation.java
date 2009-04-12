@@ -22,7 +22,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public abstract class AbstractContextManipulation<E extends IInternalElement>
-		extends AbstractAttributeManipulation implements IAttributeManipulation {
+		extends AbstractAttributeManipulation {
 
 	private String getCurrentFileName(E element) {
 		return element.getRodinFile().getBareName();

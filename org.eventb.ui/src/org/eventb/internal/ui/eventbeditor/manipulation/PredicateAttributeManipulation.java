@@ -19,8 +19,8 @@ import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class PredicateAttributeManipulation extends AbstractAttributeManipulation
-		implements IAttributeManipulation {
+public class PredicateAttributeManipulation extends
+		AbstractAttributeManipulation {
 
 	private IPredicateElement asPredicate(IRodinElement element) {
 		assert element instanceof IPredicateElement;

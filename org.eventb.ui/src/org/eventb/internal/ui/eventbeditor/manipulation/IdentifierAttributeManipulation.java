@@ -22,7 +22,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class IdentifierAttributeManipulation extends
-		AbstractAttributeManipulation implements IAttributeManipulation {
+		AbstractAttributeManipulation {
 
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {

@@ -19,8 +19,7 @@ import org.eventb.core.ICommentedElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-public class CommentAttributeManipulation extends AbstractAttributeManipulation
-		implements IAttributeManipulation {
+public class CommentAttributeManipulation extends AbstractAttributeManipulation {
 
 	private ICommentedElement asCommented(IRodinElement element) {
 		assert element instanceof ICommentedElement;
