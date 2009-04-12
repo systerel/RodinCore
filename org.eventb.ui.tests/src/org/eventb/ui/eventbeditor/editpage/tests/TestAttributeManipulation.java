@@ -32,7 +32,6 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariant;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation;
@@ -370,11 +369,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IExtendsContext createExtendsContext() throws RodinDBException {
 		final IContextRoot ctx = createContext("ctx");
-		final String childName = UIUtils.getFreeChildName(ctx,
-				IExtendsContext.ELEMENT_TYPE);
-		final IExtendsContext extendsContext = ctx.getExtendsClause(childName);
-		extendsContext.create(null, null);
-		return extendsContext;
+		return ctx.createChild(IExtendsContext.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -385,11 +380,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private ISeesContext createSeesContext() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
-		final String childName = UIUtils.getFreeChildName(mch,
-				ISeesContext.ELEMENT_TYPE);
-		final ISeesContext seesContext = mch.getSeesClause(childName);
-		seesContext.create(null, null);
-		return seesContext;
+		return mch.createChild(ISeesContext.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -401,11 +392,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	private IAssignmentElement createAssignment() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
 		final IEvent event = createEvent(mch, "event");
-		final String childName = UIUtils.getFreeChildName(event,
-				IAction.ELEMENT_TYPE);
-		final IAction action = event.getAction(childName);
-		action.create(null, null);
-		return action;
+		return event.createChild(IAction.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -426,11 +413,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IEvent createEvent() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
-		final String childName = UIUtils.getFreeChildName(mch,
-				IEvent.ELEMENT_TYPE);
-		final IEvent event = mch.getEvent(childName);
-		event.create(null, null);
-		return event;
+		return mch.createChild(IEvent.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -451,11 +434,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IExpressionElement createExpression() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
-		final String childName = UIUtils.getFreeChildName(mch,
-				IVariant.ELEMENT_TYPE);
-		final IVariant variant = mch.getVariant(childName);
-		variant.create(null, null);
-		return variant;
+		return mch.createChild(IVariant.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -466,11 +445,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IIdentifierElement createIdentifier() throws RodinDBException {
 		final IContextRoot ctx = createContext("ctx");
-		final String childName = UIUtils.getFreeChildName(ctx,
-				ICarrierSet.ELEMENT_TYPE);
-		final ICarrierSet set = ctx.getCarrierSet(childName);
-		set.create(null, null);
-		return set;
+		return ctx.createChild(ICarrierSet.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -491,11 +466,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IPredicateElement createPredicate() throws RodinDBException {
 		final IContextRoot ctx = createContext("ctx");
-		final String childName = UIUtils.getFreeChildName(ctx,
-				IAxiom.ELEMENT_TYPE);
-		final IAxiom axiom = ctx.getAxiom(childName);
-		axiom.create(null, null);
-		return axiom;
+		return ctx.createChild(IAxiom.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -507,11 +478,7 @@ public class TestAttributeManipulation extends EventBUITest {
 	private IRefinesEvent createRefinesEvent() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
 		final IEvent event = createEvent(mch, "event");
-		final String childName = UIUtils.getFreeChildName(event,
-				IRefinesEvent.ELEMENT_TYPE);
-		final IRefinesEvent refines = event.getRefinesClause(childName);
-		refines.create(null, null);
-		return refines;
+		return event.createChild(IRefinesEvent.ELEMENT_TYPE, null, null);
 	}
 
 	/**
@@ -522,10 +489,6 @@ public class TestAttributeManipulation extends EventBUITest {
 	 */
 	private IRefinesMachine createRefinesMachine() throws RodinDBException {
 		final IMachineRoot mch = createMachine("mch");
-		final String childName = UIUtils.getFreeChildName(mch,
-				IRefinesMachine.ELEMENT_TYPE);
-		final IRefinesMachine refines = mch.getRefinesClause(childName);
-		refines.create(null, null);
-		return refines;
+		return mch.createChild(IRefinesMachine.ELEMENT_TYPE, null, null);
 	}
 }
