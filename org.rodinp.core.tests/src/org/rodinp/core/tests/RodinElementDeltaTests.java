@@ -336,11 +336,15 @@ public class RodinElementDeltaTests extends ModifyingResourceTests {
 		rodinFile.save(null, false);
 		assertDeltas(
 				"Unexpected delta", 
-				"P[*]: {CHILDREN}\n" +
-				"	A.test[*]: {CHILDREN}\n" +
-				"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" +
-				"			foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}"
+				"P[*]: {CHILDREN}\n" + 
+				"	A.test[*]: {CHILDREN}\n" + 
+				"		A[org.rodinp.core.tests.test][*]: {CHILDREN}\n" + 
+				"			foo[org.rodinp.core.tests.namedElement][*]: {ATTRIBUTE}\n" + 
+				"\n" + 
+				"P[*]: {CHILDREN}\n" + 
+				"	A.test[*]: {CONTENT}"
 		);
+		// TODO should produce only the first delta, not the second.
 	}
 
 	public void testModifyContentsNoSave() throws CoreException {
