@@ -11,6 +11,10 @@
 package org.rodinp.core.tests;
 
 import static org.rodinp.internal.core.NameGenerator.isValid;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import org.rodinp.internal.core.NameGenerator;
@@ -21,13 +25,34 @@ import org.rodinp.internal.core.NameGenerator;
  * @author Laurent Voisin
  */
 public class NameGeneratorTests extends TestCase {
+	
+	private static class VerifyingGenerator extends NameGenerator {
 
-	NameGenerator g;
+		private final Set<String> usedNames = new HashSet<String>();
+		
+		@Override
+		public void addUsedName(String s) {
+			usedNames.add(s);
+			super.addUsedName(s);
+		}
+
+		@Override
+		public String advance() {
+			final String result = super.advance();
+			assertTrue(isValid(result));
+			assertFalse(usedNames.contains(result));
+			usedNames.add(result);
+			return result;
+		}
+		
+	}
+
+	private VerifyingGenerator g;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		g = new NameGenerator();
+		g = new VerifyingGenerator();
 	}
 
 	/**
@@ -107,9 +132,7 @@ public class NameGeneratorTests extends TestCase {
 	}
 
 	private void assertNextName(String expected) {
-		final String actual = g.advance();
-		assertTrue(isValid(actual));
-		assertEquals(expected, actual);
+		assertEquals(expected, g.advance());
 	}
 	
 }
