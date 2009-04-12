@@ -77,7 +77,7 @@ public class ExtendsSection extends
 
 	@Override
 	protected IExtendsContext getFreeElementContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+		final String childName = UIUtils.getFreeChildName(rodinRoot,
 				IExtendsContext.ELEMENT_TYPE);
 		return rodinRoot.getExtendsClause(childName);
 	}

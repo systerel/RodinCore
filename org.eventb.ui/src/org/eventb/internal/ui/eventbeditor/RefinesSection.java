@@ -384,7 +384,7 @@ public class RefinesSection extends SectionPart implements
 		machineCombo.add(NULL_VALUE);
 		try {
 			final String childName = UIUtils.getFreeChildName(rodinRoot,
-					rodinRoot, IRefinesMachine.ELEMENT_TYPE);
+					IRefinesMachine.ELEMENT_TYPE);
 			final IRefinesMachine refinesMachine = rodinRoot
 					.getInternalElement(IRefinesMachine.ELEMENT_TYPE, childName);
 			final String[] possibleValues = factory.getPossibleValues(

@@ -67,7 +67,7 @@ public class SeesSection extends
 
 	@Override
 	protected ISeesContext getFreeElementContext() throws RodinDBException {
-		final String childName = UIUtils.getFreeChildName(rodinRoot, rodinRoot,
+		final String childName = UIUtils.getFreeChildName(rodinRoot,
 				ISeesContext.ELEMENT_TYPE);
 		return rodinRoot.getSeesClause(childName);
 	}

@@ -489,21 +489,6 @@ public class UIUtils {
 	}
 
 	/**
-	 * Return the internal name prefix. Use extension point to get the
-	 * autoNamePrefix.
-	 * */
-	public static String getNamePrefix(IRodinFile rodinFile,
-			IInternalElementType<?> type) {
-		return "internal_" + getAutoNamePrefix(rodinFile, type); //$NON-NLS-1$
-	}
-
-	public static String getNamePrefix(IInternalElement root,
-			IInternalElementType<?> type) {
-		return getNamePrefix(root.getRodinFile(), type);
-	}
-
-
-	/**
 	 * Return the prefix setting by user or the default prefix if there is not.
 	 * 
 	 * @param inputFile
@@ -549,15 +534,14 @@ public class UIUtils {
 		}
 	}
 	
-	public static String getAutoNamePrefix(IInternalElement root,
+	public static String getAutoNamePrefix(IInternalElement parent,
 			IInternalElementType<?> type) {
-		return getAutoNamePrefix(root.getRodinFile(), type);
+		return getAutoNamePrefix(parent.getRodinFile(), type);
 	}
 
 	public static String getFreeElementLabel(IInternalElement parent,
-			IInternalElementType<? extends IInternalElement> type) {
-		final IInternalElement root = parent.getRodinFile().getRoot();
-		String prefix = getAutoNamePrefix(root, type);
+			IInternalElementType<?> type) {
+		final String prefix = getAutoNamePrefix(parent, type);
 		return prefix + getFreeElementLabelIndex(parent, type, prefix);
 	}
 
@@ -577,8 +561,7 @@ public class UIUtils {
 	 *         beginIndex)
 	 */
 	public static String getFreeElementLabelIndex(IInternalElement parent,
-			IInternalElementType<? extends IInternalElement> type, String prefix)
-			{
+			IInternalElementType<?> type, String prefix) {
 		try {
 			return getFreePrefixIndex(parent, type,
 					EventBAttributes.LABEL_ATTRIBUTE, prefix);
@@ -590,8 +573,7 @@ public class UIUtils {
 
 	public static String getFreeElementIdentifier(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type) {
-		final IInternalElement root = parent.getRodinFile().getRoot();
-		final String prefix = getAutoNamePrefix(root, type);
+		final String prefix = getAutoNamePrefix(parent, type);
 		try {
 			return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 		} catch (RodinDBException e) {
@@ -606,8 +588,6 @@ public class UIUtils {
 		return getFreePrefixIndex(parent, type, 
 				EventBAttributes.IDENTIFIER_ATTRIBUTE, prefix);
 	}
-
-
 
 	public static Collection<IRodinElement> addToTreeSet(
 			Collection<IRodinElement> set, IRodinElement element) {
@@ -652,18 +632,12 @@ public class UIUtils {
 	}
 
 	public static <T extends IInternalElement> String getFreeChildName(
-			IRodinFile file, IInternalElement parent,
-			IInternalElementType<T> type) throws RodinDBException {
-		String prefix = getNamePrefix(file, type);
+			IInternalElement parent, IInternalElementType<T> type)
+			throws RodinDBException {
+		final String prefix = "i";
 		return prefix + EventBUtils.getFreeChildNameIndex(parent, type, prefix);
 	}
 
-	public static <T extends IInternalElement> String getFreeChildName(
-			IInternalElement root, IInternalElement parent,
-			IInternalElementType<T> type) throws RodinDBException {
-		return getFreeChildName(root.getRodinFile(), parent, type);
-	}
-	
 	public static QualifiedName getQualifiedName(IInternalElementType<?> type) {
 		return new QualifiedName(EventBUIPlugin.PLUGIN_ID, type.getId());
 	}
@@ -846,9 +820,9 @@ public class UIUtils {
 	}
 
 	/*
-	 * to fix bug 2417413: CCombo have a child Text. When Text receive a
-	 * MouseWheel event, CCombo send a KeyDown event to his listeners. To fix it
-	 * we remove the listener on MouseWheel event.
+	 * Fix for bug 2417413: CCombo has a child Text. When Text receives a
+	 * MouseWheel event, CCombo sends a KeyDown event to its listeners. To fix
+	 * it we remove the listener on MouseWheel event.
 	 */
 	public static void removeTextListener(CCombo cc) {
 		for (Control contol : cc.getTabList()) {
