@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Systerel - factor IAttributeFactory code
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
@@ -24,11 +24,16 @@ import org.rodinp.core.RodinDBException;
 public abstract class AbstractContextManipulation<E extends IInternalElement>
 		extends AbstractAttributeManipulation {
 
-	private String getCurrentFileName(E element) {
-		return element.getRodinFile().getBareName();
+	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
+			throws RodinDBException {
+		// do nothing
+	}
+
+	private String getCurrentRootName(E element) {
+		return element.getRoot().getElementName();
 	}
 	
-	public String[] getPossibleValues(IRodinElement element,
+	public final String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		final E contextElement = asContextClause(element);
 		final Set<String> results = new HashSet<String>();
@@ -49,7 +54,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 	public Set<String> getUsedContextNames(E element) {
 		Set<String> usedNames = new HashSet<String>();
 		// First add myself
-		usedNames.add(getCurrentFileName(element));
+		usedNames.add(getCurrentRootName(element));
 		// Then, all contexts already extended
 		for (E clause : getClauses(element)) {
 			try {
@@ -72,7 +77,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "When computing the list of contexts of project "
 					+ rodinProject);
-			contextRoots = new IContextRoot[0];
+			return result;
 		}
 		for (IContextRoot root : contextRoots) {
 			result.add(root.getComponentName());
