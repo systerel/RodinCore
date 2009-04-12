@@ -167,11 +167,8 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 				((IConfigurationElement) rodinRoot).setConfiguration(
 						DEFAULT_CONFIGURATION, pMonitor);
 				if (rodinRoot instanceof IMachineRoot) {
-					IEvent init = rodinRoot.getInternalElement(
-							IEvent.ELEMENT_TYPE, UIUtils
-							.getFreeChildName(rodinRoot, rodinRoot,
-									IEvent.ELEMENT_TYPE) + 1);
-					init.create(null, pMonitor);
+					final IEvent init = rodinRoot.createChild(
+							IEvent.ELEMENT_TYPE, null, pMonitor);
 					init.setLabel(IEvent.INITIALISATION, pMonitor);
 					init.setConvergence(
 							IConvergenceElement.Convergence.ORDINARY, pMonitor);

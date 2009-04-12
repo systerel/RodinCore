@@ -163,10 +163,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IInternalElement root, IInternalElement parent,
 			final IInternalElementType<T> type, final IInternalElement sibling)
 			throws CoreException {
-		String newName = UIUtils.getFreeChildName(root, parent, type);
-		final T newElement = parent.getInternalElement(type, newName);
+		final T newElement = parent.createChild(type, sibling, null);
 		final IAttributeDesc[] attrDesc = getAttributes(type);
-		newElement.create(sibling, null);
 		for (IAttributeDesc desc : attrDesc) {
 			desc.getManipulation().setDefaultValue(newElement, null);
 		}

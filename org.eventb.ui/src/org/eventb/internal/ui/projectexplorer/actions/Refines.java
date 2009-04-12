@@ -66,9 +66,8 @@ public class Refines implements IObjectActionDelegate {
 
 		private void createRefinesMachineClause(IProgressMonitor monitor)
 				throws RodinDBException {
-			final IRefinesMachine refines = con
-					.getRefinesClause("internal_refinesMachine1");
-			refines.create(null, monitor);
+			final IRefinesMachine refines = con.createChild(
+					IRefinesMachine.ELEMENT_TYPE, null, monitor);
 			refines.setAbstractMachineName(abs.getComponentName(), monitor);
 		}
 
@@ -111,9 +110,8 @@ public class Refines implements IObjectActionDelegate {
 		private void createRefinesEventClause(IEvent conEvt, String label,
 				IProgressMonitor monitor) throws RodinDBException {
 			if (!label.equals(IEvent.INITIALISATION)) {
-				final IRefinesEvent refines = conEvt
-						.getRefinesClause("internal_refinesEvent1");
-				refines.create(null, monitor);
+				final IRefinesEvent refines = conEvt.createChild(
+						IRefinesEvent.ELEMENT_TYPE, null, monitor);
 				refines.setAbstractEventLabel(label, monitor);
 			}
 		}

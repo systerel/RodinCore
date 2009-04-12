@@ -51,9 +51,8 @@ public class Extends implements IObjectActionDelegate {
 
 		private void createExtendsContextClause(IProgressMonitor monitor)
 				throws RodinDBException {
-			final IExtendsContext refines = con
-					.getExtendsClause("internal_extendsContext1");
-			refines.create(null, monitor);
+			final IExtendsContext refines = con.createChild(
+					IExtendsContext.ELEMENT_TYPE, null, monitor);
 			refines.setAbstractContextName(abs.getComponentName(), monitor);
 		}
 

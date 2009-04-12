@@ -19,7 +19,6 @@ import org.eventb.core.IAction;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -52,11 +51,7 @@ class CreateInitialisation extends OperationLeaf {
 			// actSub, monitor);
 
 			event = getInitialisationEvent(monitor);
-			final String name = UIUtils.getFreeChildName(root, event,
-					IAction.ELEMENT_TYPE);
-			action = event.getInternalElement(IAction.ELEMENT_TYPE, name);
-
-			action.create(null, monitor);
+			action = event.createChild(IAction.ELEMENT_TYPE, null, monitor);
 			action.setLabel(actLabel, monitor);
 			action.setAssignmentString(actSub, monitor);
 			// editor.addNewElement(action);
@@ -98,11 +93,7 @@ class CreateInitialisation extends OperationLeaf {
 		}
 
 		newInit = true;
-		final String evtName = UIUtils.getFreeChildName(root, root,
-				IEvent.ELEMENT_TYPE);
-		result = root.getEvent(evtName);
-
-		result.create(null, monitor);
+		result = root.createChild(IEvent.ELEMENT_TYPE, null, monitor);
 		result.setLabel(IEvent.INITIALISATION, monitor);
 		result
 				.setConvergence(IConvergenceElement.Convergence.ORDINARY,
