@@ -14,6 +14,7 @@ Export-Package: org.rodinp.core,
  org.rodinp.core.builder,
  org.rodinp.core.indexer,
  org.rodinp.core.location,
+ org.rodinp.internal.core;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.debug,
  org.rodinp.internal.core.indexer;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.indexer.persistence;x-friends:="org.rodinp.core.tests",
@@ -21,6 +22,6 @@ Export-Package: org.rodinp.core,
  org.rodinp.internal.core.indexer.sort;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.indexer.tables;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.location;x-friends:="org.rodinp.core.tests",
- org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests",
- org.rodinp.internal.core.util;x-friends:="org.rodinp.core.tests"
+ org.rodinp.internal.core.util;x-friends:="org.rodinp.core.tests",
+ org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -12,6 +12,7 @@
  *     Systerel - added method getNextSibling()
  *     Systerel - separation of file and root element
  *     Systerel - added inquiry methods
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -30,6 +31,7 @@ import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.ClearElementsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
+import org.rodinp.internal.core.CreateFreshInternalElementOperation;
 import org.rodinp.internal.core.CreateInternalElementOperation;
 import org.rodinp.internal.core.CreateProblemMarkerOperation;
 import org.rodinp.internal.core.DeleteElementsOperation;
@@ -91,6 +93,15 @@ public abstract class InternalElement extends RodinElement implements
 			throws RodinDBException {
 		new CreateInternalElementOperation(this, nextSibling)
 				.runOperation(monitor);
+	}
+
+	public final <T extends IInternalElement> T createChild(
+			IInternalElementType<T> type, IInternalElement nextSibling,
+			IProgressMonitor monitor) throws RodinDBException {
+		final CreateFreshInternalElementOperation<T> op = //
+		new CreateFreshInternalElementOperation<T>(this, type, nextSibling);
+		op.runOperation(monitor);
+		return op.getResultElement();
 	}
 
 	@Override

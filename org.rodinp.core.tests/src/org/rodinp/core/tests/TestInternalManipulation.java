@@ -10,8 +10,13 @@
  *     Systerel - removed test on pseudo-attribute "contents"
  *     Systerel - added tests for method getNextSibling()
  *     Systerel - separation of file and root element
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.core.tests;
+
+import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_SIBLING;
+import static org.rodinp.core.IRodinDBStatusConstants.READ_ONLY;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -23,7 +28,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -32,6 +39,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
@@ -410,4 +418,93 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertEquals(null, ne3.getNextSibling());
 	}
 
+	/**
+	 * Ensures that creating a new child of a root element works as advertised
+	 * in nominal cases.
+	 */
+	public void testCreateNewChildRoot() throws Exception {
+		checkEmpty(root);
+		final NamedElement e1 = createNewNEPositive(root, null);
+		checkEmptyChildren(root, e1);
+		final NamedElement e3 = createNewNEPositive(root, null);
+		checkEmptyChildren(root, e1, e3);
+		final NamedElement e0 = createNewNEPositive(root, e1);
+		checkEmptyChildren(root, e0, e1, e3);
+		final NamedElement e2 = createNewNEPositive(root, e3);
+		checkEmptyChildren(root, e0, e1, e2, e3);
+	}
+
+	/**
+	 * Ensures that creating a new child of a non root element works as advertised
+	 * in nominal cases.
+	 */
+	public void testCreateNewChildNonRoot() throws Exception {
+		checkEmpty(root);
+		final NamedElement e1 = createNewNEPositive(root, null);
+		final NamedElement e11 = createNewNEPositive(e1, null);
+		checkEmptyChildren(e1, e11);
+	}
+
+	/**
+	 * Ensures that creating a new child of a root element works as advertised
+	 * in nominal cases.
+	 */
+	public void testCreateNewChildDelta() throws Exception {
+		startDeltas();
+		final NamedElement e1 = createNewNEPositive(root, null);
+		final String n1 = e1.getElementName();
+		assertDeltas(
+				"Unexpected delta after creation",
+				"P[*]: {CHILDREN}\n" + 
+				"	x.test[*]: {CHILDREN}\n" + 
+				"		x[org.rodinp.core.tests.test][*]: {CHILDREN}\n" + 
+				"			" + n1 + "[org.rodinp.core.tests.namedElement][+]: {}"
+		);
+			
+		clearDeltas();
+		final NamedElement e11 = createNewNEPositive(e1, null);
+		final String n11 = e11.getElementName();
+		assertDeltas(
+				"Unexpected delta after creation",
+				"P[*]: {CHILDREN}\n" + 
+				"	x.test[*]: {CHILDREN}\n" + 
+				"		x[org.rodinp.core.tests.test][*]: {CHILDREN}\n" + 
+				"			" + n1 + "[org.rodinp.core.tests.namedElement][*]: {CHILDREN}\n" +
+				"				" + n11 + "[org.rodinp.core.tests.namedElement][+]: {}"
+		);
+	}
+
+	public void testCreateNewChildErrors() throws Exception {
+		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
+
+		final IRodinFile rf = getRodinFile(rodinProject, "inexistent.test");
+		final IInternalElement ir = rf.getRoot();
+		assertCreateNewChildError(ir, type, null, ELEMENT_DOES_NOT_EXIST, ir);
+
+		final InternalElement ro = root.getSnapshot();
+		assertCreateNewChildError(ro, type, null, READ_ONLY, ro);
+
+		assertCreateNewChildError(root, type, root, INVALID_SIBLING, root);
+
+		final NamedElement sibling = root
+				.getInternalElement(type, "inexistent");
+		assertCreateNewChildError(root, type, sibling, ELEMENT_DOES_NOT_EXIST,
+				sibling);
+	}
+
+	private void assertCreateNewChildError(IInternalElement parent,
+			IInternalElementType<?> type, IInternalElement nextSibling,
+			int errorCode, IInternalElement... elements) {
+		try {
+			parent.createChild(type, nextSibling, null);
+			fail("Should have raised an error");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = e.getRodinDBStatus();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertEquals(errorCode, status.getCode());
+			assertEquals(Arrays.asList(elements), //
+					Arrays.asList(status.getElements()));
+		}
+	}
+	
 }

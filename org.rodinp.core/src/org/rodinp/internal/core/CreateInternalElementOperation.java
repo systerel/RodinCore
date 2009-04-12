@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -19,12 +23,22 @@ import org.rodinp.internal.core.util.Messages;
 
 public class CreateInternalElementOperation extends RodinDBOperation{
 
-	private InternalElement newElement;
-	private InternalElement nextSibling;
+	private final InternalElement newElement;
+	private final RodinElement parent;
+	protected final InternalElement nextSibling;
 	
 	public CreateInternalElementOperation(InternalElement newElement, IInternalElement nextSibling) {
 		super(new IRodinElement[] { newElement });
 		this.newElement = newElement;
+		this.parent = newElement.getParent();
+		this.nextSibling = (InternalElement) nextSibling;
+	}
+
+	public CreateInternalElementOperation(InternalElement parent,
+			IInternalElement nextSibling, boolean unused) {
+		super(new IRodinElement[] { parent });
+		this.newElement = null;
+		this.parent = parent;
 		this.nextSibling = (InternalElement) nextSibling;
 	}
 
@@ -32,17 +46,22 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	protected void executeOperation() throws RodinDBException {
 		try {
 			beginTask(Messages.operation_createInternalElementProgress, 2);
-			RodinFile file = newElement.getRodinFile();
-			RodinFileElementInfo fileInfo = (RodinFileElementInfo)
-					file.getElementInfo(getSubProgressMonitor(1));
-			fileInfo.create(newElement, nextSibling);
-			RodinElementDelta delta = newRodinElementDelta();
-			delta.added(newElement);
+			final IInternalElement result = doCreate();
+			final RodinElementDelta delta = newRodinElementDelta();
+			delta.added(result);
 			addDelta(delta);
 			worked(1);
 		} finally {
 			done();
 		}
+	}
+
+	protected IInternalElement doCreate() throws RodinDBException {
+		final RodinFile file = newElement.getRodinFile();
+		final RodinFileElementInfo fileInfo = (RodinFileElementInfo) file
+				.getElementInfo(getSubProgressMonitor(1));
+		fileInfo.create(newElement, nextSibling);
+		return newElement;
 	}
 
 	@Override
@@ -65,8 +84,10 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	 */
 	@Override
 	public IRodinDBStatus verify() {
-		super.verify();
-		final RodinElement parent = newElement.getParent();
+		final IRodinDBStatus status = super.verify();
+		if (!status.isOK())
+			return status;
+
 		if (! parent.exists()) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
@@ -79,7 +100,7 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 					parent
 			);
 		}
-		if (newElement.exists()) {
+		if (newElement != null && newElement.exists()) {
 			return new RodinDBStatus(
 					IRodinDBStatusConstants.NAME_COLLISION,
 					newElement

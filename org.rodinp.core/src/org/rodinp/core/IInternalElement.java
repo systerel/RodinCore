@@ -11,6 +11,7 @@
  *     Systerel - added method getNextSibling()
  *     Systerel - separation of file and root element
  *     Systerel - added inquiry methods
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -40,24 +41,57 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            the same parent as this element), or <code>null</code> to
 	 *            create this element in the last position
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * @exception RodinDBException
 	 *                if the element could not be created. Reasons include:
 	 *                <ul>
-	 *                <li>The parent of this element does not exist
-	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li>The parent of this element or the given sibling does
+	 *                not exist (ELEMENT_DOES_NOT_EXIST)</li>
 	 *                <li>The parent of this element is read-only (READ_ONLY)</li>
 	 *                <li>There already exists a child element with the given
 	 *                type and name (NAME_COLLISION)</li>
 	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
-	 *                <li> A <code>CoreException</code> occurred while
-	 *                accessing an underlying resource
+	 *                <li>A <code>CoreException</code> occurred while accessing
+	 *                an underlying resource
 	 *                </ul>
+	 * @see #createChild(IInternalElementType, IInternalElement,
+	 *      IProgressMonitor)
 	 */
 	void create(IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException;
-	
+
+	/**
+	 * Creates a new child of this element in the database and returns a handle
+	 * to it. As a side effect, this element and all its ancestors are open if
+	 * they were not already. The name of the created child is automatically
+	 * assigned by the database to prevent any name collision.
+	 * 
+	 * @param type
+	 *            type of the child to create
+	 * @param nextSibling
+	 *            sibling before which the child should be created (must have
+	 *            this element as parent), or <code>null</code> to create the
+	 *            child in the last position
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @exception RodinDBException
+	 *                if the child could not be created. Reasons include:
+	 *                <ul>
+	 *                <li>This element or the given sibling does not exist
+	 *                (ELEMENT_DOES_NOT_EXIST)</li>
+	 *                <li>This element is read-only (READ_ONLY)</li>
+	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
+	 *                <li>A <code>CoreException</code> occurred while accessing
+	 *                an underlying resource
+	 *                </ul>
+	 * @see #create(IInternalElement, IProgressMonitor)
+	 */
+	<T extends IInternalElement> T createChild(IInternalElementType<T> type,
+			IInternalElement nextSibling, IProgressMonitor monitor)
+			throws RodinDBException;
+
 	/**
 	 * Creates a new Rodin Problem marker for the given attribute of this
 	 * element.
@@ -124,9 +158,6 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 			int charEnd, IRodinProblem problem, Object... args)
 			throws RodinDBException;
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinElement#getElementType()
-	 */
 	IInternalElementType<? extends IInternalElement> getElementType();
 	
 	/**
@@ -275,6 +306,8 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 * @param childName
 	 *            name of the child element
 	 * @return the child internal element with the given type and name
+	 * @see #createChild(IInternalElementType, IInternalElement,
+	 *      IProgressMonitor)
 	 */
 	<T extends IInternalElement> T getInternalElement(
 			IInternalElementType<T> childType, String childName);

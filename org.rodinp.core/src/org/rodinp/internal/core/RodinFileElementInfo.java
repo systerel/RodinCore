@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - removed deprecated methods (contents)
  *     Systerel - added auto-upgrade of file with past version
  *     Systerel - separation of file and root element
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -219,6 +220,16 @@ public class RodinFileElementInfo extends OpenableElementInfo {
 			printCaches();
 			System.out.println("--- END OF CREATE ---");
 		}
+	}
+
+	public synchronized <T extends IInternalElement> T create(InternalElement parent,
+			InternalElementType<T> childType,
+			InternalElement nextSibling) throws RodinDBException {
+		final InternalElementInfo parentInfo = getElementInfo(parent);
+		final String childName = parentInfo.getFreshName();
+		T child = parent.getInternalElement(childType, childName);
+		create((InternalElement) child, nextSibling);
+		return child;
 	}
 
 	public synchronized void delete(InternalElement element)

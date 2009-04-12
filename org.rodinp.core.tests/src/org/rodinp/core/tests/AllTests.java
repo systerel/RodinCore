@@ -37,6 +37,7 @@ public class AllTests {
 		// $JUnit-BEGIN$
 		suite.addTestSuite(HandleTests.class);
 		suite.addTestSuite(TestInternalManipulation.class);
+		suite.addTestSuite(NameGeneratorTests.class);
 		suite.addTestSuite(DeleteTests.class);
 		suite.addTestSuite(ClearTests.class);
 		suite.addTestSuite(MementoTests.class);

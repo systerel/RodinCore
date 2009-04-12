@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - moved attribute type declarations to super
  *     Systerel - separation of file and root element
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -113,6 +115,16 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		element.create(nextSibling, null);
 		assertExists("Created element should exist", element);
 		return (NamedElement) element;
+	}
+
+	protected static NamedElement createNewNEPositive(IInternalElement parent,
+			IInternalElement nextSibling) throws RodinDBException {
+		assertExists("Parent should exist", parent);
+		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
+		final NamedElement element = parent
+				.createChild(type, nextSibling, null);
+		assertExists("Created element should exist", element);
+		return element;
 	}
 
 	protected static void createNENegative(IInternalElement parent, String name,

@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaElementInfo.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.JavaElementInfo
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added creation of new internal element child
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -39,10 +42,12 @@ public class RodinElementInfo {
 
 	public void addChild(RodinElement child) {
 		if (this.children == RodinElement.NO_ELEMENTS) {
-			setChildren(new RodinElement[] { child });
+			this.children = new RodinElement[] { child };
+			childAdded(child);
 		} else {
 			if (!includesChild(child)) {
-				setChildren(growAndAddToArray(this.children, child));
+				this.children = growAndAddToArray(this.children, child);
+				childAdded(child);
 			}
 		}
 	}
@@ -57,13 +62,15 @@ public class RodinElementInfo {
 			System.arraycopy(children, 0, array, 0, idx);
 			array[idx] = child;
 			System.arraycopy(children, idx, array, idx+1, length-idx);
-			children = array;
+			this.children = array;
+			childAdded(child);
 		}
 	}
 
 	public void changeChild(RodinElement source, RodinElement dest) {
 		final int idx = getChildIndex(source);
 		children[idx] = dest;
+		childAdded(dest);
 	}
 
 	public boolean containsChild(RodinElement element) {
@@ -157,12 +164,13 @@ public class RodinElementInfo {
 
 	public void removeChild(RodinElement child) {
 		if (includesChild(child)) {
-			setChildren(removeAndShrinkArray(this.children, child));
+			this.children = removeAndShrinkArray(this.children, child);
 		}
 	}
 
 	public void setChildren(RodinElement[] children) {
 		this.children = children;
+		childrenSet();
 	}
 
 	public void setChildren(Collection<? extends IRodinElement> children) {
@@ -172,6 +180,15 @@ public class RodinElementInfo {
 		} else {
 			this.children = children.toArray(new RodinElement[length]);
 		}
+		childrenSet();
+	}
+
+	protected void childrenSet() {
+		// do nothing by default
+	}
+	
+	protected void childAdded(RodinElement newChild) {
+		// do nothing by default
 	}
 
 }
