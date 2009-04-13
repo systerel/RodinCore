@@ -54,7 +54,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		final IRefinesMachine refines = asRefinesMachine(element);
 		List<String> results = new ArrayList<String>();
 		IMachineRoot machine = (IMachineRoot) refines.getParent();
-		String machineName = machine.getRoot().getElementName();
+		String machineName = machine.getElementName();
 		IMachineRoot[] machineRoots = getMachineRoots(refines);
 		for (IMachineRoot root : machineRoots) {
 			String bareName = root.getElementName();
