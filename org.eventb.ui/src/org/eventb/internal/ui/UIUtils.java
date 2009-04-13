@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -60,6 +61,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -193,11 +195,21 @@ public class UIUtils {
 			final IInternalElement[] implicitChildren = EventBUtils
 					.getImplicitChildren((IEvent) parent);
 			for (IInternalElement child : implicitChildren) {
-				if (child.getElementType() == type) {
-					result.add((T)child);
+				final T typedChild = asOfType(child, type);
+				if (typedChild != null) {
+					result.add(typedChild);
 				}
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends IInternalElement> T asOfType(
+			IInternalElement element, IInternalElementType<T> type) {
+		if (element.getElementType() == type) {
+			return (T) element;
+		}
+		return null;
 	}
 
 	public static void log(Throwable exc, String message) {
@@ -489,54 +501,50 @@ public class UIUtils {
 	}
 
 	/**
-	 * Return the prefix setting by user or the default prefix if there is not.
+	 * Returns the name prefix for an element described by its parent and
+	 * element type.
 	 * 
-	 * @param inputFile
-	 *            a {@link IRodinFile}
+	 * @param parent
+	 *            parent of element for which a name prefix is wanted
 	 * @param type
-	 *            a {@link IInternalElementType}. Type of the element of the
-	 *            attribute
-	 * */
-	public static String getAutoNamePrefix(IRodinFile inputFile,
+	 *            type of element for which a name prefix is wanted
+	 */
+	public static String getAutoNamePrefix(IInternalElement parent,
 			IInternalElementType<?> type) {
-		final String defaultPrefix = ElementDescRegistry.getInstance()
-				.getElementDesc(type).getAutoNamePrefix();
+		final IFile file = parent.getRodinFile().getResource();
+		final QualifiedName propertyName = getQualifiedName(type);
 		try {
-			final String prefix = inputFile.getResource()
-					.getPersistentProperty(getQualifiedName(type));
-			if (prefix == null)
-				return defaultPrefix;
-			return prefix;
+			final String prefix = file.getPersistentProperty(propertyName);
+			if (prefix != null)
+				return prefix;
 		} catch (CoreException e) {
-			e.printStackTrace();
-			return defaultPrefix;
+			EventBUIExceptionHandler.handleGetPersistentPropertyException(e);
 		}
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+		final IElementDesc desc = registry.getElementDesc(type);
+		return desc.getAutoNamePrefix();
 	}
-	
+
 	/**
-	 * Set the prefix
+	 * Changes the name prefix for an element described by an ancestor and
+	 * element type.
 	 * 
-	 * @param inputFile
-	 *            a {@link IRodinFile}
+	 * @param ancestor
+	 *            ancestor of element
 	 * @param type
-	 *            a {@link IInternalElementType}. Type of the element of the
-	 *            attribute
-	 * */
-	public static void setAutoNamePrefix(IRodinFile inputFile,
+	 *            type of element
+	 * @param newPrefix
+	 *            new name prefix or <code>null</code> to delete this property
+	 */
+	public static void setAutoNamePrefix(IInternalElement ancestor,
 			IInternalElementType<?> type, String newPrefix) {
-		final QualifiedName qualifiedName = UIUtils.getQualifiedName(type);
+		final IFile file = ancestor.getRodinFile().getResource();
+		final QualifiedName propertyName = UIUtils.getQualifiedName(type);
 		try {
-			if (newPrefix != null)
-				inputFile.getResource().setPersistentProperty(qualifiedName,
-						newPrefix);
+			file.setPersistentProperty(propertyName, newPrefix);
 		} catch (CoreException e) {
 			EventBUIExceptionHandler.handleSetPersistentPropertyException(e);
 		}
-	}
-	
-	public static String getAutoNamePrefix(IInternalElement parent,
-			IInternalElementType<?> type) {
-		return getAutoNamePrefix(parent.getRodinFile(), type);
 	}
 
 	public static String getFreeElementLabel(IInternalElement parent,

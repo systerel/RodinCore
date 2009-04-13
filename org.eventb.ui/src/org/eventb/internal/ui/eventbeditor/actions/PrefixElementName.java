@@ -15,6 +15,7 @@ package org.eventb.internal.ui.eventbeditor.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.internal.ui.UIUtils;
@@ -48,13 +49,15 @@ public class PrefixElementName implements IEditorActionDelegate {
 	public void setPrefix(IInternalElementType<?> type, String dialogTitle,
 			String message) {
 		final IInternalElement root = editor.getRodinInput();
-		final String prefix = UIUtils.getAutoNamePrefix(root, type);
-
-		final InputDialog dialog = new InputDialog(editor.getSite().getShell(),
-				dialogTitle, message, prefix, null);
+		final String oldPrefix = UIUtils.getAutoNamePrefix(root, type);
+		final Shell shell = editor.getSite().getShell();
+		final InputDialog dialog = new InputDialog(shell, dialogTitle, message,
+				oldPrefix, null);
 		dialog.open();
-
-		UIUtils.setAutoNamePrefix(root.getRodinFile(), type, dialog.getValue());
+		final String newPrefix = dialog.getValue();
+		if (newPrefix != null && !newPrefix.equals(oldPrefix)) {
+			UIUtils.setAutoNamePrefix(root, type, newPrefix);
+		}
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
