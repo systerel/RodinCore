@@ -18,7 +18,10 @@ import org.rodinp.core.RodinDBException;
  * @author htson
  *         <p>
  *         A common interface for proving label of an object
+ *         
+ * @deprecated This interface is not used anymore.
  */
+@Deprecated
 public interface IElementLabelProvider {
 
 	/**

@@ -20,7 +20,10 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This is the common interface for the element modifiers used in the
  *         Event-B Table/Tree.
+ *
+ * @deprecated This interface is not used anymore.
  */
+@Deprecated
 public interface IElementModifier {
 
 	/**
