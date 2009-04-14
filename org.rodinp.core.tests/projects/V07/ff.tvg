@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.rodinp.core.tests.versionFileG>
+<org.rodinp.core.tests.versionEA name="a1" org.rodinp.core.tests.versionStrAttr="at EA"/>
+<org.rodinp.core.tests.versionEA name="a2" org.rodinp.core.tests.versionStrAttr="at EA"/>
+<org.rodinp.core.tests.versionEC name="c1" org.rodinp.core.tests.versionStrAttr="at EC"/>
+<org.rodinp.core.tests.versionEB>
+<org.rodinp.core.tests.versionEC name="c2" org.rodinp.core.tests.versionStrAttr="at EB EC"/>
+</org.rodinp.core.tests.versionEB>
+</org.rodinp.core.tests.versionFileG>

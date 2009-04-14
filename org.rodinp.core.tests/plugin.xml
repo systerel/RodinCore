@@ -235,6 +235,13 @@
             name="Test Version F"
             priority="normal">
       </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvg"
+            id="versionFileG"
+            name="Test Version G"
+            priority="normal">
+      </content-type>
    </extension>
    <extension
          point="org.rodinp.core.fileAssociations">
@@ -261,6 +268,10 @@
       <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileF"
             root-element-type="org.rodinp.core.tests.versionFileF">
+      </fileAssociation>
+      <fileAssociation
+            content-type-id="org.rodinp.core.tests.versionFileG"
+            root-element-type="org.rodinp.core.tests.versionFileG">
       </fileAssociation>
    </extension>
    <extension
@@ -294,6 +305,11 @@
             class="org.rodinp.core.tests.version.db.basis.VersionRootF"
             id="versionFileF"
             name="Version File F">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootG"
+            id="versionFileG"
+            name="Version File G">
       </internalElementType>
       <internalElementType
             class="org.rodinp.core.tests.version.db.basis.VersionEA"
@@ -426,6 +442,17 @@
             type="org.rodinp.core.tests.versionFileF"
             version="1">
       </source>
+      <multiple
+            type="org.rodinp.core.tests.versionFileG"
+            version="1">
+         <pattern
+               patternPath="//*">
+            <modifyAttribute
+                  class="org.rodinp.core.tests.version.db.Modifier"
+                  id="org.rodinp.core.tests.versionStrAttr">
+            </modifyAttribute>
+         </pattern>
+      </multiple>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">
@@ -451,6 +478,10 @@
       </fileElementVersion>
       <fileElementVersion
             id="org.rodinp.core.tests.versionFileF"
+            version="1">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileG"
             version="1">
       </fileElementVersion>
    </extension>

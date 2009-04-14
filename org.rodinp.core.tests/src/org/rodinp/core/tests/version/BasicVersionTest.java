@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added test for invalid version
  *     Systerel - separation of file and root element
+ *     Systerel - added attribute modification
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
@@ -38,6 +39,7 @@ import org.rodinp.core.tests.version.db.IVersionEA;
 import org.rodinp.core.tests.version.db.IVersionEB;
 import org.rodinp.core.tests.version.db.IVersionEC;
 import org.rodinp.core.tests.version.db.IVersionRootF;
+import org.rodinp.core.tests.version.db.Modifier;
 import org.rodinp.core.tests.version.db.VersionAttributes;
 
 /**
@@ -64,14 +66,13 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		return elements;
 	}
 	
-	private static String getAttribute(
+	private static void assertAttribute(
 			IInternalElement element, 
 			IAttributeType.String attr, 
 			String string) throws Exception {
 		assertTrue("Attribute not present " + attr.getId(), element.hasAttribute(attr));
-		String value = element.getAttributeValue(attr);
+		final String value = element.getAttributeValue(attr);
 		assertEquals("Attribute has wrong value " + attr.getId(), string, value);
-		return value;
 	}
 
 	private static void convertProjectWithSuccess(IRodinProject project, int size)
@@ -252,7 +253,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		IInternalElement[] elements = getElements(project, "ff.tvb", IVersionEA.ELEMENT_TYPE, 1);
 		
-		getAttribute(elements[0], VersionAttributes.StringAttr, "Hello");
+		assertAttribute(elements[0], VersionAttributes.StringAttr, "Hello");
 	}
 	
 	/**
@@ -268,11 +269,11 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		
 		// new attribute in elements[0] added
 		
-		getAttribute(elements[0], VersionAttributes.StringAttr, "Hello");
+		assertAttribute(elements[0], VersionAttributes.StringAttr, "Hello");
 		
 		// existing attributes are not modified
 		
-		getAttribute(elements[1], VersionAttributes.StringAttr, "Byebye");
+		assertAttribute(elements[1], VersionAttributes.StringAttr, "Byebye");
 	}
 	
 	private void checkV04(IRodinProject project) throws Exception {
@@ -284,7 +285,7 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		for (int i=0; i< 6; i++) {
 			IInternalElement element = elements[i];
 			assertEquals("wrong name", names[i], element.getElementName());
-			getAttribute(element, VersionAttributes.StringAttr, attrs[i]);
+			assertAttribute(element, VersionAttributes.StringAttr, attrs[i]);
 		}
 	}
 
@@ -404,5 +405,26 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		assertRodinDBExceptionRaised(rf, ERROR, INVALID_VERSION_NUMBER);
 	}
 
+	/**
+	 * Test of the modification of the contents of an attribute.
+	 */
+	public void test_11_ModifyAttribute()throws Exception {
+
+		IRodinProject project = fetchProject("V07");
+
+		convertProjectWithSuccess(project, 1);
+
+		final IInternalElement[] elementsEA = getElements(project, "ff.tvg", IVersionEA.ELEMENT_TYPE, 2);
+		final IInternalElement[] elementsEB = getElements(project, "ff.tvg", IVersionEB.ELEMENT_TYPE, 1);
+		final IInternalElement[] elementsEC = getElements(project, "ff.tvg", IVersionEC.ELEMENT_TYPE, 1);
+		final IVersionEC[] elementsEBEC = elementsEB[0].getChildrenOfType(IVersionEC.ELEMENT_TYPE);
+		
+		final Modifier modifier = new Modifier();
+		assertAttribute(elementsEA[0], VersionAttributes.StringAttr, modifier.getNewValue("at EA"));
+		assertAttribute(elementsEA[1], VersionAttributes.StringAttr, modifier.getNewValue("at EA"));
+		assertAttribute(elementsEC[0], VersionAttributes.StringAttr, modifier.getNewValue("at EC"));
+		assertAttribute(elementsEBEC[0], VersionAttributes.StringAttr, modifier.getNewValue("at EB EC"));
+	}
+	
 }
 

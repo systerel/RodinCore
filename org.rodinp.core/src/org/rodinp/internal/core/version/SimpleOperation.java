@@ -4,8 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
+ *
  *     ETH Zurich - initial API and implementation
  *     Systerel   - added attribute modification
  *******************************************************************************/
@@ -13,17 +12,21 @@ package org.rodinp.internal.core.version;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
-public abstract class Operation extends ExtensionDesc {
+/**
+ * @author Stefan Hallerstede
+ *
+ */
+public abstract class SimpleOperation extends Operation {
+	
+	private final SimpleConversionSheet sheet;
 
-	public Operation(IConfigurationElement configElement) {
+	public SimpleOperation(IConfigurationElement configElement, SimpleConversionSheet sheet) {
 		super(configElement);
+		this.sheet = sheet;
 	}
 
-	protected void checkId(String s) {
-		int x = s.indexOf('@');
-		int y = s.indexOf('/');
-		if (x != -1 || y != -1)
-			throw new IllegalStateException("bare id expected " + s);
+	public SimpleConversionSheet getSheet() {
+		return sheet;
 	}
 
 }

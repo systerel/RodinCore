@@ -21,6 +21,7 @@
             <element ref="simple"/>
             <element ref="sorted"/>
             <element ref="source"/>
+            <element ref="multiple"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -109,6 +110,33 @@
                <documentation>
                   the value to be given to the new attribute
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="modifyAttribute">
+      <annotation>
+         <documentation>
+            modify the contents of an attribute of the selected element
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified identifier of the attribute type
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a class that implements &lt;code&gt;IAttributeModifier&lt;/code&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.rodinp.core.version.IAttributeModifier"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -209,6 +237,33 @@
       </complexType>
    </element>
 
+   <element name="multiple">
+      <annotation>
+         <documentation>
+            A multiple conversion converts elements based on a path pattern.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="pattern" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified identifier of a type of file elements to which this version applies
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="version" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the target version of this conversion; each conversion converts from &lt;code&gt;version-1&lt;/code&gt; to &lt;code&gt;version&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="element">
       <annotation>
          <documentation>
@@ -225,6 +280,27 @@
             <annotation>
                <documentation>
                   the path to the element to which to apply the operations; the last element type identifier on this path determines that element; the element type identifier must not refer to a file element type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pattern">
+      <annotation>
+         <documentation>
+            the pattern that matches elements to convert.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="modifyAttribute"/>
+         </choice>
+         <attribute name="patternPath" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the path to the elements to which to apply the operations;
+the path can be any valid XPath pattern, including &quot;//*&quot; that matches all elements.
                </documentation>
             </annotation>
          </attribute>
