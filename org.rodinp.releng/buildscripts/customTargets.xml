@@ -140,10 +140,8 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 
-<!--
 		<antcall target="run.director.for.macosx"/>
 		<antcall target="run.director.for.win32"/>
--->
 		<antcall target="run.director.for.linux"/>
 	</target>
 	
@@ -201,12 +199,13 @@
 			<!--param name="p2.version" value="${buildId}"/-->
 		</antcall>
 
-		<!-- (mj) Before zipping, we need to (1) modify config.ini and (2) make the executable executable. -->
-
-    	<propertyfile file="${buildDirectory}/result/tmp/rodin/configuration/config.ini">
-    		<entry key="osgi.bundles" value="org.eclipse.equinox.transforms.hook@4,org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start"/>
-    	</propertyfile>
-
+		<!-- Copy the p2 settings in destination -->
+		<property name="p2.settings" location="${buildDirectory}/result/tmp/rodin/configuration/.settings" />
+		<mkdir dir="${p2.settings}" />
+		<copy todir="${p2.settings}">
+			<fileset dir="${builder}/p2-settings" includes="**" />
+		</copy>
+        <!-- (mj) Doesn't work, for whatever reason ..>
         <chmod file="${buildDirectory}/result/tmp/rodin/rodin" perm="ugo+rx"/>
 
 		<zip destfile="${buildDirectory}/result/rodin-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
