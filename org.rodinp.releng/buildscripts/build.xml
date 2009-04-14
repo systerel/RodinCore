@@ -2,18 +2,19 @@
 
 <target name="product-build">
 
-    <java jar="${baseLocation}/plugins/org.eclipse.equinox.launcher_1.0.100.v20080509-1800.jar" fork="true">
-      <arg value="-Dbuilder=${buildFolder}/${projectName}/buildscripts"/>
-      <arg value="-application"/>
-      <arg value="org.eclipse.ant.core.antRunner"/>
-      <arg value="-buildfile"/>
-      <arg value="${baseLocation}/plugins/org.eclipse.pde.build_3.4.0.v20080604/scripts/productBuild/productBuild.xml"/>
+    <java jar="${baseLocation}/plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20081125.jar"
+          fork="true">
+      <arg line="-Dbuilder=${buildFolder}/${projectName}/buildscripts"/>
+      <arg line="-application org.eclipse.ant.core.antRunner"/>
+      <arg line="-buildfile ${baseLocation}/plugins/org.eclipse.pde.build_3.4.1.R34x_v20081217/scripts/productBuild/productBuild.xml"/>
 
-      <arg value="-DbaseLocation=${baseLocation}"/>
-      <arg value="-DbuildFolder=${buildFolder}"/>
-      <arg value="-DprojectName=${projectName}"/>
-      <arg value="-DpluginPath=${pluginPath}"/>
+      <arg line="-DbaseLocation=${baseLocation}"/>
+      <arg line="-DbuildDirectory=${buildFolder}/${projectName}"/>
+      <arg line="-DbuildFolder=${buildFolder}/${projectName}/buildscripts"/>
+      <arg line="-DprojectName=${projectName}"/>
+      <arg line="-DpluginPath=${pluginPath}"/>
     </java>
 
 </target>
+
 </project>
