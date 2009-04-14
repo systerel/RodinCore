@@ -205,7 +205,7 @@
 		<copy todir="${p2.settings}">
 			<fileset dir="${builder}/p2-settings" includes="**" />
 		</copy>
-        <!-- (mj) Doesn't work, for whatever reason ..>
+        <!-- (mj) Doesn't work, for whatever reason -->
         <chmod file="${buildDirectory}/result/tmp/rodin/rodin" perm="ugo+rx"/>
 
 		<zip destfile="${buildDirectory}/result/rodin-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
