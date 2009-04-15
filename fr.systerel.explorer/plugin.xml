@@ -451,7 +451,7 @@
          </enablement>
       </actionProvider>
       <navigatorContent
-            activeByDefault="false"
+            activeByDefault="true"
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.MachineContentProvider"
             id="fr.systerel.explorer.navigator.content.machine"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
@@ -476,7 +476,7 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            activeByDefault="false"
+            activeByDefault="true"
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.ContextContentProvider"
             id="fr.systerel.explorer.navigator.content.context"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
@@ -499,6 +499,7 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
+            activeByDefault="false"
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.complex.ComplexContextContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.context"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
@@ -527,6 +528,7 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
+            activeByDefault="false"
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.complex.ComplexMachineContentProvider"
             id="fr.systerel.explorer.navigator.content.complex.machine"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
@@ -552,7 +554,7 @@
          </commonSorter>
       </navigatorContent>
       <commonFilter
-            activeByDefault="true"
+            activeByDefault="false"
             class="fr.systerel.internal.explorer.navigator.filters.HideNoneRodinFilter"
             id="fr.systerel.explorer.navigator.filters.hideNonRodin"
             name="%filters.hideNonRodin">
@@ -564,36 +566,43 @@
             name="%filters.hideResources">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$CheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcc"
             name="%filters.hideBcc">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$CheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBcm"
             name="%filters.hideBcm">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$POFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpo"
             name="%filters.hideBpo">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$PRFilter"
             id="fr.systerel.explorer.navigator.filters.hideBpr"
             name="%filters.hideBpr">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$PSFilter"
             id="fr.systerel.explorer.navigator.filters.hideBps"
             name="%filters.hideBps">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$UncheckedContextFilter"
             id="fr.systerel.explorer.navigator.filters.hideBuc"
             name="%filters.hideBuc">
       </commonFilter>
       <commonFilter
+            activeByDefault="true"
             class="fr.systerel.internal.explorer.navigator.filters.FileTypeFilter$UncheckedMachineFilter"
             id="fr.systerel.explorer.navigator.filters.hideBum"
             name="%filters.hideBum">
