@@ -7,9 +7,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.arith;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -27,6 +27,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -35,7 +36,6 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
  * Basic automated arithmetic rewriter for the Event-B sequent prover.
