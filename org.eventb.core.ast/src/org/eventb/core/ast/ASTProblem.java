@@ -1,9 +1,17 @@
-/*
- * Created on 24-jun-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored hashcode() and equals()
+ *******************************************************************************/
 package org.eventb.core.ast;
 
+import java.util.Arrays;
 
 /**
  * Describes a problem encountered when dealing with a formula.
@@ -35,23 +43,38 @@ public class ASTProblem {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof ASTProblem) {
-			ASTProblem other = (ASTProblem) obj;
-			if (args.length != other.args.length) {
-				return false;
-			}
-			for (int i = 0; i < args.length; i++) {
-				if (!args[i].equals(other.args[i])) {
-					return false;
-				}
-			}
-			return other.location==null?true:other.location.equals(location) && other.msg.equals(msg) && other.severity == severity;
-		}
-		return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(args);
+		result = prime * result
+				+ ((location == null) ? 0 : location.hashCode());
+		result = prime * result + msg.hashCode();
+		result = prime * result + severity;
+		return result;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ASTProblem other = (ASTProblem) obj;
+		if (this.msg != other.msg || severity != other.severity)
+			return false;
+		if (!Arrays.equals(args, other.args))
+			return false;
+		if (this.location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!this.location.equals(other.location))
+			return false;
+		return true;
+	}
+
 	/**
 	 * Returns the arguments of this problem.
 	 * 
