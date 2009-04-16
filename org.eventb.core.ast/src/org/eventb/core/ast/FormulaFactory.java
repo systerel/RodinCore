@@ -23,6 +23,9 @@ import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
+import org.eventb.internal.core.upgrade.UpgradeResult;
+import org.eventb.internal.core.upgrade.UpgraderFactory;
+import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 /**
  * This class is the factory class for all the ast nodes of an event-B formula.
@@ -1111,5 +1114,79 @@ public class FormulaFactory {
 	public boolean isValidIdentifierName(String name) {
 		return Lexer.isValidIdentifierName(name);
 	}
-	
+
+	/**
+	 * Returns whether the given char is a white space according to the Event-B
+	 * lexical specification.
+	 * 
+	 * @param c
+	 *            the char to test
+	 * @return <code>true</code> if the given char is a white space
+	 */
+	public static boolean isEventBWhiteSpace(char c) {
+		return Character.isSpaceChar(c)
+			|| ('\u0009' <= c && c <= 0x000d)
+			|| ('\u001c' <= c && c <= '\u001F');
+	}
+
+	/**
+	 * Upgrades the given assignment string to the given language version.
+	 * 
+	 * @param input
+	 *            an assignment string assumed to be parseable in the language
+	 *            version immediately preceding the target version
+	 * @param targetVersion
+	 *            the desired version after upgrade
+	 * @return the result of the upgrade
+	 */
+	public IUpgradeResult<Assignment> upgradeAssignment(String input,
+			LanguageVersion targetVersion) {
+		final UpgradeResult<Assignment> result = new UpgradeResult<Assignment>(
+				this);
+		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
+				targetVersion, this);
+		upgrader.upgradeAssignment(input, result);
+		return result;
+	}
+
+	/**
+	 * Upgrades the given expression string to the given language version.
+	 * 
+	 * @param input
+	 *            an expression string assumed to be parseable in the language
+	 *            version immediately preceding the target version
+	 * @param targetVersion
+	 *            the desired version after upgrade
+	 * @return the result of the upgrade
+	 */
+	public IUpgradeResult<Expression> upgradeExpression(String input,
+			LanguageVersion targetVersion) {
+		final UpgradeResult<Expression> result = new UpgradeResult<Expression>(
+				this);
+		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
+				targetVersion, this);
+		upgrader.upgradeExpression(input, result);
+		return result;
+	}
+
+	/**
+	 * Upgrades the given predicate string to the given language version.
+	 * 
+	 * @param input
+	 *            a predicate string assumed to be parseable in the language
+	 *            version immediately preceding the target version
+	 * @param targetVersion
+	 *            the desired version after upgrade
+	 * @return the result of the upgrade
+	 */
+	public IUpgradeResult<Predicate> upgradePredicate(String input,
+			LanguageVersion targetVersion) {
+		final UpgradeResult<Predicate> result = new UpgradeResult<Predicate>(
+				this);
+		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
+				targetVersion, this);
+		upgrader.upgradePredicate(input, result);
+		return result;
+	}
+
 }
