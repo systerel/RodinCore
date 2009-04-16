@@ -50,7 +50,6 @@ public class DefaultVisitor implements IVisitor {
 	}
 
 	public boolean enterEQUAL(RelationalPredicate pred) {
-		System.out.println("enterEQUAL");
 		return true;
 	}
 
