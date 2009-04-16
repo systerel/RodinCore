@@ -1124,7 +1124,8 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Checks whether two formulae are strictly equal, that is ignoring alpha-conversion.
+	 * Checks whether two formulae are strictly equal, that is ignoring
+	 * alpha-conversion.
 	 * <p>
 	 * Returns <code>true</code> if the formulae are equal.
 	 * </p>
@@ -1132,7 +1133,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param obj
 	 *            the object to be compared to
 	 * @return <code>true</code> iff the two formulae are equal
+	 * @deprecated This method never computed what it advertised and is in fact
+	 *             strictly equivalent to {@link #equals(Object)}.
 	 */
+	@Deprecated
 	public final boolean equalsNoAlphaConversion(Object obj) {
 		if (this == obj) { 
 			return true;
