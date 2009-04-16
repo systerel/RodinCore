@@ -140,17 +140,27 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 
-		<antcall target="run.director.for.macosx"/>
+		<antcall target="run.director.for.macosx.x86"/>
+		<antcall target="run.director.for.macosx.ppc"/>
 		<antcall target="run.director.for.win32"/>
 		<antcall target="run.director.for.linux"/>
 	</target>
 	
-	<target name="run.director.for.macosx" depends="check.director.for.macosx"
+	<target name="run.director.for.macosx.pcc" depends="check.director.for.macosx"
 			if="do.director.for.macosx">
 		<antcall target="run.director.for">
 			<param name="p2.os" value="macosx" />
 			<param name="p2.ws" value="carbon" />
 			<param name="p2.arch" value="ppc" />
+		</antcall>
+	</target>
+
+	<target name="run.director.for.macosx.x86" depends="check.director.for.macosx"
+			if="do.director.for.macosx">
+		<antcall target="run.director.for">
+			<param name="p2.os" value="macosx" />
+			<param name="p2.ws" value="carbon" />
+			<param name="p2.arch" value="x86" />
 		</antcall>
 	</target>
 	
@@ -205,11 +215,25 @@
 		<copy todir="${p2.settings}">
 			<fileset dir="${builder}/p2-settings" includes="**" />
 		</copy>
-        <!-- (mj) Doesn't work, for whatever reason -->
-        <chmod file="${buildDirectory}/result/tmp/rodin/rodin" perm="ugo+rx"/>
 
-		<zip destfile="${buildDirectory}/result/rodin-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
+                <!-- when building with cruisecontrol, we use Linux zip to preserve permissions -->
+                <antcall target="zip.ant" />
+                <antcall target="zip.linux"/>
+
 		<delete dir="${buildDirectory}/result/tmp" />
+	</target>
+
+        <target name="zip.ant" unless="cruisecontrol">
+		<zip destfile="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
+	</target>
+
+        <target name="zip.linux"  if="cruisecontrol" >
+          <exec executable="zip" dir="${buildDirectory}/result/tmp">
+            <arg value="-r"/>
+            <arg value="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip"/>
+            <arg value="rodin"/>
+          </exec>
+
 	</target>
 
 	<target name="run.director">

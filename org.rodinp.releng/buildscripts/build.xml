@@ -1,6 +1,6 @@
 <project name="build-eclipse" default="product-build" >
 
-<target name="product-build">
+<target name="product-build" depends="clean">
 
     <java jar="${baseLocation}/plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20081125.jar"
           fork="true">
@@ -13,7 +13,19 @@
       <arg line="-DbuildFolder=${buildFolder}/${projectName}/buildscripts"/>
       <arg line="-DprojectName=${projectName}"/>
       <arg line="-DpluginPath=${pluginPath}"/>
+      <arg line="-Dcruisecontrol=true"/>
     </java>
+
+</target>
+
+<target name="clean">
+  <delete>
+    <fileset dir="${buildFolder}/${projectName}/" includes="assemble.org.*"/>
+    <fileset dir="${buildFolder}/${projectName}/" includes="finalFeaturesVersions.*"/>
+    <fileset dir="${buildFolder}/${projectName}/" includes="package.org.eclipse.pde.build.container.*"/>
+  </delete>
+  <delete dir="${buildFolder}/${projectName}/repo" />
+  <delete dir="${buildFolder}/${projectName}/result" />
 
 </target>
 
