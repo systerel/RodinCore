@@ -40,10 +40,9 @@ import org.rodinp.core.RodinDBException;
  *         useful to other plug-ins.
  *         <p>
  *         This class provides <code>Image</code> and
- *         <code>ImageDescriptor</code>s for each named image in the
- *         interface. All <code>Image</code> objects provided by this class
- *         are managed by this class and must never be disposed by other
- *         clients.
+ *         <code>ImageDescriptor</code>s for each named image in the interface.
+ *         All <code>Image</code> objects provided by this class are managed by
+ *         this class and must never be disposed by other clients.
  *         </p>
  *         <p>
  *         This class is not intended to be extended by clients.
@@ -62,7 +61,7 @@ public class EventBImage {
 	public static final String IMG_NEW_COMPONENT = "New Component";
 
 	public static final String IMG_DISCHARGED_SMILEY = "Discharged Smiley";
-	
+
 	public static final String IMG_PENDING_SMILEY = "Pending Smiley";
 
 	public static final String IMG_REVIEW_SMILEY = "Review Smiley";
@@ -102,12 +101,18 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IEventBSharedImages.IMG_MACHINE, "icons/full/obj16/mch_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_MACHINE,
+				"icons/full/obj16/mch_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_CONTEXT,
+				"icons/full/obj16/ctx_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_VARIABLES,
+				"icons/full/obj16/vars_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_INVARIANTS,
+				"icons/full/obj16/invs_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_THEOREMS,
+				"icons/full/obj16/thms_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_EVENTS,
+				"icons/full/obj16/evts_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SETS,
 				"icons/full/obj16/sets_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_CONSTANTS,
@@ -179,7 +184,7 @@ public class EventBImage {
 				"icons/full/ctool16/sad.gif");
 		registerImage(registry, EventBImage.IMG_REVIEW_SMILEY,
 				"icons/full/ctool16/wink-blue.gif");
-		
+
 		registerImage(registry, IEventBSharedImages.IMG_INVERSE,
 				"icons/full/ctool16/inv_prover.gif");
 		registerImage(registry, IEventBSharedImages.IMG_SELECT_ALL,
@@ -274,9 +279,9 @@ public class EventBImage {
 			return null;
 
 		int F_COMMENT = 0x00001;
-		
+
 		int F_ERROR = 0x00002;
-		
+
 		int F_WARNING = 0x00004;
 
 		int F_INFO = 0x00008;
@@ -396,15 +401,15 @@ public class EventBImage {
 		String base_path = "";
 
 		int F_AUTO = 0x00001;
-		
+
 		int F_INACCURATE = 0x00002;
-		
+
 		int F_REVIEWED_BROKEN = 0x00004;
-		
+
 		int F_DISCHARGED_BROKEN = 0x00008;
 
 		int confidence;
-		
+
 		try {
 			confidence = status.getConfidence();
 		} catch (RodinDBException e) {
@@ -440,8 +445,7 @@ public class EventBImage {
 			if (isProofBroken) {
 				if (confidence == IConfidence.PENDING) {
 					// Do nothing
-				}
-				else if (confidence <= IConfidence.REVIEWED_MAX)
+				} else if (confidence <= IConfidence.REVIEWED_MAX)
 					overlay = overlay | F_REVIEWED_BROKEN;
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
 					overlay = overlay | F_DISCHARGED_BROKEN;
@@ -458,11 +462,11 @@ public class EventBImage {
 
 		boolean isAutomatic = false;
 		try {
-			isAutomatic = ! status.getHasManualProof();
+			isAutomatic = !status.getHasManualProof();
 		} catch (RodinDBException e) {
 			String message = "Cannot check if the proof tree of the sequent "
-				+ status.getElementName()
-				+ " is automatically generated or not";
+					+ status.getElementName()
+					+ " is automatically generated or not";
 			if (UIUtils.DEBUG) {
 				System.out.println(message);
 				e.printStackTrace();
@@ -515,8 +519,7 @@ public class EventBImage {
 		return image;
 	}
 
-	public static ImageDescriptor getImageDescriptor(
-			IElementType<?> type) {
+	public static ImageDescriptor getImageDescriptor(IElementType<?> type) {
 		IElementDesc elementDesc = ElementDescRegistry.getInstance()
 				.getElementDesc(type);
 		return elementDesc.getImageDescriptor();
@@ -524,9 +527,9 @@ public class EventBImage {
 
 	public static Image getImage(ImageDescriptor desc, int overlay) {
 		int F_COMMENT = 0x00001;
-		
+
 		int F_ERROR = 0x00002;
-		
+
 		int F_WARNING = 0x00004;
 
 		String key = "desc:" + desc;
