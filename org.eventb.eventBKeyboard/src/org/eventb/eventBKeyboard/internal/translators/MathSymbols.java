@@ -1,38 +1,70 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored symbol definitions
+ *******************************************************************************/
 package org.eventb.eventBKeyboard.internal.translators;
 
-
 public class MathSymbols extends AbstractSymbols {
-	// Combos input which are "math".
-	private static final String[] mathCombo = { "|>>", "|>", "\\/", "/\\",
-			"|->", "-->", "/<<:", "/<:", "/:", "<=>", "=>", "&", "!", "#",
-			"/=", "<=", ">=", "<<:", "<:", "<<->>", "<<->", "<->>", "<->",
-			">->>", "+->", ">+>", ">->", "+>>", "->>", "{}", "\\", "**", "<+",
-			"><", "||", "~", "<<|", "<|", "%", "..", ".", "-", "*", "/", ":=",
-			"::", ":|", ":", "|", ",," };
 
-	// The translation of the above "math" combos
-	private static final String[] mathTranslation = { "\u2a65", "\u25b7",
-			"\u222a", "\u2229", "\u21a6", "\u2192", "\u2284", "\u2288",
-			"\u2209", "\u21d4", "\u21d2", "\u2227", "\u2200", "\u2203",
-			"\u2260", "\u2264", "\u2265", "\u2282", "\u2286", "\ue102",
-			"\ue100", "\ue101", "\u2194", "\u2916", "\u21f8", "\u2914",
-			"\u21a3", "\u2900", "\u21a0", "\u2205", "\u2216", "\u00d7",
-			"\ue103", "\u2297", "\u2225", "\u223c", "\u2a64", "\u25c1",
-			"\u03bb", "\u2025", "\u00b7", "\u2212", "\u2217", "\u00f7",
-			"\u2254", ":\u2208", ":\u2223", "\u2208", "\u2223", "\u21a6" };
-
-	@Override
-	protected String[] getTranslation() {
-		return mathTranslation;
-	}
-
-	@Override
-	protected String[] getCombo() {
-		return mathCombo;
-	}
-	
 	public MathSymbols() {
-		super();
+		super(new Symbol[] { new Symbol("|>>", "\u2a65"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("|>", "\u25b7"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("\\/", "\u222a"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/\\", "\u2229"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("|->", "\u21a6"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("-->", "\u2192"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/<<:", "\u2284"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/<:", "\u2288"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/:", "\u2209"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<=>", "\u21d4"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("=>", "\u21d2"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("&", "\u2227"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("!", "\u2200"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("#", "\u2203"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/=", "\u2260"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<=", "\u2264"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(">=", "\u2265"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<<:", "\u2282"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<:", "\u2286"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<<->>", "\ue102"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<<->", "\ue100"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<->>", "\ue101"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<->", "\u2194"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(">->>", "\u2916"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("+->", "\u21f8"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(">+>", "\u2914"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(">->", "\u21a3"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("+>>", "\u2900"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("->>", "\u21a0"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("{}", "\u2205"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("\\", "\u2216"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("**", "\u00d7"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<+", "\ue103"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("><", "\u2297"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("||", "\u2225"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("~", "\u223c"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<<|", "\u2a64"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("<|", "\u25c1"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("%", "\u03bb"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("..", "\u2025"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(".", "\u00b7"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("-", "\u2212"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("*", "\u2217"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("/", "\u00f7"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(":=", "\u2254"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("::", ":\u2208"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(":|", ":\u2223"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(":", "\u2208"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("|", "\u2223"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol(",,", "\u21a6"), //$NON-NLS-1$ //$NON-NLS-2$
+		});
 	}
-	
+
 }

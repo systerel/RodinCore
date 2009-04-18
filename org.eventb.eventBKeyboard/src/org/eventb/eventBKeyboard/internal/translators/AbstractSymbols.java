@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored symbol definitions
+ *******************************************************************************/
 package org.eventb.eventBKeyboard.internal.translators;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +20,8 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
 public abstract class AbstractSymbols {
 
+	private final Symbol[] rawSymbols;
+	
 	private Collection<Symbol> newSymbols;
 
 	private HashMap<String, Collection<Symbol>> tempSymbols = null;
@@ -16,23 +30,17 @@ public abstract class AbstractSymbols {
 
 	public int maxSize = 0;
 
+	public AbstractSymbols(Symbol[] rawSymbols) {
+		this.rawSymbols = rawSymbols;
+	}
+	
 	public HashMap<String, Collection<Symbol>> getSymbols() {
 		if (symbols == null) {
 			int count = 0;
 			tempSymbols = new HashMap<String, Collection<Symbol>>();
-			String[] mathCombo = getCombo();
-			String[] mathComboTranslation = getTranslation();
-
-			for (int i = 0; i < mathCombo.length; i++) {
-				String combo = mathCombo[i];
-				String translation = mathComboTranslation[i];
-				Symbol symbol = new Symbol(combo, translation);
-				// KeyboardUtils.debugMath("Combo: \"" + combo + "\" --> \""
-				// + translation + "\"");
-				int length = combo.length();
-
-				String key = generateKey(length);
-
+			for (Symbol symbol : rawSymbols) {
+				final int length = symbol.getCombo().length();
+				final String key = generateKey(length);
 				Collection<Symbol> collection = tempSymbols.get(key);
 				if (collection == null) {
 					// KeyboardUtils.debugMath("New size: " + length);
@@ -54,10 +62,6 @@ public abstract class AbstractSymbols {
 		}
 		return symbols;
 	}
-
-	protected abstract String[] getTranslation();
-
-	protected abstract String[] getCombo();
 
 	private void mutateSymbols() {
 		symbols = new HashMap<String, Collection<Symbol>>();
@@ -150,11 +154,10 @@ public abstract class AbstractSymbols {
 		KeyboardUtils.debugMath("Total Symbols: " + count);
 	}
 
-	public static String generateKey(int i) {
-		String key = "";
-		for (int j = 0; j < i; j++)
-			key += "*";
-		return key;
+	public static String generateKey(int length) {
+		final char[] temp = new char[length];
+		Arrays.fill(temp, '*');
+		return new String(temp);
 	}
 
 	private void pushSymbol(Symbol symbol) {

@@ -1,29 +1,34 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored symbol definitions
+ *******************************************************************************/
 package org.eventb.eventBKeyboard.internal.translators;
 
-
 public class TextSymbols extends AbstractSymbols {
-	// Combos input which are "text".
-	private static final String[] textCombo = { "NAT1", "NAT", "POW1", "POW",
-			"INT", "INTER", "UNION", "or", "not", "true", "false", "circ", "oftype" };
 
-	// The translation of the above "text" combos
-	private static final String[] textTranslation = { "\u2115\u0031",
-			"\u2115", "\u2119\u0031", "\u2119", "\u2124", "\u22c2", "\u22c3",
-			"\u2228", "\u00ac", "\u22a4", "\u22a5", "\u2218", "\u2982" };
-
-
-	@Override
-	protected String[] getTranslation() {
-		return textTranslation;
-	}
-
-	@Override
-	protected String[] getCombo() {
-		return textCombo;
-	}
-	
 	public TextSymbols() {
-		super();
+		super(new Symbol[] {
+				new Symbol("NAT1", "\u2115\u0031"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("NAT", "\u2115"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("POW1", "\u2119\u0031"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("POW", "\u2119"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("INT", "\u2124"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("INTER", "\u22c2"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("UNION", "\u22c3"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("or", "\u2228"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("not", "\u00ac"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("true", "\u22a4"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("false", "\u22a5"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("circ", "\u2218"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("oftype", "\u2982"), //$NON-NLS-1$ //$NON-NLS-2$
+		});
 	}
-	
+
 }
