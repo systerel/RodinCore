@@ -1,6 +1,6 @@
 <project name="build-eclipse" default="product-build" >
 
-<target name="product-build" depends="clean">
+<target name="product-build" depends="clean,get-dependencies">
 
     <java jar="${baseLocation}/plugins/org.eclipse.equinox.launcher_1.0.101.R34x_v20081125.jar"
           fork="true">
@@ -18,6 +18,18 @@
 
 </target>
 
+<target name="get-dependencies">
+<mkdir dir="${buildFolder}/${projectName}/dependencies" />
+
+<unzip src="${buildFolder}/org.rodinp/I.cruise/org.rodinp-cruise.zip"
+       dest="${buildFolder}/${projectName}/dependencies">
+</unzip>
+<unzip src="${buildFolder}/org.eventb.ide/I.cruise/org.eventb.ide-cruise.zip"
+       dest="${buildFolder}/${projectName}/dependencies">
+</unzip>
+
+</target>
+
 <target name="clean">
   <delete>
     <fileset dir="${buildFolder}/${projectName}/" includes="assemble.org.*"/>
@@ -26,6 +38,7 @@
   </delete>
   <delete dir="${buildFolder}/${projectName}/repo" />
   <delete dir="${buildFolder}/${projectName}/result" />
+  <delete dir="${buildFolder}/${projectName}/dependencies" />
 
 </target>
 
