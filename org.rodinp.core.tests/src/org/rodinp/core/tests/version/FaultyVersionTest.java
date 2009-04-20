@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added support for testing failing converters
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +80,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 		}
 	}
 	
-	private void faultyFileVersions(IConfigurationElement[] elements) {
+	private static void faultyFileVersions(IConfigurationElement[] elements) {
 		try {
 			VersionManager vm = VersionManager.getInstance();
 			vm.computeVersionDescs(elements);
@@ -88,23 +90,24 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 		fail("Faulty configuration undetected");
 	}
 	
-	private void faultyConversions(IConfigurationElement[] vElements,
-			IConfigurationElement[] cElements) {
+	private static void faultyConversions(IConfigurationElement[] vElements,
+			IConfigurationElement[] cElements,
+			IConfigurationElement... expectedFailures) {
 		VersionManager vm = VersionManager.getInstance();
+		vm.clearInvalidConverters();
 		List<VersionDesc> descs = vm.computeVersionDescs(vElements);
+		Map<IInternalElementType<?>, Converter> cmap = vm.computeConverters(descs, cElements);
+		final List<IConfigurationElement> invalidConverters = vm.getInvalidConverters();
+		assertEquals(Arrays.asList(expectedFailures), invalidConverters);
 		try {
-			Map<IInternalElementType<?>, Converter> cmap = vm.computeConverters(descs, cElements);
 			for (Converter converter : cmap.values()) {
 				for (ConversionSheet sheet : converter.getConversionSheets()) {
 					sheet.getTransformer();
 				}
 			}
-		} catch (IllegalStateException e) {
-			return;
 		} catch (RodinDBException e) {
-			return;
+			fail("Faulty configuration undetected");
 		}
-		fail("Faulty configuration undetected");
 	}
 
 	/**
@@ -171,13 +174,15 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 			makeFileElementVersions(
 					new FileElementVersion(PLUGIN_ID, FILEA_TYPE, "1")
 			);
+		SimpleConversion failingConversion = new SimpleConversion(PLUGIN_ID,
+				FILEA_TYPE, "1");
 		IConfigurationElement[] cElements =
 			makeConversions(
 					new SimpleConversion(PLUGIN_ID, FILEA_TYPE, "1"),
-					new SimpleConversion(PLUGIN_ID, FILEA_TYPE, "1")
+					failingConversion
 			);
 		
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, failingConversion);
 	}
 
 	/**
@@ -197,7 +202,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 					)
 			);
 		
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, cElements);
 	}
 
 	/**
@@ -226,7 +231,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-			faultyConversions(vElements, cElements);
+			faultyConversions(vElements, cElements, cElements);
 		}
 	}
 	
@@ -254,7 +259,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-			faultyConversions(vElements, cElements);
+			faultyConversions(vElements, cElements, cElements);
 		}
 	}
 	
@@ -285,7 +290,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-			faultyConversions(vElements, cElements);
+			faultyConversions(vElements, cElements, cElements);
 		}
 	}
 
@@ -312,7 +317,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						new Element("/" + FILEA_TYPE, 
 								new RenameAttribute(o, n))));
 
-				faultyConversions(vElements, cElements);
+				faultyConversions(vElements, cElements, cElements);
 			}
 	}
 
@@ -340,7 +345,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-			faultyConversions(vElements, cElements);
+			faultyConversions(vElements, cElements, cElements);
 		}
 	}
 	
@@ -364,7 +369,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, cElements);
 	}
 	
 	/**
@@ -394,7 +399,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 								)
 						);
 			
-					faultyConversions(vElements, cElements);
+					faultyConversions(vElements, cElements, cElements);
 				}
 	}
 	
@@ -425,7 +430,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 								)
 						);
 			
-					faultyConversions(vElements, cElements);
+					faultyConversions(vElements, cElements, cElements);
 				}
 	}
 	
@@ -449,7 +454,7 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 						)
 				);
 			
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, cElements);
 	}
 	
 	
@@ -468,12 +473,12 @@ public class FaultyVersionTest extends ModifyingResourceTests {
 		IConfigurationElement[] cElements =
 			makeConversions(new SimpleConversion(PLUGIN_ID, FILEB_TYPE, "1"));
 			
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, cElements);
 		
 		cElements =
 			makeConversions(new SimpleConversion(OTHER_PLUGIN_ID, FILEB_TYPE, "1"));
 			
-		faultyConversions(vElements, cElements);
+		faultyConversions(vElements, cElements, cElements);
 	}
 	
 

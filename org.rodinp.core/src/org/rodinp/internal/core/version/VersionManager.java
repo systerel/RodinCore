@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added support for testing failing converters
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -84,6 +85,8 @@ public class VersionManager {
 	
 	Map<IInternalElementType<?>, Converter> converters;
 	
+	private final List<IConfigurationElement> invalidConverters = new ArrayList<IConfigurationElement>();
+	
 	private VersionManager() {
 		// only one instance; lazily initialised
 		
@@ -110,6 +113,7 @@ public class VersionManager {
 				computeConverter(configElement, descs, fc);
 			} catch (Throwable e) {
 				Util.log(e, "When computing a version converter");
+				invalidConverters.add(configElement);
 			}
 		}
 		
@@ -269,4 +273,13 @@ public class VersionManager {
 		return null;
 	}
 
+	// For testing purposes only
+	public List<IConfigurationElement> getInvalidConverters() {
+		return invalidConverters;
+	}
+
+	// For testing purposes only
+	public void clearInvalidConverters() {
+		invalidConverters.clear();
+	}
 }
