@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language v2
  *******************************************************************************/ 
 
 /*
@@ -274,6 +275,20 @@
 }
 
 /*
+ * MultiplePredicate
+ */
+ 
+%op Predicate MultiplePredicate (children : ExpressionList) {
+	is_fsym(t) { t instanceof MultiplePredicate }
+	get_slot(children,t) { ((MultiplePredicate) t).getChildren() }
+}
+
+%op Predicate Partition (children : ExpressionList) {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPARTITION }
+	get_slot(children,t) { ((MultiplePredicate) t).getChildren() }
+}
+
+/*
  * AssociativeExpression
  */
 
@@ -359,6 +374,18 @@
 
 %op Expression SUCC {
 	is_fsym(t) { t != null && t.getTag() == Formula.KSUCC }
+}
+
+%op Expression Prj1Gen {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ1_GEN }
+}
+
+%op Expression Prj2Gen {
+	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ2_GEN }
+}
+
+%op Expression IdGen {
+	is_fsym(t) { t != null && t.getTag() == Formula.KID_GEN }
 }
 
 /*
@@ -650,21 +677,6 @@
 
 %op Expression Ran (child: Expression) {
 	is_fsym(t) { t != null && t.getTag() == Formula.KRAN }
-	get_slot(child,t) { ((UnaryExpression) t).getChild() }
-}
-
-%op Expression Prj1 (child: Expression) {
-	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ1 }
-	get_slot(child,t) { ((UnaryExpression) t).getChild() }
-}
-
-%op Expression Prj2 (child: Expression) {
-	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ2 }
-	get_slot(child,t) { ((UnaryExpression) t).getChild() }
-}
-
-%op Expression Id (child: Expression) {
-	is_fsym(t) { t != null && t.getTag() == Formula.KID }
 	get_slot(child,t) { ((UnaryExpression) t).getChild() }
 }
 
