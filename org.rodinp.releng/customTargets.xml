@@ -71,64 +71,69 @@
 	<!-- ===================================================================== -->
 	<target name="postSetup">
 		<antcall target="getBaseComponents" />
-
-		<!-- Copy feature and plug-in sources -->
-		<mkdir dir="${buildDirectory}/features" />
-		<copy todir="${buildDirectory}/features/org.rodinp">
-			<fileset dir="${builder}/../org.rodinp-feature" />
-		</copy>
-		<copy todir="${buildDirectory}/features/org.rodinp.platform">
-			<fileset dir="${builder}/../org.rodinp.platform-feature" />
-		</copy>
-		<copy todir="${buildDirectory}/features/org.eventb.ide">
-			<fileset dir="${builder}/../org.eventb.ide-feature" />
-		</copy>
-
-		<mkdir dir="${buildDirectory}/plugins" />
-		<copy todir="${buildDirectory}/plugins/org.rodinp">
-			<fileset dir="${builder}/../org.rodinp" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.rodinp.core">
-			<fileset dir="${builder}/../org.rodinp.core" />
-		</copy>
-
-		<copy todir="${buildDirectory}/plugins/org.rodinp.platform">
-			<fileset dir="${builder}/../org.rodinp.platform" />
-		</copy>
-
-		<copy todir="${buildDirectory}/plugins/org.eventb.core">
-			<fileset dir="${builder}/../org.eventb.core" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.core.ast">
-			<fileset dir="${builder}/../org.eventb.core.ast" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.core.seqprover">
-			<fileset dir="${builder}/../org.eventb.core.seqprover" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.ui">
-			<fileset dir="${builder}/../org.eventb.ui" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.eventBKeyboard">
-			<fileset dir="${builder}/../org.eventb.eventBKeyboard" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.ide">
-			<fileset dir="${builder}/../org.eventb.ide" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.pp">
-			<fileset dir="${builder}/../org.eventb.pp" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.pptrans">
-			<fileset dir="${builder}/../org.eventb.pptrans" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/org.eventb.pp.ui">
-			<fileset dir="${builder}/../org.eventb.pp.ui" />
-		</copy>
-		<copy todir="${buildDirectory}/plugins/fr.systerel.explorer">
-			<fileset dir="${builder}/../fr.systerel.explorer" />
-		</copy>
-
+		
+        <antcall target="copySources" />
 	</target>
 
+	<!-- Skipped when run through CruiseControl, as CC uses a different mechanism -->
+	<target name="copySources" unless="cruisecontrol">
+	      <!-- Copy feature and plug-in sources -->
+	        <mkdir dir="${buildDirectory}/features" />
+	        <copy todir="${buildDirectory}/features/org.rodinp">
+	            <fileset dir="${builder}/../org.rodinp-feature" />
+	        </copy>
+	        <copy todir="${buildDirectory}/features/org.rodinp.platform">
+	            <fileset dir="${builder}/../org.rodinp.platform-feature" />
+	        </copy>
+	        <copy todir="${buildDirectory}/features/org.eventb.ide">
+	            <fileset dir="${builder}/../org.eventb.ide-feature" />
+	        </copy>
+
+	        <mkdir dir="${buildDirectory}/plugins" />
+	        <copy todir="${buildDirectory}/plugins/org.rodinp">
+	            <fileset dir="${builder}/../org.rodinp" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.rodinp.core">
+	            <fileset dir="${builder}/../org.rodinp.core" />
+	        </copy>
+
+	        <copy todir="${buildDirectory}/plugins/org.rodinp.platform">
+	            <fileset dir="${builder}/../org.rodinp.platform" />
+	        </copy>
+
+	        <copy todir="${buildDirectory}/plugins/org.eventb.core">
+	            <fileset dir="${builder}/../org.eventb.core" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.core.ast">
+	            <fileset dir="${builder}/../org.eventb.core.ast" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.core.seqprover">
+	            <fileset dir="${builder}/../org.eventb.core.seqprover" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.ui">
+	            <fileset dir="${builder}/../org.eventb.ui" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.eventBKeyboard">
+	            <fileset dir="${builder}/../org.eventb.eventBKeyboard" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.ide">
+	            <fileset dir="${builder}/../org.eventb.ide" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.pp">
+	            <fileset dir="${builder}/../org.eventb.pp" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.pptrans">
+	            <fileset dir="${builder}/../org.eventb.pptrans" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.pp.ui">
+	            <fileset dir="${builder}/../org.eventb.pp.ui" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/fr.systerel.explorer">
+	            <fileset dir="${builder}/../fr.systerel.explorer" />
+	        </copy>
+
+	</target>
+	
 	<!-- ===================================================================== -->
 	<!-- Steps to do before fetching the build elements -->
 	<!-- ===================================================================== -->
@@ -196,18 +201,27 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 
-
-		<antcall target="run.director.for.macosx"/>
+		<antcall target="run.director.for.macosx.x86"/>
+		<antcall target="run.director.for.macosx.ppc"/>
 		<antcall target="run.director.for.win32"/>
 		<antcall target="run.director.for.linux"/>
 	</target>
 	
-	<target name="run.director.for.macosx" depends="check.director.for.macosx"
+	<target name="run.director.for.macosx.ppc" depends="check.director.for.macosx"
 			if="do.director.for.macosx">
 		<antcall target="run.director.for">
 			<param name="p2.os" value="macosx" />
 			<param name="p2.ws" value="carbon" />
 			<param name="p2.arch" value="ppc" />
+		</antcall>
+	</target>
+
+	<target name="run.director.for.macosx.x86" depends="check.director.for.macosx"
+			if="do.director.for.macosx">
+		<antcall target="run.director.for">
+			<param name="p2.os" value="macosx" />
+			<param name="p2.ws" value="carbon" />
+			<param name="p2.arch" value="x86" />
 		</antcall>
 	</target>
 	
@@ -263,8 +277,24 @@
 			<fileset dir="${builder}/p2-settings" includes="**" />
 		</copy>
 
-		<zip destfile="${buildDirectory}/result/rodin-${buildId}-${p2.os}.zip" basedir="${buildDirectory}/result/tmp" />
+                <!-- when building with cruisecontrol, we use Linux zip to preserve permissions -->
+                <antcall target="zip.ant" />
+                <antcall target="zip.linux"/>
+
 		<delete dir="${buildDirectory}/result/tmp" />
+	</target>
+
+        <target name="zip.ant" unless="cruisecontrol">
+		<zip destfile="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
+	</target>
+
+        <target name="zip.linux"  if="cruisecontrol" >
+          <exec executable="zip" dir="${buildDirectory}/result/tmp">
+            <arg value="-r"/>
+            <arg value="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip"/>
+            <arg value="rodin"/>
+          </exec>
+
 	</target>
 
 	<target name="run.director">
