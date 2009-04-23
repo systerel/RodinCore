@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,48 +25,43 @@ import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class ShowSeesContextContribution extends ContributionItem {
 
-	private IMachineRoot root;
+	private final IMachineRoot root;
 
-	private IEventBProject evbProject;
+	private final IEventBProject evbProject;
 
 	public ShowSeesContextContribution(IMachineRoot root) {
 		this.root = root;
-		IRodinProject rp = root.getRodinProject();
-		evbProject = (IEventBProject) rp.getAdapter(IEventBProject.class);
+		this.evbProject = root.getEventBProject();
 	}
 
 	@Override
 	public void fill(Menu menu, int index) {
-		IRodinElement[] elements;
+		final ISeesContext[] seesClauses;
 		try {
-			elements = root.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
+			seesClauses = root.getSeesClauses();
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;
 		}
-		for (IRodinElement element : elements) {
-				ISeesContext seesContext = (ISeesContext) element;
-				String name;
-				try {
-					name = seesContext.getSeenContextName();
-				} catch (RodinDBException e) {
-					EventBUIExceptionHandler.handleGetAttributeException(e,
+		for (ISeesContext seesClause : seesClauses) {
+			final String name;
+			try {
+				name = seesClause.getSeenContextName();
+			} catch (RodinDBException e) {
+				EventBUIExceptionHandler.handleGetAttributeException(e,
 						UserAwareness.IGNORE);
-					continue;
-				}
-				IRodinFile contextFile = evbProject.getContextFile(name);
-				if (contextFile != null & contextFile.exists()) {
-					createMenuItem(menu, contextFile);
-					// submenu.add(new ShowSeesContext(contextFile));
-				}
+				continue;
 			}
+			final IRodinFile contextFile = evbProject.getContextFile(name);
+			if (contextFile != null & contextFile.exists()) {
+				createMenuItem(menu, contextFile);
+			}
+		}
 	}
 
 	private void createMenuItem(Menu menu, final IRodinFile contextFile) {
@@ -74,17 +69,12 @@ public class ShowSeesContextContribution extends ContributionItem {
 		menuItem.setText(contextFile.getBareName());
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_CONTEXT));
 
-		Listener listener = new Listener() {
+		final Listener listener = new Listener() {
 			public void handleEvent(Event event) {
-				switch (event.type) {
-				case SWT.Selection:
-					UIUtils.linkToEventBEditor(contextFile);
-					break;
-				}
+				UIUtils.linkToEventBEditor(contextFile);
 			}
 		};
 		menuItem.addListener(SWT.Selection, listener);
-
 	}
 
 }

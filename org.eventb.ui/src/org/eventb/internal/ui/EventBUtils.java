@@ -21,7 +21,6 @@ import java.util.List;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBProject;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -66,11 +65,9 @@ public class EventBUtils {
 		IRodinElement[] refines = concrete
 				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 		if (refines.length == 1) {
-			IRefinesMachine refine = (IRefinesMachine) refines[0];
-			String name = refine.getAbstractMachineName();
-			IEventBProject prj = (IEventBProject) concrete.getRodinProject()
-					.getAdapter(IEventBProject.class);
-			return (IMachineRoot) prj.getMachineFile(name).getRoot();
+			final IRefinesMachine refine = (IRefinesMachine) refines[0];
+			final String name = refine.getAbstractMachineName();
+			return concrete.getEventBProject().getMachineRoot(name);
 		}
 		return null;
 	}
