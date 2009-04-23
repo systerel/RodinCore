@@ -18,8 +18,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
+import org.eventb.core.ISCContextRoot;
+import org.eventb.core.ISCMachineRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -32,6 +39,8 @@ import org.rodinp.core.RodinCore;
  */
 public class EventBFileTest extends TestCase {
 	
+	private static final String BARE_NAME = "foo";
+
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 	IRodinProject rodinProject = RodinCore.valueOf(root.getProject("P"));
@@ -80,63 +89,70 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that an unchecked context can be created from an event-B project.
 	 */
 	public void testContextFile() throws Exception {
-		IRodinFile file = evbProject.getContextFile("foo");
-		assertFileName("foo.buc", file);
+		IRodinFile file = evbProject.getContextFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".buc", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getContextRoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that an unchecked machine can be created from an event-B project.
 	 */
 	public void testMachineFile() throws Exception {
-		IRodinFile file = evbProject.getMachineFile("foo");
-		assertFileName("foo.bum", file);
+		IRodinFile file = evbProject.getMachineFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bum", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getMachineRoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that a checked context can be created from an event-B project.
 	 */
 	public void testSCContextFile() throws Exception {
-		IRodinFile file = evbProject.getSCContextFile("foo");
-		assertFileName("foo.bcc", file);
+		IRodinFile file = evbProject.getSCContextFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bcc", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getSCContextRoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that a checked machine can be created from an event-B project.
 	 */
 	public void testSCMachineFile() throws Exception {
-		IRodinFile file = evbProject.getSCMachineFile("foo");
-		assertFileName("foo.bcm", file);
+		IRodinFile file = evbProject.getSCMachineFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bcm", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getSCMachineRoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that a PO file can be created from an event-B project.
 	 */
 	public void testPOFile() throws Exception {
-		IRodinFile file = evbProject.getPOFile("foo");
-		assertFileName("foo.bpo", file);
+		IRodinFile file = evbProject.getPOFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bpo", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getPORoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that a proof file can be created from an event-B project.
 	 */
 	public void testPRFile() throws Exception {
-		IRodinFile file = evbProject.getPRFile("foo");
-		assertFileName("foo.bpr", file);
+		IRodinFile file = evbProject.getPRFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bpr", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getPRRoot(BARE_NAME));
 	}
 
 	/**
 	 * Ensures that a proof status file can be created from an event-B project.
 	 */
 	public void testPSFile() throws Exception {
-		IRodinFile file = evbProject.getPSFile("foo");
-		assertFileName("foo.bps", file);
+		IRodinFile file = evbProject.getPSFile(BARE_NAME);
+		assertFileName(BARE_NAME + ".bps", file);
 		checkFileConversions(file);
+		assertEquals(file.getRoot(), evbProject.getPSRoot(BARE_NAME));
 	}
 
 	private void assertSimilar(IRodinFile input, IRodinFile expected, IRodinFile actual) {
@@ -152,13 +168,13 @@ public class EventBFileTest extends TestCase {
 	 * event-B files.
 	 */
 	public void testFileAdaptation() throws Exception {
-		final IRodinFile buc = evbProject.getContextFile("foo");
-		final IRodinFile bum = evbProject.getMachineFile("foo");
-		final IRodinFile bcc = evbProject.getSCContextFile("foo");
-		final IRodinFile bcm = evbProject.getSCMachineFile("foo");
-		final IRodinFile bpo = evbProject.getPOFile("foo");
-		final IRodinFile bpr = evbProject.getPRFile("foo");
-		final IRodinFile bps = evbProject.getPSFile("foo");
+		final IRodinFile buc = evbProject.getContextFile(BARE_NAME);
+		final IRodinFile bum = evbProject.getMachineFile(BARE_NAME);
+		final IRodinFile bcc = evbProject.getSCContextFile(BARE_NAME);
+		final IRodinFile bcm = evbProject.getSCMachineFile(BARE_NAME);
+		final IRodinFile bpo = evbProject.getPOFile(BARE_NAME);
+		final IRodinFile bpr = evbProject.getPRFile(BARE_NAME);
+		final IRodinFile bps = evbProject.getPSFile(BARE_NAME);
 		final IRodinFile[] files = new IRodinFile[] { buc, bum, bcc, bcm, bpo,
 				bpr, bps };
 
@@ -176,4 +192,29 @@ public class EventBFileTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Ensures that adaptation to event-B roots works appropriately on all
+	 * event-B roots.
+	 */
+	public void testRootAdaptation() throws Exception {
+		final IContextRoot buc = evbProject.getContextRoot(BARE_NAME);
+		final IMachineRoot bum = evbProject.getMachineRoot(BARE_NAME);
+		final ISCContextRoot bcc = evbProject.getSCContextRoot(BARE_NAME);
+		final ISCMachineRoot bcm = evbProject.getSCMachineRoot(BARE_NAME);
+		final IPORoot bpo = evbProject.getPORoot(BARE_NAME);
+		final IPRRoot bpr = evbProject.getPRRoot(BARE_NAME);
+		final IPSRoot bps = evbProject.getPSRoot(BARE_NAME);
+		final IEventBRoot[] roots = new IEventBRoot[] { buc, bum, bcc, bcm, bpo,
+				bpr, bps };
+
+		for (IEventBRoot root : roots) {
+			assertEquals(buc, root.getContextRoot());
+			assertEquals(bum, root.getMachineRoot());
+			assertEquals(bcc, root.getSCContextRoot());
+			assertEquals(bcm, root.getSCMachineRoot());
+			assertEquals(bpo, root.getPORoot());
+			assertEquals(bpr, root.getPRRoot());
+			assertEquals(bps, root.getPSRoot());
+		}
+	}
 }
