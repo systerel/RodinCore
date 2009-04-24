@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
+ *******************************************************************************/
 package org.eventb.internal.pp.core.elements.terms;
 
 import static junit.framework.Assert.assertFalse;
@@ -22,6 +33,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -63,6 +75,7 @@ import org.eventb.internal.pp.loader.predicate.IntermediateResultList;
 
 public class Util {
 
+	private static final LanguageVersion LANGUAGE_VERSION = LanguageVersion.V2;
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	private static ClauseFactory cf = ClauseFactory.getDefault();
 	
@@ -70,11 +83,13 @@ public class Util {
 	// AST Rodin //
 	///////////////
 	public static Expression parseExpression(String expression) {
-		return ff.parseExpression(expression).getParsedExpression();
+		return ff.parseExpression(expression, LANGUAGE_VERSION, null)
+				.getParsedExpression();
 	}
 	
 	public static Predicate parsePredicate(String predicate) {
-		IParseResult result = ff.parsePredicate(predicate);
+		IParseResult result = ff.parsePredicate(predicate, LANGUAGE_VERSION,
+				null);
 		assertFalse(result.hasProblem());
 		return result.getParsedPredicate();
 	}
