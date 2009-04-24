@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eventb.core.ast,
+ org.eventb.core.ast.expanders,
  org.eventb.internal.core.ast;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.parser;x-friends:="org.eventb.core.ast.tests"
 Bundle-ActivationPolicy: lazy

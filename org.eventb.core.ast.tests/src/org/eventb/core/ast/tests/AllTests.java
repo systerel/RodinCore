@@ -1,5 +1,8 @@
 package org.eventb.core.ast.tests;
 
+import org.eventb.core.ast.expander.tests.PartitionExpanderTests;
+import org.eventb.core.ast.expander.tests.SmartFactoryTests;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -45,6 +48,8 @@ public class AllTests {
 		suite.addTestSuite(TestGivenTypes.class);
 		suite.addTestSuite(TestSubFormulas.class);
 		suite.addTestSuite(TestVersionUpgrader.class);
+		suite.addTestSuite(PartitionExpanderTests.class);
+		suite.addTestSuite(SmartFactoryTests.class);
 		//$JUnit-END$
 		return suite;
 	}
