@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2 (BR8, IR39, IR43, IR44)
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -66,8 +70,8 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 
 	static ITypeEnvironment br_te = mTypeEnvironment(
-			mList("s", "t", "v", "w", "p", "q"), 
-			mList(POW(S), POW(S), POW(S), POW(S), REL(S, T), REL(S, T)));
+			mList("s", "t", "v", "w", "p", "q", "e1", "e2", "e3"), 
+			mList(POW(S), POW(S), POW(S), POW(S), REL(S, T), REL(S, T), S, S, S));
 
 	/**
 	 *  Tests for BR1
@@ -180,6 +184,18 @@ public class TranslationTests extends AbstractTranslationTests {
 				"∀x·∃y·y=t∨(∀a·∃b,f·f∈({s∪x∪y}↣a‥b))", true, br_te);
 	}
 	
+	public void testBR8_simple() throws Exception {
+		doTest( "partition(s, t, v)",
+				"(s=t∪v)∧(t∩v=∅)", true, br_te);
+		doTest( "partition(s, {e1}, {e2}, {e3})",
+				"(s={e1,e2,e3})∧e1≠e2∧e1≠e3∧e2≠e3", true, br_te);
+	}
+
+	public void testBR8_recursive() throws Exception {
+		doTest( "partition(ℙ(s∪t))",
+				"ℙ(s∪t) = ∅", true, br_te);
+	}
+
 	static ITypeEnvironment er_te = mTypeEnvironment(
 			mList("f", "s", "t", "v", "w", "x", "y", "a", "b", "is", "it"), 
 			mList(REL(S, T), POW(S), POW(S), POW(S), POW(S), S, T, S, T, INT_SET, INT_SET));
@@ -1365,16 +1381,15 @@ public class TranslationTests extends AbstractTranslationTests {
 			
 	public void testIR39_simple() {
 
-		doTest( "e↦f∈id(s)",
-				"e∈s∧e=f", 
+		doTest( "e↦f∈id",
+				"e=f", 
 				true, 
 				te_ir39);
 	}
 
 	public void testIR39_recursive() {
-
-		doTest( "e↦f∈id(s∪s2)",
-				"e∈s∪s2∧e=f", 
+		doTest( "e↦f∈(sus2)◁id",
+				"e=f∧e∈(sus2)", 
 				true, 
 				te_ir39);
 	}
@@ -1468,16 +1483,15 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 	public void testIR43_simple() {
 
-		doTest( "(e↦f)↦g ∈ prj1(r)", 
-				"e↦f∈r ∧ g=e", 
+		doTest( "(e↦f)↦g ∈ prj1", 
+				"e=g", 
 				true, 
 				te_ir43);
 	}
 	
 	public void testIR43_recursive() {
-
-		doTest( "(e↦f)↦g ∈ prj1(r∪r1)", 
-				"e↦f∈r∪r1 ∧ g=e", 
+		doTest( "(e↦f)↦g ∈ (r∪r1)◁prj1", 
+				"e=g∧(e ↦ f∈r∨e ↦ f∈r1)", 
 				true, 
 				te_ir43);
 	}
@@ -1490,16 +1504,15 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 	public void testIR44_simple() {
 
-		doTest( "(e↦f)↦g ∈ prj2(r)", 
-				"e↦f∈r ∧ g=f", 
+		doTest( "(e↦f)↦g ∈ prj2", 
+				"f=g",  
 				true, 
 				te_ir44);
 	}
 	
 	public void testIR44_recursive() {
-
-		doTest( "(e↦f)↦g ∈ prj2(r∪r1)", 
-				"e↦f∈r∪r1 ∧ g=f", 
+		doTest( "(e↦f)↦g ∈ (r∪r1)◁prj2", 
+				"f=g∧(e ↦ f∈r∨e ↦ f∈r1)", 
 				true, 
 				te_ir44);
 	}

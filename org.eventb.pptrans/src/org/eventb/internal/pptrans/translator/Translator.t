@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 
 package org.eventb.internal.pptrans.translator;
@@ -12,6 +16,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 import org.eventb.core.ast.*;
+import org.eventb.core.ast.expanders.Expanders;
 
 
 /**
@@ -177,7 +182,7 @@ public class Translator extends IdentityTranslator {
 			loc);
 	}
 
-	%include {Formula.tom}
+	%include {FormulaV2.tom}
 
 	@Override
 	protected Predicate translate(Predicate pred) {
@@ -301,7 +306,25 @@ public class Translator extends IdentityTranslator {
 			    		loc),
 			    	loc);
 	    	}
-	    		       	/**
+	    	
+	       /**
+	        * RULE BR8: 	partition (s, sn , sn , . . . , sn )
+	        *               s = s1 ∪ s2 ∪ · · · ∪ sn
+            *               s1 ∩ s2 = ∅
+            *               .
+            *               .
+            *               .
+            *               s1 ∩ sn = ∅
+            *               .
+            *               .
+            *               .
+            *               sn−1 ∩ sn = ∅
+            */
+	    	Partition(_) -> {
+	    		return translate(Expanders.expandPARTITION(pred, ff));
+	    	}
+	    	
+	    	/**
 	 		 *  RULE CR1: 	a <∣≤ min(s) 
 	 		 * 				∀x·x∈s' ⇒ a' <∣≤ x
 	 		 */
@@ -1035,15 +1058,12 @@ public class Translator extends IdentityTranslator {
 					loc);
 			}
 	        /**
-	         * RULE IR39:	e↦f ∈ id(s)
-	         *	  			e∈s ∧ e=f
+       		 * RULE IR39:	e↦f ∈ id
+	         *	  			e=f
 	         */
-			Id(S) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(e, `S, loc),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, e, f, loc)),
-					loc);
+			IdGen() -> {
+				return 
+					translate(ff.makeRelationalPredicate(Formula.EQUAL, e, f, loc));
 			}
 	        /**
 	         * RULE IR40:	e↦f ∈ r1; ;rn
@@ -1124,26 +1144,18 @@ public class Translator extends IdentityTranslator {
 		
 		%match(Expression rhs) {
 	        /**
-	        * RULE IR43:	(e↦f)↦g ∈ prj1(r)
-	        *	  			e↦f∈r ∧ g=e
+	        * RULE IR43:	(e↦f)↦g ∈ prj1
+	        *	  			e=g
 	        */
-			Prj1(r) -> {
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, e, loc)),
-					loc);
+			Prj1Gen() -> {
+				return translate(ff.makeRelationalPredicate(Formula.EQUAL, e, g, loc));
 			}
 	        /**
-	        * RULE IR44:	(e↦f)↦g ∈ prj2(r)
-	        *	  			e↦f∈r ∧ g=f
+	        * RULE IR44:	(e↦f)↦g ∈ prj2
+	        *	  			f=g
 	        */
-			Prj2(r) -> {	
-				return FormulaConstructor.makeLandPredicate(
-					ff,
-					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, f, loc), `r, loc),
-					translate(ff.makeRelationalPredicate(Formula.EQUAL, g, f, loc)),
-					loc);
+			Prj2Gen() -> {	
+				return translate(ff.makeRelationalPredicate(Formula.EQUAL, f, g, loc));
 			}
 			_ -> {
 				return null;

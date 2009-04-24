@@ -1,14 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added translator for multiple predicates (math V2)
  *******************************************************************************/
 package org.eventb.internal.pptrans.translator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -187,6 +192,24 @@ public abstract class IdentityTranslatorBase {
   			return pred;
   		}
   		return ff.makeSimplePredicate(pred.getTag(), nE, loc);
+	}
+	
+	protected Predicate idTransMultiplePredicate(
+			Predicate pred, Expression[] children) {
+
+		SourceLocation loc = pred.getSourceLocation();
+
+		final List<Expression> newChildren = new ArrayList<Expression>();
+		boolean hasChanged = false;
+		for (Expression child: children) {
+			Expression newChild = translate(child);
+				newChildren.add(newChild);
+				hasChanged |= newChild != child;
+		}
+		if (! hasChanged) {
+			return pred;
+		}
+		return ff.makeMultiplePredicate(pred.getTag(), newChildren, loc);
 	}
 	
 	protected Predicate idTransRelationalPredicate(

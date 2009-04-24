@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added a test for partition (math V2)
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -318,4 +322,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 				" ⇒ (∃z1,z2·z1↦z2=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
 	}
 	
+	public void testDecomposePartition() throws Exception {
+		dotest("partition({x∣x ∈ S×T})", "partition({x1↦x2∣x1↦x2 ∈ S×T})");
+	}
 }
