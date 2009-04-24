@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.Collection;
 
@@ -62,7 +65,8 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 
 		// parse the predicate
 
-		IParseResult parseResult = factory.parsePredicate(predicateString);
+		IParseResult parseResult = factory.parsePredicate(predicateString, V2,
+				formulaElement);
 
 		if (issueASTProblemMarkers(formulaElement, attributeType,
 				parseResult)) {

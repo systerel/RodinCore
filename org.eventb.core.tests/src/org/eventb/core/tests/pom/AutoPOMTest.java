@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.core.tests.pom;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -52,7 +55,7 @@ public class AutoPOMTest extends BuilderTest {
 		for (int i = 0; i < strings.length; i += 2) {
 			final String name = strings[i];
 			final String typeString = strings[i+1];
-			final IParseResult pResult = factory.parseType(typeString);
+			final IParseResult pResult = factory.parseType(typeString, V2);
 			assertFalse("Parsing type failed for " + typeString,
 					pResult.hasProblem());
 			final Type type = pResult.getParsedType(); 

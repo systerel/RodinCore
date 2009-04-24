@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.Collection;
 
@@ -66,7 +69,7 @@ public abstract class AssignmentModule<I extends IInternalElement> extends
 
 		// parse the assignment
 
-		IParseResult parseResult = factory.parseAssignment(assignmentString);
+		IParseResult parseResult = factory.parseAssignment(assignmentString, V2, assignmentElement);
 
 		if (issueASTProblemMarkers(assignmentElement, attributeType,
 				parseResult)) {

@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.core.tests;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -451,21 +454,21 @@ public abstract class EventBTest extends BuilderTest {
 	}
 
 	public String getNormalizedExpression(String input, ITypeEnvironment environment) {
-		Expression expr = factory.parseExpression(input).getParsedExpression();
+		Expression expr = factory.parseExpression(input, V2, null).getParsedExpression();
 		expr.typeCheck(environment);
 		assertTrue(expr.isTypeChecked());
 		return expr.toStringWithTypes();
 	}
 
 	public String getNormalizedPredicate(String input, ITypeEnvironment environment) {
-		Predicate pred = factory.parsePredicate(input).getParsedPredicate();
+		Predicate pred = factory.parsePredicate(input, V2, null).getParsedPredicate();
 		pred.typeCheck(environment);
 		assertTrue(pred.isTypeChecked());
 		return pred.toStringWithTypes();
 	}
 
 	public String getNormalizedAssignment(String input, ITypeEnvironment environment) {
-		Assignment assn = factory.parseAssignment(input).getParsedAssignment();
+		Assignment assn = factory.parseAssignment(input, V2, null).getParsedAssignment();
 		assn.typeCheck(environment);
 		assertTrue(assn.isTypeChecked());
 		return assn.toStringWithTypes();

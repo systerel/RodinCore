@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class AutoCompletionTests extends BuilderTest {
 	private static final String INTERNAL_THM1 = "internal_thm1";
 
 	private static final String C1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 			+ "<org.eventb.core.constant"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"cst1\"/>"
@@ -65,7 +65,7 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "</org.eventb.core.contextFile>";
 
 	private static final String C2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 			+ "<org.eventb.core.extendsContext"
 			+ "		name=\"internal_1\""
 			+ "		org.eventb.core.target=\"C1\"/>"
@@ -78,7 +78,7 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "</org.eventb.core.contextFile>";
 
 	private static final String M1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.seesContext"
 			+ "		name=\"internal_1\" org.eventb.core.target=\"C2\"/>"
 			+ "<org.eventb.core.variable"
@@ -110,7 +110,7 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
 	private static final String M2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.refinesMachine"
 			+ " 	name=\"internal_1\""
 			+ " 	org.eventb.core.target=\"M1\"/>"

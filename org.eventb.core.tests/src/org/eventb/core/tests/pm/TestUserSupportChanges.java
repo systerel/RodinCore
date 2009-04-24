@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
@@ -84,7 +85,9 @@ public class TestUserSupportChanges extends TestPM {
 
 	@Override
 	protected void tearDown() throws Exception {
-		userSupport.dispose();
+		if (userSupport != null) {
+			userSupport.dispose();
+		}
 		super.tearDown();
 	}
 
@@ -435,7 +438,7 @@ public class TestUserSupportChanges extends TestPM {
 	 */
 	public void testChangePOModifiedAndNotReusable() throws Exception {
 		POUtil
-				.addSequent(poRoot, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id(ℤ)", hyp0,
+				.addSequent(poRoot, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id", hyp0,
 						mTypeEnvironment());
 		POUtil.addSequent(poRoot, dischargedPO, "x = 1", hyp1,
 				mTypeEnvironment());

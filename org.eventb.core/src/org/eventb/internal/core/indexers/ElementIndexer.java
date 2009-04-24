@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.LanguageVersion;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -21,6 +22,8 @@ import org.rodinp.core.indexer.IIndexingBridge;
 import org.rodinp.core.location.IAttributeLocation;
 
 public abstract class ElementIndexer extends Cancellable {
+	
+	protected static final LanguageVersion version = LanguageVersion.V2;
 
 	private final IInternalElement element;
 	private final SymbolTable symbolTable;
@@ -57,7 +60,6 @@ public abstract class ElementIndexer extends Cancellable {
 		visitAndIndex(formula);
 	}
 
-	// TODO add a ParserVersion argument
 	protected abstract IParseResult parseFormula(String formulaString,
 			IAttributeLocation location);
 

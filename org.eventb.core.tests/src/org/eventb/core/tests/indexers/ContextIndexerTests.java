@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.contextFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"1\">"
+						+ "		version=\"2\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"
@@ -199,7 +199,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 	private static final String CST_1REF_AXM =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 					+ "<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.comment=\"\""
@@ -292,7 +292,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testDeclSet() throws Exception {
 		final String SET_1DECL =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.carrierSet"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"set1\"/>"
@@ -368,7 +368,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		// constant node is not closed with a /
 		final String MALFORMED_CONTEXT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\">"
@@ -391,7 +391,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testMissingAttribute() throws Exception {
 		final String CST_1DECL_1AXM_NO_PRED_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"axm1\"/>"
@@ -420,7 +420,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testDoesNotParse() throws Exception {
 		final String CST_1DECL_1AXM_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"axm1\""

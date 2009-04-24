@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.core.tests.pog;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -1320,7 +1323,8 @@ public class TestMachineRefines extends EventBPOTest {
 		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
 		for (IAxiom axiom: ctx.getAxioms()) {
 			final String s = axiom.getPredicateString();
-			final Predicate p = factory.parsePredicate(s).getParsedPredicate();
+			final Predicate p = factory.parsePredicate(s, V2, null)
+					.getParsedPredicate();
 			final ITypeCheckResult tcResult = p.typeCheck(typenv);
 			assertTrue(p.isTypeChecked());
 			typenv.addAll(tcResult.getInferredEnvironment());

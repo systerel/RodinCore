@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.internal.core.indexers.IdentTable.ff;
 
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.Formula;
@@ -38,7 +39,7 @@ public class PredicateIndexer extends ElementIndexer {
 	@Override
 	protected IParseResult parseFormula(String formulaString,
 			IAttributeLocation location) {
-		return IdentTable.ff.parsePredicate(formulaString, location);
+		return ff.parsePredicate(formulaString, version, location);
 	}
 
 }

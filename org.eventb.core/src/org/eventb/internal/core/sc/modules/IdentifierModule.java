@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,7 +52,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			FormulaFactory factory, IMarkerDisplay display)
 			throws RodinDBException {
 
-		IParseResult pResult = factory.parseExpression(name);
+		IParseResult pResult = factory.parseExpression(name, V2, element);
 		Expression expr = pResult.getParsedExpression();
 		if (pResult.hasProblem() || !(expr instanceof FreeIdentifier)) {
 			display.createProblemMarker(element, attrType,

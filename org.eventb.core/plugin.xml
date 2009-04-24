@@ -1259,16 +1259,21 @@
       <tactic id="org.eventb.core.seqprover.clarifyGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrHypTac"/>
+      <tactic id="org.eventb.core.seqprover.partitionRewriteTac"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">
       <fileElementVersion
             id="org.eventb.core.contextFile"
-            version="1">
+            version="2">
       </fileElementVersion>
       <fileElementVersion
             id="org.eventb.core.machineFile"
-            version="3">
+            version="4">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.eventb.core.prFile"
+            version="1">
       </fileElementVersion>
    </extension>
    <extension
@@ -1310,6 +1315,51 @@
             type="org.eventb.core.machineFile"
             version="3">
       </source>
+      <multiple
+            type="org.eventb.core.contextFile"
+            version="2">
+         <pattern
+               patternPath="//*">
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$PredicateUpgraderV1V2"
+                  id="org.eventb.core.predicate">
+            </modifyAttribute>
+         </pattern>
+      </multiple>
+      <multiple
+            type="org.eventb.core.machineFile"
+            version="4">
+         <pattern
+               patternPath="//*">
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$AssignmentUpgraderV1V2"
+                  id="org.eventb.core.assignment">
+            </modifyAttribute>
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$ExpressionUpgraderV1V2"
+                  id="org.eventb.core.expression">
+            </modifyAttribute>
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$PredicateUpgraderV1V2"
+                  id="org.eventb.core.predicate">
+            </modifyAttribute>
+         </pattern>
+      </multiple>
+      <multiple
+            type="org.eventb.core.prFile"
+            version="1">
+         <pattern
+               patternPath="//*">
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$PredicateUpgraderV1V2WithTypes"
+                  id="org.eventb.core.predicate">
+            </modifyAttribute>
+            <modifyAttribute
+                  class="org.eventb.internal.core.upgrade.UpgraderV1V2$ExpressionUpgraderV1V2WithTypes"
+                  id="org.eventb.core.expression">
+            </modifyAttribute>
+         </pattern>
+      </multiple>
    </extension>
    <extension
          point="org.rodinp.core.indexers">

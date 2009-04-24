@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 
 	private static final String CTX_1EXT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 					+ "<org.eventb.core.extendsContext"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.target=\"c1\"/>"
@@ -87,7 +87,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 
 		final String CTX_2EXT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "		<org.eventb.core.extendsContext"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"c1\"/>"
@@ -129,7 +129,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		// missing closing " after internal_element1 in extendsContext node
 		final String MALFORMED_CONTEXT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.extendsContext"
 						+ "		name=\"internal_element1"
 						+ "		org.eventb.core.target=\"c1\"/>"
@@ -151,7 +151,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	public void testMissingAttribute() throws Exception {
 		final String CTX_1EXT_NO_TARGET_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.extendsContext"
 						+ "		name=\"internal_element1\"/>"
 						+ "</org.eventb.core.contextFile>";

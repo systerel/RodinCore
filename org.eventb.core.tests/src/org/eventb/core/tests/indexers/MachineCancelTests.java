@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelInPredicates() throws Exception {
 		final String VAR_1DECL_2REF_2INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 				+ "<org.eventb.core.variable"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -114,7 +114,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelInExpressions() throws Exception {
 		final String VAR_1DECL_2REF_2VRT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 				+ "<org.eventb.core.variable"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -142,7 +142,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelEventsInActions() throws Exception {
 		final String VAR_4OCC = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 				+ "<org.eventb.core.refinesMachine name=\"internal_element1\" org.eventb.core.target=\"exporter\"/>"
 				+ "		<org.eventb.core.variable"
 				+ "				name=\"internal_element1\""

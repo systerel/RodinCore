@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,14 +39,14 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	}
 
 	private static final String MCH_1REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "	<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "	<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "	<org.eventb.core.refinesMachine"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"m1\"/>"
 			+ "	</org.eventb.core.machineFile>";
 
 	private static final String MCH_1SEES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.seesContext"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"c1\"/>"
@@ -134,7 +134,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	public void testMalformedXML() throws Exception {
 		// missing = at internal_element1 in variable node
 		final String MALFORMED_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 				+ "<org.eventb.core.seesContext"
 				+ "		name\"internal_element1\""
 				+ "		org.eventb.core.target=\"exporter\"/>"
@@ -154,7 +154,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 */
 	public void testMissingAttribute() throws Exception {
 		final String MCH_1REFINES_NO_TARGET_ATT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 				+ "<org.eventb.core.refinesMachine"
 				+ "		name=\"internal_element1\"/>"
 				+ "</org.eventb.core.machineFile>";

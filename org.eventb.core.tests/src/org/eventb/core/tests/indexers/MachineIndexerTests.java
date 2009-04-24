@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testDoubleOccurrenceSameElement() throws Exception {
 		final String VAR_1DECL_2OCC_SAME_INV =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -194,7 +194,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 					+ "<org.eventb.core.contextFile"
 					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"1\">"
+					+ "		version=\"2\">"
 					+ "<org.eventb.core.carrierSet"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"set1\"/>"
@@ -229,7 +229,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 					+ "<org.eventb.core.machineFile"
 					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"3\">"
+					+ "		version=\"4\">"
 					+ "		<org.eventb.core.invariant "
 					+ "				name=\"internal_element1\""
 					+ "				org.eventb.core.label=\"inv1\""
@@ -345,7 +345,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.seesContext"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"context\"/>"
@@ -377,7 +377,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -411,7 +411,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -495,7 +495,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final String ABSTRACT_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
 		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-		+ "		version=\"3\">"
+		+ "		version=\"4\">"
 		+ "<org.eventb.core.event"
 		+ "		name=\"internal_element1\""
 		+ "		org.eventb.core.convergence=\"0\""
@@ -506,7 +506,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final String CONCRETE_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
 		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-		+ "		version=\"3\">"
+		+ "		version=\"4\">"
 		+ "<org.eventb.core.refinesMachine"
 		+ "		name=\"internal_element1\""
 		+ "		org.eventb.core.target=\"exporter\"/>"
@@ -623,7 +623,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final String PRM_2REF_LBL_PRED_WIT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -672,7 +672,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile "
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -724,7 +724,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -772,7 +772,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -819,7 +819,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -907,7 +907,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"3\">"
+						+ "		version=\"4\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -962,7 +962,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final String VARCST_1DECL_1REF_INV =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.seesContext"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -996,7 +996,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBadFileType() throws Exception {
 		final String CST_1DECL_1REF_THM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"1\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"
@@ -1028,7 +1028,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		// missing closing " after internal_element1 in variable node
 		final String MALFORMED_MACHINE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1"
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1051,7 +1051,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testMissingAttribute() throws Exception {
 		final String VAR_1DECL_NO_IDENT_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\"/>"
 						+ "</org.eventb.core.machineFile>";
@@ -1073,7 +1073,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testDoesNotParse() throws Exception {
 		final String VAR_1DECL_INV_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1098,7 +1098,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBecomesEqualTo() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1151,7 +1151,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		//                              0    |    1     |    2    |    3    |    4    |    5
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1205,7 +1205,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBecomesMemberOf() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"
