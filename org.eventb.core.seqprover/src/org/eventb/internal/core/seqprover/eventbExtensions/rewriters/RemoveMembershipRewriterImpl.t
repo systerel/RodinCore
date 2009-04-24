@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -46,7 +50,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		super();
 	}
 
-	%include {Formula.tom}
+	%include {FormulaV2.tom}
 
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
@@ -197,12 +201,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	}
 
 	    	/**
-	    	 * Set Theory: E ↦ F ∈ id(S) == E ∈ S ∧ F = E
+	    	 * Set Theory: E ↦ F ∈ id == E = F
 	    	 */
-	    	In(Mapsto(E, F), Id(S)) -> {
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `E, `S);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, `F, `E);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    	In(Mapsto(E, F), IdGen()) -> {
+	    		return makeRelationalPredicate(Predicate.EQUAL, `E, `F);
 	    	}
 	    	 
 	    	/**

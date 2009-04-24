@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added FunOvrGoalTac and FunOvrHypTac tactics
+ *     Systerel - added PartitionRewriteTac tactic (math V2)
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -416,6 +417,48 @@ public class AutoTactics {
 		}
 	}
 
+	/**
+	 * Simplifies all predicates of the form 'partition(S, ...)' into their
+	 * expanded form in the goal and all visible hypotheses .
+	 * 
+	 * @author Nicolas Beauger
+	 */
+	public static class PartitionRewriteTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			boolean success = false;
+			for (Predicate shyp : ptNode.getSequent().visibleHypIterable()) {
+				success |= applyPartitionRewrites(ptNode, shyp, pm);
+			}
+			success |= applyPartitionRewrites(ptNode, null, pm);
+			
+			if (success)
+				return null;
+			else
+				return "Tactic unapplicable";
+		}
+
+		private boolean applyPartitionRewrites(IProofTreeNode ptNode,
+				Predicate hyp, IProofMonitor pm) {
+			boolean success = false;
+			final Predicate pred;
+			if (hyp == null) {
+				pred = ptNode.getSequent().goal();
+			} else {
+				pred = hyp;
+			}
+			final List<IPosition> positions = Tactics
+					.partitionGetPositions(pred);
+			for (IPosition position : positions) {
+				final ITactic partitionRewrites = Tactics
+						.partitionRewrites(hyp, position);
+				success |= (partitionRewrites.apply(ptNode, pm) == null);
+			}
+			return success;
+		}
+	}
+
+	
 	
 	//*************************************************
 	//

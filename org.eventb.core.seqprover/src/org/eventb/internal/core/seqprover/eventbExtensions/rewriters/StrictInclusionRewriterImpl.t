@@ -20,7 +20,7 @@ import org.eventb.core.ast.*;
 @SuppressWarnings("unused")
 public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
-	%include {Formula.tom}
+	%include {FormulaV2.tom}
 	
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {

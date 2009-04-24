@@ -1,4 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
+ ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -29,6 +42,7 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -62,6 +76,8 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  */
 public final class Lib {
+
+	private static final LanguageVersion LANGUAGE_VERSION = V2;
 
 	public final static FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -516,14 +532,14 @@ public final class Lib {
 	}
 
 	public static Expression parseExpression(String str) {
-		IParseResult plr = ff.parseExpression(str);
+		IParseResult plr = ff.parseExpression(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedExpression();
 	}
 
 	public static Type parseType(String str) {
-		IParseResult plr = ff.parseType(str);
+		IParseResult plr = ff.parseType(str, LANGUAGE_VERSION);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedType();
@@ -536,14 +552,14 @@ public final class Lib {
 	}
 
 	public static Assignment parseAssignment(String str) {
-		IParseResult plr = ff.parseAssignment(str);
+		IParseResult plr = ff.parseAssignment(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedAssignment();
 	}
 
 	public static Predicate parsePredicate(String str) {
-		IParseResult plr = ff.parsePredicate(str);
+		IParseResult plr = ff.parsePredicate(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedPredicate();
@@ -1239,4 +1255,9 @@ public final class Lib {
 	public static Type getDomainType(Expression r) {
 		return r.getType().getSource();
 	}
+	
+	public static boolean isPartition(Predicate p) {
+		return p.getTag() == Formula.KPARTITION;
+	}
+
 }

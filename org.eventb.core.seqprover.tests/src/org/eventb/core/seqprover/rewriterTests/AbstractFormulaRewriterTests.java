@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - allowing subclasses to provide a type environment
+ *     Systerel - mathematical language V2
  ******************************************************************************/
-
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -258,7 +259,7 @@ public abstract class AbstractFormulaRewriterTests {
 		for (int i = 0; i < env.length; i+=2) {
 			final String name = env[i];
 			final String typeString = env[i+1];
-			final IParseResult res = ff.parseType(typeString);
+			final IParseResult res = ff.parseType(typeString, V2);
 			assertFalse(res.hasProblem());
 			typenv.addName(name, res.getParsedType());
 		}

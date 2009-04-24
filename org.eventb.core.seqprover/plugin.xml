@@ -340,6 +340,11 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.FinitePositive"
             id="finitePositive"
             name="%finitePositiveName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites"
+            id="partitionRewrites"
+            name="%partitionRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -450,6 +455,12 @@
             description="%funOvrHypTacDesc"
             id="funOvrHypTac"
             name="%funOvrHypTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$PartitionRewriteTac"
+            description="%partitionRewriteTacDesc"
+            id="partitionRewriteTac"
+            name="%partitionRewriteTacName">
       </autoTactic>
 
    </extension>

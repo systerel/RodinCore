@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - allowing subclasses to provide a type environment
+ *     Systerel - mathematical language V2
+ ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
@@ -249,14 +261,14 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	String resultP44 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{0 ↦ 1,1 ↦ 2}∧x0 ↦ x1 ↦ (x ↦ 1)∈r)";
 
 	
-	// E |-> F : id(S) == E : S & F = E
-	String P45 = "(0 = 1) ⇒ x ↦ 1 ∈ id({1, 2})";
+	// E |-> F : id == E = F
+	String P45 = "(0 = 1) ⇒ x ↦ 1 ∈ id";
 
-	String resultP45 = "0=1⇒x∈{1,2}∧1=x";
+	String resultP45 = "0=1⇒x=1";
 	
-	String P46 = "∀x·x = 0 ⇒ x ↦ y ∈ id({x, y})";
+	String P46 = "∀x·x = 0 ⇒ x ↦ y ∈ id";
 	
-	String resultP46 = "∀x·x=0⇒x∈{x,y}∧y=x";
+	String resultP46 = "∀x·x=0⇒x=y";
 
 	
 	// E |-> F : (p_1; p_2;...; p_n) == 

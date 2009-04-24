@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added partition tactic (math V2)
+ ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
@@ -20,6 +31,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
@@ -104,6 +116,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistRightRewrites;
@@ -1087,8 +1100,8 @@ public class Tactics {
 					}
 					if (left instanceof BinaryExpression
 							&& lTag == Expression.MAPSTO
-							&& right instanceof UnaryExpression
-							&& rTag == Expression.KID) {
+							&& right instanceof AtomicExpression
+							&& rTag == Expression.KID_GEN) {
 						return true;
 					}
 					if (left instanceof BinaryExpression
@@ -3332,6 +3345,44 @@ public class Tactics {
 			IPosition position) {
 		return BasicTactics.reasonerTac(new InclusionSetMinusRightRewrites(),
 				new InclusionSetMinusRightRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic
+	 * "partition rewrites" {@link PartitionRewrites} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author Nicolas Beauger
+	 */
+	public static List<IPosition> partitionGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(MultiplePredicate predicate) {
+				return predicate.getTag() == Predicate.KPARTITION;
+			}
+
+		});
+	}
+	
+	/**
+	 * Return the tactic "rewrites partition" {@link PartitionRewrites} which is
+	 * applicable to a predicate at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "rewrites partition"
+	 */
+	public static ITactic partitionRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new PartitionRewrites(),
+				new PartitionRewrites.Input(hyp, position));
 	}
 
 }

@@ -1,19 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH Zurich - initial API and implementation
- *     Systerel - mathematical language V2
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -32,47 +29,43 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.ast.expanders.Expanders;
 
 /**
- * Basic automated rewriter for the Event-B sequent prover.
+ * Automated rewriter for the Event-B sequent prover: expand the definition of
+ * a partition predicate.
  */
 @SuppressWarnings("unused")
-public class SetEqlRewriterImpl extends DefaultRewriter {
+public class PartitionRewriterImpl extends DefaultRewriter {
 
-	public SetEqlRewriterImpl() {
+	public PartitionRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
 		
 	%include {FormulaV2.tom}
 	
 	@Override
-	public Predicate rewrite(RelationalPredicate predicate) {
+	public Predicate rewrite(MultiplePredicate predicate) {
 	    %match (Predicate predicate) {
 
 			/**
-	    	 * Set Theory : S = T == S ⊆ T ∧ T ⊆ S (where S and T are sets)
+	    	 * Set Theory : partition(S, S1, S2, ..., Sn) == S = S1 ∪ S2 ∪ ... ∪ Sn ∧
+	    	 *                                               S1 ∩ S2 = ø  ∧
+	    	 *                                               S1 ∩ ... = ø ∧
+	    	 *                                               ...          ∧
+	    	 *                                               Sn-1 ∩ Sn = ø
+	    	 *                                               (where S and Si are sets)
 	    	 */
-			Equal(S, T) -> {
-				Type type = `S.getType();
-				if (type instanceof PowerSetType) {
-					Predicate pred1 = ff.makeRelationalPredicate(Predicate.SUBSETEQ, `S, `T, null);
-					Predicate pred2 = ff.makeRelationalPredicate(Predicate.SUBSETEQ, `T, `S, null);
-					return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] {pred1, pred2}, null);
-				}
-				
-				return predicate;
+			Partition(_) -> {
+				return Expanders.expandPARTITION(predicate, ff);
 			}
 			
 	    }

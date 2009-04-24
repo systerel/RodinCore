@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 ETH Zurich.
+ * Copyright (c) 2008, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -49,7 +53,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 @SuppressWarnings("unused")
 public class CardComparison extends AbstractManualInference {
 
-	%include {Formula.tom}
+	%include {FormulaV2.tom}
 	
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".cardComparison";

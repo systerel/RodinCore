@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -106,7 +107,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeSimplePredicate(tag, expression, null);
 	}
 
-	%include {Formula.tom}
+	%include {FormulaV2.tom}
 	
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
