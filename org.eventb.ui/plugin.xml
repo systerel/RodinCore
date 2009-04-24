@@ -1873,6 +1873,24 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpToGoal"
             target="goal"
             tooltip="%proofTactic.cardUpToGoal.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.partitionRewritesGoal"
+            interrupt="true"
+            name="%proofTactic.partitionRewrites.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
+            target="goal"
+            tooltip="%proofTactic.partitionRewrites.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.partitionRewritesHyp"
+            interrupt="true"
+            name="%proofTactic.partitionRewrites.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
+            target="hypothesis"
+            tooltip="%proofTactic.partitionRewrites.tooltip"/>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

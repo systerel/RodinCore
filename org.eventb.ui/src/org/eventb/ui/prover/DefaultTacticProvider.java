@@ -1,15 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added MultiplePredicate processing (math V2)
+ *******************************************************************************/
 package org.eventb.ui.prover;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -120,6 +120,12 @@ public class DefaultTacticProvider implements ITacticProvider {
 		}
 		if (subFormula instanceof LiteralPredicate) {
 			return new Point(0, 1);
+		}
+		if (subFormula instanceof MultiplePredicate) {
+			final MultiplePredicate mPred = (MultiplePredicate) subFormula;
+			final Expression[] children = mPred.getChildren();
+			return getOperatorPosition(predStr, subFormula.getSourceLocation()
+					.getStart(), children[0].getSourceLocation().getStart());
 		}
 		if (subFormula instanceof QuantifiedPredicate) {
 			QuantifiedPredicate qPred = (QuantifiedPredicate) subFormula;

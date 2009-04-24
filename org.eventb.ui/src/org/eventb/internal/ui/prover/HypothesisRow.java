@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
+
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,7 +178,7 @@ public class HypothesisRow {
 
 		Predicate pred = hyp;
 		actualString = pred.toString();
-		IParseResult parseResult = formulaFactory.parsePredicate(actualString);
+		IParseResult parseResult = formulaFactory.parsePredicate(actualString, V2, null);
 		assert !parseResult.hasProblem();
 		parsedPred = parseResult.getParsedPredicate();
 
@@ -244,7 +247,7 @@ public class HypothesisRow {
 			// Get the list of applicable tactic
 			// For each tactic, get the applicable positions
 
-			IParseResult parseResult = formulaFactory.parsePredicate(string);
+			IParseResult parseResult = formulaFactory.parsePredicate(string, V2, null);
 			assert !parseResult.hasProblem();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 
@@ -286,7 +289,7 @@ public class HypothesisRow {
 			String str = PredicateUtil.prettyPrint(max_length, actualString,
 					parsedPred);
 
-			IParseResult parseResult = formulaFactory.parsePredicate(str);
+			IParseResult parseResult = formulaFactory.parsePredicate(str, V2, null);
 			assert !parseResult.hasProblem();
 			Predicate parsedStr = parseResult.getParsedPredicate();
 

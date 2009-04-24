@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - mathematical language V2
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
@@ -7,6 +18,7 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -125,6 +137,10 @@ public class PredicateUtil {
 		}
 
 		else if (pred instanceof LiteralPredicate) {
+			result = printSpace(indent) + str;
+		}
+
+		else if (pred instanceof MultiplePredicate) {
 			result = printSpace(indent) + str;
 		}
 
@@ -279,6 +295,10 @@ public class PredicateUtil {
 		}
 
 		else if (pred instanceof LiteralPredicate) {
+			result = getImage(pred, predString);
+		}
+
+		else if (pred instanceof MultiplePredicate) {
 			result = getImage(pred, predString);
 		}
 
