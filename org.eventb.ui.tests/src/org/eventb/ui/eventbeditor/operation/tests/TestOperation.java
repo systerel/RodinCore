@@ -214,14 +214,8 @@ public class TestOperation extends OperationTest {
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
 		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE, elements);
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm1",
-				"mySet = {e1, e2, e3}");
-		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm2",
-				"¬ e1 = e2");
-		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm3",
-				"¬ e1 = e3");
-		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm4",
-				"¬ e2 = e3");
-
+				"partition(mySet, {e1}, {e2}, {e3})");
+		
 		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(
 				ctx, "mySet", elements);
 

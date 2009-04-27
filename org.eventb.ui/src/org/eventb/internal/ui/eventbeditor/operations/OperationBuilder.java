@@ -43,6 +43,8 @@ import org.rodinp.core.RodinDBException;
 
 class OperationBuilder {
 
+	private static final String KEYWORD_PARTITION = "partition";
+	
 	public OperationTree deleteElement(IInternalElement element, boolean force) {
 		final OperationTree cmdCreate = getCommandCreateElement(element);
 		return new DeleteElementLeaf(element, cmdCreate, force);
@@ -106,10 +108,7 @@ class OperationBuilder {
 		cmd.addCommande(createCarrierSet(root, identifier));
 		if (elements.length > 0) {
 			cmd.addCommande(createElementsOfEnumeratedSet(root, elements));
-			cmd.addCommande(createAxiomDefinitionOfEnumeratedSet(root,
-					identifier, elements));
-			cmd.addCommande(createAxiomElementsDifferentsOfEnumeratedSet(root,
-					elements));
+			cmd.addCommande(createPartition(root, identifier, elements));
 		}
 		return cmd;
 	}
@@ -120,26 +119,25 @@ class OperationBuilder {
 	}
 
 	/**
-	 * create an axiom which define an enumerated set. the axiom is "identifier = {
-	 * element1,..., elementN }
+	 * create an axiom which define an enumerated set. the axiom is
+	 * "partition(Set, {element1},..., {elementN})
 	 * 
 	 * @param identifier
 	 *            identifier of the enumerated set
 	 * @param elements
 	 *            elements in the set
 	 */
-	private OperationTree createAxiomDefinitionOfEnumeratedSet(
-			IInternalElement root, String identifier, String[] elements) {
-		final StringBuilder axmPred = new StringBuilder(identifier);
-		axmPred.append(" = {");
-		String axmSep = "";
+	private OperationTree createPartition(IInternalElement root,
+			String identifier, String[] elements) {
+		final StringBuilder axmPred = new StringBuilder(KEYWORD_PARTITION);
+		axmPred.append("(");
+		axmPred.append(identifier);
 		for (String element : elements) {
-
-			axmPred.append(axmSep);
-			axmSep = ", ";
+			axmPred.append(", {");
 			axmPred.append(element);
+			axmPred.append('}');
 		}
-		axmPred.append("}");
+		axmPred.append(")");
 		return createAxiom(root, null, axmPred.toString());
 	}
 
@@ -151,24 +149,6 @@ class OperationBuilder {
 		final OperationNode cmd = new OperationNode();
 		for (String element : elements) {
 			cmd.addCommande(createConstant(root, element));
-		}
-		return cmd;
-	}
-
-	/**
-	 * return a command which create a list of axiom to specify elements of the
-	 * set are all different
-	 */
-	private OperationTree createAxiomElementsDifferentsOfEnumeratedSet(
-			IInternalElement root, String[] elements) {
-		final OperationNode cmd = new OperationNode();
-		for (int i = 0; i < elements.length; ++i) {
-			for (int j = i + 1; j < elements.length; ++j) {
-				final String predicate = "\u00ac " + elements[i] + " = "
-						+ elements[j];
-				cmd.addCommande(createAxiom(root, null, predicate));
-
-			}
 		}
 		return cmd;
 	}
