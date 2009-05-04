@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -64,7 +65,17 @@ public interface IAttributeType {
 	 * </p>
 	 */
 	interface Boolean extends IAttributeType {
-		// No more methods
+
+		/**
+		 * Returns a new attribute value for this attribute type with the given
+		 * value.
+		 * 
+		 * @param value
+		 *            a value
+		 * @return a new attribute value for this type and the given value
+		 */
+		IAttributeValue.Boolean makeValue(boolean value);
+
 	}
 
 	/**
@@ -75,7 +86,17 @@ public interface IAttributeType {
 	 * </p>
 	 */
 	interface Handle extends IAttributeType {
-		// No more methods
+
+		/**
+		 * Returns a new attribute value for this attribute type with the given
+		 * value.
+		 * 
+		 * @param value
+		 *            a value
+		 * @return a new attribute value for this type and the given value
+		 */
+		IAttributeValue.Handle makeValue(IRodinElement value);
+
 	}
 
 	/**
@@ -86,7 +107,17 @@ public interface IAttributeType {
 	 * </p>
 	 */
 	interface Integer extends IAttributeType {
-		// No more methods
+
+		/**
+		 * Returns a new attribute value for this attribute type with the given
+		 * value.
+		 * 
+		 * @param value
+		 *            a value
+		 * @return a new attribute value for this type and the given value
+		 */
+		IAttributeValue.Integer makeValue(int value);
+
 	}
 
 	/**
@@ -97,7 +128,17 @@ public interface IAttributeType {
 	 * </p>
 	 */
 	interface Long extends IAttributeType {
-		// No more methods
+
+		/**
+		 * Returns a new attribute value for this attribute type with the given
+		 * value.
+		 * 
+		 * @param value
+		 *            a value
+		 * @return a new attribute value for this type and the given value
+		 */
+		IAttributeValue.Long makeValue(long value);
+
 	}
 
 	/**
@@ -108,7 +149,17 @@ public interface IAttributeType {
 	 * </p>
 	 */
 	interface String extends IAttributeType {
-		// No more methods
+
+		/**
+		 * Returns a new attribute value for this attribute type with the given
+		 * value.
+		 * 
+		 * @param value
+		 *            a value
+		 * @return a new attribute value for this type and the given value
+		 */
+		IAttributeValue.String makeValue(java.lang.String value);
+
 	}
 
 	/**

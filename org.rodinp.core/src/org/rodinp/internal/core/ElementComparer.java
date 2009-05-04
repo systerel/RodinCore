@@ -8,10 +8,15 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import org.rodinp.core.IAttributeType;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -112,22 +117,13 @@ public abstract class ElementComparer {
 			InternalElement right) throws RodinDBException {
 
 		// Attributes are not ordered
-		final IAttributeType[] leftAttrs = left.getAttributeTypes();
-		final IAttributeType[] rightAttrs = right.getAttributeTypes();
-		if (leftAttrs.length != rightAttrs.length) {
-			return false;
-		}
-		for (IAttributeType attr : leftAttrs) {
-			if (!right.hasAttribute(attr)) {
-				return false;
-			}
-			final String attrName = attr.getId();
-			if (!left.getAttributeRawValue(attrName).equals(
-					right.getAttributeRawValue(attrName))) {
-				return false;
-			}
-		}
-		return true;
+		final Set<IAttributeValue> leftSet = asSet(left.getAttributeValues());
+		final Set<IAttributeValue> rightSet = asSet(right.getAttributeValues());
+		return leftSet.equals(rightSet);
+	}
+
+	private Set<IAttributeValue> asSet(IAttributeValue[] members) {
+		return new HashSet<IAttributeValue>(Arrays.asList(members));
 	}
 
 	protected final boolean compareChildren(InternalElement left,

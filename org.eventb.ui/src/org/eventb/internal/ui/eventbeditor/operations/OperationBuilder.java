@@ -16,6 +16,7 @@ import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
 import java.util.Collection;
 
@@ -24,7 +25,6 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
@@ -36,6 +36,7 @@ import org.eventb.core.IVariant;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -203,10 +204,10 @@ class OperationBuilder {
 
 	private <T extends IInternalElement> OperationCreateElement getCreateElement(
 			IInternalElement parent, IInternalElementType<T> type,
-			IInternalElement sibling, EventBAttributesManager manager) {
+			IInternalElement sibling, IAttributeValue[] values) {
 		OperationCreateElement op = new OperationCreateElement(
 				createDefaultElement(parent, type, sibling));
-		op.addSubCommande(new ChangeAttribute(manager));
+		op.addSubCommande(new ChangeAttribute(values));
 		return op;
 	}
 
@@ -224,11 +225,11 @@ class OperationBuilder {
 	}
 
 	private OperationCreateElement createEvent(IMachineRoot root, String label) {
-		EventBAttributesManager manager = new EventBAttributesManager();
-		manager.addAttribute(LABEL_ATTRIBUTE, label);
-		manager.addAttribute(CONVERGENCE_ATTRIBUTE,
-				IConvergenceElement.Convergence.ORDINARY.getCode());
-		return getCreateElement(root, IEvent.ELEMENT_TYPE, null, manager);
+		final IAttributeValue[] values = new IAttributeValue[] {
+				LABEL_ATTRIBUTE.makeValue(label),
+				CONVERGENCE_ATTRIBUTE.makeValue(ORDINARY.getCode()), //
+		};
+		return getCreateElement(root, IEvent.ELEMENT_TYPE, null, values);
 	}
 
 	private void assertLengthEquals(Object[] tab1, Object[] tab2) {
@@ -256,9 +257,10 @@ class OperationBuilder {
 	public <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
 			IInternalElement parent, IInternalElementType<T> typeElement,
 			IInternalElement sibling, IAttributeType.String type, String string) {
-		EventBAttributesManager manager = new EventBAttributesManager();
-		manager.addAttribute(type, string);
-		return getCreateElement(parent, typeElement, sibling, manager);
+		final IAttributeValue[] values = new IAttributeValue[] { type
+				.makeValue(string), //
+		};
+		return getCreateElement(parent, typeElement, sibling, values);
 	}
 
 	/**
@@ -287,10 +289,11 @@ class OperationBuilder {
 			IInternalElement parent, IInternalElementType<T> typeElement,
 			IAttributeType.String type1, IAttributeType.String type2,
 			String string1, String string2) {
-		EventBAttributesManager manager = new EventBAttributesManager();
-		manager.addAttribute(type1, string1);
-		manager.addAttribute(type2, string2);
-		return getCreateElement(parent, typeElement, null, manager);
+		final IAttributeValue[] values = new IAttributeValue[] {
+				type1.makeValue(string1), //
+				type2.makeValue(string2), //
+		};
+		return getCreateElement(parent, typeElement, null, values);
 	}
 
 	/**
@@ -318,6 +321,10 @@ class OperationBuilder {
 	private <T extends IInternalElement> OperationCreateElement createElementLabelPredicate(
 			IInternalElement parent, IInternalElementType<T> type,
 			String label, String predicate) {
+		if (label == null) {
+			return createElementOneStringAttribute(parent, type, null,
+					PREDICATE_ATTRIBUTE, predicate);
+		}
 		return createElementTwoStringAttribute(parent, type, LABEL_ATTRIBUTE,
 				PREDICATE_ATTRIBUTE, label, predicate);
 
@@ -398,12 +405,6 @@ class OperationBuilder {
 			cmd.addCommande(getCommandCreateElement(element));
 		}
 		return cmd;
-	}
-
-	public OperationTree changeAttribute(IInternalElement element,
-			EventBAttributesManager manager) {
-		final ChangeAttribute op = new ChangeAttribute(element, manager);
-		return op;
 	}
 
 	public <E extends IInternalElement> OperationTree changeAttribute(

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -23,16 +24,14 @@ import org.rodinp.internal.core.util.Messages;
 
 public class ChangeElementAttributeOperation extends RodinDBOperation{
 
-	private IInternalElement element;
-	private String attrName;
-	private String newValue;
+	private final IInternalElement element;
+	private final AttributeValue<?,?> attrValue;
 	
 	public ChangeElementAttributeOperation(IInternalElement element,
-			String attrName, String newValue) {
+			AttributeValue<?,?> attrValue) {
 		super(new IRodinElement[] { element });
 		this.element = element;
-		this.attrName = attrName;
-		this.newValue = newValue;
+		this.attrValue = attrValue;
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class ChangeElementAttributeOperation extends RodinDBOperation{
 			final RodinFile file = ((InternalElement) element).getRodinFile();
 			final RodinFileElementInfo fileInfo = (RodinFileElementInfo)
 					file.getElementInfo(getSubProgressMonitor(1));
-			fileInfo.setAttributeRawValue(element, attrName, newValue);
+			fileInfo.setAttributeValue(element, attrValue);
 			final RodinElementDelta delta = newRodinElementDelta();
 			delta.changed(element, IRodinElementDelta.F_ATTRIBUTE);
 			addDelta(delta);
@@ -84,10 +83,6 @@ public class ChangeElementAttributeOperation extends RodinDBOperation{
 					IRodinDBStatusConstants.READ_ONLY,
 					element
 			);
-		}
-		// Existence of the attribute type has been checked by caller.
-		if (newValue == null) {
-			return new RodinDBStatus(IRodinDBStatusConstants.NULL_STRING);
 		}
 		return RodinDBStatus.VERIFIED_OK;
 	}

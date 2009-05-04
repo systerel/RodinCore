@@ -10,6 +10,7 @@
  *     Systerel - added deleteElementChildren() method
  *     Systerel - removed deprecated methods (contents)
  *     Systerel - separation of file and root element
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -23,7 +24,9 @@ import static org.rodinp.core.IRodinDBStatusConstants.XML_SAVE_ERROR;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.ErrorListener;
@@ -101,8 +104,6 @@ public class Buffer {
 	private static final String CONTENTS_ATTRIBUTE = "contents";
 	
 	private static final String NAME_ATTRIBUTE = "name";
-	
-	private static String[] NO_ATTRIBUTE_NAMES = new String[0];
 
 	private static final ErrorListener errorListener = new XMLErrorListener();
 	
@@ -278,15 +279,14 @@ public class Buffer {
 		return null;
 	}
 
-	public String[] getAttributeNames(Element domElement) {
+	public Map<String, String> getAttributes(Element domElement) {
 		final NamedNodeMap attributeMap = domElement.getAttributes();
 		final int length = attributeMap.getLength();
-		if (length == 0) {
-			return NO_ATTRIBUTE_NAMES;
-		}
-		final String[] result = new String[length];
+		final Map<String, String> result = new HashMap<String, String>(
+				length * 2);
 		for (int i = 0; i < length; i++) {
-			result[i] = attributeMap.item(i).getLocalName();
+			final Node item = attributeMap.item(i);
+			result.put(item.getLocalName(), item.getNodeValue());
 		}
 		return result;
 	}

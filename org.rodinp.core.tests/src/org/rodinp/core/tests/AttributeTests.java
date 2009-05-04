@@ -9,8 +9,9 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added checks of generated deltas
  *     Systerel - separation of file and root element
+ *     Systerel - added tests for extension point processing
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
-
 package org.rodinp.core.tests;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -29,6 +31,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
+import org.rodinp.internal.core.AttributeType;
 
 /**
  * Tests about attributes of Rodin internal elements.
@@ -61,14 +64,12 @@ public class AttributeTests extends ModifyingResourceTests {
 		super.tearDown();
 	}
 
-	static final Set<IAttributeType> knownAttributeTypes =
-		new HashSet<IAttributeType>(Arrays.asList(new IAttributeType[] {
-			fBool,
-			fInt,
-			fHandle,
-			fLong,
-			fString,
-		}));
+	private static final <T> Set<T> mSet(T... members) {
+		return new HashSet<T>(Arrays.asList(members));
+	}
+
+	static final Set<IAttributeType> knownAttributeTypes = mSet(fBool, fInt,
+			fHandle, fLong, fString);
 	
 	static void assertErrorCode(RodinDBException exception, int failureCode) {
 
@@ -85,11 +86,9 @@ public class AttributeTests extends ModifyingResourceTests {
 			IAttributeType... expectedTypes) throws RodinDBException {
 		
 		assertExists("Element should exist", element);
-		IAttributeType[] actualTypes = element.getAttributeTypes();
-		Set<IAttributeType> expected =
-			new HashSet<IAttributeType>(Arrays.asList(expectedTypes));
-		Set<IAttributeType> actual =
-			new HashSet<IAttributeType>(Arrays.asList(actualTypes));
+		final IAttributeType[] actualTypes = element.getAttributeTypes();
+		final Set<IAttributeType> expected = mSet(expectedTypes);
+		final Set<IAttributeType> actual = mSet(actualTypes);
 		assertEquals("Unexpected attribute types", expected, actual);
 		for (IAttributeType name: actualTypes) {
 			assertTrue("Returned type should exist", element.hasAttribute(name));
@@ -103,6 +102,14 @@ public class AttributeTests extends ModifyingResourceTests {
 		}
 	}
 	
+	private static void assertAttributeValues(IInternalElement element,
+			IAttributeValue... expected) throws RodinDBException {
+		final IAttributeValue[] actual = element.getAttributeValues();
+		final Set<IAttributeValue> eSet = mSet(expected);
+		final Set<IAttributeValue> aSet = mSet(actual);
+		assertEquals(eSet, aSet);
+	}
+
 	static void assertBooleanValue(IInternalElement element,
 			IAttributeType.Boolean type, boolean expected)
 			throws RodinDBException {
@@ -207,6 +214,8 @@ public class AttributeTests extends ModifyingResourceTests {
 					.hasAttribute(type));
 			assertEquals("New value should have been set", newValue, element
 					.getAttributeValue(type));
+			assertEquals("Wrong generic attribute", type.makeValue(newValue),
+					element.getAttributeValue((IAttributeType) type));
 			assertAttributeDelta(element);
 		} finally {
 			stopDeltas();
@@ -224,6 +233,8 @@ public class AttributeTests extends ModifyingResourceTests {
 					.hasAttribute(type));
 			assertEquals("New value should have been set", newValue, element
 					.getAttributeValue(type));
+			assertEquals("Wrong generic attribute", type.makeValue(newValue),
+					element.getAttributeValue((IAttributeType) type));
 			assertAttributeDelta(element);
 		} finally {
 			stopDeltas();
@@ -240,6 +251,8 @@ public class AttributeTests extends ModifyingResourceTests {
 					.hasAttribute(type));
 			assertEquals("New value should have been set", newValue, element
 					.getAttributeValue(type));
+			assertEquals("Wrong generic attribute", type.makeValue(newValue),
+					element.getAttributeValue((IAttributeType) type));
 			assertAttributeDelta(element);
 		} finally {
 			stopDeltas();
@@ -256,6 +269,8 @@ public class AttributeTests extends ModifyingResourceTests {
 					.hasAttribute(type));
 			assertEquals("New value should have been set", newValue, element
 					.getAttributeValue(type));
+			assertEquals("Wrong generic attribute", type.makeValue(newValue),
+					element.getAttributeValue((IAttributeType) type));
 			assertAttributeDelta(element);
 		} finally {
 			stopDeltas();
@@ -273,6 +288,8 @@ public class AttributeTests extends ModifyingResourceTests {
 					.hasAttribute(type));
 			assertEquals("New value should have been set", newValue, element
 					.getAttributeValue(type));
+			assertEquals("Wrong generic attribute", type.makeValue(newValue),
+					element.getAttributeValue((IAttributeType) type));
 			assertAttributeDelta(element);
 		} finally {
 			stopDeltas();
@@ -363,24 +380,36 @@ public class AttributeTests extends ModifyingResourceTests {
 			throws CoreException {
 
 		assertAttributeNames(ie);
-		
+		assertAttributeValues(ie);
+
+		final IAttributeValue vBool = fBool.makeValue(true);
 		setBoolAttrPositive(ie, fBool, true);
 		assertAttributeNames(ie, fBool);
+		assertAttributeValues(ie, vBool);
 
+		final IAttributeValue vHandle = fHandle.makeValue(ie);
 		setHandleAttrPositive(ie, fHandle, ie);
 		assertAttributeNames(ie, fBool, fHandle);
-		
+		assertAttributeValues(ie, vBool, vHandle);
+
+		final IAttributeValue vInt = fInt.makeValue((-55));
 		setIntAttrPositive(ie, fInt, -55);
 		assertAttributeNames(ie, fBool, fHandle, fInt);
+		assertAttributeValues(ie, vBool, vHandle, vInt);
 
+		final IAttributeValue vLong = fLong.makeValue(12345678901L);
 		setLongAttrPositive(ie, fLong, 12345678901L);
 		assertAttributeNames(ie, fBool, fHandle, fInt, fLong);
+		assertAttributeValues(ie, vBool, vHandle, vInt, vLong);
 
+		final IAttributeValue vString = fString.makeValue("bar");
 		setStringAttrPositive(ie, fString, "bar");
 		assertAttributeNames(ie, fBool, fHandle, fInt, fLong, fString);
-		
+		assertAttributeValues(ie, vBool, vHandle, vInt, vLong, vString);
+
 		removeAttrPositive(ie, fLong);
 		assertAttributeNames(ie, fBool, fHandle, fInt, fString);
+		assertAttributeValues(ie, vBool, vHandle, vInt, vString);
 	}
 	
 	/**
@@ -584,4 +613,67 @@ public class AttributeTests extends ModifyingResourceTests {
 			}
 		});
 	}
+
+	public void testIdWithDotInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"id", "foo.bar", //
+				"name", "Foo Bar", //
+				"kind", "long" //
+		)));
+	}
+
+	public void testIdWithSpaceInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"id", "foo bar", //
+				"name", "Foo Bar", //
+				"kind", "long" //
+		)));
+	}
+
+	public void testInvalidKindInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"id", "foo", //
+				"name", "Foo", //
+				"kind", "inexistent" //
+		)));
+	}
+
+	public void testMissingIdInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"name", "Foo", //
+				"kind", "long" //
+		)));
+	}
+
+	public void testMissingNameInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"id", "foo", //
+				"kind", "long" //
+		)));
+	}
+
+	public void testMissingKindInAttributeTypeDeclaration() throws Exception {
+		assertNull(AttributeType.valueOf(new MockConfigurationElement( //
+				"id", "foo", //
+				"name", "Foo" //
+		)));
+	}
+
+	/**
+	 * Ensures that generic attribute values can be set (tested only for
+	 * boolean).
+	 */
+	public void testGenericSetAttribute() throws RodinDBException {
+		final IAttributeValue v1 = fBool.makeValue(true);
+		final IAttributeValue v2 = fBool.makeValue(true);
+
+		assertAttributeValues(root);
+
+		root.setAttributeValue(v1, null);
+		assertAttributeValues(root, v1);
+
+		root.setAttributeValue(v2, null);
+		assertAttributeValues(root, v2);
+	}
+
 }

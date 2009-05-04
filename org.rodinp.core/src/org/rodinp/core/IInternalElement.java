@@ -12,6 +12,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added inquiry methods
  *     Systerel - added creation of new internal element child
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -203,6 +204,39 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 * @return the types of all attributes of this element
 	 */
 	IAttributeType[] getAttributeTypes() throws RodinDBException;
+
+	/**
+	 * Returns an array of the values of all attributes currently attached to
+	 * this element. If this element doesn't carry any attribute, an empty array
+	 * is returned.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 * @return the values of all attributes of this element
+	 */
+	IAttributeValue[] getAttributeValues() throws RodinDBException;
+
+	/**
+	 * Returns the value of the attribute with the given type and carried by
+	 * this element.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param type
+	 *            type of the attribute
+	 * @exception RodinDBException
+	 *                if this element or the specified attribute does not exist
+	 *                or if an exception occurs while accessing its
+	 *                corresponding resource
+	 * @return the value of the attribute with the given type
+	 */
+	IAttributeValue getAttributeValue(IAttributeType type)
+			throws RodinDBException;
 
 	/**
 	 * Returns the value of the attribute with the given boolean type and
@@ -544,6 +578,25 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 */
 	void setAttributeValue(IAttributeType.String type, String newValue,
 			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Sets the given attribute value to this element. If the specified
+	 * attribute didn't exist, it is created.
+	 * <p>
+	 * The file containing this element is opened by this operation.
+	 * </p>
+	 * 
+	 * @param newValue
+	 *            value to set
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @exception RodinDBException
+	 *                if this element does not exist or if an exception occurs
+	 *                while accessing its corresponding resource
+	 */
+	void setAttributeValue(IAttributeValue newValue, IProgressMonitor monitor)
+			throws RodinDBException;
 
 	// Methods with specialized return types
 	IInternalElement getSnapshot();

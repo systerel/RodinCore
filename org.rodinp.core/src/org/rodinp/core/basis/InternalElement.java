@@ -13,6 +13,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added inquiry methods
  *     Systerel - added creation of new internal element child
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -28,6 +30,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.AttributeValue;
 import org.rodinp.internal.core.ChangeElementAttributeOperation;
 import org.rodinp.internal.core.ClearElementsOperation;
 import org.rodinp.internal.core.CopyElementsOperation;
@@ -149,36 +152,44 @@ public abstract class InternalElement extends RodinElement implements
 		return getFileInfo(null).getAttributeTypes(this);
 	}
 	
-	public String getAttributeRawValue(String attrName)
-			throws RodinDBException {
+	public final IAttributeValue[] getAttributeValues() throws RodinDBException {
+		return getFileInfo(null).getAttributeValues(this);
+	}
 
-		return getFileInfo(null).getAttributeRawValue(this, attrName);
+	public final IAttributeValue getAttributeValue(IAttributeType attrType)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType<?>) attrType);
 	}
 
 	public boolean getAttributeValue(IAttributeType.Boolean attrType)
 			throws RodinDBException {
-		final String rawValue = getAttributeRawValue(attrType.getId());
-		return ((AttributeType) attrType).getBoolValue(rawValue);
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType.Boolean) attrType);
 	}
 
-	public IRodinElement getAttributeValue(IAttributeType.Handle attrType) throws RodinDBException {
-		final String rawValue = getAttributeRawValue(attrType.getId());
-		return ((AttributeType) attrType).getHandleValue(rawValue);
+	public IRodinElement getAttributeValue(IAttributeType.Handle attrType)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType.Handle) attrType);
 	}
 
-	public int getAttributeValue(IAttributeType.Integer attrType) throws RodinDBException {
-		final String rawValue = getAttributeRawValue(attrType.getId());
-		return ((AttributeType) attrType).getIntValue(rawValue);
+	public int getAttributeValue(IAttributeType.Integer attrType)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType.Integer) attrType);
 	}
 
-	public long getAttributeValue(IAttributeType.Long attrType) throws RodinDBException {
-		final String rawValue = getAttributeRawValue(attrType.getId());
-		return ((AttributeType) attrType).getLongValue(rawValue);
+	public long getAttributeValue(IAttributeType.Long attrType)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType.Long) attrType);
 	}
 
-	public String getAttributeValue(IAttributeType.String attrType) throws RodinDBException {
-		final String rawValue = getAttributeRawValue(attrType.getId());
-		return ((AttributeType) attrType).getStringValue(rawValue);
+	public String getAttributeValue(IAttributeType.String attrType)
+			throws RodinDBException {
+		return getFileInfo(null).getAttributeValue(this,
+				(AttributeType.String) attrType);
 	}
 
 	public IResource getCorrespondingResource() {
@@ -381,41 +392,60 @@ public abstract class InternalElement extends RodinElement implements
 		new RenameElementsOperation(this, newName, replace).runOperation(monitor);
 	}
 
-	private void setAttributeRawValue(String attrName, String newRawValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		
-		new ChangeElementAttributeOperation(this, attrName, newRawValue)
+	public void setAttributeValue(IAttributeType.Boolean attrType,
+			boolean newValue, IProgressMonitor monitor) throws RodinDBException {
+		final AttributeType.Boolean iType = (AttributeType.Boolean) attrType;
+		final AttributeValue<?,?> attrValue = iType.makeValue(newValue);
+		new ChangeElementAttributeOperation(this, attrValue)
 				.runOperation(monitor);
 	}
 
-	public void setAttributeValue(IAttributeType.Boolean attrType, boolean newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final String newRawValue = ((AttributeType) attrType).toString(newValue);
-		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	public final void setAttributeValue(IAttributeType.Handle attrType,
+			IRodinElement newValue, IProgressMonitor monitor)
+			throws RodinDBException {
+		if (newValue == null) {
+			throw new NullPointerException();
+		}
+		final AttributeType.Handle iType = (AttributeType.Handle) attrType;
+		final AttributeValue<?,?> attrValue = iType.makeValue(newValue);
+		new ChangeElementAttributeOperation(this, attrValue)
+				.runOperation(monitor);
 	}
 
-	public void setAttributeValue(IAttributeType.Handle attrType, IRodinElement newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final String newRawValue = ((AttributeType) attrType).toString(newValue);
-		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	public final void setAttributeValue(IAttributeType.Integer attrType,
+			int newValue, IProgressMonitor monitor) throws RodinDBException {
+		final AttributeType.Integer iType = (AttributeType.Integer) attrType;
+		final AttributeValue<?,?> attrValue = iType.makeValue(newValue);
+		new ChangeElementAttributeOperation(this, attrValue)
+				.runOperation(monitor);
 	}
 
-	public void setAttributeValue(IAttributeType.Integer attrType, int newValue,
+	public final void setAttributeValue(IAttributeType.Long attrType, long newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final String newRawValue = ((AttributeType) attrType).toString(newValue);
-		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+		final AttributeType.Long iType = (AttributeType.Long) attrType;
+		final AttributeValue<?,?> attrValue = iType.makeValue(newValue);
+		new ChangeElementAttributeOperation(this, attrValue)
+				.runOperation(monitor);
 	}
 
-	public void setAttributeValue(IAttributeType.Long attrType, long newValue,
-			IProgressMonitor monitor) throws RodinDBException {
-		final String newRawValue = ((AttributeType) attrType).toString(newValue);
-		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+	public final void setAttributeValue(IAttributeType.String attrType,
+			String newValue, IProgressMonitor monitor) throws RodinDBException {
+		if (newValue == null) {
+			throw new NullPointerException();
+		}
+		final AttributeType.String iType = (AttributeType.String) attrType;
+		final AttributeValue<?,?> attrValue = iType.makeValue(newValue);
+		new ChangeElementAttributeOperation(this, attrValue)
+				.runOperation(monitor);
 	}
 
-	public void setAttributeValue(IAttributeType.String attrType, String newValue,
+	public void setAttributeValue(IAttributeValue newValue,
 			IProgressMonitor monitor) throws RodinDBException {
-		final String newRawValue = ((AttributeType) attrType).toString(newValue);
-		setAttributeRawValue(attrType.getId(), newRawValue, monitor);
+		if (newValue == null) {
+			throw new NullPointerException();
+		}
+		new ChangeElementAttributeOperation(this,
+				(AttributeValue<?, ?>) newValue).runOperation(monitor);
 	}
 
 	@Override

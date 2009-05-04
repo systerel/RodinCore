@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 
 package org.rodinp.internal.core;
@@ -21,53 +25,134 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public abstract class AttributeType implements IAttributeType {
+public abstract class AttributeType<V> implements IAttributeType {
 
-	private static final java.lang.String KIND_BOOLEAN = "boolean";
+	public static enum Kind {
+		BOOLEAN("boolean") { //$NON-NLS-N$
+			@Override
+			protected AttributeType<?> makeType(java.lang.String typeId,
+					java.lang.String typeName) {
+				return new Boolean(typeId, typeName);
+			}
+		},
+		HANDLE("handle") { //$NON-NLS-N$
+			@Override
+			protected AttributeType<?> makeType(java.lang.String typeId,
+					java.lang.String typeName) {
+				return new Handle(typeId, typeName);
+			}
+		},
+		INTEGER("integer") { //$NON-NLS-N$
+			@Override
+			protected AttributeType<?> makeType(java.lang.String typeId,
+					java.lang.String typeName) {
+				return new Integer(typeId, typeName);
+			}
+		},
+		LONG("long") { //$NON-NLS-N$
+			@Override
+			protected AttributeType<?> makeType(java.lang.String typeId,
+					java.lang.String typeName) {
+				return new Long(typeId, typeName);
+			}
+		},
+		STRING("string") { //$NON-NLS-N$
+			@Override
+			protected AttributeType<?> makeType(java.lang.String typeId,
+					java.lang.String typeName) {
+				return new String(typeId, typeName);
+			}
+		},
+		;
 
-	private static final java.lang.String KIND_HANDLE = "handle";
+		private final java.lang.String name;
 
-	private static final java.lang.String KIND_INTEGER = "integer";
+		private Kind(java.lang.String name) {
+			this.name = name;
+		}
 
-	private static final java.lang.String KIND_LONG = "long";
+		public static Kind fromName(java.lang.String name) {
+			for (Kind kind : values()) {
+				if (kind.name.equals(name)) {
+					return kind;
+				}
+			}
+			return null;
+		}
 
-	private static final java.lang.String KIND_STRING = "string";
+		public java.lang.String getName() {
+			return name;
+		}
 
-	private static class Boolean extends AttributeType implements
+		protected abstract AttributeType<?> makeType(java.lang.String typeId,
+				java.lang.String typeName);
+
+	}
+
+	public static class Boolean extends AttributeType<java.lang.Boolean> implements
 			IAttributeType.Boolean {
 
 		protected Boolean(java.lang.String id, java.lang.String name) {
-			super(id, name);
+			super(Kind.BOOLEAN, id, name);
+		}
+
+		public AttributeValue.Boolean makeValue(boolean value) {
+			return new AttributeValue.Boolean(this, value);
+		}
+		
+		@Override
+		public AttributeValue.Boolean makeValueFromRaw(
+				java.lang.String rawValue) {
+			return makeValue(parseValue(rawValue));
 		}
 
 		@Override
+		@Deprecated
 		public boolean getBoolValue(java.lang.String rawValue) {
-			return java.lang.Boolean.valueOf(rawValue);
+			return parseValue(rawValue);
+		}
+
+		public boolean parseValue(java.lang.String rawValue) {
+			return java.lang.Boolean.parseBoolean(rawValue);
 		}
 
 		@Override
-		public java.lang.String getKind() {
-			return KIND_BOOLEAN;
-		}
-
-		@Override
-		public java.lang.String toString(boolean value) throws RodinDBException {
+		public java.lang.String toString(java.lang.Boolean value) {
 			return java.lang.Boolean.toString(value);
 		}
 
 	}
 
-	private static class Handle extends AttributeType implements
+	public static class Handle extends AttributeType<IRodinElement> implements
 			IAttributeType.Handle {
 
 		protected Handle(java.lang.String id, java.lang.String name) {
-			super(id, name);
+			super(Kind.HANDLE, id, name);
+		}
+
+		public AttributeValue.Handle makeValue(IRodinElement value) {
+			if (value == null) {
+				throw new NullPointerException("null value");
+			}
+			return new AttributeValue.Handle(this, value);
+		}
+		
+		@Override
+		public AttributeValue.Handle makeValueFromRaw(
+				java.lang.String rawValue) throws RodinDBException {
+			return makeValue(parseValue(rawValue));
 		}
 
 		@Override
+		@Deprecated
 		public IRodinElement getHandleValue(java.lang.String rawValue)
 				throws RodinDBException {
-			IRodinElement result = RodinCore.valueOf(rawValue);
+			return parseValue(rawValue);
+		}
+
+		public IRodinElement parseValue(java.lang.String rawValue)
+				throws RodinDBException {
+			final IRodinElement result = RodinCore.valueOf(rawValue);
 			if (result == null) {
 				Util.log(null, "Can't parse handle value for attribute " + id);
 				throw newInvalidValueException();
@@ -76,169 +161,233 @@ public abstract class AttributeType implements IAttributeType {
 		}
 
 		@Override
-		public java.lang.String getKind() {
-			return KIND_HANDLE;
-		}
-
-		@Override
-		public java.lang.String toString(IRodinElement value)
-				throws RodinDBException {
+		public java.lang.String toString(IRodinElement value) {
 			return value.getHandleIdentifier();
 		}
 
 	}
 
-	private static class Integer extends AttributeType implements
+	public static class Integer extends AttributeType<java.lang.Integer> implements
 			IAttributeType.Integer {
 
 		protected Integer(java.lang.String id, java.lang.String name) {
-			super(id, name);
+			super(Kind.INTEGER, id, name);
+		}
+
+		public AttributeValue.Integer makeValue(int value) {
+			return new AttributeValue.Integer(this, value);
 		}
 
 		@Override
+		public AttributeValue.Integer makeValueFromRaw(
+				java.lang.String rawValue) throws RodinDBException {
+			return makeValue(parseValue(rawValue));
+		}
+
+		@Override
+		@Deprecated
 		public int getIntValue(java.lang.String rawValue)
 				throws RodinDBException {
+			return parseValue(rawValue);
+		}
+
+		public int parseValue(java.lang.String rawValue)
+				throws RodinDBException {
 			try {
-				return java.lang.Integer.valueOf(rawValue);
+				return java.lang.Integer.parseInt(rawValue);
 			} catch (NumberFormatException e) {
+				Util.log(e, "Can't parse integer value for attribute " + id);
 				throw newInvalidValueException();
 			}
 		}
 
 		@Override
-		public java.lang.String getKind() {
-			return KIND_INTEGER;
-		}
-
-		@Override
-		public java.lang.String toString(int value) throws RodinDBException {
+		public java.lang.String toString(java.lang.Integer value) {
 			return java.lang.Integer.toString(value);
 		}
 
 	}
 
-	private static class Long extends AttributeType implements
+	public static class Long extends AttributeType<java.lang.Long> implements
 			IAttributeType.Long {
 
 		protected Long(java.lang.String id, java.lang.String name) {
-			super(id, name);
+			super(Kind.LONG, id, name);
+		}
+
+		public AttributeValue.Long makeValue(long value) {
+			return new AttributeValue.Long(this, value);
 		}
 
 		@Override
-		public java.lang.String getKind() {
-			return KIND_LONG;
+		public AttributeValue.Long makeValueFromRaw(java.lang.String rawValue)
+		throws RodinDBException {
+			return makeValue(parseValue(rawValue));
 		}
-
+		
 		@Override
+		@Deprecated
 		public long getLongValue(java.lang.String rawValue)
 				throws RodinDBException {
+			return parseValue(rawValue);
+		}
+
+		public long parseValue(java.lang.String rawValue)
+				throws RodinDBException {
 			try {
-				return java.lang.Long.valueOf(rawValue);
+				return java.lang.Long.parseLong(rawValue);
 			} catch (NumberFormatException e) {
+				Util.log(e, "Can't parse long value for attribute " + id);
 				throw newInvalidValueException();
 			}
 		}
 
 		@Override
-		public java.lang.String toString(long value) throws RodinDBException {
+		public java.lang.String toString(java.lang.Long value) {
 			return java.lang.Long.toString(value);
 		}
 
 	}
 
-	private static class String extends AttributeType implements
+	public static class String extends AttributeType<java.lang.String> implements
 			IAttributeType.String {
 
 		protected String(java.lang.String id, java.lang.String name) {
-			super(id, name);
+			super(Kind.STRING, id, name);
+		}
+
+		public AttributeValue.String makeValue(java.lang.String value) {
+			if (value == null) {
+				throw new NullPointerException("null value");
+			}
+			return new AttributeValue.String(this, value);
 		}
 
 		@Override
-		public java.lang.String getKind() {
-			return KIND_STRING;
+		public AttributeValue.String makeValueFromRaw(
+				java.lang.String rawValue) {
+			return makeValue(parseValue(rawValue));
 		}
-
+		
 		@Override
+		@Deprecated
 		public java.lang.String getStringValue(java.lang.String rawValue) {
+			return parseValue(rawValue);
+		}
+
+		public java.lang.String parseValue(java.lang.String rawValue) {
 			return rawValue;
 		}
 
 		@Override
-		public java.lang.String toString(java.lang.String value)
-				throws RodinDBException {
+		public java.lang.String toString(java.lang.String value) {
 			return value;
 		}
 
 	}
 
-	public static AttributeType valueOf(IConfigurationElement ice) {
+	public static AttributeType<?> valueOf(IConfigurationElement ice) {
+		final java.lang.String localId = ice.getAttribute("id");
+		if (localId == null) {
+			logError(ice, "Missing id");
+			return null;
+		}
+		if (containsDot(localId)) {
+			logError(ice, "Invalid id (contains a dot): " + localId);
+			return null;
+		}
+		if (containsWhiteSpace(localId)) {
+			logError(ice, "Invalid id (contains white space): " + localId);
+			return null;
+		}
 		final java.lang.String nameSpace = ice.getNamespaceIdentifier();
-		final java.lang.String id = nameSpace + "." + ice.getAttribute("id");
+		final java.lang.String id = nameSpace + "." + localId;
 		final java.lang.String name = ice.getAttribute("name");
-		final java.lang.String kind = ice.getAttribute("kind");
-		if (KIND_BOOLEAN.equals(kind)) {
-			return new Boolean(id, name);
+		if (name == null) {
+			logError(ice, "Missing name");
+			return null;
 		}
-		if (KIND_HANDLE.equals(kind)) {
-			return new Handle(id, name);
+		final java.lang.String kindName = ice.getAttribute("kind");
+		if (kindName == null) {
+			logError(ice, "Missing kind");
+			return null;
 		}
-		if (KIND_INTEGER.equals(kind)) {
-			return new Integer(id, name);
+		final Kind kind = Kind.fromName(kindName);
+		if (kind == null) {
+			logError(ice, "Unknown kind: " + kindName);
+			return null;
 		}
-		if (KIND_LONG.equals(kind)) {
-			return new Long(id, name);
-		}
-		if (KIND_STRING.equals(kind)) {
-			return new String(id, name);
-		}
-		Util.log(null, "Unknown attribute kind " + kind
-				+ " when parsing configuration element " + id);
-		return null;
+		return kind.makeType(id, name);
 	}
+
+	private static boolean containsDot(final java.lang.String str) {
+		return str.indexOf('.') >= 0;
+	}
+
+	private static boolean containsWhiteSpace(final java.lang.String str) {
+		for (int i = 0; i < str.length(); i = str.offsetByCodePoints(i, 1)) {
+			final int cp = str.codePointAt(i);
+			if (Character.isWhitespace(cp)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static void logError(IConfigurationElement ice,
+			java.lang.String message) {
+		Util.log(null, "Error in attribute type contributed by \""
+				+ ice.getContributor().getName() + "\":\n" + message);
+	}
+
+	private final Kind kind;
 
 	protected final java.lang.String id;
 
-	protected final java.lang.String name;
+	private final java.lang.String name;
 
-	protected AttributeType(java.lang.String id, java.lang.String name) {
+	protected AttributeType(Kind kind, java.lang.String id,
+			java.lang.String name) {
+		this.kind = kind;
 		this.id = id;
 		this.name = name;
 	}
 
+	@Deprecated
 	public boolean getBoolValue(java.lang.String rawValue)
 			throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
+	@Deprecated
 	public IRodinElement getHandleValue(java.lang.String rawValue)
 			throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
-	/**
-	 * @return Returns the id.
-	 */
 	public final java.lang.String getId() {
 		return id;
 	}
 
+	@Deprecated
 	public int getIntValue(java.lang.String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
-	public abstract java.lang.String getKind();
+	public Kind getKind() {
+		return kind;
+	}
 
+	@Deprecated
 	public long getLongValue(java.lang.String rawValue) throws RodinDBException {
 		throw newInvalidKindException();
 	}
 
-	/**
-	 * @return Returns the name.
-	 */
 	public final java.lang.String getName() {
 		return name;
 	}
 
+	@Deprecated
 	public java.lang.String getStringValue(java.lang.String rawValue)
 			throws RodinDBException {
 		throw newInvalidKindException();
@@ -249,31 +398,15 @@ public abstract class AttributeType implements IAttributeType {
 				IRodinDBStatusConstants.INVALID_ATTRIBUTE_VALUE, id));
 	}
 
+	@Deprecated
 	private RodinDBException newInvalidKindException() {
 		return new RodinDBException(new RodinDBStatus(
 				IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND, id));
 	}
+	
+	public abstract AttributeValue<?, ?> makeValueFromRaw(
+			java.lang.String rawValue) throws RodinDBException;
 
-	public java.lang.String toString(boolean value) throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
-	public java.lang.String toString(int value) throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
-	public java.lang.String toString(IRodinElement value)
-			throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
-	public java.lang.String toString(long value) throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
-	public java.lang.String toString(java.lang.String value)
-			throws RodinDBException {
-		throw newInvalidKindException();
-	}
+	public abstract java.lang.String toString(V value);
 
 }

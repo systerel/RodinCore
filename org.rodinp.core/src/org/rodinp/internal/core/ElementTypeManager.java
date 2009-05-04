@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -216,18 +217,17 @@ public class ElementTypeManager {
 	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 	
 	// Access to attribute type descriptions using their unique id
-	private HashMap<String, AttributeType> attributeTypeIds;
+	private HashMap<String, AttributeType<?>> attributeTypeIds;
 
 	private void computeAttributeTypes() {
-		attributeTypeIds = new HashMap<String, AttributeType>();
+		attributeTypeIds = new HashMap<String, AttributeType<?>>();
 		
 		// Read the extension point extensions.
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = 
 			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, ATTRIBUTE_TYPES_ID);
 		for (IConfigurationElement element: elements) {
-			AttributeType description =
-				AttributeType.valueOf(element);
+			final AttributeType<?> description = AttributeType.valueOf(element);
 			if (description != null) {
 				attributeTypeIds.put(description.getId(), description);
 			}
@@ -237,7 +237,7 @@ public class ElementTypeManager {
 			System.out.println("--------------------------------------------");
 			System.out.println("Attribute types known to the Rodin database:");
 			for (String id: getSortedIds(attributeTypeIds)) {
-				AttributeType type = attributeTypeIds.get(id);
+				AttributeType<?> type = attributeTypeIds.get(id);
 				System.out.println("  " + type.getId());
 				System.out.println("    name:  " + type.getName());
 				System.out.println("    kind:  " + type.getKind());
@@ -256,7 +256,7 @@ public class ElementTypeManager {
 	 * @return the attribute type description associated to the given name or
 	 *         <code>null</code> if it is not a valid attribute name
 	 */
-	public AttributeType getAttributeType(String name) {
+	public AttributeType<?> getAttributeType(String name) {
 		if (attributeTypeIds == null) {
 			computeAttributeTypes();
 		}
