@@ -72,7 +72,8 @@ public class DependenciesPage extends EventBEditorPage {
 		final IInternalElement rodinRoot = eventBEditor.getRodinInput();
 		final FormToolkit toolkit = getManagedForm().getToolkit();
 		if (rodinRoot instanceof IMachineRoot) {
-			SectionPart part = new RefinesSection(eventBEditor, toolkit, body);
+			SectionPart part = new RefinesSection(
+					(IEventBEditor<IMachineRoot>) eventBEditor, toolkit, body);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.minimumWidth = 150;
 			part.getSection().setLayoutData(gd);

@@ -15,6 +15,7 @@
  *     Systerel - added boolean to linkToProverUI() and a showQuestion() method
  *     Systerel - added method to remove MouseWheel Listener of CCombo
  *     Systerel - used ElementDescRegistry
+ *     Systerel - update combo list on focus gain
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -86,6 +87,8 @@ import org.rodinp.core.RodinDBException;
  *         Event-B User interface plug-in.
  */
 public class UIUtils {
+	
+	public static final String COMBO_VALUE_UNDEFINED = "--undef--";
 	
 	public static abstract class MaxFinder {
 
@@ -843,4 +846,35 @@ public class UIUtils {
 			}
 		}
 	}
+	
+	public static void resetCComboValues(CCombo combo,
+			IAttributeManipulation manipulation, IInternalElement element,
+			boolean required) {
+		final String[] values = getValues(manipulation, element, required);
+		if (Arrays.equals(combo.getItems(), values))
+			return;
+		setCComboValues(combo, values);
+	}
+
+	private static String[] getValues(IAttributeManipulation manipulation,
+			IInternalElement element, boolean required) {
+		final String[] values = manipulation.getPossibleValues(element, null);
+		if (required) {
+			return values;
+		}
+		final String[] temp = new String[values.length + 1];
+		temp[0] = COMBO_VALUE_UNDEFINED;
+		System.arraycopy(values, 0, temp, 1, values.length);
+		return temp;
+	}
+
+	private static void setCComboValues(CCombo combo, String[] values) {
+		final String currentText = combo.getText();
+		combo.removeAll();
+		for (String value : values) {
+			combo.add(value);
+		}
+		combo.setText(currentText);
+	}
+
 }

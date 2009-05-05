@@ -13,14 +13,20 @@
  *     Systerel - removed MouseWheel Listener of CCombo
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
+ *     Systerel - update combo list on focus gain
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
+
+import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
+import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -36,12 +42,10 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class CComboEditComposite extends AbstractEditComposite {
-
-	protected final String UNDEFINED = "--undef--";
 	
 	protected CCombo combo;
 	protected Button undefinedButton;
-	private final boolean required;
+	protected final boolean required;
 	
 	public CComboEditComposite(ComboDesc attrDesc) {
 		super(attrDesc);
@@ -60,11 +64,11 @@ public class CComboEditComposite extends AbstractEditComposite {
 	private String getValue() {
 		try {
 			if (!manipulation.hasValue(element, null))
-				return UNDEFINED;
+				return COMBO_VALUE_UNDEFINED;
 			return manipulation.getValue(element, null);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
-			return UNDEFINED;
+			return COMBO_VALUE_UNDEFINED;
 		}
 	}
 
@@ -107,42 +111,43 @@ public class CComboEditComposite extends AbstractEditComposite {
 	}
 
 	private void createCombo() {
-		if (combo != null)
-			combo.removeAll();
-		else {
+		if (combo == null) {
 			combo = new CCombo(composite, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY);
 
+			combo.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					resetCComboValues(combo, manipulation, element, required);
+				}
+			});
+			
 			// to fix bug 2417413
 			UIUtils.removeTextListener(combo);
 			
 			combo.addSelectionListener(new SelectionListener() {
 
-				private String getText() {
-					final String text = combo.getText();
-					return (text.equals(UNDEFINED)) ? null : text;
-				}
-				
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
 				}
 
 				public void widgetSelected(SelectionEvent e) {
-					UIUtils.setStringAttribute(element, attrDesc.getManipulation(),
-							getText(), new NullProgressMonitor());
+					commit();
 				}
 			});
 			this.getFormToolkit().paintBordersFor(composite);
 		}
-
-		if(!required)
-			combo.add(UNDEFINED);
-		String[] values = manipulation.getPossibleValues(
-				element, null);
-		for (String value : values) {
-			combo.add(value);
-		}
 	}
 
+	private String getText() {
+		final String text = combo.getText();
+		return (text.equals(COMBO_VALUE_UNDEFINED)) ? null : text;
+	}
+
+	protected void commit() {
+		UIUtils.setStringAttribute(element, attrDesc.getManipulation(),
+				getText(), null);
+	}
+	
 	public void setDefaultValue(IEventBEditor<?> editor) {
 		try {
 			manipulation.setDefaultValue(element,

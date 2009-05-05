@@ -11,14 +11,20 @@
  *     Systerel - used IAttributeFactory
  *     Systerel - removed MouseWheel Listener of CCombo
  *     Systerel - separation of file and root element
+ *     Systerel - update combo list on focus gain
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
+
+import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
+import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
@@ -46,11 +52,9 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	private IAttributeManipulation factory = null;
 
-	private IInternalElement element;
+	protected IInternalElement element;
 
-	private final String UNDEFINED = "--undef--";
-
-	private boolean required = false;
+	protected boolean required = false;
 	
 	public CComboSection() {
 		// Do nothing
@@ -73,18 +77,20 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		data.top = new FormAttachment(0, ITabbedPropertyConstants.VSPACE);
 		comboWidget.setLayoutData(data);
 		
+		comboWidget.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				resetCComboValues(comboWidget, getFactory(), element, required);
+			}
+		});
+
 		// to fix bug 2417413
 		UIUtils.removeTextListener(comboWidget);
 		
 		comboWidget.addSelectionListener(new SelectionListener() {
 
-			private String getText() {
-				final String text = comboWidget.getText();
-				return (text.equals(UNDEFINED)) ? null : text;
-			}
-
 			public void widgetSelected(SelectionEvent e) {
-				setText(getText());
+				setText();
 			}
 			
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -105,26 +111,20 @@ public abstract class CComboSection extends AbstractPropertySection implements
 
 	abstract String getLabel();
 
-	void setText(String text) {
-		UIUtils.setStringAttribute(element, getFactory(), text, null);
-	}
-
-	void setData() {
-		if(!required)
-			comboWidget.add(UNDEFINED);
-		for (String value : getFactory().getPossibleValues(element, null))
-			comboWidget.add(value);
+	void setText() {
+		final String text = comboWidget.getText();
+		final String value = (text.equals(COMBO_VALUE_UNDEFINED)) ? null : text;
+		UIUtils.setStringAttribute(element, getFactory(), value, null);
 	}
 
 	private String getValue() {
 		try {
-			if (!getFactory().hasValue(element, null))
-				return UNDEFINED;
-			return getFactory().getValue(element, null);
+			if (element.exists() && getFactory().hasValue(element, null))
+				return getFactory().getValue(element, null);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
-			return UNDEFINED;
 		}
+		return COMBO_VALUE_UNDEFINED;
 	}
 
 	@Override
@@ -132,8 +132,6 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		if (comboWidget.isDisposed())
 			return;
 
-		comboWidget.removeAll();
-		setData();
 		comboWidget.setText(getValue());
 		super.refresh();
 	}
@@ -189,7 +187,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		super.aboutToBeShown();
 	}
 
-	private IAttributeManipulation getFactory() {
+	protected IAttributeManipulation getFactory() {
 		if (factory == null)
 			factory = createFactory();
 		return factory;
