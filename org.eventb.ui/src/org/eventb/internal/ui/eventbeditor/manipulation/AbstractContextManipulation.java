@@ -41,13 +41,15 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 		final Set<String> usedContextNames = getUsedContextNames(contextElement);
 		final String elementValue = getElementValue(contextElement);
 
-		//  result = contextRoot \ (usedContextNames \ { elementValue }) 
+		// result = contextRoot \ (usedContextNames \ { elementValue })
+		// then remove values that would introduce a cycle
 		final Set<String> valueToRemove = new HashSet<String>();
 		valueToRemove.addAll(usedContextNames);
 		valueToRemove.remove(elementValue);
 		
 		results.addAll(contextNames);
 		results.removeAll(valueToRemove);
+		removeCycle(contextElement, results);
 		return results.toArray(new String[results.size()]);
 	}
 
@@ -100,4 +102,6 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 	public abstract E[] getClauses(E element);
 
 	protected abstract E asContextClause(IRodinElement element);
+	
+	protected abstract void removeCycle(E element, Set<String> contexts);
 }

@@ -10,10 +10,13 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - filter getPossibleValues() for cycles
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineRoot;
@@ -59,5 +62,10 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).hasSeenContextName();
+	}
+
+	@Override
+	protected void removeCycle(ISeesContext element, Set<String> contexts) {
+		// do nothing
 	}
 }

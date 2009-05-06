@@ -10,14 +10,20 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - filter getPossibleValues() for cycles
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.IExtendsContext;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -60,5 +66,36 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).hasAbstractContextName();
+	}
+
+	@Override
+	protected void removeCycle(IExtendsContext element, Set<String> contexts) {
+		final IContextRoot root = (IContextRoot) element.getRoot();
+		final IEventBProject prj = root.getEventBProject();
+		final Iterator<String> iter = contexts.iterator();
+		while (iter.hasNext()) {
+			final String ctxName = iter.next();
+			final IContextRoot ctx = prj.getContextRoot(ctxName);
+			if (isExtendedBy(root, ctx)) {
+				iter.remove();
+			}
+		}
+	}
+
+	/**
+	 * Returns true if abstractContext is extended directly or indirectly by
+	 * root .
+	 */
+	private boolean isExtendedBy(IContextRoot abstractContext, IContextRoot root) {
+		try {
+			for (IContextRoot ctx : EventBUtils.getAbstractContexts(root)) {
+				if (ctx.equals(abstractContext)
+						|| isExtendedBy(abstractContext, ctx))
+					return true;
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

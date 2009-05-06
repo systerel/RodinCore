@@ -10,6 +10,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - filtered getPossibleValues
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -52,18 +54,37 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		final IRefinesMachine refines = asRefinesMachine(element);
-		List<String> results = new ArrayList<String>();
-		IMachineRoot machine = (IMachineRoot) refines.getParent();
-		String machineName = machine.getElementName();
-		IMachineRoot[] machineRoots = getMachineRoots(refines);
+		final List<String> results = new ArrayList<String>();
+		final IMachineRoot machine = (IMachineRoot) refines.getRoot();
+		final IMachineRoot[] machineRoots = getMachineRoots(refines);
 		for (IMachineRoot root : machineRoots) {
-			String bareName = root.getElementName();
-			if (!machineName.equals(bareName))
-				results.add(bareName);
+			if (!machine.equals(root) && !isAbstractionOf(machine, root))
+				results.add(root.getElementName());
 		}
 		return results.toArray(new String[results.size()]);
 	}
 
+	/**
+	 * Returns true if abstractMachine is a (direct or indirect) abstraction of
+	 * root.
+	 */
+	private boolean isAbstractionOf(IMachineRoot abstractMachine,
+			IMachineRoot root) {
+		try {
+			final IMachineRoot rootAbs = EventBUtils.getAbstractMachine(root);
+			if (rootAbs == null) {
+				return false;
+			} else if (rootAbs.equals(abstractMachine)) {
+				return true;
+			} else {
+				return isAbstractionOf(abstractMachine, rootAbs);
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	private IMachineRoot[] getMachineRoots(IRodinElement refinesMachine) {
 		final IRodinProject rp = refinesMachine.getRodinProject();
 		try {

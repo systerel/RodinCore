@@ -106,6 +106,30 @@ public class TestAttributeManipulation extends EventBUITest {
 
 	}
 
+	public void testExtendsContextGetPossibleValueWithExtendsClauseDetectCycle()
+			throws RodinDBException {
+		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
+		createContext("ctx0");
+		final IContextRoot ctx1 = createContext("ctx1");
+		final IContextRoot ctx2 = createContext("ctx2");
+		final IContextRoot ctx3 = createContext("ctx3");
+		final IContextRoot ctx4 = createContext("ctx4");
+		createContext("ctx5");
+
+		createExtendsContextClause(ctx3, "ctx2");
+		createExtendsContextClause(ctx2, "ctx4");
+		createExtendsContextClause(ctx4, "ctx5");
+		createExtendsContextClause(ctx2, "ctx1");
+		final IExtendsContext extCtx1 = createExtendsContextClause(ctx1, "ctx0");
+		// ctx5 <-- ctx4 <-- ctx2 <-- ctx3
+		// ctx0 <-- ctx1
+		
+		final String[] possibleValues = manipulation.getPossibleValues(extCtx1,
+				null);
+		assertPossibleValues("Error in getPossibleValue for Extends Context",
+				possibleValues, "ctx0", "ctx4", "ctx5");
+	}
+
 	public void testSeeContextGetPossibleValueWithoutSeesClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
@@ -173,6 +197,55 @@ public class TestAttributeManipulation extends EventBUITest {
 
 		assertPossibleValues("Error in getPossibleValue for RefineMachine",
 				possibleValues, "mch0", "mch1");
+	}
+
+	public void testRefineMachineGetPossibleValueCyclic()
+			throws RodinDBException {
+		final IAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();
+		createMachine("mch0");
+		final IMachineRoot mch1 = createMachine("mch1");
+		final IMachineRoot mch2 = createMachine("mch2");
+		final IMachineRoot mch3 = createMachine("mch3");
+		final IMachineRoot mch4 = createMachine("mch4");
+		final IMachineRoot mch5 = createMachine("mch5");
+
+		final IRefinesMachine refined3 = createRefinesMachineClause(mch3,
+				"mch0");
+		final IRefinesMachine refined1 = createRefinesMachineClause(mch1,
+				"mch3");
+		createRefinesMachineClause(mch2, "mch1");
+		final IRefinesMachine refined4 = createRefinesMachineClause(mch4,
+				"mch3");
+		createRefinesMachineClause(mch5, "mch4");
+		createRefinesMachineClause(mch3, "mch2");
+		// mch0 <-- mch3 <-- mch1 <-- mch2
+		// _____________ <-- mch4 <-- mch5
+
+		final String[] possibleValues3 = manipulation.getPossibleValues(
+				refined3, null);
+
+		final String[] possibleValues1 = manipulation.getPossibleValues(
+				refined1, null);
+
+		assertPossibleValues("Error in getPossibleValue for RefineMachine",
+				possibleValues3, "mch0");
+		assertPossibleValues("Error in getPossibleValue for RefineMachine",
+				possibleValues1, "mch0", "mch3", "mch4", "mch5");
+
+		manipulation.setValue(refined4, "mch1", null);
+		// mch0 <-- mch3 <-- mch1 <-- mch2
+		// ______________________ <-- mch4 <-- mch5
+
+		final String[] possibleValues3bis = manipulation.getPossibleValues(
+				refined3, null);
+
+		final String[] possibleValues1bis = manipulation.getPossibleValues(
+				refined1, null);
+
+		assertPossibleValues("Error in getPossibleValue for RefineMachine",
+				possibleValues3bis, "mch0");
+		assertPossibleValues("Error in getPossibleValue for RefineMachine",
+				possibleValues1bis, "mch0", "mch3");
 	}
 
 	public void testRefineEventGetPossibleValue() throws RodinDBException {

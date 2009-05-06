@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 ETH Zurich and others.
+ * Copyright (c) 2008, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,15 +12,20 @@
  *     Systerel - replaced inherited by extended
  *     Systerel - added getImplicitChildren(), refactored getAbstractEvent()
  *     Systerel - separation of file and root element
+ *     Systerel - added getAbstractContexts()
  *******************************************************************************/
 package org.eventb.internal.ui;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBProject;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -61,15 +66,38 @@ public class EventBUtils {
 	 */
 	public static IMachineRoot getAbstractMachine(IMachineRoot concrete)
 			throws RodinDBException {
-		assert concrete != null;
-		IRodinElement[] refines = concrete
-				.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
+		final IRodinElement[] refines = concrete.getRefinesClauses();
 		if (refines.length == 1) {
 			final IRefinesMachine refine = (IRefinesMachine) refines[0];
 			final String name = refine.getAbstractMachineName();
 			return concrete.getEventBProject().getMachineRoot(name);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the contexts which are extended by a given context. This is done
+	 * by checking the lists of extends context clause of the context root
+	 * element.
+	 * 
+	 * @param concrete
+	 *            a context root element
+	 * @return the root elements of the contexts that are extended
+	 * @throws RodinDBException
+	 *             if there is any problem in reading the extends context clause
+	 *             or in getting the abstract context.
+	 */
+	public static IContextRoot[] getAbstractContexts(IContextRoot concrete)
+			throws RodinDBException {
+		final List<IContextRoot> result = new ArrayList<IContextRoot>();
+		final IEventBProject prj = concrete.getEventBProject();
+		for (final IExtendsContext clause : concrete.getExtendsClauses()) {
+			if (clause.hasAbstractContextName()) {
+				final String name = clause.getAbstractContextName();
+				result.add(prj.getContextRoot(name));
+			}
+		}
+		return result.toArray(new IContextRoot[result.size()]);
 	}
 
 	/**
