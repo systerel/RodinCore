@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel   - added XSL_ALL_ATTRIBUTES and XSL_ALL_NODES
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -37,6 +41,8 @@ public final class XSLConstants {
 	
 	public static final String XSL_ROOT = "/*";
 	public static final String XSL_ALL = "* | @*";
+	public static final String XSL_ALL_ATTRIBUTES = "@*";
+	public static final String XSL_ALL_NODES = "*";
 	public static final String XSL_EN = "en";
 	public static final String XSL_CURRENT_NAME = "name()";	
 	public static final String XSL_UTF8 = "UTF-8";	

@@ -5,8 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * Contributors:
  *     Soton    - initial API and implementation
  *     Systerel - added attribute modification
+ *     Systerel - used XSLWriter
+ *     Systerel - added ChangeName
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -17,12 +20,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
  *
  */
 public abstract class Conversion extends SimpleOperation {
-
-	private static final String T1 = "\t\t<" + XSLConstants.XSL_APPLY_TEMPLATES + " " + XSLConstants.XSL_SELECT +
-			"=\"" + XSLConstants.XSL_ALL + "\"";
-	private static final String T2 = ">\n";
-	private static final String T3 = "\t\t</" + XSLConstants.XSL_APPLY_TEMPLATES + ">\n";
-	private static final String T4 = "/>\n";
 
 	public Conversion(IConfigurationElement configElement,
 			SimpleConversionSheet sheet) {
@@ -38,32 +35,28 @@ public abstract class Conversion extends SimpleOperation {
 	protected abstract AddAttribute[] getAddAttributes();
 	
 	protected abstract RenameElement getRenameElement();
+	
+	protected abstract ChangeName getChangeName();
 
-	public void addTemplates(StringBuffer document) {
+	public void addTemplates(XSLWriter writer) {
 		for (RenameAttribute ra : getRenameAttributes())
-			ra.addTemplate(document, getPath());
+			ra.addTemplate(writer, getPath());
+		
+		if (getChangeName() != null) {
+			getChangeName().addTemplate(writer, getPath());
+		}
 		
 		if (getRenameElement() != null) {
 			
-			getRenameElement().beginTemplate(document, getPath());
+			getRenameElement().beginTemplate(writer, getPath());
 			
 			for (AddAttribute aa : getAddAttributes()) {
-				aa.addAttribute(document);
+				aa.addAttribute(writer);
 			}
-			
-			document.append(T1);
-			
-			if (getSheet().hasSorter()) {
-				document.append(T2);
-				
-				getSheet().addSorter(document);
-				
-				document.append(T3);
-			} else {
-				document.append(T4);
-			}
-			
-			getRenameElement().endTemplate(document);
+	
+			writer.appendApplyTemplates(getSheet());
+					
+			getRenameElement().endTemplate(writer);
 		}
 	}
 

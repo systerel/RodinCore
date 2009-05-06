@@ -9,6 +9,7 @@
  *     Systerel - added test for invalid version
  *     Systerel - separation of file and root element
  *     Systerel - added attribute modification
+ *     Systerel - added test for name changing
  *******************************************************************************/
 package org.rodinp.core.tests.version;
 
@@ -73,6 +74,11 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		assertTrue("Attribute not present " + attr.getId(), element.hasAttribute(attr));
 		final String value = element.getAttributeValue(attr);
 		assertEquals("Attribute has wrong value " + attr.getId(), string, value);
+	}
+
+	private static void assertName(String expectedName, IInternalElement element) {
+		final String actual = element.getElementName();
+		assertEquals("Unexpected element name", expectedName, actual);
 	}
 
 	private static void convertProjectWithSuccess(IRodinProject project, int size)
@@ -426,5 +432,21 @@ public class BasicVersionTest extends ModifyingResourceTests {
 		assertAttribute(elementsEBEC[0], VersionAttributes.StringAttr, modifier.getNewValue("at EB EC"));
 	}
 	
+	/**
+	 * Test of the modification of the name of an element.
+	 */
+	public void test_12_ChangeName() throws Exception {
+		final IRodinProject project = fetchProject("V08");
+
+		convertProjectWithSuccess(project, 1);
+
+		final IInternalElement[] elementsEA = getElements(project, "ff.tvh", IVersionEA.ELEMENT_TYPE, 2);
+		final IInternalElement[] elementsEC = getElements(project, "ff.tvh", IVersionEC.ELEMENT_TYPE, 1);
+
+		assertName("xx_a1_yy", elementsEA[0]);
+		assertName("xx_a2_yy", elementsEA[1]);
+		assertName("newName", elementsEC[0]);
+	}
+
 }
 

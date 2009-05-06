@@ -11,58 +11,34 @@
 
 package org.rodinp.internal.core.version;
 
+import static org.rodinp.internal.core.Buffer.VERSION_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElementType;
 
 public abstract class ComplexConversionSheet extends
 		ConversionSheetWithTransformer {
 
-	private static final String prefix = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			+ "<xsl:transform version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n"
-			+ "<xsl:output encoding=\"UTF-8\" indent=\"yes\"/>\n";
-	private static final String setVersionPre = "<xsl:template match=\"";
-	private static final String setVersionVer = "/@version\">\n"
-			+ "\t<xsl:attribute name=\"version\">";
-	private static final String setVersionPost = "</xsl:attribute>\n"
-			+ "</xsl:template>\n";
-	private static final String addVersionMatch = "<xsl:template match=\"/";
-	private static final String addVersionCopy = "\">\n"
-			+ "\t<xsl:element name=\"";
-	private static final String addVersionBody = "\">\n"
-			+ "\t\t<xsl:attribute name=\"version\">";
-	private static final String addVersionEnd = "</xsl:attribute>\n"
-			+ "\t\t<xsl:apply-templates select=\"* | @*\"/>\n"
-			+ "\t</xsl:element>\n" + "</xsl:template>\n";
-	private static final String suffix = "</xsl:transform>";
-	private static final String copyTemplate = "<xsl:template match=\"* | @*\">\n"
-			+ "\t<xsl:copy>\n"
-			+ "\t\t<xsl:apply-templates select=\"* | @*\"/>\n"
-			+ "\t</xsl:copy>\n" + "</xsl:template>";
-
 	public ComplexConversionSheet(IConfigurationElement configElement,
 			IInternalElementType<?> type) {
 		super(configElement, type);
 	}
 
-	protected String computeSheet(String templates) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(prefix);
-		buffer.append(setVersionPre);
-		buffer.append(getType().getId());
-		buffer.append(setVersionVer);
-		buffer.append(getVersion());
-		buffer.append(setVersionPost);
-		buffer.append(addVersionMatch);
-		buffer.append(getType().getId());
-		buffer.append(addVersionCopy);
-		buffer.append(getType().getId());
-		buffer.append(addVersionBody);
-		buffer.append(getVersion());
-		buffer.append(addVersionEnd);
-		buffer.append(templates);
-		buffer.append(copyTemplate);
-		buffer.append(suffix);
-		return buffer.toString();
+	@Override
+	protected void addTemplates(XSLWriter writer) {
+		addRootTemplate(writer);
+		addComplexTemplates(writer);
 	}
+
+	private void addRootTemplate(XSLWriter writer) {
+		writer.beginTemplate("/" + getType().getId());
+		writer.beginElement(getType().getId());
+		writer.simpleAttribute(VERSION_ATTRIBUTE, String.valueOf(getVersion()));
+		writer.simpleApplyTemplates(XSLConstants.XSL_ALL);
+		writer.endElement();
+		writer.endTemplate();
+	}
+
+	protected abstract void addComplexTemplates(XSLWriter writer);
 
 }

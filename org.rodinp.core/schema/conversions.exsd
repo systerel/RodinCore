@@ -115,6 +115,24 @@
       </complexType>
    </element>
 
+   <element name="changeName">
+      <annotation>
+         <documentation>
+            change the internal element name of the selected element
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="newValue" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The value to be given to the name attribute. The previous value of the name can be referred to as the &apos;@&apos; character in the new value. For instance, if the previous value is &quot;int_name01&quot;, then giving newValue=&quot;xx_@_yy&quot; will actually result in name=&quot;xx_int_name01_yy&quot;.
+It is not required to refer to the previous value.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="modifyAttribute">
       <annotation>
          <documentation>
@@ -275,6 +293,7 @@
             <element ref="renameElement"/>
             <element ref="renameAttribute"/>
             <element ref="addAttribute"/>
+            <element ref="changeName"/>
          </choice>
          <attribute name="elementPath" type="string" use="required">
             <annotation>

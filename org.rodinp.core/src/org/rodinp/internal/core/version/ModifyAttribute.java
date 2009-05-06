@@ -11,6 +11,10 @@
 
 package org.rodinp.internal.core.version;
 
+import static java.util.Arrays.asList;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_MATCH;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_TEMPLATE;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.version.IAttributeModifier;
 import org.rodinp.internal.core.util.Util;
@@ -31,41 +35,18 @@ public class ModifyAttribute extends PatternOperation {
 		checkId(attributeTypeId);
 	}
 
-	private static String TEMPLATE_START = "<" + XSLConstants.XSL_TEMPLATE
-			+ " " + XSLConstants.XSL_MATCH + "=\"";
-	private static String SLASH_AROBASE = "/@";
-	private static String MODIFIER_NS = "\" xmlns:modifier=\""
-			+ XSLModifier.class.getCanonicalName() + "\">\n";
+	private void addTemplate(XSLWriter writer, String path, int modifierKey) {
+		final String match = path + "/@" + attributeTypeId;
+		final String modifierClass = XSLModifier.class.getCanonicalName();
+		final String modifierCall = "modifier:modify(string(.), number('"
+				+ modifierKey + "'))";
 
-	private static String ATTRIBUTE_START = "\t<" + XSLConstants.XSL_ATTRIBUTE
-			+ " " + XSLConstants.XSL_NAME + "=\"";
-	private static String ATTRIBUTE_MIDDLE = "\">\n";
-	private static String VALUE_OF_MODIFIER = "\t\t<"
-			+ XSLConstants.XSL_VALUE_OF + " " + XSLConstants.XSL_SELECT
-			+ "=\"modifier:modify(string(.), number('";
-
-	private static String VALUE_OF_END = "'))\"/>\n";
-	private static String ATTRIBUTE_END = "\t</" + XSLConstants.XSL_ATTRIBUTE
-			+ ">\n</";
-	private static String TEMPLATE_END = XSLConstants.XSL_TEMPLATE + ">\n";
-
-	private String makeTemplate(String path, int modifierKey) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(TEMPLATE_START);
-		sb.append(path);
-		sb.append(SLASH_AROBASE);
-		sb.append(attributeTypeId);
-		sb.append(MODIFIER_NS);
-		sb.append(ATTRIBUTE_START);
-		sb.append(attributeTypeId);
-		sb.append(ATTRIBUTE_MIDDLE);
-		sb.append(VALUE_OF_MODIFIER);
-		sb.append(modifierKey);
-		sb.append(VALUE_OF_END);
-		sb.append(ATTRIBUTE_END);
-		sb.append(TEMPLATE_END);
-
-		return sb.toString();
+		writer.beginMarkup(XSL_TEMPLATE, asList(XSL_MATCH, "xmlns:modifier"),
+				asList(match, modifierClass), true);
+		writer.beginAttribute(attributeTypeId);
+		writer.valueOf(modifierCall);
+		writer.endAttribute();
+		writer.endTemplate();
 	}
 
 	private int initModifier() {
@@ -98,17 +79,17 @@ public class ModifyAttribute extends PatternOperation {
 		Util.log(e, message);
 	}
 
-	public String getTemplate(String path) {
+	public String getId() {
+		return attributeTypeId;
+	}
+
+	public void addTemplate(XSLWriter writer, String path) {
 		final int modifierKey = initModifier();
 		if (modifierKey < 0) {
 			throw new IllegalStateException(
 					"Version Upgrade: unable to make an xsl template. See log for details");
 		}
-		return makeTemplate(path, modifierKey);
-	}
-
-	public String getId() {
-		return attributeTypeId;
+		addTemplate(writer, path, modifierKey);
 	}
 
 }

@@ -242,6 +242,13 @@
             name="Test Version G"
             priority="normal">
       </content-type>
+      <content-type
+            base-type="org.rodinp.core.rodin"
+            file-extensions="tvh"
+            id="versionFileH"
+            name="Test Version H"
+            priority="normal">
+      </content-type>
    </extension>
    <extension
          point="org.rodinp.core.fileAssociations">
@@ -272,6 +279,10 @@
       <fileAssociation
             content-type-id="org.rodinp.core.tests.versionFileG"
             root-element-type="org.rodinp.core.tests.versionFileG">
+      </fileAssociation>
+      <fileAssociation
+            content-type-id="org.rodinp.core.tests.versionFileH"
+            root-element-type="org.rodinp.core.tests.versionFileH">
       </fileAssociation>
    </extension>
    <extension
@@ -310,6 +321,11 @@
             class="org.rodinp.core.tests.version.db.basis.VersionRootG"
             id="versionFileG"
             name="Version File G">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.tests.version.db.basis.VersionRootH"
+            id="versionFileH"
+            name="Version File H">
       </internalElementType>
       <internalElementType
             class="org.rodinp.core.tests.version.db.basis.VersionEA"
@@ -453,6 +469,22 @@
             </modifyAttribute>
          </pattern>
       </multiple>
+      <simple
+            type="org.rodinp.core.tests.versionFileH"
+            version="1">
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileH/org.rodinp.core.tests.versionEA">
+            <changeName
+                  newValue="xx_@_yy">
+            </changeName>
+         </element>
+         <element
+               elementPath="/org.rodinp.core.tests.versionFileH/org.rodinp.core.tests.versionEC">
+            <changeName
+                  newValue="newName">
+            </changeName>
+         </element>
+      </simple>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">
@@ -482,6 +514,10 @@
       </fileElementVersion>
       <fileElementVersion
             id="org.rodinp.core.tests.versionFileG"
+            version="1">
+      </fileElementVersion>
+      <fileElementVersion
+            id="org.rodinp.core.tests.versionFileH"
             version="1">
       </fileElementVersion>
    </extension>

@@ -11,6 +11,7 @@
  *     Systerel - removed deprecated methods (contents)
  *     Systerel - separation of file and root element
  *     Systerel - generic attribute manipulation
+ *     Systerel - made NAME_ATTRIBUTE and VERSION_ATTRIBUTE public
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -103,12 +104,12 @@ public class Buffer {
 
 	private static final String CONTENTS_ATTRIBUTE = "contents";
 	
-	private static final String NAME_ATTRIBUTE = "name";
+	public static final String NAME_ATTRIBUTE = "name";
 
 	private static final ErrorListener errorListener = new XMLErrorListener();
 	
 	
-	private static final String VERSION_ATTRIBUTE = "version";
+	public static final String VERSION_ATTRIBUTE = "version";
 	private static final ErrorHandler errorHandler = new XMLErrorHandler();
 	private Document domDocument;
 	/**

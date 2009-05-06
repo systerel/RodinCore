@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel   - added attribute modification
+ *     Systerel   - used XSL writer
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -45,16 +46,8 @@ public class AddAttribute extends SimpleOperation {
 		return newValue;
 	}
 	
-	private static String T1 = "\t\t<" + XSLConstants.XSL_ATTRIBUTE + " " + XSLConstants.XSL_NAME + "=\"";
-	private static String T2 = "\">";
-	private static String T3 = "</" + XSLConstants.XSL_ATTRIBUTE + ">\n";
-
-	public void addAttribute(StringBuffer document) {
-		document.append(T1);
-		document.append(newId);
-		document.append(T2);
-		document.append(newValue);
-		document.append(T3);
+	public void addAttribute(XSLWriter writer) {
+		writer.simpleAttribute(newId, newValue);
 	}
 
 }

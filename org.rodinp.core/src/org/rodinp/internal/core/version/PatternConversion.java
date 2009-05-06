@@ -35,10 +35,9 @@ public class PatternConversion extends ExtensionDesc {
 
 	}
 
-	public void addTemplates(StringBuffer buffer) {
+	public void addTemplates(XSLWriter writer) {
 		for(ModifyAttribute modifAttr : modifAttrs) {
-			final String modifTemplate = modifAttr.getTemplate(path);
-			buffer.append(modifTemplate);
+			modifAttr.addTemplate(writer, path);
 		}
 	}
 

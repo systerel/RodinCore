@@ -36,13 +36,10 @@ public class MultipleConversionSheet extends ComplexConversionSheet {
 	}
 
 	@Override
-	protected String computeSheet() {
-		final StringBuffer buffer = new StringBuffer();
+	protected void addComplexTemplates(XSLWriter writer) {
 		for (PatternConversion patternConv : conversions) {
-			patternConv.addTemplates(buffer);
+			patternConv.addTemplates(writer);
 		}
-
-		return computeSheet(buffer.toString());
 	}
 
 }

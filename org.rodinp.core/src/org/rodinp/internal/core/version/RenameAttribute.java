@@ -5,8 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel   - added attribute modification
+ *     Systerel   - used XSLWriter
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -39,23 +41,13 @@ public class RenameAttribute extends SimpleOperation {
 		return newId;
 	}
 	
-	private static String T1 = "<" + XSLConstants.XSL_TEMPLATE + " " + XSLConstants.XSL_MATCH + "=\"";
-	private static String T2 = "/@";
-	private static String T3 = 
-		"\">\n\t<" + XSLConstants.XSL_ATTRIBUTE + " " + XSLConstants.XSL_NAME + "=\"";
-	private static String T4 = 
-		"\">\n\t\t<" + XSLConstants.XSL_VALUE_OF + " " + XSLConstants.XSL_SELECT + "=\".\"/>\n\t</" + 
-		XSLConstants.XSL_ATTRIBUTE + ">\n</" + XSLConstants.XSL_TEMPLATE + ">";
-		
-	public void addTemplate(StringBuffer document, String path) {
-		
-		document.append(T1);
-		document.append(path);
-		document.append(T2);
-		document.append(id);
-		document.append(T3);
-		document.append(newId);
-		document.append(T4);
+	public void addTemplate(XSLWriter writer, String path) {
+		final String match = path + "/@" + id;
+		writer.beginTemplate(match);
+		writer.beginAttribute(newId);
+		writer.valueOf(".");
+		writer.endAttribute();
+		writer.endTemplate();
 	}
 
 }

@@ -1,11 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel   - added ChangeName
  *******************************************************************************/
 package org.rodinp.internal.core.version;
+
+import static org.rodinp.internal.core.Buffer.VERSION_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +30,7 @@ public class ElementConversion extends Conversion {
 	private final RenameAttribute[] renameAttr;
 	private final AddAttribute[] addAttr;
 	private final RenameElement renameElem;
+	private final ChangeName changeName;
 	
 	public ElementConversion(IConfigurationElement configElement, SimpleConversionSheet sheet) {
 		super(configElement, sheet);
@@ -37,11 +44,12 @@ public class ElementConversion extends Conversion {
 		final List<RenameAttribute> rAttr = new ArrayList<RenameAttribute>(confElements.length);
 		final List<AddAttribute> aAttr = new ArrayList<AddAttribute>(confElements.length);
 		RenameElement rElem = null;
+		ChangeName cName = null;
 		
 		if (root) {
 		
 			String version = String.valueOf(sheet.getVersion());
-			aAttr.add(new AddAttribute("version", version, sheet));
+			aAttr.add(new AddAttribute(VERSION_ATTRIBUTE, version, sheet));
 			
 		}
 		
@@ -65,6 +73,12 @@ public class ElementConversion extends Conversion {
 				aAttr.add(aa);
 				String newId = aa.getNewId();
 				checkId(newIds, newId);
+			} else if (op.equals("changeName")) {
+				if (cName == null) {
+					cName  = new ChangeName(confElement, sheet);
+				} else {
+					throw new IllegalStateException("Multiple change name on path: " + path);
+				}
 			} else {
 				throw new IllegalStateException("Unknown operation: " + op);
 			}
@@ -78,6 +92,7 @@ public class ElementConversion extends Conversion {
 		} else {
 			renameElem = rElem;
 		}
+		changeName = cName;
 	}
 
 	private boolean verifyPath(String p) {
@@ -153,6 +168,11 @@ public class ElementConversion extends Conversion {
 	@Override
 	protected RenameElement getRenameElement() {
 		return renameElem;
+	}
+
+	@Override
+	protected ChangeName getChangeName() {
+		return changeName;
 	}
 	
 }

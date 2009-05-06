@@ -9,6 +9,7 @@
  *     Soton - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added attribute modification
+ *     Systerel - used XSLWriter
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -36,8 +37,8 @@ public class SourceConversionSheet extends ComplexConversionSheet {
 	}
 	
 	@Override
-	protected String computeSheet() {
-		return computeSheet(source);
+	protected void addComplexTemplates(XSLWriter writer) {
+		writer.appendSource(source);
 	}
 
 

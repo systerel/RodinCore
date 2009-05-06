@@ -5,8 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel   - added attribute modification
+ *     Systerel   - used XSLWriter
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -62,22 +64,14 @@ public class RenameElement extends SimpleOperation {
 		return newId;
 	}
 	
-	private static String T1 = "<" + XSLConstants.XSL_TEMPLATE + " " + XSLConstants.XSL_MATCH + "=\"";
-	private static String T2 = "\">\n\t<" + XSLConstants.XSL_ELEMENT + " " + XSLConstants.XSL_NAME + "=\"";
-	private static String T3 = "\">\n";
-	private static String T4 = "\t</" + XSLConstants.XSL_ELEMENT + ">\n</" + XSLConstants.XSL_TEMPLATE + ">\n";
-		
-	public void beginTemplate(StringBuffer document, String path) {
-		
-		document.append(T1);
-		document.append(path);
-		document.append(T2);
-		document.append(newId);
-		document.append(T3);
+	public void beginTemplate(XSLWriter writer, String path) {
+		writer.beginTemplate(path);
+		writer.beginElement(newId);
 	}
 	
-	public void endTemplate(StringBuffer document) {
-		document.append(T4);
+	public void endTemplate(XSLWriter writer) {
+		writer.endElement();
+		writer.endTemplate();
 	}
 
 }

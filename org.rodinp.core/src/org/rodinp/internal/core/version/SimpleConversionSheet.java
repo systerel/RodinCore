@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - used XSLWriter
  *******************************************************************************/
 package org.rodinp.internal.core.version;
 
@@ -51,100 +52,26 @@ public class SimpleConversionSheet extends ConversionSheetWithTransformer {
 		}
 	}
 
-	private static String T7 = 
-		XSLConstants.XML + "\n<" + XSLConstants.XSL_TRANSFORM + " " +
-		XSLConstants.XSL_VERSION + "=\"" + XSLConstants.XSL_VERSION_VAL + "\" " +
-		XSLConstants.XSL_XMLNS + "=\"" + XSLConstants.XSL_XMLNS_URI + "\">\n<" +
-		XSLConstants.XSL_OUTPUT + " " + XSLConstants.XSL_ENCODING + "=\"" + XSLConstants.XSL_UTF8 + "\" " +
-		XSLConstants.XSL_INDENT + "=\"" + XSLConstants.XSL_YES + "\"/>\n";
-	private static String T8 = "</" + XSLConstants.XSL_TRANSFORM + ">";
-	
-	@Override
-	protected String computeSheet() {
-		
-		StringBuffer sheet = new StringBuffer();
-		
-		sheet.append(T7);
-				
-		getPrefix(sheet);
-		
-		for (Conversion conversion : conversions) {
-			conversion.addTemplates(sheet);
-		}
-		
-		addPostfix(sheet);
-		
-		sheet.append(T8);
-		
-		return sheet.toString();
-		
-	}
-	
-	@Override
-	public String toString() {
-		return computeSheet();
-	}
-	
-	private static String T1 = 
-		"<" + XSLConstants.XSL_TEMPLATE + " " + XSLConstants.XSL_MATCH + "=\"";
-	private static String T2 = "\">\n\t<" + XSLConstants.XSL_COPY + ">\n";
-	private static String T9 = 
-		"\t\t<" + XSLConstants.XSL_APPLY_TEMPLATES + " " + XSLConstants.XSL_SELECT + "=\"" + 
-		XSLConstants.XSL_ALL;
-	private static String T3 = "\">\n";
-	private static String T4 = "\t\t</" + XSLConstants.XSL_APPLY_TEMPLATES + ">\n";
-	private static String T5 = "\"/>\n";
-	private static String T6 = "\t</" + XSLConstants.XSL_COPY + ">\n</" + XSLConstants.XSL_TEMPLATE + ">\n";
-	private static String TA = 
-		"\t<" + XSLConstants.XSL_ATTRIBUTE + " " + XSLConstants.XSL_NAME + "=\"version\">";
-	private static String TB = "</" + XSLConstants.XSL_ATTRIBUTE + ">\n";
-		
-	protected void createCopyTemplate(StringBuffer document) {
-		
-		document.append(T1);
-		document.append(XSLConstants.XSL_ALL);
-		document.append(T2);
-		
-		document.append(T9);
-		if (hasSorter()) {
-			document.append(T3);
-			
-			addSorter(document);
-			
-			document.append(T4);
-		} else {
-			document.append(T5);
-		}
-		
-		document.append(T6);
-	}
-
 	public boolean hasSorter() {
 		return false;
 	}
 
-	public void addSorter(StringBuffer document) {
+	public void addSorter(XSLWriter writer) {
 		// do nothing
 	}
-	
-	private static String TC = "</" + XSLConstants.XSL_TEMPLATE + ">\n";
-	
-	private void getPrefix(StringBuffer document) {
-		
-		document.append(T1);
-		document.append("/");
-		document.append(getType());
-		document.append("/@version\">\n");
-		document.append(TA);
-		document.append(getVersion());
-		document.append(TB);
-		document.append(TC);
-		
+
+	@Override
+	protected void addTemplates(XSLWriter writer) {
+		for (Conversion conversion : conversions) {
+			conversion.addTemplates(writer);
+		}
 	}
 	
-	private void addPostfix(StringBuffer document) {
-		
-		createCopyTemplate(document);
+	@Override
+	protected void addPostfix(XSLWriter writer) {
+		writer.appendCopyAllTemplate(this);
+		writer.endTransform();
 	}
 
 }
+

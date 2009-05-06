@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton and others.
+ * Copyright (c) 2008, 2009 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,15 @@
  * Contributors:
  *     Soton - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - pulled up computeSheet() addPrefix() addPostfix() toString()
  *******************************************************************************/
 package org.rodinp.internal.core.version;
+
+import static org.rodinp.internal.core.Buffer.VERSION_ATTRIBUTE;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_UTF8;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_VERSION_VAL;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_XMLNS_URI;
+import static org.rodinp.internal.core.version.XSLConstants.XSL_YES;
 
 import java.io.StringReader;
 
@@ -38,7 +45,36 @@ public abstract class ConversionSheetWithTransformer extends ConversionSheet {
 		super(configElement, type);
 	}
 
-	protected abstract String computeSheet();
+	private final String computeSheet() {
+		final XSLWriter writer = new XSLWriter();
+		
+		addPrefix(writer);
+		
+		addTemplates(writer);
+		
+		addPostfix(writer);
+
+		return writer.getDocument();
+
+	}
+	
+	protected void addPrefix(XSLWriter writer) {
+		writer.xmlHeader();
+		writer.beginTransform(XSL_VERSION_VAL, XSL_XMLNS_URI, XSL_UTF8, XSL_YES);
+		addRemoveVersionTemplate(writer);
+	}
+	
+	private void addRemoveVersionTemplate(XSLWriter writer) {
+		final String match = "/" + getType() + "/@" + VERSION_ATTRIBUTE;
+		writer.simpleTemplate(match);
+	}
+
+	protected void addPostfix(XSLWriter writer) {
+		writer.appendCopyAllTemplate();
+		writer.endTransform();
+	}
+
+	protected abstract void addTemplates(XSLWriter writer);
 	
 	@Override
 	public Transformer getTransformer() throws RodinDBException {
@@ -60,5 +96,10 @@ public abstract class ConversionSheetWithTransformer extends ConversionSheet {
 		return transformer;
 	}
 
+	@Override
+	public String toString() {
+		return computeSheet();
+	}
+	
 
 }
