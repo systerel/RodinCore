@@ -84,7 +84,7 @@ public abstract class BuilderTest extends TestCase {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return (IPORoot) result;
+		return (IPORoot) result.getRoot();
 	}
 
 	protected ISCContextRoot createSCContext(String bareName) throws RodinDBException {
@@ -98,7 +98,7 @@ public abstract class BuilderTest extends TestCase {
 		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
-		return (ISCMachineRoot) result;
+		return (ISCMachineRoot) result.getRoot();
 	}
 	
 	public static void saveRodinFileOf(IInternalElement elem) throws RodinDBException {
