@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.IEvent.INITIALISATION;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -617,6 +619,40 @@ public class TestMachineEvents extends EventBPOTest {
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4");
 		sequentHasGoal(sequent, typeEnvironment, "∃V1'·V1'>0");
 		
+	}
+
+	/**
+	 * Ensures that no PO is generated for derived invariant establishment or
+	 * preservation.
+	 */
+	public void test_15_theoremPO() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		addVariables(mac, "V1");
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V1<4"), false, true);
+		addEvent(mac, INITIALISATION, 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V1≔0"));
+		addEvent(mac, "evt", 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("V1≔V1+1"));
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("V1", intType);
+		
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+		
+		IPORoot po = mac.getPORoot();
+
+		getSequent(po, INITIALISATION + "/I1/INV");
+		noSequent(po, INITIALISATION + "/I2/INV");
+
+		getSequent(po, "evt/I1/INV");
+		noSequent(po, "evt/I2/INV");
 	}
 
 }

@@ -62,6 +62,9 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 		for (int i=0; i<invariants.size(); i++) {
 			
 			ISCInvariant invariant = invariants.get(i);
+			if (invariant.isTheorem()) {
+				continue;
+			}
 			String invariantLabel = invariant.getLabel();
 			
 			Predicate predicate = invPredicates.get(i);
