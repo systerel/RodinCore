@@ -66,6 +66,9 @@ public final class EventBAttributes {
 	public static IAttributeType.String TYPE_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".type");
 	
+	public static IAttributeType.Boolean THEOREM_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".theorem");
+	
 	public static IAttributeType.String TARGET_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".target");
 

@@ -32,6 +32,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public interface ITheorem extends ICommentedElement, ILabeledElement, IPredicateElement {
 
 	IInternalElementType<ITheorem> ELEMENT_TYPE =

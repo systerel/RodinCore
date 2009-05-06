@@ -24,7 +24,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.tests.BuilderTest;
@@ -54,31 +53,33 @@ public class AutoCompletionTests extends BuilderTest {
 	private static final String INTERNAL_THM1 = "internal_thm1";
 
 	private static final String C1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 			+ "<org.eventb.core.constant"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"cst1\"/>"
 			+ "<org.eventb.core.axiom"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.label=\"axm1\""
-			+ "		org.eventb.core.predicate=\" = 2\"/>"
+			+ "		org.eventb.core.predicate=\" = 2\""
+			+ "		org.eventb.core.theorem=\"false\"/>"
 			+ "</org.eventb.core.contextFile>";
 
 	private static final String C2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 			+ "<org.eventb.core.extendsContext"
 			+ "		name=\"internal_1\""
 			+ "		org.eventb.core.target=\"C1\"/>"
 			+ "<org.eventb.core.carrierSet"
 			+ " 	name=\"internal_set1\" org.eventb.core.identifier=\"set1\"/>"
-			+ "<org.eventb.core.theorem"
+			+ "<org.eventb.core.axiom"
 			+ " 	name=\"internal_thm1\""
 			+ " 	org.eventb.core.label=\"thm1\""
-			+ " 	org.eventb.core.predicate=\" ∈ \"/>"
+			+ " 	org.eventb.core.predicate=\" ∈ \""
+			+ "		org.eventb.core.theorem=\"true\"/>"
 			+ "</org.eventb.core.contextFile>";
 
 	private static final String M1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.seesContext"
 			+ "		name=\"internal_1\" org.eventb.core.target=\"C2\"/>"
 			+ "<org.eventb.core.variable"
@@ -87,7 +88,8 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "<org.eventb.core.invariant"
 			+ " 	name=\"internal_inv1\""
 			+ " 	org.eventb.core.label=\"inv1\""
-			+ " 	org.eventb.core.predicate=\"varM1 ∈ set1\"/>"
+			+ " 	org.eventb.core.predicate=\"varM1 ∈ set1\""
+			+ "		org.eventb.core.theorem=\"false\"/>"
 			+ "<org.eventb.core.variant"
 			+ " 	name=\"internal_1\""
 			+ " 	org.eventb.core.expression=\"set1 ∪ {varM1}\"/>"
@@ -102,7 +104,8 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "		<org.eventb.core.guard"
 			+ " 		name=\"internal_grd1\""
 			+ " 		org.eventb.core.label=\"grd1\""
-			+ " 		org.eventb.core.predicate=\"prmM1 ∈ set1\"/>"
+			+ " 		org.eventb.core.predicate=\"prmM1 ∈ set1\""
+			+ "			org.eventb.core.theorem=\"false\"/>"
 			+ "		<org.eventb.core.action"
 			+ " 		name=\"internal_act1\""
 			+ " 		org.eventb.core.assignment=\"varM1 ≔ prmM1\""
@@ -110,7 +113,7 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 
 	private static final String M2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.refinesMachine"
 			+ " 	name=\"internal_1\""
 			+ " 	org.eventb.core.target=\"M1\"/>"
@@ -123,7 +126,8 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "<org.eventb.core.invariant"
 			+ " 	name=\"internal_inv1\""
 			+ " 	org.eventb.core.label=\"inv1\""
-			+ " 	org.eventb.core.predicate=\"\"/>"
+			+ " 	org.eventb.core.predicate=\"\""
+			+ "		org.eventb.core.theorem=\"false\"/>"
 			+ "<org.eventb.core.event"
 			+ " 	name=\"internal_evt1\""
 			+ " 	org.eventb.core.convergence=\"0\""
@@ -138,7 +142,8 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "		<org.eventb.core.guard"
 			+ " 			name=\"internal_grd2\""
 			+ " 			org.eventb.core.label=\"grd2\""
-			+ " 			org.eventb.core.predicate=\"prmM2 = prmM1 \"/>"
+			+ " 			org.eventb.core.predicate=\"prmM2 = prmM1 \""
+			+ "				org.eventb.core.theorem=\"false\"/>"
 			+ "		<org.eventb.core.witness"
 			+ " 		name=\"internal_wit1\""
 			+ " 		org.eventb.core.label=\"varM1\""
@@ -185,7 +190,7 @@ public class AutoCompletionTests extends BuilderTest {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2",
 				C2);
-		final ITheorem theorem = c2.getTheorem(INTERNAL_THM1);
+		final IAxiom theorem = c2.getAxiom(INTERNAL_THM1);
 		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
 				theorem, PREDICATE_ATTRIBUTE);
 		final List<String> completions = AutoCompletion

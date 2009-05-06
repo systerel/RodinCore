@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -36,12 +37,8 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 		test.containsConstants(element, strings);
 	}
 
-	public void containsNonTheorems(ISCContextRoot element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		test.containsAxioms(element, environment, labels, strings);
-	}
-
-	public void containsTheorems(ISCContextRoot element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		test.containsTheorems(element, environment, labels, strings);
+	public void containsPredicates(ISCContextRoot element, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
+		test.containsAxioms(element, environment, labels, strings, derived);
 	}
 
 	public ISCContextRoot getSCElement(IContextRoot element) throws RodinDBException {
@@ -60,12 +57,8 @@ public class GenericContextSCTest extends GenericContextTest<BasicSCTest> implem
 		return element.getConstants();
 	}
 
-	public IRodinElement[] getNonTheorems(IContextRoot element) throws RodinDBException {
+	public IRodinElement[] getPredicates(IContextRoot element) throws RodinDBException {
 		return element.getAxioms();
-	}
-
-	public IRodinElement[] getTheorems(IContextRoot element) throws RodinDBException {
-		return element.getTheorems();
 	}
 
 }

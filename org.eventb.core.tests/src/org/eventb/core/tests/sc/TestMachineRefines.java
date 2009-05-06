@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -40,7 +41,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, makeSList("V1"));
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
 
 		saveRodinFileOf(abs);
 		
@@ -52,7 +53,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V2"));
-		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"), false);
 
 		saveRodinFileOf(mac);
 		
@@ -68,7 +69,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 		typeEnvironment.addName("V2", factory.makeIntegerType());
 	
-		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"));
+		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), false, false);
 		
 		getInternalContexts(file, 0);
 
@@ -123,7 +124,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	public void testMachineRefines_2() throws Exception {
 		IContextRoot con =  createContext("con");
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), true);
 	
 		saveRodinFileOf(con);
 		
@@ -166,7 +167,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	public void testMachineRefines_3() throws Exception {
 		IContextRoot con =  createContext("con");
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), true);
 	
 		saveRodinFileOf(con);
 		
@@ -176,7 +177,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addMachineSees(abs, "con");
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
@@ -188,7 +189,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
@@ -211,7 +212,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
@@ -222,7 +223,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
-		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2=V1+1"), true);
 		IEvent ini = addInitialisation(mac, "V2");
 		addEventWitness(ini, "V1'", "⊤");
 		
@@ -237,7 +238,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
 		containsVariables(file, "V1", "V2");
-		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"));
+		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2=V1+1"), true, true);
 
 		containsMarkers(mac, false);
 	}
@@ -249,14 +250,14 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, makeSList("V1"));
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
 
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V2"));
-		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2∈ℕ"), false);
 
 		saveRodinFileOf(mac);
 		
@@ -273,7 +274,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		containsMarkers(mac, true);
 	
 		containsInvariants(file, typeEnvironment, 
-				makeSList("I2"), makeSList("V2∈ℕ"));
+				makeSList("I2"), makeSList("V2∈ℕ"), false);
 		
 		hasMarker(mac.getRefinesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 		

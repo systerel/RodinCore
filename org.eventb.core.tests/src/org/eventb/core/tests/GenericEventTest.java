@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -37,22 +38,12 @@ extends GenericTest<T>  {
 			
 	}
 
-	public void addNonTheorems(IEvent element, String[] names, String[] nonTheorems) throws RodinDBException {
+	public void addPredicates(IEvent element, String[] names, String[] nonTheorems, boolean...derived) throws RodinDBException {
 		for (int i=0; i<names.length; i++) {
 			IGuard guard = element.getGuard(test.getUniqueName());
 			guard.create(null, null);
 			guard.setLabel(names[i], null);
 			guard.setPredicateString(nonTheorems[i], null);
-		}
-	}
-
-	public void addTheorems(IEvent element, String[] names, String[] theorems) throws RodinDBException {
-// TODO implement proper tests for theorems
-		for (int i=0; i<names.length; i++) {
-			IGuard guard = element.getGuard(test.getUniqueName());
-			guard.create(null, null);
-			guard.setLabel(names[i], null);
-			guard.setPredicateString(theorems[i], null);
 		}
 	}
 

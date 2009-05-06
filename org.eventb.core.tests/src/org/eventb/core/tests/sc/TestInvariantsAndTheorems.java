@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -40,7 +41,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 
 		addMachineSees(mac, "con");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"), false, false);
 	
 		saveRodinFileOf(mac);
 		
@@ -48,7 +49,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
-		containsInvariants(file, typeEnvironment, makeSList("I2"), makeSList("V1∈S1"));
+		containsInvariants(file, typeEnvironment, makeSList("I2"), makeSList("V1∈S1"), false);
 		
 		hasMarker(mac.getInvariants()[0]);
 		
@@ -74,7 +75,8 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		addVariables(mac, "V1");
 		addInvariants(mac, 
 				makeSList("I1", "I2", "I3", "I4"), 
-				makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
+				makeSList("V1=V1", "V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"),
+				false, false, false, false);
 	
 		saveRodinFileOf(mac);
 		
@@ -84,7 +86,8 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		
 		containsInvariants(file, typeEnvironment, 
 				makeSList("I2", "I3", "I4"), 
-				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"));
+				makeSList("V1∈S1", "V1∈{V1}", "S1 ⊆ {V1}"),
+				false, false, false);
 		
 		hasMarker(mac.getInvariants()[0]);
 	}

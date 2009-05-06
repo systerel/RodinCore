@@ -12,7 +12,6 @@ import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ISCTheorem;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -61,8 +60,9 @@ public class SCInternalContext extends InternalElement implements
 		return getChildrenOfType(ISCAxiom.ELEMENT_TYPE); 
 	}
 
-	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
+	@Deprecated
+	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
+		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE); 
 	}
 
 	public ISCAxiom getSCAxiom(String elementName) {
@@ -77,8 +77,9 @@ public class SCInternalContext extends InternalElement implements
 		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
 	}
 
-	public ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	@Deprecated
+	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
+		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public String getComponentName() {

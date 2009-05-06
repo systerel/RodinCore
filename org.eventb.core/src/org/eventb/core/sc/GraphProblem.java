@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added LoadingRootModuleError
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -32,6 +33,8 @@ public enum GraphProblem implements IRodinProblem {
 	AssignmentUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentUndef),
 	ConvergenceUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ConvergenceUndef),
 	ExtendedUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_ExtendedUndef),
+	DerivedPredUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_DerivedPredUndef),
+	DerivedPredIgnoredWarning(IMarker.SEVERITY_WARNING, Messages.scuser_DerivedPredIgnored),
 	InvalidIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_InvalidIdentifierName),
 	InvalidIdentifierSpacesError(IMarker.SEVERITY_ERROR, Messages.scuser_InvalidIdentifierContainsSpaces),
 	LabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_LabelUndef),
@@ -96,6 +99,7 @@ public enum GraphProblem implements IRodinProblem {
 	FreeIdentifierFaultyDeclError(IMarker.SEVERITY_ERROR, Messages.scuser_FreeIdentifierFaultyDeclError),
 	VariantFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_VariantFreeIdentifierError),
 	AxiomFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomFreeIdentifierError),
+	@Deprecated
 	TheoremFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremFreeIdentifierError),
 	InvariantFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_InvariantFreeIdentifierError),
 	GuardFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_GuardFreeIdentifierError),
@@ -116,7 +120,9 @@ public enum GraphProblem implements IRodinProblem {
 	InitialisationNotOrdinaryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InitialisationNotOrdinary),
 	AxiomLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomLabelConflict),
 	AxiomLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomLabelConflict),
+	@Deprecated
 	TheoremLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremLabelConflict),
+	@Deprecated
 	TheoremLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_TheoremLabelConflict),
 	InvariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_InvariantLabelConflict),
 	InvariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InvariantLabelConflict),

@@ -202,6 +202,7 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	 *            element name of the SC theorem
 	 * @return a handle to a child SC theorem with the given element name
 	 */
+	@Deprecated
 	ISCTheorem getSCTheorem(String elementName);
 
 	/**
@@ -211,6 +212,7 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	ISCTheorem[] getSCTheorems() throws RodinDBException;
 
 	/**

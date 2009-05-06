@@ -43,6 +43,7 @@ import org.rodinp.core.RodinDBException;
  * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IContextRoot extends IEventBRoot, ICommentedElement, IConfigurationElement {
 
@@ -144,6 +145,7 @@ public interface IContextRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 *            element name of the theorem
 	 * @return a handle to a child theorem with the given element name
 	 */
+	@Deprecated
 	ITheorem getTheorem(String elementName);
 
 	/**
@@ -152,6 +154,7 @@ public interface IContextRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	ITheorem[] getTheorems() throws RodinDBException;
 
 }

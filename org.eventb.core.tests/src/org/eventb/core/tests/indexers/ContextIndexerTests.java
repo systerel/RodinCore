@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.tests.indexers.OccUtils.*;
-import static org.eventb.core.tests.indexers.ResourceUtils.*;
+import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
+import static org.eventb.core.tests.indexers.OccUtils.newDecl;
+import static org.eventb.core.tests.indexers.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.indexers.ResourceUtils.MCH_BARE_NAME;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.core.ITheorem;
 import org.eventb.internal.core.indexers.ContextIndexer;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
@@ -125,14 +128,15 @@ public class ContextIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.contextFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"2\">"
+						+ "		version=\"3\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"axm1\""
-						+ "		org.eventb.core.predicate=\"cst1 = cst1\"/>"
+						+ "		org.eventb.core.predicate=\"cst1 = cst1\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
@@ -199,12 +203,13 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 	private static final String CST_1REF_AXM =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.comment=\"\""
 					+ "		org.eventb.core.label=\"axm1\""
-					+ "		org.eventb.core.predicate=\"1 &lt; cst1\"/>"
+					+ "		org.eventb.core.predicate=\"1 &lt; cst1\""
+					+ " 	org.eventb.core.theorem=\"false\"/>"
 					+ "</org.eventb.core.contextFile>";
 
 	/**
@@ -292,7 +297,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testDeclSet() throws Exception {
 		final String SET_1DECL =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.carrierSet"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"set1\"/>"
@@ -332,7 +337,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
 		final IDeclaration declCst1 = newDecl(cst1, CST1);
 		
-		final ITheorem thm = context.getTheorem(INTERNAL_ELEMENT1);
+		final IAxiom thm = context.getAxiom(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(thm, 9, 13, declCst1);
 
 
@@ -368,7 +373,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		// constant node is not closed with a /
 		final String MALFORMED_CONTEXT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\">"
@@ -391,10 +396,11 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testMissingAttribute() throws Exception {
 		final String CST_1DECL_1AXM_NO_PRED_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
-						+ "		org.eventb.core.label=\"axm1\"/>"
+						+ "		org.eventb.core.label=\"axm1\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.comment=\"\""
@@ -420,11 +426,12 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	public void testDoesNotParse() throws Exception {
 		final String CST_1DECL_1AXM_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"axm1\""
-						+ "		org.eventb.core.predicate=\"(1&lt;\"/>"
+						+ "		org.eventb.core.predicate=\"(1&lt;\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"

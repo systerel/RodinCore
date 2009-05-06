@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
-
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -264,6 +267,18 @@ public abstract class EventBElement extends InternalElement {
 
 	public IRodinElement getSource() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
+	}
+
+	public boolean hasTheorem() throws RodinDBException {
+		return hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE);
+	}
+
+	public boolean isTheorem() throws RodinDBException {
+		return getAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE);
+	}
+
+	public void setTheorem(boolean thm, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE, thm, monitor);
 	}
 
 }

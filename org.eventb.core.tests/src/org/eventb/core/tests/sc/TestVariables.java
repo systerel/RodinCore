@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -44,7 +45,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"), false);
 		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
@@ -63,7 +64,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		containsVariables(file, "V1");
 		
-		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"));
+		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈S1"), false);
 
 		containsMarkers(mac, false);
 	}
@@ -75,7 +76,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		IContextRoot con = createContext("con");
 
 		addConstants(con, makeSList("C1"));
-		addAxioms(con, makeSList("A1"), makeSList("C1∈BOOL"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈BOOL"), false);
 		
 		saveRodinFileOf(con);
 		
@@ -86,7 +87,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("C1"));
-		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"), false, false);
 
 		saveRodinFileOf(mac);
 		
@@ -103,7 +104,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		containsVariables(file);
 		
-		containsInvariants(file, environment, makeSList("I2"), makeSList("C1=TRUE"));
+		containsInvariants(file, environment, makeSList("I2"), makeSList("C1=TRUE"), false);
 
 		hasMarker(mac.getVariables()[0]);
 		hasMarker(mac.getInvariants()[0]);
@@ -116,7 +117,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, makeSList("V1"));
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addInitialisation(abs, "V1");
 
 		saveRodinFileOf(abs);
@@ -141,7 +142,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 				
 		containsVariables(file, "V1");
 		
-		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"));
+		containsInvariants(file, environment, makeSList("I1"), makeSList("V1∈ℕ"), false, false);
 
 		containsMarkers(mac, false);
 	}
@@ -152,21 +153,21 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	public void testVariables_04() throws Exception {
 		final IMachineRoot m0 = createMachine("m0");
 		addVariables(m0, "v1");
-		addInvariants(m0, makeSList("I1"), makeSList("v1 ∈ ℕ"));
+		addInvariants(m0, makeSList("I1"), makeSList("v1 ∈ ℕ"), true);
 		addInitialisation(m0, "v1");
 		saveRodinFileOf(m0);
 		
 		final IMachineRoot m1 = createMachine("m1");
 		addMachineRefines(m1, "m0");
 		addVariables(m1, "v2");
-		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"));
+		addInvariants(m1, makeSList("I1"), makeSList("v2 ∈ ℕ"), true);
 		addInitialisation(m1, "v2");
 		saveRodinFileOf(m1);
 
 		final IMachineRoot m2 = createMachine("m2");
 		addMachineRefines(m2, "m1");
 		addVariables(m2, "v1");
-		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"));
+		addInvariants(m2, makeSList("I1"), makeSList("v1 ∈ ℕ"), true);
 		addInitialisation(m2, "v1");
 		saveRodinFileOf(m2);
 		

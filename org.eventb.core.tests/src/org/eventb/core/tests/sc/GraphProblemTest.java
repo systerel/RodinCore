@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -63,6 +64,7 @@ public class GraphProblemTest extends TestCase {
 		return new Spec(problem, arity);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static Spec[] specs = new Spec[] {
 			spec(GraphProblem.LoadingRootModuleError, 0),
 			spec(GraphProblem.ConfigurationMissingError, 1),
@@ -73,6 +75,8 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.ConvergenceUndefError, 0),
 			spec(GraphProblem.ExtendedUndefError, 0),
 			spec(GraphProblem.IdentifierUndefError, 0),
+			spec(GraphProblem.DerivedPredUndefError, 0),
+			spec(GraphProblem.DerivedPredIgnoredWarning, 0),
 			spec(GraphProblem.InvalidIdentifierSpacesError, 1),
 			spec(GraphProblem.LabelUndefError, 0),
 			spec(GraphProblem.AbstractContextNameUndefError, 0),

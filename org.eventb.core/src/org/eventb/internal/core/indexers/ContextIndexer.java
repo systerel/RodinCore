@@ -54,8 +54,6 @@ public class ContextIndexer extends EventBIndexer {
 		checkCancel();
 
 		processPredicateElements(root.getAxioms(), totalST);
-		checkCancel();
-		processPredicateElements(root.getTheorems(), totalST);
 	}
 
 	private void processImports(IDeclaration[] imports, SymbolTable importST) {

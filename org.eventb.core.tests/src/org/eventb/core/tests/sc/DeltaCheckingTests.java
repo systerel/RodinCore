@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -81,7 +82,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		final IPORoot po = mac.getPORoot();
 
 		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈BOOL"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈BOOL"), true);
 		saveRodinFileOf(mac);
 
 		runBuilder();
@@ -101,7 +102,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		final ISCMachineRoot scAbs = abs.getSCMachineRoot();
 		final IPORoot poAbs = abs.getPORoot();
 		addVariables(abs, makeSList("V1"));
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈BOOL"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈BOOL"), true);
 		saveRodinFileOf(abs);
 
 		final IMachineRoot con = createMachine("con");

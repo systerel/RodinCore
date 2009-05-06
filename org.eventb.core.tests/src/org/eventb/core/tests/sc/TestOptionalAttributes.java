@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -68,8 +69,8 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		addMachineRefines(m, "abs");
 		addMachineSees(m, "con");
 		addVariables(m, "v");
-		addInvariants(m, makeSList("I"), makeSList("v∈ℤ"));
-		addTheorems(m, makeSList("T"), makeSList("⊤"));
+		addInvariants(m, makeSList("I"), makeSList("v∈ℤ"), false);
+		addInvariants(m, makeSList("T"), makeSList("⊤"), true);
 		addVariant(m, "1");
 		IEvent e = addEvent(m, "e", 
 				makeSList("b"), 
@@ -94,8 +95,8 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 		addContextExtends(c, "abs");
 		addCarrierSets(c, "S");
 		addConstants(c, "C");
-		addAxioms(c, makeSList("A"), makeSList("C∈S"));
-		addTheorems(c, makeSList("T"), makeSList("⊤"));
+		addAxioms(c, makeSList("A"), makeSList("C∈S"), false);
+		addAxioms(c, makeSList("T"), makeSList("⊤"), true);
 		
 		saveRodinFileOf(a);
 		saveRodinFileOf(c);
@@ -202,27 +203,13 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getTheorems()[0], EventBAttributes.LABEL_ATTRIBUTE);
+					hasMarker(f.getInvariants()[0], EventBAttributes.THEOREM_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
-					f.getTheorems()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
-				}
-				
-			},
-			new MachineOptAttrTest() {
-
-				@Override
-				public void checkAttr() throws Exception {
-					hasMarker(f.getTheorems()[0], EventBAttributes.PREDICATE_ATTRIBUTE);
-				}
-
-				@Override
-				public void removeAttr() throws Exception {
-					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
-					f.getTheorems()[0].removeAttribute(EventBAttributes.PREDICATE_ATTRIBUTE, null);
+					assertTrue(f.getInvariants()[0].hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE));
+					f.getInvariants()[0].removeAttribute(EventBAttributes.THEOREM_ATTRIBUTE, null);
 				}
 				
 			},
@@ -482,32 +469,15 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getTheorems()[0], EventBAttributes.LABEL_ATTRIBUTE);
+					hasMarker(f.getAxioms()[0], EventBAttributes.THEOREM_ATTRIBUTE);
 				}
 
 				@Override
 				public void removeAttr() throws Exception {
-					assertTrue(f.getTheorems()[0].hasAttribute(EventBAttributes.LABEL_ATTRIBUTE));
-					f.getTheorems()[0].removeAttribute(EventBAttributes.LABEL_ATTRIBUTE, null);
+					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE));
+					f.getAxioms()[0].removeAttribute(EventBAttributes.THEOREM_ATTRIBUTE, null);
 				}
 				
-			},
-			new ContextOptAttrTest() {
-
-				@Override
-				public void checkAttr() throws Exception {
-					hasMarker(f.getTheorems()[0],
-							EventBAttributes.PREDICATE_ATTRIBUTE);
-				}
-
-				@Override
-				public void removeAttr() throws Exception {
-					assertTrue(f.getTheorems()[0]
-							.hasAttribute(EventBAttributes.PREDICATE_ATTRIBUTE));
-					f.getTheorems()[0].removeAttribute(
-							EventBAttributes.PREDICATE_ATTRIBUTE, null);
-				}
-
 			}
 	};
 	

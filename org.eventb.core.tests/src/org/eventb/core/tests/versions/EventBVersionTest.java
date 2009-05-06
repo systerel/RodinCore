@@ -8,6 +8,7 @@
  * Contributors:
  *     Soton - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
@@ -32,6 +33,11 @@ import org.rodinp.core.IConversionResult.IEntry;
 public abstract class EventBVersionTest extends BuilderTest {
 
 	protected static final String ORG_EVENTB_CORE_FWD = "org.eventb.core.fwd";
+
+	protected static <T> T assertSingleGet(final T[] objs) {
+		assertEquals(1, objs.length);
+		return objs[0];
+	}
 
 	protected void createFile(String fileName, String contents) throws CoreException {
 		IProject project = rodinProject.getProject();

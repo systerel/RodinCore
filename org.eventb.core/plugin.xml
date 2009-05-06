@@ -517,6 +517,11 @@
             kind="boolean"
             name="%eventBextendedEventAttribute">
       </attributeType>
+      <attributeType
+            id="theorem"
+            kind="boolean"
+            name="%eventBtheoremAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -626,10 +631,6 @@
             id="contextHypothesisManager"
             name="%contextHypothesisManager"/>
       <stateType
-            class="org.eventb.core.pog.state.IContextTheoremTable"
-            id="contextTheoremTable"
-            name="%contextTheoremTable"/>
-      <stateType
             class="org.eventb.core.pog.state.IEventHypothesisManager"
             id="eventHypothesisManager"
             name="%eventHypothesisManager"/>
@@ -641,10 +642,6 @@
             class="org.eventb.core.pog.state.IMachineInvariantTable"
             id="machineInvariantTable"
             name="%machineInvariantTable"/>
-      <stateType
-            class="org.eventb.core.pog.state.IMachineTheoremTable"
-            id="machineTheoremTable"
-            name="%machineTheoremTable"/>
       <stateType
             class="org.eventb.core.pog.state.IMachineVariableTable"
             id="machineVariableTable"
@@ -694,8 +691,7 @@
          <scModule id="org.eventb.core.contextCommitIdentsModule"/>
          <scModule id="org.eventb.core.contextAxiomModule"/>
          <scModule id="org.eventb.core.contextAxiomFreeIdentsModule"/>
-         <scModule id="org.eventb.core.contextTheoremModule"/>
-         <scModule id="org.eventb.core.contextTheoremFreeIdentsModule"/>
+         <scModule id="org.eventb.core.contextAxiomTheoremModule"/>
       </configuration>
       <configuration
             id="mchBase"
@@ -709,8 +705,7 @@
          <scModule id="org.eventb.core.machineCommitIdentsModule"/>
          <scModule id="org.eventb.core.machineInvariantModule"/>
          <scModule id="org.eventb.core.machineInvariantFreeIdentsModule"/>
-         <scModule id="org.eventb.core.machineTheoremModule"/>
-         <scModule id="org.eventb.core.machineTheoremFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineInvariantTheoremModule"/>
          <scModule id="org.eventb.core.machineVariantModule"/>
          <scModule id="org.eventb.core.machineVariantFreeIdentsModule"/>
          <scModule id="org.eventb.core.machineVariableFromParameterModule"/>
@@ -745,7 +740,6 @@
          <pogModule id="org.eventb.core.contextHypothesesModule"/>
          <pogModule id="org.eventb.core.contextCommitHypothesesModule"/>
          <pogModule id="org.eventb.core.contextAxiomModule"/>
-         <pogModule id="org.eventb.core.contextTheoremModule"/>
       </configuration>
       <configuration
             id="fwd"
@@ -759,7 +753,6 @@
          <pogModule id="org.eventb.core.fwdMachineHypothesesModule"/>
          <pogModule id="org.eventb.core.fwdMachineCommitHypothesesModule"/>
          <pogModule id="org.eventb.core.fwdMachineInvariantModule"/>
-         <pogModule id="org.eventb.core.fwdMachineTheoremModule"/>
          <pogModule id="org.eventb.core.fwdMachineVariantModule"/>
          <pogModule id="org.eventb.core.fwdMachineEventModule"/>
          <pogModule id="org.eventb.core.fwdMachineNewEventInvariantModule"/>
@@ -816,24 +809,18 @@
             name="%scContextAxiomFreeIdentsModule"
             parent="org.eventb.core.contextAxiomModule"/>
       <processorType
-            class="org.eventb.internal.core.sc.modules.ContextTheoremModule"
-            id="contextTheoremModule"
-            name="%scContextTheoremModule"
-            parent="org.eventb.core.contextModule">
-         <prereq id="org.eventb.core.contextAxiomModule"/>
-      </processorType>
-      <filterType
-            class="org.eventb.internal.core.sc.modules.ContextTheoremFreeIdentsModule"
-            id="contextTheoremFreeIdentsModule"
-            name="%scContextTheoremFreeIdentsModule"
-            parent="org.eventb.core.contextTheoremModule"/>
-      <processorType
             class="org.eventb.internal.core.sc.modules.ContextCommitIdentsModule"
             id="contextCommitIdentsModule"
             name="%scContextCommitIdentsModule"
             parent="org.eventb.core.contextModule">
          <prereq id="org.eventb.core.contextAxiomModule"/>
       </processorType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.ContextAxiomTheoremModule"
+            id="contextAxiomTheoremModule"
+            name="%scContextAxiomTheoremModule"
+            parent="org.eventb.core.contextAxiomModule">
+      </filterType>
    </extension>
    <extension
          name="%scMachineModuleTypes"
@@ -887,22 +874,16 @@
             name="%scMachineInvariantFreeIdentsModule"
             parent="org.eventb.core.machineInvariantModule"/>
       <filterType
+            class="org.eventb.internal.core.sc.modules.MachineInvariantTheoremModule"
+            id="machineInvariantTheoremModule"
+            name="%scMachineInvariantTheoremModule"
+            parent="org.eventb.core.machineInvariantModule">
+      </filterType>
+      <filterType
             class="org.eventb.internal.core.sc.modules.MachinePreviousEventLabelModule"
             id="machinePreviousEventLabelModule"
             name="%scMachinePreviousEventLabelModule"
             parent="org.eventb.core.machineInvariantModule"/>
-      <processorType
-            class="org.eventb.internal.core.sc.modules.MachineTheoremModule"
-            id="machineTheoremModule"
-            name="%scMachineTheoremModule"
-            parent="org.eventb.core.machineModule">
-         <prereq id="org.eventb.core.machineInvariantModule"/>
-      </processorType>
-      <filterType
-            class="org.eventb.internal.core.sc.modules.MachineTheoremFreeIdentsModule"
-            id="machineTheoremFreeIdentsModule"
-            name="%scMachineTheoremFreeIdentsModule"
-            parent="org.eventb.core.machineTheoremModule"/>
       <processorType
             class="org.eventb.internal.core.sc.modules.MachineCommitIdentsModule"
             id="machineCommitIdentsModule"
@@ -1067,19 +1048,11 @@
          <prereq id="org.eventb.core.contextHypothesesModule"/>
       </processorType>
       <processorType
-            class="org.eventb.internal.core.pog.modules.ContextTheoremModule"
-            id="contextTheoremModule"
-            name="%pogContextTheoremModule"
-            parent="org.eventb.core.contextModule">
-         <prereq id="org.eventb.core.contextHypothesesModule"/>
-      </processorType>
-      <processorType
             class="org.eventb.internal.core.pog.modules.ContextCommitHypothesesModule"
             id="contextCommitHypothesesModule"
             name="%pogContextCommitHypothesesModule"
             parent="org.eventb.core.contextModule">
          <prereq id="org.eventb.core.contextAxiomModule"/>
-         <prereq id="org.eventb.core.contextTheoremModule"/>
       </processorType>
    </extension>
    <extension
@@ -1110,19 +1083,11 @@
          <prereq id="org.eventb.core.fwdMachineHypothesesModule"/>
       </processorType>
       <processorType
-            class="org.eventb.internal.core.pog.modules.FwdMachineTheoremModule"
-            id="fwdMachineTheoremModule"
-            name="%pogFwdMachineTheoremModule"
-            parent="org.eventb.core.machineModule">
-         <prereq id="org.eventb.core.fwdMachineHypothesesModule"/>
-      </processorType>
-      <processorType
             class="org.eventb.internal.core.pog.modules.FwdMachineCommitHypothesesModule"
             id="fwdMachineCommitHypothesesModule"
             name="%pogFwdMachineCommitHypothesesModule"
             parent="org.eventb.core.machineModule">
          <prereq id="org.eventb.core.fwdMachineInvariantModule"/>
-         <prereq id="org.eventb.core.fwdMachineTheoremModule"/>
       </processorType>
       <processorType
             class="org.eventb.internal.core.pog.modules.FwdMachineVariantModule"
@@ -1265,11 +1230,11 @@
          point="org.rodinp.core.fileElementVersions">
       <fileElementVersion
             id="org.eventb.core.contextFile"
-            version="2">
+            version="3">
       </fileElementVersion>
       <fileElementVersion
             id="org.eventb.core.machineFile"
-            version="4">
+            version="5">
       </fileElementVersion>
       <fileElementVersion
             id="org.eventb.core.prFile"
@@ -1360,6 +1325,61 @@
             </modifyAttribute>
          </pattern>
       </multiple>
+      <sorted
+            order="ascending"
+            type="org.eventb.core.contextFile"
+            version="3">
+         <element
+               elementPath="/org.eventb.core.contextFile/org.eventb.core.axiom">
+            <addAttribute
+                  newId="org.eventb.core.theorem"
+                  newValue="false">
+            </addAttribute>
+            <changeName newValue="@A"/>
+         </element>
+         <element
+               elementPath="/org.eventb.core.contextFile/org.eventb.core.theorem">
+            <renameElement
+                  newId="org.eventb.core.axiom">
+            </renameElement>
+            <addAttribute
+                  newId="org.eventb.core.theorem"
+                  newValue="true">
+            </addAttribute>
+            <changeName newValue="@T"/>
+         </element>
+      </sorted>
+      <sorted
+            order="ascending"
+            type="org.eventb.core.machineFile"
+            version="5">
+         <element
+               elementPath="/org.eventb.core.machineFile/org.eventb.core.invariant">
+            <addAttribute
+                  newId="org.eventb.core.theorem"
+                  newValue="false">
+            </addAttribute>
+            <changeName newValue="@I"/>
+         </element>
+         <element
+               elementPath="/org.eventb.core.machineFile/org.eventb.core.theorem">
+            <renameElement
+                  newId="org.eventb.core.invariant">
+            </renameElement>
+            <addAttribute
+                  newId="org.eventb.core.theorem"
+                  newValue="true">
+            </addAttribute>
+            <changeName newValue="@T"/>
+         </element>
+         <element
+               elementPath="/org.eventb.core.machineFile/org.eventb.core.event/org.eventb.core.guard">
+            <addAttribute
+                  newId="org.eventb.core.theorem"
+                  newValue="false">
+            </addAttribute>
+         </element>
+      </sorted>
    </extension>
    <extension
          point="org.rodinp.core.indexers">

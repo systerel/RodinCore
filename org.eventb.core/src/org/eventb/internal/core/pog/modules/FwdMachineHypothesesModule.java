@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -23,7 +24,6 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
@@ -32,7 +32,6 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.MachineHypothesisManager;
 import org.eventb.internal.core.pog.MachineInvariantTable;
-import org.eventb.internal.core.pog.MachineTheoremTable;
 import org.eventb.internal.core.pog.MachineVariableTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -54,7 +53,6 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 
 	MachineHypothesisManager hypothesisManager;
 	MachineInvariantTable invariantTable;
-	MachineTheoremTable theoremTable;
 	
 	@Override
 	public void initModule(
@@ -78,30 +76,21 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 		fetchVariables(scMachineRoot.getSCVariables(), rootSet, repository, monitor);
 		
 		ISCInvariant[] invariants = scMachineRoot.getSCInvariants();
-		ISCTheorem[] theorems = scMachineRoot.getSCTheorems();
 		
 		String bag = scMachineRoot.getMachineRoot().getRodinFile().getElementName();
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		List<ISCInvariant> invPreds = 
 			fetchPredicates(predicates, rootSet, invariants, bag, monitor);
-		List<ISCTheorem> thmPreds = 
-			fetchPredicates(predicates, rootSet, theorems, bag, monitor);
 		
 		invariantTable = new MachineInvariantTable(
 				invPreds.toArray(new ISCInvariant[invPreds.size()]),
 				typeEnvironment,
 				factory);
-		theoremTable = new MachineTheoremTable(
-				thmPreds.toArray(new ISCTheorem[thmPreds.size()]),
-				typeEnvironment,
-				factory);
 		
 		repository.setState(invariantTable);
-		repository.setState(theoremTable);
 		
 		invariantTable.makeImmutable();
-		theoremTable.makeImmutable();
 		
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);

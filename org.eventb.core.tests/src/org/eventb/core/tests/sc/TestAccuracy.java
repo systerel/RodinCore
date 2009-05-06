@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -27,7 +28,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_01() throws Exception {
 		IContextRoot root = createContext("con");
 
-		addAxioms(root, makeSList("A"), makeSList("x∈ℕ"));
+		addAxioms(root, makeSList("A"), makeSList("x∈ℕ"), false);
 		
 		saveRodinFileOf(root);
 		
@@ -42,7 +43,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_02() throws Exception {
 		IContextRoot root = createContext("con");
 
-		addTheorems(root, makeSList("T"), makeSList("x∈ℕ"));
+		addAxioms(root, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(root);
 		
@@ -57,14 +58,14 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_03() throws Exception {
 		IContextRoot abs = createContext("abs");
 
-		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
+		addAxioms(abs, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(abs);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "abs");
 		
-		addTheorems(con, makeSList("X"), makeSList("1<0"));
+		addAxioms(con, makeSList("X"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -80,7 +81,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_04() throws Exception {
 		IMachineRoot con = createMachine("con");
 
-		addInvariants(con, makeSList("I"), makeSList("x∈ℕ"));
+		addInvariants(con, makeSList("I"), makeSList("x∈ℕ"), false);
 		
 		saveRodinFileOf(con);
 		
@@ -95,7 +96,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_05() throws Exception {
 		IMachineRoot con = createMachine("con");
 
-		addTheorems(con, makeSList("T"), makeSList("x∈ℕ"));
+		addInvariants(con, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -110,7 +111,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_06() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
-		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
+		addAxioms(abs, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(abs);
 		
@@ -118,7 +119,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addMachineSees(con, "abs");
 		addInitialisation(con);
 		
-		addTheorems(con, makeSList("X"), makeSList("1<0"));
+		addInvariants(con, makeSList("X"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -135,7 +136,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
 		
-		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
+		addInvariants(abs, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(abs);
 		
@@ -143,7 +144,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addMachineRefines(con, "abs");
 		addInitialisation(con);
 		
-		addTheorems(con, makeSList("X"), makeSList("1<0"));
+		addInvariants(con, makeSList("X"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -272,7 +273,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
-		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
+		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
 		addInitialisation(con);
 		
 		saveRodinFileOf(con);
@@ -325,13 +326,13 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_15() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
-		addTheorems(abs, makeSList("T"), makeSList("1<0"));
+		addAxioms(abs, makeSList("T"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(abs);
 		
 		IContextRoot bbs = createContext("bbs");
 		
-		addTheorems(bbs, makeSList("T"), makeSList("x∈ℕ"));
+		addAxioms(bbs, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(bbs);
 		
@@ -339,7 +340,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		addContextExtends(con, "abs");
 		addContextExtends(con, "bbs");
 		
-		addTheorems(con, makeSList("X"), makeSList("1<0"));
+		addAxioms(con, makeSList("X"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -357,21 +358,21 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_16() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
-		addTheorems(abs, makeSList("T"), makeSList("x∈ℕ"));
+		addAxioms(abs, makeSList("T"), makeSList("x∈ℕ"), true);
 		
 		saveRodinFileOf(abs);
 		
 		IContextRoot bbs = createContext("bbs");
 		addContextExtends(bbs, "abs");
 	
-		addTheorems(bbs, makeSList("T"), makeSList("1<0"));
+		addAxioms(bbs, makeSList("T"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(bbs);
 		
 		IContextRoot con = createContext("con");
 		addContextExtends(con, "bbs");
 		
-		addTheorems(con, makeSList("X"), makeSList("1<0"));
+		addAxioms(con, makeSList("X"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -389,7 +390,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
-		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
+		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
 		addInitialisation(con);
 		IEvent evt = addEvent(con, "evt", makeSList("x"), 
 				makeSList("G"), makeSList("x∈ℕ"), 
@@ -418,7 +419,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		IMachineRoot con = createMachine("con");
 
 		addVariables(con, "v");
-		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"));
+		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
 		addInitialisation(con);
 		IEvent evt = addEvent(con, "evt", makeSList("x"), 
 				makeSList("G"), makeSList("x∈ℕ"), 
@@ -510,7 +511,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	public void testAcc_21() throws Exception {
 		IMachineRoot con = createMachine("con");
 
-		addInvariants(con, makeSList("I"), makeSList("p>0"));
+		addInvariants(con, makeSList("I"), makeSList("p>0"), true);
 		addInitialisation(con);
 		addEvent(con, "fvt", makeSList("x"), 
 				makeSList("G"), makeSList("x∈ℕ"), 

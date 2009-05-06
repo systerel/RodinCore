@@ -28,15 +28,15 @@ public abstract class EventBIndexerTests extends BuilderTest {
 
 	protected static final String EMPTY_MACHINE =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\"/>";
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\"/>";
 
 	public static final String EMPTY_CONTEXT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\"/>";
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\"/>";
 
 	protected static final String CST_1DECL =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "<org.eventb.core.constant"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"cst1\"/>"
@@ -44,31 +44,33 @@ public abstract class EventBIndexerTests extends BuilderTest {
 
 	protected static final String CST_1DECL_1REF_AXM =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "<org.eventb.core.constant"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"cst1\"/>"
 					+ "<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.label=\"axm1\""
-					+ "		org.eventb.core.predicate=\"cst1 = 2\"/>"
+					+ "		org.eventb.core.predicate=\"cst1 = 2\""
+					+ " 	org.eventb.core.theorem=\"false\"/>"
 					+ "</org.eventb.core.contextFile>";
 
 	protected static final String CST_1DECL_1REF_THM =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "<org.eventb.core.constant"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"cst1\"/>"
-					+ "<org.eventb.core.theorem"
+					+ "<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.label=\"thm1\""
-					+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
+					+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\""
+					+ " 	org.eventb.core.theorem=\"true\"/>"
 					+ "</org.eventb.core.contextFile>";
 
 	protected static final String VAR_1DECL =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 					+ "<org.eventb.core.variable"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -76,20 +78,21 @@ public abstract class EventBIndexerTests extends BuilderTest {
 
 	protected static final String VAR_1DECL_1REF_INV =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 					+ "<org.eventb.core.variable"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"var1\"/>"
 					+ "<org.eventb.core.invariant"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.label=\"inv1\""
-					+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
+					+ "		org.eventb.core.predicate=\"var1 = 1\""
+					+ " 	org.eventb.core.theorem=\"false\"/>"
 					+ "</org.eventb.core.machineFile>";
 	
 	protected static final String EVT_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 	+ "<org.eventb.core.machineFile"
 	+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-	+ "		version=\"4\">"
+	+ "		version=\"5\">"
 	+ "<org.eventb.core.event"
 	+ "		name=\"internal_element1\""
 	+ "		org.eventb.core.convergence=\"0\""
@@ -100,7 +103,7 @@ public abstract class EventBIndexerTests extends BuilderTest {
 	protected static final String EVT_1REF_REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<org.eventb.core.machineFile"
 			+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-			+ "		version=\"4\">"
+			+ "		version=\"5\">"
 			+ "<org.eventb.core.refinesMachine"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"exporter\"/>"
@@ -116,7 +119,7 @@ public abstract class EventBIndexerTests extends BuilderTest {
 	protected static final String PRM_1DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<org.eventb.core.machineFile"
 			+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-			+ "		version=\"4\">"
+			+ "		version=\"5\">"
 			+ "<org.eventb.core.event"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.convergence=\"0\""
@@ -130,7 +133,7 @@ public abstract class EventBIndexerTests extends BuilderTest {
 	protected static final String PRM_1DECL_1REF_GRD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<org.eventb.core.machineFile"
 			+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-			+ "		version=\"4\">"
+			+ "		version=\"5\">"
 			+ "<org.eventb.core.refinesMachine"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"exporter\"/>"
@@ -148,7 +151,8 @@ public abstract class EventBIndexerTests extends BuilderTest {
 			+ "		<org.eventb.core.guard"
 			+ "				name=\"internal_element1\""
 			+ "				org.eventb.core.label=\"grd1\""
-			+ "				org.eventb.core.predicate=\"prm1 = 1\"/>"
+			+ "				org.eventb.core.predicate=\"prm1 = 1\""
+			+ "				org.eventb.core.theorem=\"false\"/>"
 			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 	
 	public EventBIndexerTests(String name) {

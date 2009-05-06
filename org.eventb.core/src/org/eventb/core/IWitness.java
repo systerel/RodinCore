@@ -31,6 +31,7 @@ import org.rodinp.core.RodinCore;
  * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IWitness extends ICommentedElement, ILabeledElement, IPredicateElement {
 	

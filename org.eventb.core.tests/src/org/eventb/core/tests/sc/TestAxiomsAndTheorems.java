@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -34,7 +35,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 
 		addCarrierSets(con, "S1");
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈ℕ∪S1", "C1∈S1"));
+		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈ℕ∪S1", "C1∈S1"), false, false);
 	
 		saveRodinFileOf(con);
 		
@@ -42,7 +43,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
-		containsAxioms(file, typeEnvironment, makeSList("A2"), makeSList("C1∈S1"));
+		containsAxioms(file, typeEnvironment, makeSList("A2"), makeSList("C1∈S1"), false);
 		
 		hasMarker(con.getAxioms()[0]);
 	}
@@ -59,7 +60,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 		
 		addCarrierSets(con, "S1");
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1", "A2", "A3", "A4"), makeSList("C1=C1", "C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"));
+		addAxioms(con, makeSList("A1", "A2", "A3", "A4"), makeSList("C1=C1", "C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"), false, false, false, false);
 	
 		saveRodinFileOf(con);
 		
@@ -67,7 +68,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 		
 		ISCContextRoot file = con.getSCContextRoot();
 		
-		containsAxioms(file, typeEnvironment, makeSList("A2", "A3", "A4"), makeSList("C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"));
+		containsAxioms(file, typeEnvironment, makeSList("A2", "A3", "A4"), makeSList("C1∈S1", "C1∈{C1}", "S1 ⊆ {C1}"), false, false, false);
 		
 		hasMarker(con.getAxioms()[0]);
 		

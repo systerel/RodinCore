@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -28,7 +29,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_00() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ≠∅"), false);
 		
 		getGeneric().save(con);
 		
@@ -36,7 +37,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"), false);
 		
 		getGeneric().containsMarkers(con, false);
 	}
@@ -47,8 +48,8 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_01() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ≠∅"));
-		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("ℕ=∅"));
+		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ≠∅"), false);
+		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ=∅"), false);
 	
 		getGeneric().save(con);
 		
@@ -56,9 +57,9 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("P"), makeSList("ℕ≠∅"), false);
 		
-		hasMarker(getGeneric().getNonTheorems(con)[1]);
+		hasMarker(getGeneric().getPredicates(con)[1]);
 	}
 	
 	/**
@@ -67,7 +68,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_02() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("ℕ≠BOOL"));
+		getGeneric().addPredicates(con, makeSList("A1"), makeSList("ℕ≠BOOL"), false);
 	
 		getGeneric().save(con);
 		
@@ -75,9 +76,9 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
-		hasMarker(getGeneric().getNonTheorems(con)[0]);
+		hasMarker(getGeneric().getPredicates(con)[0]);
 	}
 	
 	/**
@@ -87,7 +88,7 @@ extends GenericEventBSCTest<E, SCE> {
 		E con = getGeneric().createElement("con");
 
 		getGeneric().addIdents(con, "x");
-		getGeneric().addNonTheorems(con, makeSList("P"), makeSList("x∈1‥0"));
+		getGeneric().addPredicates(con, makeSList("P"), makeSList("x∈1‥0"), false);
 	
 		getGeneric().save(con);
 		
@@ -95,7 +96,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("P"), makeSList("x∈1‥0"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("P"), makeSList("x∈1‥0"), false);
 		
 		getGeneric().containsMarkers(con, false);
 	}
@@ -106,7 +107,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_04() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		getGeneric().addPredicates(con, makeSList("A1"), makeSList("C1∈ℕ"), false);
 	
 		getGeneric().save(con);
 		
@@ -114,9 +115,9 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
-		hasMarker(getGeneric().getNonTheorems(con)[0]);
+		hasMarker(getGeneric().getPredicates(con)[0]);
 	}
 
 	/**
@@ -125,7 +126,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_05() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), true);
 		
 		getGeneric().save(con);
 		
@@ -133,7 +134,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"), true);
 		
 		getGeneric().containsMarkers(con, false);
 	}
@@ -144,7 +145,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_06() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addTheorems(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
+		getGeneric().addPredicates(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"), true, true);
 		
 		getGeneric().save(con);
 		
@@ -152,7 +153,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"), true, true);
 		
 		getGeneric().containsMarkers(con, false);
 	}
@@ -163,8 +164,8 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_07() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), true);
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ=∅"), true);
 		
 		getGeneric().save(con);
 		
@@ -172,9 +173,9 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"), true);
 		
-		hasMarker(getGeneric().getTheorems(con)[1]);
+		hasMarker(getGeneric().getPredicates(con)[1]);
 	}
 	
 	/**
@@ -183,8 +184,8 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_08() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("T1"), makeSList("ℕ≠∅"));
-		getGeneric().addTheorems(con, makeSList("T1"), makeSList("ℕ=∅"));
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), false);
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ=∅"), true);
 		
 		getGeneric().save(con);
 		
@@ -192,10 +193,9 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"));
-		getGeneric().containsTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList("T1"), makeSList("ℕ≠∅"), false);
 		
-		hasMarker(getGeneric().getTheorems(con)[0]);
+		hasMarker(getGeneric().getPredicates(con)[0]);
 		
 	}
 	
@@ -207,8 +207,8 @@ extends GenericEventBSCTest<E, SCE> {
 		E con = getGeneric().createElement("con");
 
 		getGeneric().addIdents(con, "C1", "C1");
-		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("C1=∅"));
-		getGeneric().addNonTheorems(con, makeSList("A2"), makeSList("C2=∅"));
+		getGeneric().addPredicates(con, makeSList("A1"), makeSList("C1=∅"), false);
+		getGeneric().addPredicates(con, makeSList("A2"), makeSList("C2=∅"), false);
 	
 		getGeneric().save(con);
 		
@@ -216,13 +216,13 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
-		hasMarker(getGeneric().getNonTheorems(con)[0]);
-		hasNotMarker(getGeneric().getNonTheorems(con)[0], ParseProblem.TypeUnknownError);
+		hasMarker(getGeneric().getPredicates(con)[0]);
+		hasNotMarker(getGeneric().getPredicates(con)[0], ParseProblem.TypeUnknownError);
 		
-		hasMarker(getGeneric().getNonTheorems(con)[1]);
-		hasNotMarker(getGeneric().getNonTheorems(con)[1], ParseProblem.TypeUnknownError);
+		hasMarker(getGeneric().getPredicates(con)[1]);
+		hasNotMarker(getGeneric().getPredicates(con)[1], ParseProblem.TypeUnknownError);
 	}
 
 	/**
@@ -231,7 +231,7 @@ extends GenericEventBSCTest<E, SCE> {
 	public void test_10_bug2689872() throws Exception {
 		E con = getGeneric().createElement("con");
 
-		getGeneric().addNonTheorems(con, makeSList("A1"), makeSList("0/=1"));
+		getGeneric().addPredicates(con, makeSList("A1"), makeSList("0/=1"), false);
 	
 		getGeneric().save(con);
 		
@@ -239,13 +239,29 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		SCE file = getGeneric().getSCElement(con);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
-		hasMarker(getGeneric().getNonTheorems(con)[0],
+		hasMarker(getGeneric().getPredicates(con)[0],
 				EventBAttributes.PREDICATE_ATTRIBUTE,
 				ParseProblem.LexerError,
 				"/"
 				);
+	}
+
+	/**
+	 * A piece of data can now be typed by a theorem.
+	 */
+	public void test_11() throws Exception {
+		E con = getGeneric().createElement("con");
+
+		getGeneric().addIdents(con, "C1");
+		getGeneric().addPredicates(con, makeSList("T1"), makeSList("C1 ∈ ℤ"), true);
+	
+		getGeneric().save(con);
+		
+		runBuilder();
+
+		getGeneric().containsMarkers(con, false);
 	}
 
 }

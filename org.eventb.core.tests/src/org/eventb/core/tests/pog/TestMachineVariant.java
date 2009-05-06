@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -162,6 +163,7 @@ public class TestMachineVariant extends EventBPOTest {
 
 	String[] invLabels = makeSList("I1", "I2", "I3");
 	String[] invPredicates = makeSList("A ⊆ ℤ", "x ∈ ℤ", "y ∈ ℤ");
+	boolean[] isTheorem = new boolean[] { false, false, false};
 	
 	ITypeEnvironment environment;
 	{
@@ -227,7 +229,7 @@ public class TestMachineVariant extends EventBPOTest {
 	private IMachineRoot createMachineFragment(String macName) throws RodinDBException {
 		IMachineRoot mac = createMachine(macName);
 		addVariables(mac, "A", "x", "y");
-		addInvariants(mac, invLabels, invPredicates);
+		addInvariants(mac, invLabels, invPredicates, isTheorem);
 		return mac;
 	}
 
@@ -277,7 +279,7 @@ public class TestMachineVariant extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		IEvent aev = addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -333,7 +335,7 @@ public class TestMachineVariant extends EventBPOTest {
 	public void test_07_mergeAntCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		IEvent aev = addEvent(abs, "aev", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -380,7 +382,7 @@ public class TestMachineVariant extends EventBPOTest {
 	public void test_08_mergeAntCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		IEvent aev = addEvent(abs, "aev", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -428,7 +430,7 @@ public class TestMachineVariant extends EventBPOTest {
 	public void test_09_antRefinesCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		IEvent aev = addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 

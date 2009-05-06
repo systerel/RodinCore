@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -30,7 +31,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, "ax", "ay");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"), false, false);
 		addEvent(abs, IEvent.INITIALISATION, 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -44,7 +45,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "ay");
-		addInvariants(mac, makeSList("I3"), makeSList("cx=ax+1"));
+		addInvariants(mac, makeSList("I3"), makeSList("cx=ax+1"), false);
 		IEvent event = addEvent(mac, IEvent.INITIALISATION, 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -80,7 +81,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax", "ay");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("ax>0", "ay≥6"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("pp"), 
 				makeSList("G1"), makeSList("pp⊆ℕ∖{0}"), 
@@ -94,7 +95,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "ay");
-		addInvariants(mac, makeSList("I3"), makeSList("cx=ay+1"));
+		addInvariants(mac, makeSList("I3"), makeSList("cx=ay+1"), false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("qq"), 
 				makeSList("G1"), makeSList("qq∈ℕ"), 
@@ -157,7 +158,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax", "ay", "az");
-		addInvariants(abs, makeSList("I1", "I2", "I3"), makeSList("ax>0", "ay>0", "az>0"));
+		addInvariants(abs, makeSList("I1", "I2", "I3"), makeSList("ax>0", "ay>0", "az>0"), false, false, false);
 		addEvent(abs, "evt", 
 				makeSList("pp"), 
 				makeSList("G1"), makeSList("pp⊆ℕ"), 
@@ -171,7 +172,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "cx", "cy", "cz");
-		addInvariants(mac, makeSList("I1", "I2", "I3"), makeSList("cx>ax", "cy+ax>ay", "cz+ay+ax>az"));
+		addInvariants(mac, makeSList("I1", "I2", "I3"), makeSList("cx>ax", "cy+ax>ay", "cz+ay+ax>az"), false, false, false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("qq"), 
 				makeSList("G1"), makeSList("qq∈ℕ"), 
@@ -231,7 +232,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "ax");
-		addInvariants(abs, makeSList("I1"), makeSList("ax>0"));
+		addInvariants(abs, makeSList("I1"), makeSList("ax>0"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -245,7 +246,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "qq", "cy");
-		addInvariants(mac, makeSList("I2", "I3"), makeSList("qq=0 ⇒ ax=cy", "qq=1 ⇒ ax=cy+1"));
+		addInvariants(mac, makeSList("I2", "I3"), makeSList("qq=0 ⇒ ax=cy", "qq=1 ⇒ ax=cy+1"), false, false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList("G1"), makeSList("cy=0"), 
@@ -285,7 +286,8 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		addVariables(abs, "ax", "ay", "az");
 		addInvariants(abs, 
 				makeSList("I1", "I2", "I3"), 
-				makeSList("ax>0", "ay∈{0,1}", "az>ax"));
+				makeSList("ax>0", "ay∈{0,1}", "az>ax"),
+				false, false, false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList("G1"), makeSList("az>0"), 
@@ -300,7 +302,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "ay", "az", "cz");
 		addInvariants(mac, makeSList("I4"), 
-				makeSList("cz∈{1,2}"));
+				makeSList("cz∈{1,2}"), false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList("G1"), makeSList("az>0"), 

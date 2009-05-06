@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -27,7 +28,7 @@ public class TestMachineSeesContext extends EventBPOTest {
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"), false);
 		
 		saveRodinFileOf(con);
 		
@@ -37,7 +38,7 @@ public class TestMachineSeesContext extends EventBPOTest {
 		
 		addMachineSees(mac, "con");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");

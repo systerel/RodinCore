@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -49,7 +50,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_01_initCtxPredSet() throws Exception {
 		IContextRoot root = createContext("ctx");
-		addAxioms(root, makeSList("A"), makeSList("ℕ≠∅"));
+		addAxioms(root, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(root);
 		
 		runBuilder();
@@ -65,7 +66,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_02_initCtxSequent() throws Exception {
 		IContextRoot root = createContext("ctx");
-		addTheorems(root, makeSList("T"), makeSList("ℕ≠∅"));
+		addAxioms(root, makeSList("T"), makeSList("ℕ≠∅"), true);
 		saveRodinFileOf(root);
 	
 		runBuilder();
@@ -80,7 +81,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_03_initMchPredSet() throws Exception {
 		IMachineRoot root = createMachine("mch");
-		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"));
+		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(root);
 		
 		runBuilder();
@@ -97,7 +98,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_04_initMchSequent() throws Exception {
 		IMachineRoot root = createMachine("mch");
-		addTheorems(root, makeSList("A"), makeSList("ℕ≠∅"));
+		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), true);
 		saveRodinFileOf(root);
 		
 		runBuilder();
@@ -112,12 +113,12 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_05_addCtxPredSetAndSeq() throws Exception {
 		IContextRoot con = createContext("ctx");
-		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"));
+		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
 		
-		addAxioms(con, makeSList("B"), makeSList("∀x·x÷x=1"));
+		addAxioms(con, makeSList("B"), makeSList("∀x·x÷x=1"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
@@ -135,12 +136,12 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_06_addMchPredSetAndSeq() throws Exception {
 		IMachineRoot root = createMachine("mch");
-		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"));
+		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(root);
 		
 		runBuilder();
 		
-		addInvariants(root, makeSList("B"), makeSList("∀x·x÷x=1"));
+		addInvariants(root, makeSList("B"), makeSList("∀x·x÷x=1"), false);
 		saveRodinFileOf(root);
 		
 		runBuilder();
@@ -160,7 +161,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_07_chgCtxPredSetAndSeq() throws Exception {
 		IContextRoot con = createContext("ctx");
-		addAxioms(con, makeSList("A"), makeSList("∀f·f(0)=0"));
+		addAxioms(con, makeSList("A"), makeSList("∀f·f(0)=0"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
@@ -169,7 +170,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		
 		con = createContext("ctx");
 		
-		addAxioms(con, makeSList("B"), makeSList("∀x·x÷x=1"));
+		addAxioms(con, makeSList("B"), makeSList("∀x·x÷x=1"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
@@ -186,7 +187,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_08_chgMchPredSetAndSeq() throws Exception {
 		IMachineRoot mac = createMachine("mch");
-		addInvariants(mac, makeSList("A"), makeSList("∀f·f(0)=0"));
+		addInvariants(mac, makeSList("A"), makeSList("∀f·f(0)=0"), false);
 		saveRodinFileOf(mac);
 		
 		runBuilder();
@@ -194,7 +195,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		hasStamp(mac.getPORoot().getSequents()[0], IPOStampedElement.INIT_STAMP);
 		
 		mac = createMachine("mch");
-		addInvariants(mac, makeSList("B"), makeSList("∀x·x÷x=1"));
+		addInvariants(mac, makeSList("B"), makeSList("∀x·x÷x=1"), false);
 		saveRodinFileOf(mac);
 		
 		runBuilder();
@@ -213,7 +214,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_09_delCtxPredSet() throws Exception {
 		IContextRoot con = createContext("ctx");
-		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"));
+		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
@@ -236,7 +237,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_10_delMchPredSet() throws Exception {
 		IMachineRoot mch = createMachine("mch");
-		addInvariants(mch, makeSList("A"), makeSList("ℕ≠∅"));
+		addInvariants(mch, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(mch);
 		
 		runBuilder();
@@ -258,12 +259,12 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_11_chgAbsCtxPredSet() throws Exception {
 		IContextRoot abs = createContext("abs");
-		addAxioms(abs, makeSList("Z"), makeSList("ℕ≠∅"));
+		addAxioms(abs, makeSList("Z"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(abs);
 		
 		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
-		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"));
+		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(con);
 		
 		runBuilder();
@@ -287,12 +288,12 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_12_chgAbsMchPredSet() throws Exception {
 		IMachineRoot abs = createMachine("abs");
-		addInvariants(abs, makeSList("Z"), makeSList("ℕ≠∅"));
+		addInvariants(abs, makeSList("Z"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(abs);
 		
 		IMachineRoot mch = createMachine("mch");
 		addMachineRefines(mch, "abs");
-		addInvariants(mch, makeSList("A"), makeSList("ℕ≠∅"));
+		addInvariants(mch, makeSList("A"), makeSList("ℕ≠∅"), false);
 		saveRodinFileOf(mch);
 		
 		runBuilder();
@@ -316,7 +317,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	public void testDelta_13_chgManyCtxPredSet() throws Exception {
 		for (int i=0; i<10; i++) {
 			IContextRoot con = createContext("ctx");
-			addAxioms(con, makeSList("A"), makeSList("∀x·x=" + i));
+			addAxioms(con, makeSList("A"), makeSList("∀x·x=" + i), false);
 			saveRodinFileOf(con);
 		
 			runBuilder();
@@ -333,10 +334,10 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 */
 	public void testDelta_14_noChange() throws Exception {
 		IContextRoot con = createContext("ctx");
-		addTheorems(con, makeSList("T"), makeSList("∀x·x=1"));
+		addAxioms(con, makeSList("T"), makeSList("∀x·x=1"), true);
 		saveRodinFileOf(con);
 		IMachineRoot mac = createMachine("mch");
-		addTheorems(mac, makeSList("T"), makeSList("∀x·x=1"));
+		addInvariants(mac, makeSList("T"), makeSList("∀x·x=1"), true);
 		saveRodinFileOf(mac);
 		
 		runBuilder();
@@ -366,7 +367,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		final IMachineRoot mac = createMachine("mac");
 		final IPORoot po = mac.getPORoot();
 		
-		addInvariants(mac, makeSList("I"), makeSList("1∈ℤ"));
+		addInvariants(mac, makeSList("I"), makeSList("1∈ℤ"), false);
 		saveRodinFileOf(mac);
 
 		runBuilder();
@@ -384,7 +385,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	public void testDelta_16_chgIndirectGuard() throws Exception {
 		final IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList("G1"), makeSList("1 < x"), 
@@ -417,7 +418,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	public void testDelta_17_chgIndirectInvariant() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "u");
-		addInvariants(abs, makeSList("H"), makeSList("u>0"));
+		addInvariants(abs, makeSList("H"), makeSList("u>0"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -427,7 +428,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 		IMachineRoot mac = createMachine("mch");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "u", "v");
-		addInvariants(mac, makeSList("I"), makeSList("v=u"));
+		addInvariants(mac, makeSList("I"), makeSList("v=u"), false);
 		IEvent evt = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 

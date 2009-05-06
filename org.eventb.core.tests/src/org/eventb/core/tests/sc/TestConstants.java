@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -31,7 +32,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 
 		addConstants(con, makeSList("C1"));
 		addCarrierSets(con, makeSList("S1"));
-		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"), false);
 		
 		saveRodinFileOf(con);
 		
@@ -47,7 +48,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		containsConstants(file, "C1");
 		
-		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"));
+		containsAxioms(file, environment, makeSList("A1"), makeSList("C1∈S1"), false);
 		
 		containsMarkers(con, false);
 	}
@@ -58,7 +59,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	public void testConstants_04_constantFromAbstraction() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
-		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"), false);
 		
 		saveRodinFileOf(abs1);
 		
@@ -68,7 +69,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addContextExtends(con, "abs1");
 
 		addConstants(con, makeSList("C2"));
-		addAxioms(con, makeSList("A1"), makeSList("C2∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C2∈ℕ"), false);
 		
 		saveRodinFileOf(con);
 		
@@ -91,7 +92,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	public void testConstants_05_constantFromAbstractionNameConflict() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
-		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(abs1, makeSList("A1"), makeSList("C1∈ℕ"), true);
 		
 		saveRodinFileOf(abs1);
 		
@@ -102,7 +103,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addContextExtends(con, "abs1");
 
 		addConstants(con, makeSList("C1"));
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), true);
 		
 		saveRodinFileOf(con);
 		
@@ -127,7 +128,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		IContextRoot con = createContext("con");
 
 		addConstants(con, makeSList("d"));
-		addAxioms(con, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
+		addAxioms(con, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"), false, false);
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("d", factory.makeIntegerType());
@@ -139,7 +140,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		ISCContextRoot file = con.getSCContextRoot();
 		
 		containsConstants(file, "d");
-		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"));
+		containsAxioms(file, typeEnvironment, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"), false, false);
 		
 		containsMarkers(con, false);
 	}
@@ -150,7 +151,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	public void testConstants_07_constantFromAbstractionAbstractionNameConflict() throws Exception {
 		final IContextRoot root1 = createContext("c1");
 		addConstants(root1, makeSList("C1"));
-		addAxioms(root1, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(root1, makeSList("A1"), makeSList("C1∈ℕ"), false);
 		saveRodinFileOf(root1);
 		runBuilder();
 		
@@ -162,7 +163,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		final IContextRoot root3 = createContext("c3");
 		addContextExtends(root3, root2.getComponentName());
 		addConstants(root3, makeSList("C1"));
-		addAxioms(root3, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(root3, makeSList("A1"), makeSList("C1∈ℕ"), false);
 		saveRodinFileOf(root3);
 		runBuilder();
 

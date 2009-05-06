@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 
 package org.eventb.core.tests.versions;
@@ -76,8 +77,8 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 
 		try {
 			final IContextRoot root = (IContextRoot) file.getRoot();
-			final IAxiom axiom = root.getAxiom("internal_axm1");
-			final String actual = axiom.getPredicateString();
+			final IAxiom[] axioms = root.getAxioms();
+			final String actual = assertSingleGet(axioms).getPredicateString();
 			return actual;
 		} finally {
 			file.delete(true, null);
@@ -123,9 +124,17 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		
 		final IRodinFile file = rodinProject.getRodinFile(CTX_NAME);
 		final IContextRoot root = (IContextRoot) file.getRoot();
-		final String axiomUpg = root.getAxiom("internal_axm1").getPredicateString();
-		final String theoremUpg = root.getTheorem("internal_thm1").getPredicateString();
+		final IAxiom[] axioms = root.getAxioms();
 		
+		final String axiomUpg;
+		final String theoremUpg;
+		if (axioms[0].isTheorem()) {
+			axiomUpg = axioms[1].getPredicateString();
+			theoremUpg = axioms[0].getPredicateString();
+		} else {
+			axiomUpg = axioms[0].getPredicateString();
+			theoremUpg = axioms[1].getPredicateString();
+		}
 		assertChanged(axiom, axiomUpg);
 		assertChanged(theorem, theoremUpg);
 	}
@@ -178,12 +187,12 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		
 		final IRodinFile file = rodinProject.getRodinFile(MCH_NAME);
 		final IMachineRoot root = (IMachineRoot) file.getRoot();
-		final String invariantUpg = root.getInvariant("internal_inv1").getPredicateString();
-		final String variantUpg = root.getVariant("internal_1").getExpressionString();
-		final IEvent event = root.getEvent("internal_evt1");
-		final String guardUpg = event.getGuard("internal_grd1").getPredicateString();
-		final String witnessUpg = event.getWitness("internal_wit1").getPredicateString();
-		final String actionUpg = event.getAction("internal_act1").getAssignmentString();
+		final String invariantUpg = assertSingleGet(root.getInvariants()).getPredicateString();
+		final String variantUpg = assertSingleGet(root.getVariants()).getExpressionString();
+		final IEvent event = assertSingleGet(root.getEvents());
+		final String guardUpg = assertSingleGet(event.getGuards()).getPredicateString();
+		final String witnessUpg = assertSingleGet(event.getWitnesses()).getPredicateString();
+		final String actionUpg = assertSingleGet(event.getActions()).getAssignmentString();
 		
 		assertChanged(invariant, invariantUpg);
 		assertChanged(variant, variantUpg);

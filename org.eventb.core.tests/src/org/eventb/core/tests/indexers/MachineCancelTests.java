@@ -84,18 +84,20 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelInPredicates() throws Exception {
 		final String VAR_1DECL_2REF_2INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 				+ "<org.eventb.core.variable"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.identifier=\"var1\"/>"
 				+ "<org.eventb.core.invariant"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.label=\"inv1\""
-				+ "		org.eventb.core.predicate=\"var1 = 0\"/>"
+				+ "		org.eventb.core.predicate=\"var1 = 0\""
+				+ " 	org.eventb.core.theorem=\"false\"/>"	
 				+ "<org.eventb.core.invariant"
 				+ "		name=\"internal_element2\""
 				+ "		org.eventb.core.label=\"inv2\""
-				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
+				+ "		org.eventb.core.predicate=\"var1 = 1\""
+				+ " 	org.eventb.core.theorem=\"false\"/>"	
 				+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
@@ -114,7 +116,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelInExpressions() throws Exception {
 		final String VAR_1DECL_2REF_2VRT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 				+ "<org.eventb.core.variable"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -142,12 +144,13 @@ public class MachineCancelTests extends EventBIndexerTests {
 
 	public void testCancelEventsInActions() throws Exception {
 		final String VAR_4OCC = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 				+ "<org.eventb.core.refinesMachine name=\"internal_element1\" org.eventb.core.target=\"exporter\"/>"
 				+ "		<org.eventb.core.variable"
 				+ "				name=\"internal_element1\""
 				+ "				org.eventb.core.identifier=\"var1\"/>"
-				+ "		<org.eventb.core.event" + "				name=\"internal_element1\""
+				+ "		<org.eventb.core.event"
+				+ "				name=\"internal_element1\""
 				+ "				org.eventb.core.convergence=\"0\""
 				+ "				org.eventb.core.extended=\"true\""
 				+ "				org.eventb.core.label=\"evt1\">"

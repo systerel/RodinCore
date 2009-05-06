@@ -10,8 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.tests.indexers.OccUtils.*;
-import static org.eventb.core.tests.indexers.ResourceUtils.*;
+import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
+import static org.eventb.core.tests.indexers.OccUtils.makeModifAssign;
+import static org.eventb.core.tests.indexers.OccUtils.makeRedeclIdent;
+import static org.eventb.core.tests.indexers.OccUtils.makeRedeclLabel;
+import static org.eventb.core.tests.indexers.OccUtils.makeRedeclTarget;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefAssign;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefExpr;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefLabel;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
+import static org.eventb.core.tests.indexers.OccUtils.newDecl;
+import static org.eventb.core.tests.indexers.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT2;
+import static org.eventb.core.tests.indexers.ResourceUtils.MCH_BARE_NAME;
 
 import org.eventb.core.IAction;
 import org.eventb.core.ICarrierSet;
@@ -23,7 +35,6 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -118,14 +129,15 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testDoubleOccurrenceSameElement() throws Exception {
 		final String VAR_1DECL_2OCC_SAME_INV =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
 						+ "<org.eventb.core.invariant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"inv1\""
-						+ "		org.eventb.core.predicate=\"var1 ≥ var1\"/>"
+						+ "		org.eventb.core.predicate=\"var1 ≥ var1\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot machine =
@@ -194,7 +206,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 					+ "<org.eventb.core.contextFile"
 					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"2\">"
+					+ "		version=\"3\">"
 					+ "<org.eventb.core.carrierSet"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.identifier=\"set1\"/>"
@@ -229,11 +241,12 @@ public class MachineIndexerTests extends EventBIndexerTests {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 					+ "<org.eventb.core.machineFile"
 					+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-					+ "		version=\"4\">"
+					+ "		version=\"5\">"
 					+ "		<org.eventb.core.invariant "
 					+ "				name=\"internal_element1\""
 					+ "				org.eventb.core.label=\"inv1\""
-					+ "				org.eventb.core.predicate=\"var1 &gt; 1\"/>"
+					+ "				org.eventb.core.predicate=\"var1 &gt; 1\""
+					+ " 			org.eventb.core.theorem=\"false\"/>"
 					+ "</org.eventb.core.machineFile>";
 
 	/**
@@ -345,14 +358,15 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.seesContext"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"context\"/>"
 						+ "<org.eventb.core.invariant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"inv1\""
-						+ "		org.eventb.core.predicate=\"cst1 ∈ set1\"/>"
+						+ "		org.eventb.core.predicate=\"cst1 ∈ set1\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot machine =
@@ -377,14 +391,15 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
-						+ "<org.eventb.core.theorem"
+						+ "<org.eventb.core.invariant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"thm1\""
-						+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
+						+ "		org.eventb.core.predicate=\"var1 = 1\""
+						+ " 	org.eventb.core.theorem=\"true\"/>"
 						+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot machine =
@@ -394,7 +409,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final IDeclaration declVar1 =
 				getDeclVar(machine, INTERNAL_ELEMENT1, VAR1);
 
-		final ITheorem theorem = machine.getTheorem(INTERNAL_ELEMENT1);
+		final IInvariant theorem = machine.getInvariant(INTERNAL_ELEMENT1);
 		final IOccurrence occRef = makeRefPred(theorem, 0, 4, declVar1);
 
 		final BridgeStub tk = new BridgeStub(machine);
@@ -411,7 +426,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -495,7 +510,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final String ABSTRACT_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
 		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-		+ "		version=\"4\">"
+		+ "		version=\"5\">"
 		+ "<org.eventb.core.event"
 		+ "		name=\"internal_element1\""
 		+ "		org.eventb.core.convergence=\"0\""
@@ -506,7 +521,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		final String CONCRETE_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
 		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-		+ "		version=\"4\">"
+		+ "		version=\"5\">"
 		+ "<org.eventb.core.refinesMachine"
 		+ "		name=\"internal_element1\""
 		+ "		org.eventb.core.target=\"exporter\"/>"
@@ -623,7 +638,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final String PRM_2REF_LBL_PRED_WIT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -672,7 +687,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile "
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -724,7 +739,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -772,7 +787,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -819,7 +834,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -837,7 +852,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 						+ "		<org.eventb.core.guard"
 						+ "				name=\"internal_element1\""
 						+ "				org.eventb.core.label=\"grd1\""
-						+ "				org.eventb.core.predicate=\"prm1 = var1\"/>"
+						+ "				org.eventb.core.predicate=\"prm1 = var1\""
+						+ " 			org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.event>"
 						+ "</org.eventb.core.machineFile>";
 
@@ -907,7 +923,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						+ "<org.eventb.core.machineFile"
 						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-						+ "		version=\"4\">"
+						+ "		version=\"5\">"
 						+ "<org.eventb.core.refinesMachine"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -962,7 +978,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		final String VARCST_1DECL_1REF_INV =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.seesContext"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.target=\"exporter\"/>"
@@ -972,7 +988,8 @@ public class MachineIndexerTests extends EventBIndexerTests {
 						+ "	<org.eventb.core.invariant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"inv1\""
-						+ "		org.eventb.core.predicate=\"cst1 = 0\"/>"
+						+ "		org.eventb.core.predicate=\"cst1 = 0\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot importer =
@@ -996,14 +1013,15 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBadFileType() throws Exception {
 		final String CST_1DECL_1REF_THM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"
-						+ "<org.eventb.core.theorem"
+						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"thm1\""
-						+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\"/>"
+						+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\""
+						+ " 	org.eventb.core.theorem=\"true\"/>"
 						+ "</org.eventb.core.contextFile>";
 
 		final IContextRoot context =
@@ -1028,7 +1046,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		// missing closing " after internal_element1 in variable node
 		final String MALFORMED_MACHINE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1"
 						+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1051,7 +1069,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testMissingAttribute() throws Exception {
 		final String VAR_1DECL_NO_IDENT_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\"/>"
 						+ "</org.eventb.core.machineFile>";
@@ -1073,14 +1091,15 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testDoesNotParse() throws Exception {
 		final String VAR_1DECL_INV_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+						+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 						+ "<org.eventb.core.variable"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"var1\"/>"
 						+ "<org.eventb.core.invariant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"inv1\""
-						+ "		org.eventb.core.predicate=\"∃ s · var1 &lt; 1 ∧ ¬\"/>"
+						+ "		org.eventb.core.predicate=\"∃ s · var1 &lt; 1 ∧ ¬\""
+						+ " 	org.eventb.core.theorem=\"false\"/>"
 						+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot machine =
@@ -1098,7 +1117,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBecomesEqualTo() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1151,7 +1170,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		//                              0    |    1     |    2    |    3    |    4    |    5
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"
@@ -1205,7 +1224,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	public void testBecomesMemberOf() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.variable"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"var1\"/>"

@@ -12,7 +12,8 @@ package org.eventb.core.tests.indexers;
 
 import static org.eventb.core.tests.indexers.CancelBridgeStub.NO_LIMIT;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
-import static org.eventb.core.tests.indexers.ResourceUtils.*;
+import static org.eventb.core.tests.indexers.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
 
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
@@ -87,17 +88,19 @@ public class ContextCancelTests extends EventBIndexerTests {
 	public void testCancelInPredicates() throws Exception {
 		final String CST_1DECL_2REF_2AXM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 						+ "<org.eventb.core.constant"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.identifier=\"cst1\"/>"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element1\""
 						+ "		org.eventb.core.label=\"axm1\""
+						+ "		org.eventb.core.theorem=\"false\""
 						+ "		org.eventb.core.predicate=\"cst1 = 1\"/>"
 						+ "<org.eventb.core.axiom"
 						+ "		name=\"internal_element2\""
 						+ "		org.eventb.core.label=\"axm2\""
+						+ "		org.eventb.core.theorem=\"false\""
 						+ "		org.eventb.core.predicate=\"cst1 = 2\"/>"
 						+ "</org.eventb.core.contextFile>";
 

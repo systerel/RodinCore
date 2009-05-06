@@ -8,39 +8,73 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ISCTheorem;
-import org.eventb.core.ITheorem;
+import org.eventb.core.EventBAttributes;
+import org.eventb.core.IDerivedPredicateElement;
+import org.eventb.core.ILabeledElement;
+import org.eventb.core.sc.GraphProblem;
+import org.eventb.core.sc.SCFilterModule;
+import org.eventb.core.sc.state.ILabelSymbolInfo;
+import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.eventb.core.sc.state.ISCStateRepository;
-import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 
 /**
  * @author Stefan Hallerstede
  * 
  */
-public abstract class TheoremModule extends PredicateModule<ITheorem> {
+public abstract class TheoremModule extends SCFilterModule {
 
-	private static String THEOREM_NAME_PREFIX = "THM";
+	private ILabelSymbolTable labelSymbolTable;
 
-	protected void checkAndSaveTheorems(IInternalElement target, int offset,
-			ISCStateRepository repository, IProgressMonitor monitor)
-			throws CoreException {
-
-		checkAndType(target.getElementName(), repository, monitor);
-
-		saveTheorems(target, offset, null);
-	}
-
-	protected abstract ISCTheorem getSCTheorem(IInternalElement target,
-			String elementName);
-
-	private void saveTheorems(IInternalElement parent, int offset,
+	@Override
+	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
-		createSCPredicates(parent, THEOREM_NAME_PREFIX, offset, monitor);
+		super.initModule(repository, monitor);
+		labelSymbolTable = getLabelSymbolTable(repository);
 	}
+
+	public boolean accept(IRodinElement element, ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+	
+		IDerivedPredicateElement derivedElement = (IDerivedPredicateElement) element;
+		if (!derivedElement.hasTheorem()) {
+			createProblemMarker(derivedElement,
+					EventBAttributes.THEOREM_ATTRIBUTE,
+					GraphProblem.DerivedPredUndefError);
+			return false;
+		}
+		final boolean isTheorem = derivedElement.isTheorem();
+		final String label = ((ILabeledElement) element).getLabel();
+	
+		checkAndSetSymbolInfo(label, isTheorem);
+	
+		return true;
+	}
+
+	private void checkAndSetSymbolInfo(String label, boolean isTheorem) {
+		final ILabelSymbolInfo symbolInfo = labelSymbolTable
+				.getSymbolInfo(label);
+		if (symbolInfo == null) {
+			throw new IllegalStateException("No defined symbol for: " + label);
+		}
+		symbolInfo.setAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE,
+				isTheorem);
+	}
+
+	@Override
+	public void endModule(ISCStateRepository repository,
+			IProgressMonitor monitor) throws CoreException {
+		labelSymbolTable = null;
+		super.endModule(repository, monitor);
+	}
+
+	protected abstract ILabelSymbolTable getLabelSymbolTable(
+			ISCStateRepository repository) throws CoreException;
 
 }

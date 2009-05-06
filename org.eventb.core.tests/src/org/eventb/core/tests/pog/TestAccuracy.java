@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -27,8 +28,8 @@ public class TestAccuracy extends EventBPOTest {
 	 */
 	public void testAcc_00() throws Exception {
 		IMachineRoot mac = createMachine("mac");
-		addInvariants(mac, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"));
-		addTheorems(mac, makeSList("T"), makeSList("0>0"));
+		addInvariants(mac, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"), false, false, false);
+		addInvariants(mac, makeSList("T"), makeSList("0>0"), true);
 		saveRodinFileOf(mac);
 		
 		runBuilder();
@@ -46,7 +47,7 @@ public class TestAccuracy extends EventBPOTest {
 	public void testAcc_01() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "m");
-		addInvariants(mac, makeSList("H", "I", "J"), makeSList("m>0", "0>0", "∀x·x÷9>0"));
+		addInvariants(mac, makeSList("H", "I", "J"), makeSList("m>0", "0>0", "∀x·x÷9>0"), false, false, false);
 		addInitialisation(mac, "m");
 		addEvent(mac, "evt", makeSList(), 
 				makeSList("G"), makeSList("p<m"), 
@@ -76,8 +77,8 @@ public class TestAccuracy extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "m");
-		addInvariants(mac, makeSList("H"), makeSList("m>0"));
-		addTheorems(mac, makeSList("T"), makeSList("9>9"));
+		addInvariants(mac, makeSList("H"), makeSList("m>0"), false);
+		addInvariants(mac, makeSList("T"), makeSList("9>9"), true);
 		addInitialisation(mac, "m");
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
@@ -111,8 +112,8 @@ public class TestAccuracy extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "m");
-		addInvariants(mac, makeSList("H"), makeSList("m>0"));
-		addTheorems(mac, makeSList("T"), makeSList("9>9"));
+		addInvariants(mac, makeSList("H"), makeSList("m>0"), false);
+		addInvariants(mac, makeSList("T"), makeSList("9>9"), true);
 		addInitialisation(mac, "m");
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
@@ -134,8 +135,8 @@ public class TestAccuracy extends EventBPOTest {
 	 */
 	public void testAcc_04() throws Exception {
 		IContextRoot ctx = createContext("ctx");
-		addAxioms(ctx, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"));
-		addTheorems(ctx, makeSList("T"), makeSList("0>0"));
+		addAxioms(ctx, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"), false, false, false);
+		addAxioms(ctx, makeSList("T"), makeSList("0>0"), true);
 		saveRodinFileOf(ctx);
 		
 		runBuilder();
@@ -169,8 +170,8 @@ public class TestAccuracy extends EventBPOTest {
 		IMachineRoot mac =  createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "m");
-		addInvariants(mac, makeSList("H"), makeSList("m>0"));
-		addTheorems(mac, makeSList("T"), makeSList("9>9"));
+		addInvariants(mac, makeSList("H"), makeSList("m>0"), false);
+		addInvariants(mac, makeSList("T"), makeSList("9>9"), true);
 		addInitialisation(mac, "m");
 		IEvent evt = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 

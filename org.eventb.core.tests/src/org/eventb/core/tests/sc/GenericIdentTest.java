@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -48,7 +49,7 @@ extends GenericEventBSCTest<E, SCE> {
 		E cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, makeSList("V1"));
-		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V1∈ℤ"));
+		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("V1∈ℤ"), false);
 		
 		getGeneric().save(cmp);
 		
@@ -61,7 +62,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsIdents(file, "V1");
 		
-		getGeneric().containsNonTheorems(file, environment, makeSList("I1"), makeSList("V1∈ℤ"));
+		getGeneric().containsPredicates(file, environment, makeSList("I1"), makeSList("V1∈ℤ"), false);
 
 		getGeneric().containsMarkers(cmp, false);
 	}
@@ -73,7 +74,7 @@ extends GenericEventBSCTest<E, SCE> {
 		E cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, makeSList("V1"));
-		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V2∈ℤ"));
+		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("V2∈ℤ"), false);
 
 		getGeneric().save(cmp);
 		
@@ -83,10 +84,10 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsIdents(file);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
 		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
+		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 	
 	/**
@@ -96,7 +97,7 @@ extends GenericEventBSCTest<E, SCE> {
 		E cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, makeSList("V1", "V1"));
-		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("V1∈ℤ"));
+		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("V1∈ℤ"), false);
 
 		getGeneric().save(cmp);
 		
@@ -106,11 +107,11 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsIdents(file);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
 		hasMarker(getGeneric().getIdents(cmp)[0]);
 		hasMarker(getGeneric().getIdents(cmp)[1]);
-		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
+		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 
 	/**
@@ -120,7 +121,7 @@ extends GenericEventBSCTest<E, SCE> {
 		E cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, makeSList("/V1"));
-		getGeneric().addNonTheorems(cmp, makeSList("I1"), makeSList("/V1∈ℤ"));
+		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("/V1∈ℤ"), false);
 
 		getGeneric().save(cmp);
 		
@@ -130,10 +131,10 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		getGeneric().containsIdents(file);
 		
-		getGeneric().containsNonTheorems(file, emptyEnv, makeSList(), makeSList());
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
 		
 		hasMarker(getGeneric().getIdents(cmp)[0]);
-		hasMarker(getGeneric().getNonTheorems(cmp)[0]);
+		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 
 }

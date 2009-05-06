@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -30,7 +31,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"));
+		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), 
@@ -67,7 +68,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
-		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL"));
+		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL"), false, false);
 		addEvent(mac, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
@@ -106,7 +107,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
-		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
+		addInvariants(mac, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"), false, false);
 		addEvent(mac, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
@@ -146,7 +147,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		
 		
 		addVariables(abs, "x", "z");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
@@ -197,7 +198,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, "x", "z");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
@@ -209,7 +210,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, "x", "zc");
-		addInvariants(mac, makeSList("JC"), makeSList("zc∈BOOL∖{TRUE}"));
+		addInvariants(mac, makeSList("JC"), makeSList("zc∈BOOL∖{TRUE}"), false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("yc"), 
 				makeSList("GC", "HC"), makeSList("yc>1", "x=1"), 
@@ -258,7 +259,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot abs = createMachine("abs");
 		
 		addVariables(abs, "x", "z");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈0‥4", "z∈BOOL∖{TRUE}"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
@@ -270,7 +271,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, "x", "zc");
-		addInvariants(mac, makeSList("JC", "JD"), makeSList("zc∈BOOL∖{TRUE}", "z≠zc"));
+		addInvariants(mac, makeSList("JC", "JD"), makeSList("zc∈BOOL∖{TRUE}", "z≠zc"), false, false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("yc"), 
 				makeSList("GC", "HC"), makeSList("yc>1", "x=1"), 
@@ -319,7 +320,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x", "z");
-		addInvariants(mac, makeSList("I", "J", "K"), makeSList("x=min(0‥4)", "z∈ℕ→ℕ", "x≤z(x)"));
+		addInvariants(mac, makeSList("I", "J", "K"), makeSList("x=min(0‥4)", "z∈ℕ→ℕ", "x≤z(x)"), false, false, false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -363,7 +364,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"));
+		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"), false);
 		IEvent evt = addEvent(mac, "evt", 
 				makeSList("y"), 
 				makeSList("G", "H", "K"), makeSList("y>1", "x÷x=0", "x+y=0"), 

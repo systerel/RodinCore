@@ -27,6 +27,7 @@ import org.rodinp.core.IRodinElement;
  * @author Stefan Hallerstede
  *
  */
+@Deprecated
 public class SCTheorem extends SCPredicateElement implements ISCTheorem {
 
 	/**

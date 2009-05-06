@@ -18,7 +18,6 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -32,6 +31,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  *
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public class ContextRoot extends EventBRoot implements IContextRoot{
 	
@@ -71,12 +71,14 @@ public class ContextRoot extends EventBRoot implements IContextRoot{
 		return getChildrenOfType(IAxiom.ELEMENT_TYPE); 
 	}
 	
-	public ITheorem getTheorem(String elementName) {
-		return getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+	@Deprecated
+	public org.eventb.core.ITheorem getTheorem(String elementName) {
+		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
 	}
 
-	public ITheorem[] getTheorems() throws RodinDBException {
-		return getChildrenOfType(ITheorem.ELEMENT_TYPE); 
+	@Deprecated
+	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
+		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE); 
 	}
 
 	public IExtendsContext getExtendsClause(String elementName) {

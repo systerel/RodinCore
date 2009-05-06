@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
@@ -63,8 +65,12 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		if (formulaElements.length == 0)
 			return;
 
-		if (checkInitialisation(element, monitor))
-			checkAndType(element.getElementName(), repository, monitor);
+		if (!checkInitialisation(element, monitor))
+			return;
+		
+		checkDerived(element);
+		
+		checkAndType(element.getElementName(), repository, monitor);
 
 		if (target != null) {
 			ISCEvent targetEvent = (ISCEvent) target;
@@ -83,6 +89,15 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 				return false;
 			}
 		return true;
+	}
+
+	private void checkDerived(IRodinElement element) throws RodinDBException {
+		for (IGuard guard : formulaElements) {
+			if (guard.hasTheorem() && guard.isTheorem()) {
+				createProblemMarker(guard, EventBAttributes.THEOREM_ATTRIBUTE,
+						GraphProblem.DerivedPredIgnoredWarning);
+			}
+		}	
 	}
 
 	protected IConcreteEventInfo refinedEventTable;
@@ -227,8 +242,10 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	@Override
 	protected ILabelSymbolInfo createLabelSymbolInfo(String symbol,
 			ILabeledElement element, String component) throws CoreException {
-		return SymbolFactory.getInstance().makeLocalGuard(symbol, true, element,
+		ILabelSymbolInfo info = SymbolFactory.getInstance().makeLocalGuard(symbol, true, element,
 				component);
+		info.setAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE, false);
+		return info;
 	}
 
 	@Override

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -112,13 +113,14 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 			ISCGuard predicateElement, 
 			Predicate predicate, 
 			int index,
+			boolean isTheorem,
 			IProgressMonitor monitor) throws CoreException {
 		
 		if (isRedundantWDProofObligation(predicate, index))
 			return;
 		
 		super.createWDProofObligation(target, elementLabel, predicateElement,
-				predicate, index, monitor);
+				predicate, index, isTheorem, monitor);
 	}
 	
 	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
@@ -155,12 +157,16 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	}
 
 	@Override
-	protected String getWDProofObligationDescription() {
-		return "Well-definedness of Guard";
+	protected String getWDProofObligationDescription(boolean isTheorem) {
+		if (isTheorem) {
+			return "Well-definedness of Theorem";
+		} else {
+			return "Well-definedness of Guard";
+		}
 	}
 
 	@Override
-	protected String getWDProofObligationName(String elementLabel) {
+	protected String getWDProofObligationName(String elementLabel, boolean isTheorem) {
 		return eventLabel + "/" + elementLabel + "/WD";
 	}
 

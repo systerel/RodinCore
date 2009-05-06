@@ -67,8 +67,6 @@ public class MachineIndexer extends EventBIndexer {
 
 		processPredicateElements(root.getInvariants(), declImportST);
 		checkCancel();
-		processPredicateElements(root.getTheorems(), declImportST);
-		checkCancel();
 		processExpressionElements(root.getVariants(), declImportST);
 		checkCancel();
 

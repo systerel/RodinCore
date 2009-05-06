@@ -29,10 +29,8 @@ public final class Messages {
 	
 	// progress messages
 	public static String progress_ContextAxioms;
-	public static String progress_ContextTheorems;
 	
 	public static String progress_MachineInvariants;
-	public static String progress_MachineTheorems;
 	public static String progress_MachineEvents;
 	public static String progress_MachineVariant;
 	

@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -78,7 +79,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		setConvergent(addEvent(mac, "evt"));
 		addInitialisation(mac, "V1");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addVariant(mac, "V1");
 
 		saveRodinFileOf(mac);
@@ -120,7 +121,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_04() throws Exception {
 		IContextRoot con = createContext("con");
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), false);
 
 		saveRodinFileOf(con);
 		
@@ -131,7 +132,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		addVariables(mac, "V1");
 		setConvergent(addEvent(mac, "evt"));
 		addInitialisation(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addVariant(mac, "V1+C1");
 
 		saveRodinFileOf(mac);
@@ -155,7 +156,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_05() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
-		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
+		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"), false);
 
 		saveRodinFileOf(abs);
 		
@@ -164,7 +165,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		setConvergent(addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList(), makeSList()));
 		addVariant(mac, "V1+V0");
@@ -189,7 +190,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_06() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
-		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
+		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"), false);
 		addInitialisation(abs, "V0");
 		addVariant(abs, "V0");
 		setConvergent(addEvent(abs, "evt"));
@@ -203,7 +204,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addInitialisation(mac, "V1");
 		IEvent evt = addEvent(mac, "evt");
 		setConvergent(evt);
@@ -254,7 +255,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	public void testVariant_08() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
-		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"));
+		addInvariants(abs, makeSList("I0"), makeSList("V0∈ℕ"), false);
 		addInitialisation(abs, "V0");
 		setAnticipated(addEvent(abs, "evt"));
 		setAnticipated(addEvent(abs, "fvt"));
@@ -268,7 +269,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V0", "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addInitialisation(mac, "V0", "V1");
 		IEvent evt = addEvent(mac, "evt");
 		setConvergent(evt);

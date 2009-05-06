@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -53,15 +57,19 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getWDProofObligationDescription()
 	 */
 	@Override
-	protected String getWDProofObligationDescription() {
-		return "Well-definedness of Axiom";
+	protected String getWDProofObligationDescription(boolean isTheorem) {
+		if (isTheorem) {
+			return "Well-definedness of Theorem";
+		} else {
+			return "Well-definedness of Axiom";
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getWDProofObligationName(java.lang.String)
 	 */
 	@Override
-	protected String getWDProofObligationName(String elementLabel) {
+	protected String getWDProofObligationName(String elementLabel, boolean isTheorem) {
 		return elementLabel + "/WD";
 	}
 

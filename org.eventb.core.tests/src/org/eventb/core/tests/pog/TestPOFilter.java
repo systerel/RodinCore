@@ -8,6 +8,7 @@
  * Contributors:
  *     Soton - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -45,7 +46,7 @@ public class TestPOFilter extends EventBPOTest {
 		if (filter)
 			mac.setConfiguration(ORG_EVENTB_CORE_TESTS_FILTER, null);
 
-		addTheorems(mac, makeSList("T1", "T2"), makeSList("∀x·x>1", "∃x·1÷x>0"));
+		addInvariants(mac, makeSList("T1", "T2"), makeSList("∀x·x>1", "∃x·1÷x>0"), true, true);
 		
 		saveRodinFileOf(mac);
 		
@@ -77,7 +78,7 @@ public class TestPOFilter extends EventBPOTest {
 			mac.setConfiguration(ORG_EVENTB_CORE_TESTS_FILTER, null);
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 

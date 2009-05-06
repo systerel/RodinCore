@@ -107,7 +107,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 	 * Evaluate whether to accept or reject an element using the child filter
 	 * modules in the order returned by <code>getFilterModules()</code>.
 	 * <p>
-	 * The evaualtion is stopped as soon as some filter module returns
+	 * The evaluation is stopped as soon as some filter module returns
 	 * <code>false</code>.
 	 * 
 	 * @param element

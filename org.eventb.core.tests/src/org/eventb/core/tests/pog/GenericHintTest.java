@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -29,7 +30,7 @@ extends GenericEventBPOTest<F> {
 	public void testHints_00() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addTheorems(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
+		getGeneric().addPredicates(cmp, makeSList("T1", "T2", "T3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"), true, true, true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -60,7 +61,7 @@ extends GenericEventBPOTest<F> {
 	public void testHints_01() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addNonTheorems(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"));
+		getGeneric().addPredicates(cmp, makeSList("N1", "N2", "N3"), makeSList("∀x·x>1", "∃x·x≠0", "∀x·x÷x≠0"), false, false, false);
 		
 		saveRodinFileOf(cmp);
 		

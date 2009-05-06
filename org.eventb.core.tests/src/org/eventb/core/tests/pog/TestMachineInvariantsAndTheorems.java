@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -28,15 +29,15 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	public void testMachine_01_seen() throws Exception {
 		IContextRoot ctx = createContext("ctx");
 		
-		addTheorems(ctx, makeSList("N0"), makeSList("2>9"));
+		addAxioms(ctx, makeSList("N0"), makeSList("2>9"), true);
 		
 		saveRodinFileOf(ctx);
 		
 		IMachineRoot mac = createMachine("mac");
 
 		addMachineSees(mac, "ctx");
-		addInvariants(mac, makeSList("N1"), makeSList("7<1"));
-		addTheorems(mac, makeSList("T1"), makeSList("1<0"));
+		addInvariants(mac, makeSList("N1"), makeSList("7<1"), false);
+		addInvariants(mac, makeSList("T1"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(mac);
 		
@@ -57,13 +58,13 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	public void testMachine_02_seenAndRefined() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
-		addTheorems(abs, makeSList("T0"), makeSList("5>9"));	
+		addInvariants(abs, makeSList("T0"), makeSList("5>9"), true);	
 		
 		saveRodinFileOf(abs);
 
 		IContextRoot ctx = createContext("ctx");
 		
-		addTheorems(ctx, makeSList("N0"), makeSList("2>9"));
+		addAxioms(ctx, makeSList("N0"), makeSList("2>9"), true);
 		
 		saveRodinFileOf(ctx);
 		
@@ -72,8 +73,8 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 
 		addMachineSees(mac, "ctx");
 		addMachineRefines(mac, "abs");
-		addInvariants(mac, makeSList("N1"), makeSList("7<1"));
-		addTheorems(mac, makeSList("T1"), makeSList("1<0"));
+		addInvariants(mac, makeSList("N1"), makeSList("7<1"), false);
+		addInvariants(mac, makeSList("T1"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(mac);
 		
@@ -88,6 +89,37 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	
 	}
 
+	
+	/*
+	 * proof obligations for mixed list of invariants and theorems
+	 */
+	public void testMachine_03_mixedTheoremsAndInvariants() throws Exception {
+
+		IMachineRoot mac = createMachine("mac");
+
+		addMachineSees(mac, "ctx");
+		addInvariant(mac, "N1", "7<max({1})", false);
+		addInvariant(mac, "T1", "1<max({1})", true);
+		addInvariant(mac, "N2", "8<max({1})", false);
+		addInvariant(mac, "T2", "9<max({1})", true);
+		
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+		
+		IPORoot po = mac.getPORoot();
+		
+		noSequent(po, "N1/THM");
+		getSequent(po, "N1/WD");
+		getSequent(po, "T1/THM");
+		getSequent(po, "T1/WD");
+		noSequent(po, "N2/THM");
+		getSequent(po, "N2/WD");
+		getSequent(po, "T2/THM");
+		getSequent(po, "T2/WD");
+		
+	}
+	
 	@Override
 	protected IGenericPOTest<IMachineRoot> newGeneric() {
 		return new GenericMachinePOTest(this);

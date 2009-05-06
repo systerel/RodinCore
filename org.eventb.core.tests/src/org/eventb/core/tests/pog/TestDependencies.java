@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -26,7 +27,7 @@ public class TestDependencies extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈{1}"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈{1}"), false);
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
@@ -37,7 +38,7 @@ public class TestDependencies extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I11"), makeSList("V1>V1"));
+		addInvariants(mac, makeSList("I11"), makeSList("V1>V1"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -57,7 +58,7 @@ public class TestDependencies extends EventBPOTest {
 		sequentHasGoal(sequent, typeEnvironment, "V1+1>V1+1");
 		
 		// check if abstract invariant propagates
-		addInvariants(abs, makeSList("I2"), makeSList("V1∈{2}"));
+		addInvariants(abs, makeSList("I2"), makeSList("V1∈{2}"), false);
 		saveRodinFileOf(abs);
 		runBuilder();
 	

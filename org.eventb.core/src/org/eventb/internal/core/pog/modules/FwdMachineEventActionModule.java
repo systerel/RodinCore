@@ -167,22 +167,22 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			String desc,
 			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + action.getLabel() + "/" + suffix;
-		if (!goalIsTrivial(predicate)) {
-			createPO(
-					target, 
-					sequentName, 
-					desc, 
-					fullHypothesis, 
-					hyp, 
-					makePredicate(predicate, action.getSource()), 
-					sources, 
-					hints, 
-					accurate,
-					monitor);
-		} else {
+		if (goalIsTrivial(predicate)) {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial(sequentName);
+			return;
 		}
+		createPO(
+				target, 
+				sequentName, 
+				desc, 
+				fullHypothesis, 
+				hyp, 
+				makePredicate(predicate, action.getSource()), 
+				sources, 
+				hints, 
+				accurate,
+				monitor);
 	}
 	
 	/* (non-Javadoc)

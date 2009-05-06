@@ -24,6 +24,7 @@ import org.rodinp.core.IRodinElement;
  * </p>
  *
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public class Variable extends EventBElement implements IVariable {
 	

@@ -35,6 +35,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  */
+@Deprecated
 public interface ISCTheorem 
 extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 

@@ -37,7 +37,6 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.core.indexers.EventPropagator;
@@ -57,7 +56,7 @@ public class IntegrationTests extends EventBIndexerTests {
 
 	private static final String C1 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "		<org.eventb.core.carrierSet"
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.identifier=\"set1\"/>"
@@ -65,7 +64,7 @@ public class IntegrationTests extends EventBIndexerTests {
 
 	private static final String C2 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "	<org.eventb.core.extendsContext"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.target=\"C1\"/>"
@@ -75,23 +74,25 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "	<org.eventb.core.axiom"
 					+ "		name=\"internal_element1\""
 					+ "		org.eventb.core.label=\"axm1\""
-					+ "		org.eventb.core.predicate=\"cst2 ∈ set1\"/>"
+					+ "		org.eventb.core.predicate=\"cst2 ∈ set1\""
+					+ " 	org.eventb.core.theorem=\"false\"/>"
 					+ "</org.eventb.core.contextFile>";
 
 	private static final String C2_NO_EXTENDS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+			+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 			+ "	<org.eventb.core.constant"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.identifier=\"cst2\"/>"
 			+ "	<org.eventb.core.axiom"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.label=\"axm1\""
-			+ "		org.eventb.core.predicate=\"cst2 ∈ set1\"/>"
+			+ "		org.eventb.core.predicate=\"cst2 ∈ set1\""
+			+ " 	org.eventb.core.theorem=\"false\"/>"
 			+ "</org.eventb.core.contextFile>";
 
 	private static final String C3 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"2\">"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
 					+ "		<org.eventb.core.extendsContext"
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.target=\"C1\"/>"
@@ -105,7 +106,7 @@ public class IntegrationTests extends EventBIndexerTests {
 
 	private static final String M1 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 					+ "		<org.eventb.core.seesContext"
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.target=\"C2\"/>"
@@ -119,15 +120,17 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.label=\"inv1\""
 					+ "			org.eventb.core.predicate=\"var1 ∈ set1\"/>"
-					+ "		<org.eventb.core.theorem"
-					+ "			name=\"internal_element1\""
+					+ " 		org.eventb.core.theorem=\"false\"/>"
+					+ "		<org.eventb.core.invariant"
+					+ "			name=\"internal_element2\""
 					+ "			org.eventb.core.label=\"thm1\""
-					+ "			org.eventb.core.predicate=\"cst2 ∈ set3\"/>"
+					+ "			org.eventb.core.predicate=\"cst2 ∈ set3\""
+					+ " 		org.eventb.core.theorem=\"true\"/>"
 					+ "</org.eventb.core.machineFile>";
 
 	private static final String M2 =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 					+ "		<org.eventb.core.refinesMachine"
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.target=\"M1\"/>"
@@ -138,12 +141,14 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.comment=\"\""
 					+ "			org.eventb.core.label=\"inv1\""
-					+ "			org.eventb.core.predicate=\"var2 ∈ set3\"/>"
-					+ "		<org.eventb.core.theorem"
-					+ "			name=\"internal_element1\""
+					+ "			org.eventb.core.predicate=\"var2 ∈ set3\""
+					+ " 		org.eventb.core.theorem=\"false\"/>"
+					+ "		<org.eventb.core.invariant"
+					+ "			name=\"internal_element2\""
 					+ "			org.eventb.core.comment=\"\""
 					+ "			org.eventb.core.label=\"thm1\""
-					+ "			org.eventb.core.predicate=\"set1 ⊆ set1\"/>"
+					+ "			org.eventb.core.predicate=\"set1 ⊆ set1\""
+					+ " 		org.eventb.core.theorem=\"true\"/>"
 					+ "		<org.eventb.core.event"
 					+ "			name=\"internal_element1\""
 					+ "			org.eventb.core.convergence=\"0\""
@@ -191,8 +196,8 @@ public class IntegrationTests extends EventBIndexerTests {
 		final IAxiom axmC2 = c2.getAxiom(INTERNAL_ELEMENT1);
 		final IInvariant invM1 = m1.getInvariant(INTERNAL_ELEMENT1);
 		final IInvariant invM2 = m2.getInvariant(INTERNAL_ELEMENT1);
-		final ITheorem thmM1 = m1.getTheorem(INTERNAL_ELEMENT1);
-		final ITheorem thmM2 = m2.getTheorem(INTERNAL_ELEMENT1);
+		final IInvariant thmM1 = m1.getInvariant(INTERNAL_ELEMENT2);
+		final IInvariant thmM2 = m2.getInvariant(INTERNAL_ELEMENT2);
 		final IEvent evtM2 = m2.getEvent(INTERNAL_ELEMENT1);
 		final IWitness witM2 = evtM2.getWitness(INTERNAL_ELEMENT1);
 
@@ -405,7 +410,7 @@ public class IntegrationTests extends EventBIndexerTests {
 	protected static final String PRM_2DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
 		+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-		+ "		version=\"4\">"
+		+ "		version=\"5\">"
 		+ "<org.eventb.core.event"
 		+ "		name=\"internal_element1\""
 		+ "		org.eventb.core.convergence=\"0\""
@@ -475,7 +480,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		final String VAR_1DECL_1REF_REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile"
 				+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
-				+ "		version=\"4\">"
+				+ "		version=\"5\">"
 				+ "<org.eventb.core.refinesMachine"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.target=\"exporter\"/>"
@@ -485,7 +490,8 @@ public class IntegrationTests extends EventBIndexerTests {
 				+ "<org.eventb.core.invariant"
 				+ "		name=\"internal_element1\""
 				+ "		org.eventb.core.label=\"inv1\""
-				+ "		org.eventb.core.predicate=\"var1 = 1\"/>"
+				+ "		org.eventb.core.predicate=\"var1 = 1\""
+				+ " 	org.eventb.core.theorem=\"false\"/>"
 				+ "</org.eventb.core.machineFile>";
 
 		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject,

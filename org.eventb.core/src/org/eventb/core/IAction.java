@@ -30,6 +30,7 @@ import org.rodinp.core.RodinCore;
  * @see IAssignmentElement#setAssignmentString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IAction extends ICommentedElement, ILabeledElement, IAssignmentElement {
 

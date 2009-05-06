@@ -17,7 +17,6 @@ import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.ISCSeesContext;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.FormulaFactory;
@@ -78,8 +77,9 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 		return getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
 	}
 
-	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE);
+	@Deprecated
+	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
+		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE);
 	}
 
 	@Deprecated
@@ -132,8 +132,9 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 		return getInternalElement(ISCSeesContext.ELEMENT_TYPE, elementName);
 	}
 
-	public ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	@Deprecated
+	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
+		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public ISCVariable getSCVariable(String elementName) {

@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - mathematical language V2
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -35,7 +36,6 @@ import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
@@ -83,13 +83,14 @@ public abstract class EventBTest extends BuilderTest {
 		return "x" + alloc++;
 	}
 	
-	public void addAxioms(IContextRoot root, String[] names, String[] axioms)
+	public void addAxioms(IContextRoot root, String[] names, String[] axioms, boolean...derived)
 			throws RodinDBException {
 		for (int i = 0; i < names.length; i++) {
 			IAxiom axiom = root.getAxiom(getUniqueName());
 			axiom.create(null, null);
 			axiom.setPredicateString(axioms[i], null);
 			axiom.setLabel(names[i], null);
+			axiom.setTheorem(derived[i], null);
 		}
 	}
 
@@ -102,13 +103,14 @@ public abstract class EventBTest extends BuilderTest {
 			axiom.create(null, null);
 			axiom.setLabel(strings[i], null);
 			axiom.setPredicateString(strings[i + 1], null);
+			axiom.setTheorem(false, null);
 		}
 	}
 
 	public void addAxioms(IRodinFile rodinFile, String[] names,
-			String[] axioms) throws RodinDBException {
+			String[] axioms, boolean...derived) throws RodinDBException {
 		final IContextRoot root = (IContextRoot) rodinFile.getRoot();
-		addAxioms(root, names, axioms);
+		addAxioms(root, names, axioms, derived);
 	}
 
 	public void addAxioms(IRodinFile rodinFile,
@@ -178,11 +180,19 @@ public abstract class EventBTest extends BuilderTest {
 		}
 	}
 
+	public IEvent addEvent(IMachineRoot root, String name, String[] params,
+			String[] guardNames, String[] guards, String[] actionNames,
+			String[] actions) throws RodinDBException {
+		return addEvent(root, name, params, guardNames, guards,
+				new boolean[guards.length], actionNames, actions);
+	}
+	
 	public IEvent addEvent(IMachineRoot root, 
 				String name,
 				String[] params,
 				String[] guardNames,
 				String[] guards,
+				boolean[] theorems,
 				String[] actionNames,
 				String[] actions
 	) throws RodinDBException {
@@ -202,6 +212,7 @@ public abstract class EventBTest extends BuilderTest {
 			guard.create(null, null);
 			guard.setPredicateString(guards[i], null);
 			guard.setLabel(guardNames[i], null);
+			guard.setTheorem(theorems[i], null);
 		}
 		for(int j=0; j<actions.length; j++) {
 			IAction action = event.getAction(getUniqueName());
@@ -278,30 +289,31 @@ public abstract class EventBTest extends BuilderTest {
 	
 	
 	public void addInvariant(IMachineRoot root, String label,
-			String pred) throws RodinDBException {
+			String pred, boolean derived) throws RodinDBException {
 		final IInvariant invariant = root.getInvariant(getUniqueName());
 		invariant.create(null, null);
 		invariant.setLabel(label, null);
+		invariant.setTheorem(derived, null);
 		invariant.setPredicateString(pred, null);
 	}
 	
 	
-	public void addInvariant(IRodinFile rodinFile, String label, String pred)
+	public void addInvariant(IRodinFile rodinFile, String label, String pred, boolean derived)
 			throws RodinDBException {
 		final IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
-		addInvariant(root, label, pred);
+		addInvariant(root, label, pred, derived);
 	}
 
 	public void addInvariants(IRodinFile rodinFile,
-			String[] labels, String[] preds) throws RodinDBException {
+			String[] labels, String[] preds, boolean...derived) throws RodinDBException {
 		final IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
-		addInvariants(root, labels, preds);
+		addInvariants(root, labels, preds, derived);
 	}
 
 	public void addInvariants(IMachineRoot root, String[] labels,
-			String[] preds) throws RodinDBException {
+			String[] preds, boolean...derived) throws RodinDBException {
 		for (int i = 0; i < labels.length; i++) {
-			addInvariant(root, labels[i], preds[i]);
+			addInvariant(root, labels[i], preds[i], derived[i]);
 		}
 	}
 	
@@ -351,36 +363,6 @@ public abstract class EventBTest extends BuilderTest {
 		extendsContext.setAbstractContextName(name, null);
 	}
 
-	
-	public void addTheorems(IRodinFile rodinFile, String[] names, String[] theorems) throws RodinDBException {
-		IInternalElement root = rodinFile.getRoot();
-		assert (root instanceof IMachineRoot) || (root instanceof IContextRoot);
-		if(root instanceof IMachineRoot){
-			addTheorems((IMachineRoot)root, names, theorems);
-		}else{
-			addTheorems((IContextRoot)root, names, theorems);
-		}
-	}
-	
-	
-	public void addTheorems(IMachineRoot root, String[] names, String[] theorems) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			ITheorem theorem = root.getTheorem(getUniqueName());
-			theorem.create(null, null);
-			theorem.setPredicateString(theorems[i], null);
-			theorem.setLabel(names[i], null);
-		}
-	}
-
-	public void addTheorems(IContextRoot root, String[] names, String[] theorems) throws RodinDBException {
-		for(int i=0; i<names.length; i++) {
-			ITheorem theorem = root.getTheorem(getUniqueName());
-			theorem.create(null, null);
-			theorem.setPredicateString(theorems[i], null);
-			theorem.setLabel(names[i], null);
-		}
-	}
-
 	public void addVariables(IRodinFile rodinFile, String... names) throws RodinDBException {
 		IMachineRoot root = (IMachineRoot) rodinFile.getRoot();
 		addVariables(root, names);
@@ -397,6 +379,10 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public static String[] makeSList(String...strings) {
 		return strings;
+	}
+
+	public static boolean[] makeBList(boolean...bools) {
+		return bools;
 	}
 
 	public static String[] makePrime(String...strings) {
@@ -420,14 +406,14 @@ public abstract class EventBTest extends BuilderTest {
 
 	// generic methods
 	
-	public void addNonTheorems(IRodinFile rodinFile, String[] names,
-			String[] predicates) throws RodinDBException {
+	public void addPredicates(IRodinFile rodinFile, String[] names,
+			String[] predicates, boolean...derived) throws RodinDBException {
 		IInternalElement root = rodinFile.getRoot();
 		assert (root instanceof IMachineRoot) || (root instanceof IContextRoot);
 		if (root instanceof IMachineRoot) {
-			addInvariants((IMachineRoot) root, names, predicates);
+			addInvariants((IMachineRoot) root, names, predicates, derived);
 		} else {
-			addAxioms((IContextRoot) root, names, predicates);
+			addAxioms((IContextRoot) root, names, predicates, derived);
 		}
 	}
 

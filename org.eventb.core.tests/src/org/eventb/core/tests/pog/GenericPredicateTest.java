@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -29,7 +30,7 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_00_theorem() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("∀x·x>1"));
+		getGeneric().addPredicates(cmp, makeSList("T1"), makeSList("∀x·x>1"), true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -51,7 +52,7 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_01_wDef() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1÷0=0"));
+		getGeneric().addPredicates(cmp, makeSList("T1"), makeSList("1÷0=0"), true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -75,7 +76,7 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_02_ThmInHyp() throws Exception {
 		F cmp = getGeneric().createElement("mac");
 
-		getGeneric().addTheorems(cmp, makeSList("T1", "T2"), makeSList("∀x·x>1", "∀x·x>2"));
+		getGeneric().addPredicates(cmp, makeSList("T1", "T2"), makeSList("∀x·x>1", "∀x·x>2"), true, true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -102,8 +103,8 @@ extends GenericEventBPOTest<F> {
 		F cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, "x");
-		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x∈ℤ"));
-		getGeneric().addTheorems(cmp, makeSList("T1","T2", "T3"), makeSList("x∈ℤ", "x>1", "⊤"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("x∈ℤ"), false);
+		getGeneric().addPredicates(cmp, makeSList("T1","T2", "T3"), makeSList("x∈ℤ", "x>1", "⊤"), true, true, true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -126,7 +127,7 @@ extends GenericEventBPOTest<F> {
 	public void testNonTheorems_04_nonTheorem() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addTheorems(cmp, makeSList("N1"), makeSList("∀x·x>1"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("∀x·x>1"), true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -144,7 +145,7 @@ extends GenericEventBPOTest<F> {
 	public void testNonTheorems_05_wDef() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1÷0=0"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("1÷0=0"), false);
 		
 		saveRodinFileOf(cmp);
 		
@@ -164,7 +165,7 @@ extends GenericEventBPOTest<F> {
 	public void testNonTheorems_06_wDefHypOK() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addNonTheorems(cmp, makeSList("N0", "N1"), makeSList("1<0", "1÷0=0"));
+		getGeneric().addPredicates(cmp, makeSList("N0", "N1"), makeSList("1<0", "1÷0=0"), false, false);
 		
 		saveRodinFileOf(cmp);
 		
@@ -185,8 +186,8 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_07_NonTheoremInHyp() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("1=0"));
-		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("1=0"), false);
+		getGeneric().addPredicates(cmp, makeSList("T1"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -207,15 +208,15 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_08_abstraction() throws Exception {
 		F abs = getGeneric().createElement("abs");
 		
-		getGeneric().addNonTheorems(abs, makeSList("N0"), makeSList("2>9"));
+		getGeneric().addPredicates(abs, makeSList("N0"), makeSList("2>9"), false);
 		
 		saveRodinFileOf(abs);
 		
 		F cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addSuper(cmp, "abs");
-		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("7<1"));
-		getGeneric().addTheorems(cmp, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("7<1"), false);
+		getGeneric().addPredicates(cmp, makeSList("T1"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(cmp);
 		
@@ -237,22 +238,22 @@ extends GenericEventBPOTest<F> {
 	public void testTheorems_09_transitive() throws Exception {
 		F f0 = getGeneric().createElement("f0");
 		
-		getGeneric().addTheorems(f0, makeSList("T0"), makeSList("5>9"));	
+		getGeneric().addPredicates(f0, makeSList("T0"), makeSList("5>9"), true);	
 		
 		saveRodinFileOf(f0);
 
 		F f1 = getGeneric().createElement("f1");
 		
 		getGeneric().addSuper(f1, "f0");
-		getGeneric().addTheorems(f1, makeSList("N0"), makeSList("2>9"));
+		getGeneric().addPredicates(f1, makeSList("N0"), makeSList("2>9"), true);
 		
 		saveRodinFileOf(f1);
 		
 		F f2 = getGeneric().createElement("f2");
 
 		getGeneric().addSuper(f2, "f1");
-		getGeneric().addNonTheorems(f2, makeSList("N1"), makeSList("7<1"));
-		getGeneric().addTheorems(f2, makeSList("T1"), makeSList("1<0"));
+		getGeneric().addPredicates(f2, makeSList("N1"), makeSList("7<1"), false);
+		getGeneric().addPredicates(f2, makeSList("T1"), makeSList("1<0"), true);
 		
 		saveRodinFileOf(f2);
 		
@@ -274,7 +275,7 @@ extends GenericEventBPOTest<F> {
 		F cmp = getGeneric().createElement("cmp");
 
 		getGeneric().addIdents(cmp, "x");
-		getGeneric().addNonTheorems(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"));
+		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("x÷x ∈ ℕ"), false);
 		
 		saveRodinFileOf(cmp);
 		
@@ -300,13 +301,13 @@ extends GenericEventBPOTest<F> {
 		F abs = getGeneric().createElement("abs");
 
 		getGeneric().addIdents(abs, "x");
-		getGeneric().addNonTheorems(abs, makeSList("N1"), makeSList("x ∈ ℕ"));
+		getGeneric().addPredicates(abs, makeSList("N1"), makeSList("x ∈ ℕ"), false);
 		
 		saveRodinFileOf(abs);
 		
 		F cmp = getGeneric().createElement("cmp");
 		getGeneric().addSuper(cmp, "abs");
-		getGeneric().addTheorems(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"));
+		getGeneric().addPredicates(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"), true);
 		
 		saveRodinFileOf(cmp);
 		runBuilder();

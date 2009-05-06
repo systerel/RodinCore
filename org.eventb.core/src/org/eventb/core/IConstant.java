@@ -27,6 +27,7 @@ import org.rodinp.core.RodinCore;
  * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IConstant extends ICommentedElement, IIdentifierElement {
 

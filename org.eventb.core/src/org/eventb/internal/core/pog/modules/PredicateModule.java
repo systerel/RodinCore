@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IDerivedPredicateElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
@@ -84,24 +86,46 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 		for (int i=0; i<elements.size(); i++) {
 			PE predicateElement = elements.get(i);
 			String elementLabel = ((ILabeledElement) predicateElement).getLabel();
-			
+			boolean isTheorem = ((IDerivedPredicateElement) predicateElement).isTheorem();
+
 			Predicate predicate = predicates.get(i);
-			
-			createWDProofObligation(targetRoot, elementLabel, predicateElement, predicate, i, monitor);
-			
-			createProofObligation(targetRoot, elementLabel, predicateElement, predicate, monitor);
+
+			createWDProofObligation(targetRoot, elementLabel, predicateElement,
+					predicate, i, isTheorem, monitor);
+
+			if (isTheorem) {
+				createProofObligation(targetRoot, elementLabel,
+						predicateElement, predicate, monitor);
+			}
 
 		}
 
 	}
 
-	protected void createProofObligation(
-			IPORoot target, 
-			String elementLabel, 
-			PE predicateElement, 
-			Predicate predicate, 
-			IProgressMonitor monitor) throws CoreException {
-		// create proof obligation (used for theorems)
+	protected void createProofObligation(IPORoot target, String elementLabel,
+			PE predicateElement, Predicate predicate, IProgressMonitor monitor)
+			throws CoreException {
+		if (goalIsTrivial(predicate)) {
+			if (DEBUG_TRIVIAL)
+				debugTraceTrivial(elementLabel + "/THM");
+			return;
+		}
+		IPOPredicateSet hypothesis = hypothesisManager
+				.makeHypothesis(predicateElement);
+		IRodinElement predicateSource = ((ITraceableElement) predicateElement)
+				.getSource();
+		createPO(
+				target,
+				elementLabel + "/THM",
+				"Theorem",
+				hypothesis,
+				emptyPredicates,
+				makePredicate(predicate, predicateSource),
+				new IPOGSource[] { makeSource(IPOSource.DEFAULT_ROLE,
+						predicateSource) },
+				new IPOGHint[] { makeIntervalSelectionHint(
+						hypothesisManager.getRootHypothesis(), hypothesis) },
+				isAccurate(), monitor);
 	}
 
 	protected void createWDProofObligation(
@@ -110,36 +134,37 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			PE predicateElement, 
 			Predicate predicate, 
 			int index,
+			boolean isTheorem,
 			IProgressMonitor monitor) throws CoreException {
 		Predicate wdPredicate = predicate.getWDPredicate(factory);
-		if(!goalIsTrivial(wdPredicate)) {
-			IPOPredicateSet hypothesis = hypothesisManager.makeHypothesis(predicateElement);
-			IRodinElement predicateSource = ((ITraceableElement) predicateElement).getSource();
-			createPO(
-					target, 
-					getWDProofObligationName(elementLabel), 
-					getWDProofObligationDescription(),
-					hypothesis,
-					emptyPredicates,
-					makePredicate(wdPredicate, predicateSource),
-					new IPOGSource[] {
-						makeSource(IPOSource.DEFAULT_ROLE, predicateSource)
-					},
-					new IPOGHint[] {
-						makeIntervalSelectionHint(
-								hypothesisManager.getRootHypothesis(), 
-								hypothesis)
-					},
-					isAccurate(),
-					monitor);
-		} else {
+		if (goalIsTrivial(wdPredicate)) {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial(getWDProofObligationName(elementLabel));
+				debugTraceTrivial(getWDProofObligationName(elementLabel, isTheorem));
+			return;
 		}
+		IPOPredicateSet hypothesis = hypothesisManager.makeHypothesis(predicateElement);
+		IRodinElement predicateSource = ((ITraceableElement) predicateElement).getSource();
+		createPO(
+				target,
+				getWDProofObligationName(elementLabel, isTheorem),
+				getWDProofObligationDescription(isTheorem),
+				hypothesis,
+				emptyPredicates,
+				makePredicate(wdPredicate, predicateSource),
+				new IPOGSource[] {
+					makeSource(IPOSource.DEFAULT_ROLE, predicateSource)
+				},
+				new IPOGHint[] {
+					makeIntervalSelectionHint(
+							hypothesisManager.getRootHypothesis(), 
+							hypothesis)
+				},
+				isAccurate(),
+				monitor);
 	}
 
-	protected abstract String getWDProofObligationDescription();
+	protected abstract String getWDProofObligationDescription(boolean isTheorem);
 
-	protected abstract String getWDProofObligationName(String elementLabel);
+	protected abstract String getWDProofObligationName(String elementLabel, boolean isTheorem);
 
 }

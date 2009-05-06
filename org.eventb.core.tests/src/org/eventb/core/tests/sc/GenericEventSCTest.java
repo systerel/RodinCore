@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -42,13 +43,8 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 		test.containsMarkers(element, yes);
 	}
 
-	public void containsNonTheorems(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+	public void containsPredicates(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		test.containsGuards(element, environment, labels, strings);
-	}
-
-	public void containsTheorems(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		// TODO implement proper tests for theorems
-		test.containsGuards(element, environment, labels, strings);		
 	}
 
 	public ISCEvent getSCElement(IEvent element) throws RodinDBException {
@@ -67,14 +63,10 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 		return element.getParameters();
 	}
 
-	public IRodinElement[] getNonTheorems(IEvent element) throws RodinDBException {
+	public IRodinElement[] getPredicates(IEvent element) throws RodinDBException {
 		return element.getGuards();
 	}
 
-	public IRodinElement[] getTheorems(IEvent element) throws RodinDBException {
-		// TODO adapt to new db layout with mix of guards and theorems
-		return new IRodinElement[0];
-	}
 
 
 }

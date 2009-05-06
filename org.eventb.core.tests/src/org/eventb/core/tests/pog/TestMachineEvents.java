@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -30,7 +31,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -62,7 +63,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
@@ -95,7 +96,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
@@ -128,7 +129,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1", "V2");
-		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2∈{TRUE}"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2∈{TRUE}"), false, false);
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
@@ -165,7 +166,8 @@ public class TestMachineEvents extends EventBPOTest {
 		addVariables(mac, "V1", "V2");
 		addInvariants(mac, 
 				makeSList("I1", "I2", "I3"), 
-				makeSList("V1∈0‥4", "V2∈BOOL", "V2=TRUE ⇒ V1<1"));
+				makeSList("V1∈0‥4", "V2∈BOOL", "V2=TRUE ⇒ V1<1"),
+				false, false, false);
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
@@ -210,7 +212,8 @@ public class TestMachineEvents extends EventBPOTest {
 		addVariables(mac, "V0", "V1", "V2");
 		addInvariants(mac, 
 				makeSList("I0", "I1", "I2", "I3"), 
-				makeSList("V0∈BOOL", "V1∈0‥4", "V2∈BOOL", "V2=V0 ⇒ V1<1"));
+				makeSList("V0∈BOOL", "V1∈0‥4", "V2∈BOOL", "V2=V0 ⇒ V1<1"),
+				false, false, false, false);
 		addEvent(mac, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
@@ -254,7 +257,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt1", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -296,7 +299,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt1", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
@@ -344,7 +347,7 @@ public class TestMachineEvents extends EventBPOTest {
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
+		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"), false, false);
 		
 		saveRodinFileOf(con);
 		
@@ -355,7 +358,7 @@ public class TestMachineEvents extends EventBPOTest {
 		addMachineSees(mac, "con");
 		
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -391,7 +394,8 @@ public class TestMachineEvents extends EventBPOTest {
 		addVariables(mac, "V1", "V2", "V3");
 		addInvariants(mac, 
 				makeSList("I1", "I2", "I3", "I4", "I5", "I6"), 
-				makeSList("V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ"));
+				makeSList("V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ"),
+				false, false, false, false, false, false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -459,7 +463,7 @@ public class TestMachineEvents extends EventBPOTest {
 		
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addInvariants(mac, makeSList("i1"), makeSList(i1), false);
 		addEvent(mac, "evt1", 
 				makeSList("v"), 
 				makeSList("g1"), makeSList(g1), 
@@ -499,7 +503,7 @@ public class TestMachineEvents extends EventBPOTest {
 		
 		IMachineRoot mac =  createMachine("mac");
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addInvariants(mac, makeSList("i1"), makeSList(i1), false);
 		addEvent(mac, "evt1", 
 				makeSList(), 
 				makeSList("g1", "g2"), makeSList(g1, g2), 
@@ -547,7 +551,7 @@ public class TestMachineEvents extends EventBPOTest {
 		
 		IMachineRoot mac =  createMachine("mac");
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("i1"), makeSList(i1));
+		addInvariants(mac, makeSList("i1"), makeSList(i1), false);
 		addEvent(mac, "evt1", 
 				makeSList(), 
 				makeSList("g1", "g2", "g3"), makeSList(g1, g2, g3), 
@@ -590,7 +594,7 @@ public class TestMachineEvents extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 

@@ -36,7 +36,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  */
-public interface ISCGuard extends ITraceableElement, ILabeledElement, ISCPredicateElement {
+public interface ISCGuard extends ITraceableElement, ILabeledElement, ISCPredicateElement, IDerivedPredicateElement {
 
 	IInternalElementType<ISCGuard> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scGuard"); //$NON-NLS-1$

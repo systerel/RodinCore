@@ -39,14 +39,14 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	}
 
 	private static final String MCH_1REFINES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "	<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "	<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "	<org.eventb.core.refinesMachine"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"m1\"/>"
 			+ "	</org.eventb.core.machineFile>";
 
 	private static final String MCH_1SEES = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 			+ "<org.eventb.core.seesContext"
 			+ "		name=\"internal_element1\""
 			+ "		org.eventb.core.target=\"c1\"/>"
@@ -134,7 +134,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	public void testMalformedXML() throws Exception {
 		// missing = at internal_element1 in variable node
 		final String MALFORMED_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 				+ "<org.eventb.core.seesContext"
 				+ "		name\"internal_element1\""
 				+ "		org.eventb.core.target=\"exporter\"/>"
@@ -154,7 +154,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	 */
 	public void testMissingAttribute() throws Exception {
 		final String MCH_1REFINES_NO_TARGET_ATT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"4\">"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
 				+ "<org.eventb.core.refinesMachine"
 				+ "		name=\"internal_element1\"/>"
 				+ "</org.eventb.core.machineFile>";

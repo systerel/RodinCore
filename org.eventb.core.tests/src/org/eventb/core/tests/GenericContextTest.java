@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -27,14 +28,9 @@ implements IGenericElementTest<IContextRoot> {
 		test.addConstants(element, names);
 	}
 
-	public void addNonTheorems(IContextRoot element, String[] names,
-			String[] nonTheorems) throws RodinDBException {
-		test.addAxioms(element, names, nonTheorems);
-	}
-
-	public void addTheorems(IContextRoot element, String[] names,
-			String[] theorems) throws RodinDBException {
-		test.addTheorems(element, names, theorems);
+	public void addPredicates(IContextRoot element, String[] names,
+			String[] nonTheorems, boolean...derived) throws RodinDBException {
+		test.addAxioms(element, names, nonTheorems, derived);
 	}
 
 	public IContextRoot createElement(String bareName) throws RodinDBException {

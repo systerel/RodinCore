@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -35,7 +36,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"), true);
 		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);

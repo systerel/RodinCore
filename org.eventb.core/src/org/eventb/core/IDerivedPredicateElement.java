@@ -1,0 +1,58 @@
+/*******************************************************************************
+ * Copyright (c) 2009 University of Dusseldorf and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Dusseldorf - initial API and implementation
+ *******************************************************************************/
+package org.eventb.core;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.rodinp.core.RodinDBException;
+
+/**
+ * Common protocol for predicate elements that can be theorems.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * 
+ * @author Stefan Hallerstede
+ * 
+ */
+public interface IDerivedPredicateElement extends IPredicateElement {
+
+	/**
+	 * Returns whether this element is a theorem.
+	 * 
+	 * @return whether this element is a theorem
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	boolean isTheorem() throws RodinDBException;
+
+	/**
+	 * Sets the theorem attribute of this element.
+	 * 
+	 * @param thm
+	 *            the new value of the theorem attribute
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	void setTheorem(boolean thm, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Tests whether the theorem attribute is defined or not.
+	 * 
+	 * @return <code>true</code> iff the theorem attribute is defined
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	boolean hasTheorem() throws RodinDBException;
+}

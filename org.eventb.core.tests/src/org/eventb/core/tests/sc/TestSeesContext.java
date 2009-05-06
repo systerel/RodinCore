@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -35,7 +36,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
+		addAxioms(con, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"), false, false);
 		
 		saveRodinFileOf(con);
 		
@@ -46,7 +47,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1=C1"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1=C1"), false);
 		addInitialisation(mac, "V1");
 
 		saveRodinFileOf(mac);
@@ -62,13 +63,13 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		containsCarrierSets(contexts[0], "S1");
 		containsConstants(contexts[0], "C1");
 		
-		containsAxioms(contexts[0], typeEnvironment, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"));
+		containsAxioms(contexts[0], typeEnvironment, makeSList("A1", "A2"), makeSList("C1∈S1", "1∈ℕ"), false, false);
 		
 		containsVariables(file, "V1");
 		
 		typeEnvironment.addName("V1", factory.makeGivenType("S1"));
 		
-		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1=C1"));
+		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1=C1"), false);
 
 		containsMarkers(mac, false);
 	}
@@ -262,14 +263,14 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
-		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"));
+		addAxioms(con, makeSList("A1"), makeSList("C1∈S1"), false);
 				
 		IMachineRoot mac = createMachine("mac");
 		
 		addMachineSees(mac, "con");
 
 		addVariables(mac, makeSList("V1"));
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 
 		saveRodinFileOf(mac);
 		
@@ -287,7 +288,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
-		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1∈ℕ"));
+		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1∈ℕ"), false);
 
 		hasMarker(mac.getSeesClauses()[0], EventBAttributes.TARGET_ATTRIBUTE);
 	}

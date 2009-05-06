@@ -31,8 +31,9 @@ import org.rodinp.core.RodinCore;
  * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstedes
  */
-public interface IGuard extends ICommentedElement, ILabeledElement, IPredicateElement {
+public interface IGuard extends ICommentedElement, ILabeledElement, IDerivedPredicateElement {
 	
 	IInternalElementType<IGuard> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".guard"); //$NON-NLS-1$

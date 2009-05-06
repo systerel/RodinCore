@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -39,7 +40,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final IContextRoot ctx = createContext("ctx");
 		addCarrierSets(ctx, makeSList("S"));
 		addConstants(ctx, "s");
-		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"));
+		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"), false);
 		saveRodinFileOf(ctx);
 
 		runBuilder();
@@ -60,14 +61,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
-		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
+		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"), true);
 		saveRodinFileOf(actx);
 
 		final IContextRoot cctx = createContext("cctx");
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
-		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
+		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"), true);
 		saveRodinFileOf(cctx);
 
 		runBuilder();
@@ -89,7 +90,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	public void testMachine() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");
-		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"));
+		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"), true);
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		saveRodinFileOf(mch);
 
@@ -110,13 +111,13 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final IContextRoot ctx = createContext("ctx");
 		addCarrierSets(ctx, makeSList("S"));
 		addConstants(ctx, "s");
-		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"));
+		addAxioms(ctx, makeSList("A"), makeSList("s ∈ S"), true);
 		saveRodinFileOf(ctx);
 
 		final IMachineRoot mch = createMachine("mch");
 		addMachineSees(mch, "ctx");
 		addVariables(mch, "v");
-		addInvariants(mch, makeSList("I"), makeSList("v ∈ S"));
+		addInvariants(mch, makeSList("I"), makeSList("v ∈ S"), true);
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ s"));
 		saveRodinFileOf(mch);
 
@@ -139,20 +140,20 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
-		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
+		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"), true);
 		saveRodinFileOf(actx);
 
 		final IContextRoot cctx = createContext("cctx");
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
-		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
+		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"), true);
 		saveRodinFileOf(cctx);
 
 		final IMachineRoot mch = createMachine("mch");
 		addMachineSees(mch, "cctx");
 		addVariables(mch, "v");
-		addInvariants(mch, makeSList("I"), makeSList("v ∈ T"));
+		addInvariants(mch, makeSList("I"), makeSList("v ∈ T"), true);
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ t"));
 		saveRodinFileOf(mch);
 
@@ -176,14 +177,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	public void testMachineWithAbstraction() throws Exception {
 		final IMachineRoot amch = createMachine("amch");
 		addVariables(amch, "v");
-		addInvariants(amch, makeSList("I"), makeSList("v ∈ BOOL"));
+		addInvariants(amch, makeSList("I"), makeSList("v ∈ BOOL"), true);
 		addInitialisation(amch, makeSList("A"), makeSList("v ≔ TRUE"));
 		saveRodinFileOf(amch);
 
 		final IMachineRoot cmch = createMachine("cmch");
 		addMachineRefines(cmch, "amch");
 		addVariables(cmch, "w");
-		addInvariants(cmch, makeSList("I"), makeSList("w ∈ BOOL"));
+		addInvariants(cmch, makeSList("I"), makeSList("w ∈ BOOL"), true);
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ TRUE"));
 		saveRodinFileOf(cmch);
 
@@ -205,13 +206,13 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
 		addConstants(actx, "s");
-		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"));
+		addAxioms(actx, makeSList("A"), makeSList("s ∈ S"), true);
 		saveRodinFileOf(actx);
 
 		final IMachineRoot amch = createMachine("amch");
 		addMachineSees(amch, "actx");
 		addVariables(amch, "v");
-		addInvariants(amch, makeSList("I"), makeSList("v ∈ S"));
+		addInvariants(amch, makeSList("I"), makeSList("v ∈ S"), true);
 		addInitialisation(amch, makeSList("A"), makeSList("v ≔ s"));
 		saveRodinFileOf(amch);
 
@@ -219,14 +220,14 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		addContextExtends(cctx, "actx");
 		addCarrierSets(cctx, makeSList("T"));
 		addConstants(cctx, "t");
-		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"));
+		addAxioms(cctx, makeSList("A"), makeSList("t ∈ T"), true);
 		saveRodinFileOf(cctx);
 
 		final IMachineRoot cmch = createMachine("cmch");
 		addMachineRefines(cmch, "amch");
 		addMachineSees(cmch, "cctx");
 		addVariables(cmch, "w");
-		addInvariants(cmch, makeSList("I"), makeSList("w ∈ T"));
+		addInvariants(cmch, makeSList("I"), makeSList("w ∈ T"), true);
 		addInitialisation(cmch, makeSList("A"), makeSList("w ≔ t"));
 		saveRodinFileOf(cmch);
 
@@ -250,7 +251,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	public void testEvent() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");
-		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"));
+		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"), true);
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		addEvent(mch, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList(), makeSList());
@@ -279,7 +280,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	public void testEventWithLocal() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");
-		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"));
+		addInvariants(mch, makeSList("I"), makeSList("v ∈ BOOL"), true);
 		addInitialisation(mch, makeSList("A"), makeSList("v ≔ TRUE"));
 		addEvent(mch, "evt", makeSList("l"), makeSList("G"), makeSList("l ∈ BOOL"),
 				makeSList(), makeSList());

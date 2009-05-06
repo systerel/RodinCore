@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -28,14 +32,10 @@ extends IGenericElementTest <E> {
 	
 	public IRodinElement[] getIdents(E element) throws RodinDBException;
 	
-	public IRodinElement[] getTheorems(E element) throws RodinDBException;
-	
-	public IRodinElement[] getNonTheorems(E element) throws RodinDBException;
+	public IRodinElement[] getPredicates(E element) throws RodinDBException;
 	
 	public void containsIdents(SCE element, String...strings) throws RodinDBException;
 	
-	public void containsTheorems(SCE element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException;
-	
-	public void containsNonTheorems(SCE element, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException;
+	public void containsPredicates(SCE element, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException;
 	
 }

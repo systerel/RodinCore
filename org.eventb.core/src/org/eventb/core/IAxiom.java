@@ -30,8 +30,9 @@ import org.rodinp.core.RodinCore;
  * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
-public interface IAxiom extends ICommentedElement, ILabeledElement, IPredicateElement {
+public interface IAxiom extends ICommentedElement, ILabeledElement, IDerivedPredicateElement {
 
 	IInternalElementType<IAxiom> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".axiom"); //$NON-NLS-1$

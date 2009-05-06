@@ -35,7 +35,7 @@
             class="org.eventb.core.tests.pog.modules.MachineTheoremFilterModule"
             id="machineTheoremFilterModule"
             name="Theorem Filter Module"
-            parent="org.eventb.core.fwdMachineTheoremModule">
+            parent="org.eventb.core.fwdMachineInvariantModule">
       </filterType>
    </extension>
    <extension

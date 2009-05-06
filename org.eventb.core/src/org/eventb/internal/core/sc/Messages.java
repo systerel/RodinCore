@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added scuser_LoadingRootModuleError
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
@@ -32,12 +33,10 @@ public final class Messages {
 	public static String progress_ContextCarrierSets;
 	public static String progress_ContextConstants;
 	public static String progress_ContextAxioms;
-	public static String progress_ContextTheorems;
 	public static String progress_ContextExtends;
 	
 	public static String progress_MachineVariables;
 	public static String progress_MachineInvariants;
-	public static String progress_MachineTheorems;
 	public static String progress_MachineEvents;
 	public static String progress_MachineVariant;
 	public static String progress_MachineRefines;
@@ -53,6 +52,8 @@ public final class Messages {
 	public static String scuser_AssignmentUndef;
 	public static String scuser_ConvergenceUndef;
 	public static String scuser_ExtendedUndef;
+	public static String scuser_DerivedPredUndef;
+	public static String scuser_DerivedPredIgnored;
 	public static String scuser_InvalidIdentifierName;
 	public static String scuser_InvalidIdentifierContainsSpaces;
 	public static String scuser_LabelUndef;
@@ -109,6 +110,7 @@ public final class Messages {
     public static String scuser_FreeIdentifierFaultyDeclError;
     public static String scuser_VariantFreeIdentifierError;
     public static String scuser_AxiomFreeIdentifierError;
+    @Deprecated
     public static String scuser_TheoremFreeIdentifierError;
     public static String scuser_InvariantFreeIdentifierError;
     public static String scuser_GuardFreeIdentifierError;
@@ -128,6 +130,7 @@ public final class Messages {
     public static String scuser_InitialisationNotOrdinary;
 
     public static String scuser_AxiomLabelConflict;
+    @Deprecated
     public static String scuser_TheoremLabelConflict;
     public static String scuser_InvariantLabelConflict;
     public static String scuser_EventLabelConflict;

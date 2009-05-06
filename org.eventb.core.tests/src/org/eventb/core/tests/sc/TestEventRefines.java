@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -211,7 +212,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
@@ -257,7 +258,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(abs, "V1");
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
@@ -269,7 +270,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
-		addInvariants(mac, makeSList("I2"), makeSList("V2⊆ℕ"));
+		addInvariants(mac, makeSList("I2"), makeSList("V2⊆ℕ"), true);
 		IEvent init = addInitialisation(mac, "V2");
 		addEventWitnesses(init, makeSList("V1'"), makeSList("V1'=1"));
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
@@ -873,7 +874,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p", "q");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
 		addInitialisation(abs, "p", "q");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
@@ -917,7 +918,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p", "q");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈{x}"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -958,7 +959,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"), true);
 		addInitialisation(abs, "p");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1"), makeSList("p:∈{x}"));
@@ -1000,7 +1001,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"), true);
 		addInitialisation(abs, "p");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1"), makeSList("p:∈{x}"));
@@ -1047,7 +1048,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1", "V2");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), true, true);
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(), makeSList(
 				"A1", "A2"), makeSList("V1:∈ℕ", "V2:∈ℕ"));
 
@@ -1058,7 +1059,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V3");
-		addInvariants(mac, makeSList("I1"), makeSList("V3∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V3∈ℕ"), false);
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
@@ -1121,7 +1122,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A");
-		addInvariants(abs, makeSList("I"), makeSList("A∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("A∈ℤ"), false);
 		addInitialisation(abs, "A");
 		addEvent(abs, "evt", makeSList("x"), makeSList("G"), makeSList("x∈ℕ"),
 				makeSList("S"), makeSList("A≔A+1"));
@@ -1130,7 +1131,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "B");
-		addInvariants(ref, makeSList("J"), makeSList("A=B"));
+		addInvariants(ref, makeSList("J"), makeSList("A=B"), false);
 		addInitialisation(ref, "B");
 		IEvent evt = addExtendedEvent(ref, "evt");
 		saveRodinFileOf(ref);
@@ -1149,7 +1150,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_30_extendedCopyEvent() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I", "J"), makeSList("A∈ℤ", "B∈ℤ"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("A∈ℤ", "B∈ℤ"), true, true);
 		addInitialisation(abs, "A", "B");
 		addEvent(abs, "evt", makeSList("x", "y"), makeSList("G", "H"),
 				makeSList("x∈ℕ", "y∈ℕ"), makeSList("S", "T"), makeSList(
@@ -1193,7 +1194,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p", "q");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A3"), makeSList("p≔TRUE", "q:∈ℕ"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -1231,7 +1232,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p", "q");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("p∈BOOL", "q∈ℕ"), true, true);
 		addEvent(abs, "evt", makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),
 				makeSList("A1", "A2"), makeSList("p≔TRUE", "q:∈ℕ"));
 		addEvent(abs, "gvt", makeSList("y"), makeSList("G1"),
@@ -1277,7 +1278,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"), true);
 		addInitialisation(abs, "p");
 
 		saveRodinFileOf(abs);
@@ -1315,7 +1316,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("p∈ℕ"), false);
 		addEvent(abs, "evt", makeSList("x", "y"), makeSList("G1", "G2"),
 				makeSList("x∈ℕ", "y∈ℕ"), makeSList("A1"), makeSList("p:∈{x}"));
 
@@ -1326,7 +1327,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "q");
-		addInvariants(mac, makeSList("I1"), makeSList("q≠p"));
+		addInvariants(mac, makeSList("I1"), makeSList("q≠p"), false);
 		IEvent fvt = addEvent(mac, "fvt", makeSList(), makeSList(),
 				makeSList(), makeSList("A1"), makeSList("q:∈{q}"));
 		addEventRefines(fvt, "evt");
@@ -1367,7 +1368,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent fvt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList(), makeSList());
 		addEventRefines(fvt, "evt");
@@ -1393,7 +1394,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 
@@ -1404,7 +1405,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
-		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"), false);
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList("A2", "A3"), makeSList("V1:∈ℕ", "V2≔V1"));
 		addEventRefines(evt, "evt");
@@ -1436,7 +1437,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		addEvent(abs, "evt", makeSList(), makeSList("G1"), makeSList("V1>0"),
 				makeSList(), makeSList());
 
@@ -1447,7 +1448,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
-		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V2∈ℕ"), false);
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList("G2", "G3"),
 				makeSList("V1>0", "V2>0"), makeSList(), makeSList());
 		addEventRefines(evt, "evt");
@@ -1477,7 +1478,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_38_removeWitnessesFromExtended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		addInitialisation(abs, "x");
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"),
 				makeSList("a ∈ ℕ"), makeSList("A"), makeSList("x ≔ a"));
@@ -1487,7 +1488,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y");
-		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
+		addInvariants(ref, makeSList("J"), makeSList("x+y=2"), false);
 
 		IEvent ini = addInitialisation(ref, "y");
 		addEventWitnesses(ini, makeSList("x'"), makeSList("y'=x'"));
@@ -1574,8 +1575,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(ref, "x", "y");
 		addInitialisation(ref, "x", "y");
-		addInvariant(ref, "I", "x∈ℕ");
-		addInvariant(ref, "J", "y∈ℕ");
+		addInvariant(ref, "I", "x∈ℕ", true);
+		addInvariant(ref, "J", "y∈ℕ", true);
 		IEvent evt = addEvent(ref, "evt", makeSList(), makeSList("G", "H"),
 				makeSList("1<0", "5=1"), makeSList("G", "A"), makeSList(
 						"x≔x+1", "y≔y−1"));
@@ -1613,7 +1614,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_41_extendedActionLabelCollision() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariant(abs, "I", "x∈ℕ");
+		addInvariant(abs, "I", "x∈ℕ", true);
 		addInitialisation(abs, "x");
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A"), makeSList("x:∈ℕ"));
@@ -1625,7 +1626,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		addVariables(ref, "x", "y");
 		addInitialisation(ref, "x", "y");
-		addInvariant(ref, "J", "y∈ℕ");
+		addInvariant(ref, "J", "y∈ℕ", true);
 		IEvent evt = addEvent(ref, "evt", makeSList(), makeSList("A", "H"),
 				makeSList("1<0", "5=1"), makeSList("A", "B"), makeSList(
 						"x≔x+1", "y≔y−1"));
@@ -1736,7 +1737,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_44_extendedAddAndCopyActions() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariant(abs, "I", "x∈ℕ");
+		addInvariant(abs, "I", "x∈ℕ", true);
 		addInitialisation(abs, "x");
 		addEvent(abs, "evt", makeSList(), makeSList(), makeSList(),
 				makeSList("A"), makeSList("x≔x+1"));
@@ -1747,7 +1748,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(ref, "abs");
 
 		addVariables(ref, "x", "y");
-		addInvariant(ref, "J", "y∈ℕ");
+		addInvariant(ref, "J", "y∈ℕ", true);
 		addInitialisation(ref, "x", "y");
 		IEvent evt = addEvent(ref, "evt", makeSList(), makeSList(),
 				makeSList(), makeSList("B"), makeSList("y≔y+1"));
@@ -1779,7 +1780,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_45_extendedCopyTransitive() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariant(abs, "I", "x∈ℕ");
+		addInvariant(abs, "I", "x∈ℕ", true);
 		addInitialisation(abs, "x");
 		addEvent(abs, "evt", makeSList("a"), makeSList("G"), makeSList("a<x"),
 				makeSList("A"), makeSList("x≔x+1"));
@@ -1790,7 +1791,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(ref, "abs");
 
 		addVariables(ref, "x", "y");
-		addInvariant(ref, "J", "y∈ℕ");
+		addInvariant(ref, "J", "y∈ℕ", true);
 		addInitialisation(ref, "x", "y");
 		IEvent evt = addEvent(ref, "evt", makeSList("b"), makeSList("H"),
 				makeSList("b<y"), makeSList("B"), makeSList("y≔y+1"));
@@ -1803,7 +1804,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addMachineRefines(con, "ref");
 
 		addVariables(con, "x", "y", "z");
-		addInvariant(con, "K", "z∈ℕ");
+		addInvariant(con, "K", "z∈ℕ", true);
 		addInitialisation(con, "x", "y", "z");
 		IEvent evt1 = addEvent(con, "evt", makeSList("c"), makeSList("D"),
 				makeSList("c<z"), makeSList("C"), makeSList("z≔z+1"));
@@ -1872,7 +1873,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	public void testEvents_47_initialisationExtendedActions() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℕ", "y∈ℕ"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℕ", "y∈ℕ"), false, false);
 		addEvent(abs, IEvent.INITIALISATION, makeSList(), makeSList(),
 				makeSList(), makeSList("A", "B"), makeSList("x:∈ℕ", "y:∈ℕ"));
 
@@ -1880,7 +1881,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x", "y", "z");
-		addInvariant(mac, "K", "z∈ℕ");
+		addInvariant(mac, "K", "z∈ℕ", false);
 		addMachineRefines(mac, "abs");
 		IEvent ini = addEvent(mac, IEvent.INITIALISATION, makeSList(), makeSList(),
 				makeSList(), makeSList("B", "C"), makeSList("y:∈{0,1}", "z:∈ℕ"));

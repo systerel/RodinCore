@@ -45,6 +45,7 @@ import org.rodinp.core.RodinDBException;
  * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
 public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigurationElement {
 
@@ -158,6 +159,7 @@ public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 *            element name of the theorem
 	 * @return a handle to a child theorem with the given element name
 	 */
+	@Deprecated
 	ITheorem getTheorem(String elementName);
 
 	/**
@@ -167,6 +169,7 @@ public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	ITheorem[] getTheorems() throws RodinDBException;
 
 	/**

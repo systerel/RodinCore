@@ -39,7 +39,7 @@ import org.rodinp.core.RodinCore;
  * 
  */
 public interface ISCInvariant 
-extends ITraceableElement, ILabeledElement, ISCPredicateElement {
+extends ITraceableElement, ILabeledElement, ISCPredicateElement, IDerivedPredicateElement {
 
 	IInternalElementType<ISCInvariant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scInvariant"); //$NON-NLS-1$

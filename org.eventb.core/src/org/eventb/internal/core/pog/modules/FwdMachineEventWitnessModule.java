@@ -132,35 +132,35 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + witnessLabel + "/" + suffix;
 		
-		if (!goalIsTrivial(goal)) {
-			
-			goal = applyDetAssignments(goal);
-			
-			ArrayList<IPOGPredicate> hyp = makeActionHypothesis(goal);
-						
-			IRodinElement witnessSource = witness.getSource();
-			createPO(
-					target, 
-					sequentName, 
-					desc, 
-					fullHypothesis, 
-					hyp,
-					makePredicate(goal, witnessSource),
-					new IPOGSource[] {
-						makeSource(IPOSource.DEFAULT_ROLE, witnessSource)
-					},
-					new IPOGHint[] {
-							makeIntervalSelectionHint(
-									eventHypothesisManager.getRootHypothesis(),
-									getSequentHypothesis(target, sequentName)
-							)
-					},
-					accurate,
-					monitor);
-		} else {
+		if (goalIsTrivial(goal)) {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial(sequentName);
+			return;
 		}
+		
+		goal = applyDetAssignments(goal);
+		
+		ArrayList<IPOGPredicate> hyp = makeActionHypothesis(goal);
+					
+		IRodinElement witnessSource = witness.getSource();
+		createPO(
+				target, 
+				sequentName, 
+				desc, 
+				fullHypothesis, 
+				hyp,
+				makePredicate(goal, witnessSource),
+				new IPOGSource[] {
+					makeSource(IPOSource.DEFAULT_ROLE, witnessSource)
+				},
+				new IPOGHint[] {
+						makeIntervalSelectionHint(
+								eventHypothesisManager.getRootHypothesis(),
+								getSequentHypothesis(target, sequentName)
+						)
+				},
+				accurate,
+				monitor);
 	}
 
 	private Predicate applyDetAssignments(Predicate wdPredicate) {

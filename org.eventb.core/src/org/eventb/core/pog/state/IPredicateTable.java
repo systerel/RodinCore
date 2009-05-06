@@ -18,9 +18,7 @@ import org.eventb.core.ast.Predicate;
  * It is common to
  * <li>
  * <ul>context axioms ({@link IContextAxiomTable})</ul>
- * <ul>context theorems ({@link IContextTheoremTable})</ul>
  * <ul>machine invariants ({@link IMachineInvariantTable})</ul>
- * <ul>machine theorems ({@link IMachineTheoremTable})</ul>
  * <ul>event guards ({@link IConcreteEventGuardTable}, {@link IAbstractEventGuardTable})</ul>
  * </li>
  * 

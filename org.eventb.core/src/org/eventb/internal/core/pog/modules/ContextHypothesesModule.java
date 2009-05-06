@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -23,13 +24,11 @@ import org.eventb.core.ISCAxiom;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.pog.ContextAxiomTable;
 import org.eventb.internal.core.pog.ContextHypothesisManager;
-import org.eventb.internal.core.pog.ContextTheoremTable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -50,7 +49,6 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 
 	ContextHypothesisManager hypothesisManager;
 	ContextAxiomTable axiomTable;
-	ContextTheoremTable theoremTable;
 	IPORoot target;
 	
 	@Override
@@ -76,20 +74,15 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 		fetchCarriersSetsAndConstants(scContextRoot, rootSet, monitor);
 		
 		ISCAxiom[] axioms = scContextRoot.getSCAxioms();
-		ISCTheorem[] theorems = scContextRoot.getSCTheorems();
 		
 		List<ISCPredicateElement> predicates = new LinkedList<ISCPredicateElement>();
 		fetchPredicates(predicates, axioms);
-		fetchPredicates(predicates, theorems);
 		
 		axiomTable = new ContextAxiomTable(axioms, typeEnvironment, factory);
-		theoremTable = new ContextTheoremTable(theorems, typeEnvironment, factory);
 		
 		repository.setState(axiomTable);
-		repository.setState(theoremTable);
 		
 		axiomTable.makeImmutable();
-		theoremTable.makeImmutable();
 		
 		ISCPredicateElement[] predicateElements = new ISCPredicateElement[predicates.size()];		
 		predicates.toArray(predicateElements);
@@ -122,7 +115,6 @@ public class ContextHypothesesModule extends GlobalHypothesesModule {
 		target = null;
 		hypothesisManager = null;
 		axiomTable = null;
-		theoremTable = null;
 		
 		super.endModule(element, repository, monitor);
 	}

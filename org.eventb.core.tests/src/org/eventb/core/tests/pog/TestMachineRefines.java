@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - mathematical language V2
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -37,7 +38,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -83,7 +84,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -129,7 +130,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -146,7 +147,7 @@ public class TestMachineRefines extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V2");
-		addInvariants(mac, makeSList("I1", "I2"), makeSList("V2∈0‥5", "V2≥V1"));
+		addInvariants(mac, makeSList("I1", "I2"), makeSList("V2∈0‥5", "V2≥V1"), false, false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -189,7 +190,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1", "V2");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2≥6"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("V1∈0‥4", "V2≥6"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ∖{0}"), 
@@ -203,7 +204,7 @@ public class TestMachineRefines extends EventBPOTest {
 
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1X", "V2");
-		addInvariants(mac, makeSList("I3"), makeSList("V1X=V1+1"));
+		addInvariants(mac, makeSList("I3"), makeSList("V1X=V1+1"), false);
 		IEvent event = addEvent(mac, "evt", 
 				makeSList("L2"), 
 				makeSList("L2"), makeSList("L2∈ℕ"), 
@@ -348,7 +349,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_07() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A");
-		addInvariants(abs, makeSList("I"), makeSList("A∈ℕ"));
+		addInvariants(abs, makeSList("I"), makeSList("A∈ℕ"), false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G1", "G2"), makeSList("1 > x", "x−1∈ℕ"), 
@@ -358,7 +359,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B");
-		addInvariants(ref, makeSList("J"), makeSList("A=B"));
+		addInvariants(ref, makeSList("J"), makeSList("A=B"), false);
 		IEvent evt = addExtendedEvent(ref, "evt");
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(ref);
@@ -389,7 +390,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_08() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA"), makeSList("x−1∈ℕ"), 
@@ -399,7 +400,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B", "C");
-		addInvariants(ref, makeSList("J"), makeSList("C=B"));
+		addInvariants(ref, makeSList("J"), makeSList("C=B"), false);
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
 				makeSList("GC"), makeSList("x>0"), 
@@ -482,7 +483,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_10() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA"), makeSList("x−1∈ℕ"), 
@@ -496,7 +497,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "A", "B", "C");
-		addInvariants(ref, makeSList("J"), makeSList("C=B"));
+		addInvariants(ref, makeSList("J"), makeSList("C=B"), false);
 		IEvent event = addEvent(ref, "evt", 
 				makeSList("x"), 
 				makeSList("GC"), makeSList("x>0"), 
@@ -533,7 +534,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_11() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA1", "GA2"), makeSList("x−1∈ℕ", "x=y+y"), 
@@ -588,7 +589,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_12() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA1", "GA2"), makeSList("x−1∈ℕ", "x=y+y"), 
@@ -634,7 +635,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_13() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("GA", "HA"), makeSList("x>0", "B÷x>0"), 
@@ -675,7 +676,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_14() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"), false);
 		addEvent(abs, "fvt");
 
 		saveRodinFileOf(abs);
@@ -711,7 +712,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_15() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"), false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -722,7 +723,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "q");
-		addInvariants(ref, makeSList("J"), makeSList("q∈BOOL"));
+		addInvariants(ref, makeSList("J"), makeSList("q∈BOOL"), false);
 		IEvent event = addEvent(ref, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -759,7 +760,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_16() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"), false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G"), makeSList("x≠p"), 
@@ -829,7 +830,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_17() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p", "q");
-		addInvariants(abs, makeSList("I", "J"), makeSList("p∈BOOL", "q∈BOOL"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("p∈BOOL", "q∈BOOL"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G"), makeSList("x≠p"), 
@@ -875,7 +876,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_18() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
-		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"));
+		addInvariants(abs, makeSList("I"), makeSList("p∈BOOL"), false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
 				makeSList("G"), makeSList("x≠p"), 
@@ -886,7 +887,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "q");
-		addInvariants(ref, makeSList("J"), makeSList("p∈{q}"));
+		addInvariants(ref, makeSList("J"), makeSList("p∈{q}"), false);
 	
 		IEvent evt = addEvent(ref, "evt", 
 				makeSList("y"), 
@@ -984,7 +985,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_19() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -995,7 +996,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y", "z");
-		addInvariants(ref, makeSList("K", "L"), makeSList("z∈ℤ", "y≤x"));
+		addInvariants(ref, makeSList("K", "L"), makeSList("z∈ℤ", "y≤x"), false, false);
 	
 		IEvent evt = addEvent(ref, "evt", 
 				makeSList(), 
@@ -1033,7 +1034,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_20() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
-		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"));
+		addInvariants(abs, makeSList("I", "J"), makeSList("x∈ℤ", "y∈ℤ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("a", "b"), 
 				makeSList("G", "H"), makeSList("a ∈ ℕ", "b ∈ {a}"), 
@@ -1078,7 +1079,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_21() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		addEvent(abs, "evt", 
 				makeSList("a"), 
 				makeSList("G"), makeSList("a ∈ ℕ"), 
@@ -1089,7 +1090,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y");
-		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
+		addInvariants(ref, makeSList("J"), makeSList("x+y=2"), false);
 	
 		IEvent evt = addEvent(ref, "evt", 
 				makeSList(), 
@@ -1123,7 +1124,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_22() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"));
+		addInvariants(abs, makeSList("I"), makeSList("x∈ℤ"), false);
 		addInitialisation(abs, "x");
 		addEvent(abs, "evt", 
 				makeSList("a"), 
@@ -1135,7 +1136,7 @@ public class TestMachineRefines extends EventBPOTest {
 		IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "y");
-		addInvariants(ref, makeSList("J"), makeSList("x+y=2"));
+		addInvariants(ref, makeSList("J"), makeSList("x+y=2"), false);
 	
 		IEvent ini = addInitialisation(ref, "y");
 		addEventWitnesses(ini, makeSList("x'"), makeSList("y'=x'÷1"));
@@ -1180,7 +1181,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testBug_1920752() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "v1", "v2");
-		addInvariants(abs, makeSList("I1", "I2"), makeSList("v1∈ℤ", "v2∈ℤ"));
+		addInvariants(abs, makeSList("I1", "I2"), makeSList("v1∈ℤ", "v2∈ℤ"), false, false);
 		addInitialisation(abs, "v1", "v2");
 		addEvent(abs, "evt", 
 				makeSList(), 
@@ -1191,7 +1192,7 @@ public class TestMachineRefines extends EventBPOTest {
 		final IMachineRoot ref = createMachine("ref");
 		addMachineRefines(ref, "abs");
 		addVariables(ref, "v3");
-		addInvariants(ref, makeSList("J"), makeSList("v3 = v1 ↦ v2"));
+		addInvariants(ref, makeSList("J"), makeSList("v3 = v1 ↦ v2"), false);
 	
 		final IEvent ini = addInitialisation(ref, "v3");
 		addEventWitnesses(ini,
@@ -1253,7 +1254,7 @@ public class TestMachineRefines extends EventBPOTest {
 				"vnwd", "vnwn");
 		final String absVarMaplet = makeMaplet(absVars);
 		addVariables(abs, absVars);
-		addInvariant(abs, "I", absVarMaplet + " ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ");
+		addInvariant(abs, "I", absVarMaplet + " ∈ ℤ×ℤ×ℤ×ℤ×ℤ×ℤ×ℤ", false);
 		addInitialisation(abs, absVars);
 		
 		final String[] absPars = makeSList("p", "pwd", "pwn");
@@ -1284,7 +1285,7 @@ public class TestMachineRefines extends EventBPOTest {
 		final String refVarMaplet = makeMaplet(refVars);
 		final String bothVarMaplet = makeMaplet(refVarMaplet, "vd", "vnwd", "vnwn");
 		addVariables(ref, refVars);
-		addInvariant(ref, "J", bothVarMaplet + " ∈ glue");
+		addInvariant(ref, "J", bothVarMaplet + " ∈ glue", false);
 		final IEvent refInit = addInitialisation(ref, refVars);
 		addEventWitnesses(refInit, "vd'", "⊤", "vnwd'", "⊤", "vnwn'", "⊤");
 

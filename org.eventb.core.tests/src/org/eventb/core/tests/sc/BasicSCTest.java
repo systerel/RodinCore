@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAccuracyElement;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IDerivedPredicateElement;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -45,7 +47,6 @@ import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ISCRefinesEvent;
 import org.eventb.core.ISCSeesContext;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
@@ -181,13 +182,13 @@ public abstract class BasicSCTest extends EventBTest {
 //		return table;
 //	}
 
-	private Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements) throws RodinDBException {
-		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
-		for (ISCPredicateElement predicate : elements)
-			table.put(((ILabeledElement) predicate).getLabel(), predicate.getPredicateString());
-		return table;
-	}
-
+//	private Hashtable<String, String> getPredicateTable(ISCPredicateElement[] elements, boolean[] derived) throws RodinDBException {
+//		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
+//		for (ISCPredicateElement predicate : elements)
+//			table.put(((ILabeledElement) predicate).getLabel(), predicate.getPredicateString());
+//		return table;
+//	}
+//
 	private Hashtable<String, String> getAssignmentTable(ISCAssignmentElement[] elements) throws RodinDBException {
 		Hashtable<String, String> table = new Hashtable<String, String>(elements.length * 4 / 3 + 1);
 		for (ISCAssignmentElement assignment : elements)
@@ -224,22 +225,36 @@ public abstract class BasicSCTest extends EventBTest {
 
 	private void containsPredicates(
 			String type, ITypeEnvironment environment, String[] labels, String[] strings, 
-			ISCPredicateElement[] predicateElements) throws RodinDBException {
+			boolean[] derived, ISCPredicateElement[] predicateElements) throws RodinDBException {
 		assert labels.length == strings.length;
 		assertEquals("wrong number [" + type + "]", strings.length, predicateElements.length);
 		
 		if (predicateElements.length == 0)
 			return;
 		
-		Hashtable<String, String> table = getPredicateTable(predicateElements);
+		List<String> labelList = getLabelList(predicateElements);
 		
 		for (int k=0; k<labels.length; k++) {
-			String predicate = table.get(labels[k]);
-			assertNotNull("should contain " + type + " " + labels[k], predicate);
+			int index = labelList.indexOf(labels[k]);
+			assertTrue("should contain " + type + " " + labels[k], index != -1);
+			String predicate = predicateElements[index].getPredicateString();
 			assertEquals("wrong " + type, 
 					getNormalizedPredicate(strings[k], environment), 
 					predicate);
+			if (derived != null) {
+				IDerivedPredicateElement derivedElement = (IDerivedPredicateElement) predicateElements[k];
+				assertEquals("should " + (derived[k] ? "" : "not") + " be a theorem ", derived[k], derivedElement.isTheorem());
+			}
 		}
+	}
+
+	private List<String> getLabelList(ISCPredicateElement[] predicateElements) throws RodinDBException {
+		List<String> list = new ArrayList<String>(predicateElements.length);
+		for (ISCPredicateElement element : predicateElements) {
+			ILabeledElement labeledElement = (ILabeledElement) element;
+			list.add(labeledElement.getLabel());
+		}
+		return list;
 	}
 
 	private void containsAssignments(
@@ -257,43 +272,31 @@ public abstract class BasicSCTest extends EventBTest {
 	}
 
 	public void containsGuards(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+		containsGuards(event, environment, labels, strings, null);
+	}
+	
+	public void containsGuards(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		ISCGuard[] guards = event.getSCGuards();
 		
-		containsPredicates("guard", environment, labels, strings, guards);
+		containsPredicates("guard", environment, labels, strings, derived, guards);
 	}
 
 	public void containsWitnesses(ISCEvent event, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
 		ISCWitness[] witnesses = event.getSCWitnesses();
 		
-		containsPredicates("witness", environment, labels, strings, witnesses);
+		containsPredicates("witness", environment, labels, strings, null, witnesses);
 	}
 
-	public void containsAxioms(ISCContext context, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+	public void containsAxioms(ISCContext context, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		ISCAxiom[] axioms = context.getSCAxioms();
 		
-		containsPredicates("axiom", environment, labels, strings, axioms);
+		containsPredicates("axiom", environment, labels, strings, derived, axioms);
 	}
 
-	public void containsTheorems(ISCContextRoot root, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCTheorem[] theorems = root.getSCTheorems();
-		
-		containsTheorems(theorems, environment, labels, strings);
-	}
-
-	public void containsTheorems(ISCMachineRoot file, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		ISCTheorem[] theorems = file.getSCTheorems();
-		
-		containsTheorems(theorems, environment, labels, strings);
-	}
-
-	private void containsTheorems(ISCTheorem[] theorems, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
-		containsPredicates("theorem", environment, labels, strings, theorems);
-	}
-
-	public void containsInvariants(ISCMachineRoot root, ITypeEnvironment environment, String[] labels, String[] strings) throws RodinDBException {
+	public void containsInvariants(ISCMachineRoot root, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		ISCInvariant[] invariants = root.getSCInvariants();
 		
-		containsPredicates("invariant", environment, labels, strings, invariants);
+		containsPredicates("invariant", environment, labels, strings, derived, invariants);
 	}
 	
 	public ISCInternalContext[] getInternalContexts(ISCContextRoot root, int num) throws RodinDBException {

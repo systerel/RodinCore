@@ -19,7 +19,6 @@ import org.eventb.core.ISCContext;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCPredicateElement;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -70,9 +69,6 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 			
 			for (ISCAxiom axiom : context.getSCAxioms()) {
 				savePOPredicate(rootSet, axiom, monitor);
-			}
-			for (ISCTheorem theorem : context.getSCTheorems()) {
-				savePOPredicate(rootSet, theorem, monitor);
 			}
 		}
 		

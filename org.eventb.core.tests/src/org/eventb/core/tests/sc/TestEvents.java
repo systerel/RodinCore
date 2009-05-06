@@ -9,14 +9,17 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.sc.GraphProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -192,7 +195,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1⊆ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1⊆ℕ"), true);
 		addInitialisation(mac, "V1");
 		addEvent(mac, "evt1", makeSList("L1"), makeSList("G1"), makeSList("L1∈V1"), makeSList(), makeSList());
 		
@@ -222,7 +225,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"), true);
 		IEvent e = 
 			addEvent(mac, "evt1", 
 					makeSList("L1"), 
@@ -255,7 +258,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"), true);
 		addInitialisation(mac, "L1");
 		addEvent(mac, "evt1", makeSList("L2"), makeSList("G1"), makeSList("L2∈ℕ"), makeSList(), makeSList());
 		addEvent(mac, "evt2", makeSList("L2"), makeSList("G1"), makeSList("L2⊆ℕ"), makeSList(), makeSList());
@@ -289,7 +292,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
 		addInitialisation(mac, "L1");
 		addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList("A1"), makeSList("L1≔1"));
 	
@@ -319,7 +322,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), 
 				makeSList("A1","A1"), makeSList("L1≔1", "L1≔2"));
 	
@@ -349,7 +352,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList("A1"), makeSList("1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔1"));
 	
@@ -381,7 +384,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(mac, "V1");
 		addEvent(mac, "evt1", makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
@@ -416,7 +419,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt1", makeSList("L1"), 
 				makeSList("G1"), makeSList("L1∈ℕ"), 
 				makeSList("A1"), makeSList("L1≔V1"));
@@ -451,7 +454,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("V1'", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(mac, "V1");
 		addEvent(mac, "evt1", makeSList(), 
 				makeSList(), makeSList(), 
@@ -487,7 +490,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "u", "v", "w", "x", "y", "z");
-		addInvariants(mac, makeSList("I1"), makeSList("u∈ℕ ∧ v∈ℕ ∧ w∈ℕ ∧ x∈ℕ ∧ y∈ℕ ∧ z∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("u∈ℕ ∧ v∈ℕ ∧ w∈ℕ ∧ x∈ℕ ∧ y∈ℕ ∧ z∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1", "A2", "A3", "A4", "A5"), 
@@ -545,7 +548,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList("G1", "G2"), makeSList("x∈ℕ", "⊤"), 
 				makeSList(), makeSList());
@@ -575,7 +578,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt", makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ y'=x"));
@@ -603,7 +606,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ x'=1"));
@@ -631,7 +634,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x :∣ x=1"));
@@ -659,7 +662,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
-		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList(), makeSList());
@@ -684,7 +687,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"), true);
 		addEvent(abs, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'=1"));
@@ -702,7 +705,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("y", factory.makeIntegerType());
 
 		addVariables(mac, "y");
-		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"), true);
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'=2"));
@@ -728,7 +731,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"));
+		addInvariants(abs, makeSList("I1"), makeSList("x∈ℕ"), true);
 		addEvent(abs, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x:∣x'∈{1}"));
@@ -746,7 +749,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("y", factory.makeIntegerType());
 
 		addVariables(mac, "y");
-		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"), true);
 		IEvent evt = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("y≔2"));
@@ -788,7 +791,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
-		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"));
+		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
 		addInitialisation(mac, "L1");
 		IEvent evt = addEvent(mac, "evt1", makeSList(), makeSList(), makeSList(), makeSList("A1"), makeSList("L1 :∣ 0 /= 1"));
 	
@@ -807,4 +810,30 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		hasMarker(evt.getActions()[0]);
 	}
 
+	/**
+	 * Guards should not be derived (yet)
+	 */
+	public void testEvents_27_derivedGuardWarning() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList("G1", "G2"),
+				makeSList("⊤", "⊤"), makeBList(false, true), makeSList(),
+				makeSList());
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		ISCMachineRoot file = mac.getSCMachineRoot();
+
+		ISCEvent[] scEvents = getSCEvents(file, "evt1");
+
+		containsGuards(scEvents[0], emptyEnv, makeSList("G1", "G2"), makeSList(
+				"⊤", "⊤"), false, false);
+
+		hasNotMarker(e.getGuards()[0]);
+		hasMarker(e.getGuards()[1], EventBAttributes.THEOREM_ATTRIBUTE,
+				GraphProblem.DerivedPredIgnoredWarning);
+
+	}
 }

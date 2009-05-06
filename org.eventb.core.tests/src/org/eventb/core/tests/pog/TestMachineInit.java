@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -29,7 +30,7 @@ public class TestMachineInit extends EventBPOTest {
 		IMachineRoot mac = createMachine("mac");
 
 		addVariables(mac, "V1");
-		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(mac, init, 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -58,7 +59,7 @@ public class TestMachineInit extends EventBPOTest {
 		IMachineRoot abs = createMachine("abs");
 
 		addVariables(abs, "V1");
-		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"));
+		addInvariants(abs, makeSList("I1"), makeSList("V1∈0‥4"), false);
 		addEvent(abs, init, 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -104,7 +105,7 @@ public class TestMachineInit extends EventBPOTest {
 		
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
-		addInvariants(abs, makeSList("I1"), makeSList("x ∈ ℤ"));
+		addInvariants(abs, makeSList("I1"), makeSList("x ∈ ℤ"), false);
 		addEvent(abs, init, 
 				makeSList(), 
 				makeSList(), makeSList(), 
@@ -117,7 +118,7 @@ public class TestMachineInit extends EventBPOTest {
 		IMachineRoot con = createMachine("con");
 		addMachineRefines(con, "abs");
 		addVariables(con, "y");
-		addInvariants(con, makeSList("I1"), makeSList("y = x + 1"));
+		addInvariants(con, makeSList("I1"), makeSList("y = x + 1"), false);
 		addEvent(con, init,
 				makeSList(), 
 				makeSList(), makeSList(), 

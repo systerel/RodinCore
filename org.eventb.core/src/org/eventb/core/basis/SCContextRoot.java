@@ -17,7 +17,6 @@ import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCExtendsContext;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElementType;
@@ -62,8 +61,9 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 		return getChildrenOfType(ISCAxiom.ELEMENT_TYPE); 
 	}
 
-	public ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(ISCTheorem.ELEMENT_TYPE); 
+	@Deprecated
+	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
+		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE); 
 	}
 
 	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
@@ -94,8 +94,9 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
 	}
 
-	public ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(ISCTheorem.ELEMENT_TYPE, elementName);
+	@Deprecated
+	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
+		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)

@@ -30,8 +30,9 @@ import org.rodinp.core.RodinCore;
  * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @author Stefan Hallerstede
  */
-public interface IInvariant extends ICommentedElement, ILabeledElement, IPredicateElement {
+public interface IInvariant extends ICommentedElement, ILabeledElement, IDerivedPredicateElement {
 
 	IInternalElementType<IInvariant> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".invariant"); //$NON-NLS-1$

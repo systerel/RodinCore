@@ -124,6 +124,7 @@ public interface ISCContext extends IRodinElement {
 	 *            element name of the SC theorem
 	 * @return a handle to a child SC theorem with the given element name
 	 */
+	@Deprecated
 	ISCTheorem getSCTheorem(String elementName);
 
 	/**
@@ -133,6 +134,7 @@ public interface ISCContext extends IRodinElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Deprecated
 	ISCTheorem[] getSCTheorems() throws RodinDBException;
 	
 }

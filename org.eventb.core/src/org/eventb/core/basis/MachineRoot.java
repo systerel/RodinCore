@@ -18,7 +18,6 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.core.Messages;
@@ -54,8 +53,9 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 		return getChildrenOfType(IVariable.ELEMENT_TYPE);
 	}
 	
-	public ITheorem[] getTheorems() throws RodinDBException {
-		return getChildrenOfType(ITheorem.ELEMENT_TYPE);
+	@Deprecated
+	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
+		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE);
 	}
 	
 	public IInvariant[] getInvariants() throws RodinDBException {
@@ -111,8 +111,9 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 		return getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
 	}
 
-	public ITheorem getTheorem(String elementName) {
-		return getInternalElement(ITheorem.ELEMENT_TYPE, elementName);
+	@Deprecated
+	public org.eventb.core.ITheorem getTheorem(String elementName) {
+		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
 	}
 
 	public IVariable getVariable(String elementName) {

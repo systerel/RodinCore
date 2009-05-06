@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
+ *     University of Dusseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -16,7 +20,6 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCInvariant;
 import org.eventb.core.ISCParameter;
-import org.eventb.core.ISCTheorem;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
@@ -312,30 +315,6 @@ public final class SymbolFactory {
 
 	}
 
-	private static class TheoremSymbolProblem implements ISymbolProblem {
-
-		public TheoremSymbolProblem() {
-			// public constructor
-		}
-
-		public void createConflictError(ISymbolInfo<?, ?> symbolInfo,
-				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					GraphProblem.TheoremLabelConflictError, symbolInfo
-							.getSymbol());
-		}
-
-		public void createConflictWarning(ISymbolInfo<?, ?> symbolInfo,
-				IMarkerDisplay markerDisplay) throws RodinDBException {
-			markerDisplay.createProblemMarker(symbolInfo.getProblemElement(),
-					symbolInfo.getProblemAttributeType(),
-					GraphProblem.TheoremLabelConflictWarning, symbolInfo
-							.getSymbol());
-		}
-
-	}
-
 	private static class InvariantSymbolProblem implements ISymbolProblem {
 
 		public InvariantSymbolProblem() {
@@ -486,7 +465,6 @@ public final class SymbolFactory {
 	private static LocalParameterSymbolProblem localParameterSymbolProblem = new LocalParameterSymbolProblem();
 	private static ImportedParameterSymbolProblem importedParameterSymbolProblem = new ImportedParameterSymbolProblem();
 	private static AxiomSymbolProblem axiomSymbolProblem = new AxiomSymbolProblem();
-	private static TheoremSymbolProblem theoremSymbolProblem = new TheoremSymbolProblem();
 	private static InvariantSymbolProblem invariantSymbolProblem = new InvariantSymbolProblem();
 	private static EventSymbolProblem eventSymbolProblem = new EventSymbolProblem();
 	private static GuardSymbolProblem guardSymbolProblem = new GuardSymbolProblem();
@@ -577,13 +555,6 @@ public final class SymbolFactory {
 		return new LabelSymbolInfo(symbol, ISCAxiom.ELEMENT_TYPE, persistent,
 				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
 				axiomSymbolProblem);
-	}
-
-	public ILabelSymbolInfo makeLocalTheorem(String symbol, boolean persistent,
-			IInternalElement problemElement, String component) {
-		return new LabelSymbolInfo(symbol, ISCTheorem.ELEMENT_TYPE, persistent,
-				problemElement, EventBAttributes.LABEL_ATTRIBUTE, component,
-				theoremSymbolProblem);
 	}
 
 	public ILabelSymbolInfo makeLocalInvariant(String symbol,
