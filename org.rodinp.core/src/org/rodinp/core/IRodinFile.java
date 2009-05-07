@@ -20,6 +20,17 @@ import org.rodinp.internal.core.ElementType;
  * Represents an entire Rodin file. File elements need to be opened before they
  * can be navigated or manipulated.
  * 
+ * <p>
+ * For each Rodin file, the database provides two versions:
+ * <ul>
+ * <li>a stable snapshot that corresponds to the contents of the Rodin file on
+ * disk, and which is read-only.</li>
+ * <li>a buffered copy of the Rodin file in memory which is read-write.</li>
+ * </ul>
+ * As a consequence, there are two kinds of handles for these elements, stable
+ * snapshot handles and mutable handles.
+ * </p>
+ * 
  * This interface is not intended to be implemented by clients.
  *
  * TODO write doc for IRodinFile.

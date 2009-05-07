@@ -25,13 +25,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Internal elements are elements of the database that are stored within Rodin
  * files (i.e., are descendants thereof).
  * </p>
+ * <p>
+ * For each Rodin file, the database provides two versions:
+ * <ul>
+ * <li>a stable snapshot that corresponds to the contents of the Rodin file on
+ * disk, and which is read-only.</li>
+ * <li>a buffered copy of the Rodin file in memory which is read-write.</li>
+ * </ul>
+ * As a consequence, there are two kinds of handles for internal elements
+ * depending on the kind of the file they belong to.
+ * </p>
  * 
  * @author Laurent Voisin
  */
 //TODO document IInternalElement
-@SuppressWarnings("deprecation")
 public interface IInternalElement extends IRodinElement, IElementManipulation,
-		ISnapshotable, IAttributedElement, IInternalParent {
+		ISnapshotable, IParent {
 
 	/**
 	 * Creates this internal element in the database. As a side effect, all
