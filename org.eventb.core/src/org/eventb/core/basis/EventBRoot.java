@@ -13,9 +13,7 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
-import org.eventb.core.IEventBProject;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -24,19 +22,16 @@ import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.internal.core.EventBProject;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
- * Common implementation for event-B files.
+ * Common implementation for event-B root elements.
  * 
  * @author Stefan Hallerstede
  * @author Laurent Voisin
  */
-public abstract class EventBRoot extends InternalElement implements IEventBRoot,
+public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		IPOStampedElement {
 
 	protected EventBRoot(String name, IRodinElement parent) {
@@ -47,78 +42,47 @@ public abstract class EventBRoot extends InternalElement implements IEventBRoot,
 		return getElementName();
 	}
 
-	public IEventBProject getEventBProject() {
-		return new EventBProject(getRodinProject());
-	}
-
 	public final IContextRoot getContextRoot() {
 		if (this instanceof IContextRoot) {
 			return (IContextRoot) this.getMutableCopy();
 		}
-		final String name = EventBPlugin.getContextFileName(getComponentName());
-		return (IContextRoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getContextRoot(getElementName());
 	}
 
 	public final IMachineRoot getMachineRoot() {
 		if (this instanceof IMachineRoot) {
 			return (IMachineRoot) this.getMutableCopy();
 		}
-		final String name = EventBPlugin.getMachineFileName(getComponentName());
-		return (IMachineRoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getMachineRoot(getElementName());
 	}
 
 	public final IPRRoot getPRRoot() {
 		if (this instanceof IPRRoot) {
 			return (IPRRoot) this.getMutableCopy();
 		}
-		final String name = EventBPlugin.getPRFileName(getComponentName());
-		return (IPRRoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getPRRoot(getElementName());
 	}
 
 	public final ISCContextRoot getSCContextRoot() {
 		// Do not optimize here due to temporary files.
-		final String name = EventBPlugin.getSCContextFileName(getComponentName());
-		return (ISCContextRoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getSCContextRoot(getElementName());
 	}
 
 	public final ISCMachineRoot getSCMachineRoot() {
 		// Do not optimize here due to temporary files.
-		final String name = EventBPlugin.getSCMachineFileName(getComponentName());
-		return (ISCMachineRoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getSCMachineRoot(getElementName());
 	}
 
 	public final IPORoot getPORoot() {
 		// Do not optimize here due to temporary files.
-		final String name = EventBPlugin.getPOFileName(getComponentName());
-		return (IPORoot) getRodinProject().getRodinFile(name).getRoot();
+		return getEventBProject().getPORoot(getElementName());
 	}
 
 	public final IPSRoot getPSRoot() {
 		if (this instanceof IPSRoot) {
 			return (IPSRoot) this.getMutableCopy();
 		}
-		final String name = EventBPlugin.getPSFileName(getComponentName());
-		return (IPSRoot) getRodinProject().getRodinFile(name).getRoot();
-	}
-	
-	public boolean hasPOStamp() throws RodinDBException {
-		return hasAttribute(EventBAttributes.POSTAMP_ATTRIBUTE);
-	}
-	
-	public long getPOStamp() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE);
-	}
-	
-	public void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE, stamp, monitor);
-	}
-
-	public boolean isAccurate() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE);
-	}
-	
-	public void setAccuracy(boolean accurate, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.ACCURACY_ATTRIBUTE, accurate, monitor);
+		return getEventBProject().getPSRoot(getElementName());
 	}
 	
 	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {
@@ -131,13 +95,6 @@ public abstract class EventBRoot extends InternalElement implements IEventBRoot,
 	
 	public boolean hasConfiguration() throws RodinDBException {
 		return hasAttribute(EventBAttributes.CONFIGURATION_ATTRIBUTE);
-	}
-	
-	@Deprecated
-	protected final <T extends IRodinElement> T getSingletonChild(
-			IElementType<T> elementType, String message) throws RodinDBException {
-
-		return EventBUtil.getSingletonChild(this, elementType, message);
 	}
 
 }

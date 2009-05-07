@@ -8,12 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added method getEventBProject()
  *******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.internal.core.EventBProject;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IElementType;
@@ -279,6 +281,10 @@ public abstract class EventBElement extends InternalElement {
 
 	public void setTheorem(boolean thm, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE, thm, monitor);
+	}
+
+	public final EventBProject getEventBProject() {
+		return new EventBProject(getRodinProject());
 	}
 
 }
